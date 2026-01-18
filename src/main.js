@@ -63,6 +63,7 @@ async function init() {
         await assets.loadImages({
             title: 'assets/misc/three_kingdoms_stratagem_title.png',
             noticeboard: 'assets/settings/village_noticeboard.png',
+            china_map: 'assets/settings/china_map.png',
             lvbu: 'assets/characters/001_lvbu.png',
             dongzhuo: 'assets/characters/002_dongzhuo.png',
             liubei: 'assets/characters/048_liubei.png',

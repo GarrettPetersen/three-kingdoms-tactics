@@ -25,12 +25,60 @@ export class NarrativeScene extends BaseScene {
     }
 
     enter(params) {
-        this.script = params.script || [];
+        this.originalScript = params.script || [];
+        this.script = this.processDialogueWrapping(this.originalScript);
         this.currentStep = 0;
         this.actors = {};
         this.isWaiting = false;
         this.timer = 0;
         this.processStep();
+    }
+
+    processDialogueWrapping(script) {
+        const processed = [];
+        const margin = 5;
+        const portraitSize = 34;
+        const panelWidth = this.manager.canvas.width - margin * 2;
+        // Reduced maxWidth slightly to ensure padding on both sides
+        const maxWidth = panelWidth - portraitSize - 25; 
+
+        script.forEach(step => {
+            if (step.type !== 'dialogue') {
+                processed.push(step);
+                return;
+            }
+
+            const ctx = this.manager.ctx;
+            ctx.save();
+            ctx.font = '8px Dogica';
+            const words = step.text.split(' ');
+            const lines = [];
+            let currentLine = '';
+
+            for (let n = 0; n < words.length; n++) {
+                let testLine = currentLine + words[n] + ' ';
+                // Ensure we measure against the correct font
+                if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+                    lines.push(currentLine.trim());
+                    currentLine = words[n] + ' ';
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            lines.push(currentLine.trim());
+            ctx.restore();
+
+            // Break into chunks of 2 lines
+            for (let i = 0; i < lines.length; i += 2) {
+                const chunk = lines.slice(i, i + 2);
+                processed.push({
+                    ...step,
+                    lines: chunk,
+                    hasNextChunk: (i + 2 < lines.length)
+                });
+            }
+        });
+        return processed;
     }
 
     processStep() {
@@ -248,6 +296,7 @@ export class NarrativeScene extends BaseScene {
         ctx.fillStyle = '#000';
         ctx.fillRect(portraitX, portraitY, portraitSize, portraitSize);
         ctx.strokeStyle = '#444';
+        ctx.lineWidth = 1;
         ctx.strokeRect(portraitX + 0.5, portraitY + 0.5, portraitSize - 1, portraitSize - 1);
 
         const actorImg = assets.getImage(step.portraitKey);
@@ -259,38 +308,55 @@ export class NarrativeScene extends BaseScene {
             ctx.drawImage(actorImg, crop.x, crop.y, crop.w, crop.h, portraitX + destOffset, portraitY + destOffset, destSize, destSize);
         }
 
-        // Name & Text
+        // Name (Silkscreen - Heading Style) - MOVED UP
         const textX = portraitX + portraitSize + 8;
-        this.drawPixelText(ctx, step.name, textX, py + 14, { color: '#ffd700', font: '8px Silkscreen' });
+        this.drawPixelText(ctx, (step.name || "").toUpperCase(), textX, py + 6, { color: '#ffd700', font: '8px Silkscreen' });
 
-        const words = (step.text || "").split(' ');
-        let line = '';
-        let lineY = py + 24;
-        const maxWidth = panelWidth - portraitSize - 20;
-
-        for (let n = 0; n < words.length; n++) {
-            let testLine = line + words[n] + ' ';
-            ctx.font = '8px Silkscreen'; // Set font for measurement
-            if (ctx.measureText(testLine).width > maxWidth && n > 0) {
-                this.drawPixelText(ctx, line, textX, lineY, { color: '#eee', font: '8px Silkscreen' });
-                line = words[n] + ' ';
+        // Text (Dogica - General Text Style) - MOVED UP
+        const displayLines = step.lines || [];
+        let lineY = py + 18;
+        
+        if (displayLines.length > 0) {
+            displayLines.forEach((line, i) => {
+                let text = line;
+                // Add ellipsis if this is the last line of a multi-part dialogue
+                if (i === displayLines.length - 1 && step.hasNextChunk) {
+                    text += "...";
+                }
+                this.drawPixelText(ctx, text, textX, lineY, { color: '#eee', font: '8px Dogica' });
                 lineY += 10;
-            } else {
-                line = testLine;
+            });
+        } else {
+            // Fallback for non-processed text
+            const words = (step.text || "").split(' ');
+            let line = '';
+            const maxWidth = panelWidth - portraitSize - 20;
+            for (let n = 0; n < words.length; n++) {
+                let testLine = line + words[n] + ' ';
+                ctx.font = '8px Dogica';
+                if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+                    this.drawPixelText(ctx, line, textX, lineY, { color: '#eee', font: '8px Dogica' });
+                    line = words[n] + ' ';
+                    lineY += 10;
+                } else {
+                    line = testLine;
+                }
             }
+            this.drawPixelText(ctx, line, textX, lineY, { color: '#eee', font: '8px Dogica' });
         }
-        this.drawPixelText(ctx, line, textX, lineY, { color: '#eee', font: '8px Silkscreen' });
 
-        // Click prompt
+        // Click prompt (Tiny5)
         const pulse = Math.abs(Math.sin(Date.now() / 500));
         ctx.globalAlpha = pulse;
-        this.drawPixelText(ctx, "NEXT", panelWidth - 2, py + panelHeight - 6, { color: '#eee', font: '8px Silkscreen', align: 'right' });
+        this.drawPixelText(ctx, "NEXT", panelWidth - 2, py + panelHeight - 8, { color: '#eee', font: '8px Tiny5', align: 'right' });
         ctx.globalAlpha = 1.0;
     }
 
     handleInput(e) {
         const step = this.script[this.currentStep];
         if (this.isWaiting) return;
+        
+        // Advance script on any pointerdown (if not waiting for command)
         if (step && (step.type === 'dialogue' || step.type === 'title')) {
             this.nextStep();
         }
