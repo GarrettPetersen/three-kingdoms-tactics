@@ -1,0 +1,28 @@
+{
+  "name": "three-kingdoms-tactics",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GarrettPetersen/three-kingdoms-tactics.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GarrettPetersen/three-kingdoms-tactics/issues"
+  },
+  "homepage": "https://github.com/GarrettPetersen/three-kingdoms-tactics#readme",
+  "description": "",
+  "devDependencies": {
+    "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "sharp": "^0.34.5"
+  }
+}
