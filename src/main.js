@@ -21,6 +21,10 @@ let charImg = null;
 let grid = []; // 2D array of { terrain, unit }
 let animationFrame = 0;
 let lastTime = 0;
+let activeDialogue = null;
+let gameState = 'title'; // 'title' or 'playing'
+let titleImg = null;
+let processedTitleCanvas = null;
 
 const TERRAIN_TYPES = [
     'grass_01', 'grass_flowers', 'grass_02', 'grass_03', 'grass_04',
@@ -169,8 +173,80 @@ function drawCharacter(img, action, frame, x, y) {
     );
 }
 
+function processTitleImage() {
+    if (!titleImg) return;
+    
+    // Create a temporary canvas to manipulate pixels
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = titleImg.width;
+    tempCanvas.height = titleImg.height;
+    const tempCtx = tempCanvas.getContext('2d');
+    
+    tempCtx.drawImage(titleImg, 0, 0);
+    const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+    const data = imageData.data;
+    
+    // Convert black-on-white to red (with transparency)
+    for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const avg = (r + g + b) / 3;
+        
+        if (avg < 128) {
+            // It's a dark pixel (the text)
+            data[i] = 139;     // Dark Red (matching our theme)
+            data[i+1] = 0;
+            data[i+2] = 0;
+            data[i+3] = 255;   // Fully opaque
+        } else {
+            // It's a light pixel (the background)
+            data[i+3] = 0;     // Fully transparent
+        }
+    }
+    
+    tempCtx.putImageData(imageData, 0, 0);
+    processedTitleCanvas = tempCanvas;
+}
+
+let menuHitArea = null;
+
+function drawTitleScreen() {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    if (processedTitleCanvas) {
+        const x = Math.floor((canvas.width - processedTitleCanvas.width) / 2);
+        const y = 40;
+        ctx.drawImage(processedTitleCanvas, x, y);
+    }
+    
+    // Menu
+    ctx.fillStyle = '#ffd700'; // Gold
+    ctx.font = '8px Silkscreen';
+    const text = "NEW GAME";
+    const metrics = ctx.measureText(text);
+    const tx = Math.floor((canvas.width - metrics.width) / 2);
+    const ty = canvas.height - 60;
+    
+    // Simple pulsing effect for the menu option
+    const pulse = Math.abs(Math.sin(Date.now() / 500)) * 0.5 + 0.5;
+    ctx.globalAlpha = pulse;
+    ctx.fillText(text, tx, ty);
+    ctx.globalAlpha = 1.0;
+    
+    // Hit area for "New Game"
+    menuHitArea = { x: tx - 10, y: ty - 10, w: metrics.width + 20, h: 20 };
+}
+
 function render(timestamp) {
     if (Object.keys(terrainImgs).length === 0) return;
+    
+    if (gameState === 'title') {
+        drawTitleScreen();
+        requestAnimationFrame(render);
+        return;
+    }
     
     const deltaTime = timestamp - lastTime;
     if (deltaTime > 150) {
@@ -232,40 +308,151 @@ function render(timestamp) {
             drawCharacter(call.unit.img, call.action, call.frame, call.x, call.y - call.elevation);
         }
     }
+
+    // Draw UI overlay
+    drawUI();
     
     requestAnimationFrame(render);
+}
+
+function showDialogue(unit) {
+    activeDialogue = {
+        unit: unit,
+        expires: Date.now() + 5000
+    };
+}
+
+function drawUI() {
+    if (!activeDialogue || Date.now() > activeDialogue.expires) {
+        activeDialogue = null;
+        return;
+    }
+
+    const { unit } = activeDialogue;
+    
+    // Panel dimensions in "art pixels"
+    const margin = 10;
+    const panelWidth = Math.floor(canvas.width * 0.8);
+    const panelHeight = 44;
+    const x = Math.floor((canvas.width - panelWidth) / 2);
+    const y = canvas.height - panelHeight - margin;
+
+    // 1. Draw Background
+    ctx.fillStyle = 'rgba(20, 20, 20, 0.9)';
+    ctx.fillRect(x, y, panelWidth, panelHeight);
+
+    // 2. Draw Border (1 art pixel thick)
+    ctx.strokeStyle = '#8b0000';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x + 0.5, y + 0.5, panelWidth - 1, panelHeight - 1);
+
+    // 3. Draw Portrait (zoomed using your 20,20 crop)
+    const portraitSize = 32;
+    const portraitX = x + 6;
+    const portraitY = y + 6;
+    
+    ctx.fillStyle = '#111';
+    ctx.fillRect(portraitX, portraitY, portraitSize, portraitSize);
+    ctx.strokeRect(portraitX + 0.5, portraitY + 0.5, portraitSize - 1, portraitSize - 1);
+
+    // Zoom into face (Using your tweaked faceY = 20)
+    const zoomArea = 20;
+    const faceX = 26;
+    const faceY = 20; 
+    
+    ctx.drawImage(
+        unit.img,
+        0 * 72 + faceX, 0 * 72 + faceY, zoomArea, zoomArea, // Source
+        portraitX + 1, portraitY + 1, portraitSize - 2, portraitSize - 2 // Destination
+    );
+
+    // 4. Draw Text
+    ctx.fillStyle = '#ffd700'; // Gold for Name
+    ctx.font = '8px Silkscreen'; // Pixel font
+    ctx.fillText(unit.name, portraitX + portraitSize + 8, y + 14);
+
+    ctx.fillStyle = '#eee'; // White for text
+    ctx.font = '8px Silkscreen';
+    
+    // Simple text wrapping for canvas
+    const words = (unit.dialogue || "Prepare for battle!").split(' ');
+    let line = '';
+    let lineY = y + 24;
+    const maxWidth = panelWidth - portraitSize - 24;
+
+    for (let n = 0; n < words.length; n++) {
+        let testLine = line + words[n] + ' ';
+        let metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && n > 0) {
+            ctx.fillText(line, portraitX + portraitSize + 8, lineY);
+            line = words[n] + ' ';
+            lineY += 10; // More spacing for pixel font
+        } else {
+            line = testLine;
+        }
+    }
+    ctx.fillText(line, portraitX + portraitSize + 8, lineY);
+}
+
+function handleCanvasClick(e) {
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / config.scale;
+    const y = (e.clientY - rect.top) / config.scale;
+    
+    if (gameState === 'title' && menuHitArea) {
+        if (x >= menuHitArea.x && x <= menuHitArea.x + menuHitArea.w &&
+            y >= menuHitArea.y && y <= menuHitArea.y + menuHitArea.h) {
+            gameState = 'playing';
+        }
+        return;
+    }
+
+    const mapPixelWidth = config.mapWidth * config.horizontalSpacing;
+    const mapPixelHeight = config.mapHeight * config.verticalSpacing;
+    const startX = Math.floor((canvas.width - mapPixelWidth) / 2);
+    const startY = Math.floor((canvas.height - mapPixelHeight) / 2);
+
+    let clickedHex = null;
+    let minDist = 15; // Max distance to be considered a click
+
+    for (let r = 0; r < config.mapHeight; r++) {
+        const xOffset = (r % 2 === 1) ? config.horizontalSpacing / 2 : 0;
+        for (let q = 0; q < config.mapWidth; q++) {
+            const hx = startX + q * config.horizontalSpacing + xOffset;
+            const hy = startY + r * config.verticalSpacing - (grid[r][q].elevation || 0);
+            
+            const dist = Math.sqrt((x - hx)**2 + (y - hy)**2);
+            if (dist < minDist) {
+                minDist = dist;
+                clickedHex = {r, q};
+            }
+        }
+    }
+
+    if (clickedHex) {
+        const unit = grid[clickedHex.r][clickedHex.q].unit;
+        if (unit) {
+            showDialogue(unit);
+        } else {
+            activeDialogue = null;
+        }
+    }
 }
 
 async function init() {
     setupCanvas();
     generateMap();
     
+    canvas.addEventListener('mousedown', handleCanvasClick);
+    
     window.addEventListener('resize', () => {
         setupCanvas();
     });
-
-    // Add event listeners for the animation menu
-    const menuButtons = document.querySelectorAll('#animation-menu button');
-    menuButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const action = button.getAttribute('data-action');
-            
-            // Update active state in UI
-            menuButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-
-            // Update all units on the grid to this action
-            for (let r = 0; r < config.mapHeight; r++) {
-                for (let q = 0; q < config.mapWidth; q++) {
-                    if (grid[r][q].unit) {
-                        grid[r][q].unit.action = action;
-                    }
-                }
-            }
-        });
-    });
     
     try {
+        // Wait for fonts to load
+        await document.fonts.ready;
+
         // Load all terrain images
         const terrainPromises = TERRAIN_TYPES.map(async (type) => {
             const img = await loadImage(`assets/terrain/individual/${type}.png`);
@@ -279,7 +466,8 @@ async function init() {
             liuBeiImg, 
             guanYuImg, 
             zhangFeiImg, 
-            zhugeLiangImg
+            zhugeLiangImg,
+            loadedTitleImg
         ] = await Promise.all([
             loadImage('assets/characters/001_lvbu.png'),
             loadImage('assets/characters/002_dongzhuo.png'),
@@ -287,16 +475,50 @@ async function init() {
             loadImage('assets/characters/049_guanyu.png'),
             loadImage('assets/characters/050_zhangfei.png'),
             loadImage('assets/characters/051_zhugeliang.png'),
+            loadImage('assets/misc/three_kingdoms_stratagem_title.png'),
             ...terrainPromises
         ]);
         
+        titleImg = loadedTitleImg;
+        processTitleImage();
+        
         // Place units
-        placeUnit(4, 4, { name: 'Lu Bu', img: luBuImg, action: 'standby' });
-        placeUnit(2, 2, { name: 'Dong Zhuo', img: dongZhuoImg, action: 'standby' });
-        placeUnit(2, 4, { name: 'Liu Bei', img: liuBeiImg, action: 'standby' });
-        placeUnit(2, 5, { name: 'Guan Yu', img: guanYuImg, action: 'standby' });
-        placeUnit(2, 6, { name: 'Zhang Fei', img: zhangFeiImg, action: 'standby' });
-        placeUnit(4, 2, { name: 'Zhuge Liang', img: zhugeLiangImg, action: 'standby' });
+        placeUnit(4, 4, { 
+            name: 'Lu Bu', 
+            img: luBuImg, 
+            action: 'standby',
+            dialogue: "Is there no one who can provide me with a decent challenge?"
+        });
+        placeUnit(2, 2, { 
+            name: 'Dong Zhuo', 
+            img: dongZhuoImg, 
+            action: 'standby',
+            dialogue: "All of China shall tremble before my power!"
+        });
+        placeUnit(2, 4, { 
+            name: 'Liu Bei', 
+            img: liuBeiImg, 
+            action: 'standby',
+            dialogue: "I seek only to restore peace and benevolence to the land."
+        });
+        placeUnit(2, 5, { 
+            name: 'Guan Yu', 
+            img: guanYuImg, 
+            action: 'standby',
+            dialogue: "My blade is tempered with honor. Who dares face me?"
+        });
+        placeUnit(2, 6, { 
+            name: 'Zhang Fei', 
+            img: zhangFeiImg, 
+            action: 'standby',
+            dialogue: "Hahaha! Time for a drink and a good fight!"
+        });
+        placeUnit(4, 2, { 
+            name: 'Zhuge Liang', 
+            img: zhugeLiangImg, 
+            action: 'standby',
+            dialogue: "The stars have foretold our victory. Strategy is the key."
+        });
         
         requestAnimationFrame(render);
     } catch (err) {
