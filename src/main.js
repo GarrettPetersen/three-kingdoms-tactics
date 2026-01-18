@@ -67,6 +67,7 @@ async function init() {
             inn_evening: 'assets/settings/village_inn_evening.png',
             peach_garden: 'assets/settings/peach_garden.png',
             china_map: 'assets/settings/china_map.png',
+            tent: 'assets/terrain/buildings/yellow_tent.png',
             lvbu: 'assets/characters/001_lvbu.png',
             dongzhuo: 'assets/characters/002_dongzhuo.png',
             liubei: 'assets/characters/048_liubei.png',

@@ -1,18 +1,6 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
-
-const ANIMATIONS = {
-    standby:  { start: 0,  length: 4 },
-    attack_1: { start: 4,  length: 4 },
-    walk:     { start: 8,  length: 4 },
-    attack_2: { start: 12, length: 4 },
-    defense:  { start: 16, length: 4 },
-    hit:      { start: 20, length: 4 },
-    victory:  { start: 24, length: 4 },
-    death:    { start: 28, length: 4 },
-    recovery: { start: 32, length: 4 },
-    sitting:  { start: 36, length: 4 }
-};
+import { ANIMATIONS } from '../core/Constants.js';
 
 export class NarrativeScene extends BaseScene {
     constructor() {
@@ -29,6 +17,7 @@ export class NarrativeScene extends BaseScene {
 
     enter(params) {
         this.script = params.script || [];
+        this.onComplete = params.onComplete || null;
         this.currentStep = 0;
         this.subStep = 0; // Track 2-line chunks for long dialogue
         this.actors = {};
@@ -154,6 +143,14 @@ export class NarrativeScene extends BaseScene {
         this.subStep = 0;
         this.currentStep++;
         this.isWaiting = false;
+
+        if (this.currentStep >= this.script.length) {
+            if (this.onComplete) {
+                this.onComplete();
+                return;
+            }
+        }
+        
         this.processStep();
     }
 
@@ -284,17 +281,7 @@ export class NarrativeScene extends BaseScene {
 
         const sortedActors = Object.values(this.actors).sort((a, b) => a.y - b.y);
         sortedActors.forEach(a => {
-            const anim = ANIMATIONS[a.action] || ANIMATIONS.standby;
-            const f = Math.floor(a.frame) % anim.length;
-            const frameIdx = anim.start + f;
-            const sx = (frameIdx % 8) * 72;
-            const sy = Math.floor(frameIdx / 8) * 72;
-
-            ctx.save();
-            ctx.translate(Math.floor(bgX + a.x), Math.floor(bgY + a.y));
-            if (a.flip) ctx.scale(-1, 1);
-            ctx.drawImage(a.img, sx, sy, 72, 72, -36, -68, 72, 72);
-            ctx.restore();
+            this.drawCharacter(ctx, a.img, a.action, a.frame, bgX + a.x, bgY + a.y, a.flip);
         });
         ctx.restore(); // End clipping
 

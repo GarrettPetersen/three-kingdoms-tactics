@@ -1,3 +1,5 @@
+import { ANIMATIONS } from '../core/Constants.js';
+
 export class BaseScene {
     constructor() {
         this.manager = null;
@@ -8,6 +10,22 @@ export class BaseScene {
     update(timestamp) {}
     render(timestamp) {}
     handleInput(e) {}
+
+    drawCharacter(ctx, img, action, frame, x, y, flip = false) {
+        if (!img) return;
+        const sourceSize = 72;
+        const anim = ANIMATIONS[action] || ANIMATIONS.standby;
+        const f = Math.floor(frame) % anim.length;
+        const frameIdx = anim.start + f;
+        const sx = (frameIdx % 8) * sourceSize;
+        const sy = Math.floor(frameIdx / 8) * sourceSize;
+
+        ctx.save();
+        ctx.translate(Math.floor(x), Math.floor(y));
+        if (flip) ctx.scale(-1, 1);
+        ctx.drawImage(img, sx, sy, sourceSize, sourceSize, -36, -68, sourceSize, sourceSize);
+        ctx.restore();
+    }
 
     drawPixelText(ctx, text, x, y, options = {}) {
         const { 

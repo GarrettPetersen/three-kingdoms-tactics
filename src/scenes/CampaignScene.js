@@ -1,10 +1,15 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
+import { ANIMATIONS } from '../core/Constants.js';
 
 export class CampaignScene extends BaseScene {
     constructor() {
         super();
         this.selectedCampaign = null;
+        this.prologueComplete = false;
+        this.magistrateSelected = false;
+        this.walkingToMagistrate = false;
+        this.walkProgress = 0;
         this.campaigns = [
             { 
                 id: 'liubei', 
@@ -14,6 +19,11 @@ export class CampaignScene extends BaseScene {
                 imgKey: 'liubei'
             }
         ];
+        this.magistrate = {
+            x: 182,
+            y: 85,
+            name: 'Magistrate HQ'
+        };
         this.lastClickTime = 0;
     }
 
@@ -29,53 +39,94 @@ export class CampaignScene extends BaseScene {
         const my = Math.floor((canvas.height - mapImg.height) / 2);
         ctx.drawImage(mapImg, mx, my);
 
-        // Animation frame for idle pose (4 frames, ~150ms per frame)
+        // Draw Magistrate HQ if prologue is complete
+        if (this.prologueComplete) {
+            const tentImg = assets.getImage('tent');
+            if (tentImg) {
+                const tx = mx + this.magistrate.x;
+                const ty = my + this.magistrate.y;
+                // Draw yellow tent
+                ctx.drawImage(tentImg, Math.floor(tx - 18), Math.floor(ty - 18), 36, 36);
+
+                if (this.magistrateSelected) {
+                    this.drawLabel(ctx, this.magistrate.name, tx, ty - 10, "Click to March");
+                }
+            }
+        }
+
+        // Animation frame for idle pose
         const frame = Math.floor(Date.now() / 150) % 4;
+        const walkFrame = Math.floor(Date.now() / 100) % 4;
 
         this.campaigns.forEach(c => {
             const charImg = assets.getImage(c.imgKey);
             if (!charImg) return;
 
-            const cx = mx + c.x;
-            const cy = my + c.y;
+            let cx = mx + c.x;
+            let cy = my + c.y;
             
-            // Draw character idle animation (frames 0-3)
-            const sx = frame * 72;
-            const sy = 0;
-            ctx.drawImage(charImg, sx, sy, 72, 72, Math.floor(cx - 36), Math.floor(cy - 68), 72, 72);
+            let action = 'standby';
+            let frameIdx = frame;
+            let flip = false;
 
-            if (this.selectedCampaign === c.id) {
-                // Draw name label with background box
-                ctx.save();
-                ctx.font = '8px Silkscreen';
-                const metrics = ctx.measureText(c.name);
-                ctx.restore();
-
-                const boxW = Math.floor(metrics.width + 10);
-                const boxH = 24; 
-                // Position to the LEFT of character to stay on screen
-                const bx = Math.floor(cx - 20 - boxW); 
-                const by = Math.floor(cy - 45); 
-
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
-                ctx.fillRect(bx, by, boxW, boxH);
-                ctx.strokeStyle = '#ffd700';
-                ctx.lineWidth = 1;
-                ctx.strokeRect(bx + 0.5, by + 0.5, boxW - 1, boxH - 1);
-
-                // Line 1: Title (Silkscreen - Heading Style) - MOVED UP
-                this.drawPixelText(ctx, c.name.toUpperCase(), bx + 5, by + 3, { color: '#ffd700', font: '8px Silkscreen' });
+            if (this.walkingToMagistrate) {
+                // Interpolate position
+                const startX = mx + c.x;
+                const startY = my + c.y;
+                const targetX = mx + this.magistrate.x;
+                const targetY = my + this.magistrate.y;
                 
-                // Line 2: Click prompt (Tiny5 - General UI Style) - MOVED UP
-                const pulse = Math.abs(Math.sin(Date.now() / 500));
-                ctx.globalAlpha = pulse;
-                this.drawPixelText(ctx, "Click to Start", bx + 5, by + 13, { 
-                    color: '#eee', 
-                    font: '8px Tiny5' 
-                });
-                ctx.globalAlpha = 1.0;
+                cx = startX + (targetX - startX) * this.walkProgress;
+                cy = startY + (targetY - startY) * this.walkProgress;
+                
+                action = 'walk';
+                frameIdx = walkFrame;
+                if (targetX < startX) flip = true;
+            }
+
+            this.drawCharacter(ctx, charImg, action, frameIdx, cx, cy, flip);
+
+            if (this.selectedCampaign === c.id && !this.prologueComplete) {
+                this.drawLabel(ctx, c.name, cx, cy - 45, "Click to Start");
             }
         });
+    }
+
+    drawLabel(ctx, name, x, y, prompt) {
+        ctx.save();
+        ctx.font = '8px Silkscreen';
+        const metrics = ctx.measureText(name);
+        ctx.restore();
+
+        const boxW = Math.floor(metrics.width + 10);
+        const boxH = 24;
+        const bx = Math.floor(x - 20 - boxW);
+        const by = Math.floor(y);
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+        ctx.fillRect(bx, by, boxW, boxH);
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(bx + 0.5, by + 0.5, boxW - 1, boxH - 1);
+
+        this.drawPixelText(ctx, name.toUpperCase(), bx + 5, by + 3, { color: '#ffd700', font: '8px Silkscreen' });
+        
+        const pulse = Math.abs(Math.sin(Date.now() / 500));
+        ctx.globalAlpha = pulse;
+        this.drawPixelText(ctx, prompt, bx + 5, by + 13, { color: '#eee', font: '8px Tiny5' });
+        ctx.globalAlpha = 1.0;
+    }
+
+    update(timestamp) {
+        if (this.walkingToMagistrate) {
+            this.walkProgress += 0.005;
+            if (this.walkProgress >= 1) {
+                this.walkProgress = 1;
+                this.walkingToMagistrate = false;
+                // Switch to the next scene (Tactics Map)
+                this.manager.switchTo('tactics');
+            }
+        }
     }
 
     handleInput(e) {
@@ -86,15 +137,47 @@ export class CampaignScene extends BaseScene {
         const mx = Math.floor((this.manager.canvas.width - 256) / 2);
         const my = Math.floor((this.manager.canvas.height - 256) / 2);
 
+        // 1. Handle Magistrate HQ click if prologue is done
+        if (this.prologueComplete && !this.walkingToMagistrate) {
+            const tx = mx + this.magistrate.x;
+            const ty = my + this.magistrate.y;
+            
+            // Hit box for tent (roughly 36x36)
+            const tentHit = (mouseX >= tx - 18 && mouseX <= tx + 18 && mouseY >= ty - 18 && mouseY <= ty + 18);
+            
+            // Hit box for the "Click to March" label
+            let labelHit = false;
+            if (this.magistrateSelected) {
+                this.manager.ctx.font = '8px Silkscreen';
+                const metrics = this.manager.ctx.measureText(this.magistrate.name);
+                const boxW = Math.floor(metrics.width + 10);
+                const boxH = 24;
+                const bx = Math.floor(tx - 20 - boxW);
+                const by = Math.floor(ty - 10);
+                labelHit = (mouseX >= bx && mouseX <= bx + boxW && mouseY >= by && mouseY <= by + boxH);
+            }
+
+            if (tentHit || labelHit) {
+                if (this.magistrateSelected) {
+                    this.walkingToMagistrate = true;
+                    this.walkProgress = 0;
+                } else {
+                    this.magistrateSelected = true;
+                    this.selectedCampaign = null;
+                }
+                return;
+            }
+        }
+
         let hitAny = false;
         this.campaigns.forEach(c => {
             const cx = mx + c.x;
             const cy = my + c.y;
             
-            // 1. Check hit area around character (roughly 30x45 box)
+            // Check hit area around character (roughly 30x45 box)
             const charHit = (mouseX >= cx - 15 && mouseX <= cx + 15 && mouseY >= cy - 40 && mouseY <= cy + 5);
             
-            // 2. Check hit area for the selection box (if this campaign is already selected)
+            // Check hit area for the selection box
             let boxHit = false;
             if (this.selectedCampaign === c.id) {
                 this.manager.ctx.font = '8px Silkscreen';
@@ -118,12 +201,17 @@ export class CampaignScene extends BaseScene {
 
         if (!hitAny) {
             this.selectedCampaign = null;
+            this.magistrateSelected = false;
         }
     }
 
     startCampaign(id) {
         if (id === 'liubei') {
             this.manager.switchTo('narrative', {
+                onComplete: () => {
+                    this.prologueComplete = true;
+                    this.manager.switchTo('campaign');
+                },
                 script: [
                     { 
                         type: 'title',

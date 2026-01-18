@@ -1,18 +1,6 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
-
-export const ANIMATIONS = {
-    standby:  { start: 0,  length: 4 },
-    attack_1: { start: 4,  length: 4 },
-    movement: { start: 8,  length: 4 },
-    attack_2: { start: 12, length: 4 },
-    defense:  { start: 16, length: 4 },
-    hit:      { start: 20, length: 4 },
-    victory:  { start: 24, length: 4 },
-    death:    { start: 28, length: 4 },
-    recovery: { start: 32, length: 4 },
-    sitting:  { start: 36, length: 4 }
-};
+import { ANIMATIONS } from '../core/Constants.js';
 
 export class TacticsScene extends BaseScene {
     constructor() {
@@ -182,19 +170,6 @@ export class TacticsScene extends BaseScene {
                 ctx.drawImage(img, ix, 0, 1, 36, dx + ix, dy, 1, 36);
             }
         }
-    }
-
-    drawCharacter(img, action, frame, x, y) {
-        const { ctx } = this.manager;
-        if (!img) return;
-        const sourceSize = 72; 
-        const anim = ANIMATIONS[action] || ANIMATIONS.standby;
-        const frameIndex = anim.start + (frame % anim.length);
-        const col = frameIndex % 8;
-        const row = Math.floor(frameIndex / 8);
-        const dx = Math.floor(x - 36);
-        const dy = Math.floor(y - 43); 
-        ctx.drawImage(img, col * sourceSize, row * sourceSize, sourceSize, sourceSize, dx, dy, 72, 72);
     }
 
     drawUI() {
