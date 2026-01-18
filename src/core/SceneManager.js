@@ -5,6 +5,13 @@ export class SceneManager {
         this.config = config;
         this.currentScene = null;
         this.scenes = {};
+        this.lastPointerX = 0;
+        this.lastPointerY = 0;
+
+        window.addEventListener('pointermove', (e) => {
+            this.lastPointerX = e.clientX;
+            this.lastPointerY = e.clientY;
+        });
     }
 
     addScene(name, sceneInstance) {

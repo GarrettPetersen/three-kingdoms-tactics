@@ -158,6 +158,11 @@ export class NarrativeScene extends BaseScene {
         const dt = timestamp - (this.lastTime || timestamp);
         this.lastTime = timestamp;
 
+        // Mouse tracking for hover effects in choices
+        const rect = this.manager.canvas.getBoundingClientRect();
+        this.lastMouseX = (this.manager.lastPointerX - rect.left) / this.manager.config.scale;
+        this.lastMouseY = (this.manager.lastPointerY - rect.top) / this.manager.config.scale;
+
         if (this.timer > 0) {
             this.timer -= dt;
             if (this.timer <= 0) {
@@ -295,7 +300,82 @@ export class NarrativeScene extends BaseScene {
             this.renderTitleCard(step);
         } else if (step && step.type === 'dialogue') {
             this.renderDialogue(step);
+        } else if (step && step.type === 'choice') {
+            this.renderChoice(step);
         }
+    }
+
+    renderChoice(step) {
+        const { ctx, canvas } = this.manager;
+        const options = step.options || [];
+        const padding = 10;
+        const lineSpacing = 10;
+        const optionSpacing = 6;
+        const panelWidth = 200;
+        
+        // Pre-calculate wrapped lines and total height
+        const wrappedOptions = options.map(opt => {
+            const lines = [];
+            const words = opt.text.split(' ');
+            let currentLine = '';
+            
+            ctx.save();
+            ctx.font = '8px Dogica';
+            for (let n = 0; n < words.length; n++) {
+                let testLine = currentLine + words[n] + ' ';
+                if (ctx.measureText(testLine).width > (panelWidth - 20) && n > 0) {
+                    lines.push(currentLine.trim());
+                    currentLine = words[n] + ' ';
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            lines.push(currentLine.trim());
+            ctx.restore();
+            return lines;
+        });
+
+        let totalContentHeight = 0;
+        wrappedOptions.forEach(lines => {
+            totalContentHeight += lines.length * lineSpacing + optionSpacing;
+        });
+        
+        const panelHeight = totalContentHeight + padding * 2;
+        const px = Math.floor((canvas.width - panelWidth) / 2);
+        const py = Math.floor((canvas.height - panelHeight) / 2);
+
+        // Panel Background
+        ctx.fillStyle = 'rgba(20, 20, 20, 0.95)';
+        ctx.fillRect(px, py, panelWidth, panelHeight);
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(px + 0.5, py + 0.5, panelWidth - 1, panelHeight - 1);
+
+        let currentY = py + padding;
+        wrappedOptions.forEach((lines, i) => {
+            const optionTopY = currentY;
+            const optionHeight = lines.length * lineSpacing;
+            
+            const isHovered = this.lastMouseX >= px && this.lastMouseX <= px + panelWidth &&
+                              this.lastMouseY >= optionTopY && this.lastMouseY <= optionTopY + optionHeight + optionSpacing;
+
+            if (isHovered) {
+                ctx.fillStyle = 'rgba(255, 215, 0, 0.2)';
+                ctx.fillRect(px + 2, optionTopY - 2, panelWidth - 4, optionHeight + 4);
+            }
+
+            lines.forEach((line, lineIdx) => {
+                this.drawPixelText(ctx, line, px + 10, optionTopY + lineIdx * lineSpacing, { 
+                    color: isHovered ? '#fff' : '#ccc', 
+                    font: '8px Dogica' 
+                });
+            });
+
+            currentY += optionHeight + optionSpacing;
+        });
+
+        // Store panel metadata for input handling
+        step._panelMetadata = { px, py, panelWidth, panelHeight, wrappedOptions, padding, lineSpacing, optionSpacing };
     }
 
     renderTitleCard(step) {
@@ -381,6 +461,30 @@ export class NarrativeScene extends BaseScene {
     handleInput(e) {
         const step = this.script[this.currentStep];
         if (this.isWaiting) return;
+
+        const rect = this.manager.canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / this.manager.config.scale;
+        const y = (e.clientY - rect.top) / this.manager.config.scale;
+
+        if (step && step.type === 'choice' && step._panelMetadata) {
+            const m = step._panelMetadata;
+            let currentY = m.py + m.padding;
+            
+            step.options.forEach((opt, i) => {
+                const lines = m.wrappedOptions[i];
+                const optionHeight = lines.length * m.lineSpacing;
+                
+                if (x >= m.px && x <= m.px + m.panelWidth && 
+                    y >= currentY - 2 && y <= currentY + optionHeight + 2) {
+                    if (opt.result) {
+                        this.script.splice(this.currentStep + 1, 0, ...opt.result);
+                    }
+                    this.nextStep();
+                }
+                currentY += optionHeight + m.optionSpacing;
+            });
+            return;
+        }
         
         // Advance script on any pointerdown (if not waiting for command)
         if (step && (step.type === 'dialogue' || step.type === 'title')) {

@@ -7,24 +7,46 @@ export class CampaignScene extends BaseScene {
         super();
         this.selectedCampaign = null;
         this.prologueComplete = false;
-        this.magistrateSelected = false;
-        this.walkingToMagistrate = false;
-        this.walkProgress = 0;
+        this.interactionSelected = null; // Generic interaction tracker
+        this.moveState = {
+            isMoving: false,
+            progress: 0,
+            startX: 0,
+            startY: 0,
+            targetX: 0,
+            targetY: 0,
+            onComplete: null
+        };
         this.campaigns = [
             { 
                 id: 'liubei', 
                 name: 'The Story of Liu Bei', 
-                x: 190, // Zhuo County coordinates relative to map
+                x: 190, 
                 y: 70,
                 imgKey: 'liubei'
             }
         ];
         this.magistrate = {
+            id: 'magistrate',
             x: 182,
             y: 85,
-            name: 'Magistrate HQ'
+            name: 'Magistrate Zhou Jing',
+            location: 'Zhuo County HQ'
         };
         this.lastClickTime = 0;
+    }
+
+    heroMoveTo(targetX, targetY, onComplete) {
+        const hero = this.campaigns[0];
+        this.moveState = {
+            isMoving: true,
+            progress: 0,
+            startX: hero.x,
+            startY: hero.y,
+            targetX: targetX,
+            targetY: targetY,
+            onComplete: onComplete
+        };
     }
 
     render(timestamp) {
@@ -48,7 +70,7 @@ export class CampaignScene extends BaseScene {
                 // Draw yellow tent
                 ctx.drawImage(tentImg, Math.floor(tx - 18), Math.floor(ty - 18), 36, 36);
 
-                if (this.magistrateSelected) {
+                if (this.interactionSelected === 'magistrate') {
                     this.drawLabel(ctx, this.magistrate.name, tx, ty - 10, "Click to March");
                 }
             }
@@ -69,25 +91,24 @@ export class CampaignScene extends BaseScene {
             let frameIdx = frame;
             let flip = false;
 
-            if (this.walkingToMagistrate) {
-                // Interpolate position
-                const startX = mx + c.x;
-                const startY = my + c.y;
-                const targetX = mx + this.magistrate.x;
-                const targetY = my + this.magistrate.y;
-                
-                cx = startX + (targetX - startX) * this.walkProgress;
-                cy = startY + (targetY - startY) * this.walkProgress;
+            if (this.moveState.isMoving) {
+                // Interpolate position using generic moveState
+                cx = mx + this.moveState.startX + (this.moveState.targetX - this.moveState.startX) * this.moveState.progress;
+                cy = my + this.moveState.startY + (this.moveState.targetY - this.moveState.startY) * this.moveState.progress;
                 
                 action = 'walk';
                 frameIdx = walkFrame;
-                if (targetX < startX) flip = true;
+                if (this.moveState.targetX < this.moveState.startX) flip = true;
             }
 
             this.drawCharacter(ctx, charImg, action, frameIdx, cx, cy, flip);
 
             if (this.selectedCampaign === c.id && !this.prologueComplete) {
                 this.drawLabel(ctx, c.name, cx, cy - 45, "Click to Start");
+            }
+
+            if (this.interactionSelected === 'hero_reminder' && this.selectedCampaign === c.id) {
+                this.drawLabel(ctx, "Liu Bei", cx, cy - 45, "Off to the Magistrate!");
             }
         });
     }
@@ -118,13 +139,19 @@ export class CampaignScene extends BaseScene {
     }
 
     update(timestamp) {
-        if (this.walkingToMagistrate) {
-            this.walkProgress += 0.005;
-            if (this.walkProgress >= 1) {
-                this.walkProgress = 1;
-                this.walkingToMagistrate = false;
-                // Switch to the next scene (Tactics Map)
-                this.manager.switchTo('tactics');
+        if (this.moveState.isMoving) {
+            this.moveState.progress += 0.015;
+            if (this.moveState.progress >= 1) {
+                this.moveState.progress = 1;
+                this.moveState.isMoving = false;
+                
+                // Update actual coordinate in the campaign data
+                this.campaigns[0].x = this.moveState.targetX;
+                this.campaigns[0].y = this.moveState.targetY;
+
+                if (this.moveState.onComplete) {
+                    this.moveState.onComplete();
+                }
             }
         }
     }
@@ -138,17 +165,14 @@ export class CampaignScene extends BaseScene {
         const my = Math.floor((this.manager.canvas.height - 256) / 2);
 
         // 1. Handle Magistrate HQ click if prologue is done
-        if (this.prologueComplete && !this.walkingToMagistrate) {
+        if (this.prologueComplete && !this.moveState.isMoving) {
             const tx = mx + this.magistrate.x;
             const ty = my + this.magistrate.y;
             
-            // Hit box for tent (roughly 36x36)
             const tentHit = (mouseX >= tx - 18 && mouseX <= tx + 18 && mouseY >= ty - 18 && mouseY <= ty + 18);
             
-            // Hit box for the "Click to March" label
             let labelHit = false;
-            if (this.magistrateSelected) {
-                this.manager.ctx.font = '8px Silkscreen';
+            if (this.interactionSelected === 'magistrate') {
                 const metrics = this.manager.ctx.measureText(this.magistrate.name);
                 const boxW = Math.floor(metrics.width + 10);
                 const boxH = 24;
@@ -158,11 +182,12 @@ export class CampaignScene extends BaseScene {
             }
 
             if (tentHit || labelHit) {
-                if (this.magistrateSelected) {
-                    this.walkingToMagistrate = true;
-                    this.walkProgress = 0;
+                if (this.interactionSelected === 'magistrate') {
+                    this.heroMoveTo(this.magistrate.x, this.magistrate.y, () => {
+                        this.startBriefing();
+                    });
                 } else {
-                    this.magistrateSelected = true;
+                    this.interactionSelected = 'magistrate';
                     this.selectedCampaign = null;
                 }
                 return;
@@ -192,9 +217,15 @@ export class CampaignScene extends BaseScene {
             if (charHit || boxHit) {
                 hitAny = true;
                 if (this.selectedCampaign === c.id) {
-                    this.startCampaign(c.id);
+                    if (this.prologueComplete) {
+                        // Just show a reminder instead of replaying prologue
+                        this.interactionSelected = 'hero_reminder';
+                    } else {
+                        this.startCampaign(c.id);
+                    }
                 } else {
                     this.selectedCampaign = c.id;
+                    this.interactionSelected = null;
                 }
             }
         });
@@ -203,6 +234,98 @@ export class CampaignScene extends BaseScene {
             this.selectedCampaign = null;
             this.magistrateSelected = false;
         }
+    }
+
+    startBriefing() {
+        this.manager.switchTo('narrative', {
+            onComplete: () => {
+                this.manager.switchTo('tactics');
+            },
+            script: [
+                { 
+                    type: 'title',
+                    text: "THE VOLUNTEER ARMY",
+                    subtext: "Zhuo County Headquarters",
+                    duration: 3000
+                },
+                { bg: 'army_camp', type: 'command', action: 'clearActors' },
+                { type: 'command', action: 'addActor', id: 'zhoujing', imgKey: 'zhoujing', x: 128, y: 180 },
+                { type: 'command', action: 'addActor', id: 'guard1', imgKey: 'soldier', x: 80, y: 170 },
+                { type: 'command', action: 'addActor', id: 'guard2', imgKey: 'soldier', x: 176, y: 170, flip: true },
+                { type: 'command', action: 'addActor', id: 'merchant', imgKey: 'merchant', x: 30, y: 190, speed: 0.3 },
+                { type: 'command', action: 'addActor', id: 'blacksmith', imgKey: 'blacksmith', x: 230, y: 210, flip: true, speed: 0.2 },
+                { type: 'command', action: 'addActor', id: 'volunteer1', imgKey: 'soldier', x: 40, y: 220, speed: 0.5 },
+                { type: 'command', action: 'addActor', id: 'volunteer2', imgKey: 'soldier', x: 210, y: 230, flip: true, speed: 0.4 },
+                
+                { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 128, y: 280, speed: 1 },
+                { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 90, y: 280, speed: 1 },
+                { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 166, y: 280, flip: true, speed: 1 },
+                
+                { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+                
+                { type: 'command', action: 'move', id: 'liubei', x: 128, y: 220, wait: false },
+                { type: 'command', action: 'move', id: 'guanyu', x: 90, y: 220, wait: false },
+                { type: 'command', action: 'move', id: 'zhangfei', x: 166, y: 220, wait: false },
+                { type: 'command', action: 'move', id: 'merchant', x: 20, y: 195, wait: false },
+                { type: 'command', action: 'move', id: 'blacksmith', x: 240, y: 205 },
+
+                {
+                    type: 'dialogue',
+                    portraitKey: 'zhoujing',
+                    name: 'Zhou Jing',
+                    text: "Who goes there? You don't look like common recruits."
+                },
+                {
+                    type: 'dialogue',
+                    portraitKey: 'liubei',
+                    name: 'Liu Bei',
+                    text: "I am Liu Bei, of the Imperial Clan. These are my brothers Guan Yu and Zhang Fei."
+                },
+                {
+                    type: 'dialogue',
+                    portraitKey: 'liubei',
+                    name: 'Liu Bei',
+                    text: "We have raised a force of five hundred volunteers to serve our country and protect the people."
+                },
+                {
+                    type: 'dialogue',
+                    portraitKey: 'zhoujing',
+                    name: 'Zhou Jing',
+                    text: "An Imperial kinsman! And your brothers... they have the look of tigers. Truly remarkable."
+                },
+                {
+                    type: 'dialogue',
+                    portraitKey: 'zhoujing',
+                    name: 'Zhou Jing',
+                    text: "You have arrived just in time. The rebel Cheng Yuanzhi leads fifty thousand rebels toward us."
+                },
+                {
+                    type: 'dialogue',
+                    portraitKey: 'zhangfei',
+                    name: 'Zhang Fei',
+                    text: "Only fifty thousand? Haha! We've brought enough wine to celebrate their defeat already!"
+                },
+                {
+                    type: 'dialogue',
+                    portraitKey: 'guanyu',
+                    name: 'Guan Yu',
+                    text: "Eldest brother, give the word and we shall set forth to crush these traitors."
+                },
+                {
+                    type: 'dialogue',
+                    portraitKey: 'liubei',
+                    name: 'Liu Bei',
+                    text: "Magistrate, we are ready. Lead us to the enemy!"
+                },
+                { type: 'command', action: 'fade', target: 1, speed: 0.001 },
+                { 
+                    type: 'title',
+                    text: "TO THE BATTLEFIELD",
+                    subtext: "Daxing District",
+                    duration: 3000
+                }
+            ]
+        });
     }
 
     startCampaign(id) {
@@ -281,6 +404,37 @@ export class CampaignScene extends BaseScene {
                         position: 'top',
                         name: '???',
                         text: "Why sigh, O hero, if you do not help your country?"
+                    },
+                    { type: 'command', action: 'flip', id: 'liubei', flip: false },
+                    { type: 'command', action: 'animate', id: 'liubei', animation: 'hit', wait: true },
+                    {
+                        type: 'choice',
+                        options: [
+                            { 
+                                text: "I sigh for the suffering people.",
+                                result: [
+                                    {
+                                        type: 'dialogue',
+                                        portraitKey: 'zhangfei',
+                                        position: 'top',
+                                        name: '???',
+                                        text: "A true hero's heart! You and I are of one mind."
+                                    }
+                                ]
+                            },
+                            { 
+                                text: "I sigh for my own lost status.",
+                                result: [
+                                    {
+                                        type: 'dialogue',
+                                        portraitKey: 'zhangfei',
+                                        position: 'top',
+                                        name: '???',
+                                        text: "Status? Bah! In these times of chaos, only courage and wine matter!"
+                                    }
+                                ]
+                            }
+                        ]
                     },
 
                     { type: 'command', action: 'flip', id: 'liubei', flip: false },
