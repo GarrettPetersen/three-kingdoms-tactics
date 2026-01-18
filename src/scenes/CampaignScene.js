@@ -249,6 +249,302 @@ export class CampaignScene extends BaseScene {
                         position: 'top',
                         name: 'Liu Bei',
                         text: "That would be a great blessing for the people!"
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'zhangfei',
+                        position: 'top',
+                        name: 'Zhang Fei',
+                        text: "Then come! Let us go to the village inn and discuss our plans over wine."
+                    },
+                    { type: 'command', action: 'flip', id: 'liubei', flip: true },
+                    { type: 'command', action: 'move', id: 'liubei', x: -50, y: 240, wait: false },
+                    { type: 'command', action: 'move', id: 'zhangfei', x: -50, y: 240 },
+                    { type: 'command', action: 'fade', target: 1, speed: 0.002 },
+                    
+                    // --- SWITCH TO INN ---
+                    { bg: 'inn', type: 'command', action: 'clearActors' },
+                    { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 80, y: 200 },
+                    { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 120, y: 200, flip: true },
+                    { type: 'command', action: 'animate', id: 'liubei', animation: 'recovery' },
+                    { type: 'command', action: 'animate', id: 'zhangfei', animation: 'recovery' },
+                    { type: 'command', action: 'addActor', id: 'farmer', imgKey: 'farmer', x: 200, y: 180, flip: true },
+                    { type: 'command', action: 'animate', id: 'farmer', animation: 'recovery' },
+                    
+                    { type: 'command', action: 'fade', target: 0, speed: 0.002 },
+                    
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'zhangfei',
+                        position: 'top',
+                        name: 'Zhang Fei',
+                        text: "*Drinking* This wine is good! Together, we shall raise an army that will make the rebels tremble."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'liubei',
+                        position: 'top',
+                        name: 'Liu Bei',
+                        text: "Indeed. Honor and duty call us."
+                    },
+                    
+                    { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 300, y: 210, flip: true, speed: 1 },
+                    { type: 'command', action: 'move', id: 'guanyu', x: 180, y: 210 },
+                    
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'guanyu',
+                        position: 'top',
+                        name: '???',
+                        text: "Quick! Bring me wine! I am in a hurry to get to town and join the volunteers!"
+                    },
+                    
+                    { type: 'command', action: 'flip', id: 'liubei', flip: false },
+                    { type: 'command', action: 'flip', id: 'zhangfei', flip: false },
+                    { type: 'command', action: 'animate', id: 'guanyu', animation: 'standby' },
+
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'liubei',
+                        position: 'top',
+                        name: 'Liu Bei',
+                        text: "*Looking at the newcomer* That man... his presence is extraordinary. Look at his majestic beard and phoenix-like eyes."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'zhangfei',
+                        position: 'top',
+                        name: 'Zhang Fei',
+                        text: "Hey! You there! You're joining the volunteers too? Come, drink with us!"
+                    },
+                    { type: 'command', action: 'move', id: 'guanyu', x: 140, y: 195 },
+                    { type: 'command', action: 'animate', id: 'guanyu', animation: 'recovery' },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'guanyu',
+                        position: 'top',
+                        name: 'Guan Yu',
+                        text: "I am Guan Yu, courtesy name Yunchang. For years I have been a fugitive, for I slew a local bully who oppressed the weak."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'guanyu',
+                        position: 'top',
+                        name: 'Guan Yu',
+                        text: "Now I hear there is a call for volunteers, and I have come to join the cause."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'liubei',
+                        position: 'top',
+                        name: 'Liu Bei',
+                        text: "A noble heart! I am Liu Bei, and this is Zhang Fei. We have just agreed to raise a volunteer army ourselves."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'zhangfei',
+                        position: 'top',
+                        name: 'Zhang Fei',
+                        text: "Haha! The more the merrier! Drink, Yunchang! Let us toast to our new brotherhood!"
+                    },
+                    
+                    // --- TIME SKIP TO EVENING ---
+                    { type: 'command', action: 'fade', target: 1, speed: 0.001 },
+                    { bg: 'inn_evening', type: 'command', action: 'removeActor', id: 'farmer' },
+                    { type: 'command', action: 'addActor', id: 'soldier_npc', imgKey: 'soldier', x: 230, y: 190, flip: true },
+                    { type: 'command', action: 'addActor', id: 'butcher_npc', imgKey: 'butcher', x: 30, y: 210 },
+                    { type: 'command', action: 'animate', id: 'soldier_npc', animation: 'recovery' },
+                    { type: 'command', action: 'animate', id: 'butcher_npc', animation: 'recovery' },
+                    { type: 'command', action: 'wait', duration: 1000 },
+                    { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'zhangfei',
+                        position: 'top',
+                        name: 'Zhang Fei',
+                        text: "*Tipsy* ...and that is why the pig escaped! Haha! But seriously, my friends..."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'zhangfei',
+                        position: 'top',
+                        name: 'Zhang Fei',
+                        text: "I feel as though I have known you both for a lifetime."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'guanyu',
+                        position: 'top',
+                        name: 'Guan Yu',
+                        text: "The heavens have surely brought us together. We share one mind and one purpose."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'liubei',
+                        position: 'top',
+                        name: 'Liu Bei',
+                        text: "To restore the Han and bring peace to the common people. That is our shared destiny."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'zhangfei',
+                        position: 'top',
+                        name: 'Zhang Fei',
+                        text: "Listen! Behind my farm is a peach garden. The flowers are in full bloom."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'zhangfei',
+                        position: 'top',
+                        name: 'Zhang Fei',
+                        text: "Tomorrow, let us offer sacrifices there and swear to be brothers! To live and die as one!"
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'liubei',
+                        position: 'top',
+                        name: 'Liu Bei',
+                        text: "An excellent proposal. We shall do it!"
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'guanyu',
+                        position: 'top',
+                        name: 'Guan Yu',
+                        text: "I agree. We swear by the peach garden."
+                    },
+                    { type: 'command', action: 'fade', target: 1, speed: 0.0005 },
+                    
+                    // --- THE PEACH GARDEN OATH ---
+                    { 
+                        type: 'title',
+                        text: "THE PEACH GARDEN OATH",
+                        subtext: "The Next Morning",
+                        duration: 3000
+                    },
+                    { bg: 'peach_garden', type: 'command', action: 'clearActors' },
+                    { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 128, y: 210 },
+                    { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 80, y: 215 },
+                    { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 176, y: 215, flip: true },
+                    
+                    { type: 'command', action: 'animate', id: 'liubei', animation: 'sitting' },
+                    { type: 'command', action: 'animate', id: 'guanyu', animation: 'sitting' },
+                    { type: 'command', action: 'animate', id: 'zhangfei', animation: 'sitting' },
+
+                    { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+
+                    {
+                        type: 'dialogue',
+                        name: 'Narrator',
+                        portraitKey: 'peach_garden',
+                        portraitRect: { x: 50, y: 50, w: 100, h: 80 },
+                        text: "In the peach garden, among the blooming flowers, a black ox and a white horse are sacrificed."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'liubei',
+                        name: 'Liu Bei',
+                        text: "We three, Liu Bei, Guan Yu, and Zhang Fei, though of different lineages, swear brotherhood and promise mutual help to one end."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'guanyu',
+                        name: 'Guan Yu',
+                        text: "We will rescue each other in difficulty; we will aid each other in danger."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'zhangfei',
+                        name: 'Zhang Fei',
+                        text: "We swear to serve the state and save the people."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'liubei',
+                        name: 'Liu Bei',
+                        text: "We ask not the same day of birth, but we seek to die together on the same day."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'liubei',
+                        name: 'Liu Bei',
+                        text: "May the Heaven and the Earth read our hearts. If we turn aside from righteousness, may the Heaven and the Human smite us!"
+                    },
+
+                    { type: 'command', action: 'animate', id: 'liubei', animation: 'standby' },
+                    { type: 'command', action: 'animate', id: 'guanyu', animation: 'standby' },
+                    { type: 'command', action: 'animate', id: 'zhangfei', animation: 'standby' },
+
+                    {
+                        type: 'dialogue',
+                        name: 'Narrator',
+                        portraitKey: 'peach_garden',
+                        portraitRect: { x: 50, y: 50, w: 100, h: 80 },
+                        text: "The ritual complete, Liu Bei is acknowledged as the eldest brother, Guan Yu the second, and Zhang Fei the youngest."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'liubei',
+                        name: 'Liu Bei',
+                        text: "The path ahead is long and full of peril, but together, we shall restore the Han!"
+                    },
+                    { type: 'command', action: 'fade', target: 1, speed: 0.001 },
+
+                    // --- RECRUITING AT THE NOTICEBOARD ---
+                    { bg: 'noticeboard', type: 'command', action: 'clearActors' },
+                    { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 100, y: 240 },
+                    { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 60, y: 240 },
+                    { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 140, y: 240 },
+                    { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'zhangfei',
+                        position: 'top',
+                        name: 'Zhang Fei',
+                        text: "CITIZENS OF ZHUO! The Yellow Turbans are coming! Who among you is brave enough to fight for your homes?"
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'guanyu',
+                        position: 'top',
+                        name: 'Guan Yu',
+                        text: "We offer no riches, only the chance to serve with honor under the banner of the Imperial Uncle, Liu Bei."
+                    },
+
+                    { type: 'command', action: 'addActor', id: 'volunteer1', imgKey: 'soldier', x: -50, y: 240, speed: 0.8 },
+                    { type: 'command', action: 'addActor', id: 'volunteer2', imgKey: 'soldier', x: 300, y: 230, flip: true, speed: 0.7 },
+                    { type: 'command', action: 'move', id: 'volunteer1', x: 50, y: 250, wait: false },
+                    { type: 'command', action: 'move', id: 'volunteer2', x: 200, y: 245 },
+
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'soldier',
+                        position: 'top',
+                        name: 'Volunteer',
+                        text: "We have heard of your brotherhood! We are but simple men, but we will follow you to the death!"
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'liubei',
+                        position: 'top',
+                        name: 'Liu Bei',
+                        text: "Welcome, brothers. Today we are but a few, but tomorrow we shall be an army."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'liubei',
+                        position: 'top',
+                        name: 'Liu Bei',
+                        text: "Let us march! Our first destination: the headquarters of the local Magistrate."
+                    },
+                    { type: 'command', action: 'fade', target: 1, speed: 0.0005 },
+                    { 
+                        type: 'title',
+                        text: "CHAPTER ONE: THE VOLUNTEER ARMY",
+                        subtext: "The Journey Begins",
+                        duration: 3000
                     }
                 ]
             });

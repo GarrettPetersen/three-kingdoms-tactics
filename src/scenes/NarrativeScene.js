@@ -22,63 +22,47 @@ export class NarrativeScene extends BaseScene {
         this.actors = {}; // { id: { x, y, img, action, frame, flip, targetX, targetY } }
         this.isWaiting = false;
         this.timer = 0;
+        this.fadeAlpha = 0;
+        this.fadeTarget = 0;
+        this.fadeSpeed = 0.002;
     }
 
     enter(params) {
-        this.originalScript = params.script || [];
-        this.script = this.processDialogueWrapping(this.originalScript);
+        this.script = params.script || [];
         this.currentStep = 0;
+        this.subStep = 0; // Track 2-line chunks for long dialogue
         this.actors = {};
         this.isWaiting = false;
         this.timer = 0;
         this.processStep();
     }
 
-    processDialogueWrapping(script) {
-        const processed = [];
+    wrapText(text) {
         const margin = 5;
         const portraitSize = 34;
         const panelWidth = this.manager.canvas.width - margin * 2;
         // Reduced maxWidth slightly to ensure padding on both sides
         const maxWidth = panelWidth - portraitSize - 25; 
 
-        script.forEach(step => {
-            if (step.type !== 'dialogue') {
-                processed.push(step);
-                return;
-            }
+        const ctx = this.manager.ctx;
+        ctx.save();
+        ctx.font = '8px Dogica';
+        const words = (text || "").split(' ');
+        const lines = [];
+        let currentLine = '';
 
-            const ctx = this.manager.ctx;
-            ctx.save();
-            ctx.font = '8px Dogica';
-            const words = step.text.split(' ');
-            const lines = [];
-            let currentLine = '';
-
-            for (let n = 0; n < words.length; n++) {
-                let testLine = currentLine + words[n] + ' ';
-                // Ensure we measure against the correct font
-                if (ctx.measureText(testLine).width > maxWidth && n > 0) {
-                    lines.push(currentLine.trim());
-                    currentLine = words[n] + ' ';
-                } else {
-                    currentLine = testLine;
-                }
+        for (let n = 0; n < words.length; n++) {
+            let testLine = currentLine + words[n] + ' ';
+            if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+                lines.push(currentLine.trim());
+                currentLine = words[n] + ' ';
+            } else {
+                currentLine = testLine;
             }
-            lines.push(currentLine.trim());
-            ctx.restore();
-
-            // Break into chunks of 2 lines
-            for (let i = 0; i < lines.length; i += 2) {
-                const chunk = lines.slice(i, i + 2);
-                processed.push({
-                    ...step,
-                    lines: chunk,
-                    hasNextChunk: (i + 2 < lines.length)
-                });
-            }
-        });
-        return processed;
+        }
+        lines.push(currentLine.trim());
+        ctx.restore();
+        return lines;
     }
 
     processStep() {
@@ -87,6 +71,9 @@ export class NarrativeScene extends BaseScene {
 
         if (step.type === 'command') {
             this.handleCommand(step);
+        } else if ((step.type === 'title' || step.type === 'dialogue') && step.duration) {
+            this.timer = step.duration;
+            this.isWaiting = true;
         }
     }
 
@@ -110,7 +97,11 @@ export class NarrativeScene extends BaseScene {
                 actor.targetX = cmd.x;
                 actor.targetY = cmd.y;
                 actor.action = 'walk';
-                this.isWaiting = true;
+                if (cmd.wait !== false) {
+                    this.isWaiting = true;
+                } else {
+                    this.nextStep();
+                }
             } else {
                 this.nextStep();
             }
@@ -119,8 +110,11 @@ export class NarrativeScene extends BaseScene {
             if (actor) {
                 actor.action = cmd.animation;
                 actor.frame = 0;
-                if (cmd.wait) this.isWaiting = true;
-                else this.nextStep();
+                if (cmd.wait) {
+                    this.isWaiting = true;
+                } else {
+                    this.nextStep();
+                }
             } else {
                 this.nextStep();
             }
@@ -130,10 +124,34 @@ export class NarrativeScene extends BaseScene {
         } else if (cmd.action === 'flip') {
             if (this.actors[cmd.id]) this.actors[cmd.id].flip = cmd.flip;
             this.nextStep();
+        } else if (cmd.action === 'removeActor') {
+            delete this.actors[cmd.id];
+            this.nextStep();
+        } else if (cmd.action === 'clearActors') {
+            this.actors = {};
+            this.nextStep();
+        } else if (cmd.action === 'fade') {
+            this.fadeTarget = cmd.target;
+            this.fadeSpeed = cmd.speed || 0.002;
+            if (cmd.wait !== false) {
+                this.isWaiting = true;
+            } else {
+                this.nextStep();
+            }
         }
     }
 
     nextStep() {
+        const step = this.script[this.currentStep];
+        if (step && step.type === 'dialogue') {
+            const lines = this.wrapText(step.text);
+            if ((this.subStep + 1) * 2 < lines.length) {
+                this.subStep++;
+                return;
+            }
+        }
+
+        this.subStep = 0;
         this.currentStep++;
         this.isWaiting = false;
         this.processStep();
@@ -151,19 +169,50 @@ export class NarrativeScene extends BaseScene {
             }
         }
 
+        // Fade handling
+        if (this.fadeAlpha !== this.fadeTarget) {
+            const diff = this.fadeTarget - this.fadeAlpha;
+            const step = this.fadeSpeed * dt;
+            if (Math.abs(diff) < step) {
+                this.fadeAlpha = this.fadeTarget;
+                if (this.isWaiting) this.nextStep();
+            } else {
+                this.fadeAlpha += Math.sign(diff) * step;
+            }
+        }
+
         let allMoved = true;
         for (let id in this.actors) {
             const a = this.actors[id];
             
             // Animation
             const anim = ANIMATIONS[a.action] || ANIMATIONS.standby;
-            a.frame += dt * 0.008;
-            if (a.frame >= anim.length) {
-                if (a.action === 'hit' || a.action === 'attack_1' || a.action === 'attack_2') {
-                    a.action = 'standby';
-                    if (this.isWaiting) this.nextStep();
+            
+            if (a.action === 'recovery') {
+                // Special logic for drinking: stay on frame 0 (holding bowl) mostly,
+                // occasionally play the 4-frame animation once.
+                if (!a.isAnimating) {
+                    a.frame = 0;
+                    // Random chance to start drinking
+                    if (Math.random() < 0.005) {
+                        a.isAnimating = true;
+                    }
+                } else {
+                    a.frame += dt * 0.006;
+                    if (a.frame >= anim.length) {
+                        a.frame = 0;
+                        a.isAnimating = false;
+                    }
                 }
-                a.frame = 0;
+            } else {
+                a.frame += dt * 0.008;
+                if (a.frame >= anim.length) {
+                    if (a.action === 'hit' || a.action === 'attack_1' || a.action === 'attack_2') {
+                        a.action = 'standby';
+                        if (this.isWaiting) this.nextStep();
+                    }
+                    a.frame = 0;
+                }
             }
 
             // Movement
@@ -249,6 +298,12 @@ export class NarrativeScene extends BaseScene {
         });
         ctx.restore(); // End clipping
 
+        // Fade overlay
+        if (this.fadeAlpha > 0) {
+            ctx.fillStyle = `rgba(0, 0, 0, ${this.fadeAlpha})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
         if (step && step.type === 'title') {
             this.renderTitleCard(step);
         } else if (step && step.type === 'dialogue') {
@@ -308,42 +363,26 @@ export class NarrativeScene extends BaseScene {
             ctx.drawImage(actorImg, crop.x, crop.y, crop.w, crop.h, portraitX + destOffset, portraitY + destOffset, destSize, destSize);
         }
 
-        // Name (Silkscreen - Heading Style) - MOVED UP
+        // Name (Silkscreen - Heading Style)
         const textX = portraitX + portraitSize + 8;
         this.drawPixelText(ctx, (step.name || "").toUpperCase(), textX, py + 6, { color: '#ffd700', font: '8px Silkscreen' });
 
-        // Text (Dogica - General Text Style) - MOVED UP
-        const displayLines = step.lines || [];
-        let lineY = py + 18;
+        // Text (Dogica - General Text Style)
+        const lines = this.wrapText(step.text);
+        const start = this.subStep * 2;
+        const displayLines = lines.slice(start, start + 2);
+        const hasNextChunk = (this.subStep + 1) * 2 < lines.length;
         
-        if (displayLines.length > 0) {
-            displayLines.forEach((line, i) => {
-                let text = line;
-                // Add ellipsis if this is the last line of a multi-part dialogue
-                if (i === displayLines.length - 1 && step.hasNextChunk) {
-                    text += "...";
-                }
-                this.drawPixelText(ctx, text, textX, lineY, { color: '#eee', font: '8px Dogica' });
-                lineY += 10;
-            });
-        } else {
-            // Fallback for non-processed text
-            const words = (step.text || "").split(' ');
-            let line = '';
-            const maxWidth = panelWidth - portraitSize - 20;
-            for (let n = 0; n < words.length; n++) {
-                let testLine = line + words[n] + ' ';
-                ctx.font = '8px Dogica';
-                if (ctx.measureText(testLine).width > maxWidth && n > 0) {
-                    this.drawPixelText(ctx, line, textX, lineY, { color: '#eee', font: '8px Dogica' });
-                    line = words[n] + ' ';
-                    lineY += 10;
-                } else {
-                    line = testLine;
-                }
+        let lineY = py + 18;
+        displayLines.forEach((line, i) => {
+            let text = line;
+            // Add ellipsis if this is the last line of a multi-part dialogue
+            if (i === displayLines.length - 1 && hasNextChunk) {
+                text += "...";
             }
-            this.drawPixelText(ctx, line, textX, lineY, { color: '#eee', font: '8px Dogica' });
-        }
+            this.drawPixelText(ctx, text, textX, lineY, { color: '#eee', font: '8px Dogica' });
+            lineY += 10;
+        });
 
         // Click prompt (Tiny5)
         const pulse = Math.abs(Math.sin(Date.now() / 500));

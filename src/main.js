@@ -63,6 +63,9 @@ async function init() {
         await assets.loadImages({
             title: 'assets/misc/three_kingdoms_stratagem_title.png',
             noticeboard: 'assets/settings/village_noticeboard.png',
+            inn: 'assets/settings/village_inn.png',
+            inn_evening: 'assets/settings/village_inn_evening.png',
+            peach_garden: 'assets/settings/peach_garden.png',
             china_map: 'assets/settings/china_map.png',
             lvbu: 'assets/characters/001_lvbu.png',
             dongzhuo: 'assets/characters/002_dongzhuo.png',
@@ -72,6 +75,8 @@ async function init() {
             zhugeliang: 'assets/characters/051_zhugeliang.png',
             farmer: 'assets/characters/083_nongfu01.png',
             farmer2: 'assets/characters/084_nongfu02.png',
+            soldier: 'assets/characters/081_shibing001.png',
+            butcher: 'assets/characters/082_tufu01.png',
             ...terrainAssets
         });
 
