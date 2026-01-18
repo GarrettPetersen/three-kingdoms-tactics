@@ -28,6 +28,9 @@ body {
 canvas {
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
+    font-smooth: never;
     background-color: #000;
     max-width: 100%;
     max-height: 100%;

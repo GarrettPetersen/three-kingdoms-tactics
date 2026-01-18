@@ -1,6 +1,7 @@
 import { assets } from './core/AssetLoader.js';
 import { SceneManager } from './core/SceneManager.js';
 import { TitleScene } from './scenes/TitleScene.js';
+import { CampaignScene } from './scenes/CampaignScene.js';
 import { TacticsScene } from './scenes/TacticsScene.js';
 import { NarrativeScene } from './scenes/NarrativeScene.js';
 
@@ -45,10 +46,11 @@ async function init() {
 
     const sceneManager = new SceneManager(ctx, canvas, config);
     sceneManager.addScene('title', new TitleScene());
+    sceneManager.addScene('campaign', new CampaignScene());
     sceneManager.addScene('tactics', new TacticsScene());
     sceneManager.addScene('narrative', new NarrativeScene());
 
-    canvas.addEventListener('mousedown', (e) => sceneManager.handleInput(e));
+    canvas.addEventListener('pointerdown', (e) => sceneManager.handleInput(e));
 
     try {
         await assets.loadFonts();
@@ -60,12 +62,15 @@ async function init() {
 
         await assets.loadImages({
             title: 'assets/misc/three_kingdoms_stratagem_title.png',
+            noticeboard: 'assets/settings/village_noticeboard.png',
             lvbu: 'assets/characters/001_lvbu.png',
             dongzhuo: 'assets/characters/002_dongzhuo.png',
             liubei: 'assets/characters/048_liubei.png',
             guanyu: 'assets/characters/049_guanyu.png',
             zhangfei: 'assets/characters/050_zhangfei.png',
             zhugeliang: 'assets/characters/051_zhugeliang.png',
+            farmer: 'assets/characters/083_nongfu01.png',
+            farmer2: 'assets/characters/084_nongfu02.png',
             ...terrainAssets
         });
 
@@ -84,4 +89,3 @@ async function init() {
 }
 
 init();
-

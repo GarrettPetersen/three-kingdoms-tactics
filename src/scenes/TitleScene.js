@@ -50,19 +50,21 @@ export class TitleScene extends BaseScene {
             ctx.drawImage(this.processedTitleCanvas, x, y);
         }
         
-        ctx.fillStyle = '#ffd700';
-        ctx.font = '8px Silkscreen';
+        const cx = Math.floor(canvas.width / 2);
+        const cy = canvas.height - 60;
         const text = "NEW GAME";
-        const metrics = ctx.measureText(text);
-        const tx = Math.floor((canvas.width - metrics.width) / 2);
-        const ty = canvas.height - 60;
         
         const pulse = Math.abs(Math.sin(Date.now() / 500)) * 0.5 + 0.5;
         ctx.globalAlpha = pulse;
-        ctx.fillText(text, tx, ty);
+        const metrics = this.drawPixelText(ctx, text, cx, cy, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
         ctx.globalAlpha = 1.0;
         
-        this.menuHitArea = { x: tx - 10, y: ty - 10, w: metrics.width + 20, h: 20 };
+        this.menuHitArea = { 
+            x: Math.floor(cx - metrics.width / 2 - 10), 
+            y: cy - 10, 
+            w: Math.floor(metrics.width + 20), 
+            h: 20 
+        };
     }
 
     handleInput(e) {
@@ -72,8 +74,7 @@ export class TitleScene extends BaseScene {
         
         if (this.menuHitArea && x >= this.menuHitArea.x && x <= this.menuHitArea.x + this.menuHitArea.w &&
             y >= this.menuHitArea.y && y <= this.menuHitArea.y + this.menuHitArea.h) {
-            this.manager.switchTo('tactics');
+            this.manager.switchTo('campaign');
         }
     }
 }
-
