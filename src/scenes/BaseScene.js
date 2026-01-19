@@ -12,20 +12,47 @@ export class BaseScene {
     render(timestamp) {}
     handleInput(e) {}
 
-    drawCharacter(ctx, img, action, frame, x, y, flip = false) {
+    drawCharacter(ctx, img, action, frame, x, y, options = {}) {
         if (!img) return;
+        const { flip = false, sinkOffset = 0, isSubmerged = false } = options;
         const sourceSize = 72;
         const anim = ANIMATIONS[action] || ANIMATIONS.standby;
         const f = Math.floor(frame) % anim.length;
         const frameIdx = anim.start + f;
         const sx = (frameIdx % 8) * sourceSize;
         const sy = Math.floor(frameIdx / 8) * sourceSize;
+        const feetY = -44;
 
-        ctx.save();
-        ctx.translate(Math.floor(x), Math.floor(y));
-        if (flip) ctx.scale(-1, 1);
-        ctx.drawImage(img, sx, sy, sourceSize, sourceSize, -36, -68, sourceSize, sourceSize);
-        ctx.restore();
+        if (isSubmerged) {
+            // Draw ABOVE water surface (opaque)
+            // The water surface is exactly at 'y'
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(x - 40, y - 100, 80, 100); 
+            ctx.clip();
+            ctx.translate(Math.floor(x), Math.floor(y + sinkOffset));
+            if (flip) ctx.scale(-1, 1);
+            ctx.drawImage(img, sx, sy, sourceSize, sourceSize, -36, feetY, sourceSize, sourceSize);
+            ctx.restore();
+
+            // Draw BELOW water surface (semi-transparent)
+            ctx.save();
+            ctx.globalAlpha = 0.4;
+            ctx.beginPath();
+            ctx.rect(x - 40, y, 80, 100); 
+            ctx.clip();
+            ctx.translate(Math.floor(x), Math.floor(y + sinkOffset));
+            if (flip) ctx.scale(-1, 1);
+            ctx.drawImage(img, sx, sy, sourceSize, sourceSize, -36, feetY, sourceSize, sourceSize);
+            ctx.restore();
+        } else {
+            // Draw normally (Dry Ground)
+            ctx.save();
+            ctx.translate(Math.floor(x), Math.floor(y));
+            if (flip) ctx.scale(-1, 1);
+            ctx.drawImage(img, sx, sy, sourceSize, sourceSize, -36, feetY, sourceSize, sourceSize);
+            ctx.restore();
+        }
     }
 
     wrapText(ctx, text, maxWidth) {

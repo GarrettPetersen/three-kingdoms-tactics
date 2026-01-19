@@ -262,7 +262,7 @@ export class NarrativeScene extends BaseScene {
 
         const sortedActors = Object.values(this.actors).sort((a, b) => a.y - b.y);
         sortedActors.forEach(a => {
-            this.drawCharacter(ctx, a.img, a.action, a.frame, bgX + a.x, bgY + a.y, a.flip);
+            this.drawCharacter(ctx, a.img, a.action, a.frame, bgX + a.x, bgY + a.y, { flip: a.flip });
         });
         ctx.restore();
 

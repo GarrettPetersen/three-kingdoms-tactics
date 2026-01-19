@@ -1,0 +1,204 @@
+import { ANIMATIONS, ATTACKS } from '../core/Constants.js';
+
+export class Unit {
+    constructor(id, config = {}) {
+        this.id = id;
+        this.name = config.name || "Unknown";
+        this.imgKey = config.imgKey;
+        this.img = config.img; // Loaded image
+        this.faction = config.faction || 'player'; // 'player', 'enemy'
+        
+        this.r = config.r || 0;
+        this.q = config.q || 0;
+        
+        // Stats
+        this.hp = config.hp || 10;
+        this.maxHp = config.hp || 10;
+        this.moveRange = config.moveRange || 3;
+        
+        // State
+        this.action = 'standby';
+        this.currentAnimAction = 'standby';
+        this.frame = 0;
+        this.flip = config.flip || false;
+        this.dialogue = config.dialogue || "";
+        this.hasMoved = false;
+        this.hasAttacked = false;
+        this.hasActed = false; // Turn is complete
+        this.attacks = config.attacks || []; // Array of attack keys from ATTACKS
+        this.intent = null; // { type: 'attack', r, q, attackKey }
+        
+        // Movement animation
+        this.isMoving = false;
+        this.path = [];
+        this.pathIndex = 0;
+        this.moveProgress = 0;
+        this.visualX = 0;
+        this.visualY = 0;
+        this.currentSortR = config.r || 0;
+
+        // Push/Hit visual effects
+        this.visualOffsetX = 0;
+        this.visualOffsetY = 0;
+        this.shakeTimer = 0;
+        this.shakeDir = { x: 0, y: 0 };
+        this.pushData = null; // { startX, startY, targetX, targetY, progress, isBounce }
+        this.isDrowning = false;
+        this.drownTimer = 0;
+    }
+
+    update(dt, getPixelPos, shouldAnimate = true) {
+        if (this.isDrowning) {
+            this.drownTimer += dt;
+            this.action = 'hit';
+            this.frame += dt * 0.008;
+            if (this.drownTimer > 2000) {
+                this.hp = 0;
+                this.isDrowning = false;
+                this.action = 'death';
+            }
+            return;
+        }
+
+        let animAction = this.action;
+        
+        // If telegraphing an attack, use the attack animation but hold frame 0
+        if (this.intent && this.intent.type === 'attack' && this.action === 'standby' && !this.isMoving && !this.pushData) {
+            const attack = ATTACKS[this.intent.attackKey];
+            if (attack) {
+                animAction = attack.animation;
+            }
+        }
+
+        const anim = ANIMATIONS[animAction] || ANIMATIONS.standby;
+        
+        // One-shot animations (except hit, which we might want to manually control during push)
+        const isOneShot = (this.action === 'attack_1' || this.action === 'attack_2' || (this.action === 'hit' && !this.pushData));
+        
+        if (isOneShot) {
+            if (this.frame < anim.length - 0.1) {
+                this.frame += dt * 0.008;
+            } else {
+                this.action = 'standby';
+                this.frame = 0;
+            }
+        } else if (this.isMoving || this.pushData || this.action === 'hit') {
+            this.frame += dt * 0.008;
+        } else if (this.intent && this.intent.type === 'attack' && this.action === 'standby') {
+            // Telegraphing - hold first frame of attack
+            this.frame = 0;
+        } else if (shouldAnimate) {
+            this.frame += dt * 0.008;
+        } else {
+            this.frame = 0;
+        }
+
+        // Use the resolved animation action for drawing
+        this.currentAnimAction = animAction;
+
+        // Handle Hit Shake
+        if (this.shakeTimer > 0) {
+            this.shakeTimer -= dt;
+            const progress = Math.max(0, this.shakeTimer / 200); 
+            const mag = Math.sin(progress * Math.PI * 8) * 4 * progress;
+            this.visualOffsetX = this.shakeDir.x * mag;
+            this.visualOffsetY = this.shakeDir.y * mag;
+            
+            if (this.shakeTimer <= 0) {
+                this.visualOffsetX = 0;
+                this.visualOffsetY = 0;
+            }
+        }
+
+        // Handle Push Animation
+        if (this.pushData) {
+            this.action = 'hit';
+            this.pushData.progress += dt * 0.004;
+            const p = Math.min(1, this.pushData.progress);
+            
+            let interp = p;
+            if (this.pushData.isBounce) {
+                // Out and back curve
+                interp = Math.sin(p * Math.PI) * 0.4;
+            }
+
+            this.visualX = this.pushData.startX + (this.pushData.targetX - this.pushData.startX) * interp;
+            this.visualY = this.pushData.startY + (this.pushData.targetY - this.pushData.startY) * interp;
+
+            if (p >= 1) {
+                this.pushData = null;
+                this.action = 'standby';
+            }
+        }
+
+        // Handle Path Movement
+        if (this.isMoving && this.path.length > 0) {
+            this.action = 'walk';
+            this.moveProgress += dt * 0.005; 
+
+            const startNode = this.path[this.pathIndex];
+            const endNode = this.path[this.pathIndex + 1];
+
+            if (endNode) {
+                const startPos = getPixelPos(startNode.r, startNode.q);
+                const endPos = getPixelPos(endNode.r, endNode.q);
+
+                this.visualX = startPos.x + (endPos.x - startPos.x) * this.moveProgress;
+                this.visualY = startPos.y + (endPos.y - startPos.y) * this.moveProgress;
+                this.currentSortR = startNode.r + (endNode.r - startNode.r) * this.moveProgress;
+
+                // Handle facing
+                if (endPos.x < startPos.x) this.flip = true;
+                if (endPos.x > startPos.x) this.flip = false;
+
+                if (this.moveProgress >= 1) {
+                    this.moveProgress = 0;
+                    this.pathIndex++;
+                    this.setPosition(endNode.r, endNode.q);
+                    
+                    if (this.pathIndex >= this.path.length - 1) {
+                        this.isMoving = false;
+                        this.action = 'standby';
+                        this.path = [];
+                    }
+                }
+            } else {
+                this.isMoving = false;
+                this.action = 'standby';
+            }
+        } else if (!this.pushData) {
+            // Stationary update
+            const pos = getPixelPos(this.r, this.q);
+            this.visualX = pos.x;
+            this.visualY = pos.y;
+            this.currentSortR = this.r;
+        }
+    }
+
+    startPath(path) {
+        if (!path || path.length < 2) return;
+        this.path = path;
+        this.pathIndex = 0;
+        this.moveProgress = 0;
+        this.isMoving = true;
+    }
+
+    startPush(startX, startY, targetX, targetY, isBounce = false) {
+        this.pushData = { startX, startY, targetX, targetY, progress: 0, isBounce };
+        this.action = 'hit';
+        this.frame = 0;
+    }
+
+    triggerShake(fromX, fromY, toX, toY) {
+        const dx = toX - fromX;
+        const dy = toY - fromY;
+        const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+        this.shakeDir = { x: dx / dist, y: dy / dist };
+        this.shakeTimer = 200;
+    }
+
+    setPosition(r, q) {
+        this.r = r;
+        this.q = q;
+    }
+}

@@ -102,7 +102,7 @@ export class CampaignScene extends BaseScene {
                 if (this.moveState.targetX < this.moveState.startX) flip = true;
             }
 
-            this.drawCharacter(ctx, charImg, action, frameIdx, cx, cy, flip);
+            this.drawCharacter(ctx, charImg, action, frameIdx, cx, cy, { flip });
 
             if (this.selectedCampaign === c.id && !this.prologueComplete) {
                 this.drawLabel(ctx, c.name, cx, cy - 45, "Click to Start");
@@ -300,54 +300,63 @@ export class CampaignScene extends BaseScene {
                     type: 'dialogue',
                     portraitKey: 'zhoujing',
                     name: 'Zhou Jing',
+                    position: 'top',
                     text: "Who goes there? These men behind you... they have the look of tigers. You do not look like common recruits."
                 },
                 {
                     type: 'dialogue',
                     portraitKey: 'liubei',
                     name: 'Liu Bei',
+                    position: 'top',
                     text: "I am Liu Bei, a descendant of Prince Jing of Zhongshan and great-great-grandson of Emperor Jing. These are my sworn brothers, Guan Yu and Zhang Fei."
                 },
                 {
                     type: 'dialogue',
                     portraitKey: 'liubei',
                     name: 'Liu Bei',
+                    position: 'top',
                     text: "We have raised a force of five hundred volunteers to serve our country and protect the people."
                 },
                 {
                     type: 'dialogue',
                     portraitKey: 'zhoujing',
                     name: 'Zhou Jing',
+                    position: 'top',
                     text: "An Imperial kinsman! Truly, the Heavens have not abandoned the Han. Your arrival is most timely."
                 },
                 {
                     type: 'dialogue',
                     portraitKey: 'zhoujing',
                     name: 'Zhou Jing',
+                    position: 'top',
                     text: "Scouts report that the rebel general Cheng Yuanzhi is marching upon us with fifty thousand Yellow Turbans."
                 },
                 {
                     type: 'dialogue',
                     portraitKey: 'zhangfei',
                     name: 'Zhang Fei',
+                    position: 'top',
                     text: "Fifty thousand? Hah! They are but a mob of ants! Give us the order, Magistrate, and we shall scatter them like dust!"
                 },
                 {
                     type: 'dialogue',
                     portraitKey: 'guanyu',
                     name: 'Guan Yu',
+                    position: 'top',
                     text: "Eldest brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march."
                 },
                 {
                     type: 'dialogue',
                     portraitKey: 'liubei',
                     name: 'Liu Bei',
+                    position: 'top',
                     text: "Magistrate Zhou, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion."
                 },
                 {
                     type: 'dialogue',
                     portraitKey: 'zhoujing',
                     name: 'Zhou Jing',
+                    position: 'top',
                     text: "Very well! I shall lead the main force myself. Together, we shall strike at the heart of Cheng Yuanzhi's army!"
                 },
                 { type: 'command', action: 'fade', target: 1, speed: 0.001 },

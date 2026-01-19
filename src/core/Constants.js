@@ -11,3 +11,21 @@ export const ANIMATIONS = {
     sitting:  { start: 36, length: 4 }
 };
 
+export const ATTACKS = {
+    stab: {
+        name: 'Stab',
+        damage: 1,
+        range: 1,
+        animation: 'attack_1',
+        description: 'A basic forward strike.'
+    },
+    slash: {
+        name: 'Slash',
+        damage: 1,
+        range: 1,
+        push: 1,
+        animation: 'attack_2',
+        description: 'Strikes and pushes the target back.'
+    }
+};
+
