@@ -41,3 +41,17 @@ A tactical roguelike game set in the Three Kingdoms era, built with Vanilla JS, 
 - **World Space**: Coordinates are relative to the specific scene background (e.g., the 256x256 noticeboard).
 - **Screen Space**: The `SceneManager` handles centering backgrounds and clipping actors to the visible play area.
 
+## Testing & Debugging
+
+### Cheat Codes
+Type these words on your keyboard during gameplay to jump to specific scenes:
+
+| Cheat Code | Destination Scene |
+| :--- | :--- |
+| `title` | Main Title Screen |
+| `camp` | Campaign/World Map |
+| `brief` | Briefing at Magistrate's HQ |
+| `battle` | Tactics Battle Map |
+| `story` | Narrative/Dialogue Test |
+
+

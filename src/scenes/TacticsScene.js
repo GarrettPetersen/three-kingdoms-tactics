@@ -140,7 +140,7 @@ export class TacticsScene extends BaseScene {
             if (call.type === 'hex') {
                 this.drawTile(call.terrain, call.x, call.y - call.elevation, call.elevation);
             } else {
-                this.drawCharacter(call.unit.img, call.action, call.frame, call.x, call.y - call.elevation);
+                this.drawCharacter(ctx, call.unit.img, call.action, call.frame, call.x, call.y - call.elevation);
             }
         }
 

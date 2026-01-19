@@ -23,35 +23,9 @@ export class NarrativeScene extends BaseScene {
         this.actors = {};
         this.isWaiting = false;
         this.timer = 0;
+        this.fadeAlpha = params.fadeAlpha !== undefined ? params.fadeAlpha : 1;
+        this.fadeTarget = this.fadeAlpha;
         this.processStep();
-    }
-
-    wrapText(text) {
-        const margin = 5;
-        const portraitSize = 34;
-        const panelWidth = this.manager.canvas.width - margin * 2;
-        // Reduced maxWidth slightly to ensure padding on both sides
-        const maxWidth = panelWidth - portraitSize - 25; 
-
-        const ctx = this.manager.ctx;
-        ctx.save();
-        ctx.font = '8px Dogica';
-        const words = (text || "").split(' ');
-        const lines = [];
-        let currentLine = '';
-
-        for (let n = 0; n < words.length; n++) {
-            let testLine = currentLine + words[n] + ' ';
-            if (ctx.measureText(testLine).width > maxWidth && n > 0) {
-                lines.push(currentLine.trim());
-                currentLine = words[n] + ' ';
-            } else {
-                currentLine = testLine;
-            }
-        }
-        lines.push(currentLine.trim());
-        ctx.restore();
-        return lines;
     }
 
     processStep() {
@@ -122,10 +96,14 @@ export class NarrativeScene extends BaseScene {
         } else if (cmd.action === 'fade') {
             this.fadeTarget = cmd.target;
             this.fadeSpeed = cmd.speed || 0.002;
-            if (cmd.wait !== false) {
-                this.isWaiting = true;
-            } else {
+            if (this.fadeAlpha === this.fadeTarget) {
                 this.nextStep();
+            } else {
+                if (cmd.wait !== false) {
+                    this.isWaiting = true;
+                } else {
+                    this.nextStep();
+                }
             }
         }
     }
@@ -133,8 +111,7 @@ export class NarrativeScene extends BaseScene {
     nextStep() {
         const step = this.script[this.currentStep];
         if (step && step.type === 'dialogue') {
-            const lines = this.wrapText(step.text);
-            if ((this.subStep + 1) * 2 < lines.length) {
+            if (this.hasNextChunk) {
                 this.subStep++;
                 return;
             }
@@ -277,8 +254,7 @@ export class NarrativeScene extends BaseScene {
 
         // Actors - Clipped to background area
         ctx.save();
-        if (bgKey) {
-            // Create a clipping rectangle so actors don't appear on the black letterboxing
+        if (bgKey && bgWidth > 0 && bgHeight > 0) {
             ctx.beginPath();
             ctx.rect(bgX, bgY, bgWidth, bgHeight);
             ctx.clip();
@@ -288,7 +264,7 @@ export class NarrativeScene extends BaseScene {
         sortedActors.forEach(a => {
             this.drawCharacter(ctx, a.img, a.action, a.frame, bgX + a.x, bgY + a.y, a.flip);
         });
-        ctx.restore(); // End clipping
+        ctx.restore();
 
         // Fade overlay
         if (this.fadeAlpha > 0) {
@@ -299,7 +275,8 @@ export class NarrativeScene extends BaseScene {
         if (step && step.type === 'title') {
             this.renderTitleCard(step);
         } else if (step && step.type === 'dialogue') {
-            this.renderDialogue(step);
+            const status = this.renderDialogueBox(ctx, canvas, step, { subStep: this.subStep });
+            this.hasNextChunk = status.hasNextChunk;
         } else if (step && step.type === 'choice') {
             this.renderChoice(step);
         }
@@ -391,71 +368,6 @@ export class NarrativeScene extends BaseScene {
         if (step.subtext) {
             this.drawPixelText(ctx, step.subtext, cx, cy + 6, { color: '#eee', font: '8px Silkscreen', align: 'center' });
         }
-    }
-
-    renderDialogue(step) {
-        const { ctx, canvas } = this.manager;
-        const margin = 5;
-        const panelHeight = 44;
-        const panelWidth = canvas.width - margin * 2;
-        const px = margin;
-        
-        // Handle position: top or bottom (default)
-        const position = step.position || 'bottom';
-        const py = position === 'top' ? margin : canvas.height - panelHeight - margin;
-
-        // Panel
-        ctx.fillStyle = 'rgba(20, 20, 20, 0.95)';
-        ctx.fillRect(px, py, panelWidth, panelHeight);
-        ctx.strokeStyle = '#8b0000';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(px + 0.5, py + 0.5, panelWidth - 1, panelHeight - 1);
-
-        // Portrait
-        const portraitSize = 34;
-        const portraitX = px + 5;
-        const portraitY = py + 5;
-        ctx.fillStyle = '#000';
-        ctx.fillRect(portraitX, portraitY, portraitSize, portraitSize);
-        ctx.strokeStyle = '#444';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(portraitX + 0.5, portraitY + 0.5, portraitSize - 1, portraitSize - 1);
-
-        const actorImg = assets.getImage(step.portraitKey);
-        if (actorImg) {
-            // Default to character face crop (26, 20, 20, 20)
-            const crop = step.portraitRect || { x: 26, y: 20, w: 20, h: 20 };
-            const destSize = 28;
-            const destOffset = (portraitSize - destSize) / 2;
-            ctx.drawImage(actorImg, crop.x, crop.y, crop.w, crop.h, portraitX + destOffset, portraitY + destOffset, destSize, destSize);
-        }
-
-        // Name (Silkscreen - Heading Style)
-        const textX = portraitX + portraitSize + 8;
-        this.drawPixelText(ctx, (step.name || "").toUpperCase(), textX, py + 6, { color: '#ffd700', font: '8px Silkscreen' });
-
-        // Text (Dogica - General Text Style)
-        const lines = this.wrapText(step.text);
-        const start = this.subStep * 2;
-        const displayLines = lines.slice(start, start + 2);
-        const hasNextChunk = (this.subStep + 1) * 2 < lines.length;
-        
-        let lineY = py + 18;
-        displayLines.forEach((line, i) => {
-            let text = line;
-            // Add ellipsis if this is the last line of a multi-part dialogue
-            if (i === displayLines.length - 1 && hasNextChunk) {
-                text += "...";
-            }
-            this.drawPixelText(ctx, text, textX, lineY, { color: '#eee', font: '8px Dogica' });
-            lineY += 10;
-        });
-
-        // Click prompt (Tiny5)
-        const pulse = Math.abs(Math.sin(Date.now() / 500));
-        ctx.globalAlpha = pulse;
-        this.drawPixelText(ctx, "NEXT", panelWidth - 2, py + panelHeight - 8, { color: '#eee', font: '8px Tiny5', align: 'right' });
-        ctx.globalAlpha = 1.0;
     }
 
     handleInput(e) {

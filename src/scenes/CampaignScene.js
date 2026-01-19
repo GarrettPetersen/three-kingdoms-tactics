@@ -7,7 +7,8 @@ export class CampaignScene extends BaseScene {
         super();
         this.selectedCampaign = null;
         this.prologueComplete = false;
-        this.interactionSelected = null; // Generic interaction tracker
+        this.interactionSelected = null;
+        this.subStep = 0;
         this.moveState = {
             isMoving: false,
             progress: 0,
@@ -106,11 +107,16 @@ export class CampaignScene extends BaseScene {
             if (this.selectedCampaign === c.id && !this.prologueComplete) {
                 this.drawLabel(ctx, c.name, cx, cy - 45, "Click to Start");
             }
-
-            if (this.interactionSelected === 'hero_reminder' && this.selectedCampaign === c.id) {
-                this.drawLabel(ctx, "Liu Bei", cx, cy - 45, "Off to the Magistrate!");
-            }
         });
+
+        if (this.interactionSelected === 'hero_reminder') {
+            const status = this.renderDialogueBox(ctx, canvas, {
+                portraitKey: 'liubei',
+                name: 'Liu Bei',
+                text: "Off to the Magistrate! Magistrate Zhou Jing's HQ awaits our enlistment."
+            }, { subStep: this.subStep });
+            this.hasNextChunk = status.hasNextChunk;
+        }
     }
 
     drawLabel(ctx, name, x, y, prompt) {
@@ -163,6 +169,17 @@ export class CampaignScene extends BaseScene {
 
         const mx = Math.floor((this.manager.canvas.width - 256) / 2);
         const my = Math.floor((this.manager.canvas.height - 256) / 2);
+
+        // Advance dialogue if active
+        if (this.interactionSelected === 'hero_reminder') {
+            if (this.hasNextChunk) {
+                this.subStep++;
+            } else {
+                this.interactionSelected = null;
+                this.subStep = 0;
+            }
+            return;
+        }
 
         // 1. Handle Magistrate HQ click if prologue is done
         if (this.prologueComplete && !this.moveState.isMoving) {
@@ -218,20 +235,24 @@ export class CampaignScene extends BaseScene {
                 hitAny = true;
                 if (this.selectedCampaign === c.id) {
                     if (this.prologueComplete) {
-                        // Just show a reminder instead of replaying prologue
                         this.interactionSelected = 'hero_reminder';
+                        this.subStep = 0;
                     } else {
                         this.startCampaign(c.id);
                     }
                 } else {
                     this.selectedCampaign = c.id;
                     this.interactionSelected = null;
+                    this.subStep = 0;
                 }
             }
         });
 
         if (!hitAny) {
             this.selectedCampaign = null;
+            if (this.interactionSelected !== 'hero_reminder') {
+                this.interactionSelected = null;
+            }
             this.magistrateSelected = false;
         }
     }
@@ -252,20 +273,26 @@ export class CampaignScene extends BaseScene {
                 { type: 'command', action: 'addActor', id: 'zhoujing', imgKey: 'zhoujing', x: 128, y: 180 },
                 { type: 'command', action: 'addActor', id: 'guard1', imgKey: 'soldier', x: 80, y: 170 },
                 { type: 'command', action: 'addActor', id: 'guard2', imgKey: 'soldier', x: 176, y: 170, flip: true },
+                
+                // Background NPCs for a busier camp
+                { type: 'command', action: 'addActor', id: 'soldier3', imgKey: 'soldier', x: 20, y: 180, speed: 0.2 },
+                { type: 'command', action: 'addActor', id: 'soldier4', imgKey: 'soldier', x: 230, y: 175, flip: true, speed: 0.1 },
                 { type: 'command', action: 'addActor', id: 'merchant', imgKey: 'merchant', x: 30, y: 190, speed: 0.3 },
                 { type: 'command', action: 'addActor', id: 'blacksmith', imgKey: 'blacksmith', x: 230, y: 210, flip: true, speed: 0.2 },
                 { type: 'command', action: 'addActor', id: 'volunteer1', imgKey: 'soldier', x: 40, y: 220, speed: 0.5 },
                 { type: 'command', action: 'addActor', id: 'volunteer2', imgKey: 'soldier', x: 210, y: 230, flip: true, speed: 0.4 },
                 
-                { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 128, y: 280, speed: 1 },
-                { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 90, y: 280, speed: 1 },
-                { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 166, y: 280, flip: true, speed: 1 },
+                { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 80, y: 280, speed: 1 },
+                { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 40, y: 290, speed: 1 },
+                { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 120, y: 295, flip: true, speed: 1 },
                 
                 { type: 'command', action: 'fade', target: 0, speed: 0.001 },
                 
                 { type: 'command', action: 'move', id: 'liubei', x: 128, y: 220, wait: false },
                 { type: 'command', action: 'move', id: 'guanyu', x: 90, y: 220, wait: false },
                 { type: 'command', action: 'move', id: 'zhangfei', x: 166, y: 220, wait: false },
+                { type: 'command', action: 'move', id: 'soldier3', x: 10, y: 185, wait: false },
+                { type: 'command', action: 'move', id: 'soldier4', x: 245, y: 170, wait: false },
                 { type: 'command', action: 'move', id: 'merchant', x: 20, y: 195, wait: false },
                 { type: 'command', action: 'move', id: 'blacksmith', x: 240, y: 205 },
 
@@ -273,13 +300,13 @@ export class CampaignScene extends BaseScene {
                     type: 'dialogue',
                     portraitKey: 'zhoujing',
                     name: 'Zhou Jing',
-                    text: "Who goes there? You don't look like common recruits."
+                    text: "Who goes there? These men behind you... they have the look of tigers. You do not look like common recruits."
                 },
                 {
                     type: 'dialogue',
                     portraitKey: 'liubei',
                     name: 'Liu Bei',
-                    text: "I am Liu Bei, of the Imperial Clan. These are my brothers Guan Yu and Zhang Fei."
+                    text: "I am Liu Bei, a descendant of Prince Jing of Zhongshan and great-great-grandson of Emperor Jing. These are my sworn brothers, Guan Yu and Zhang Fei."
                 },
                 {
                     type: 'dialogue',
@@ -291,37 +318,43 @@ export class CampaignScene extends BaseScene {
                     type: 'dialogue',
                     portraitKey: 'zhoujing',
                     name: 'Zhou Jing',
-                    text: "An Imperial kinsman! And your brothers... they have the look of tigers. Truly remarkable."
+                    text: "An Imperial kinsman! Truly, the Heavens have not abandoned the Han. Your arrival is most timely."
                 },
                 {
                     type: 'dialogue',
                     portraitKey: 'zhoujing',
                     name: 'Zhou Jing',
-                    text: "You have arrived just in time. The rebel Cheng Yuanzhi leads fifty thousand rebels toward us."
+                    text: "Scouts report that the rebel general Cheng Yuanzhi is marching upon us with fifty thousand Yellow Turbans."
                 },
                 {
                     type: 'dialogue',
                     portraitKey: 'zhangfei',
                     name: 'Zhang Fei',
-                    text: "Only fifty thousand? Haha! We've brought enough wine to celebrate their defeat already!"
+                    text: "Fifty thousand? Hah! They are but a mob of ants! Give us the order, Magistrate, and we shall scatter them like dust!"
                 },
                 {
                     type: 'dialogue',
                     portraitKey: 'guanyu',
                     name: 'Guan Yu',
-                    text: "Eldest brother, give the word and we shall set forth to crush these traitors."
+                    text: "Eldest brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march."
                 },
                 {
                     type: 'dialogue',
                     portraitKey: 'liubei',
                     name: 'Liu Bei',
-                    text: "Magistrate, we are ready. Lead us to the enemy!"
+                    text: "Magistrate Zhou, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion."
+                },
+                {
+                    type: 'dialogue',
+                    portraitKey: 'zhoujing',
+                    name: 'Zhou Jing',
+                    text: "Very well! I shall lead the main force myself. Together, we shall strike at the heart of Cheng Yuanzhi's army!"
                 },
                 { type: 'command', action: 'fade', target: 1, speed: 0.001 },
                 { 
                     type: 'title',
-                    text: "TO THE BATTLEFIELD",
-                    subtext: "Daxing District",
+                    text: "BATTLE OF DAXING DISTRICT",
+                    subtext: "First Strike against the Yellow Turbans",
                     duration: 3000
                 }
             ]
@@ -341,6 +374,7 @@ export class CampaignScene extends BaseScene {
                         text: "THE HAN DYNASTY IS CRUMBLING",
                         subtext: "Year 184, Zhuo County"
                     },
+                    { type: 'command', action: 'fade', target: 0, speed: 0.002 },
                     { type: 'command', action: 'addActor', id: 'farmer', imgKey: 'farmer', x: 200, y: 230, speed: 0.5 },
                     { type: 'command', action: 'addActor', id: 'farmer2', imgKey: 'farmer2', x: 50, y: 215, flip: true, speed: 0.4 },
                     { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: -50, y: 240, speed: 1 },
