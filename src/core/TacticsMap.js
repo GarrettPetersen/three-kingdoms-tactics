@@ -29,6 +29,22 @@ export class TacticsMap {
         return this.grid[r][q];
     }
 
+    // Convert offset to cube coordinates
+    // Using Math.floor(r/2) ensures it works correctly for both positive and negative rows
+    offsetToCube(r, q) {
+        const q_cube = q - Math.floor(r / 2);
+        const r_cube = r;
+        const s_cube = -q_cube - r_cube;
+        // Map to x, y, z for dot product calculations (x=q, y=s, z=r)
+        return { x: q_cube, y: s_cube, z: r_cube };
+    }
+
+    getDistance(r1, q1, r2, q2) {
+        const a = this.offsetToCube(r1, q1);
+        const b = this.offsetToCube(r2, q2);
+        return (Math.abs(a.x - b.x) + Math.abs(a.y - b.y) + Math.abs(a.z - b.z)) / 2;
+    }
+
     // Hex neighbor logic for "pointy-top" hexes with odd-row offset (Odd rows shifted right)
     // We define 6 consistent physical directions: 
     // 0: UR (Up-Right), 1: R (Right), 2: DR (Down-Right), 3: DL (Down-Left), 4: L (Left), 5: UL (Up-Left)
@@ -65,12 +81,55 @@ export class TacticsMap {
 
     getDirectionIndex(fromR, fromQ, toR, toQ) {
         const directions = this.getDirections(fromR);
+        // Check distance 1 neighbors
         for (let i = 0; i < directions.length; i++) {
             if (fromR + directions[i].dr === toR && fromQ + directions[i].dq === toQ) {
                 return i;
             }
         }
-        return -1;
+        // Check distance 2 (axial)
+        for (let i = 0; i < directions.length; i++) {
+            const d1 = directions[i];
+            const r1 = fromR + d1.dr;
+            const q1 = fromQ + d1.dq;
+            const directions2 = this.getDirections(r1);
+            const d2 = directions2[i]; // Use same index for consistent physical direction
+            if (r1 + d2.dr === toR && q1 + d2.dq === toQ) {
+                return i;
+            }
+        }
+        
+        // Non-axial distance 2 or further: find closest physical direction
+        const fromPos = this.offsetToCube(fromR, fromQ);
+        const toPos = this.offsetToCube(toR, toQ);
+        const dx = toPos.x - fromPos.x;
+        const dy = toPos.y - fromPos.y;
+        const dz = toPos.z - fromPos.z;
+
+        let bestDir = -1;
+        let maxDot = -Infinity;
+
+        // Correct cube unit vectors for each direction index (0-5)
+        // Order: UR, R, DR, DL, L, UL
+        const cubeDirs = [
+            { x: 1, y: 0, z: -1 },  // 0: UR
+            { x: 1, y: -1, z: 0 },  // 1: R
+            { x: 0, y: -1, z: 1 },  // 2: DR
+            { x: -1, y: 0, z: 1 },  // 3: DL
+            { x: -1, y: 1, z: 0 },  // 4: L
+            { x: 0, y: 1, z: -1 }   // 5: UL
+        ];
+
+        for (let i = 0; i < cubeDirs.length; i++) {
+            const dot = dx * cubeDirs[i].x + dy * cubeDirs[i].y + dz * cubeDirs[i].z;
+            // Add a tiny bit of jitter to avoid perfect ties preferring index 0
+            const score = dot;
+            if (score > maxDot) {
+                maxDot = score;
+                bestDir = i;
+            }
+        }
+        return bestDir;
     }
 
     getNeighborInDirection(r, q, dirIndex) {
@@ -86,7 +145,7 @@ export class TacticsMap {
             forestDensity = 0.15, 
             mountainDensity = 0.1,
             riverDensity = 0.05,
-            villageDensity = 0.02
+            houseDensity = 0.03
         } = params;
 
         // Simple procedural generation
@@ -114,9 +173,10 @@ export class TacticsMap {
                         cell.level = 0;
                         cell.impassable = true;
                     }
-                } else if (rand < mountainDensity + forestDensity + riverDensity + villageDensity) {
-                    cell.terrain = 'town_pavement';
+                } else if (rand < mountainDensity + forestDensity + riverDensity + houseDensity) {
+                    cell.terrain = 'house_01';
                     cell.level = 0;
+                    cell.impassable = true;
                 } else {
                     const grassVariants = ['grass_01', 'grass_02', 'grass_flowers'];
                     cell.terrain = grassVariants[Math.floor(Math.random() * grassVariants.length)];

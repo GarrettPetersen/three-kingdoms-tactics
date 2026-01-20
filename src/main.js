@@ -9,7 +9,8 @@ const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
 
 const config = {
-    scale: 3, 
+    virtualWidth: 256,
+    virtualHeight: 256,
     tileWidth: 36,
     tileHeight: 36,
     baseDepth: 6,
@@ -26,18 +27,28 @@ const TERRAIN_TYPES = [
     'forest_01', 'forest_02', 'forest_03', 'forest_04', 'forest_05',
     'earth_cracked', 'earth_rocky',
     'mountain_stone_01', 'mountain_stone_02', 'mountain_stone_03', 'earth_stone',
-    'town_pavement', 'town_building_01', 'town_building_02', 'town_building_03', 'town_road', 'town_building_04', 'town_building_05', 'town_square',
+    'house_01', 'house_damaged_01', 'house_destroyed_01',
     'mud_01', 'mud_02', 'mud_03', 'mud_04', 'mud_05', 'mud_06', 'mud_07',
     'jungle_01', 'jungle_02', 'jungle_03', 'jungle_04', 'jungle_05', 'jungle_06', 'jungle_07',
     'mountain_snowy_01', 'mountain_snowy_02'
 ];
 
 function setupCanvas() {
-    canvas.width = Math.floor(window.innerWidth / config.scale);
-    canvas.height = Math.floor(window.innerHeight / config.scale);
+    // Standardize on a fixed virtual resolution for pixel-perfect consistency
+    canvas.width = config.virtualWidth;
+    canvas.height = config.virtualHeight;
     ctx.imageSmoothingEnabled = false;
-    canvas.style.width = `${canvas.width * config.scale}px`;
-    canvas.style.height = `${canvas.height * config.scale}px`;
+
+    // Use CSS to scale the canvas to fit the window while maintaining aspect ratio
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    const multiplier = Math.max(1, Math.floor(Math.min(screenWidth / config.virtualWidth, screenHeight / config.virtualHeight)));
+    
+    // We can either use a whole-number multiplier for sharpest pixels, 
+    // or just let 'object-fit: contain' handle it in CSS.
+    // Let's set a explicit style size to ensure it's large enough.
+    canvas.style.width = `${config.virtualWidth * multiplier}px`;
+    canvas.style.height = `${config.virtualHeight * multiplier}px`;
 }
 
 async function init() {
@@ -66,18 +77,18 @@ async function init() {
                     script: [
                         { type: 'title', text: "THE VOLUNTEER ARMY", subtext: "Zhuo County Headquarters", duration: 3000 },
                         { bg: 'army_camp', type: 'command', action: 'clearActors' },
-                        { type: 'command', action: 'addActor', id: 'zhoujing', imgKey: 'zhoujing', x: 128, y: 180 },
-                        { type: 'command', action: 'addActor', id: 'guard1', imgKey: 'soldier', x: 80, y: 170 },
-                        { type: 'command', action: 'addActor', id: 'guard2', imgKey: 'soldier', x: 176, y: 170, flip: true },
-                        { type: 'command', action: 'addActor', id: 'soldier3', imgKey: 'soldier', x: 20, y: 180, speed: 0.2 },
-                        { type: 'command', action: 'addActor', id: 'soldier4', imgKey: 'soldier', x: 230, y: 175, flip: true, speed: 0.1 },
-                        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 80, y: 280, speed: 1 },
-                        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 40, y: 290, speed: 1 },
-                        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 120, y: 295, flip: true, speed: 1 },
+                        { type: 'command', action: 'addActor', id: 'zhoujing', imgKey: 'zhoujing', x: 180, y: 150, flip: true },
+                        { type: 'command', action: 'addActor', id: 'guard1', imgKey: 'soldier', x: 160, y: 140, flip: true },
+                        { type: 'command', action: 'addActor', id: 'guard2', imgKey: 'soldier', x: 200, y: 140, flip: true },
+                        { type: 'command', action: 'addActor', id: 'soldier3', imgKey: 'soldier', x: 20, y: 150, speed: 0.2 },
+                        { type: 'command', action: 'addActor', id: 'soldier4', imgKey: 'soldier', x: 230, y: 145, flip: true, speed: 0.1 },
+                        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: -40, y: 240, speed: 1 },
+                        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: -80, y: 250, speed: 1 },
+                        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: -120, y: 255, speed: 1 },
                         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-                        { type: 'command', action: 'move', id: 'liubei', x: 128, y: 220, wait: false },
-                        { type: 'command', action: 'move', id: 'guanyu', x: 90, y: 220, wait: false },
-                        { type: 'command', action: 'move', id: 'zhangfei', x: 166, y: 220, wait: false },
+                        { type: 'command', action: 'move', id: 'liubei', x: 100, y: 190, wait: false },
+                        { type: 'command', action: 'move', id: 'guanyu', x: 65, y: 190, wait: false },
+                        { type: 'command', action: 'move', id: 'zhangfei', x: 135, y: 190, wait: false },
                         {
                             type: 'dialogue',
                             portraitKey: 'zhoujing',
@@ -171,36 +182,52 @@ async function init() {
             terrainAssets[t] = `assets/terrain/individual/${t}.png`;
         });
 
-        await assets.loadImages({
-            title: 'assets/misc/three_kingdoms_stratagem_title.png',
-            noticeboard: 'assets/settings/village_noticeboard.png',
-            inn: 'assets/settings/village_inn.png',
-            inn_evening: 'assets/settings/village_inn_evening.png',
-            peach_garden: 'assets/settings/peach_garden.png',
-            army_camp: 'assets/settings/army_camp.png',
-            china_map: 'assets/settings/china_map.png',
-            tent: 'assets/terrain/buildings/yellow_tent.png',
-            lvbu: 'assets/characters/001_lvbu.png',
-            dongzhuo: 'assets/characters/002_dongzhuo.png',
-            liubei: 'assets/characters/048_liubei.png',
-            guanyu: 'assets/characters/049_guanyu.png',
-            zhangfei: 'assets/characters/050_zhangfei.png',
-            zhugeliang: 'assets/characters/051_zhugeliang.png',
-            zhoujing: 'assets/characters/064_jiangwan.png',
-            merchant: 'assets/characters/090_fushang01.png',
-            blacksmith: 'assets/characters/091_tiejiang01.png',
-            zhangjiao: 'assets/characters/005_zhangjiao.png',
-            zhangbao: 'assets/characters/006_zhangbao.png',
-            zhangliang: 'assets/characters/007_zhangliang.png',
-            rebel1: 'assets/characters/088_qiangdao01.png',
-            rebel2: 'assets/characters/089_qiangdao02.png',
-            priest: 'assets/characters/085_daoshi01.png',
-            farmer: 'assets/characters/083_nongfu01.png',
-            farmer2: 'assets/characters/084_nongfu02.png',
-            soldier: 'assets/characters/081_shibing001.png',
-            butcher: 'assets/characters/082_tufu01.png',
-            ...terrainAssets
-        });
+        await Promise.all([
+            assets.loadImages({
+                title: 'assets/misc/three_kingdoms_stratagem_title.png',
+                noticeboard: 'assets/settings/village_noticeboard.png',
+                inn: 'assets/settings/village_inn.png',
+                inn_evening: 'assets/settings/village_inn_evening.png',
+                peach_garden: 'assets/settings/peach_garden.png',
+                army_camp: 'assets/settings/army_camp.png',
+                china_map: 'assets/settings/china_map.png',
+                tent: 'assets/terrain/buildings/yellow_tent.png',
+                lvbu: 'assets/characters/001_lvbu.png',
+                dongzhuo: 'assets/characters/002_dongzhuo.png',
+                liubei: 'assets/characters/048_liubei.png',
+                guanyu: 'assets/characters/049_guanyu.png',
+                zhangfei: 'assets/characters/050_zhangfei.png',
+                zhugeliang: 'assets/characters/051_zhugeliang.png',
+                zhoujing: 'assets/characters/064_jiangwan.png',
+                yellowturban: 'assets/characters/097_yellowturban.png',
+                merchant: 'assets/characters/090_fushang01.png',
+                blacksmith: 'assets/characters/091_tiejiang01.png',
+                zhangjiao: 'assets/characters/005_zhangjiao.png',
+                zhangbao: 'assets/characters/006_zhangbao.png',
+                zhangliang: 'assets/characters/007_zhangliang.png',
+                yellowturban: 'assets/characters/097_yellowturban.png',
+                priest: 'assets/characters/085_daoshi01.png',
+                farmer: 'assets/characters/083_nongfu01.png',
+                farmer2: 'assets/characters/084_nongfu02.png',
+                soldier: 'assets/characters/081_shibing001.png',
+                butcher: 'assets/characters/082_tufu01.png',
+                ...terrainAssets
+            }),
+            assets.loadSounds({
+                slash: 'assets/sfx/slash.wav',
+                stab: 'assets/sfx/stab.wav',
+                double_blades: 'assets/sfx/double_blades.wav',
+                green_dragon: 'assets/sfx/green_dragon.wav',
+                bash: 'assets/sfx/bash.wav',
+                collision: 'assets/sfx/collision.wav',
+                splash: 'assets/sfx/splash.wav',
+                step_grass: 'assets/sfx/step_grass.wav',
+                step_water: 'assets/sfx/step_water.wav',
+                step_sand: 'assets/sfx/step_sand.wav',
+                step_stone: 'assets/sfx/step_stone.wav',
+                step_generic: 'assets/sfx/step_generic.wav'
+            })
+        ]);
 
         sceneManager.switchTo('title');
 

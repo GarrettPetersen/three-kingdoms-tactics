@@ -24,11 +24,21 @@ export class TacticsScene extends BaseScene {
         this.activeDialogue = null;
         this.hoveredCell = null;
         this.damageNumbers = []; // { x, y, value, timer, maxTime }
+
+        // Intro Animation State
+        this.isIntroAnimating = true;
+        this.introTimer = 0;
+        this.introDuration = 1000; // ms for the sequence
     }
 
     enter(params = {}) {
         const { config, canvas } = this.manager;
         this.tacticsMap = new TacticsMap(config.mapWidth, config.mapHeight);
+
+        // Reset Intro Animation
+        this.isIntroAnimating = true;
+        this.introTimer = 0;
+        this.lastTime = 0;
         
         // Ensure start positions are calculated before telegraphing
         const mapPixelWidth = config.mapWidth * config.horizontalSpacing;
@@ -221,113 +231,262 @@ export class TacticsScene extends BaseScene {
         });
     }
 
+    damageCell(r, q) {
+        const cell = this.tacticsMap.getCell(r, q);
+        if (!cell) return;
+
+        if (cell.terrain === 'house_01') {
+            cell.terrain = 'house_damaged_01';
+            const pos = this.getPixelPos(r, q);
+            this.addDamageNumber(pos.x, pos.y - 20, "DAMAGED");
+            assets.playSound('collision');
+        } else if (cell.terrain === 'house_damaged_01') {
+            cell.terrain = 'house_destroyed_01';
+            cell.impassable = false;
+            const pos = this.getPixelPos(r, q);
+            this.addDamageNumber(pos.x, pos.y - 20, "DESTROYED");
+            assets.playSound('collision');
+        }
+    }
+
     executeAttack(attacker, attackKey, targetR, targetQ, onComplete) {
+        // Safety check: Only player can trigger attacks via this method during their turn
+        if (this.turn === 'player' && attacker.faction !== 'player') return;
+
+        attacker.intent = null; // Clear intent so arrow disappears
+        const attack = ATTACKS[attackKey];
+
+        // Play attack sound
+        if (attackKey === 'serpent_spear') assets.playSound('stab');
+        else if (attackKey === 'green_dragon_slash') assets.playSound('green_dragon');
+        else if (attackKey === 'double_blades') assets.playSound('double_blades');
+        else if (attackKey === 'bash') assets.playSound('bash');
+        else if (attackKey === 'slash') assets.playSound('slash');
+        else if (attackKey === 'stab') assets.playSound('stab');
+
+        const startPos = this.getPixelPos(attacker.r, attacker.q);
+        const targetPos = this.getPixelPos(targetR, targetQ);
+
+        // Facing logic
+        if (targetPos.x < startPos.x) attacker.flip = true;
+        if (targetPos.x > startPos.x) attacker.flip = false;
+
+        if (attackKey === 'double_blades') {
+            this.executeDoubleBlades(attacker, targetR, targetQ, onComplete);
+        } else if (attackKey === 'green_dragon_slash') {
+            this.executeGreenDragonSlash(attacker, targetR, targetQ, onComplete);
+        } else if (attackKey === 'serpent_spear') {
+            this.executeSerpentSpear(attacker, targetR, targetQ, onComplete);
+        } else {
+            // Standard single-target attack (Bash, etc.)
+            this.executeStandardAttack(attacker, attackKey, targetR, targetQ, onComplete);
+        }
+    }
+
+    executeStandardAttack(attacker, attackKey, targetR, targetQ, onComplete) {
         const attack = ATTACKS[attackKey];
         attacker.action = attack.animation;
         attacker.frame = 0;
 
         const startPos = this.getPixelPos(attacker.r, attacker.q);
         const endPos = this.getPixelPos(targetR, targetQ);
-        if (endPos.x < startPos.x) attacker.flip = true;
-        if (endPos.x > startPos.x) attacker.flip = false;
 
         const targetCell = this.tacticsMap.getCell(targetR, targetQ);
         const victim = targetCell ? targetCell.unit : null;
 
         setTimeout(() => {
+            this.damageCell(targetR, targetQ);
             if (victim) {
-                // Apply damage & Shake
-                victim.hp -= attack.damage;
-                victim.triggerShake(startPos.x, startPos.y, endPos.x, endPos.y);
-                this.addDamageNumber(endPos.x, endPos.y - 30, attack.damage);
-                
-                // Handle death
-                if (victim.hp <= 0) {
-                    victim.hp = 0;
-                    victim.action = 'death';
-                    targetCell.unit = null;
-                } else if (attack.push) {
-                    // Handle push
-                    const dirIndex = this.tacticsMap.getDirectionIndex(attacker.r, attacker.q, targetR, targetQ);
-                    const pushCell = this.tacticsMap.getNeighborInDirection(targetR, targetQ, dirIndex);
-                    
-                    const victimPos = this.getPixelPos(victim.r, victim.q);
-
-                    if (pushCell) {
-                        const targetPos = this.getPixelPos(pushCell.r, pushCell.q);
-
-                        if (pushCell.terrain === 'water_deep_01') {
-                            // Drown: Move into water and sink
-                            targetCell.unit = null;
-                            victim.setPosition(pushCell.r, pushCell.q);
-                            victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false);
-                            setTimeout(() => { 
-                                victim.isDrowning = true;
-                                victim.drownTimer = 0;
-                            }, 300);
-                        } else if (!pushCell.impassable && !pushCell.unit) {
-                            // Valid empty tile: Move to new pos
-                            targetCell.unit = null;
-                            victim.setPosition(pushCell.r, pushCell.q);
-                            pushCell.unit = victim;
-                            victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false);
-                        } else {
-                            // Collision (blocked by mountain or unit)
-                            victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, true); // isBounce = true
-                            
-                            // Delay collision damage until the "bump" (approx 125ms into push)
-                            setTimeout(() => {
-                                victim.hp -= 1;
-                                this.addDamageNumber(victimPos.x, victimPos.y - 30, 1);
-                                
-                                if (pushCell.unit) {
-                                    pushCell.unit.hp -= 1;
-                                    this.addDamageNumber(targetPos.x, targetPos.y - 30, 1);
-                                    pushCell.unit.triggerShake(victimPos.x, victimPos.y, targetPos.x, targetPos.y);
-                                    if (pushCell.unit.hp <= 0) {
-                                        pushCell.unit.hp = 0;
-                                        pushCell.unit.action = 'death';
-                                        pushCell.unit = null;
-                                    } else {
-                                        pushCell.unit.action = 'hit';
-                                    }
-                                }
-                                
-                                if (victim.hp <= 0) {
-                                    victim.hp = 0;
-                                    victim.action = 'death';
-                                    targetCell.unit = null;
-                                }
-                            }, 125);
-                        }
-                    } else {
-                        // Edge of map - collision damage
-                        // Use a dummy target pos for bounce
-                        const dummyX = victimPos.x + (victimPos.x - startPos.x) * 0.5;
-                        const dummyY = victimPos.y + (victimPos.y - startPos.y) * 0.5;
-                        victim.startPush(victimPos.x, victimPos.y, dummyX, dummyY, true);
-
-                        // Delay collision damage
-                        setTimeout(() => {
-                            victim.hp -= 1;
-                            this.addDamageNumber(victimPos.x, victimPos.y - 30, 1);
-                            if (victim.hp <= 0) {
-                                victim.hp = 0;
-                                victim.action = 'death';
-                                targetCell.unit = null;
-                            }
-                        }, 125);
-                    }
-                } else {
-                    victim.action = 'hit';
-                }
+                this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos);
             }
+            setTimeout(() => {
+                attacker.action = 'standby';
+                if (onComplete) onComplete();
+            }, 400);
+        }, 400);
+    }
+
+    executeDoubleBlades(attacker, targetR, targetQ, onComplete) {
+        attacker.action = 'attack_1';
+        attacker.frame = 0;
+
+        const startPos = this.getPixelPos(attacker.r, attacker.q);
+        const frontPos = this.getPixelPos(targetR, targetQ);
+        
+        // Opposite side target
+        const dirIndex = this.tacticsMap.getDirectionIndex(attacker.r, attacker.q, targetR, targetQ);
+        const oppositeDir = (dirIndex + 3) % 6;
+        const backCell = this.tacticsMap.getNeighborInDirection(attacker.r, attacker.q, oppositeDir);
+        const backPos = backCell ? this.getPixelPos(backCell.r, backCell.q) : null;
+
+        const targetCell = this.tacticsMap.getCell(targetR, targetQ);
+        const frontVictim = targetCell ? targetCell.unit : null;
+        const backVictim = backCell ? backCell.unit : null;
+
+        // First strike (Front)
+        setTimeout(() => {
+            this.damageCell(targetR, targetQ);
+            if (frontVictim) {
+                this.applyDamageAndPush(attacker, frontVictim, ATTACKS.double_blades, targetR, targetQ, startPos, frontPos);
+            }
+
+            // Turn around
+            setTimeout(() => {
+                attacker.flip = !attacker.flip;
+                attacker.action = 'attack_1';
+                attacker.frame = 0;
+                assets.playSound('double_blades');
+
+                // Second strike (Back)
+                setTimeout(() => {
+                    if (backCell) this.damageCell(backCell.r, backCell.q);
+                    if (backVictim && backCell) {
+                        this.applyDamageAndPush(attacker, backVictim, ATTACKS.double_blades, backCell.r, backCell.q, startPos, backPos);
+                    }
+                    setTimeout(() => {
+                        attacker.action = 'standby';
+                        if (onComplete) onComplete();
+                    }, 400);
+                }, 400);
+            }, 300);
+        }, 400);
+    }
+
+    executeGreenDragonSlash(attacker, targetR, targetQ, onComplete) {
+        attacker.action = 'attack_1';
+        attacker.frame = 0;
+
+        const startPos = this.getPixelPos(attacker.r, attacker.q);
+        const affected = this.getAffectedTiles(attacker, 'green_dragon_slash', targetR, targetQ);
+
+        setTimeout(() => {
+            affected.forEach(pos => {
+                this.damageCell(pos.r, pos.q);
+                const cell = this.tacticsMap.getCell(pos.r, pos.q);
+                if (cell && cell.unit) {
+                    const victim = cell.unit;
+                    const victimPos = this.getPixelPos(cell.r, cell.q);
+                    this.applyDamageAndPush(attacker, victim, ATTACKS.green_dragon_slash, cell.r, cell.q, startPos, victimPos);
+                }
+            });
 
             setTimeout(() => {
                 attacker.action = 'standby';
                 if (onComplete) onComplete();
             }, 400);
         }, 400);
+    }
+
+    executeSerpentSpear(attacker, targetR, targetQ, onComplete) {
+        attacker.action = 'attack_2';
+        attacker.frame = 0;
+
+        const startPos = this.getPixelPos(attacker.r, attacker.q);
+        const affected = this.getAffectedTiles(attacker, 'serpent_spear', targetR, targetQ);
+
+        setTimeout(() => {
+            affected.forEach(pos => {
+                this.damageCell(pos.r, pos.q);
+                const cell = this.tacticsMap.getCell(pos.r, pos.q);
+                if (cell && cell.unit) {
+                    const victim = cell.unit;
+                    const victimPos = this.getPixelPos(cell.r, cell.q);
+                    this.applyDamageAndPush(attacker, victim, ATTACKS.serpent_spear, cell.r, cell.q, startPos, victimPos);
+                }
+            });
+
+            setTimeout(() => {
+                attacker.action = 'standby';
+                if (onComplete) onComplete();
+            }, 400);
+        }, 400);
+    }
+
+    applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos) {
+        // Apply damage & Shake
+        victim.hp -= attack.damage;
+        victim.triggerShake(startPos.x, startPos.y, endPos.x, endPos.y);
+        this.addDamageNumber(endPos.x, endPos.y - 30, attack.damage);
+        
+        const targetCell = this.tacticsMap.getCell(targetR, targetQ);
+
+        // Handle death
+        if (victim.hp <= 0) {
+            victim.hp = 0;
+            victim.action = 'death';
+            targetCell.unit = null;
+        } else if (attack.push) {
+            // Handle push
+            const dirIndex = this.tacticsMap.getDirectionIndex(attacker.r, attacker.q, targetR, targetQ);
+            const pushCell = this.tacticsMap.getNeighborInDirection(targetR, targetQ, dirIndex);
+            
+            const victimPos = this.getPixelPos(victim.r, victim.q);
+
+            if (pushCell) {
+                const targetPos = this.getPixelPos(pushCell.r, pushCell.q);
+
+                if (pushCell.terrain === 'water_deep_01') {
+                    // Drown
+                    targetCell.unit = null;
+                    victim.setPosition(pushCell.r, pushCell.q);
+                    victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false);
+                    setTimeout(() => { 
+                        assets.playSound('splash');
+                        victim.isDrowning = true;
+                        victim.drownTimer = 0;
+                    }, 300);
+                } else if (!pushCell.impassable && !pushCell.unit) {
+                    // Valid empty tile
+                    targetCell.unit = null;
+                    victim.setPosition(pushCell.r, pushCell.q);
+                    pushCell.unit = victim;
+                    victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false);
+                } else {
+                    // Collision
+                    victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, true); 
+                    setTimeout(() => {
+                        assets.playSound('collision');
+                        this.damageCell(pushCell.r, pushCell.q);
+                        victim.hp -= 1;
+                        this.addDamageNumber(victimPos.x, victimPos.y - 30, 1);
+                        if (pushCell.unit) {
+                            pushCell.unit.hp -= 1;
+                            this.addDamageNumber(targetPos.x, targetPos.y - 30, 1);
+                            pushCell.unit.triggerShake(victimPos.x, victimPos.y, targetPos.x, targetPos.y);
+                            if (pushCell.unit.hp <= 0) {
+                                pushCell.unit.hp = 0;
+                                pushCell.unit.action = 'death';
+                                pushCell.unit = null;
+                            } else {
+                                pushCell.unit.action = 'hit';
+                            }
+                        }
+                        if (victim.hp <= 0) {
+                            victim.hp = 0;
+                            victim.action = 'death';
+                            targetCell.unit = null;
+                        }
+                    }, 125);
+                }
+            } else {
+                // Edge of map
+                const dummyX = victimPos.x + (victimPos.x - startPos.x) * 0.5;
+                const dummyY = victimPos.y + (victimPos.y - startPos.y) * 0.5;
+                victim.startPush(victimPos.x, victimPos.y, dummyX, dummyY, true);
+                setTimeout(() => {
+                    assets.playSound('collision');
+                    victim.hp -= 1;
+                    this.addDamageNumber(victimPos.x, victimPos.y - 30, 1);
+                    if (victim.hp <= 0) {
+                        victim.hp = 0;
+                        victim.action = 'death';
+                        targetCell.unit = null;
+                    }
+                }, 125);
+            }
+        } else {
+            victim.action = 'hit';
+        }
     }
 
     saveTurnState() {
@@ -374,11 +533,12 @@ export class TacticsScene extends BaseScene {
     placeInitialUnits(specifiedUnits) {
         this.units = [];
         const unitsToPlace = specifiedUnits || [
-            { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 3, hp: 10, faction: 'player', attacks: ['stab', 'slash'] },
-            { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 2, hp: 12, faction: 'player', attacks: ['stab', 'slash'] },
-            { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 2, hp: 12, faction: 'player', attacks: ['stab', 'slash'] },
-            { id: 'rebel1', name: 'Rebel', imgKey: 'rebel1', r: 7, q: 4, moveRange: 3, hp: 8, faction: 'enemy', attacks: ['stab'] },
-            { id: 'rebel2', name: 'Rebel', imgKey: 'rebel2', r: 8, q: 5, moveRange: 3, hp: 8, faction: 'enemy', attacks: ['slash'] }
+            { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
+            { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
+            { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
+            { id: 'rebel1', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 4, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
+            { id: 'rebel2', name: 'Yellow Turban', imgKey: 'yellowturban', r: 8, q: 5, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
+            { id: 'rebel3', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 6, moveRange: 3, hp: 2, faction: 'enemy', attacks: ['bash'] }
         ];
 
         unitsToPlace.forEach(u => {
@@ -424,7 +584,16 @@ export class TacticsScene extends BaseScene {
 
     update(timestamp) {
         const dt = timestamp - (this.lastTime || timestamp);
-        this.lastTime = timestamp;
+            this.lastTime = timestamp;
+
+        if (this.isIntroAnimating) {
+            this.introTimer += dt;
+            // End animation when the last hex is likely done
+            const maxDelay = (this.manager.config.mapHeight * 80) + (this.manager.config.mapWidth * 40);
+            if (this.introTimer > maxDelay + 1000) {
+                this.isIntroAnimating = false;
+            }
+        }
 
         this.animationFrame = Math.floor(timestamp / 150) % 4;
         
@@ -434,7 +603,11 @@ export class TacticsScene extends BaseScene {
             const isEnemyActive = (this.turn === 'enemy' && u.faction === 'enemy');
             const shouldAnimate = isPlayerActive || isEnemyActive;
             
-            u.update(dt, (r, q) => this.getPixelPos(r, q), shouldAnimate);
+            // Get current terrain for footstep sounds
+            const cell = this.tacticsMap.getCell(u.r, u.q);
+            const terrainType = cell ? cell.terrain : 'grass_01';
+            
+            u.update(dt, (r, q) => this.getPixelPos(r, q), shouldAnimate, terrainType);
         });
 
         // Update damage numbers
@@ -447,10 +620,7 @@ export class TacticsScene extends BaseScene {
             }
         }
 
-        const rect = this.manager.canvas.getBoundingClientRect();
-        const mx = (this.manager.lastPointerX - rect.left) / this.manager.config.scale;
-        const my = (this.manager.lastPointerY - rect.top) / this.manager.config.scale;
-        this.hoveredCell = this.getCellAt(mx, my);
+        this.hoveredCell = this.getCellAt(this.manager.logicalMouseX, this.manager.logicalMouseY);
     }
 
     getCellAt(x, y) {
@@ -476,6 +646,58 @@ export class TacticsScene extends BaseScene {
         return found;
     }
 
+    getAffectedTiles(attacker, attackKey, targetR, targetQ) {
+        const affected = [];
+        const dist = this.tacticsMap.getDistance(attacker.r, attacker.q, targetR, targetQ);
+
+        if (attackKey === 'serpent_spear') {
+            // Only hits the target hex
+            affected.push({ r: targetR, q: targetQ });
+        } else if (attackKey === 'green_dragon_slash') {
+            // Hits target and its neighbors that are at the same distance from attacker
+            affected.push({ r: targetR, q: targetQ });
+            const neighbors = this.tacticsMap.getNeighbors(targetR, targetQ);
+            neighbors.forEach(n => {
+                const d = this.tacticsMap.getDistance(attacker.r, attacker.q, n.r, n.q);
+                if (d === dist) {
+                    affected.push({ r: n.r, q: n.q });
+                }
+            });
+        } else if (attackKey === 'double_blades') {
+            affected.push({ r: targetR, q: targetQ });
+            const dirIndex = this.tacticsMap.getDirectionIndex(attacker.r, attacker.q, targetR, targetQ);
+            if (dirIndex !== -1) {
+                const oppositeDir = (dirIndex + 3) % 6;
+                const backCell = this.tacticsMap.getNeighborInDirection(attacker.r, attacker.q, oppositeDir);
+                if (backCell) affected.push({ r: backCell.r, q: backCell.q });
+            }
+        } else {
+            affected.push({ r: targetR, q: targetQ });
+        }
+        return affected;
+    }
+
+    getIntroEffect(r, q) {
+        if (!this.isIntroAnimating) return { yOffset: 0, alpha: 1 };
+
+        const delay = (this.manager.config.mapHeight - r) * 80 + q * 40;
+        const duration = 600;
+        const t = Math.max(0, Math.min(1, (this.introTimer - delay) / duration));
+        
+        if (t <= 0) return { yOffset: 100, alpha: 0 };
+        if (t >= 1) return { yOffset: 0, alpha: 1 };
+
+        // Overshoot ease: p starts at 0, goes to ~1.2, then settles to 1
+        const p = t;
+        const overshoot = 1.70158;
+        const f = 1 + (overshoot + 1) * Math.pow(p - 1, 3) + overshoot * Math.pow(p - 1, 2);
+        
+        return {
+            yOffset: (1 - f) * 100,
+            alpha: Math.min(1, t * 3)
+        };
+    }
+
     render(timestamp) {
         const { ctx, canvas, config } = this.manager;
         ctx.fillStyle = '#000';
@@ -487,6 +709,13 @@ export class TacticsScene extends BaseScene {
         this.startY = Math.floor((canvas.height - mapPixelHeight) / 2);
 
         const drawCalls = [];
+
+        // Determine which tiles are currently being "previewed" for damage
+        const affectedTiles = new Map();
+        if (this.selectedUnit && this.selectedAttack && this.hoveredCell && this.attackTiles.has(`${this.hoveredCell.r},${this.hoveredCell.q}`)) {
+            const tiles = this.getAffectedTiles(this.selectedUnit, this.selectedAttack, this.hoveredCell.r, this.hoveredCell.q);
+            tiles.forEach(t => affectedTiles.set(`${t.r},${t.q}`, true));
+        }
 
         // 1. Collect hexes
         for (let r = 0; r < config.mapHeight; r++) {
@@ -502,7 +731,8 @@ export class TacticsScene extends BaseScene {
                     terrain: cell.terrain,
                     elevation: cell.elevation || 0,
                     isReachable: this.reachableTiles.has(`${r},${q}`),
-                    isAttack: this.attackTiles.has(`${r},${q}`),
+                    isAttackRange: this.attackTiles.has(`${r},${q}`),
+                    isAffected: affectedTiles.has(`${r},${q}`),
                     isHovered: this.hoveredCell === cell
                 });
             }
@@ -514,6 +744,7 @@ export class TacticsScene extends BaseScene {
             drawCalls.push({
                 type: 'unit',
                 r: u.currentSortR,
+                q: u.q,
                 priority: 1,
                 unit: u,
                 x: pos.x, // not actually used for moving units but good for consistency
@@ -537,23 +768,33 @@ export class TacticsScene extends BaseScene {
         });
 
         for (const call of drawCalls) {
+            const effect = this.getIntroEffect(Math.floor(call.r), call.q || 0);
+            if (effect.alpha <= 0) continue;
+            
+            ctx.save();
+            ctx.globalAlpha = effect.alpha;
+
             if (call.type === 'hex') {
-                const surfaceY = call.y - call.elevation;
+                const surfaceY = call.y - call.elevation + effect.yOffset;
                 this.drawTile(call.terrain, call.x, surfaceY, call.elevation);
+                
                 if (call.isReachable) {
                     this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 215, 0, 0.3)');
                 }
-                if (call.isAttack && call.isHovered) {
+                
+                if (call.isAffected) {
+                    // Impact preview (Red)
                     this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 0, 0, 0.5)');
-                } else if (call.isAttack) {
-                    this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 0, 0, 0.3)');
+                } else if (call.isAttackRange) {
+                    // Possible targets (Subtle)
+                    this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 0, 0, 0.15)');
                 } else if (call.isHovered) {
                     this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 255, 255, 0.2)');
                 }
             } else {
                 const u = call.unit;
                 const cell = this.tacticsMap.getCell(u.r, u.q);
-                let surfaceY = u.visualY; 
+                let surfaceY = u.visualY + effect.yOffset; 
                 
                 let drawOptions = { flip: u.flip };
                 
@@ -586,29 +827,57 @@ export class TacticsScene extends BaseScene {
                     this.drawHpBar(ctx, u, u.visualX, surfaceY);
                 }
             }
+            ctx.restore();
         }
 
         this.drawUI();
 
         // 4. Final Pass: Draw UX elements (like push arrows) above everything
-        this.units.forEach(u => {
-            if (u.faction === 'enemy' && u.intent && u.intent.type === 'attack') {
-                const attack = ATTACKS[u.intent.attackKey];
-                if (attack && attack.push) {
-                    const targetCell = this.tacticsMap.getNeighborInDirection(u.r, u.q, u.intent.dirIndex);
-                    if (targetCell) {
-                        this.drawPushArrow(ctx, targetCell.r, targetCell.q, u.intent.dirIndex);
+        if (!this.isIntroAnimating) {
+            this.units.forEach(u => {
+                if (u.hp > 0 && u.faction === 'enemy' && u.intent && u.intent.type === 'attack') {
+                    const attack = ATTACKS[u.intent.attackKey];
+                    if (attack && attack.push) {
+                        const targetCell = this.tacticsMap.getNeighborInDirection(u.r, u.q, u.intent.dirIndex);
+                        if (targetCell) {
+                            this.drawPushArrow(ctx, targetCell.r, targetCell.q, u.intent.dirIndex);
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
 
         if (this.selectedAttack && this.hoveredCell && this.attackTiles.has(`${this.hoveredCell.r},${this.hoveredCell.q}`)) {
             const attack = ATTACKS[this.selectedAttack];
             if (attack && attack.push && this.selectedUnit) {
-                const dirIndex = this.tacticsMap.getDirectionIndex(this.selectedUnit.r, this.selectedUnit.q, this.hoveredCell.r, this.hoveredCell.q);
-                if (dirIndex !== -1) {
-                    this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
+                if (this.selectedAttack === 'double_blades') {
+                    // Double Blades: Show both push arrows
+                    const dirIndex = this.tacticsMap.getDirectionIndex(this.selectedUnit.r, this.selectedUnit.q, this.hoveredCell.r, this.hoveredCell.q);
+                    if (dirIndex !== -1) {
+                        this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
+                        const oppositeDir = (dirIndex + 3) % 6;
+                        const backCell = this.tacticsMap.getNeighborInDirection(this.selectedUnit.r, this.selectedUnit.q, oppositeDir);
+                        if (backCell) {
+                            this.drawPushArrow(ctx, backCell.r, backCell.q, oppositeDir);
+                        }
+                    }
+                } else if (this.selectedAttack === 'serpent_spear') {
+                    // Serpent Spear: Push the further target
+                    const dirIndex = this.tacticsMap.getDirectionIndex(this.selectedUnit.r, this.selectedUnit.q, this.hoveredCell.r, this.hoveredCell.q);
+                    if (dirIndex !== -1) {
+                        const cell1 = this.tacticsMap.getNeighborInDirection(this.selectedUnit.r, this.selectedUnit.q, dirIndex);
+                        const cell2 = cell1 ? this.tacticsMap.getNeighborInDirection(cell1.r, cell1.q, dirIndex) : null;
+                        
+                        // If user hovers either cell in the line, show the push on the appropriate one
+                        // Actually the spear always pushes the "further" target in its line of fire.
+                        // But for simplicity in UX, we show the arrow on the cell actually hovered if it's in the range.
+                        this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
+                    }
+                } else {
+                    const dirIndex = this.tacticsMap.getDirectionIndex(this.selectedUnit.r, this.selectedUnit.q, this.hoveredCell.r, this.hoveredCell.q);
+                    if (dirIndex !== -1) {
+                        this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
+                    }
                 }
             }
         }
@@ -717,20 +986,36 @@ export class TacticsScene extends BaseScene {
         
         const extraDepth = config.baseDepth + elevation;
         const dx = Math.floor(x - 18);
-        const dy = Math.floor(y - 18);
         
+        // Handle taller tiles (like houses)
+        // Standard hexes are 36x36. Taller hexes are 36x72.
+        // We always align the bottom 36px with the hex footprint.
+        const isTall = img.height > 36;
+        const dy = Math.floor(y - 18) - (isTall ? 36 : 0);
+        const sourceHeight = img.height;
+        const displayHeight = sourceHeight;
+
         for (let ix = 0; ix < 36; ix++) {
             let edgeY = null;
-            if (ix >= 7 && ix <= 17) edgeY = 25 + Math.floor((ix - 7) * (30 - 25) / 10);
-            else if (ix >= 18 && ix <= 28) edgeY = 30 + Math.floor((ix - 18) * (25 - 30) / 10);
+            // The hex footprint logic (bottom 36px)
+            const footprintStart = isTall ? 36 : 0;
+            const relIx = ix;
+            if (relIx >= 7 && relIx <= 17) edgeY = 25 + Math.floor((relIx - 7) * (30 - 25) / 10);
+            else if (relIx >= 18 && relIx <= 28) edgeY = 30 + Math.floor((relIx - 18) * (25 - 30) / 10);
 
             if (edgeY !== null) {
-                ctx.drawImage(img, ix, 0, 1, edgeY, dx + ix, dy, 1, edgeY);
-                ctx.drawImage(img, ix, edgeY, 1, 1, dx + ix, dy + edgeY, 1, extraDepth);
-                const remainingH = 36 - edgeY;
-                ctx.drawImage(img, ix, edgeY, 1, remainingH, dx + ix, dy + edgeY + extraDepth, 1, remainingH);
+                // Top part (above the footprint edges)
+                const topPartHeight = footprintStart + edgeY;
+                ctx.drawImage(img, ix, 0, 1, topPartHeight, dx + ix, dy, 1, topPartHeight);
+                
+                // The vertical "side" edge
+                ctx.drawImage(img, ix, topPartHeight, 1, 1, dx + ix, dy + topPartHeight, 1, extraDepth);
+                
+                // The bottom part of the hex "lip"
+                const bottomPartHeight = sourceHeight - topPartHeight;
+                ctx.drawImage(img, ix, topPartHeight, 1, bottomPartHeight, dx + ix, dy + topPartHeight + extraDepth, 1, bottomPartHeight);
             } else {
-                ctx.drawImage(img, ix, 0, 1, 36, dx + ix, dy, 1, 36);
+                ctx.drawImage(img, ix, 0, 1, sourceHeight, dx + ix, dy, 1, sourceHeight);
             }
         }
     }
@@ -738,6 +1023,15 @@ export class TacticsScene extends BaseScene {
     drawUI() {
         const { ctx, canvas } = this.manager;
         
+        // During intro, UI is mostly hidden or faded
+        let uiAlpha = 1;
+        if (this.isIntroAnimating) {
+            uiAlpha = Math.max(0, (this.introTimer - 800) / 400);
+            if (uiAlpha <= 0) return;
+            ctx.save();
+            ctx.globalAlpha = uiAlpha;
+        }
+
         // Draw damage numbers
         this.damageNumbers.forEach(dn => {
             const alpha = Math.min(1, dn.timer / 300);
@@ -778,7 +1072,7 @@ export class TacticsScene extends BaseScene {
         }
 
         // Selected Unit Info & Attacks
-        if (this.selectedUnit && this.turn === 'player' && !this.isProcessingTurn) {
+        if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.turn === 'player' && !this.isProcessingTurn) {
             this.drawUnitAbilityUI(ctx, canvas, this.selectedUnit);
         }
 
@@ -788,6 +1082,10 @@ export class TacticsScene extends BaseScene {
                 name: this.activeDialogue.unit.name,
                 text: this.activeDialogue.unit.dialogue
             });
+        }
+
+        if (this.isIntroAnimating) {
+            ctx.restore();
         }
     }
 
@@ -828,13 +1126,36 @@ export class TacticsScene extends BaseScene {
         });
     }
 
-    handleInput(e) {
-        if (this.isProcessingTurn) return;
+    selectAttack(attackKey) {
+        if (!this.selectedUnit || this.selectedUnit.faction !== 'player' || this.selectedUnit.hasAttacked) return;
+        
+        this.selectedAttack = attackKey;
+        // Don't clear reachableTiles here, let the input handler manage it
+        
+        // Find valid attack targets based on range
+        this.attackTiles = new Map();
+        const range = ATTACKS[this.selectedAttack].range || 1;
+        
+        if (range === 1) {
+            const neighbors = this.tacticsMap.getNeighbors(this.selectedUnit.r, this.selectedUnit.q);
+            neighbors.forEach(n => this.attackTiles.set(`${n.r},${n.q}`, true));
+        } else if (range === 2) {
+            // Find all hexes within distance 2
+            for (let r = 0; r < this.manager.config.mapHeight; r++) {
+                for (let q = 0; q < this.manager.config.mapWidth; q++) {
+                    const dist = this.tacticsMap.getDistance(this.selectedUnit.r, this.selectedUnit.q, r, q);
+                    if (dist > 0 && dist <= 2) {
+                        this.attackTiles.set(`${r},${q}`, true);
+                    }
+                }
+            }
+        }
+    }
 
-        const { canvas, config } = this.manager;
-        const rect = canvas.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / config.scale;
-        const y = (e.clientY - rect.top) / config.scale;
+    handleInput(e) {
+        if (this.isProcessingTurn || this.isIntroAnimating) return;
+
+        const { x, y } = this.getMousePos(e);
         
         // Check End Turn button
         if (this.endTurnRect && x >= this.endTurnRect.x && x <= this.endTurnRect.x + this.endTurnRect.w &&
@@ -851,15 +1172,10 @@ export class TacticsScene extends BaseScene {
         }
 
         // Check Attack buttons
-        if (this.attackRects && this.selectedUnit) {
+        if (this.attackRects && this.selectedUnit && this.selectedUnit.faction === 'player') {
             const btn = this.attackRects.find(r => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h);
             if (btn && !this.selectedUnit.hasAttacked) {
-                this.selectedAttack = btn.key;
-                this.reachableTiles.clear();
-                // Find valid attack targets
-                this.attackTiles = new Map();
-                const neighbors = this.tacticsMap.getNeighbors(this.selectedUnit.r, this.selectedUnit.q);
-                neighbors.forEach(n => this.attackTiles.set(`${n.r},${n.q}`, true));
+                this.selectAttack(btn.key);
                 return;
             }
         }
@@ -867,8 +1183,35 @@ export class TacticsScene extends BaseScene {
         const clickedCell = this.getCellAt(x, y);
 
         if (clickedCell) {
+            // ACTION: MOVE UNIT (Priority over attack so you can move to a tile you could also attack)
+            if (this.selectedUnit && !this.selectedUnit.hasMoved && this.reachableTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
+                const path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, clickedCell.r, clickedCell.q, this.selectedUnit.moveRange);
+                if (path) {
+                    const oldCell = this.tacticsMap.getCell(this.selectedUnit.r, this.selectedUnit.q);
+                    if (oldCell) oldCell.unit = null;
+                    
+                    this.selectedUnit.startPath(path);
+                    clickedCell.unit = this.selectedUnit;
+                    this.selectedUnit.hasMoved = true;
+                    
+                    // After path starts, auto-select attack for once movement finishes
+                    const checkArrival = () => {
+                        if (!this.selectedUnit.isMoving) {
+                            if (this.selectedUnit.attacks.length > 0) {
+                                this.selectAttack(this.selectedUnit.attacks[0]);
+                            }
+                        } else {
+                            setTimeout(checkArrival, 100);
+                        }
+                    };
+                    checkArrival();
+                }
+                this.reachableTiles.clear();
+                return;
+            }
+
             // ACTION: PERFORM ATTACK
-            if (this.selectedUnit && this.selectedAttack && this.attackTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
+            if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack && this.attackTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
                 this.executeAttack(this.selectedUnit, this.selectedAttack, clickedCell.r, clickedCell.q, () => {
                     this.selectedUnit.hasAttacked = true;
                     this.selectedUnit.hasActed = true;
@@ -879,32 +1222,22 @@ export class TacticsScene extends BaseScene {
                 return;
             }
 
-            // ACTION: MOVE UNIT
-            if (this.selectedUnit && !this.selectedUnit.hasMoved && this.reachableTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
-                const path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, clickedCell.r, clickedCell.q, this.selectedUnit.moveRange);
-                if (path) {
-                    const oldCell = this.tacticsMap.getCell(this.selectedUnit.r, this.selectedUnit.q);
-                    if (oldCell) oldCell.unit = null;
-                    
-                    this.selectedUnit.startPath(path);
-                    clickedCell.unit = this.selectedUnit;
-                    this.selectedUnit.hasMoved = true;
-                }
-                this.reachableTiles.clear();
-                return;
-            }
-
             // ACTION: SELECT UNIT
             if (clickedCell.unit) {
                 this.selectedUnit = clickedCell.unit;
                 this.selectedAttack = null;
                 this.attackTiles.clear();
+                this.attackRects = []; // Clear buttons for new selection
 
                 if (this.selectedUnit.faction === 'player' && !this.selectedUnit.hasActed) {
                     if (!this.selectedUnit.hasMoved) {
                         this.reachableTiles = this.tacticsMap.getReachableData(clickedCell.r, clickedCell.q, this.selectedUnit.moveRange);
                     } else {
                         this.reachableTiles.clear();
+                        // Default select first attack ONLY after moving
+                        if (this.selectedUnit.attacks.length > 0) {
+                            this.selectAttack(this.selectedUnit.attacks[0]);
+                        }
                     }
                 } else {
                     this.reachableTiles.clear();
@@ -919,6 +1252,7 @@ export class TacticsScene extends BaseScene {
                 this.selectedAttack = null;
                 this.reachableTiles.clear();
                 this.attackTiles.clear();
+                this.attackRects = [];
                 this.activeDialogue = null;
             }
         }

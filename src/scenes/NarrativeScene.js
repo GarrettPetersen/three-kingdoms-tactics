@@ -136,9 +136,8 @@ export class NarrativeScene extends BaseScene {
         this.lastTime = timestamp;
 
         // Mouse tracking for hover effects in choices
-        const rect = this.manager.canvas.getBoundingClientRect();
-        this.lastMouseX = (this.manager.lastPointerX - rect.left) / this.manager.config.scale;
-        this.lastMouseY = (this.manager.lastPointerY - rect.top) / this.manager.config.scale;
+        this.lastMouseX = this.manager.logicalMouseX;
+        this.lastMouseY = this.manager.logicalMouseY;
 
         if (this.timer > 0) {
             this.timer -= dt;
@@ -202,6 +201,12 @@ export class NarrativeScene extends BaseScene {
             if (dist > 1) {
                 allMoved = false;
                 const moveDist = a.speed * (dt / 16);
+                
+                // Auto-flip based on movement direction
+                // Sprites face RIGHT by default
+                if (dx > 0.1) a.flip = false; // Moving Right -> Face Right (default)
+                if (dx < -0.1) a.flip = true;  // Moving Left -> Flip to face Left
+                
                 a.x += (dx / dist) * moveDist;
                 a.y += (dy / dist) * moveDist;
             } else {
@@ -238,7 +243,7 @@ export class NarrativeScene extends BaseScene {
         }
 
         let bgX = 0;
-        let bgY = 10;
+        let bgY = 0;
         let bgWidth = 0;
         let bgHeight = 0;
         
@@ -248,6 +253,7 @@ export class NarrativeScene extends BaseScene {
                 bgWidth = bg.width;
                 bgHeight = bg.height;
                 bgX = Math.floor((canvas.width - bgWidth) / 2);
+                bgY = Math.floor((canvas.height - bgHeight) / 2);
                 ctx.drawImage(bg, bgX, bgY, bgWidth, bgHeight);
             }
         }
@@ -374,9 +380,7 @@ export class NarrativeScene extends BaseScene {
         const step = this.script[this.currentStep];
         if (this.isWaiting) return;
 
-        const rect = this.manager.canvas.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / this.manager.config.scale;
-        const y = (e.clientY - rect.top) / this.manager.config.scale;
+        const { x, y } = this.getMousePos(e);
 
         if (step && step.type === 'choice' && step._panelMetadata) {
             const m = step._panelMetadata;

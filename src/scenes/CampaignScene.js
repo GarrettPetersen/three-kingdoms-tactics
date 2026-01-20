@@ -163,12 +163,10 @@ export class CampaignScene extends BaseScene {
     }
 
     handleInput(e) {
-        const rect = this.manager.canvas.getBoundingClientRect();
-        const mouseX = Math.floor((e.clientX - rect.left) / this.manager.config.scale);
-        const mouseY = Math.floor((e.clientY - rect.top) / this.manager.config.scale);
+        const { x: mouseX, y: mouseY } = this.getMousePos(e);
 
-        const mx = Math.floor((this.manager.canvas.width - 256) / 2);
-        const my = Math.floor((this.manager.canvas.height - 256) / 2);
+        const mx = 0; // Fixed 256x256 resolution makes map offset 0
+        const my = 0;
 
         // Advance dialogue if active
         if (this.interactionSelected === 'hero_reminder') {
@@ -270,31 +268,31 @@ export class CampaignScene extends BaseScene {
                     duration: 3000
                 },
                 { bg: 'army_camp', type: 'command', action: 'clearActors' },
-                { type: 'command', action: 'addActor', id: 'zhoujing', imgKey: 'zhoujing', x: 128, y: 180 },
-                { type: 'command', action: 'addActor', id: 'guard1', imgKey: 'soldier', x: 80, y: 170 },
-                { type: 'command', action: 'addActor', id: 'guard2', imgKey: 'soldier', x: 176, y: 170, flip: true },
+                { type: 'command', action: 'addActor', id: 'zhoujing', imgKey: 'zhoujing', x: 180, y: 150, flip: true }, // Face heroes
+                { type: 'command', action: 'addActor', id: 'guard1', imgKey: 'soldier', x: 160, y: 140, flip: true },
+                { type: 'command', action: 'addActor', id: 'guard2', imgKey: 'soldier', x: 200, y: 140, flip: true },
                 
                 // Background NPCs for a busier camp
-                { type: 'command', action: 'addActor', id: 'soldier3', imgKey: 'soldier', x: 20, y: 180, speed: 0.2 },
-                { type: 'command', action: 'addActor', id: 'soldier4', imgKey: 'soldier', x: 230, y: 175, flip: true, speed: 0.1 },
-                { type: 'command', action: 'addActor', id: 'merchant', imgKey: 'merchant', x: 30, y: 190, speed: 0.3 },
-                { type: 'command', action: 'addActor', id: 'blacksmith', imgKey: 'blacksmith', x: 230, y: 210, flip: true, speed: 0.2 },
-                { type: 'command', action: 'addActor', id: 'volunteer1', imgKey: 'soldier', x: 40, y: 220, speed: 0.5 },
-                { type: 'command', action: 'addActor', id: 'volunteer2', imgKey: 'soldier', x: 210, y: 230, flip: true, speed: 0.4 },
+                { type: 'command', action: 'addActor', id: 'soldier3', imgKey: 'soldier', x: 20, y: 150, speed: 0.2 },
+                { type: 'command', action: 'addActor', id: 'soldier4', imgKey: 'soldier', x: 230, y: 145, flip: true, speed: 0.1 },
+                { type: 'command', action: 'addActor', id: 'merchant', imgKey: 'merchant', x: 30, y: 160, speed: 0.3 },
+                { type: 'command', action: 'addActor', id: 'blacksmith', imgKey: 'blacksmith', x: 230, y: 180, flip: true, speed: 0.2 },
+                { type: 'command', action: 'addActor', id: 'volunteer1', imgKey: 'soldier', x: 40, y: 190, speed: 0.5 },
+                { type: 'command', action: 'addActor', id: 'volunteer2', imgKey: 'soldier', x: 210, y: 200, flip: true, speed: 0.4 },
                 
-                { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 80, y: 280, speed: 1 },
-                { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 40, y: 290, speed: 1 },
-                { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 120, y: 295, flip: true, speed: 1 },
+                { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: -40, y: 240, speed: 1 },
+                { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: -80, y: 250, speed: 1 },
+                { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: -120, y: 255, speed: 1 },
                 
                 { type: 'command', action: 'fade', target: 0, speed: 0.001 },
                 
-                { type: 'command', action: 'move', id: 'liubei', x: 128, y: 220, wait: false },
-                { type: 'command', action: 'move', id: 'guanyu', x: 90, y: 220, wait: false },
-                { type: 'command', action: 'move', id: 'zhangfei', x: 166, y: 220, wait: false },
-                { type: 'command', action: 'move', id: 'soldier3', x: 10, y: 185, wait: false },
-                { type: 'command', action: 'move', id: 'soldier4', x: 245, y: 170, wait: false },
-                { type: 'command', action: 'move', id: 'merchant', x: 20, y: 195, wait: false },
-                { type: 'command', action: 'move', id: 'blacksmith', x: 240, y: 205 },
+                { type: 'command', action: 'move', id: 'liubei', x: 100, y: 190, wait: false },
+                { type: 'command', action: 'move', id: 'guanyu', x: 65, y: 190, wait: false },
+                { type: 'command', action: 'move', id: 'zhangfei', x: 135, y: 190, wait: false },
+                { type: 'command', action: 'move', id: 'soldier3', x: 10, y: 155, wait: false },
+                { type: 'command', action: 'move', id: 'soldier4', x: 245, y: 140, wait: false },
+                { type: 'command', action: 'move', id: 'merchant', x: 20, y: 165, wait: false },
+                { type: 'command', action: 'move', id: 'blacksmith', x: 240, y: 175 },
 
                 {
                     type: 'dialogue',
@@ -384,13 +382,13 @@ export class CampaignScene extends BaseScene {
                         subtext: "Year 184, Zhuo County"
                     },
                     { type: 'command', action: 'fade', target: 0, speed: 0.002 },
-                    { type: 'command', action: 'addActor', id: 'farmer', imgKey: 'farmer', x: 200, y: 230, speed: 0.5 },
-                    { type: 'command', action: 'addActor', id: 'farmer2', imgKey: 'farmer2', x: 50, y: 215, flip: true, speed: 0.4 },
-                    { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: -50, y: 240, speed: 1 },
-                    { bg: 'noticeboard', type: 'command', action: 'move', id: 'liubei', x: 160, y: 240 },
+                    { type: 'command', action: 'addActor', id: 'farmer', imgKey: 'farmer', x: 200, y: 200, speed: 0.5 },
+                    { type: 'command', action: 'addActor', id: 'farmer2', imgKey: 'farmer2', x: 50, y: 185, flip: true, speed: 0.4 },
+                    { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: -50, y: 210, speed: 1 },
+                    { bg: 'noticeboard', type: 'command', action: 'move', id: 'liubei', x: 160, y: 210 },
                     { type: 'command', action: 'flip', id: 'liubei', flip: true },
-                    { type: 'command', action: 'move', id: 'farmer', x: 220, y: 225 },
-                    { type: 'command', action: 'move', id: 'farmer2', x: 20, y: 210 },
+                    { type: 'command', action: 'move', id: 'farmer', x: 220, y: 195 },
+                    { type: 'command', action: 'move', id: 'farmer2', x: 20, y: 180 },
                     
                     {
                         type: 'dialogue',
@@ -708,11 +706,11 @@ export class CampaignScene extends BaseScene {
                         subtext: "The Next Morning",
                         duration: 3000
                     },
-                    { bg: 'peach_garden', type: 'command', action: 'clearActors' },
-                    { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 128, y: 210 },
-                    { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 80, y: 215 },
-                    { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 176, y: 215, flip: true },
-                    
+                { bg: 'peach_garden', type: 'command', action: 'clearActors' },
+                { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 128, y: 160 },
+                { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 80, y: 165 },
+                { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 176, y: 165, flip: true },
+
                     { type: 'command', action: 'animate', id: 'liubei', animation: 'sitting' },
                     { type: 'command', action: 'animate', id: 'guanyu', animation: 'sitting' },
                     { type: 'command', action: 'animate', id: 'zhangfei', animation: 'sitting' },
@@ -722,6 +720,7 @@ export class CampaignScene extends BaseScene {
                     {
                         type: 'dialogue',
                         name: 'Narrator',
+                        position: 'top',
                         portraitKey: 'peach_garden',
                         portraitRect: { x: 50, y: 50, w: 100, h: 80 },
                         text: "In the peach garden, among the blooming flowers, a black ox and a white horse are sacrificed."
@@ -729,30 +728,35 @@ export class CampaignScene extends BaseScene {
                     {
                         type: 'dialogue',
                         portraitKey: 'liubei',
+                        position: 'top',
                         name: 'Liu Bei',
                         text: "We three, Liu Bei, Guan Yu, and Zhang Fei, though of different lineages, swear brotherhood and promise mutual help to one end."
                     },
                     {
                         type: 'dialogue',
                         portraitKey: 'guanyu',
+                        position: 'top',
                         name: 'Guan Yu',
                         text: "We will rescue each other in difficulty; we will aid each other in danger."
                     },
                     {
                         type: 'dialogue',
                         portraitKey: 'zhangfei',
+                        position: 'top',
                         name: 'Zhang Fei',
                         text: "We swear to serve the state and save the people."
                     },
                     {
                         type: 'dialogue',
                         portraitKey: 'liubei',
+                        position: 'top',
                         name: 'Liu Bei',
                         text: "We ask not the same day of birth, but we seek to die together on the same day."
                     },
                     {
                         type: 'dialogue',
                         portraitKey: 'liubei',
+                        position: 'top',
                         name: 'Liu Bei',
                         text: "May the Heaven and the Earth read our hearts. If we turn aside from righteousness, may the Heaven and the Human smite us!"
                     },
@@ -778,9 +782,9 @@ export class CampaignScene extends BaseScene {
 
                     // --- RECRUITING AT THE NOTICEBOARD ---
                     { bg: 'noticeboard', type: 'command', action: 'clearActors' },
-                    { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 100, y: 240 },
-                    { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 60, y: 240 },
-                    { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 140, y: 240 },
+                    { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 100, y: 210 },
+                    { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 60, y: 210 },
+                    { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 140, y: 210 },
                     { type: 'command', action: 'fade', target: 0, speed: 0.001 },
 
                     {
@@ -798,10 +802,10 @@ export class CampaignScene extends BaseScene {
                         text: "We offer no riches, only the chance to serve with honor under the banner of the Imperial Uncle, Liu Bei."
                     },
 
-                    { type: 'command', action: 'addActor', id: 'volunteer1', imgKey: 'soldier', x: -50, y: 240, speed: 0.8 },
-                    { type: 'command', action: 'addActor', id: 'volunteer2', imgKey: 'soldier', x: 300, y: 230, flip: true, speed: 0.7 },
-                    { type: 'command', action: 'move', id: 'volunteer1', x: 50, y: 250, wait: false },
-                    { type: 'command', action: 'move', id: 'volunteer2', x: 200, y: 245 },
+                    { type: 'command', action: 'addActor', id: 'volunteer1', imgKey: 'soldier', x: -50, y: 210, speed: 0.8 },
+                    { type: 'command', action: 'addActor', id: 'volunteer2', imgKey: 'soldier', x: 300, y: 200, flip: true, speed: 0.7 },
+                    { type: 'command', action: 'move', id: 'volunteer1', x: 50, y: 220, wait: false },
+                    { type: 'command', action: 'move', id: 'volunteer2', x: 200, y: 215 },
 
                     {
                         type: 'dialogue',

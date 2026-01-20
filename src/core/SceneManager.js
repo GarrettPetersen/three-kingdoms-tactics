@@ -7,10 +7,18 @@ export class SceneManager {
         this.scenes = {};
         this.lastPointerX = 0;
         this.lastPointerY = 0;
+        this.logicalMouseX = 0;
+        this.logicalMouseY = 0;
 
         window.addEventListener('pointermove', (e) => {
             this.lastPointerX = e.clientX;
             this.lastPointerY = e.clientY;
+            
+            const rect = this.canvas.getBoundingClientRect();
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
+            this.logicalMouseX = (e.clientX - rect.left) * scaleX;
+            this.logicalMouseY = (e.clientY - rect.top) * scaleY;
         });
     }
 

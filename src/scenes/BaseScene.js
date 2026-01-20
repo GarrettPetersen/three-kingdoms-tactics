@@ -12,6 +12,17 @@ export class BaseScene {
     render(timestamp) {}
     handleInput(e) {}
 
+    getMousePos(e) {
+        const { canvas } = this.manager;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        return {
+            x: (e.clientX - rect.left) * scaleX,
+            y: (e.clientY - rect.top) * scaleY
+        };
+    }
+
     drawCharacter(ctx, img, action, frame, x, y, options = {}) {
         if (!img) return;
         const { flip = false, sinkOffset = 0, isSubmerged = false } = options;

@@ -12,20 +12,36 @@ export const ANIMATIONS = {
 };
 
 export const ATTACKS = {
-    stab: {
-        name: 'Stab',
+    serpent_spear: {
+        name: 'Serpent Spear',
+        damage: 1,
+        range: 2,
+        push: true,
+        animation: 'attack_2',
+        description: 'Strikes in a line. Pushes the further target.'
+    },
+    green_dragon_slash: {
+        name: 'Green Dragon',
+        damage: 1,
+        range: 2,
+        animation: 'attack_1',
+        description: 'A massive sweeping arc.'
+    },
+    double_blades: {
+        name: 'Double Blades',
         damage: 1,
         range: 1,
+        push: true,
         animation: 'attack_1',
-        description: 'A basic forward strike.'
+        description: 'Strikes front and back, pushing both.'
     },
-    slash: {
-        name: 'Slash',
+    bash: {
+        name: 'Bash',
         damage: 1,
         range: 1,
         push: 1,
-        animation: 'attack_2',
-        description: 'Strikes and pushes the target back.'
+        animation: 'attack_1',
+        description: 'A heavy strike that knocks the target back.'
     }
 };
 

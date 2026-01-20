@@ -1,0 +1,4 @@
+assets/all_sound_effects
+node_modules/
+.DS_Store
+dist/

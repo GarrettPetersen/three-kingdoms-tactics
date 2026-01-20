@@ -68,9 +68,7 @@ export class TitleScene extends BaseScene {
     }
 
     handleInput(e) {
-        const rect = this.manager.canvas.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / this.manager.config.scale;
-        const y = (e.clientY - rect.top) / this.manager.config.scale;
+        const { x, y } = this.getMousePos(e);
         
         if (this.menuHitArea && x >= this.menuHitArea.x && x <= this.menuHitArea.x + this.menuHitArea.w &&
             y >= this.menuHitArea.y && y <= this.menuHitArea.y + this.menuHitArea.h) {

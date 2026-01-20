@@ -1,4 +1,5 @@
 import { ANIMATIONS, ATTACKS } from '../core/Constants.js';
+import { assets } from '../core/AssetLoader.js';
 
 export class Unit {
     constructor(id, config = {}) {
@@ -45,9 +46,10 @@ export class Unit {
         this.pushData = null; // { startX, startY, targetX, targetY, progress, isBounce }
         this.isDrowning = false;
         this.drownTimer = 0;
+        this.stepTimer = 0;
     }
 
-    update(dt, getPixelPos, shouldAnimate = true) {
+    update(dt, getPixelPos, shouldAnimate = true, terrainType = 'grass_01') {
         if (this.isDrowning) {
             this.drownTimer += dt;
             this.action = 'hit';
@@ -136,6 +138,13 @@ export class Unit {
             this.action = 'walk';
             this.moveProgress += dt * 0.005; 
 
+            // Trigger footstep sounds
+            this.stepTimer -= dt;
+            if (this.stepTimer <= 0) {
+                this.stepTimer = 350; // Every 350ms during walk
+                this.playStepSound(terrainType);
+            }
+
             const startNode = this.path[this.pathIndex];
             const endNode = this.path[this.pathIndex + 1];
 
@@ -181,6 +190,7 @@ export class Unit {
         this.pathIndex = 0;
         this.moveProgress = 0;
         this.isMoving = true;
+        this.stepTimer = 0; // Play first step immediately
     }
 
     startPush(startX, startY, targetX, targetY, isBounce = false) {
@@ -195,6 +205,16 @@ export class Unit {
         const dist = Math.sqrt(dx*dx + dy*dy) || 1;
         this.shakeDir = { x: dx / dist, y: dy / dist };
         this.shakeTimer = 200;
+    }
+
+    playStepSound(terrainType) {
+        let soundKey = 'step_generic';
+        if (terrainType.includes('grass')) soundKey = 'step_grass';
+        else if (terrainType.includes('water')) soundKey = 'step_water';
+        else if (terrainType.includes('sand') || terrainType.includes('mud')) soundKey = 'step_sand';
+        else if (terrainType.includes('mountain') || terrainType.includes('house') || terrainType.includes('town')) soundKey = 'step_stone';
+        
+        assets.playSound(soundKey, 0.3); // Play at 30% volume
     }
 
     setPosition(r, q) {

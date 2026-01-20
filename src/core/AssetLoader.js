@@ -1,6 +1,7 @@
 export class AssetLoader {
     constructor() {
         this.images = {};
+        this.sounds = {};
         this.fontsLoaded = false;
     }
 
@@ -19,6 +20,21 @@ export class AssetLoader {
         return Promise.all(promises);
     }
 
+    async loadSounds(assets) {
+        const promises = Object.entries(assets).map(([key, src]) => {
+            return new Promise((resolve, reject) => {
+                const audio = new Audio();
+                audio.oncanplaythrough = () => {
+                    this.sounds[key] = audio;
+                    resolve(audio);
+                };
+                audio.onerror = reject;
+                audio.src = src;
+            });
+        });
+        return Promise.all(promises);
+    }
+
     async loadFonts() {
         await document.fonts.ready;
         this.fontsLoaded = true;
@@ -26,6 +42,20 @@ export class AssetLoader {
 
     getImage(key) {
         return this.images[key];
+    }
+
+    getSound(key) {
+        return this.sounds[key];
+    }
+
+    playSound(key, volume = 1.0) {
+        const sound = this.getSound(key);
+        if (sound) {
+            // Clone the node so we can play the same sound multiple times simultaneously
+            const clone = sound.cloneNode();
+            clone.volume = volume;
+            clone.play().catch(e => console.log("Sound play prevented:", e));
+        }
     }
 }
 
