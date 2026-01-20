@@ -142,50 +142,262 @@ export class TacticsMap {
     generate(params = {}) {
         const { 
             seed = Math.random(), 
+            biome = 'central', // 'central', 'northern', 'northern_snowy', 'southern'
+            layout = 'plain',  // 'plain', 'mountain_pass', 'lake_edge', 'river', 'foothills', 'city_gate'
             forestDensity = 0.15, 
             mountainDensity = 0.1,
             riverDensity = 0.05,
             houseDensity = 0.03
         } = params;
 
-        // Simple procedural generation
+        this.biome = biome;
+        this.params = params;
+
+        let attempts = 0;
+        let success = false;
+
+        while (attempts < 5 && !success) {
+            this.initialTerrainPass(layout);
+            this.smoothElevation();
+            this.placeProps(forestDensity, houseDensity);
+            
+            // General connectivity check to ensure the map isn't totally segmented
+            success = this.checkGeneralConnectivity();
+            attempts++;
+        }
+    }
+
+    initialTerrainPass(layout) {
+        // Reset
         for (let r = 0; r < this.height; r++) {
             for (let q = 0; q < this.width; q++) {
                 const cell = this.grid[r][q];
-                const rand = Math.random();
+                cell.terrain = this.getDefaultGrass();
+                cell.level = 0;
+                cell.elevation = 0;
+                cell.impassable = false;
+            }
+        }
 
-                if (rand < mountainDensity) {
-                    cell.terrain = 'mountain_stone_01';
-                    cell.level = 2 + Math.floor(Math.random() * 2);
-                    cell.impassable = true; // Mountains are walls
-                } else if (rand < mountainDensity + forestDensity) {
-                    const variants = ['forest_01', 'forest_02', 'forest_03'];
-                    cell.terrain = variants[Math.floor(Math.random() * variants.length)];
-                    cell.level = 1;
-                } else if (rand < mountainDensity + forestDensity + riverDensity) {
-                    // Decide between shallow and deep water
-                    if (Math.random() < 0.4) {
-                        cell.terrain = 'water_shallow_01';
-                        cell.level = 0;
-                        cell.impassable = false;
+        if (layout === 'river') {
+            this.generateRiver();
+        } else if (layout === 'lake_edge') {
+            this.generateLake();
+        } else if (layout === 'mountain_pass') {
+            this.generateMountainPass();
+        } else if (layout === 'foothills') {
+            this.generateFoothills();
+        } else if (layout === 'city_gate') {
+            this.generateCityGate();
+        } else {
+            this.generatePlains();
+        }
+    }
+
+    generateCityGate() {
+        // Wall line across middle (vertical)
+        const wallQ = Math.floor(this.width / 2);
+        const gapStart = Math.floor(this.height / 2) - 1;
+        const gapSize = 3;
+
+        for (let r = 0; r < this.height; r++) {
+            for (let q = 0; q < this.width; q++) {
+                const cell = this.grid[r][q];
+                if (q === wallQ) {
+                    if (r < gapStart || r >= gapStart + gapSize) {
+                        cell.terrain = 'wall_01';
+                        cell.impassable = true;
                     } else {
-                        cell.terrain = 'water_deep_01';
-                        cell.level = 0;
+                        cell.terrain = 'mud_01'; // The road through the gate
+                    }
+                } else if (q > wallQ) {
+                    // Inside city: mud streets and houses
+                    cell.terrain = 'mud_01';
+                    if (Math.random() < 0.15 && (q !== wallQ + 1 || (r < gapStart || r >= gapStart + gapSize))) {
+                        cell.terrain = 'house_01';
                         cell.impassable = true;
                     }
-                } else if (rand < mountainDensity + forestDensity + riverDensity + houseDensity) {
-                    cell.terrain = 'house_01';
-                    cell.level = 0;
-                    cell.impassable = true;
                 } else {
-                    const grassVariants = ['grass_01', 'grass_02', 'grass_flowers'];
-                    cell.terrain = grassVariants[Math.floor(Math.random() * grassVariants.length)];
-                    cell.level = 0;
+                    // Outside: grass
+                    cell.terrain = this.getDefaultGrass();
                 }
-                
+            }
+        }
+    }
+
+    getDefaultGrass() {
+        const grassVariants = ['grass_01', 'grass_02', 'grass_flowers'];
+        if (this.biome === 'northern_snowy') return 'snow_01';
+        if (this.biome === 'southern') grassVariants.push('grass_03');
+        return grassVariants[Math.floor(Math.random() * grassVariants.length)];
+    }
+
+    generatePlains() {
+        // Mostly flat, small random elevation bumps
+        for (let i = 0; i < 5; i++) {
+            this.createElevationBlob(Math.floor(Math.random() * this.height), Math.floor(Math.random() * this.width), 1, 2);
+        }
+    }
+
+    generateFoothills() {
+        // Rolling hills
+        for (let i = 0; i < 8; i++) {
+            const r = Math.floor(Math.random() * this.height);
+            const q = Math.floor(Math.random() * this.width);
+            this.createElevationBlob(r, q, Math.floor(Math.random() * 2) + 1, 3);
+        }
+    }
+
+    generateMountainPass() {
+        // Mountains on top and bottom or left and right
+        const vertical = Math.random() > 0.5;
+        if (vertical) {
+            // Mountain ranges on left and right sides
+            for (let r = 0; r < this.height; r++) {
+                this.setMountain(r, 0);
+                this.setMountain(r, 1);
+                this.setMountain(r, this.width - 1);
+                this.setMountain(r, this.width - 2);
+                if (Math.random() < 0.5) this.setMountain(r, 2);
+                if (Math.random() < 0.5) this.setMountain(r, this.width - 3);
+            }
+        } else {
+            // Mountain ranges on top and bottom
+            for (let q = 0; q < this.width; q++) {
+                this.setMountain(0, q);
+                this.setMountain(1, q);
+                this.setMountain(this.height - 1, q);
+                this.setMountain(this.height - 2, q);
+                if (Math.random() < 0.5) this.setMountain(2, q);
+                if (Math.random() < 0.5) this.setMountain(this.height - 3, q);
+            }
+        }
+    }
+
+    generateRiver() {
+        // A winding river from one side to another
+        let r = Math.floor(Math.random() * this.height);
+        let q = 0;
+        while (q < this.width) {
+            this.setWater(r, q, true); // Deep
+            const neighbors = this.getNeighbors(r, q);
+            neighbors.forEach(n => { if (Math.random() < 0.4) this.setWater(n.r, n.q, false); }); // Shallow banks
+            
+            q++;
+            if (Math.random() < 0.3) r = Math.max(0, Math.min(this.height - 1, r + (Math.random() > 0.5 ? 1 : -1)));
+        }
+    }
+
+    generateLake() {
+        // Large body of water on one edge
+        const edge = Math.floor(Math.random() * 4); // 0: Top, 1: Right, 2: Bottom, 3: Left
+        for (let r = 0; r < this.height; r++) {
+            for (let q = 0; q < this.width; q++) {
+                let dist = 0;
+                if (edge === 0) dist = r;
+                if (edge === 1) dist = this.width - 1 - q;
+                if (edge === 2) dist = this.height - 1 - r;
+                if (edge === 3) dist = q;
+
+                if (dist < 3) {
+                    this.setWater(r, q, dist < 2);
+                }
+            }
+        }
+    }
+
+    setMountain(r, q) {
+        const cell = this.getCell(r, q);
+        if (!cell) return;
+        if (this.biome === 'northern_snowy' && Math.random() < 0.6) {
+            cell.terrain = Math.random() > 0.5 ? 'mountain_snowy_01' : 'mountain_snowy_02';
+        } else {
+            cell.terrain = 'mountain_stone_01';
+        }
+        cell.level = 2;
+        cell.impassable = true;
+    }
+
+    setWater(r, q, deep = true) {
+        const cell = this.getCell(r, q);
+        if (!cell) return;
+        cell.terrain = deep ? 'water_deep_01' : 'water_shallow_01';
+        cell.level = 0;
+        cell.impassable = deep;
+    }
+
+    createElevationBlob(centerR, centerQ, maxLevel, radius) {
+        for (let r = centerR - radius; r <= centerR + radius; r++) {
+            for (let q = centerQ - radius; q <= centerQ + radius; q++) {
+                const cell = this.getCell(r, q);
+                if (!cell) continue;
+                const dist = this.getDistance(centerR, centerQ, r, q);
+                if (dist <= radius) {
+                    const level = Math.max(cell.level, Math.floor(maxLevel * (1 - dist / radius)));
+                    cell.level = level;
+                }
+            }
+        }
+    }
+
+    smoothElevation() {
+        // Ensure no level diff > 1 between passable neighbors unless it's a cliff intended
+        for (let r = 0; r < this.height; r++) {
+            for (let q = 0; q < this.width; q++) {
+                const cell = this.grid[r][q];
                 cell.elevation = cell.level * 6;
             }
         }
+    }
+
+    placeProps(forestDensity, houseDensity) {
+        const biome = this.biome;
+        for (let r = 0; r < this.height; r++) {
+            for (let q = 0; q < this.width; q++) {
+                const cell = this.grid[r][q];
+                if (cell.impassable || cell.terrain.includes('water')) continue;
+
+                const rand = Math.random();
+                if (rand < houseDensity) {
+                    cell.terrain = 'house_01';
+                    cell.impassable = true;
+                } else if (rand < houseDensity + forestDensity) {
+                    let variants = ['forest_deciduous_01', 'forest_deciduous_02'];
+                    if (biome === 'northern') variants = ['pine_forest_01', 'forest_deciduous_01'];
+                    else if (biome === 'northern_snowy') variants = ['pine_forest_snow_01', 'pine_forest_01'];
+                    else if (biome === 'southern') variants = ['jungle_dense_01', 'jungle_dense_02', 'jungle_palm_01', 'jungle_palm_02'];
+                    
+                    cell.terrain = variants[Math.floor(Math.random() * variants.length)];
+                    // If elevation is 0, give it level 1 for some variety
+                    if (cell.level === 0) {
+                        cell.level = 1;
+                        cell.elevation = 6;
+                    }
+                }
+            }
+        }
+    }
+
+    checkGeneralConnectivity() {
+        // Find a passable tile to start
+        let start = null;
+        for (let r = 0; r < this.height && !start; r++) {
+            for (let q = 0; q < this.width && !start; q++) {
+                if (!this.grid[r][q].impassable) start = this.grid[r][q];
+            }
+        }
+        if (!start) return false;
+
+        const reachable = this.getReachableData(start.r, start.q, 999);
+        let passableCount = 0;
+        for (let r = 0; r < this.height; r++) {
+            for (let q = 0; q < this.width; q++) {
+                if (!this.grid[r][q].impassable) passableCount++;
+            }
+        }
+
+        // If more than 60% of passable tiles are connected, it's probably a good map
+        return reachable.size >= passableCount * 0.6;
     }
 
     // Dijkstra's for reachable tiles, returning a map of { "r,q": { cost, parent } }
@@ -198,7 +410,7 @@ export class TacticsMap {
         data.set(`${startR},${startQ}`, { cost: 0, parent: null });
 
         while (queue.length > 0) {
-            // Sort by cost for Dijkstra (though uniform cost here makes it BFS-like)
+            // Sort by cost for Dijkstra
             queue.sort((a, b) => a.cost - b.cost);
             const current = queue.shift();
 
@@ -212,9 +424,14 @@ export class TacticsMap {
                 const levelDiff = Math.abs(n.level - current.level);
                 if (levelDiff > 1) return;
 
-                const newCost = current.cost + 1;
-                const key = `${n.r},${n.q}`;
+                // Difficult terrain costs 2, normal costs 1
+                const isDifficult = n.terrain.includes('forest') || n.terrain.includes('water_shallow');
+                const moveCost = isDifficult ? 2 : 1;
+                const newCost = current.cost + moveCost;
 
+                if (newCost > range) return;
+
+                const key = `${n.r},${n.q}`;
                 if (!data.has(key) || data.get(key).cost > newCost) {
                     data.set(key, { cost: newCost, parent: `${current.r},${current.q}` });
                     queue.push({ r: n.r, q: n.q, cost: newCost, level: n.level });

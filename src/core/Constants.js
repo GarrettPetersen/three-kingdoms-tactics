@@ -42,6 +42,13 @@ export const ATTACKS = {
         push: 1,
         animation: 'attack_1',
         description: 'A heavy strike that knocks the target back.'
+    },
+    slash: {
+        name: 'Slash',
+        damage: 1,
+        range: 1,
+        animation: 'attack_1',
+        description: 'A standard sword strike.'
     }
 };
 

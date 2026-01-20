@@ -10,6 +10,7 @@ export class TitleScene extends BaseScene {
 
     enter() {
         this.processTitleImage();
+        assets.playMusic('title', 0.5);
     }
 
     processTitleImage() {

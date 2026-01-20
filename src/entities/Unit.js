@@ -51,15 +51,30 @@ export class Unit {
 
     update(dt, getPixelPos, shouldAnimate = true, terrainType = 'grass_01') {
         if (this.isDrowning) {
+            // ... drowning logic ...
             this.drownTimer += dt;
             this.action = 'hit';
+            this.currentAnimAction = 'hit';
             this.frame += dt * 0.008;
+
+            const pos = getPixelPos(this.r, this.q);
+            this.visualX = pos.x;
+            this.visualY = pos.y;
+            this.currentSortR = this.r;
+
             if (this.drownTimer > 2000) {
                 this.hp = 0;
                 this.isDrowning = false;
                 this.action = 'death';
+                this.currentAnimAction = 'death';
             }
             return;
+        }
+
+        // Ensure hp=0 units stay in death animation
+        if (this.hp <= 0 && this.action !== 'death') {
+            this.action = 'death';
+            this.frame = 0;
         }
 
         let animAction = this.action;
@@ -74,8 +89,9 @@ export class Unit {
 
         const anim = ANIMATIONS[animAction] || ANIMATIONS.standby;
         
-        // One-shot animations (except hit, which we might want to manually control during push)
+        // One-shot animations
         const isOneShot = (this.action === 'attack_1' || this.action === 'attack_2' || (this.action === 'hit' && !this.pushData));
+        const isDeath = (this.action === 'death');
         
         if (isOneShot) {
             if (this.frame < anim.length - 0.1) {
@@ -83,6 +99,13 @@ export class Unit {
             } else {
                 this.action = 'standby';
                 this.frame = 0;
+            }
+        } else if (isDeath) {
+            // Death animation: play once and stay on the last frame
+            if (this.frame < anim.length - 1) {
+                this.frame += dt * 0.008;
+            } else {
+                this.frame = anim.length - 1;
             }
         } else if (this.isMoving || this.pushData || this.action === 'hit') {
             this.frame += dt * 0.008;
@@ -211,7 +234,7 @@ export class Unit {
         let soundKey = 'step_generic';
         if (terrainType.includes('grass')) soundKey = 'step_grass';
         else if (terrainType.includes('water')) soundKey = 'step_water';
-        else if (terrainType.includes('sand') || terrainType.includes('mud')) soundKey = 'step_sand';
+        else if (terrainType.includes('sand') || terrainType.includes('mud') || terrainType.includes('snow')) soundKey = 'step_sand';
         else if (terrainType.includes('mountain') || terrainType.includes('house') || terrainType.includes('town')) soundKey = 'step_stone';
         
         assets.playSound(soundKey, 0.3); // Play at 30% volume

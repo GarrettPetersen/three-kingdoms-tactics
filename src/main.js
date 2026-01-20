@@ -24,13 +24,15 @@ const TERRAIN_TYPES = [
     'grass_01', 'grass_flowers', 'grass_02', 'grass_03', 'grass_04',
     'sand_01', 'sand_02', 'sand_03', 'sand_04', 'sand_05',
     'water_shallow_01', 'water_shallow_02', 'water_deep_01', 'water_deep_02',
-    'forest_01', 'forest_02', 'forest_03', 'forest_04', 'forest_05',
+    'forest_deciduous_01', 'forest_deciduous_02', 'forest_broadleaf_01', 'forest_broadleaf_02', 'forest_broadleaf_03',
     'earth_cracked', 'earth_rocky',
     'mountain_stone_01', 'mountain_stone_02', 'mountain_stone_03', 'earth_stone',
-    'house_01', 'house_damaged_01', 'house_destroyed_01',
+    'house_01', 'house_damaged_01', 'house_destroyed_01', 'wall_01',
     'mud_01', 'mud_02', 'mud_03', 'mud_04', 'mud_05', 'mud_06', 'mud_07',
-    'jungle_01', 'jungle_02', 'jungle_03', 'jungle_04', 'jungle_05', 'jungle_06', 'jungle_07',
-    'mountain_snowy_01', 'mountain_snowy_02'
+    'jungle_dense_01', 'jungle_dense_02', 'jungle_dense_03', 'jungle_palm_01', 'jungle_palm_02', 'jungle_palm_03',
+    'pine_forest_01', 'pine_forest_snow_01',
+    'mountain_snowy_01', 'mountain_snowy_02',
+    'snow_01'
 ];
 
 function setupCanvas() {
@@ -73,7 +75,16 @@ async function init() {
             if (inputBuffer.endsWith('brief')) {
                 // Jump to the Magistrate Briefing script
                 sceneManager.switchTo('narrative', {
-                    onComplete: () => sceneManager.switchTo('tactics'),
+                    onComplete: () => sceneManager.switchTo('tactics', {
+                        mapGen: {
+                            biome: 'northern',
+                            layout: 'foothills',
+                            forestDensity: 0.15,
+                            mountainDensity: 0.1,
+                            riverDensity: 0.05,
+                            houseDensity: 0.04
+                        }
+                    }),
                     script: [
                         { type: 'title', text: "THE VOLUNTEER ARMY", subtext: "Zhuo County Headquarters", duration: 3000 },
                         { bg: 'army_camp', type: 'command', action: 'clearActors' },
@@ -226,6 +237,14 @@ async function init() {
                 step_sand: 'assets/sfx/step_sand.wav',
                 step_stone: 'assets/sfx/step_stone.wav',
                 step_generic: 'assets/sfx/step_generic.wav'
+            }),
+            assets.loadMusic({
+                title_loop: 'assets/music/title_loop.ogg',
+                campaign_intro: 'assets/music/campaign_intro.ogg',
+                campaign_loop: 'assets/music/campaign_loop.ogg',
+                narrative_loop: 'assets/music/narrative_loop.ogg',
+                battle_intro: 'assets/music/battle_intro.ogg',
+                battle_loop: 'assets/music/battle_loop.ogg'
             })
         ]);
 

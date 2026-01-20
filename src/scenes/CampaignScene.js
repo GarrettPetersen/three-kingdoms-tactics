@@ -37,6 +37,10 @@ export class CampaignScene extends BaseScene {
         this.lastClickTime = 0;
     }
 
+    enter() {
+        assets.playMusic('campaign', 0.4);
+    }
+
     heroMoveTo(targetX, targetY, onComplete) {
         const hero = this.campaigns[0];
         this.moveState = {
@@ -258,7 +262,16 @@ export class CampaignScene extends BaseScene {
     startBriefing() {
         this.manager.switchTo('narrative', {
             onComplete: () => {
-                this.manager.switchTo('tactics');
+                this.manager.switchTo('tactics', {
+                    mapGen: {
+                        biome: 'northern',
+                        layout: 'foothills',
+                        forestDensity: 0.15,
+                        mountainDensity: 0.1,
+                        riverDensity: 0.05,
+                        houseDensity: 0.04
+                    }
+                });
             },
             script: [
                 { 
@@ -707,9 +720,9 @@ export class CampaignScene extends BaseScene {
                         duration: 3000
                     },
                 { bg: 'peach_garden', type: 'command', action: 'clearActors' },
-                { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 128, y: 160 },
-                { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 80, y: 165 },
-                { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 176, y: 165, flip: true },
+                { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 128, y: 180 },
+                { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 80, y: 185 },
+                { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 176, y: 185, flip: true },
 
                     { type: 'command', action: 'animate', id: 'liubei', animation: 'sitting' },
                     { type: 'command', action: 'animate', id: 'guanyu', animation: 'sitting' },

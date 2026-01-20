@@ -32,35 +32,238 @@ export class TacticsScene extends BaseScene {
     }
 
     enter(params = {}) {
+        assets.playMusic('battle', 0.4);
         const { config, canvas } = this.manager;
         this.tacticsMap = new TacticsMap(config.mapWidth, config.mapHeight);
+
+        // Calculate map start positions once
+        const mapPixelWidth = config.mapWidth * config.horizontalSpacing;
+        const mapPixelHeight = config.mapHeight * config.verticalSpacing;
+        this.startX = Math.floor((canvas.width - mapPixelWidth) / 2);
+        this.startY = Math.floor((canvas.height - mapPixelHeight) / 2);
 
         // Reset Intro Animation
         this.isIntroAnimating = true;
         this.introTimer = 0;
         this.lastTime = 0;
         
-        // Ensure start positions are calculated before telegraphing
-        const mapPixelWidth = config.mapWidth * config.horizontalSpacing;
-        const mapPixelHeight = config.mapHeight * config.verticalSpacing;
-        this.startX = Math.floor((canvas.width - mapPixelWidth) / 2);
-        this.startY = Math.floor((canvas.height - mapPixelHeight) / 2);
-
         // Map generation parameters
         const mapGenParams = params.mapGen || {
-            forestDensity: 0.12,
-            mountainDensity: 0.08,
-            riverDensity: 0.04
+            biome: 'central',
+            layout: 'river', 
+            forestDensity: 0.15,
+            mountainDensity: 0.1,
+            riverDensity: 0.05,
+            houseDensity: 0.03
         };
         
         this.tacticsMap.generate(mapGenParams);
         this.placeInitialUnits(params.units);
         
-        this.startPlayerTurn();
+        // New Turn Flow: Start by moving and telegraphing all NPCs
+        this.startNpcPhase();
+    }
+
+    startNpcPhase() {
+        this.turn = 'npc_moving';
+        this.isProcessingTurn = true;
+        
+        // Move all non-player units (Allies move first, then Enemies)
+        const allies = this.units.filter(u => u.faction === 'allied' && u.hp > 0);
+        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
+        const npcs = [...allies, ...enemies];
+        
+        const executeMoves = (index) => {
+            if (index >= npcs.length) {
+                // Final pause to see the last move
+                setTimeout(() => {
+                    this.telegraphAllNpcs();
+                    this.startPlayerTurn();
+                }, 300);
+                return;
+            }
+            
+            this.moveNpcAndTelegraph(npcs[index], () => {
+                // Pause between individual NPC moves so player can follow
+                setTimeout(() => {
+                    executeMoves(index + 1);
+                }, 400); 
+            });
+        };
+        
+        // Small initial delay before the first NPC moves
+        setTimeout(() => {
+            executeMoves(0);
+        }, 500);
+    }
+
+    telegraphAllNpcs() {
+        // Reset all NPC intents and orders first
+        this.units.forEach(u => {
+            if (u.faction !== 'player') {
+                u.intent = null;
+                u.attackOrder = null;
+            }
+        });
+
+        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
+        const allies = this.units.filter(u => u.faction === 'allied' && u.hp > 0);
+        
+        let order = 1;
+        // Enemies first (Red numbers)
+        enemies.forEach(e => {
+            this.telegraphSingleNpc(e);
+            if (e.intent) {
+                e.attackOrder = order++;
+            }
+        });
+        // Allies second (Green numbers)
+        allies.forEach(a => {
+            this.telegraphSingleNpc(a);
+            if (a.intent) {
+                a.attackOrder = order++;
+            }
+        });
+    }
+
+    moveNpcAndTelegraph(unit, onComplete) {
+        const targetFaction = unit.faction === 'enemy' ? ['player', 'allied'] : ['enemy'];
+        const unitTargets = this.units.filter(u => targetFaction.includes(u.faction) && u.hp > 0);
+        const reachableData = this.tacticsMap.getReachableData(unit.r, unit.q, unit.moveRange);
+        
+        let bestTile = { r: unit.r, q: unit.q };
+        let chosenTargetPos = null;
+
+        // 1. Check if we can reach a unit to attack it
+        let unitAttackTiles = [];
+        reachableData.forEach((data, key) => {
+            const [r, q] = key.split(',').map(Number);
+            const neighbors = this.tacticsMap.getNeighbors(r, q);
+            const unitNeighbor = neighbors.find(n => n.unit && targetFaction.includes(n.unit.faction));
+            if (unitNeighbor) {
+                unitAttackTiles.push({ r, q, target: unitNeighbor.unit });
+            }
+        });
+
+        if (unitAttackTiles.length > 0) {
+            bestTile = unitAttackTiles[0];
+            chosenTargetPos = { r: bestTile.target.r, q: bestTile.target.q };
+        } 
+        // 2. If no units reachable, check if enemy can reach a house
+        else if (unit.faction === 'enemy') {
+            let houseAttackTiles = [];
+            reachableData.forEach((data, key) => {
+                const [r, q] = key.split(',').map(Number);
+                const neighbors = this.tacticsMap.getNeighbors(r, q);
+                const houseNeighbor = neighbors.find(n => n.terrain.includes('house') && !n.terrain.includes('destroyed'));
+                if (houseNeighbor) {
+                    houseAttackTiles.push({ r, q, target: houseNeighbor });
+                }
+            });
+
+            if (houseAttackTiles.length > 0) {
+                bestTile = houseAttackTiles[0];
+                chosenTargetPos = { r: bestTile.target.r, q: bestTile.target.q };
+            }
+        }
+
+        // 3. If no immediate attacks possible, move towards the nearest unit (or house)
+        if (!chosenTargetPos) {
+            let nearestTargetPos = null;
+            let minDist = Infinity;
+
+            if (unitTargets.length > 0) {
+                unitTargets.forEach(t => {
+                    const dist = this.tacticsMap.getDistance(unit.r, unit.q, t.r, t.q);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        nearestTargetPos = { r: t.r, q: t.q };
+                    }
+                });
+            } else if (unit.faction === 'enemy') {
+                // Fallback to houses if no units exist
+                for (let r = 0; r < this.manager.config.mapHeight; r++) {
+                    for (let q = 0; q < this.manager.config.mapWidth; q++) {
+                        const cell = this.tacticsMap.getCell(r, q);
+                        if (cell.terrain.includes('house') && !cell.terrain.includes('destroyed')) {
+                            const d = this.tacticsMap.getDistance(unit.r, unit.q, r, q);
+                            if (d < minDist) {
+                                minDist = d;
+                                nearestTargetPos = { r, q };
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (nearestTargetPos) {
+                let minDistFromTile = Infinity;
+                reachableData.forEach((data, key) => {
+                    const [r, q] = key.split(',').map(Number);
+                    const dist = this.tacticsMap.getDistance(r, q, nearestTargetPos.r, nearestTargetPos.q);
+                    if (dist < minDistFromTile) {
+                        minDistFromTile = dist;
+                        bestTile = { r, q };
+                    }
+                });
+            }
+        }
+
+        const path = this.tacticsMap.getPath(unit.r, unit.q, bestTile.r, bestTile.q, unit.moveRange);
+        if (path) {
+            const oldCell = this.tacticsMap.getCell(unit.r, unit.q);
+            if (oldCell) oldCell.unit = null;
+            unit.startPath(path);
+            this.tacticsMap.getCell(bestTile.r, bestTile.q).unit = unit;
+        }
+
+        const checkDone = () => {
+            if (!unit.isMoving) {
+                this.telegraphSingleNpc(unit);
+                onComplete();
+            } else {
+                setTimeout(checkDone, 100);
+            }
+        };
+        checkDone();
+    }
+
+    telegraphSingleNpc(unit) {
+        const attackKey = unit.attacks[0] || 'stab';
+        const targetFaction = unit.faction === 'enemy' ? ['player', 'allied'] : ['enemy'];
+        
+        // Find adjacent units to target
+        const neighbors = this.tacticsMap.getNeighbors(unit.r, unit.q);
+        const adjacentUnit = neighbors.find(n => n.unit && targetFaction.includes(n.unit.faction));
+        
+        let dirIndex = -1;
+        if (adjacentUnit) {
+            dirIndex = this.tacticsMap.getDirectionIndex(unit.r, unit.q, adjacentUnit.r, adjacentUnit.q);
+        } else if (unit.faction === 'enemy') {
+            // Enemies look for adjacent houses if no units are nearby
+            const adjacentHouse = neighbors.find(n => n.terrain.includes('house') && !n.terrain.includes('destroyed'));
+            if (adjacentHouse) {
+                dirIndex = this.tacticsMap.getDirectionIndex(unit.r, unit.q, adjacentHouse.r, adjacentHouse.q);
+            }
+        }
+
+        if (dirIndex !== -1) {
+            unit.intent = { type: 'attack', dirIndex, attackKey };
+            const targetCell = this.tacticsMap.getNeighborInDirection(unit.r, unit.q, dirIndex);
+            if (targetCell) {
+                const startPos = this.getPixelPos(unit.r, unit.q);
+                const endPos = this.getPixelPos(targetCell.r, targetCell.q);
+                if (endPos.x < startPos.x) unit.flip = true;
+                if (endPos.x > startPos.x) unit.flip = false;
+            }
+        } else {
+            unit.intent = null;
+        }
     }
 
     startPlayerTurn() {
         this.turn = 'player';
+        this.isProcessingTurn = false;
         this.units.forEach(u => {
             if (u.faction === 'player') {
                 u.hasMoved = false;
@@ -70,151 +273,49 @@ export class TacticsScene extends BaseScene {
         });
         
         this.saveTurnState();
-        this.telegraphEnemyMoves();
     }
 
-    startEnemyTurn() {
-        this.turn = 'enemy';
+    startExecutionPhase() {
+        this.turn = 'execution';
         this.isProcessingTurn = true;
         this.selectedUnit = null;
         this.selectedAttack = null;
         this.reachableTiles.clear();
         this.attackTiles.clear();
         
-        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
+        // Collect all telegraphed attacks
+        const attackers = this.units
+            .filter(u => u.hp > 0 && u.intent && u.intent.type === 'attack')
+            .sort((a, b) => (a.attackOrder || 99) - (b.attackOrder || 99));
         
-        // Phase 1: All enemies attack first
-        const executeAllAttacks = (index) => {
-            if (index >= enemies.length) {
-                // Phase 2: All enemies move after all attacks are done
-                executeAllMoves(0);
+        const executeAll = (index) => {
+            if (index >= attackers.length) {
+                // Short pause after the final attack before next phase
+                setTimeout(() => {
+                    this.turnNumber++;
+                    this.startNpcPhase();
+                }, 600);
                 return;
             }
-            const enemy = enemies[index];
-            if (enemy.intent && enemy.intent.type === 'attack') {
-                const targetCell = this.tacticsMap.getNeighborInDirection(enemy.r, enemy.q, enemy.intent.dirIndex);
-                if (targetCell) {
-                    this.executeAttack(enemy, enemy.intent.attackKey, targetCell.r, targetCell.q, () => {
-                        executeAllAttacks(index + 1);
-                    });
-                } else {
-                    executeAllAttacks(index + 1);
-                }
-            } else {
-                executeAllAttacks(index + 1);
-            }
-        };
-
-        const executeAllMoves = (index) => {
-            if (index >= enemies.length) {
-                this.isProcessingTurn = false;
-                this.turnNumber++;
-                this.startPlayerTurn();
-                return;
-            }
-            const enemy = enemies[index];
-            this.moveEnemyAndTelegraph(enemy, () => {
-                executeAllMoves(index + 1);
-            });
-        };
-
-        executeAllAttacks(0);
-    }
-
-    moveEnemyAndTelegraph(enemy, onComplete) {
-        // Move towards nearest player
-        const targets = this.units.filter(u => u.faction === 'player' && u.hp > 0);
-        if (targets.length === 0) {
-            onComplete();
-            return;
-        }
-
-        const target = targets[0]; // Simplest AI
-        const reachable = this.tacticsMap.getReachableData(enemy.r, enemy.q, enemy.moveRange);
-        
-        let bestTile = { r: enemy.r, q: enemy.q };
-        let minDist = Infinity;
-
-        reachable.forEach((data, key) => {
-            const [r, q] = key.split(',').map(Number);
-            // Ideally move to adjacency
-            const dist = Math.sqrt((r - target.r)**2 + (q - target.q)**2);
-            if (dist < minDist) {
-                minDist = dist;
-                bestTile = { r, q };
-            }
-        });
-
-        const path = this.tacticsMap.getPath(enemy.r, enemy.q, bestTile.r, bestTile.q, enemy.moveRange);
-        if (path) {
-            const oldCell = this.tacticsMap.getCell(enemy.r, enemy.q);
-            if (oldCell) oldCell.unit = null;
+            const unit = attackers[index];
+            const targetCell = this.tacticsMap.getNeighborInDirection(unit.r, unit.q, unit.intent.dirIndex);
             
-            enemy.startPath(path);
-            this.tacticsMap.getCell(bestTile.r, bestTile.q).unit = enemy;
-        }
-
-        // Wait for movement to finish, then telegraph next attack
-        const checkDone = () => {
-            if (!enemy.isMoving) {
-                // Now that we've moved, where will we attack next turn?
-                this.telegraphSingleEnemy(enemy);
-                onComplete();
-            } else {
-                setTimeout(checkDone, 100);
-            }
-        };
-        checkDone();
-    }
-
-    telegraphEnemyMoves() {
-        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
-        enemies.forEach(e => this.telegraphSingleEnemy(e));
-    }
-
-    telegraphSingleEnemy(enemy) {
-        const attackKey = enemy.attacks[0] || 'stab';
-        const targets = this.units.filter(u => u.faction === 'player' && u.hp > 0);
-        
-        // Find adjacent player to target
-        const neighbors = this.tacticsMap.getNeighbors(enemy.r, enemy.q);
-        const playerNeighbor = neighbors.find(n => n.unit && n.unit.faction === 'player');
-        
-        let dirIndex = -1;
-        if (playerNeighbor) {
-            dirIndex = this.tacticsMap.getDirectionIndex(enemy.r, enemy.q, playerNeighbor.r, playerNeighbor.q);
-        } else if (targets.length > 0) {
-            // Pick a direction towards target
-            const target = targets[0];
-            // Simplest: find neighbor closest to target
-            let bestNeighbor = null;
-            let minDist = Infinity;
-            neighbors.forEach(n => {
-                const dist = Math.sqrt((n.r - target.r)**2 + (n.q - target.q)**2);
-                if (dist < minDist) {
-                    minDist = dist;
-                    bestNeighbor = n;
-                }
-            });
-            if (bestNeighbor) {
-                dirIndex = this.tacticsMap.getDirectionIndex(enemy.r, enemy.q, bestNeighbor.r, bestNeighbor.q);
-            }
-        }
-
-        if (dirIndex !== -1) {
-            enemy.intent = { type: 'attack', dirIndex, attackKey };
-            
-            // Set facing ONCE when telegraphing
-            const targetCell = this.tacticsMap.getNeighborInDirection(enemy.r, enemy.q, dirIndex);
             if (targetCell) {
-                const startPos = this.getPixelPos(enemy.r, enemy.q);
-                const endPos = this.getPixelPos(targetCell.r, targetCell.q);
-                if (endPos.x < startPos.x) enemy.flip = true;
-                if (endPos.x > startPos.x) enemy.flip = false;
+                this.executeAttack(unit, unit.intent.attackKey, targetCell.r, targetCell.q, () => {
+                    // Pause between individual attacks so results are clear
+                    setTimeout(() => {
+                        executeAll(index + 1);
+                    }, 500);
+                });
+            } else {
+                executeAll(index + 1);
             }
-        } else {
-            enemy.intent = null;
-        }
+        };
+        
+        // Delay before the very first attack starts
+        setTimeout(() => {
+            executeAll(0);
+        }, 400);
     }
 
     addDamageNumber(x, y, value) {
@@ -245,6 +346,9 @@ export class TacticsScene extends BaseScene {
             cell.impassable = false;
             const pos = this.getPixelPos(r, q);
             this.addDamageNumber(pos.x, pos.y - 20, "DESTROYED");
+            assets.playSound('collision');
+        } else if (cell.terrain === 'wall_01') {
+            // Walls are sturdy and don't break yet, but we play a sound
             assets.playSound('collision');
         }
     }
@@ -528,6 +632,7 @@ export class TacticsScene extends BaseScene {
         this.reachableTiles.clear();
         this.attackTiles.clear();
         this.activeDialogue = null;
+        this.telegraphAllNpcs();
     }
 
     placeInitialUnits(specifiedUnits) {
@@ -536,9 +641,18 @@ export class TacticsScene extends BaseScene {
             { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
             { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
             { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
+            
+            // Allied Soldiers
+            { id: 'ally1', name: 'Soldier', imgKey: 'soldier', r: 1, q: 3, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] },
+            { id: 'ally2', name: 'Soldier', imgKey: 'soldier', r: 1, q: 4, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] },
+            { id: 'ally3', name: 'Soldier', imgKey: 'soldier', r: 1, q: 5, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] },
+
             { id: 'rebel1', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 4, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
             { id: 'rebel2', name: 'Yellow Turban', imgKey: 'yellowturban', r: 8, q: 5, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
-            { id: 'rebel3', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 6, moveRange: 3, hp: 2, faction: 'enemy', attacks: ['bash'] }
+            { id: 'rebel3', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 6, moveRange: 3, hp: 2, faction: 'enemy', attacks: ['bash'] },
+            { id: 'rebel4', name: 'Yellow Turban', imgKey: 'yellowturban', r: 9, q: 2, moveRange: 3, hp: 2, faction: 'enemy', attacks: ['bash'] },
+            { id: 'rebel5', name: 'Yellow Turban', imgKey: 'yellowturban', r: 9, q: 7, moveRange: 3, hp: 2, faction: 'enemy', attacks: ['bash'] },
+            { id: 'rebel6', name: 'Yellow Turban', imgKey: 'yellowturban', r: 10, q: 4, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] }
         ];
 
         unitsToPlace.forEach(u => {
@@ -739,15 +853,16 @@ export class TacticsScene extends BaseScene {
         }
 
         // 2. Collect units (using their fractional sort row for depth)
-        this.units.filter(u => u.hp > 0).forEach(u => {
+        // Include dead units so their death animation/corpse is visible
+        this.units.forEach(u => {
             const pos = this.getPixelPos(u.r, u.q); // for stationary reference
-            drawCalls.push({
-                type: 'unit',
+                    drawCalls.push({
+                        type: 'unit',
                 r: u.currentSortR,
                 q: u.q,
                 priority: 1,
                 unit: u,
-                x: pos.x, // not actually used for moving units but good for consistency
+                x: pos.x,
                 y: pos.y
             });
         });
@@ -814,20 +929,29 @@ export class TacticsScene extends BaseScene {
                 if (isSelected) {
                     this.drawHighlight(ctx, u.visualX, surfaceY, 'rgba(255, 255, 255, 0.4)');
                 }
-                
-                // Draw intent if enemy
-                if (u.faction === 'enemy' && u.intent) {
-                    this.drawIntent(ctx, u, u.visualX, surfaceY);
-                }
 
                 this.drawCharacter(ctx, u.img, u.currentAnimAction || u.action, u.frame, u.visualX + u.visualOffsetX, surfaceY + u.visualOffsetY, drawOptions);
+            }
+            ctx.restore();
+        }
+
+        // 3. Info Pass: Draw health bars and intents above all terrain
+        if (!this.isIntroAnimating) {
+            this.units.forEach(u => {
+                if (u.hp <= 0) return;
+                
+                const surfaceY = u.visualY; 
+                
+                // Draw intent if enemy or ally
+                if (u.intent) {
+                    this.drawIntent(ctx, u, u.visualX, surfaceY);
+                }
 
                 // Draw HP bar
                 if (!u.isDrowning || u.drownTimer < 500) {
                     this.drawHpBar(ctx, u, u.visualX, surfaceY);
                 }
-            }
-            ctx.restore();
+            });
         }
 
         this.drawUI();
@@ -885,16 +1009,27 @@ export class TacticsScene extends BaseScene {
 
     drawHpBar(ctx, unit, x, y) {
         const barW = 20;
-        const barH = 3;
+        const barH = 4; // Slightly taller for better visibility of segments
         const bx = x - barW / 2;
         const by = y + 5;
 
+        // Background
         ctx.fillStyle = '#000';
         ctx.fillRect(bx, by, barW, barH);
         
+        // Health segments
+        const segmentW = (barW - 1) / unit.maxHp;
         const healthPct = unit.hp / unit.maxHp;
-        ctx.fillStyle = unit.faction === 'player' ? '#0f0' : '#f00';
+        
+        ctx.fillStyle = unit.faction === 'enemy' ? '#f00' : (unit.faction === 'allied' ? '#0f0' : '#0f0');
         ctx.fillRect(bx + 0.5, by + 0.5, (barW - 1) * healthPct, barH - 1);
+
+        // Discrete breaks (draw a line between each segment)
+        ctx.fillStyle = '#000';
+        for (let i = 1; i < unit.maxHp; i++) {
+            const lx = bx + 0.5 + i * segmentW;
+            ctx.fillRect(Math.floor(lx), by + 0.5, 1, barH - 1);
+        }
     }
 
     drawIntent(ctx, unit, x, y) {
@@ -903,16 +1038,33 @@ export class TacticsScene extends BaseScene {
         const targetCell = this.tacticsMap.getNeighborInDirection(unit.r, unit.q, unit.intent.dirIndex);
         if (!targetCell) return;
 
-        // Red exclamation mark above enemy
+        // Is this unit currently selected? Highlight telegraphed attack more clearly
+        const isSelected = this.selectedUnit === unit;
+        const glow = isSelected ? Math.abs(Math.sin(Date.now() / 200)) * 0.4 : 0;
+
+        // Draw attack order badge
         ctx.save();
-        ctx.fillStyle = '#f00';
-        ctx.font = '10px Silkscreen';
+        
+        // Background circle for the number (Red for enemy, Green for ally)
+        const bx = x;
+        const by = y - 35;
+        ctx.fillStyle = unit.faction === 'enemy' ? `rgba(255, 0, 0, ${0.8 + glow})` : `rgba(0, 200, 0, ${0.8 + glow})`;
+        ctx.beginPath();
+        ctx.arc(bx, by - 3, 6 + (isSelected ? 1 : 0), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = isSelected ? '#fff' : '#fff';
+        ctx.lineWidth = isSelected ? 2 : 1;
+        ctx.stroke();
+
+        ctx.fillStyle = '#fff';
+        ctx.font = isSelected ? 'bold 8px Silkscreen' : '8px Silkscreen';
         ctx.textAlign = 'center';
-        ctx.fillText('!', x, y - 45);
+        ctx.fillText(unit.attackOrder || '!', bx, by);
         
         // Target highlight on the map
         const targetPos = this.getPixelPos(targetCell.r, targetCell.q);
-        this.drawHighlight(ctx, targetPos.x, targetPos.y, 'rgba(255, 0, 0, 0.2)');
+        const highlightColor = unit.faction === 'enemy' ? `rgba(255, 0, 0, ${0.3 + glow})` : `rgba(0, 255, 0, ${0.3 + glow})`;
+        this.drawHighlight(ctx, targetPos.x, targetPos.y, highlightColor);
 
         ctx.restore();
     }
@@ -994,7 +1146,7 @@ export class TacticsScene extends BaseScene {
         const dy = Math.floor(y - 18) - (isTall ? 36 : 0);
         const sourceHeight = img.height;
         const displayHeight = sourceHeight;
-
+        
         for (let ix = 0; ix < 36; ix++) {
             let edgeY = null;
             // The hex footprint logic (bottom 36px)
@@ -1030,6 +1182,45 @@ export class TacticsScene extends BaseScene {
             if (uiAlpha <= 0) return;
             ctx.save();
             ctx.globalAlpha = uiAlpha;
+        }
+
+        // 1. Draw Selection Info Box (Bottom Left)
+        if (this.selectedUnit) {
+            const u = this.selectedUnit;
+            const boxW = 100;
+            const boxH = 40;
+            const bx = 5;
+            const by = canvas.height - boxH - 5;
+
+            // Background
+        ctx.fillStyle = 'rgba(20, 20, 20, 0.9)';
+            ctx.fillRect(bx, by, boxW, boxH);
+            ctx.strokeStyle = u.faction === 'player' ? '#0f0' : (u.faction === 'allied' ? '#0af' : '#f00');
+        ctx.lineWidth = 1;
+            ctx.strokeRect(bx + 0.5, by + 0.5, boxW - 1, boxH - 1);
+
+            // Name & Faction
+            this.drawPixelText(ctx, u.name, bx + 5, by + 5, { color: '#fff', font: '8px Silkscreen' });
+            const factionText = u.faction.toUpperCase();
+            this.drawPixelText(ctx, factionText, bx + boxW - 5, by + 5, { 
+                color: u.faction === 'player' ? '#0f0' : (u.faction === 'allied' ? '#0af' : '#f00'), 
+                font: '6px Dogica', 
+                align: 'right' 
+            });
+
+            // HP
+            this.drawPixelText(ctx, `HP: ${u.hp}/${u.maxHp}`, bx + 5, by + 16, { color: '#eee', font: '6px Dogica' });
+
+            // State/Intent
+            let actionText = "IDLE";
+            if (u.intent && u.intent.type === 'attack') {
+                const attack = ATTACKS[u.intent.attackKey];
+                actionText = `ATTACK: ${attack ? attack.name.toUpperCase() : '???'}`;
+                if (u.attackOrder) actionText = `[#${u.attackOrder}] ` + actionText;
+            } else if (u.hasActed) {
+                actionText = "DONE";
+            }
+            this.drawPixelText(ctx, actionText, bx + 5, by + 26, { color: '#aaa', font: '6px Dogica' });
         }
 
         // Draw damage numbers
@@ -1160,7 +1351,7 @@ export class TacticsScene extends BaseScene {
         // Check End Turn button
         if (this.endTurnRect && x >= this.endTurnRect.x && x <= this.endTurnRect.x + this.endTurnRect.w &&
             y >= this.endTurnRect.y && y <= this.endTurnRect.y + this.endTurnRect.h) {
-            this.startEnemyTurn();
+            this.startExecutionPhase();
             return;
         }
 
@@ -1180,11 +1371,54 @@ export class TacticsScene extends BaseScene {
             }
         }
 
+        // Check for Unit Sprite clicks (Z-sorted selection)
+        let spriteUnit = null;
+        // Search in reverse draw order (units on top of others get priority)
+        const activeUnits = this.units.filter(u => u.hp > 0);
+        for (let i = activeUnits.length - 1; i >= 0; i--) {
+            const u = activeUnits[i];
+            const ux = u.visualX;
+            const uy = u.visualY;
+            // Rough bounding box for the character sprite
+            if (x >= ux - 18 && x <= ux + 18 && y >= uy - 45 && y <= uy + 5) {
+                spriteUnit = u;
+                break;
+            }
+        }
+
         const clickedCell = this.getCellAt(x, y);
 
+        // ACTION: SELECT UNIT (Priority to sprite clicks, fallback to cell)
+        const targetUnit = spriteUnit || (clickedCell ? clickedCell.unit : null);
+
+        if (targetUnit) {
+            this.selectedUnit = targetUnit;
+            this.selectedAttack = null;
+            this.attackTiles.clear();
+            this.attackRects = [];
+
+            if (this.selectedUnit.faction === 'player' && !this.selectedUnit.hasActed) {
+                if (!this.selectedUnit.hasMoved) {
+                    this.reachableTiles = this.tacticsMap.getReachableData(this.selectedUnit.r, this.selectedUnit.q, this.selectedUnit.moveRange);
+            } else {
+                    this.reachableTiles.clear();
+                    if (this.selectedUnit.attacks.length > 0) {
+                        this.selectAttack(this.selectedUnit.attacks[0]);
+                    }
+                }
+            } else {
+                this.reachableTiles.clear();
+            }
+            
+            if (this.selectedUnit.dialogue) {
+                this.activeDialogue = { unit: this.selectedUnit, expires: Date.now() + 3000 };
+            }
+            return;
+        }
+
         if (clickedCell) {
-            // ACTION: MOVE UNIT (Priority over attack so you can move to a tile you could also attack)
-            if (this.selectedUnit && !this.selectedUnit.hasMoved && this.reachableTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
+            // ACTION: MOVE UNIT
+            if (this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && this.reachableTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
                 const path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, clickedCell.r, clickedCell.q, this.selectedUnit.moveRange);
                 if (path) {
                     const oldCell = this.tacticsMap.getCell(this.selectedUnit.r, this.selectedUnit.q);

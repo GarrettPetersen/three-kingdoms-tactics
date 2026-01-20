@@ -16,6 +16,7 @@ export class NarrativeScene extends BaseScene {
     }
 
     enter(params) {
+        assets.playMusic('narrative', 0.5);
         this.script = params.script || [];
         this.onComplete = params.onComplete || null;
         this.currentStep = 0;
