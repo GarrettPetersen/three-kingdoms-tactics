@@ -218,10 +218,28 @@ export class CampaignScene extends BaseScene {
             const cx = mx + c.x;
             const cy = my + c.y;
             
-            // Check hit area around character (roughly 30x45 box)
-            const charHit = (mouseX >= cx - 15 && mouseX <= cx + 15 && mouseY >= cy - 40 && mouseY <= cy + 5);
+            // 1. Check pixel-perfect character hit
+            const charImg = assets.getImage(c.imgKey);
+            const frame = Math.floor(Date.now() / 150) % 4;
+            const walkFrame = Math.floor(Date.now() / 100) % 4;
             
-            // Check hit area for the selection box
+            let action = 'standby';
+            let frameIdx = frame;
+            let flip = false;
+            let currentX = cx;
+            let currentY = cy;
+
+            if (this.moveState.isMoving) {
+                currentX = mx + this.moveState.startX + (this.moveState.targetX - this.moveState.startX) * this.moveState.progress;
+                currentY = my + this.moveState.startY + (this.moveState.targetY - this.moveState.startY) * this.moveState.progress;
+                action = 'walk';
+                frameIdx = walkFrame;
+                if (this.moveState.targetX < this.moveState.startX) flip = true;
+            }
+
+            const charHit = this.checkCharacterHit(charImg, action, frameIdx, currentX, currentY, mouseX, mouseY, { flip });
+            
+            // 2. Check hit area for the selection box (label)
             let boxHit = false;
             if (this.selectedCampaign === c.id) {
                 this.manager.ctx.font = '8px Silkscreen';

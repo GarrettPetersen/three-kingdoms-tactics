@@ -3,6 +3,7 @@ export class AssetLoader {
         this.images = {};
         this.sounds = {};
         this.music = {};
+        this.palettes = {};
         this.fontsLoaded = false;
         
         // Music management
@@ -10,6 +11,94 @@ export class AssetLoader {
         this.currentIntro = null;
         this.currentLoop = null;
         this.fadeInterval = null;
+    }
+
+    async loadPalettes(paletteAssets) {
+        const promises = Object.entries(paletteAssets).map(([key, src]) => {
+            return fetch(src)
+                .then(response => response.text())
+                .then(text => {
+                    const colors = [];
+                    const lines = text.split('\n');
+                    lines.forEach(line => {
+                        const trimmed = line.trim();
+                        if (!trimmed || trimmed.startsWith(';')) return;
+                        
+                        // Handle FFRRGGBB format (paint.net)
+                        let hex = trimmed;
+                        if (hex.length === 8) {
+                            // Strip the FF alpha if present
+                            hex = hex.substring(2);
+                        }
+                        
+                        const r = parseInt(hex.substring(0, 2), 16);
+                        const g = parseInt(hex.substring(2, 4), 16);
+                        const b = parseInt(hex.substring(4, 6), 16);
+                        colors.push({ r, g, b });
+                    });
+                    this.palettes[key] = colors;
+                    return colors;
+                });
+        });
+        return Promise.all(promises);
+    }
+
+    palettizeImage(img, paletteKey) {
+        if (!img) return null;
+        const palette = this.palettes[paletteKey];
+        if (!palette) return img;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        ctx.drawImage(img, 0, 0);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        for (let i = 0; i < data.length; i += 4) {
+            const a = data[i + 3];
+            if (a < 10) continue; // Skip transparent pixels
+
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+
+            // Find nearest color in palette
+            let bestColor = palette[0];
+            let minDist = Infinity;
+
+            for (const color of palette) {
+                // simple Euclidean distance in RGB space
+                const dr = r - color.r;
+                const dg = g - color.g;
+                const db = b - color.b;
+                const dist = dr * dr + dg * dg + db * db;
+                
+                if (dist < minDist) {
+                    minDist = dist;
+                    bestColor = color;
+                }
+            }
+
+            data[i] = bestColor.r;
+            data[i + 1] = bestColor.g;
+            data[i + 2] = bestColor.b;
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        return canvas;
+    }
+
+    palettizeKeys(keys, paletteKey) {
+        keys.forEach(key => {
+            const original = this.getImage(key);
+            if (original) {
+                const palettized = this.palettizeImage(original, paletteKey);
+                this.images[key] = palettized;
+            }
+        });
     }
 
     async loadImages(assets) {

@@ -1,6 +1,7 @@
 import { assets } from './core/AssetLoader.js';
 import { SceneManager } from './core/SceneManager.js';
 import { TitleScene } from './scenes/TitleScene.js';
+import { CustomBattleMenuScene } from './scenes/CustomBattleMenuScene.js';
 import { CampaignScene } from './scenes/CampaignScene.js';
 import { TacticsScene } from './scenes/TacticsScene.js';
 import { NarrativeScene } from './scenes/NarrativeScene.js';
@@ -59,6 +60,7 @@ async function init() {
 
     const sceneManager = new SceneManager(ctx, canvas, config);
     sceneManager.addScene('title', new TitleScene());
+    sceneManager.addScene('custom_battle', new CustomBattleMenuScene());
     sceneManager.addScene('campaign', new CampaignScene());
     sceneManager.addScene('tactics', new TacticsScene());
     sceneManager.addScene('narrative', new NarrativeScene());
@@ -194,6 +196,9 @@ async function init() {
         });
 
         await Promise.all([
+            assets.loadPalettes({
+                vinik24: 'assets/palettes/vinik24.txt'
+            }),
             assets.loadImages({
                 title: 'assets/misc/three_kingdoms_stratagem_title.png',
                 noticeboard: 'assets/settings/village_noticeboard.png',
@@ -247,6 +252,9 @@ async function init() {
                 battle_loop: 'assets/music/battle_loop.ogg'
             })
         ]);
+
+        // Apply palette to terrain assets
+        assets.palettizeKeys(TERRAIN_TYPES, 'vinik24');
 
         sceneManager.switchTo('title');
 

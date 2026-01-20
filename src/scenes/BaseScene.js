@@ -66,6 +66,54 @@ export class BaseScene {
         }
     }
 
+    checkCharacterHit(img, action, frame, x, y, clickX, clickY, options = {}) {
+        if (!img) return false;
+        const { flip = false, sinkOffset = 0 } = options;
+        const sourceSize = 72;
+        const anim = ANIMATIONS[action] || ANIMATIONS.standby;
+        const f = Math.floor(frame) % anim.length;
+        const frameIdx = anim.start + f;
+        const sx = (frameIdx % 8) * sourceSize;
+        const sy = Math.floor(frameIdx / 8) * sourceSize;
+        const feetY = -44;
+
+        // 1. Quick bounding box check
+        const bx = x - 36;
+        const by = y + feetY + sinkOffset;
+        if (clickX < bx || clickX > bx + sourceSize || clickY < by || clickY > by + sourceSize) {
+            return false;
+        }
+
+        // 2. Pixel-perfect check using a tiny offscreen canvas
+        if (!this._hitCanvas) {
+            this._hitCanvas = document.createElement('canvas');
+            this._hitCanvas.width = 1;
+            this._hitCanvas.height = 1;
+            this._hitCtx = this._hitCanvas.getContext('2d', { willReadFrequently: true });
+        }
+
+        const hctx = this._hitCtx;
+        hctx.clearRect(0, 0, 1, 1);
+        hctx.save();
+        
+        // Translate such that the click point is at (0,0) in our 1x1 canvas
+        hctx.translate(-(clickX - bx), -(clickY - by));
+        
+        if (flip) {
+            // If flipped, we need to flip the drawing relative to the sprite center
+            // Sprite center relative to bx is sourceSize / 2
+            hctx.translate(sourceSize / 2, 0);
+            hctx.scale(-1, 1);
+            hctx.translate(-sourceSize / 2, 0);
+        }
+
+        hctx.drawImage(img, sx, sy, sourceSize, sourceSize, 0, 0, sourceSize, sourceSize);
+        hctx.restore();
+
+        const alpha = hctx.getImageData(0, 0, 1, 1).data[3];
+        return alpha > 10; // Threshold for hit
+    }
+
     wrapText(ctx, text, maxWidth) {
         const words = (text || "").split(' ');
         const lines = [];

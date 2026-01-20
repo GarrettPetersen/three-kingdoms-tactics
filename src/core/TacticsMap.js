@@ -368,11 +368,6 @@ export class TacticsMap {
                     else if (biome === 'southern') variants = ['jungle_dense_01', 'jungle_dense_02', 'jungle_palm_01', 'jungle_palm_02'];
                     
                     cell.terrain = variants[Math.floor(Math.random() * variants.length)];
-                    // If elevation is 0, give it level 1 for some variety
-                    if (cell.level === 0) {
-                        cell.level = 1;
-                        cell.elevation = 6;
-                    }
                 }
             }
         }

@@ -33,6 +33,7 @@ export class TacticsScene extends BaseScene {
 
     enter(params = {}) {
         assets.playMusic('battle', 0.4);
+        this.isCustom = params.isCustom || false;
         const { config, canvas } = this.manager;
         this.tacticsMap = new TacticsMap(config.mapWidth, config.mapHeight);
 
@@ -46,6 +47,8 @@ export class TacticsScene extends BaseScene {
         this.isIntroAnimating = true;
         this.introTimer = 0;
         this.lastTime = 0;
+        this.gameOverTimer = 0;
+        this.isGameOver = false;
         
         // Map generation parameters
         const mapGenParams = params.mapGen || {
@@ -62,6 +65,19 @@ export class TacticsScene extends BaseScene {
         
         // New Turn Flow: Start by moving and telegraphing all NPCs
         this.startNpcPhase();
+    }
+
+    checkWinLoss() {
+        if (this.isGameOver) return;
+
+        const playerUnits = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp > 0);
+        const enemyUnits = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
+
+        if (playerUnits.length === 0 || enemyUnits.length === 0) {
+            this.isGameOver = true;
+            this.gameOverTimer = 2000; // Wait 2 seconds before switching back
+            this.isProcessingTurn = true; // Stop inputs
+        }
     }
 
     startNpcPhase() {
@@ -98,10 +114,9 @@ export class TacticsScene extends BaseScene {
     }
 
     telegraphAllNpcs() {
-        // Reset all NPC intents and orders first
+        // Reset all NPC orders first, but KEEEP intents that might have been set during movement
         this.units.forEach(u => {
             if (u.faction !== 'player') {
-                u.intent = null;
                 u.attackOrder = null;
             }
         });
@@ -112,14 +127,15 @@ export class TacticsScene extends BaseScene {
         let order = 1;
         // Enemies first (Red numbers)
         enemies.forEach(e => {
-            this.telegraphSingleNpc(e);
+            // Only recalculate if intent is missing (e.g. they didn't move/re-telegraph)
+            if (!e.intent) this.telegraphSingleNpc(e);
             if (e.intent) {
                 e.attackOrder = order++;
             }
         });
         // Allies second (Green numbers)
         allies.forEach(a => {
-            this.telegraphSingleNpc(a);
+            if (!a.intent) this.telegraphSingleNpc(a);
             if (a.intent) {
                 a.attackOrder = order++;
             }
@@ -719,6 +735,14 @@ export class TacticsScene extends BaseScene {
             }
         }
 
+        if (this.isGameOver) {
+            this.gameOverTimer -= dt;
+            if (this.gameOverTimer <= 0) {
+                this.manager.switchTo('title');
+                return;
+            }
+        }
+
         this.animationFrame = Math.floor(timestamp / 150) % 4;
         
         this.units.forEach(u => {
@@ -745,6 +769,8 @@ export class TacticsScene extends BaseScene {
         }
 
         this.hoveredCell = this.getCellAt(this.manager.logicalMouseX, this.manager.logicalMouseY);
+
+        this.checkWinLoss();
     }
 
     getCellAt(x, y) {
@@ -973,7 +999,8 @@ export class TacticsScene extends BaseScene {
                     const attack = ATTACKS[u.intent.attackKey];
                     if (attack && attack.push) {
                         const targetCell = this.tacticsMap.getNeighborInDirection(u.r, u.q, u.intent.dirIndex);
-                        if (targetCell) {
+                        // Only show arrow if there's a unit to be pushed
+                        if (targetCell && targetCell.unit) {
                             this.drawPushArrow(ctx, targetCell.r, targetCell.q, u.intent.dirIndex);
                         }
                     }
@@ -988,10 +1015,14 @@ export class TacticsScene extends BaseScene {
                     // Double Blades: Show both push arrows
                     const dirIndex = this.tacticsMap.getDirectionIndex(this.selectedUnit.r, this.selectedUnit.q, this.hoveredCell.r, this.hoveredCell.q);
                     if (dirIndex !== -1) {
-                        this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
+                        // Front target
+                        if (this.hoveredCell.unit) {
+                            this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
+                        }
+                        // Back target
                         const oppositeDir = (dirIndex + 3) % 6;
                         const backCell = this.tacticsMap.getNeighborInDirection(this.selectedUnit.r, this.selectedUnit.q, oppositeDir);
-                        if (backCell) {
+                        if (backCell && backCell.unit) {
                             this.drawPushArrow(ctx, backCell.r, backCell.q, oppositeDir);
                         }
                     }
@@ -999,21 +1030,28 @@ export class TacticsScene extends BaseScene {
                     // Serpent Spear: Push the further target
                     const dirIndex = this.tacticsMap.getDirectionIndex(this.selectedUnit.r, this.selectedUnit.q, this.hoveredCell.r, this.hoveredCell.q);
                     if (dirIndex !== -1) {
-                        const cell1 = this.tacticsMap.getNeighborInDirection(this.selectedUnit.r, this.selectedUnit.q, dirIndex);
-                        const cell2 = cell1 ? this.tacticsMap.getNeighborInDirection(cell1.r, cell1.q, dirIndex) : null;
-                        
-                        // If user hovers either cell in the line, show the push on the appropriate one
-                        // Actually the spear always pushes the "further" target in its line of fire.
-                        // But for simplicity in UX, we show the arrow on the cell actually hovered if it's in the range.
-                        this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
+                        // Only show arrow if the hovered cell actually contains a unit
+                        if (this.hoveredCell.unit) {
+                            this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
+                        }
                     }
                 } else {
                     const dirIndex = this.tacticsMap.getDirectionIndex(this.selectedUnit.r, this.selectedUnit.q, this.hoveredCell.r, this.hoveredCell.q);
-                    if (dirIndex !== -1) {
+                    if (dirIndex !== -1 && this.hoveredCell.unit) {
                         this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
                     }
                 }
             }
+        }
+
+        // Game Over Overlay
+        if (this.isGameOver) {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            const playerUnits = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp > 0);
+            const text = playerUnits.length > 0 ? "VICTORY!" : "DEFEAT...";
+            const color = playerUnits.length > 0 ? "#ffd700" : "#ff4444";
+            this.drawPixelText(ctx, text, canvas.width / 2, canvas.height / 2 - 10, { color, font: '16px Silkscreen', align: 'center' });
         }
     }
 
@@ -1073,7 +1111,8 @@ export class TacticsScene extends BaseScene {
         
         // Target highlight on the map
         const targetPos = this.getPixelPos(targetCell.r, targetCell.q);
-        const highlightColor = unit.faction === 'enemy' ? `rgba(255, 0, 0, ${0.3 + glow})` : `rgba(0, 255, 0, ${0.3 + glow})`;
+        // Map highlights are always RED for danger/attack, regardless of faction
+        const highlightColor = `rgba(255, 0, 0, ${0.3 + glow})`;
         this.drawHighlight(ctx, targetPos.x, targetPos.y, highlightColor);
 
         ctx.restore();
@@ -1194,46 +1233,50 @@ export class TacticsScene extends BaseScene {
             ctx.globalAlpha = uiAlpha;
         }
 
-        // 1. Draw Selection Info Box (Bottom Left)
+        // --- BOTTOM UI BAR ---
+        const barH = 40;
+        const barY = canvas.height - barH;
+        
+        // Draw bottom bar background (semi-transparent)
+        ctx.fillStyle = 'rgba(10, 10, 10, 0.85)';
+        ctx.fillRect(0, barY, canvas.width, barH);
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, barY + 0.5);
+        ctx.lineTo(canvas.width, barY + 0.5);
+        ctx.stroke();
+
+        // 1. Selection Info (Bottom Left)
         if (this.selectedUnit) {
             const u = this.selectedUnit;
-            const boxW = 100;
-            const boxH = 40;
+            const boxW = 90;
             const bx = 5;
-            const by = canvas.height - boxH - 5;
+            const by = barY + 2;
 
-            // Background
-        ctx.fillStyle = 'rgba(20, 20, 20, 0.9)';
-            ctx.fillRect(bx, by, boxW, boxH);
+            // Faction-colored border for the info section
             ctx.strokeStyle = u.faction === 'player' ? '#0f0' : (u.faction === 'allied' ? '#0af' : '#f00');
-        ctx.lineWidth = 1;
-            ctx.strokeRect(bx + 0.5, by + 0.5, boxW - 1, boxH - 1);
+            ctx.strokeRect(bx, by, boxW, barH - 4);
 
-            // Name & Faction
-            this.drawPixelText(ctx, u.name, bx + 5, by + 5, { color: '#fff', font: '8px Silkscreen' });
-            const factionText = u.faction.toUpperCase();
-            this.drawPixelText(ctx, factionText, bx + boxW - 5, by + 5, { 
-                color: u.faction === 'player' ? '#0f0' : (u.faction === 'allied' ? '#0af' : '#f00'), 
-                font: '6px Dogica', 
-                align: 'right' 
-            });
-
+            // Name
+            this.drawPixelText(ctx, u.name, bx + 4, by + 4, { color: '#fff', font: '8px Silkscreen' });
+            
             // HP
-            this.drawPixelText(ctx, `HP: ${u.hp}/${u.maxHp}`, bx + 5, by + 16, { color: '#eee', font: '6px Dogica' });
+            this.drawPixelText(ctx, `HP: ${u.hp}/${u.maxHp}`, bx + 4, by + 14, { color: '#eee', font: '6px Dogica' });
 
             // State/Intent
             let actionText = "IDLE";
             if (u.intent && u.intent.type === 'attack') {
                 const attack = ATTACKS[u.intent.attackKey];
-                actionText = `ATTACK: ${attack ? attack.name.toUpperCase() : '???'}`;
-                if (u.attackOrder) actionText = `[#${u.attackOrder}] ` + actionText;
+                actionText = `${attack ? attack.name.toUpperCase() : '???'}`;
+                if (u.attackOrder) actionText = `#${u.attackOrder} ` + actionText;
             } else if (u.hasActed) {
                 actionText = "DONE";
             }
-            this.drawPixelText(ctx, actionText, bx + 5, by + 26, { color: '#aaa', font: '6px Dogica' });
+            this.drawPixelText(ctx, actionText, bx + 4, by + 24, { color: '#aaa', font: '6px Dogica' });
         }
 
-        // Draw damage numbers
+        // 2. Damage Numbers (Floating over world)
         this.damageNumbers.forEach(dn => {
             const alpha = Math.min(1, dn.timer / 300);
             ctx.save();
@@ -1246,33 +1289,40 @@ export class TacticsScene extends BaseScene {
             ctx.restore();
         });
 
-        // Turn indicator
+        // 3. Turn Indicator (Top Left)
         const turnText = this.turn === 'player' ? "YOUR TURN" : "ENEMY TURN";
         const color = this.turn === 'player' ? '#ffd700' : '#f00';
         this.drawPixelText(ctx, turnText, 10, 10, { color, font: '8px Silkscreen' });
 
-        // End Turn button
+        // 4. End Turn / Reset Turn (Bottom Right)
         if (this.turn === 'player' && !this.isProcessingTurn) {
-            const bx = canvas.width - 80;
-            const by = 10;
-            ctx.fillStyle = 'rgba(20, 20, 20, 0.8)';
-            ctx.fillRect(bx, by, 70, 20);
+            const btnW = 60;
+            const btnH = 16;
+            const rx = canvas.width - btnW - 5;
+            
+            // END TURN
+            const ey = barY + 3;
+            ctx.fillStyle = 'rgba(40, 20, 20, 0.9)';
+            ctx.fillRect(rx, ey, btnW, btnH);
             ctx.strokeStyle = '#ffd700';
-            ctx.strokeRect(bx + 0.5, by + 0.5, 69, 19);
-            this.drawPixelText(ctx, "END TURN", bx + 35, by + 5, { color: '#fff', font: '8px Silkscreen', align: 'center' });
-            this.endTurnRect = { x: bx, y: by, w: 70, h: 20 };
+            ctx.strokeRect(rx + 0.5, ey + 0.5, btnW - 1, btnH - 1);
+            this.drawPixelText(ctx, "END TURN", rx + btnW / 2, ey + 4, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.endTurnRect = { x: rx, y: ey, w: btnW, h: btnH };
 
-            // Reset Turn button
-            const rby = 35;
-            ctx.fillStyle = 'rgba(20, 20, 20, 0.8)';
-            ctx.fillRect(bx, rby, 70, 20);
+            // RESET TURN
+            const ry = barY + 21;
+            ctx.fillStyle = 'rgba(20, 20, 20, 0.9)';
+            ctx.fillRect(rx, ry, btnW, btnH);
             ctx.strokeStyle = '#fff';
-            ctx.strokeRect(bx + 0.5, rby + 0.5, 69, 19);
-            this.drawPixelText(ctx, "RESET TURN", bx + 35, rby + 5, { color: '#eee', font: '8px Silkscreen', align: 'center' });
-            this.resetTurnRect = { x: bx, y: rby, w: 70, h: 20 };
+            ctx.strokeRect(rx + 0.5, ry + 0.5, btnW - 1, btnH - 1);
+            this.drawPixelText(ctx, "RESET", rx + btnW / 2, ry + 4, { color: '#eee', font: '8px Tiny5', align: 'center' });
+            this.resetTurnRect = { x: rx, y: ry, w: btnW, h: btnH };
+        } else {
+            this.endTurnRect = null;
+            this.resetTurnRect = null;
         }
 
-        // Selected Unit Info & Attacks
+        // 5. Ability UI (Bottom Center)
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.turn === 'player' && !this.isProcessingTurn) {
             this.drawUnitAbilityUI(ctx, canvas, this.selectedUnit);
         }
@@ -1291,24 +1341,19 @@ export class TacticsScene extends BaseScene {
     }
 
     drawUnitAbilityUI(ctx, canvas, unit) {
-        const barHeight = 40;
-        const by = canvas.height - barHeight;
-        
-        ctx.fillStyle = 'rgba(10, 10, 10, 0.9)';
-        ctx.fillRect(0, by, canvas.width, barHeight);
-        ctx.strokeStyle = '#444';
-        ctx.strokeRect(0.5, by + 0.5, canvas.width - 1, barHeight - 1);
-
-        this.drawPixelText(ctx, unit.name.toUpperCase(), 10, by + 5, { color: '#ffd700' });
+        // Positioned between Info Box and Turn Buttons
+        const startX = 100;
+        const endX = canvas.width - 70;
+        const barY = canvas.height - 40;
         
         // Attack buttons
         this.attackRects = [];
         unit.attacks.forEach((key, i) => {
             const attack = ATTACKS[key];
-            const ax = 80 + i * 85;
-            const ay = by + 10;
-            const aw = 80;
+            const aw = 65;
             const ah = 20;
+            const ax = startX + i * (aw + 5);
+            const ay = barY + 10;
 
             const isSelected = this.selectedAttack === key;
             const isDisabled = unit.hasAttacked;
@@ -1320,6 +1365,7 @@ export class TacticsScene extends BaseScene {
 
             this.drawPixelText(ctx, attack.name, ax + aw / 2, ay + 5, { 
                 color: isDisabled ? '#555' : '#eee', 
+                font: '8px Tiny5',
                 align: 'center' 
             });
 
@@ -1358,21 +1404,19 @@ export class TacticsScene extends BaseScene {
 
         const { x, y } = this.getMousePos(e);
         
-        // Check End Turn button
+        // 1. Check UI Buttons (End/Reset)
         if (this.endTurnRect && x >= this.endTurnRect.x && x <= this.endTurnRect.x + this.endTurnRect.w &&
             y >= this.endTurnRect.y && y <= this.endTurnRect.y + this.endTurnRect.h) {
             this.startExecutionPhase();
             return;
         }
-
-        // Check Reset Turn button
         if (this.resetTurnRect && x >= this.resetTurnRect.x && x <= this.resetTurnRect.x + this.resetTurnRect.w &&
             y >= this.resetTurnRect.y && y <= this.resetTurnRect.y + this.resetTurnRect.h) {
             this.resetTurn();
             return;
         }
 
-        // Check Attack buttons
+        // 2. Check Ability Buttons
         if (this.attackRects && this.selectedUnit && this.selectedUnit.faction === 'player') {
             const btn = this.attackRects.find(r => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h);
             if (btn && !this.selectedUnit.hasAttacked) {
@@ -1381,33 +1425,34 @@ export class TacticsScene extends BaseScene {
             }
         }
 
-        // Check for Unit Sprite clicks (Z-sorted selection)
+        // 3. Detect Sprite & Cell
         let spriteUnit = null;
-        // Search in reverse draw order (units on top of others get priority)
         const activeUnits = this.units.filter(u => u.hp > 0);
-        for (let i = activeUnits.length - 1; i >= 0; i--) {
-            const u = activeUnits[i];
+        activeUnits.sort((a, b) => b.currentSortR - a.currentSortR);
+        for (let u of activeUnits) {
             const ux = u.visualX;
             const uy = u.visualY;
-            // Rough bounding box for the character sprite
-            if (x >= ux - 18 && x <= ux + 18 && y >= uy - 45 && y <= uy + 5) {
+            let sinkOffset = 0;
+            if (u.isDrowning) sinkOffset = Math.min(1, u.drownTimer / 2000) * 40;
+            else {
+                const cell = this.tacticsMap.getCell(u.r, u.q);
+                if (cell && cell.terrain === 'water_shallow_01') sinkOffset = 4;
+            }
+            if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, x, y, { flip: u.flip, sinkOffset })) {
                 spriteUnit = u;
                 break;
             }
         }
-
         const clickedCell = this.getCellAt(x, y);
 
-        // --- ACTION: PERFORM ATTACK ---
-        // If an attack is selected and we click a valid target (sprite or cell), prioritize the attack!
+        // --- SMART INTENT ACTION CHECK ---
+        
+        // A. PERFORM ATTACK (Highest Priority if attack is active)
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack) {
-            // Check if we clicked an enemy sprite directly within attack range
             let targetCell = null;
             if (spriteUnit && this.attackTiles.has(`${spriteUnit.r},${spriteUnit.q}`)) {
                 targetCell = this.tacticsMap.getCell(spriteUnit.r, spriteUnit.q);
-            } 
-            // Or if we clicked a valid cell in range
-            else if (clickedCell && this.attackTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
+            } else if (clickedCell && this.attackTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
                 targetCell = clickedCell;
             }
 
@@ -1423,130 +1468,60 @@ export class TacticsScene extends BaseScene {
             }
         }
 
-        // --- ACTION: SELECT UNIT ---
-        const targetUnit = spriteUnit || (clickedCell ? clickedCell.unit : null);
-
-        if (targetUnit) {
-            this.selectedUnit = targetUnit;
-            this.selectedAttack = null;
-            this.attackTiles.clear();
-            this.attackRects = [];
-
-            if (this.selectedUnit.faction === 'player' && !this.selectedUnit.hasActed) {
-                if (!this.selectedUnit.hasMoved) {
-                    const rawReachable = this.tacticsMap.getReachableData(this.selectedUnit.r, this.selectedUnit.q, this.selectedUnit.moveRange, this.selectedUnit);
-                    // Filter to only unoccupied tiles (can't end move on another unit)
-                    this.reachableTiles = new Map();
-                    rawReachable.forEach((data, key) => {
-                        const [r, q] = key.split(',').map(Number);
-                        const cell = this.tacticsMap.getCell(r, q);
-                        if (!cell.unit || cell.unit === this.selectedUnit) {
-                            this.reachableTiles.set(key, data);
-                        }
-                    });
-                } else {
-                    this.reachableTiles.clear();
-                    if (this.selectedUnit.attacks.length > 0) {
-                        this.selectAttack(this.selectedUnit.attacks[0]);
-                    }
-                }
-            } else {
-                this.reachableTiles.clear();
-            }
-            
-            if (this.selectedUnit.dialogue) {
-                this.activeDialogue = { unit: this.selectedUnit, expires: Date.now() + 3000 };
-            }
-            return;
-        }
-
-        if (clickedCell) {
-            // --- ACTION: MOVE UNIT ---
-            if (this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && this.reachableTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
-                // CANNOT end move on an occupied hex
-                if (clickedCell.unit && clickedCell.unit !== this.selectedUnit) {
-                    return;
-                }
-
+        // B. MOVE UNIT (Priority if move is valid, even if clicking a sprite)
+        if (this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && clickedCell && this.reachableTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
+            // Check landing spot (cannot land on another unit)
+            if (!clickedCell.unit || clickedCell.unit === this.selectedUnit) {
                 const path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, clickedCell.r, clickedCell.q, this.selectedUnit.moveRange, this.selectedUnit);
                 if (path) {
                     const oldCell = this.tacticsMap.getCell(this.selectedUnit.r, this.selectedUnit.q);
                     if (oldCell) oldCell.unit = null;
-                    
                     this.selectedUnit.startPath(path);
                     clickedCell.unit = this.selectedUnit;
                     this.selectedUnit.hasMoved = true;
-                    
-                    // After path starts, auto-select attack for once movement finishes
                     const checkArrival = () => {
                         if (!this.selectedUnit.isMoving) {
-                            if (this.selectedUnit.attacks.length > 0) {
-                                this.selectAttack(this.selectedUnit.attacks[0]);
-                            }
-                        } else {
-                            setTimeout(checkArrival, 100);
-                        }
+                            if (this.selectedUnit.attacks.length > 0) this.selectAttack(this.selectedUnit.attacks[0]);
+                        } else setTimeout(checkArrival, 100);
                     };
                     checkArrival();
                 }
                 this.reachableTiles.clear();
                 return;
             }
+        }
 
-            // ACTION: PERFORM ATTACK
-            // (Note: This is now a fallback if for some reason the prioritized attack check above didn't trigger)
-            if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack && this.attackTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
-                this.executeAttack(this.selectedUnit, this.selectedAttack, clickedCell.r, clickedCell.q, () => {
-                    this.selectedUnit.hasAttacked = true;
-                    this.selectedUnit.hasActed = true;
-                    this.selectedUnit = null;
-                    this.selectedAttack = null;
-                    this.attackTiles.clear();
-                });
-                return;
-            }
-
-            // ACTION: SELECT UNIT
-            if (clickedCell.unit) {
-                this.selectedUnit = clickedCell.unit;
-                this.selectedAttack = null;
-                this.attackTiles.clear();
-                this.attackRects = []; // Clear buttons for new selection
-
-                if (this.selectedUnit.faction === 'player' && !this.selectedUnit.hasActed) {
-                    if (!this.selectedUnit.hasMoved) {
-                        const rawReachable = this.tacticsMap.getReachableData(clickedCell.r, clickedCell.q, this.selectedUnit.moveRange, this.selectedUnit);
-                        this.reachableTiles = new Map();
-                        rawReachable.forEach((data, key) => {
-                            const [r, q] = key.split(',').map(Number);
-                            const cell = this.tacticsMap.getCell(r, q);
-                            if (!cell.unit || cell.unit === this.selectedUnit) {
-                                this.reachableTiles.set(key, data);
-                            }
-                        });
-                    } else {
-                        this.reachableTiles.clear();
-                        // Default select first attack ONLY after moving
-                        if (this.selectedUnit.attacks.length > 0) {
-                            this.selectAttack(this.selectedUnit.attacks[0]);
-                        }
-                    }
+        // C. SELECT UNIT (Sprite has priority over empty cell)
+        const targetUnit = spriteUnit || (clickedCell ? clickedCell.unit : null);
+        if (targetUnit) {
+            this.selectedUnit = targetUnit;
+            this.selectedAttack = null;
+            this.attackTiles.clear();
+            this.attackRects = [];
+            if (this.selectedUnit.faction === 'player' && !this.selectedUnit.hasActed) {
+                if (!this.selectedUnit.hasMoved) {
+                    const rawReachable = this.tacticsMap.getReachableData(this.selectedUnit.r, this.selectedUnit.q, this.selectedUnit.moveRange, this.selectedUnit);
+                    this.reachableTiles = new Map();
+                    rawReachable.forEach((data, key) => {
+                        const [r, q] = key.split(',').map(Number);
+                        const cell = this.tacticsMap.getCell(r, q);
+                        if (!cell.unit || cell.unit === this.selectedUnit) this.reachableTiles.set(key, data);
+                    });
                 } else {
                     this.reachableTiles.clear();
+                    if (this.selectedUnit.attacks.length > 0) this.selectAttack(this.selectedUnit.attacks[0]);
                 }
-                
-                if (this.selectedUnit.dialogue) {
-                    this.activeDialogue = { unit: this.selectedUnit, expires: Date.now() + 3000 };
-                }
-            } else {
-                // DESELECT
-                this.selectedUnit = null;
-                this.selectedAttack = null;
-                this.reachableTiles.clear();
-                this.attackTiles.clear();
-                this.attackRects = [];
-                this.activeDialogue = null;
-            }
+            } else this.reachableTiles.clear();
+            if (this.selectedUnit.dialogue) this.activeDialogue = { unit: this.selectedUnit, expires: Date.now() + 3000 };
+            return;
         }
+
+        // D. DESELECT
+        this.selectedUnit = null;
+        this.selectedAttack = null;
+        this.reachableTiles.clear();
+        this.attackTiles.clear();
+        this.attackRects = [];
+        this.activeDialogue = null;
     }
 }
