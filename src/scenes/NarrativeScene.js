@@ -304,7 +304,7 @@ export class NarrativeScene extends BaseScene {
             let currentLine = '';
             
             ctx.save();
-            ctx.font = '8px Dogica';
+            ctx.font = '8px Tiny5';
             for (let n = 0; n < words.length; n++) {
                 let testLine = currentLine + words[n] + ' ';
                 if (ctx.measureText(testLine).width > (panelWidth - 20) && n > 0) {
@@ -351,7 +351,7 @@ export class NarrativeScene extends BaseScene {
             lines.forEach((line, lineIdx) => {
                 this.drawPixelText(ctx, line, px + 10, optionTopY + lineIdx * lineSpacing, { 
                     color: isHovered ? '#fff' : '#ccc', 
-                    font: '8px Dogica' 
+                    font: '8px Tiny5' 
                 });
             });
 

@@ -224,14 +224,35 @@ export class TacticsScene extends BaseScene {
 
             if (nearestTargetPos) {
                 let minDistFromTile = Infinity;
+                let bestGapTile = null;
+                let minGapDistFromTile = Infinity;
+
                 validDestinations.forEach((data, key) => {
                     const [r, q] = key.split(',').map(Number);
                     const dist = this.tacticsMap.getDistance(r, q, nearestTargetPos.r, nearestTargetPos.q);
+                    
                     if (dist < minDistFromTile) {
                         minDistFromTile = dist;
                         bestTile = { r, q };
                     }
+
+                    // Allied spacing logic: Try to keep a 1-hex gap from other allies
+                    if (unit.faction === 'allied') {
+                        const neighbors = this.tacticsMap.getNeighbors(r, q);
+                        const hasNearbyAlly = neighbors.some(n => n.unit && n.unit.faction === 'allied' && n.unit !== unit);
+                        if (!hasNearbyAlly) {
+                            if (dist < minGapDistFromTile) {
+                                minGapDistFromTile = dist;
+                                bestGapTile = { r, q };
+                            }
+                        }
+                    }
                 });
+
+                // If we found a tile that respects the gap, use it
+                if (unit.faction === 'allied' && bestGapTile) {
+                    bestTile = bestGapTile;
+                }
             }
         }
 
@@ -1086,34 +1107,55 @@ export class TacticsScene extends BaseScene {
         const targetCell = this.tacticsMap.getNeighborInDirection(unit.r, unit.q, unit.intent.dirIndex);
         if (!targetCell) return;
 
-        // Is this unit currently selected? Highlight telegraphed attack more clearly
+        // Target pixel position
+        const targetPos = this.getPixelPos(targetCell.r, targetCell.q);
+        
+        // Attacker pixel position (current visual pos)
+        const startX = unit.visualX;
+        const startY = unit.visualY;
+
+        // Is this unit currently selected?
         const isSelected = this.selectedUnit === unit;
         const glow = isSelected ? Math.abs(Math.sin(Date.now() / 200)) * 0.4 : 0;
 
-        // Draw attack order badge
         ctx.save();
         
-        // Background circle for the number (Red for enemy, Green for ally)
-        const bx = x;
-        const by = y - 35;
-        ctx.fillStyle = unit.faction === 'enemy' ? `rgba(255, 0, 0, ${0.8 + glow})` : `rgba(0, 200, 0, ${0.8 + glow})`;
-        ctx.beginPath();
-        ctx.arc(bx, by - 3, 6 + (isSelected ? 1 : 0), 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = isSelected ? '#fff' : '#fff';
-        ctx.lineWidth = isSelected ? 2 : 1;
-        ctx.stroke();
-
-        ctx.fillStyle = '#fff';
-        ctx.font = isSelected ? 'bold 8px Silkscreen' : '8px Silkscreen';
-        ctx.textAlign = 'center';
-        ctx.fillText(unit.attackOrder || '!', bx, by);
+        // Draw telegraphed attack arrow (Red, semi-transparent)
+        const dx = targetPos.x - startX;
+        const dy = targetPos.y - startY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
         
-        // Target highlight on the map
-        const targetPos = this.getPixelPos(targetCell.r, targetCell.q);
-        // Map highlights are always RED for danger/attack, regardless of faction
-        const highlightColor = `rgba(255, 0, 0, ${0.3 + glow})`;
-        this.drawHighlight(ctx, targetPos.x, targetPos.y, highlightColor);
+        // Start arrow slightly away from attacker center
+        const offset = 10;
+        const sx = startX + (dx / dist) * offset;
+        const sy = startY + (dy / dist) * offset;
+        
+        // End arrow slightly before target center
+        const ex = targetPos.x - (dx / dist) * 5;
+        const ey = targetPos.y - (dy / dist) * 5;
+
+        ctx.strokeStyle = `rgba(255, 0, 0, ${0.6 + glow})`;
+        ctx.fillStyle = `rgba(255, 0, 0, ${0.6 + glow})`;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 2]); // Dashed line for intent
+        
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(ex, ey);
+        ctx.stroke();
+        
+        // Arrow head
+        const angle = Math.atan2(dy, dx);
+        ctx.save();
+        ctx.translate(ex, ey);
+        ctx.rotate(angle);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-6, -4);
+        ctx.lineTo(-6, 4);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
 
         ctx.restore();
     }
@@ -1262,18 +1304,19 @@ export class TacticsScene extends BaseScene {
             this.drawPixelText(ctx, u.name, bx + 4, by + 4, { color: '#fff', font: '8px Silkscreen' });
             
             // HP
-            this.drawPixelText(ctx, `HP: ${u.hp}/${u.maxHp}`, bx + 4, by + 14, { color: '#eee', font: '6px Dogica' });
+            this.drawPixelText(ctx, `HP: ${u.hp}/${u.maxHp}`, bx + 4, by + 14, { color: '#eee', font: '8px Tiny5' });
 
             // State/Intent
             let actionText = "IDLE";
             if (u.intent && u.intent.type === 'attack') {
                 const attack = ATTACKS[u.intent.attackKey];
-                actionText = `${attack ? attack.name.toUpperCase() : '???'}`;
-                if (u.attackOrder) actionText = `#${u.attackOrder} ` + actionText;
+                const actionName = attack ? attack.name.toUpperCase() : '???';
+                if (u.attackOrder) actionText = `INTENT: ${actionName} (ORD: ${u.attackOrder})`;
+                else actionText = `INTENT: ${actionName}`;
             } else if (u.hasActed) {
                 actionText = "DONE";
             }
-            this.drawPixelText(ctx, actionText, bx + 4, by + 24, { color: '#aaa', font: '6px Dogica' });
+            this.drawPixelText(ctx, actionText, bx + 4, by + 24, { color: '#aaa', font: '8px Tiny5' });
         }
 
         // 2. Damage Numbers (Floating over world)
@@ -1283,7 +1326,7 @@ export class TacticsScene extends BaseScene {
             ctx.globalAlpha = alpha;
             this.drawPixelText(ctx, `-${dn.value}`, dn.x, dn.y, { 
                 color: '#f00', 
-                font: '10px Dogica', 
+                font: '10px Tiny5', 
                 align: 'center' 
             });
             ctx.restore();

@@ -120,7 +120,7 @@ export class BaseScene {
         let currentLine = '';
 
         ctx.save();
-        ctx.font = '8px Dogica';
+        ctx.font = '8px Tiny5';
         for (let n = 0; n < words.length; n++) {
             let testLine = currentLine + words[n] + ' ';
             if (ctx.measureText(testLine).width > maxWidth && n > 0) {
@@ -187,7 +187,7 @@ export class BaseScene {
             if (i === displayLines.length - 1 && hasNextChunk) {
                 text += "...";
             }
-            this.drawPixelText(ctx, text, textX, lineY, { color: '#eee', font: '8px Dogica' });
+            this.drawPixelText(ctx, text, textX, lineY, { color: '#eee', font: '8px Tiny5' });
             lineY += 10;
         });
 
