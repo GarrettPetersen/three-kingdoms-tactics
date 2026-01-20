@@ -129,14 +129,24 @@ export class TacticsScene extends BaseScene {
     moveNpcAndTelegraph(unit, onComplete) {
         const targetFaction = unit.faction === 'enemy' ? ['player', 'allied'] : ['enemy'];
         const unitTargets = this.units.filter(u => targetFaction.includes(u.faction) && u.hp > 0);
-        const reachableData = this.tacticsMap.getReachableData(unit.r, unit.q, unit.moveRange);
+        const reachableData = this.tacticsMap.getReachableData(unit.r, unit.q, unit.moveRange, unit);
         
         let bestTile = { r: unit.r, q: unit.q };
         let chosenTargetPos = null;
 
+        // Filter reachable hexes to those that aren't occupied (can't end on a unit)
+        const validDestinations = new Map();
+        reachableData.forEach((data, key) => {
+            const [r, q] = key.split(',').map(Number);
+            const cell = this.tacticsMap.getCell(r, q);
+            if (!cell.unit || cell.unit === unit) {
+                validDestinations.set(key, data);
+            }
+        });
+
         // 1. Check if we can reach a unit to attack it
         let unitAttackTiles = [];
-        reachableData.forEach((data, key) => {
+        validDestinations.forEach((data, key) => {
             const [r, q] = key.split(',').map(Number);
             const neighbors = this.tacticsMap.getNeighbors(r, q);
             const unitNeighbor = neighbors.find(n => n.unit && targetFaction.includes(n.unit.faction));
@@ -152,7 +162,7 @@ export class TacticsScene extends BaseScene {
         // 2. If no units reachable, check if enemy can reach a house
         else if (unit.faction === 'enemy') {
             let houseAttackTiles = [];
-            reachableData.forEach((data, key) => {
+            validDestinations.forEach((data, key) => {
                 const [r, q] = key.split(',').map(Number);
                 const neighbors = this.tacticsMap.getNeighbors(r, q);
                 const houseNeighbor = neighbors.find(n => n.terrain.includes('house') && !n.terrain.includes('destroyed'));
@@ -198,7 +208,7 @@ export class TacticsScene extends BaseScene {
 
             if (nearestTargetPos) {
                 let minDistFromTile = Infinity;
-                reachableData.forEach((data, key) => {
+                validDestinations.forEach((data, key) => {
                     const [r, q] = key.split(',').map(Number);
                     const dist = this.tacticsMap.getDistance(r, q, nearestTargetPos.r, nearestTargetPos.q);
                     if (dist < minDistFromTile) {
@@ -209,7 +219,7 @@ export class TacticsScene extends BaseScene {
             }
         }
 
-        const path = this.tacticsMap.getPath(unit.r, unit.q, bestTile.r, bestTile.q, unit.moveRange);
+        const path = this.tacticsMap.getPath(unit.r, unit.q, bestTile.r, bestTile.q, unit.moveRange, unit);
         if (path) {
             const oldCell = this.tacticsMap.getCell(unit.r, unit.q);
             if (oldCell) oldCell.unit = null;
@@ -1388,7 +1398,32 @@ export class TacticsScene extends BaseScene {
 
         const clickedCell = this.getCellAt(x, y);
 
-        // ACTION: SELECT UNIT (Priority to sprite clicks, fallback to cell)
+        // --- ACTION: PERFORM ATTACK ---
+        // If an attack is selected and we click a valid target (sprite or cell), prioritize the attack!
+        if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack) {
+            // Check if we clicked an enemy sprite directly within attack range
+            let targetCell = null;
+            if (spriteUnit && this.attackTiles.has(`${spriteUnit.r},${spriteUnit.q}`)) {
+                targetCell = this.tacticsMap.getCell(spriteUnit.r, spriteUnit.q);
+            } 
+            // Or if we clicked a valid cell in range
+            else if (clickedCell && this.attackTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
+                targetCell = clickedCell;
+            }
+
+            if (targetCell) {
+                this.executeAttack(this.selectedUnit, this.selectedAttack, targetCell.r, targetCell.q, () => {
+                    this.selectedUnit.hasAttacked = true;
+                    this.selectedUnit.hasActed = true;
+                    this.selectedUnit = null;
+                    this.selectedAttack = null;
+                    this.attackTiles.clear();
+                });
+                return;
+            }
+        }
+
+        // --- ACTION: SELECT UNIT ---
         const targetUnit = spriteUnit || (clickedCell ? clickedCell.unit : null);
 
         if (targetUnit) {
@@ -1399,8 +1434,17 @@ export class TacticsScene extends BaseScene {
 
             if (this.selectedUnit.faction === 'player' && !this.selectedUnit.hasActed) {
                 if (!this.selectedUnit.hasMoved) {
-                    this.reachableTiles = this.tacticsMap.getReachableData(this.selectedUnit.r, this.selectedUnit.q, this.selectedUnit.moveRange);
-            } else {
+                    const rawReachable = this.tacticsMap.getReachableData(this.selectedUnit.r, this.selectedUnit.q, this.selectedUnit.moveRange, this.selectedUnit);
+                    // Filter to only unoccupied tiles (can't end move on another unit)
+                    this.reachableTiles = new Map();
+                    rawReachable.forEach((data, key) => {
+                        const [r, q] = key.split(',').map(Number);
+                        const cell = this.tacticsMap.getCell(r, q);
+                        if (!cell.unit || cell.unit === this.selectedUnit) {
+                            this.reachableTiles.set(key, data);
+                        }
+                    });
+                } else {
                     this.reachableTiles.clear();
                     if (this.selectedUnit.attacks.length > 0) {
                         this.selectAttack(this.selectedUnit.attacks[0]);
@@ -1417,9 +1461,14 @@ export class TacticsScene extends BaseScene {
         }
 
         if (clickedCell) {
-            // ACTION: MOVE UNIT
+            // --- ACTION: MOVE UNIT ---
             if (this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && this.reachableTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
-                const path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, clickedCell.r, clickedCell.q, this.selectedUnit.moveRange);
+                // CANNOT end move on an occupied hex
+                if (clickedCell.unit && clickedCell.unit !== this.selectedUnit) {
+                    return;
+                }
+
+                const path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, clickedCell.r, clickedCell.q, this.selectedUnit.moveRange, this.selectedUnit);
                 if (path) {
                     const oldCell = this.tacticsMap.getCell(this.selectedUnit.r, this.selectedUnit.q);
                     if (oldCell) oldCell.unit = null;
@@ -1445,6 +1494,7 @@ export class TacticsScene extends BaseScene {
             }
 
             // ACTION: PERFORM ATTACK
+            // (Note: This is now a fallback if for some reason the prioritized attack check above didn't trigger)
             if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack && this.attackTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
                 this.executeAttack(this.selectedUnit, this.selectedAttack, clickedCell.r, clickedCell.q, () => {
                     this.selectedUnit.hasAttacked = true;
@@ -1465,7 +1515,15 @@ export class TacticsScene extends BaseScene {
 
                 if (this.selectedUnit.faction === 'player' && !this.selectedUnit.hasActed) {
                     if (!this.selectedUnit.hasMoved) {
-                        this.reachableTiles = this.tacticsMap.getReachableData(clickedCell.r, clickedCell.q, this.selectedUnit.moveRange);
+                        const rawReachable = this.tacticsMap.getReachableData(clickedCell.r, clickedCell.q, this.selectedUnit.moveRange, this.selectedUnit);
+                        this.reachableTiles = new Map();
+                        rawReachable.forEach((data, key) => {
+                            const [r, q] = key.split(',').map(Number);
+                            const cell = this.tacticsMap.getCell(r, q);
+                            if (!cell.unit || cell.unit === this.selectedUnit) {
+                                this.reachableTiles.set(key, data);
+                            }
+                        });
                     } else {
                         this.reachableTiles.clear();
                         // Default select first attack ONLY after moving

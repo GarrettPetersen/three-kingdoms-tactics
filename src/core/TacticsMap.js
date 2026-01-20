@@ -401,7 +401,7 @@ export class TacticsMap {
     }
 
     // Dijkstra's for reachable tiles, returning a map of { "r,q": { cost, parent } }
-    getReachableData(startR, startQ, range) {
+    getReachableData(startR, startQ, range, movingUnit = null) {
         const startCell = this.getCell(startR, startQ);
         if (!startCell) return new Map();
 
@@ -418,7 +418,22 @@ export class TacticsMap {
 
             const neighbors = this.getNeighbors(current.r, current.q);
             neighbors.forEach(n => {
-                if (n.impassable || (n.unit && (n.r !== startR || n.q !== startQ))) return;
+                if (n.impassable) return;
+
+                // Friendly units can be passed through, but enemy units block entirely.
+                if (n.unit && n.unit !== movingUnit) {
+                    const movingFaction = movingUnit ? movingUnit.faction : null;
+                    const neighborFaction = n.unit.faction;
+
+                    let areFriendly = false;
+                    if (movingFaction === 'player' || movingFaction === 'allied') {
+                        if (neighborFaction === 'player' || neighborFaction === 'allied') areFriendly = true;
+                    } else if (movingFaction === 'enemy') {
+                        if (neighborFaction === 'enemy') areFriendly = true;
+                    }
+
+                    if (!areFriendly) return;
+                }
 
                 // Climbing rule: max 1 level difference
                 const levelDiff = Math.abs(n.level - current.level);
@@ -442,8 +457,8 @@ export class TacticsMap {
         return data;
     }
 
-    getPath(startR, startQ, targetR, targetQ, range) {
-        const data = this.getReachableData(startR, startQ, range);
+    getPath(startR, startQ, targetR, targetQ, range, movingUnit = null) {
+        const data = this.getReachableData(startR, startQ, range, movingUnit);
         const targetKey = `${targetR},${targetQ}`;
         
         if (!data.has(targetKey)) return null;
