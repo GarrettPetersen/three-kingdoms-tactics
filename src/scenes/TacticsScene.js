@@ -24,6 +24,8 @@ export class TacticsScene extends BaseScene {
         this.activeDialogue = null;
         this.hoveredCell = null;
         this.damageNumbers = []; // { x, y, value, timer, maxTime }
+        this.particles = []; // { x, y, r, type, vx, vy, life, targetY }
+        this.weatherType = null; // 'rain', 'snow'
 
         // Intro Animation State
         this.isIntroAnimating = true;
@@ -63,6 +65,16 @@ export class TacticsScene extends BaseScene {
         this.tacticsMap.generate(mapGenParams);
         this.placeInitialUnits(params.units);
         
+        // Setup Weather
+        this.weatherType = mapGenParams.weather || null;
+        if (this.weatherType === 'none') this.weatherType = null;
+        
+        if (!this.weatherType) {
+            if (mapGenParams.biome === 'northern_snowy') this.weatherType = 'snow';
+            else if (mapGenParams.biome === 'southern' && Math.random() < 0.3) this.weatherType = 'rain';
+        }
+        this.particles = [];
+
         // New Turn Flow: Start by moving and telegraphing all NPCs
         this.startNpcPhase();
     }
@@ -397,6 +409,25 @@ export class TacticsScene extends BaseScene {
         } else if (cell.terrain === 'wall_01') {
             // Walls are sturdy and don't break yet, but we play a sound
             assets.playSound('collision');
+        } else if (cell.terrain === 'ice_01') {
+            cell.terrain = 'ice_cracked_01';
+            const pos = this.getPixelPos(r, q);
+            this.addDamageNumber(pos.x, pos.y - 20, "CRACKED");
+            assets.playSound('collision');
+        } else if (cell.terrain === 'ice_cracked_01') {
+            cell.terrain = 'water_deep_01_01';
+            cell.impassable = true;
+            const pos = this.getPixelPos(r, q);
+            this.addDamageNumber(pos.x, pos.y - 20, "BROKEN");
+            assets.playSound('splash');
+            
+            // Check if a unit was standing on it
+            if (cell.unit) {
+                const u = cell.unit;
+                u.isDrowning = true;
+                u.drownTimer = 0;
+                cell.unit = null;
+            }
         }
     }
 
@@ -576,7 +607,7 @@ export class TacticsScene extends BaseScene {
             if (pushCell) {
                 const targetPos = this.getPixelPos(pushCell.r, pushCell.q);
 
-                if (pushCell.terrain === 'water_deep_01') {
+                if (pushCell.terrain.includes('water_deep')) {
                     // Drown
                     targetCell.unit = null;
                     victim.setPosition(pushCell.r, pushCell.q);
@@ -597,7 +628,12 @@ export class TacticsScene extends BaseScene {
                     victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, true); 
                     setTimeout(() => {
                         assets.playSound('collision');
-                        this.damageCell(pushCell.r, pushCell.q);
+                        
+                        // Ice doesn't take damage from bumps
+                        if (!pushCell.terrain.includes('ice')) {
+                            this.damageCell(pushCell.r, pushCell.q);
+                        }
+
                         victim.hp -= 1;
                         this.addDamageNumber(victimPos.x, victimPos.y - 30, 1);
                         if (pushCell.unit) {
@@ -791,7 +827,80 @@ export class TacticsScene extends BaseScene {
 
         this.hoveredCell = this.getCellAt(this.manager.logicalMouseX, this.manager.logicalMouseY);
 
+        this.updateWeather(dt);
         this.checkWinLoss();
+    }
+
+    updateWeather(dt) {
+        if (!this.weatherType) {
+            this.particles = [];
+            return;
+        }
+
+        const { config, canvas } = this.manager;
+        
+        // 1. Spawn new particles (Slower spawn rates)
+        const spawnRate = this.weatherType === 'rain' ? 0.15 : 0.03; // Much slower
+        const spawnCount = Math.floor(dt * spawnRate + Math.random());
+        for (let i = 0; i < spawnCount; i++) {
+            const r = Math.floor(Math.random() * config.mapHeight);
+            const q = Math.floor(Math.random() * config.mapWidth);
+            const pos = this.getPixelPos(r, q);
+            
+            if (this.weatherType === 'rain') {
+                this.particles.push({
+                    type: 'rain',
+                    x: pos.x + (Math.random() - 0.5) * 20 - 30, // Start left for diagonal fall
+                    y: pos.y - 200,
+                    targetY: pos.y,
+                    r: r + 0.5,
+                    vx: 0.1,  // Slower diagonal
+                    vy: 0.4,  // Slower fall
+                    life: 1,
+                    alpha: 0.4 + Math.random() * 0.3
+                });
+            } else {
+                this.particles.push({
+                    type: 'snow',
+                    x: pos.x + (Math.random() - 0.5) * 40,
+                    y: pos.y - 200,
+                    targetY: pos.y,
+                    r: r + 0.5,
+                    vx: (Math.random() - 0.5) * 0.02,
+                    vy: 0.02 + Math.random() * 0.02, // Much slower fall
+                    life: 1,
+                    alpha: 0.6 + Math.random() * 0.4,
+                    driftTimer: Math.random() * Math.PI * 2
+                });
+            }
+        }
+
+        // 2. Update existing particles
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            const p = this.particles[i];
+            
+            if (p.life > 0) {
+                if (p.type === 'snow') {
+                    p.driftTimer += dt * 0.001; // Slower drift
+                    p.x += Math.sin(p.driftTimer) * 0.1;
+                }
+                p.x += p.vx * dt;
+                p.y += p.vy * dt;
+
+                if (p.y >= p.targetY) {
+                    p.y = p.targetY;
+                    p.life = 0;
+                    if (p.type === 'snow') p.life = -500;
+                }
+            } else {
+                p.life -= dt;
+                if (p.type === 'rain') {
+                    if (p.life < -100) this.particles.splice(i, 1);
+                } else {
+                    if (p.life < -2000) this.particles.splice(i, 1);
+                }
+            }
+        }
     }
 
     getCellAt(x, y) {
@@ -924,27 +1033,39 @@ export class TacticsScene extends BaseScene {
             });
         });
 
-        // 3. Sort by row, then by priority (hex < unit)
+        // 3. Collect particles
+        this.particles.forEach(p => {
+            const { alpha } = this.getIntroEffect(Math.floor(p.r), 0);
+            if (alpha <= 0) return;
+            
+            drawCalls.push({
+                type: 'particle',
+                r: p.r,
+                particle: p,
+                alpha: p.alpha * alpha
+            });
+        });
+
+        // 4. Sort by row, then by priority (hex < unit < particle)
         drawCalls.sort((a, b) => {
-            // For sorting purposes, units should draw as if they are in the furthest row they overlap.
-            // Using Math.ceil ensures that as soon as a unit moves even slightly "down" into 
-            // the visual overlap zone of the next row, it draws after that row's hexes.
             const depthA = a.type === 'unit' ? Math.ceil(a.r) : a.r;
             const depthB = b.type === 'unit' ? Math.ceil(b.r) : b.r;
 
             if (depthA !== depthB) return depthA - depthB;
-            if (a.priority !== b.priority) return a.priority - b.priority;
             
-            // For units in same fractional row position, use actual r for sub-sorting
+            // Priority within same depth
+            const priorities = { 'hex': 0, 'particle': 1, 'unit': 2 };
+            if (priorities[a.type] !== priorities[b.type]) return priorities[a.type] - priorities[b.type];
+            
             return a.r - b.r;
         });
 
         for (const call of drawCalls) {
             const effect = this.getIntroEffect(Math.floor(call.r), call.q || 0);
-            if (effect.alpha <= 0) continue;
+            if (effect.alpha <= 0 && call.type !== 'particle') continue; // Particles have their own alpha check
             
             ctx.save();
-            ctx.globalAlpha = effect.alpha;
+            ctx.globalAlpha = call.alpha || effect.alpha;
 
             if (call.type === 'hex') {
                 const surfaceY = call.y - call.elevation + effect.yOffset;
@@ -963,7 +1084,7 @@ export class TacticsScene extends BaseScene {
                 } else if (call.isHovered) {
                     this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 255, 255, 0.2)');
                 }
-            } else {
+            } else if (call.type === 'unit') {
                 const u = call.unit;
                 const cell = this.tacticsMap.getCell(u.r, u.q);
                 let surfaceY = u.visualY + effect.yOffset; 
@@ -976,7 +1097,7 @@ export class TacticsScene extends BaseScene {
                     const drownProgress = Math.min(1, u.drownTimer / 2000);
                     drawOptions.sinkOffset = drownProgress * 40; 
                     drawOptions.isSubmerged = true;
-                } else if (cell && cell.terrain === 'water_shallow_01') {
+                } else if (cell && cell.terrain.includes('water_shallow')) {
                     // Wading: exactly 4px deep into the hex
                     drawOptions.sinkOffset = 4;
                     drawOptions.isSubmerged = true;
@@ -988,6 +1109,35 @@ export class TacticsScene extends BaseScene {
                 }
 
                 this.drawCharacter(ctx, u.img, u.currentAnimAction || u.action, u.frame, u.visualX + u.visualOffsetX, surfaceY + u.visualOffsetY, drawOptions);
+            } else if (call.type === 'particle') {
+                const p = call.particle;
+                const px = Math.floor(p.x);
+                const py = Math.floor(p.y);
+
+                if (p.type === 'rain') {
+                    if (p.life > 0) {
+                        // Falling streak: strictly 1px wide, pixel-aligned
+                        ctx.fillStyle = '#add8e6';
+                        // Draw a tiny 1x3 diagonal-ish streak using small rects to avoid AA
+                        ctx.fillRect(px, py, 1, 3);
+                        ctx.fillRect(px - 1, py - 3, 1, 3);
+                    } else {
+                        // Splash: simple pixel dots instead of arc
+                        ctx.fillStyle = '#add8e6';
+                        const stage = Math.floor((p.life / -100) * 3);
+                        if (stage === 0) {
+                            ctx.fillRect(px - 1, py, 3, 1);
+                        } else if (stage === 1) {
+                            ctx.fillRect(px - 2, py - 1, 1, 1);
+                            ctx.fillRect(px + 2, py - 1, 1, 1);
+                        }
+                    }
+                } else {
+                    // Snow: simple pixel squares
+                    const size = p.life > 0 ? 1 : 1;
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(px, py, size, size);
+                }
             }
             ctx.restore();
         }
@@ -1222,9 +1372,29 @@ export class TacticsScene extends BaseScene {
         ctx.restore();
     }
 
+    getAnimatedTerrain(terrainType) {
+        // Slow 2-frame animation
+        const frame = (Math.floor(Date.now() / 600) % 2) + 1; // 600ms per frame
+        
+        if (terrainType === 'water_shallow_01' || terrainType === 'water_shallow_02') {
+            return `water_shallow_0${frame}`;
+        }
+        
+        if (terrainType.startsWith('water_deep_01')) {
+            return `water_deep_01_0${frame}`;
+        }
+        
+        if (terrainType.startsWith('water_deep_02')) {
+            return `water_deep_02_0${frame}`;
+        }
+        
+        return terrainType;
+    }
+
     drawTile(terrainType, x, y, elevation = 0) {
         const { ctx, config } = this.manager;
-        const img = assets.getImage(terrainType);
+        const animatedKey = this.getAnimatedTerrain(terrainType);
+        const img = assets.getImage(animatedKey);
         if (!img) return;
         
         const extraDepth = config.baseDepth + elevation;
@@ -1479,7 +1649,7 @@ export class TacticsScene extends BaseScene {
             if (u.isDrowning) sinkOffset = Math.min(1, u.drownTimer / 2000) * 40;
             else {
                 const cell = this.tacticsMap.getCell(u.r, u.q);
-                if (cell && cell.terrain === 'water_shallow_01') sinkOffset = 4;
+                if (cell && cell.terrain.includes('water_shallow')) sinkOffset = 4;
             }
             if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, x, y, { flip: u.flip, sinkOffset })) {
                 spriteUnit = u;

@@ -24,7 +24,9 @@ const config = {
 const TERRAIN_TYPES = [
     'grass_01', 'grass_flowers', 'grass_02', 'grass_03', 'grass_04',
     'sand_01', 'sand_02', 'sand_03', 'sand_04', 'sand_05',
-    'water_shallow_01', 'water_shallow_02', 'water_deep_01', 'water_deep_02',
+    'water_shallow_01', 'water_shallow_02', 
+    'water_deep_01_01', 'water_deep_01_02', 
+    'water_deep_02_01', 'water_deep_02_02',
     'forest_deciduous_01', 'forest_deciduous_02', 'forest_broadleaf_01', 'forest_broadleaf_02', 'forest_broadleaf_03',
     'earth_cracked', 'earth_rocky',
     'mountain_stone_01', 'mountain_stone_02', 'mountain_stone_03', 'earth_stone',
@@ -33,7 +35,7 @@ const TERRAIN_TYPES = [
     'jungle_dense_01', 'jungle_dense_02', 'jungle_dense_03', 'jungle_palm_01', 'jungle_palm_02', 'jungle_palm_03',
     'pine_forest_01', 'pine_forest_snow_01',
     'mountain_snowy_01', 'mountain_snowy_02',
-    'snow_01'
+    'snow_01', 'ice_01', 'ice_cracked_01'
 ];
 
 function setupCanvas() {

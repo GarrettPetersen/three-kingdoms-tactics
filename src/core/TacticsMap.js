@@ -159,6 +159,12 @@ export class TacticsMap {
         while (attempts < 5 && !success) {
             this.initialTerrainPass(layout);
             this.smoothElevation();
+            
+            // Post-process for ice in snowy biomes
+            if (this.biome === 'northern_snowy') {
+                this.applyIce();
+            }
+
             this.placeProps(forestDensity, houseDensity);
             
             // General connectivity check to ensure the map isn't totally segmented
@@ -346,6 +352,26 @@ export class TacticsMap {
             for (let q = 0; q < this.width; q++) {
                 const cell = this.grid[r][q];
                 cell.elevation = cell.level * 6;
+            }
+        }
+    }
+
+    applyIce() {
+        for (let r = 0; r < this.height; r++) {
+            for (let q = 0; q < this.width; q++) {
+                const cell = this.grid[r][q];
+                if (cell.terrain === 'water_shallow_01') {
+                    cell.terrain = 'ice_01';
+                    cell.impassable = false;
+                } else if (cell.terrain === 'water_deep_01') {
+                    // Deep water near ice also freezes
+                    const neighbors = this.getNeighbors(r, q);
+                    const nearShallow = neighbors.some(n => n.terrain === 'water_shallow_01' || n.terrain === 'ice_01');
+                    if (nearShallow && Math.random() < 0.7) {
+                        cell.terrain = 'ice_01';
+                        cell.impassable = false;
+                    }
+                }
             }
         }
     }
