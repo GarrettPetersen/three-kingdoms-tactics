@@ -147,7 +147,7 @@ export class TacticsScene extends BaseScene {
     }
 
     startNpcPhase() {
-        this.turn = 'npc_moving';
+        this.turn = 'allied_moving';
         this.isProcessingTurn = true;
         
         // Clear old intents before starting new phase
@@ -158,32 +158,38 @@ export class TacticsScene extends BaseScene {
             }
         });
 
-        // Move all non-player units (Allies move first, then Enemies)
         const allies = this.units.filter(u => u.faction === 'allied' && u.hp > 0);
         const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
-        const npcs = [...allies, ...enemies];
         
-        const executeMoves = (index) => {
+        const executeMoves = (npcs, index, onComplete) => {
             if (index >= npcs.length) {
-                // Final pause to see the last move
-                setTimeout(() => {
-                    this.telegraphAllNpcs();
-                    this.startPlayerTurn();
-                }, 300);
+                onComplete();
                 return;
             }
             
             this.moveNpcAndTelegraph(npcs[index], () => {
                 // Pause between individual NPC moves so player can follow
                 setTimeout(() => {
-                    executeMoves(index + 1);
+                    executeMoves(npcs, index + 1, onComplete);
                 }, 400); 
             });
         };
         
-        // Small initial delay before the first NPC moves
+        // Allied Phase
         setTimeout(() => {
-            executeMoves(0);
+            executeMoves(allies, 0, () => {
+                // Enemy Phase
+                this.turn = 'enemy_moving';
+                setTimeout(() => {
+                    executeMoves(enemies, 0, () => {
+                        // Final pause to see the last move
+                        setTimeout(() => {
+                            this.telegraphAllNpcs();
+                            this.startPlayerTurn();
+                        }, 300);
+                    });
+                }, 400);
+            });
         }, 500);
     }
 
@@ -1197,6 +1203,7 @@ export class TacticsScene extends BaseScene {
                     type: 'hex',
                     r, q, x, y, priority: 0,
                     terrain: cell.terrain,
+                    layer: this.getTerrainLayer(cell.terrain),
                     elevation: cell.elevation || 0,
                     isReachable: this.reachableTiles.has(`${r},${q}`),
                     isAttackRange: this.attackTiles.has(`${r},${q}`),
@@ -1234,7 +1241,7 @@ export class TacticsScene extends BaseScene {
             });
         });
 
-        // 4. Sort by row, then by priority (hex < unit < particle)
+        // 4. Sort by row, then by priority (hex < particle < unit)
         drawCalls.sort((a, b) => {
             const depthA = a.type === 'unit' ? Math.ceil(a.r) : a.r;
             const depthB = b.type === 'unit' ? Math.ceil(b.r) : b.r;
@@ -1244,6 +1251,12 @@ export class TacticsScene extends BaseScene {
             // Priority within same depth
             const priorities = { 'hex': 0, 'particle': 1, 'unit': 2 };
             if (priorities[a.type] !== priorities[b.type]) return priorities[a.type] - priorities[b.type];
+            
+            // Within same type and row:
+            if (a.type === 'hex' && b.type === 'hex') {
+                // Use terrain layer to determine overlap (e.g. grass over sand, trees over grass)
+                if (a.layer !== b.layer) return a.layer - b.layer;
+            }
             
             return a.r - b.r;
         });
@@ -1257,7 +1270,7 @@ export class TacticsScene extends BaseScene {
 
             if (call.type === 'hex') {
                 const surfaceY = call.y - call.elevation + effect.yOffset;
-                this.drawTile(call.terrain, call.x, surfaceY, call.elevation);
+                this.drawTile(call.terrain, call.x, surfaceY, call.elevation, call.r, call.q);
                 
                 if (call.isReachable) {
                     this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 215, 0, 0.3)');
@@ -1289,6 +1302,13 @@ export class TacticsScene extends BaseScene {
                     // Wading: exactly 4px deep into the hex
                     drawOptions.sinkOffset = 4;
                     drawOptions.isSubmerged = true;
+                } else if (cell && cell.terrain.includes('snow')) {
+                    // Snow: sink 2px. 
+                    // hideBottom is now relative to the absolute bottom of the 72x72 sprite box.
+                    // Since there are ~28px of space below the anchor, we need a higher value 
+                    // to clip the actual feet (e.g., 28 + 2 = 30).
+                    drawOptions.sinkOffset = 2;
+                    drawOptions.hideBottom = 27;
                 }
 
                 if (targetedUnits.has(u)) {
@@ -1432,27 +1452,22 @@ export class TacticsScene extends BaseScene {
     }
 
     drawHpBar(ctx, unit, x, y) {
-        const barW = 20;
-        const barH = 4; // Slightly taller for better visibility of segments
-        const bx = x - barW / 2;
-        const by = y + 5;
+        const segmentW = 3; // 3 pixels per HP point
+        const gap = 1;      // 1 pixel gap between segments
+        const totalW = unit.maxHp * segmentW + (unit.maxHp - 1) * gap;
+        const bx = Math.floor(x - totalW / 2);
+        const by = Math.floor(y + 8); // Positioned slightly below the feet
 
-        // Background
-        ctx.fillStyle = '#000';
-        ctx.fillRect(bx, by, barW, barH);
-        
-        // Health segments
-        const segmentW = (barW - 1) / unit.maxHp;
-        const healthPct = unit.hp / unit.maxHp;
-        
-        ctx.fillStyle = unit.faction === 'enemy' ? '#f00' : (unit.faction === 'allied' ? '#0f0' : '#0f0');
-        ctx.fillRect(bx + 0.5, by + 0.5, (barW - 1) * healthPct, barH - 1);
-
-        // Discrete breaks (draw a line between each segment)
-        ctx.fillStyle = '#000';
-        for (let i = 1; i < unit.maxHp; i++) {
-            const lx = bx + 0.5 + i * segmentW;
-            ctx.fillRect(Math.floor(lx), by + 0.5, 1, barH - 1);
+        for (let i = 0; i < unit.maxHp; i++) {
+            const lx = bx + i * (segmentW + gap);
+            if (i < unit.hp) {
+                // Filled segment
+                ctx.fillStyle = unit.faction === 'enemy' ? '#f00' : '#0f0';
+            } else {
+                // Empty segment (darker, semi-transparent)
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            }
+            ctx.fillRect(lx, by, segmentW, 1);
         }
     }
 
@@ -1577,9 +1592,10 @@ export class TacticsScene extends BaseScene {
         ctx.restore();
     }
 
-    getAnimatedTerrain(terrainType) {
-        // Slow 2-frame animation
-        const frame = (Math.floor(Date.now() / 600) % 2) + 1; // 600ms per frame
+    getAnimatedTerrain(terrainType, r = 0, q = 0) {
+        // Slow 2-frame animation, staggered by hex position
+        const stagger = (r * 123 + q * 456) % 2000;
+        const frame = (Math.floor((Date.now() + stagger) / 2000) % 2) + 1; // 2000ms per frame
         
         if (terrainType === 'water_shallow_01' || terrainType === 'water_shallow_02') {
             return `water_shallow_0${frame}`;
@@ -1596,9 +1612,53 @@ export class TacticsScene extends BaseScene {
         return terrainType;
     }
 
-    drawTile(terrainType, x, y, elevation = 0) {
+    getTerrainLayer(terrainType) {
+        if (!terrainType) return 0;
+        
+        // Layer 5: Tall/3D objects
+        if (terrainType.includes('forest') || 
+            terrainType.includes('jungle') || 
+            terrainType.includes('mountain') || 
+            terrainType.includes('house') || 
+            terrainType.includes('wall') ||
+            terrainType.includes('tower') ||
+            terrainType.includes('tent') ||
+            terrainType.includes('yurt') ||
+            terrainType.includes('hut')) {
+            return 5;
+        }
+        
+        // Layer 4: Snow (covers everything flat)
+        if (terrainType.includes('snow')) {
+            return 4;
+        }
+
+        // Layer 3: Grass (overhangs dirt/ice/sand)
+        if (terrainType.includes('grass')) {
+            return 3;
+        }
+
+        // Layer 2: Ice (overhangs water)
+        if (terrainType.includes('ice')) {
+            return 2;
+        }
+
+        // Layer 1: Basic land types (sand, mud, rocky ground)
+        if (terrainType.includes('sand') || 
+            terrainType.includes('mud') || 
+            terrainType.includes('earth_rocky') || 
+            terrainType.includes('earth_stone') ||
+            terrainType.includes('earth_cracked')) {
+            return 1;
+        }
+        
+        // Layer 0: Water (lowest point)
+        return 0;
+    }
+
+    drawTile(terrainType, x, y, elevation = 0, r = 0, q = 0) {
         const { ctx, config } = this.manager;
-        const animatedKey = this.getAnimatedTerrain(terrainType);
+        const animatedKey = this.getAnimatedTerrain(terrainType, r, q);
         const img = assets.getImage(animatedKey);
         if (!img) return;
         
@@ -1708,9 +1768,21 @@ export class TacticsScene extends BaseScene {
         });
 
         // 3. Turn Indicator (Top Left)
-        const turnText = this.turn === 'player' ? "YOUR TURN" : "ENEMY TURN";
-        const color = this.turn === 'player' ? '#ffd700' : '#f00';
-        this.drawPixelText(ctx, turnText, 10, 10, { color, font: '8px Silkscreen' });
+        let turnText = "YOUR TURN";
+        let color = '#ffd700';
+
+        if (this.turn === 'enemy_moving') {
+            turnText = "ENEMY TURN";
+            color = '#f00';
+        } else if (this.turn === 'allied_moving') {
+            turnText = "ALLY TURN";
+            color = '#0af';
+        } else if (this.turn === 'execution') {
+            turnText = "EXECUTION";
+            color = '#fff';
+        }
+
+        this.drawPixelText(ctx, turnText, 10, 8, { color, font: '8px Silkscreen' });
 
         // 4. End Turn / Reset Turn (Bottom Right)
         if (this.turn === 'player' && !this.isProcessingTurn) {

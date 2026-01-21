@@ -25,7 +25,7 @@ export class BaseScene {
 
     drawCharacter(ctx, img, action, frame, x, y, options = {}) {
         if (!img) return;
-        const { flip = false, sinkOffset = 0, isSubmerged = false, tint = null } = options;
+        const { flip = false, sinkOffset = 0, isSubmerged = false, tint = null, hideBottom = 0 } = options;
         const sourceSize = 72;
         const anim = ANIMATIONS[action] || ANIMATIONS.standby;
         const f = Math.floor(frame) % anim.length;
@@ -82,6 +82,12 @@ export class BaseScene {
             drawPass(1.0, { x: x - 40, y: y - 100, w: 80, h: 100 });
             // Below water
             drawPass(0.4, { x: x - 40, y: y, w: 80, h: 100 });
+        } else if (hideBottom > 0) {
+            // Hide N pixels from the absolute bottom of the 72x72 sprite
+            // The bottom of the sprite is at anchor (y + sinkOffset) + 28 pixels (since feetY is -44)
+            const spriteBottomY = y + sinkOffset + 28;
+            const clipY = spriteBottomY - hideBottom;
+            drawPass(1.0, { x: x - 40, y: y - 100, w: 80, h: clipY - (y - 100) });
         } else {
             drawPass(1.0);
         }
