@@ -49,7 +49,8 @@ Type these words on your keyboard during gameplay to jump to specific scenes:
 | Cheat Code | Destination Scene |
 | :--- | :--- |
 | `title` | Main Title Screen |
-| `camp` | Campaign/World Map |
+| `camp` | Campaign/Character Selection |
+| `map` | World Map |
 | `brief` | Briefing at Magistrate's HQ |
 | `battle` | Tactics Battle Map |
 | `story` | Narrative/Dialogue Test |

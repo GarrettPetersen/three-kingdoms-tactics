@@ -2,7 +2,8 @@ import { assets } from './core/AssetLoader.js';
 import { SceneManager } from './core/SceneManager.js';
 import { TitleScene } from './scenes/TitleScene.js';
 import { CustomBattleMenuScene } from './scenes/CustomBattleMenuScene.js';
-import { CampaignScene } from './scenes/CampaignScene.js';
+import { CampaignSelectionScene } from './scenes/CampaignSelectionScene.js';
+import { MapScene } from './scenes/MapScene.js';
 import { TacticsScene } from './scenes/TacticsScene.js';
 import { NarrativeScene } from './scenes/NarrativeScene.js';
 
@@ -63,7 +64,8 @@ async function init() {
     const sceneManager = new SceneManager(ctx, canvas, config);
     sceneManager.addScene('title', new TitleScene());
     sceneManager.addScene('custom_battle', new CustomBattleMenuScene());
-    sceneManager.addScene('campaign', new CampaignScene());
+    sceneManager.addScene('campaign_selection', new CampaignSelectionScene());
+    sceneManager.addScene('map', new MapScene());
     sceneManager.addScene('tactics', new TacticsScene());
     sceneManager.addScene('narrative', new NarrativeScene());
 
@@ -74,12 +76,14 @@ async function init() {
         if (e.key.length === 1) {
             inputBuffer += e.key.toLowerCase();
             if (inputBuffer.endsWith('title')) sceneManager.switchTo('title');
-            if (inputBuffer.endsWith('camp')) sceneManager.switchTo('campaign');
-            if (inputBuffer.endsWith('battle')) sceneManager.switchTo('tactics');
+            if (inputBuffer.endsWith('camp')) sceneManager.switchTo('campaign_selection');
+            if (inputBuffer.endsWith('map')) sceneManager.switchTo('map');
+            if (inputBuffer.endsWith('battle')) sceneManager.switchTo('tactics', { battleId: 'custom' });
             if (inputBuffer.endsWith('brief')) {
                 // Jump to the Magistrate Briefing script
                 sceneManager.switchTo('narrative', {
                     onComplete: () => sceneManager.switchTo('tactics', {
+                        battleId: 'daxing',
                         mapGen: {
                             biome: 'northern',
                             layout: 'foothills',
@@ -220,6 +224,8 @@ async function init() {
                 yellowturban: 'assets/characters/097_yellowturban.png',
                 merchant: 'assets/characters/090_fushang01.png',
                 blacksmith: 'assets/characters/091_tiejiang01.png',
+                bandit1: 'assets/characters/088_qiangdao01.png',
+                bandit2: 'assets/characters/089_qiangdao02.png',
                 zhangjiao: 'assets/characters/005_zhangjiao.png',
                 zhangbao: 'assets/characters/006_zhangbao.png',
                 zhangliang: 'assets/characters/007_zhangliang.png',

@@ -52,6 +52,9 @@ export class TacticsScene extends BaseScene {
         this.gameOverTimer = 0;
         this.isGameOver = false;
         
+        // Scenario-specific initialization (MUST BE SET BEFORE PLACING UNITS)
+        this.battleId = params.battleId || 'daxing'; 
+
         // Map generation parameters
         const mapGenParams = params.mapGen || {
             biome: 'central',
@@ -75,27 +78,86 @@ export class TacticsScene extends BaseScene {
         }
         this.particles = [];
 
-        // New Turn Flow: Start by moving and telegraphing all NPCs
-        this.startNpcPhase();
+        this.isIntroDialogueActive = true;
+        this.dialogueStep = 0;
+        
+        // Wait for intro animation then start dialogue
+        setTimeout(() => {
+            this.startIntroDialogue();
+        }, 1500);
+    }
+
+    startIntroDialogue() {
+        this.introScript = null;
+        if (this.battleId === 'daxing') {
+            this.introScript = [
+                { portraitKey: 'liubei', name: 'Liu Bei', text: "The Yellow Turban vanguard is here. They seek to plunder Zhuo County!" },
+                { portraitKey: 'guanyu', name: 'Guan Yu', text: "Their numbers are great, but they are but a rabble without leadership." },
+                { portraitKey: 'zhangfei', name: 'Zhang Fei', text: "Let me at them! My Serpent Spear is thirsty for rebel blood!" },
+                { portraitKey: 'bandit1', name: 'Deng Mao', text: "Imperial dogs! You dare stand in the way of the Lord of Heaven?" },
+                { portraitKey: 'bandit2', name: 'Cheng Yuanzhi', text: "Slay them all! The Han is dead, the Yellow Heavens shall rise!" },
+                { portraitKey: 'liubei', name: 'Liu Bei', text: "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!" }
+            ];
+        }
+        
+        if (this.introScript) {
+            this.isIntroDialogueActive = true;
+            this.dialogueStep = 0;
+        } else {
+            this.isIntroDialogueActive = false;
+            this.startNpcPhase(); // Skip to NPC phase if no dialogue
+        }
     }
 
     checkWinLoss() {
-        if (this.isGameOver) return;
+        if (this.isGameOver || this.isIntroDialogueActive) return;
 
-        const playerUnits = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp > 0);
-        const enemyUnits = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
+        // Custom Win/Loss for Battle 1 (Daxing)
+        if (this.battleId === 'daxing') {
+            const oathBrothers = this.units.filter(u => (u.id === 'liubei' || u.id === 'guanyu' || u.id === 'zhangfei') && u.hp > 0);
+            const alliedSoldiers = this.units.filter(u => u.faction === 'allied' && u.hp > 0);
+            const captains = this.units.filter(u => (u.id === 'dengmao' || u.id === 'chengyuanzhi') && u.hp > 0);
 
-        if (playerUnits.length === 0 || enemyUnits.length === 0) {
-            this.isGameOver = true;
-            this.gameOverTimer = 2000; // Wait 2 seconds before switching back
-            this.isProcessingTurn = true; // Stop inputs
+            // Loss: All oath brothers die OR all allied soldiers die
+            if (oathBrothers.length === 0 || alliedSoldiers.length === 0) {
+                this.endBattle(false);
+                return;
+            }
+
+            // Win: Both captains defeated
+            if (captains.length === 0) {
+                this.endBattle(true);
+                return;
+            }
+        } else {
+            // Default Win/Loss
+            const playerUnits = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp > 0);
+            const enemyUnits = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
+
+            if (playerUnits.length === 0) this.endBattle(false);
+            else if (enemyUnits.length === 0) this.endBattle(true);
         }
+    }
+
+    endBattle(won) {
+        this.isGameOver = true;
+        this.won = won;
+        this.gameOverTimer = 3000;
+        this.isProcessingTurn = true;
     }
 
     startNpcPhase() {
         this.turn = 'npc_moving';
         this.isProcessingTurn = true;
         
+        // Clear old intents before starting new phase
+        this.units.forEach(u => {
+            if (u.faction !== 'player') {
+                u.intent = null;
+                u.attackOrder = null;
+            }
+        });
+
         // Move all non-player units (Allies move first, then Enemies)
         const allies = this.units.filter(u => u.faction === 'allied' && u.hp > 0);
         const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
@@ -126,7 +188,7 @@ export class TacticsScene extends BaseScene {
     }
 
     telegraphAllNpcs() {
-        // Reset all NPC orders first, but KEEEP intents that might have been set during movement
+        // Reset all NPC orders first, but KEEEP intents that were set during individual movement
         this.units.forEach(u => {
             if (u.faction !== 'player') {
                 u.attackOrder = null;
@@ -139,15 +201,13 @@ export class TacticsScene extends BaseScene {
         let order = 1;
         // Enemies first (Red numbers)
         enemies.forEach(e => {
-            // Only recalculate if intent is missing (e.g. they didn't move/re-telegraph)
-            if (!e.intent) this.telegraphSingleNpc(e);
+            // ONLY assign order if they already have an intent from their move phase
             if (e.intent) {
                 e.attackOrder = order++;
             }
         });
         // Allies second (Green numbers)
         allies.forEach(a => {
-            if (!a.intent) this.telegraphSingleNpc(a);
             if (a.intent) {
                 a.attackOrder = order++;
             }
@@ -335,6 +395,7 @@ export class TacticsScene extends BaseScene {
     }
 
     startExecutionPhase() {
+        if (this.isIntroDialogueActive) return; // Wait for intro
         this.turn = 'execution';
         this.isProcessingTurn = true;
         this.selectedUnit = null;
@@ -351,8 +412,15 @@ export class TacticsScene extends BaseScene {
             if (index >= attackers.length) {
                 // Short pause after the final attack before next phase
                 setTimeout(() => {
-                    this.turnNumber++;
-                    this.startNpcPhase();
+                    this.checkWinLoss();
+                    
+                    if (!this.isGameOver) {
+                        if (this.battleId === 'daxing') {
+                            this.checkDaxingReinforcements();
+                        }
+                        this.turnNumber++;
+                        this.startNpcPhase();
+                    }
                 }, 600);
                 return;
             }
@@ -375,6 +443,50 @@ export class TacticsScene extends BaseScene {
         setTimeout(() => {
             executeAll(0);
         }, 400);
+    }
+
+    checkDaxingReinforcements() {
+        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
+        const aliveCaptains = enemies.filter(u => u.id === 'dengmao' || u.id === 'chengyuanzhi');
+        
+        // Only spawn if captains are alive and we're low on grunts
+        if (aliveCaptains.length > 0 && enemies.length < 5) {
+            const spawnSpots = [
+                { r: 0, q: 0 }, { r: 0, q: this.manager.config.mapWidth - 1 },
+                { r: this.manager.config.mapHeight - 1, q: 0 }, { r: this.manager.config.mapHeight - 1, q: this.manager.config.mapWidth - 1 }
+            ];
+            
+            let spawns = 0;
+            spawnSpots.forEach(spot => {
+                if (spawns >= 2) return;
+                const cell = this.tacticsMap.getCell(spot.r, spot.q);
+                if (cell && !cell.unit && !cell.impassable) {
+                    const id = `reinforcement_${Date.now()}_${spawns}`;
+                    const config = {
+                        name: "Yellow Turban",
+                        imgKey: 'yellowturban',
+                        faction: 'enemy',
+                        hp: 3,
+                        attacks: ['bash'],
+                        r: spot.r, q: spot.q
+                    };
+                    const unit = new Unit(id, config);
+                    unit.img = assets.getImage('yellowturban');
+                    this.units.push(unit);
+                    cell.unit = unit;
+                    spawns++;
+                }
+            });
+
+            if (spawns > 0) {
+                this.addDamageNumber(this.manager.canvas.width / 2, 50, "REINFORCEMENTS!");
+                const liubei = this.units.find(u => u.id === 'liubei');
+                if (liubei && liubei.hp > 0) {
+                    liubei.dialogue = "They keep coming! We must defeat Deng Mao and Cheng Yuanzhi to break them!";
+                    this.activeDialogue = { unit: liubei, timer: 2000 };
+                }
+            }
+        }
     }
 
     addDamageNumber(x, y, value) {
@@ -477,6 +589,11 @@ export class TacticsScene extends BaseScene {
         const victim = targetCell ? targetCell.unit : null;
 
         setTimeout(() => {
+            // Apply dialogue trigger for boss deaths in Daxing
+            if (victim && victim.hp > 0 && (victim.id === 'dengmao' || victim.id === 'chengyuanzhi')) {
+                // Potential for mid-attack dialogue if needed
+            }
+
             this.damageCell(targetR, targetQ);
             if (victim) {
                 this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos);
@@ -597,7 +714,9 @@ export class TacticsScene extends BaseScene {
             victim.hp = 0;
             victim.action = 'death';
             targetCell.unit = null;
-        } else if (attack.push) {
+        }
+
+        if (attack.push) {
             // Handle push
             const dirIndex = this.tacticsMap.getDirectionIndex(attacker.r, attacker.q, targetR, targetQ);
             const pushCell = this.tacticsMap.getNeighborInDirection(targetR, targetQ, dirIndex);
@@ -621,7 +740,10 @@ export class TacticsScene extends BaseScene {
                     // Valid empty tile
                     targetCell.unit = null;
                     victim.setPosition(pushCell.r, pushCell.q);
-                    pushCell.unit = victim;
+                    // Only occupy the new cell if still alive
+                    if (victim.hp > 0) {
+                        pushCell.unit = victim;
+                    }
                     victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false);
                 } else {
                     // Collision
@@ -685,7 +807,12 @@ export class TacticsScene extends BaseScene {
             hasMoved: u.hasMoved,
             hasAttacked: u.hasAttacked,
             hasActed: u.hasActed,
-            faction: u.faction
+            faction: u.faction,
+            intent: u.intent ? { ...u.intent } : null,
+            attackOrder: u.attackOrder,
+            flip: u.flip,
+            action: u.action,
+            isDrowning: u.isDrowning
         }));
     }
 
@@ -704,6 +831,22 @@ export class TacticsScene extends BaseScene {
                 u.hasMoved = state.hasMoved;
                 u.hasAttacked = state.hasAttacked;
                 u.hasActed = state.hasActed;
+                u.intent = state.intent ? { ...state.intent } : null;
+                u.attackOrder = state.attackOrder;
+                u.flip = state.flip;
+                u.action = state.action || 'standby';
+                u.isDrowning = state.isDrowning || false;
+                
+                // Clear any mid-turn animation states
+                u.frame = 0;
+                u.isMoving = false;
+                u.path = [];
+                u.pushData = null;
+                u.shakeTimer = 0;
+                u.visualOffsetX = 0;
+                u.visualOffsetY = 0;
+
+                if (u.hp > 0 && u.action === 'death') u.action = 'standby';
 
                 const newCell = this.tacticsMap.getCell(u.r, u.q);
                 if (newCell) newCell.unit = u;
@@ -715,30 +858,59 @@ export class TacticsScene extends BaseScene {
         this.reachableTiles.clear();
         this.attackTiles.clear();
         this.activeDialogue = null;
-        this.telegraphAllNpcs();
+        // No need to re-telegraph, we restored intents and orders
     }
 
     placeInitialUnits(specifiedUnits) {
         this.units = [];
-        const unitsToPlace = specifiedUnits || [
-            { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
-            { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
-            { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
-            
-            // Allied Soldiers
-            { id: 'ally1', name: 'Soldier', imgKey: 'soldier', r: 1, q: 3, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] },
-            { id: 'ally2', name: 'Soldier', imgKey: 'soldier', r: 1, q: 4, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] },
-            { id: 'ally3', name: 'Soldier', imgKey: 'soldier', r: 1, q: 5, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] },
+        let unitsToPlace = specifiedUnits;
 
-            { id: 'rebel1', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 4, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
-            { id: 'rebel2', name: 'Yellow Turban', imgKey: 'yellowturban', r: 8, q: 5, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
-            { id: 'rebel3', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 6, moveRange: 3, hp: 2, faction: 'enemy', attacks: ['bash'] },
-            { id: 'rebel4', name: 'Yellow Turban', imgKey: 'yellowturban', r: 9, q: 2, moveRange: 3, hp: 2, faction: 'enemy', attacks: ['bash'] },
-            { id: 'rebel5', name: 'Yellow Turban', imgKey: 'yellowturban', r: 9, q: 7, moveRange: 3, hp: 2, faction: 'enemy', attacks: ['bash'] },
-            { id: 'rebel6', name: 'Yellow Turban', imgKey: 'yellowturban', r: 10, q: 4, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] }
-        ];
+        if (!unitsToPlace && (this.battleId === 'daxing' || this.battleId === 'custom')) {
+            unitsToPlace = [
+                { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
+                { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
+                { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
+                
+                // Allied Soldiers
+                { id: 'ally1', name: 'Soldier', imgKey: 'soldier', r: 1, q: 3, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] },
+                { id: 'ally2', name: 'Soldier', imgKey: 'soldier', r: 1, q: 4, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] },
+                { id: 'ally3', name: 'Soldier', imgKey: 'soldier', r: 1, q: 5, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] }
+            ];
 
-        unitsToPlace.forEach(u => {
+            if (this.battleId === 'daxing') {
+                // Add Captains for Daxing
+                unitsToPlace.push(
+                    { id: 'dengmao', name: 'Deng Mao', imgKey: 'bandit1', r: 8, q: 4, moveRange: 3, hp: 6, faction: 'enemy', attacks: ['heavy_thrust'] },
+                    { id: 'chengyuanzhi', name: 'Cheng Yuanzhi', imgKey: 'bandit2', r: 9, q: 5, moveRange: 3, hp: 8, faction: 'enemy', attacks: ['whirlwind'] },
+                    { id: 'rebel1', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 3, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
+                    { id: 'rebel2', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 5, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
+                    { id: 'rebel3', name: 'Yellow Turban', imgKey: 'yellowturban', r: 8, q: 2, moveRange: 3, hp: 2, faction: 'enemy', attacks: ['bash'] },
+                    { id: 'rebel4', name: 'Yellow Turban', imgKey: 'yellowturban', r: 8, q: 7, moveRange: 3, hp: 2, faction: 'enemy', attacks: ['bash'] }
+                );
+            } else {
+                // Default Custom Battle Enemies
+                unitsToPlace.push(
+                    { id: 'rebel1', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 2, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
+                    { id: 'rebel2', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 4, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
+                    { id: 'rebel3', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 6, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
+                    { id: 'rebel4', name: 'Yellow Turban', imgKey: 'yellowturban', r: 9, q: 3, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
+                    { id: 'rebel5', name: 'Yellow Turban', imgKey: 'yellowturban', r: 9, q: 5, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
+                    { id: 'rebel6', name: 'Yellow Turban', imgKey: 'yellowturban', r: 9, q: 7, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] }
+                );
+            }
+        } else if (!unitsToPlace) {
+            // Sensible fallback for any other scenario
+            unitsToPlace = [
+                { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
+                { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
+                { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
+                { id: 'rebel1', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 4, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
+                { id: 'rebel2', name: 'Yellow Turban', imgKey: 'yellowturban', r: 8, q: 5, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] }
+            ];
+        }
+
+        if (unitsToPlace) {
+            unitsToPlace.forEach(u => {
             let finalR = u.r;
             let finalQ = u.q;
             
@@ -768,7 +940,8 @@ export class TacticsScene extends BaseScene {
             this.units.push(unit);
             const finalCell = this.tacticsMap.getCell(finalR, finalQ);
             if (finalCell) finalCell.unit = unit;
-        });
+            });
+        }
     }
 
     getPixelPos(r, q) {
@@ -1215,14 +1388,27 @@ export class TacticsScene extends BaseScene {
             }
         }
 
-        // Game Over Overlay
+        if (this.isIntroDialogueActive && this.introScript) {
+            const step = this.introScript[this.dialogueStep];
+            if (step) {
+                this.renderDialogueBox(ctx, canvas, {
+                    portraitKey: step.portraitKey,
+                    name: step.name,
+                    text: step.text
+                });
+            }
+        }
+
         if (this.isGameOver) {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            const playerUnits = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp > 0);
-            const text = playerUnits.length > 0 ? "VICTORY!" : "DEFEAT...";
-            const color = playerUnits.length > 0 ? "#ffd700" : "#ff4444";
+            const text = this.won ? "VICTORY!" : "DEFEAT...";
+            const color = this.won ? "#ffd700" : "#ff4444";
             this.drawPixelText(ctx, text, canvas.width / 2, canvas.height / 2 - 10, { color, font: '16px Silkscreen', align: 'center' });
+            
+            if (this.battleId === 'daxing' && this.won) {
+                this.drawPixelText(ctx, "The Yellow Turbans scatter!", canvas.width / 2, canvas.height / 2 + 15, { color: '#aaa', font: '8px Tiny5', align: 'center' });
+            }
         }
     }
 
@@ -1545,7 +1731,7 @@ export class TacticsScene extends BaseScene {
                 portraitKey: this.activeDialogue.unit.imgKey,
                 name: this.activeDialogue.unit.name,
                 text: this.activeDialogue.unit.dialogue
-            });
+            }, { subStep: this.activeDialogue.subStep || 0 });
         }
 
         if (this.isIntroAnimating) {
@@ -1613,6 +1799,36 @@ export class TacticsScene extends BaseScene {
     }
 
     handleInput(e) {
+        if (this.isIntroDialogueActive) {
+            this.dialogueStep++;
+            if (this.dialogueStep >= this.introScript.length) {
+                this.isIntroDialogueActive = false;
+                this.startNpcPhase();
+            }
+            return;
+        }
+
+        if (this.activeDialogue) {
+            // Check if there are more lines to show
+            const result = this.renderDialogueBox(this.manager.ctx, this.manager.canvas, {
+                portraitKey: this.activeDialogue.unit.imgKey,
+                name: this.activeDialogue.unit.name,
+                text: this.activeDialogue.unit.dialogue
+            }, { subStep: this.activeDialogue.subStep || 0 });
+
+            if (result.hasNextChunk) {
+                this.activeDialogue.subStep = (this.activeDialogue.subStep || 0) + 1;
+            } else {
+                this.activeDialogue = null;
+            }
+            return;
+        }
+
+        if (this.isGameOver) {
+            this.manager.switchTo('title');
+            return;
+        }
+
         if (this.isProcessingTurn || this.isIntroAnimating) return;
 
         const { x, y } = this.getMousePos(e);

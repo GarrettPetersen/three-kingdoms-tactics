@@ -114,6 +114,7 @@ export class CustomBattleMenuScene extends BaseScene {
             if (btn.type === 'back') this.manager.switchTo('title');
             if (btn.type === 'start') {
                 this.manager.switchTo('tactics', {
+                    battleId: 'custom',
                     isCustom: true,
                     mapGen: { ...this.options }
                 });

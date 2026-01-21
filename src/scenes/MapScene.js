@@ -2,10 +2,10 @@ import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 import { ANIMATIONS } from '../core/Constants.js';
 
-export class CampaignScene extends BaseScene {
+export class MapScene extends BaseScene {
     constructor() {
         super();
-        this.selectedCampaign = null;
+        this.selectedLocation = null;
         this.prologueComplete = false;
         this.interactionSelected = null;
         this.subStep = 0;
@@ -18,15 +18,14 @@ export class CampaignScene extends BaseScene {
             targetY: 0,
             onComplete: null
         };
-        this.campaigns = [
-            { 
-                id: 'liubei', 
-                name: 'The Story of Liu Bei', 
-                x: 190, 
-                y: 70,
-                imgKey: 'liubei'
-            }
-        ];
+        // Current location of the party
+        this.party = { 
+            id: 'liubei', 
+            name: 'Liu Bei', 
+            x: 190, 
+            y: 70,
+            imgKey: 'liubei'
+        };
         this.magistrate = {
             id: 'magistrate',
             x: 182,
@@ -37,17 +36,30 @@ export class CampaignScene extends BaseScene {
         this.lastClickTime = 0;
     }
 
-    enter() {
-        assets.playMusic('campaign', 0.4);
+    enter(params) {
+        assets.playMusic('campaign_intro', 'campaign_loop');
+        if (params && params.campaignId) {
+            this.currentCampaignId = params.campaignId;
+            // Initialize party based on campaign
+            if (params.campaignId === 'liubei') {
+                this.party = { 
+                    id: 'liubei', 
+                    name: 'Liu Bei', 
+                    x: 190, 
+                    y: 70,
+                    imgKey: 'liubei'
+                };
+            }
+            // Add other campaigns here as they are developed
+        }
     }
 
     heroMoveTo(targetX, targetY, onComplete) {
-        const hero = this.campaigns[0];
         this.moveState = {
             isMoving: true,
             progress: 0,
-            startX: hero.x,
-            startY: hero.y,
+            startX: this.party.x,
+            startY: this.party.y,
             targetX: targetX,
             targetY: targetY,
             onComplete: onComplete
@@ -85,19 +97,16 @@ export class CampaignScene extends BaseScene {
         const frame = Math.floor(Date.now() / 150) % 4;
         const walkFrame = Math.floor(Date.now() / 100) % 4;
 
-        this.campaigns.forEach(c => {
-            const charImg = assets.getImage(c.imgKey);
-            if (!charImg) return;
-
-            let cx = mx + c.x;
-            let cy = my + c.y;
+        const charImg = assets.getImage(this.party.imgKey);
+        if (charImg) {
+            let cx = mx + this.party.x;
+            let cy = my + this.party.y;
             
             let action = 'standby';
             let frameIdx = frame;
             let flip = false;
 
             if (this.moveState.isMoving) {
-                // Interpolate position using generic moveState
                 cx = mx + this.moveState.startX + (this.moveState.targetX - this.moveState.startX) * this.moveState.progress;
                 cy = my + this.moveState.startY + (this.moveState.targetY - this.moveState.startY) * this.moveState.progress;
                 
@@ -108,10 +117,10 @@ export class CampaignScene extends BaseScene {
 
             this.drawCharacter(ctx, charImg, action, frameIdx, cx, cy, { flip });
 
-            if (this.selectedCampaign === c.id && !this.prologueComplete) {
-                this.drawLabel(ctx, c.name, cx, cy - 45, "Click to Start");
+            if (!this.prologueComplete && !this.moveState.isMoving) {
+                this.drawLabel(ctx, "ZHUO COUNTY", cx, cy - 45, "Click to Enter");
             }
-        });
+        }
 
         if (this.interactionSelected === 'hero_reminder') {
             const status = this.renderDialogueBox(ctx, canvas, {
@@ -155,9 +164,9 @@ export class CampaignScene extends BaseScene {
                 this.moveState.progress = 1;
                 this.moveState.isMoving = false;
                 
-                // Update actual coordinate in the campaign data
-                this.campaigns[0].x = this.moveState.targetX;
-                this.campaigns[0].y = this.moveState.targetY;
+                // Update actual coordinate in the party data
+                this.party.x = this.moveState.targetX;
+                this.party.y = this.moveState.targetY;
 
                 if (this.moveState.onComplete) {
                     this.moveState.onComplete();
@@ -169,7 +178,7 @@ export class CampaignScene extends BaseScene {
     handleInput(e) {
         const { x: mouseX, y: mouseY } = this.getMousePos(e);
 
-        const mx = 0; // Fixed 256x256 resolution makes map offset 0
+        const mx = 0; // Fixed 256x256 resolution
         const my = 0;
 
         // Advance dialogue if active
@@ -207,73 +216,65 @@ export class CampaignScene extends BaseScene {
                     });
                 } else {
                     this.interactionSelected = 'magistrate';
-                    this.selectedCampaign = null;
+                    this.selectedLocation = 'magistrate';
                 }
                 return;
             }
         }
 
-        let hitAny = false;
-        this.campaigns.forEach(c => {
-            const cx = mx + c.x;
-            const cy = my + c.y;
-            
-            // 1. Check pixel-perfect character hit
-            const charImg = assets.getImage(c.imgKey);
-            const frame = Math.floor(Date.now() / 150) % 4;
-            const walkFrame = Math.floor(Date.now() / 100) % 4;
-            
-            let action = 'standby';
-            let frameIdx = frame;
-            let flip = false;
-            let currentX = cx;
-            let currentY = cy;
+        // Check party/Zhuo County hit
+        const cx = mx + this.party.x;
+        const cy = my + this.party.y;
+        
+        const charImg = assets.getImage(this.party.imgKey);
+        const frame = Math.floor(Date.now() / 150) % 4;
+        const walkFrame = Math.floor(Date.now() / 100) % 4;
+        
+        let action = 'standby';
+        let frameIdx = frame;
+        let flip = false;
+        let currentX = cx;
+        let currentY = cy;
 
-            if (this.moveState.isMoving) {
-                currentX = mx + this.moveState.startX + (this.moveState.targetX - this.moveState.startX) * this.moveState.progress;
-                currentY = my + this.moveState.startY + (this.moveState.targetY - this.moveState.startY) * this.moveState.progress;
-                action = 'walk';
-                frameIdx = walkFrame;
-                if (this.moveState.targetX < this.moveState.startX) flip = true;
-            }
+        if (this.moveState.isMoving) {
+            currentX = mx + this.moveState.startX + (this.moveState.targetX - this.moveState.startX) * this.moveState.progress;
+            currentY = my + this.moveState.startY + (this.moveState.targetY - this.moveState.startY) * this.moveState.progress;
+            action = 'walk';
+            frameIdx = walkFrame;
+            if (this.moveState.targetX < this.moveState.startX) flip = true;
+        }
 
-            const charHit = this.checkCharacterHit(charImg, action, frameIdx, currentX, currentY, mouseX, mouseY, { flip });
-            
-            // 2. Check hit area for the selection box (label)
-            let boxHit = false;
-            if (this.selectedCampaign === c.id) {
-                this.manager.ctx.font = '8px Silkscreen';
-                const metrics = this.manager.ctx.measureText(c.name);
-                const boxW = Math.floor(metrics.width + 10);
-                const boxH = 24;
-                const bx = Math.floor(cx - 20 - boxW);
-                const by = Math.floor(cy - 45);
-                boxHit = (mouseX >= bx && mouseX <= bx + boxW && mouseY >= by && mouseY <= by + boxH);
-            }
+        const charHit = this.checkCharacterHit(charImg, action, frameIdx, currentX, currentY, mouseX, mouseY, { flip });
+        
+        let boxHit = false;
+        if (this.selectedLocation === 'zhuo') {
+            this.manager.ctx.font = '8px Silkscreen';
+            const metrics = this.manager.ctx.measureText("ZHUO COUNTY");
+            const boxW = Math.floor(metrics.width + 10);
+            const boxH = 24;
+            const bx = Math.floor(cx - 20 - boxW);
+            const by = Math.floor(cy - 45);
+            boxHit = (mouseX >= bx && mouseX <= bx + boxW && mouseY >= by && mouseY <= by + boxH);
+        }
 
-            if (charHit || boxHit) {
-                hitAny = true;
-                if (this.selectedCampaign === c.id) {
-                    if (this.prologueComplete) {
-                        this.interactionSelected = 'hero_reminder';
-                        this.subStep = 0;
-                    } else {
-                        this.startCampaign(c.id);
-                    }
-                } else {
-                    this.selectedCampaign = c.id;
-                    this.interactionSelected = null;
+        if (charHit || boxHit) {
+            if (this.selectedLocation === 'zhuo') {
+                if (this.prologueComplete) {
+                    this.interactionSelected = 'hero_reminder';
                     this.subStep = 0;
+                } else {
+                    this.startCampaign('liubei');
                 }
+            } else {
+                this.selectedLocation = 'zhuo';
+                this.interactionSelected = null;
+                this.subStep = 0;
             }
-        });
-
-        if (!hitAny) {
-            this.selectedCampaign = null;
+        } else {
+            this.selectedLocation = null;
             if (this.interactionSelected !== 'hero_reminder') {
                 this.interactionSelected = null;
             }
-            this.magistrateSelected = false;
         }
     }
 
@@ -281,6 +282,7 @@ export class CampaignScene extends BaseScene {
         this.manager.switchTo('narrative', {
             onComplete: () => {
                 this.manager.switchTo('tactics', {
+                    battleId: 'daxing',
                     mapGen: {
                         biome: 'northern',
                         layout: 'foothills',
@@ -404,7 +406,7 @@ export class CampaignScene extends BaseScene {
             this.manager.switchTo('narrative', {
                 onComplete: () => {
                     this.prologueComplete = true;
-                    this.manager.switchTo('campaign');
+                    this.manager.switchTo('map');
                 },
                 script: [
                     { 

@@ -84,7 +84,7 @@ export class TitleScene extends BaseScene {
         
         if (this.newGameRect && x >= this.newGameRect.x && x <= this.newGameRect.x + this.newGameRect.w &&
             y >= this.newGameRect.y && y <= this.newGameRect.y + this.newGameRect.h) {
-            this.manager.switchTo('campaign');
+            this.manager.switchTo('campaign_selection');
             return;
         }
 

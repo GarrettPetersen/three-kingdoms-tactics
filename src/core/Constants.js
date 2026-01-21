@@ -49,6 +49,22 @@ export const ATTACKS = {
         range: 1,
         animation: 'attack_1',
         description: 'A standard sword strike.'
+    },
+    whirlwind: {
+        name: 'Whirlwind',
+        damage: 2,
+        range: 1,
+        push: true,
+        animation: 'attack_1',
+        description: 'A fierce spinning strike that hits and pushes.'
+    },
+    heavy_thrust: {
+        name: 'Heavy Thrust',
+        damage: 2,
+        range: 1,
+        push: true,
+        animation: 'attack_2',
+        description: 'A powerful lunge that deals heavy damage and push.'
     }
 };
 
