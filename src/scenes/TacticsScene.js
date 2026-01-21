@@ -1163,6 +1163,21 @@ export class TacticsScene extends BaseScene {
 
         const drawCalls = [];
 
+        // Determine which units are being targeted by telegraphed attacks
+        const targetedUnits = new Set();
+        this.units.forEach(u => {
+            if (u.intent && u.intent.type === 'attack') {
+                const targetCell = this.tacticsMap.getNeighborInDirection(u.r, u.q, u.intent.dirIndex);
+                if (targetCell) {
+                    const affected = this.getAffectedTiles(u, u.intent.attackKey, targetCell.r, targetCell.q);
+                    affected.forEach(t => {
+                        const cell = this.tacticsMap.getCell(t.r, t.q);
+                        if (cell && cell.unit) targetedUnits.add(cell.unit);
+                    });
+                }
+            }
+        });
+
         // Determine which tiles are currently being "previewed" for damage
         const affectedTiles = new Map();
         if (this.selectedUnit && this.selectedAttack && this.hoveredCell && this.attackTiles.has(`${this.hoveredCell.r},${this.hoveredCell.q}`)) {
@@ -1274,6 +1289,10 @@ export class TacticsScene extends BaseScene {
                     // Wading: exactly 4px deep into the hex
                     drawOptions.sinkOffset = 4;
                     drawOptions.isSubmerged = true;
+                }
+
+                if (targetedUnits.has(u)) {
+                    drawOptions.tint = 'rgba(255, 0, 0, 0.3)';
                 }
 
                 const isSelected = this.selectedUnit === u;

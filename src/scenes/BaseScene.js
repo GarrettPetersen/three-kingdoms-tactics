@@ -25,7 +25,7 @@ export class BaseScene {
 
     drawCharacter(ctx, img, action, frame, x, y, options = {}) {
         if (!img) return;
-        const { flip = false, sinkOffset = 0, isSubmerged = false } = options;
+        const { flip = false, sinkOffset = 0, isSubmerged = false, tint = null } = options;
         const sourceSize = 72;
         const anim = ANIMATIONS[action] || ANIMATIONS.standby;
         const f = Math.floor(frame) % anim.length;
@@ -34,35 +34,56 @@ export class BaseScene {
         const sy = Math.floor(frameIdx / 8) * sourceSize;
         const feetY = -44;
 
-        if (isSubmerged) {
-            // Draw ABOVE water surface (opaque)
-            // The water surface is exactly at 'y'
+        const drawPass = (alpha = 1.0, clipRect = null) => {
             ctx.save();
-            ctx.beginPath();
-            ctx.rect(x - 40, y - 100, 80, 100); 
-            ctx.clip();
+            if (clipRect) {
+                ctx.beginPath();
+                ctx.rect(clipRect.x, clipRect.y, clipRect.w, clipRect.h);
+                ctx.clip();
+            }
+            ctx.globalAlpha *= alpha;
             ctx.translate(Math.floor(x), Math.floor(y + sinkOffset));
             if (flip) ctx.scale(-1, 1);
-            ctx.drawImage(img, sx, sy, sourceSize, sourceSize, -36, feetY, sourceSize, sourceSize);
+            
+            if (tint) {
+                // To tint ONLY the sprite and not the background already on the canvas,
+                // we must use a temporary buffer.
+                if (!this._tintCanvas) {
+                    this._tintCanvas = document.createElement('canvas');
+                    this._tintCanvas.width = sourceSize;
+                    this._tintCanvas.height = sourceSize;
+                    this._tintCtx = this._tintCanvas.getContext('2d');
+                }
+                const tctx = this._tintCtx;
+                tctx.clearRect(0, 0, sourceSize, sourceSize);
+                
+                // 1. Draw sprite to temp
+                tctx.drawImage(img, sx, sy, sourceSize, sourceSize, 0, 0, sourceSize, sourceSize);
+                
+                // 2. Tint it
+                tctx.save();
+                tctx.globalCompositeOperation = 'source-atop';
+                tctx.fillStyle = tint;
+                tctx.fillRect(0, 0, sourceSize, sourceSize);
+                tctx.restore();
+                
+                // 3. Draw temp back to main
+                ctx.drawImage(this._tintCanvas, -36, feetY);
+            } else {
+                // Draw normally
+                ctx.drawImage(img, sx, sy, sourceSize, sourceSize, -36, feetY, sourceSize, sourceSize);
+            }
+            
             ctx.restore();
+        };
 
-            // Draw BELOW water surface (semi-transparent)
-            ctx.save();
-            ctx.globalAlpha = 0.4;
-            ctx.beginPath();
-            ctx.rect(x - 40, y, 80, 100); 
-            ctx.clip();
-            ctx.translate(Math.floor(x), Math.floor(y + sinkOffset));
-            if (flip) ctx.scale(-1, 1);
-            ctx.drawImage(img, sx, sy, sourceSize, sourceSize, -36, feetY, sourceSize, sourceSize);
-            ctx.restore();
+        if (isSubmerged) {
+            // Above water
+            drawPass(1.0, { x: x - 40, y: y - 100, w: 80, h: 100 });
+            // Below water
+            drawPass(0.4, { x: x - 40, y: y, w: 80, h: 100 });
         } else {
-            // Draw normally (Dry Ground)
-            ctx.save();
-            ctx.translate(Math.floor(x), Math.floor(y));
-            if (flip) ctx.scale(-1, 1);
-            ctx.drawImage(img, sx, sy, sourceSize, sourceSize, -36, feetY, sourceSize, sourceSize);
-            ctx.restore();
+            drawPass(1.0);
         }
     }
 
