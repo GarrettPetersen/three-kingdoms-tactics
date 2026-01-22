@@ -31,6 +31,8 @@ export class TacticsScene extends BaseScene {
         this.isIntroAnimating = true;
         this.introTimer = 0;
         this.introDuration = 1000; // ms for the sequence
+
+        this.showAttackOrder = false;
     }
 
     enter(params = {}) {
@@ -1679,6 +1681,28 @@ export class TacticsScene extends BaseScene {
             }
         }
 
+        // Draw Attack Order Numbers (Toggleable)
+        if (this.showAttackOrder && !this.isIntroAnimating && !this.isProcessingTurn) {
+            this.units.forEach(u => {
+                if (u.hp > 0 && u.attackOrder && !u.isGone) {
+                    const ux = u.visualX;
+                    const uy = u.visualY;
+                    let surfaceY = uy;
+                    const cell = this.tacticsMap.getCell(u.r, u.q);
+                    if (cell && cell.terrain.includes('water_shallow')) surfaceY += 4;
+                    if (u.isDrowning) surfaceY += Math.min(1, u.drownTimer / 2000) * 40;
+
+                    const color = (u.faction === 'enemy') ? '#f44' : '#4f4';
+                    this.drawPixelText(ctx, u.attackOrder.toString(), ux, surfaceY - 25, {
+                        color,
+                        font: '10px Silkscreen',
+                        align: 'center',
+                        outline: true
+                    });
+                }
+            });
+        }
+
         if (this.isGameOver) {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1806,27 +1830,32 @@ export class TacticsScene extends BaseScene {
         const dy = targetPos.y - fromPos.y;
         
         ctx.save();
-        // Solid white with shadow for UX clarity
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-        ctx.shadowBlur = 2;
+        // Snap to pixels
+        const sx = Math.floor(fromPos.x);
+        const sy = Math.floor(fromPos.y);
+        const ex = Math.floor(fromPos.x + dx * 0.5); // Shortened arrow
+        const ey = Math.floor(fromPos.y + dy * 0.5);
+        
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+        ctx.shadowBlur = 0; // No blur for pixel perfect
         ctx.shadowOffsetY = 1;
         
         ctx.strokeStyle = '#fff';
         ctx.fillStyle = '#fff';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1; // Thinner
         
         ctx.beginPath();
-        ctx.moveTo(fromPos.x, fromPos.y);
-        ctx.lineTo(fromPos.x + dx * 0.7, fromPos.y + dy * 0.7);
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(ex, ey);
         ctx.stroke();
         
         const angle = Math.atan2(dy, dx);
-        ctx.translate(fromPos.x + dx * 0.7, fromPos.y + dy * 0.7);
+        ctx.translate(ex, ey);
         ctx.rotate(angle);
         ctx.beginPath();
         ctx.moveTo(0, 0);
-        ctx.lineTo(-8, -5);
-        ctx.lineTo(-8, 5);
+        ctx.lineTo(-4, -2.5); // Smaller head
+        ctx.lineTo(-4, 2.5);
         ctx.closePath();
         ctx.fill();
         
@@ -2048,9 +2077,20 @@ export class TacticsScene extends BaseScene {
             ctx.strokeRect(rx + 0.5, ry + 0.5, btnW - 1, btnH - 1);
             this.drawPixelText(ctx, "RESET", rx + btnW / 2, ry + 4, { color: '#eee', font: '8px Tiny5', align: 'center' });
             this.resetTurnRect = { x: rx, y: ry, w: btnW, h: btnH };
+
+            // ATTACK ORDER TOGGLE
+            const ax = rx - btnW - 5;
+            const ay = barY + 3;
+            ctx.fillStyle = this.showAttackOrder ? 'rgba(0, 80, 0, 0.9)' : 'rgba(20, 20, 20, 0.9)';
+            ctx.fillRect(ax, ay, btnW, btnH);
+            ctx.strokeStyle = this.showAttackOrder ? '#0f0' : '#888';
+            ctx.strokeRect(ax + 0.5, ay + 0.5, btnW - 1, btnH - 1);
+            this.drawPixelText(ctx, "ORDER", ax + btnW / 2, ay + 4, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.attackOrderRect = { x: ax, y: ay, w: btnW, h: btnH };
         } else {
             this.endTurnRect = null;
             this.resetTurnRect = null;
+            this.attackOrderRect = null;
         }
 
         // 5. Ability UI (Bottom Center)
@@ -2165,7 +2205,7 @@ export class TacticsScene extends BaseScene {
 
         const { x, y } = this.getMousePos(e);
         
-        // 1. Check UI Buttons (End/Reset)
+        // 1. Check UI Buttons (End/Reset/Order)
         if (this.endTurnRect && x >= this.endTurnRect.x && x <= this.endTurnRect.x + this.endTurnRect.w &&
             y >= this.endTurnRect.y && y <= this.endTurnRect.y + this.endTurnRect.h) {
             this.startExecutionPhase();
@@ -2174,6 +2214,12 @@ export class TacticsScene extends BaseScene {
         if (this.resetTurnRect && x >= this.resetTurnRect.x && x <= this.resetTurnRect.x + this.resetTurnRect.w &&
             y >= this.resetTurnRect.y && y <= this.resetTurnRect.y + this.resetTurnRect.h) {
             this.resetTurn();
+            return;
+        }
+        if (this.attackOrderRect && x >= this.attackOrderRect.x && x <= this.attackOrderRect.x + this.attackOrderRect.w &&
+            y >= this.attackOrderRect.y && y <= this.attackOrderRect.y + this.attackOrderRect.h) {
+            this.showAttackOrder = !this.showAttackOrder;
+            assets.playSound('ui_click', 0.5);
             return;
         }
 

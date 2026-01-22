@@ -233,15 +233,23 @@ export class BaseScene {
         const { 
             color = '#eee', 
             font = '8px Silkscreen', 
-            align = 'left' 
+            align = 'left',
+            outline = false,
+            outlineColor = '#000'
         } = options;
         
         ctx.save();
-        ctx.fillStyle = color;
         ctx.font = font;
         ctx.textAlign = align; 
         ctx.textBaseline = 'top'; 
+
+        if (outline) {
+            ctx.strokeStyle = outlineColor;
+            ctx.lineWidth = 2;
+            ctx.strokeText(text, x, y);
+        }
         
+        ctx.fillStyle = color;
         ctx.fillText(text, x, y);
         const metrics = ctx.measureText(text);
         ctx.restore();
