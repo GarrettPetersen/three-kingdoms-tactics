@@ -36,7 +36,7 @@ const TERRAIN_TYPES = [
     'jungle_dense_01', 'jungle_dense_02', 'jungle_dense_03', 'jungle_palm_01', 'jungle_palm_02', 'jungle_palm_03',
     'pine_forest_01', 'pine_forest_snow_01',
     'mountain_snowy_01', 'mountain_snowy_02',
-    'snow_01', 'ice_01', 'ice_cracked_01'
+    'snow_01', 'snow_footprints_01', 'ice_01', 'ice_cracked_01'
 ];
 
 function setupCanvas() {

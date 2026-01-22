@@ -982,6 +982,12 @@ export class TacticsScene extends BaseScene {
         this.animationFrame = Math.floor(timestamp / 150) % 4;
         
         this.units.forEach(u => {
+            // Update footprints
+            const currentCell = this.tacticsMap.getCell(u.r, u.q);
+            if (currentCell && currentCell.terrain === 'snow_01') {
+                currentCell.terrain = 'snow_footprints_01';
+            }
+
             // Only animate player units that haven't acted, or units currently moving
             const isPlayerActive = (this.turn === 'player' && u.faction === 'player' && !u.hasActed);
             const isEnemyActive = (this.turn === 'enemy' && u.faction === 'enemy');
