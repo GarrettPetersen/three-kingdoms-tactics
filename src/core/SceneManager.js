@@ -1,3 +1,5 @@
+import { GameState } from './GameState.js';
+
 export class SceneManager {
     constructor(ctx, canvas, config) {
         this.ctx = ctx;
@@ -5,6 +7,9 @@ export class SceneManager {
         this.config = config;
         this.currentScene = null;
         this.scenes = {};
+        this.gameState = new GameState();
+        this.gameState.load();
+        
         this.lastPointerX = 0;
         this.lastPointerY = 0;
         this.logicalMouseX = 0;

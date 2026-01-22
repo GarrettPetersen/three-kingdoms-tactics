@@ -6,6 +6,7 @@ import { CampaignSelectionScene } from './scenes/CampaignSelectionScene.js';
 import { MapScene } from './scenes/MapScene.js';
 import { TacticsScene } from './scenes/TacticsScene.js';
 import { NarrativeScene } from './scenes/NarrativeScene.js';
+import { BattleSummaryScene } from './scenes/BattleSummaryScene.js';
 
 const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
@@ -68,6 +69,7 @@ async function init() {
     sceneManager.addScene('map', new MapScene());
     sceneManager.addScene('tactics', new TacticsScene());
     sceneManager.addScene('narrative', new NarrativeScene());
+    sceneManager.addScene('summary', new BattleSummaryScene());
 
     canvas.addEventListener('pointerdown', (e) => sceneManager.handleInput(e));
 
@@ -113,6 +115,7 @@ async function init() {
                             portraitKey: 'zhoujing',
                             name: 'Zhou Jing',
                             position: 'top',
+                            voiceId: 'daxing_zj_01',
                             text: "Who goes there? These men behind you... they have the look of tigers. You do not look like common recruits."
                         },
                         {
@@ -120,6 +123,7 @@ async function init() {
                             portraitKey: 'liubei',
                             name: 'Liu Bei',
                             position: 'top',
+                            voiceId: 'daxing_lb_01',
                             text: "I am Liu Bei, a descendant of Prince Jing of Zhongshan and great-great-grandson of Emperor Jing. These are my sworn brothers, Guan Yu and Zhang Fei."
                         },
                         {
@@ -127,6 +131,7 @@ async function init() {
                             portraitKey: 'liubei',
                             name: 'Liu Bei',
                             position: 'top',
+                            voiceId: 'daxing_lb_02',
                             text: "We have raised a force of five hundred volunteers to serve our country and protect the people."
                         },
                         {
@@ -134,6 +139,7 @@ async function init() {
                             portraitKey: 'zhoujing',
                             name: 'Zhou Jing',
                             position: 'top',
+                            voiceId: 'daxing_zj_02',
                             text: "An Imperial kinsman! Truly, the Heavens have not abandoned the Han. Your arrival is most timely."
                         },
                         {
@@ -141,6 +147,7 @@ async function init() {
                             portraitKey: 'zhoujing',
                             name: 'Zhou Jing',
                             position: 'top',
+                            voiceId: 'daxing_zj_03',
                             text: "Scouts report that the rebel general Cheng Yuanzhi is marching upon us with fifty thousand Yellow Turbans."
                         },
                         {
@@ -148,13 +155,16 @@ async function init() {
                             portraitKey: 'zhangfei',
                             name: 'Zhang Fei',
                             position: 'top',
+                            voiceId: 'daxing_zf_01',
                             text: "Fifty thousand? Hah! They are but a mob of ants! Give us the order, Magistrate, and we shall scatter them like dust!"
                         },
+                        { type: 'command', action: 'playMusic', key: 'oath', volume: 0.5 },
                         {
                             type: 'dialogue',
                             portraitKey: 'guanyu',
                             name: 'Guan Yu',
                             position: 'top',
+                            voiceId: 'daxing_gy_01',
                             text: "Eldest brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march."
                         },
                         {
@@ -162,6 +172,7 @@ async function init() {
                             portraitKey: 'liubei',
                             name: 'Liu Bei',
                             position: 'top',
+                            voiceId: 'daxing_lb_03',
                             text: "Magistrate Zhou, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion."
                         },
                         {
@@ -169,6 +180,7 @@ async function init() {
                             portraitKey: 'zhoujing',
                             name: 'Zhou Jing',
                             position: 'top',
+                            voiceId: 'daxing_zj_04',
                             text: "Very well! I shall lead the main force myself. Together, we shall strike at the heart of Cheng Yuanzhi's army!"
                         },
                         { type: 'command', action: 'fade', target: 1, speed: 0.001 },
@@ -185,7 +197,7 @@ async function init() {
                 sceneManager.switchTo('narrative', {
                     script: [
                         { type: 'title', text: 'DEBUG: NARRATIVE', subtext: 'Testing narrative scene' },
-                        { type: 'dialogue', name: 'System', text: 'Cheat code accepted. Narrative scene is functional.' }
+                        { type: 'dialogue', name: 'System', voiceId: 'debug_narrative_01', text: 'Cheat code accepted. Narrative scene is functional.' }
                     ]
                 });
             }
@@ -249,7 +261,9 @@ async function init() {
                 step_water: 'assets/sfx/step_water.wav',
                 step_sand: 'assets/sfx/step_sand.wav',
                 step_stone: 'assets/sfx/step_stone.wav',
-                step_generic: 'assets/sfx/step_generic.wav'
+                step_generic: 'assets/sfx/step_generic.wav',
+                step_water_walk: 'assets/sfx/step_water_walk.wav',
+                death: 'assets/sfx/death.wav'
             }),
             assets.loadMusic({
                 title_loop: 'assets/music/title_loop.ogg',
@@ -257,7 +271,9 @@ async function init() {
                 campaign_loop: 'assets/music/campaign_loop.ogg',
                 narrative_loop: 'assets/music/narrative_loop.ogg',
                 battle_intro: 'assets/music/battle_intro.ogg',
-                battle_loop: 'assets/music/battle_loop.ogg'
+                battle_loop: 'assets/music/battle_loop.ogg',
+                oath_intro: 'assets/music/oath_intro.ogg',
+                oath_loop: 'assets/music/oath_loop.ogg'
             })
         ]);
 

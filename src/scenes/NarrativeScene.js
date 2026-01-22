@@ -16,7 +16,13 @@ export class NarrativeScene extends BaseScene {
     }
 
     enter(params) {
-        assets.playMusic('narrative', 0.5);
+        if (params.musicKey) {
+            assets.playMusic(params.musicKey, params.musicVolume || 0.5);
+        } else if (params.keepMusic || assets.currentMusicKey === 'oath') {
+            // Do nothing, keep current music if requested or if already playing oath music
+        } else {
+            assets.playMusic('narrative', 0.5);
+        }
         this.script = params.script || [];
         this.onComplete = params.onComplete || null;
         this.currentStep = 0;
@@ -24,14 +30,21 @@ export class NarrativeScene extends BaseScene {
         this.actors = {};
         this.isWaiting = false;
         this.timer = 0;
+        this.lastTime = 0;
         this.fadeAlpha = params.fadeAlpha !== undefined ? params.fadeAlpha : 1;
         this.fadeTarget = this.fadeAlpha;
+        this.fadeSpeed = 0.002;
         this.processStep();
     }
 
     processStep() {
         const step = this.script[this.currentStep];
         if (!step) return;
+
+        // Trigger voice if present
+        if (step.voiceId) {
+            assets.playVoice(step.voiceId);
+        }
 
         if (step.type === 'command') {
             this.handleCommand(step);
@@ -106,6 +119,9 @@ export class NarrativeScene extends BaseScene {
                     this.nextStep();
                 }
             }
+        } else if (cmd.action === 'playMusic') {
+            assets.playMusic(cmd.key, cmd.volume || 0.5);
+            this.nextStep();
         }
     }
 
@@ -201,8 +217,11 @@ export class NarrativeScene extends BaseScene {
             
             if (dist > 1) {
                 allMoved = false;
-                const moveDist = a.speed * (dt / 16);
+                let moveDist = a.speed * (dt / 16);
                 
+                // Cap movement to prevent overshooting
+                if (moveDist > dist) moveDist = dist;
+
                 // Auto-flip based on movement direction
                 // Sprites face RIGHT by default
                 if (dx > 0.1) a.flip = false; // Moving Right -> Face Right (default)
@@ -217,9 +236,9 @@ export class NarrativeScene extends BaseScene {
             }
         }
 
-        if (this.isWaiting && allMoved && this.timer === 0) {
+        if (this.isWaiting && allMoved && this.timer === 0 && this.fadeAlpha === this.fadeTarget) {
             const step = this.script[this.currentStep];
-            if (step && step.action === 'move') {
+            if (step && step.type === 'command') {
                 this.nextStep();
             }
         }
@@ -393,9 +412,18 @@ export class NarrativeScene extends BaseScene {
                 
                 if (x >= m.px && x <= m.px + m.panelWidth && 
                     y >= currentY - 2 && y <= currentY + optionHeight + 2) {
-                    if (opt.result) {
-                        this.script.splice(this.currentStep + 1, 0, ...opt.result);
-                    }
+                    // Create a dialogue step for the choice so it gets voiced and displayed
+                    const choiceDialogue = {
+                        type: 'dialogue',
+                        portraitKey: step.portraitKey || 'liubei',
+                        name: step.name || 'Liu Bei',
+                        text: opt.text,
+                        voiceId: opt.voiceId
+                    };
+
+                    const resultSteps = opt.result || [];
+                    this.script.splice(this.currentStep + 1, 0, choiceDialogue, ...resultSteps);
+                    
                     this.nextStep();
                 }
                 currentY += optionHeight + m.optionSpacing;

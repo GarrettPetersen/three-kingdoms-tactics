@@ -25,7 +25,7 @@ export class BaseScene {
 
     drawCharacter(ctx, img, action, frame, x, y, options = {}) {
         if (!img) return;
-        const { flip = false, sinkOffset = 0, isSubmerged = false, tint = null, hideBottom = 0 } = options;
+        const { flip = false, sinkOffset = 0, isSubmerged = false, tint = null, hideBottom = 0, scale = 1.0 } = options;
         const sourceSize = 72;
         const anim = ANIMATIONS[action] || ANIMATIONS.standby;
         const f = Math.floor(frame) % anim.length;
@@ -44,6 +44,7 @@ export class BaseScene {
             ctx.globalAlpha *= alpha;
             ctx.translate(Math.floor(x), Math.floor(y + sinkOffset));
             if (flip) ctx.scale(-1, 1);
+            if (scale !== 1.0) ctx.scale(scale, scale);
             
             if (tint) {
                 // To tint ONLY the sprite and not the background already on the canvas,

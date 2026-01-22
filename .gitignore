@@ -3,3 +3,7 @@ assets/all_songs
 node_modules/
 .DS_Store
 dist/
+models/
+tools/venv/
+tools/piper/
+temp_*.wav

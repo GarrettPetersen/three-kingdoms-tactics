@@ -13,21 +13,21 @@ export class Unit {
         this.q = config.q || 0;
         
         // Stats
-        this.hp = config.hp || 10;
-        this.maxHp = config.hp || 10;
+        this.hp = (config.hp !== undefined) ? config.hp : 10;
+        this.maxHp = (config.maxHp !== undefined) ? config.maxHp : (config.hp || 10);
         this.moveRange = config.moveRange || 3;
         
         // State
-        this.action = 'standby';
-        this.currentAnimAction = 'standby';
+        this.action = config.action || 'standby';
+        this.currentAnimAction = config.action || 'standby';
         this.frame = 0;
         this.flip = config.flip || false;
         this.dialogue = config.dialogue || "";
-        this.hasMoved = false;
-        this.hasAttacked = false;
-        this.hasActed = false; // Turn is complete
+        this.hasMoved = config.hasMoved || false;
+        this.hasAttacked = config.hasAttacked || false;
+        this.hasActed = config.hasActed || false; // Turn is complete
         this.attacks = config.attacks || []; // Array of attack keys from ATTACKS
-        this.intent = null; // { type: 'attack', r, q, attackKey }
+        this.intent = config.intent || null; // { type: 'attack', r, q, attackKey }
         
         // Movement animation
         this.isMoving = false;
@@ -44,7 +44,8 @@ export class Unit {
         this.shakeTimer = 0;
         this.shakeDir = { x: 0, y: 0 };
         this.pushData = null; // { startX, startY, targetX, targetY, progress, isBounce }
-        this.isDrowning = false;
+        this.isDrowning = config.isDrowning || false;
+        this.isGone = config.isGone || false;
         this.drownTimer = 0;
         this.stepTimer = 0;
     }
@@ -64,9 +65,12 @@ export class Unit {
 
             if (this.drownTimer > 2000) {
                 this.hp = 0;
+                this.intent = null;
                 this.isDrowning = false;
+                this.isGone = true;
                 this.action = 'death';
                 this.currentAnimAction = 'death';
+                assets.playSound('death', 0.6);
             }
             return;
         }
@@ -75,6 +79,7 @@ export class Unit {
         if (this.hp <= 0 && this.action !== 'death') {
             this.action = 'death';
             this.frame = 0;
+            assets.playSound('death', 0.6);
         }
 
         let animAction = this.action;
@@ -233,6 +238,7 @@ export class Unit {
     playStepSound(terrainType) {
         let soundKey = 'step_generic';
         if (terrainType.includes('grass')) soundKey = 'step_grass';
+        else if (terrainType.includes('water_shallow')) soundKey = 'step_water_walk';
         else if (terrainType.includes('water')) soundKey = 'step_water';
         else if (terrainType.includes('sand') || terrainType.includes('mud') || terrainType.includes('snow')) soundKey = 'step_sand';
         else if (terrainType.includes('mountain') || terrainType.includes('house') || terrainType.includes('town')) soundKey = 'step_stone';

@@ -37,9 +37,21 @@ export class MapScene extends BaseScene {
     }
 
     enter(params) {
-        assets.playMusic('campaign_intro', 'campaign_loop');
+        // Only switch to campaign music if we're not already playing something "epic" (like the oath music)
+        // that is supposed to carry through.
+        if (assets.currentMusicKey !== 'oath') {
+            assets.playMusic('campaign', 0.4);
+        }
+        
+        // Load state if it exists
+        const gs = this.manager.gameState;
+        this.prologueComplete = gs.get('prologueComplete') || false;
+
         if (params && params.campaignId) {
             this.currentCampaignId = params.campaignId;
+            gs.set('currentCampaign', params.campaignId);
+            gs.set('lastScene', 'map');
+
             // Initialize party based on campaign
             if (params.campaignId === 'liubei') {
                 this.party = { 
@@ -50,7 +62,18 @@ export class MapScene extends BaseScene {
                     imgKey: 'liubei'
                 };
             }
-            // Add other campaigns here as they are developed
+        } else {
+            // No params (coming from Continue), restore from save
+            this.currentCampaignId = gs.get('currentCampaign');
+            if (this.currentCampaignId === 'liubei') {
+                this.party = { 
+                    id: 'liubei', 
+                    name: 'Liu Bei', 
+                    x: 190, 
+                    y: 70,
+                    imgKey: 'liubei'
+                };
+            }
         }
     }
 
@@ -126,6 +149,7 @@ export class MapScene extends BaseScene {
             const status = this.renderDialogueBox(ctx, canvas, {
                 portraitKey: 'liubei',
                 name: 'Liu Bei',
+                voiceId: 'map_lb_rem_01',
                 text: "Off to the Magistrate! Magistrate Zhou Jing's HQ awaits our enlistment."
             }, { subStep: this.subStep });
             this.hasNextChunk = status.hasNextChunk;
@@ -247,9 +271,13 @@ export class MapScene extends BaseScene {
         const charHit = this.checkCharacterHit(charImg, action, frameIdx, currentX, currentY, mouseX, mouseY, { flip });
         
         let boxHit = false;
-        if (this.selectedLocation === 'zhuo') {
+        // Always check box hit if the label is visible (prologue not complete)
+        if (!this.prologueComplete) {
+            this.manager.ctx.save();
             this.manager.ctx.font = '8px Silkscreen';
             const metrics = this.manager.ctx.measureText("ZHUO COUNTY");
+            this.manager.ctx.restore();
+            
             const boxW = Math.floor(metrics.width + 10);
             const boxH = 24;
             const bx = Math.floor(cx - 20 - boxW);
@@ -258,18 +286,22 @@ export class MapScene extends BaseScene {
         }
 
         if (charHit || boxHit) {
-            if (this.selectedLocation === 'zhuo') {
+            // Always enter immediately if the prologue is not complete
+            if (!this.prologueComplete || boxHit || this.selectedLocation === 'zhuo') {
                 if (this.prologueComplete) {
                     this.interactionSelected = 'hero_reminder';
                     this.subStep = 0;
+                    assets.playVoice('map_lb_rem_01');
                 } else {
                     this.startCampaign('liubei');
                 }
             } else {
+                // First click on character selects the location (post-prologue)
                 this.selectedLocation = 'zhuo';
                 this.interactionSelected = null;
                 this.subStep = 0;
             }
+            return;
         } else {
             this.selectedLocation = null;
             if (this.interactionSelected !== 'hero_reminder') {
@@ -332,6 +364,7 @@ export class MapScene extends BaseScene {
                     portraitKey: 'zhoujing',
                     name: 'Zhou Jing',
                     position: 'top',
+                    voiceId: 'daxing_zj_01',
                     text: "Who goes there? These men behind you... they have the look of tigers. You do not look like common recruits."
                 },
                 {
@@ -339,6 +372,7 @@ export class MapScene extends BaseScene {
                     portraitKey: 'liubei',
                     name: 'Liu Bei',
                     position: 'top',
+                    voiceId: 'daxing_lb_01',
                     text: "I am Liu Bei, a descendant of Prince Jing of Zhongshan and great-great-grandson of Emperor Jing. These are my sworn brothers, Guan Yu and Zhang Fei."
                 },
                 {
@@ -346,6 +380,7 @@ export class MapScene extends BaseScene {
                     portraitKey: 'liubei',
                     name: 'Liu Bei',
                     position: 'top',
+                    voiceId: 'daxing_lb_02',
                     text: "We have raised a force of five hundred volunteers to serve our country and protect the people."
                 },
                 {
@@ -353,6 +388,7 @@ export class MapScene extends BaseScene {
                     portraitKey: 'zhoujing',
                     name: 'Zhou Jing',
                     position: 'top',
+                    voiceId: 'daxing_zj_02',
                     text: "An Imperial kinsman! Truly, the Heavens have not abandoned the Han. Your arrival is most timely."
                 },
                 {
@@ -360,6 +396,7 @@ export class MapScene extends BaseScene {
                     portraitKey: 'zhoujing',
                     name: 'Zhou Jing',
                     position: 'top',
+                    voiceId: 'daxing_zj_03',
                     text: "Scouts report that the rebel general Cheng Yuanzhi is marching upon us with fifty thousand Yellow Turbans."
                 },
                 {
@@ -367,13 +404,16 @@ export class MapScene extends BaseScene {
                     portraitKey: 'zhangfei',
                     name: 'Zhang Fei',
                     position: 'top',
+                    voiceId: 'daxing_zf_01',
                     text: "Fifty thousand? Hah! They are but a mob of ants! Give us the order, Magistrate, and we shall scatter them like dust!"
                 },
+                { type: 'command', action: 'playMusic', key: 'oath', volume: 0.5 },
                 {
                     type: 'dialogue',
                     portraitKey: 'guanyu',
                     name: 'Guan Yu',
                     position: 'top',
+                    voiceId: 'daxing_gy_01',
                     text: "Eldest brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march."
                 },
                 {
@@ -381,6 +421,7 @@ export class MapScene extends BaseScene {
                     portraitKey: 'liubei',
                     name: 'Liu Bei',
                     position: 'top',
+                    voiceId: 'daxing_lb_03',
                     text: "Magistrate Zhou, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion."
                 },
                 {
@@ -388,6 +429,7 @@ export class MapScene extends BaseScene {
                     portraitKey: 'zhoujing',
                     name: 'Zhou Jing',
                     position: 'top',
+                    voiceId: 'daxing_zj_04',
                     text: "Very well! I shall lead the main force myself. Together, we shall strike at the heart of Cheng Yuanzhi's army!"
                 },
                 { type: 'command', action: 'fade', target: 1, speed: 0.001 },
@@ -406,6 +448,7 @@ export class MapScene extends BaseScene {
             this.manager.switchTo('narrative', {
                 onComplete: () => {
                     this.prologueComplete = true;
+                    this.manager.gameState.set('prologueComplete', true);
                     this.manager.switchTo('map');
                 },
                 script: [
@@ -429,6 +472,7 @@ export class MapScene extends BaseScene {
                         position: 'top',
                         portraitKey: 'noticeboard',
                         portraitRect: { x: 80, y: 100, w: 90, h: 70 },
+                        voiceId: 'pro_nb_01',
                         text: "NOTICE: The Yellow Turban rebels under Zhang Jue have risen!"
                     },
                     {
@@ -437,6 +481,7 @@ export class MapScene extends BaseScene {
                         position: 'top',
                         portraitKey: 'noticeboard',
                         portraitRect: { x: 80, y: 100, w: 90, h: 70 },
+                        voiceId: 'pro_nb_02',
                         text: "All able-bodied men are called to defend the Han."
                     },
                     {
@@ -445,6 +490,7 @@ export class MapScene extends BaseScene {
                         position: 'top',
                         portraitKey: 'noticeboard',
                         portraitRect: { x: 80, y: 100, w: 90, h: 70 },
+                        voiceId: 'pro_nb_03',
                         text: "Report to the local Magistrate at once."
                     },
                     {
@@ -452,13 +498,15 @@ export class MapScene extends BaseScene {
                         portraitKey: 'liubei',
                         position: 'top',
                         name: 'Liu Bei',
-                        text: "*Sighs* The Imperial Clan's blood flows in my veins..."
+                        voiceId: 'pro_lb_01',
+                        text: "The Imperial Clan's blood flows in my veins..."
                     },
                     {
                         type: 'dialogue',
                         portraitKey: 'liubei',
                         position: 'top',
                         name: 'Liu Bei',
+                        voiceId: 'pro_lb_02',
                         text: "...yet I am but a poor straw-shoe seller."
                     },
                     {
@@ -466,6 +514,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'liubei',
                         position: 'top',
                         name: 'Liu Bei',
+                        voiceId: 'pro_lb_03',
                         text: "How can I possibly save the people from this chaos?"
                     },
                     
@@ -477,33 +526,40 @@ export class MapScene extends BaseScene {
                         portraitKey: 'zhangfei',
                         position: 'top',
                         name: '???',
+                        voiceId: 'pro_zf_01',
                         text: "Why sigh, O hero, if you do not help your country?"
                     },
                     { type: 'command', action: 'flip', id: 'liubei', flip: false },
                     { type: 'command', action: 'animate', id: 'liubei', animation: 'hit', wait: true },
                     {
                         type: 'choice',
+                        portraitKey: 'liubei',
+                        name: 'Liu Bei',
                         options: [
                             { 
                                 text: "I sigh for the suffering people.",
+                                voiceId: 'pro_lb_choice_01',
                                 result: [
                                     {
                                         type: 'dialogue',
                                         portraitKey: 'zhangfei',
                                         position: 'top',
                                         name: '???',
+                                        voiceId: 'pro_zf_02',
                                         text: "A true hero's heart! You and I are of one mind."
                                     }
                                 ]
                             },
                             { 
                                 text: "I sigh for my own lost status.",
+                                voiceId: 'pro_lb_choice_02',
                                 result: [
                                     {
                                         type: 'dialogue',
                                         portraitKey: 'zhangfei',
                                         position: 'top',
                                         name: '???',
+                                        voiceId: 'pro_zf_03',
                                         text: "Status? Bah! In these times of chaos, only courage and wine matter!"
                                     }
                                 ]
@@ -519,6 +575,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'zhangfei',
                         position: 'top',
                         name: 'Zhang Fei',
+                        voiceId: 'pro_zf_04',
                         text: "I am Zhang Fei, aka Yide."
                     },
                     {
@@ -526,6 +583,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'zhangfei',
                         position: 'top',
                         name: 'Zhang Fei',
+                        voiceId: 'pro_zf_05',
                         text: "I live in this county, where I have a farm. I sell wine and slaughter hogs."
                     },
                     {
@@ -533,6 +591,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'liubei',
                         position: 'top',
                         name: 'Liu Bei',
+                        voiceId: 'pro_lb_04',
                         text: "I am of the Imperial Clan. My name is Liu Bei."
                     },
                     {
@@ -540,6 +599,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'liubei',
                         position: 'top',
                         name: 'Liu Bei',
+                        voiceId: 'pro_lb_05',
                         text: "I wish I could destroy these rebels and restore peace..."
                     },
                     {
@@ -550,6 +610,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'zhangfei',
                         position: 'top',
                         name: 'Zhang Fei',
+                        voiceId: 'pro_zf_06',
                         text: "I have some wealth! I am willing to use it to recruit volunteers."
                     },
                     {
@@ -557,6 +618,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'zhangfei',
                         position: 'top',
                         name: 'Zhang Fei',
+                        voiceId: 'pro_zf_07',
                         text: "What say you to that?"
                     },
                     {
@@ -564,6 +626,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'liubei',
                         position: 'top',
                         name: 'Liu Bei',
+                        voiceId: 'pro_lb_06',
                         text: "That would be a great blessing for the people!"
                     },
                     {
@@ -571,6 +634,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'zhangfei',
                         position: 'top',
                         name: 'Zhang Fei',
+                        voiceId: 'pro_zf_08',
                         text: "Then come! Let us go to the village inn and discuss our plans over wine."
                     },
                     { type: 'command', action: 'flip', id: 'liubei', flip: true },
@@ -594,13 +658,15 @@ export class MapScene extends BaseScene {
                         portraitKey: 'zhangfei',
                         position: 'top',
                         name: 'Zhang Fei',
-                        text: "*Drinking* This wine is good! Together, we shall raise an army that will make the rebels tremble."
+                        voiceId: 'inn_zf_01',
+                        text: "This wine is good! Together, we shall raise an army that will make the rebels tremble."
                     },
                     {
                         type: 'dialogue',
                         portraitKey: 'liubei',
                         position: 'top',
                         name: 'Liu Bei',
+                        voiceId: 'inn_lb_01',
                         text: "Indeed. Honor and duty call us."
                     },
                     
@@ -612,6 +678,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'guanyu',
                         position: 'top',
                         name: '???',
+                        voiceId: 'inn_gy_01',
                         text: "Quick! Bring me wine! I am in a hurry to get to town and join the volunteers!"
                     },
                     
@@ -624,13 +691,15 @@ export class MapScene extends BaseScene {
                         portraitKey: 'liubei',
                         position: 'top',
                         name: 'Liu Bei',
-                        text: "*Looking at the newcomer* That man... his presence is extraordinary. Look at his majestic beard and phoenix-like eyes."
+                        voiceId: 'inn_lb_02',
+                        text: "That man... his presence is extraordinary. Look at his majestic beard and phoenix-like eyes."
                     },
                     {
                         type: 'dialogue',
                         portraitKey: 'zhangfei',
                         position: 'top',
                         name: 'Zhang Fei',
+                        voiceId: 'inn_zf_02',
                         text: "Hey! You there! You're joining the volunteers too? Come, drink with us!"
                     },
                     { type: 'command', action: 'move', id: 'guanyu', x: 140, y: 195 },
@@ -640,6 +709,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'guanyu',
                         position: 'top',
                         name: 'Guan Yu',
+                        voiceId: 'inn_gy_02',
                         text: "I am Guan Yu, courtesy name Yunchang. For years I have been a fugitive, for I slew a local bully who oppressed the weak."
                     },
                     {
@@ -647,6 +717,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'guanyu',
                         position: 'top',
                         name: 'Guan Yu',
+                        voiceId: 'inn_gy_03',
                         text: "Now I hear there is a call for volunteers, and I have come to join the cause."
                     },
                     {
@@ -654,6 +725,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'liubei',
                         position: 'top',
                         name: 'Liu Bei',
+                        voiceId: 'inn_lb_03',
                         text: "A noble heart! I am Liu Bei, and this is Zhang Fei. We have just agreed to raise a volunteer army ourselves."
                     },
                     {
@@ -661,6 +733,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'zhangfei',
                         position: 'top',
                         name: 'Zhang Fei',
+                        voiceId: 'inn_zf_03',
                         text: "Haha! The more the merrier! Drink, Yunchang! Let us toast to our new brotherhood!"
                     },
                     
@@ -679,13 +752,15 @@ export class MapScene extends BaseScene {
                         portraitKey: 'zhangfei',
                         position: 'top',
                         name: 'Zhang Fei',
-                        text: "*Tipsy* ...and that is why the pig escaped! Haha! But seriously, my friends..."
+                        voiceId: 'inn_zf_04',
+                        text: "...and that is why the pig escaped! Haha! But seriously, my friends..."
                     },
                     {
                         type: 'dialogue',
                         portraitKey: 'zhangfei',
                         position: 'top',
                         name: 'Zhang Fei',
+                        voiceId: 'inn_zf_05',
                         text: "I feel as though I have known you both for a lifetime."
                     },
                     {
@@ -693,6 +768,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'guanyu',
                         position: 'top',
                         name: 'Guan Yu',
+                        voiceId: 'inn_gy_04',
                         text: "The heavens have surely brought us together. We share one mind and one purpose."
                     },
                     {
@@ -700,6 +776,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'liubei',
                         position: 'top',
                         name: 'Liu Bei',
+                        voiceId: 'inn_lb_04',
                         text: "To restore the Han and bring peace to the common people. That is our shared destiny."
                     },
                     {
@@ -707,6 +784,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'zhangfei',
                         position: 'top',
                         name: 'Zhang Fei',
+                        voiceId: 'inn_zf_06',
                         text: "Listen! Behind my farm is a peach garden. The flowers are in full bloom."
                     },
                     {
@@ -714,6 +792,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'zhangfei',
                         position: 'top',
                         name: 'Zhang Fei',
+                        voiceId: 'inn_zf_07',
                         text: "Tomorrow, let us offer sacrifices there and swear to be brothers! To live and die as one!"
                     },
                     {
@@ -721,6 +800,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'liubei',
                         position: 'top',
                         name: 'Liu Bei',
+                        voiceId: 'inn_lb_05',
                         text: "An excellent proposal. We shall do it!"
                     },
                     {
@@ -728,6 +808,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'guanyu',
                         position: 'top',
                         name: 'Guan Yu',
+                        voiceId: 'inn_gy_05',
                         text: "I agree. We swear by the peach garden."
                     },
                     { type: 'command', action: 'fade', target: 1, speed: 0.0005 },
@@ -739,6 +820,7 @@ export class MapScene extends BaseScene {
                         subtext: "The Next Morning",
                         duration: 3000
                     },
+                { type: 'command', action: 'playMusic', key: 'oath', volume: 0.5 },
                 { bg: 'peach_garden', type: 'command', action: 'clearActors' },
                 { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 128, y: 180 },
                 { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 80, y: 185 },
@@ -756,6 +838,7 @@ export class MapScene extends BaseScene {
                         position: 'top',
                         portraitKey: 'peach_garden',
                         portraitRect: { x: 50, y: 50, w: 100, h: 80 },
+                        voiceId: 'pg_nar_01',
                         text: "In the peach garden, among the blooming flowers, a black ox and a white horse are sacrificed."
                     },
                     {
@@ -763,6 +846,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'liubei',
                         position: 'top',
                         name: 'Liu Bei',
+                        voiceId: 'pg_lb_01',
                         text: "We three, Liu Bei, Guan Yu, and Zhang Fei, though of different lineages, swear brotherhood and promise mutual help to one end."
                     },
                     {
@@ -770,6 +854,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'guanyu',
                         position: 'top',
                         name: 'Guan Yu',
+                        voiceId: 'pg_gy_01',
                         text: "We will rescue each other in difficulty; we will aid each other in danger."
                     },
                     {
@@ -777,6 +862,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'zhangfei',
                         position: 'top',
                         name: 'Zhang Fei',
+                        voiceId: 'pg_zf_01',
                         text: "We swear to serve the state and save the people."
                     },
                     {
@@ -784,6 +870,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'liubei',
                         position: 'top',
                         name: 'Liu Bei',
+                        voiceId: 'pg_lb_02',
                         text: "We ask not the same day of birth, but we seek to die together on the same day."
                     },
                     {
@@ -791,6 +878,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'liubei',
                         position: 'top',
                         name: 'Liu Bei',
+                        voiceId: 'pg_lb_03',
                         text: "May the Heaven and the Earth read our hearts. If we turn aside from righteousness, may the Heaven and the Human smite us!"
                     },
 
@@ -803,12 +891,14 @@ export class MapScene extends BaseScene {
                         name: 'Narrator',
                         portraitKey: 'peach_garden',
                         portraitRect: { x: 50, y: 50, w: 100, h: 80 },
+                        voiceId: 'pg_nar_02',
                         text: "The ritual complete, Liu Bei is acknowledged as the eldest brother, Guan Yu the second, and Zhang Fei the youngest."
                     },
                     {
                         type: 'dialogue',
                         portraitKey: 'liubei',
                         name: 'Liu Bei',
+                        voiceId: 'pg_lb_04',
                         text: "The path ahead is long and full of peril, but together, we shall restore the Han!"
                     },
                     { type: 'command', action: 'fade', target: 1, speed: 0.001 },
@@ -825,6 +915,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'zhangfei',
                         position: 'top',
                         name: 'Zhang Fei',
+                        voiceId: 'rec_zf_01',
                         text: "CITIZENS OF ZHUO! The Yellow Turbans are coming! Who among you is brave enough to fight for your homes?"
                     },
                     {
@@ -832,6 +923,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'guanyu',
                         position: 'top',
                         name: 'Guan Yu',
+                        voiceId: 'rec_gy_01',
                         text: "We offer no riches, only the chance to serve with honor under the banner of the Imperial Uncle, Liu Bei."
                     },
 
@@ -845,6 +937,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'soldier',
                         position: 'top',
                         name: 'Volunteer',
+                        voiceId: 'rec_vol_01',
                         text: "We have heard of your brotherhood! We are but simple men, but we will follow you to the death!"
                     },
                     {
@@ -852,6 +945,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'liubei',
                         position: 'top',
                         name: 'Liu Bei',
+                        voiceId: 'rec_lb_01',
                         text: "Welcome, brothers. Today we are but a few, but tomorrow we shall be an army."
                     },
                     {
@@ -859,6 +953,7 @@ export class MapScene extends BaseScene {
                         portraitKey: 'liubei',
                         position: 'top',
                         name: 'Liu Bei',
+                        voiceId: 'rec_lb_02',
                         text: "Let us march! Our first destination: the headquarters of the local Magistrate."
                     },
                     { type: 'command', action: 'fade', target: 1, speed: 0.0005 },

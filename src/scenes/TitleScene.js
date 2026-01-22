@@ -55,35 +55,82 @@ export class TitleScene extends BaseScene {
         const cy = canvas.height - 70;
         const pulse = Math.abs(Math.sin(Date.now() / 500)) * 0.5 + 0.5;
 
-        // NEW GAME Button
         const ngText = "NEW GAME";
-        ctx.globalAlpha = pulse;
-        const ngMetrics = this.drawPixelText(ctx, ngText, cx, cy, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
-        ctx.globalAlpha = 1.0;
-        this.newGameRect = { 
-            x: Math.floor(cx - ngMetrics.width / 2 - 10), 
-            y: cy - 10, 
-            w: Math.floor(ngMetrics.width + 20), 
-            h: 20 
-        };
+        const hasSave = this.manager.gameState.hasSave();
+        
+        if (hasSave) {
+            // CONTINUE Button
+            const contText = "CONTINUE";
+            const contY = cy - 15;
+            const contMetrics = this.drawPixelText(ctx, contText, cx, contY, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+            this.continueRect = {
+                x: Math.floor(cx - contMetrics.width / 2 - 10),
+                y: contY - 10,
+                w: Math.floor(contMetrics.width + 20),
+                h: 20
+            };
 
-        // CUSTOM BATTLE Button
-        const cbText = "CUSTOM BATTLE";
-        const cbY = cy + 25;
-        const cbMetrics = this.drawPixelText(ctx, cbText, cx, cbY, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
-        this.customBattleRect = {
-            x: Math.floor(cx - cbMetrics.width / 2 - 10),
-            y: cbY - 10,
-            w: Math.floor(cbMetrics.width + 20),
-            h: 20
-        };
+            // Shift NEW GAME down
+            const ngY = cy + 10;
+            ctx.globalAlpha = pulse;
+            const ngMetrics = this.drawPixelText(ctx, ngText, cx, ngY, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+            ctx.globalAlpha = 1.0;
+            this.newGameRect = { 
+                x: Math.floor(cx - ngMetrics.width / 2 - 10), 
+                y: ngY - 10, 
+                w: Math.floor(ngMetrics.width + 20), 
+                h: 20 
+            };
+
+            // Shift CUSTOM BATTLE down
+            const cbText = "CUSTOM BATTLE";
+            const cbY = cy + 35;
+            const cbMetrics = this.drawPixelText(ctx, cbText, cx, cbY, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+            this.customBattleRect = {
+                x: Math.floor(cx - cbMetrics.width / 2 - 10),
+                y: cbY - 10,
+                w: Math.floor(cbMetrics.width + 20),
+                h: 20
+            };
+        } else {
+            // Original Layout
+            ctx.globalAlpha = pulse;
+            const ngMetrics = this.drawPixelText(ctx, ngText, cx, cy, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+            ctx.globalAlpha = 1.0;
+            this.newGameRect = { 
+                x: Math.floor(cx - ngMetrics.width / 2 - 10), 
+                y: cy - 10, 
+                w: Math.floor(ngMetrics.width + 20), 
+                h: 20 
+            };
+
+            const cbText = "CUSTOM BATTLE";
+            const cbY = cy + 25;
+            const cbMetrics = this.drawPixelText(ctx, cbText, cx, cbY, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+            this.customBattleRect = {
+                x: Math.floor(cx - cbMetrics.width / 2 - 10),
+                y: cbY - 10,
+                w: Math.floor(cbMetrics.width + 20),
+                h: 20
+            };
+            this.continueRect = null;
+        }
     }
 
     handleInput(e) {
         const { x, y } = this.getMousePos(e);
         
+        if (this.continueRect && x >= this.continueRect.x && x <= this.continueRect.x + this.continueRect.w &&
+            y >= this.continueRect.y && y <= this.continueRect.y + this.continueRect.h) {
+            const lastScene = this.manager.gameState.get('lastScene') || 'campaign_selection';
+            const campaignId = this.manager.gameState.get('currentCampaign');
+            this.manager.switchTo(lastScene, { campaignId, isResume: true });
+            return;
+        }
+
         if (this.newGameRect && x >= this.newGameRect.x && x <= this.newGameRect.x + this.newGameRect.w &&
             y >= this.newGameRect.y && y <= this.newGameRect.y + this.newGameRect.h) {
+            this.manager.gameState.reset();
             this.manager.switchTo('campaign_selection');
             return;
         }

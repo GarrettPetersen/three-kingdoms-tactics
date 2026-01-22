@@ -11,6 +11,29 @@ export class AssetLoader {
         this.currentIntro = null;
         this.currentLoop = null;
         this.fadeInterval = null;
+        this.voices = {}; // Cache for recently played voices
+    }
+
+    async playVoice(voiceId, volume = 1.0) {
+        if (!voiceId) return;
+        
+        // Stop current voice if any? Maybe just let them overlap for now or stop previous.
+        if (this.currentVoice) {
+            this.currentVoice.pause();
+            this.currentVoice.currentTime = 0;
+        }
+
+        const src = `assets/audio/voices/${voiceId}.ogg`;
+        
+        try {
+            const audio = this.voices[voiceId] || new Audio(src);
+            this.voices[voiceId] = audio;
+            audio.volume = volume;
+            this.currentVoice = audio;
+            await audio.play();
+        } catch (e) {
+            console.warn(`Voice line not found or playback failed: ${src}`, e);
+        }
     }
 
     async loadPalettes(paletteAssets) {

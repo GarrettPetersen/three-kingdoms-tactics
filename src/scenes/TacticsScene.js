@@ -34,7 +34,8 @@ export class TacticsScene extends BaseScene {
     }
 
     enter(params = {}) {
-        assets.playMusic('battle', 0.4);
+        const musicKey = params.battleId === 'daxing' ? 'oath' : 'battle';
+        assets.playMusic(musicKey, 0.4);
         this.isCustom = params.isCustom || false;
         const { config, canvas } = this.manager;
         this.tacticsMap = new TacticsMap(config.mapWidth, config.mapHeight);
@@ -52,51 +53,106 @@ export class TacticsScene extends BaseScene {
         this.gameOverTimer = 0;
         this.isGameOver = false;
         
-        // Scenario-specific initialization (MUST BE SET BEFORE PLACING UNITS)
-        this.battleId = params.battleId || 'daxing'; 
+        // Scenario-specific initialization
+        const gs = this.manager.gameState;
+        this.battleId = params.battleId || gs.get('currentBattleId') || 'daxing'; 
+        gs.set('currentBattleId', this.battleId);
+        this.baseXP = 5; // Default base XP for battles
+        this.isRetreating = false;
 
-        // Map generation parameters
-        const mapGenParams = params.mapGen || {
-            biome: 'central',
-            layout: 'river', 
-            forestDensity: 0.15,
-            mountainDensity: 0.1,
-            riverDensity: 0.05,
-            houseDensity: 0.03
-        };
-        
-        this.tacticsMap.generate(mapGenParams);
-        this.placeInitialUnits(params.units);
-        
-        // Setup Weather
-        this.weatherType = mapGenParams.weather || null;
-        if (this.weatherType === 'none') this.weatherType = null;
-        
-        if (!this.weatherType) {
-            if (mapGenParams.biome === 'northern_snowy') this.weatherType = 'snow';
-            else if (mapGenParams.biome === 'southern' && Math.random() < 0.3) this.weatherType = 'rain';
+        // Check for saved battle state
+        const savedState = gs.get('battleState');
+
+        if (params.isResume && savedState && savedState.battleId === this.battleId) {
+            // Restore from save
+            this.turn = savedState.turn;
+            this.turnNumber = savedState.turnNumber;
+            this.weatherType = savedState.weatherType;
+            this.mapGenParams = savedState.mapGen;
+            
+            // Restore Map
+            for (let r = 0; r < config.mapHeight; r++) {
+                for (let q = 0; q < config.mapWidth; q++) {
+                    const cell = this.tacticsMap.getCell(r, q);
+                    const savedCell = savedState.grid[r][q];
+                    cell.terrain = savedCell.terrain;
+                    cell.level = savedCell.level;
+                    cell.elevation = savedCell.elevation;
+                    cell.impassable = savedCell.impassable;
+                }
+            }
+
+            // Restore Units
+            this.units = savedState.units.map(uData => {
+                const u = new Unit(uData.id, {
+                    ...uData,
+                    img: assets.getImage(uData.imgKey)
+                });
+                // Sync positions on the map
+                const cell = this.tacticsMap.getCell(u.r, u.q);
+                if (cell) cell.unit = u;
+                return u;
+            });
+
+            this.isIntroAnimating = false;
+            this.isIntroDialogueActive = false;
+        } else {
+            // Original initialization
+            this.mapGenParams = params.mapGen || {
+                biome: 'central',
+                layout: 'river', 
+                forestDensity: 0.15,
+                mountainDensity: 0.1,
+                riverDensity: 0.05,
+                houseDensity: 0.03
+            };
+            
+            this.tacticsMap.generate(this.mapGenParams);
+            this.placeInitialUnits(params.units);
+            
+            // Setup Weather
+            this.weatherType = this.mapGenParams.weather || null;
+            if (this.weatherType === 'none') this.weatherType = null;
+            
+            if (!this.weatherType) {
+                if (this.mapGenParams.biome === 'northern_snowy') this.weatherType = 'snow';
+                else if (this.mapGenParams.biome === 'southern' && Math.random() < 0.3) this.weatherType = 'rain';
+            }
+            
+            this.isIntroDialogueActive = true;
+            this.dialogueStep = 0;
+            
+            // Wait for intro animation then start dialogue
+            setTimeout(() => {
+                this.startIntroDialogue();
+            }, 1500);
         }
-        this.particles = [];
 
-        this.isIntroDialogueActive = true;
-        this.dialogueStep = 0;
-        
-        // Wait for intro animation then start dialogue
-        setTimeout(() => {
-            this.startIntroDialogue();
-        }, 1500);
+        this.particles = [];
+        this.manager.gameState.set('lastScene', 'tactics');
+
+        // Track initial houses
+        this.initialHouseCount = 0;
+        for (let r = 0; r < config.mapHeight; r++) {
+            for (let q = 0; q < config.mapWidth; q++) {
+                const cell = this.tacticsMap.getCell(r, q);
+                if (cell && cell.terrain.includes('house') && !cell.terrain.includes('destroyed')) {
+                    this.initialHouseCount++;
+                }
+            }
+        }
     }
 
     startIntroDialogue() {
         this.introScript = null;
         if (this.battleId === 'daxing') {
             this.introScript = [
-                { portraitKey: 'liubei', name: 'Liu Bei', text: "The Yellow Turban vanguard is here. They seek to plunder Zhuo County!" },
-                { portraitKey: 'guanyu', name: 'Guan Yu', text: "Their numbers are great, but they are but a rabble without leadership." },
-                { portraitKey: 'zhangfei', name: 'Zhang Fei', text: "Let me at them! My Serpent Spear is thirsty for rebel blood!" },
-                { portraitKey: 'bandit1', name: 'Deng Mao', text: "Imperial dogs! You dare stand in the way of the Lord of Heaven?" },
-                { portraitKey: 'bandit2', name: 'Cheng Yuanzhi', text: "Slay them all! The Han is dead, the Yellow Heavens shall rise!" },
-                { portraitKey: 'liubei', name: 'Liu Bei', text: "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!" }
+                { portraitKey: 'liubei', name: 'Liu Bei', voiceId: 'dx_lb_01', text: "The Yellow Turban vanguard is here. They seek to plunder Zhuo County!" },
+                { portraitKey: 'guanyu', name: 'Guan Yu', voiceId: 'dx_gy_01', text: "Their numbers are great, but they are but a rabble without leadership." },
+                { portraitKey: 'zhangfei', name: 'Zhang Fei', voiceId: 'dx_zf_01', text: "Let me at them! My Serpent Spear is thirsty for rebel blood!" },
+                { portraitKey: 'bandit1', name: 'Deng Mao', voiceId: 'dx_dm_01', text: "Imperial dogs! You dare stand in the way of the Lord of Heaven?" },
+                { portraitKey: 'bandit2', name: 'Cheng Yuanzhi', voiceId: 'dx_cyz_01', text: "Slay them all! The Han is dead, the Yellow Heavens shall rise!" },
+                { portraitKey: 'liubei', name: 'Liu Bei', voiceId: 'dx_lb_02', text: "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!" }
             ];
         }
         
@@ -110,7 +166,7 @@ export class TacticsScene extends BaseScene {
     }
 
     checkWinLoss() {
-        if (this.isGameOver || this.isIntroDialogueActive) return;
+        if (this.isGameOver || this.isIntroAnimating || this.isIntroDialogueActive) return;
 
         // Custom Win/Loss for Battle 1 (Daxing)
         if (this.battleId === 'daxing') {
@@ -125,8 +181,8 @@ export class TacticsScene extends BaseScene {
             }
 
             // Win: Both captains defeated
-            if (captains.length === 0) {
-                this.endBattle(true);
+            if (captains.length === 0 && !this.isRetreating) {
+                this.startRetreatPhase();
                 return;
             }
         } else {
@@ -142,8 +198,55 @@ export class TacticsScene extends BaseScene {
     endBattle(won) {
         this.isGameOver = true;
         this.won = won;
-        this.gameOverTimer = 3000;
+        this.gameOverTimer = 2500; // Time before showing summary
         this.isProcessingTurn = true;
+
+        if (won) {
+            const gs = this.manager.gameState;
+            const completed = gs.get('completedCampaigns') || [];
+            if (!completed.includes(this.battleId)) {
+                completed.push(this.battleId);
+                gs.set('completedCampaigns', completed);
+            }
+        }
+
+        // Calculate final stats
+        let housesDestroyed = 0;
+        for (let r = 0; r < this.manager.config.mapHeight; r++) {
+            for (let q = 0; q < this.manager.config.mapWidth; q++) {
+                const cell = this.tacticsMap.getCell(r, q);
+                if (cell && cell.terrain.includes('house') && cell.terrain.includes('destroyed')) {
+                    housesDestroyed++;
+                }
+            }
+        }
+
+        this.finalStats = {
+            won: won,
+            battleId: this.battleId,
+            alliedCasualties: this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp <= 0).length,
+            enemyCasualties: this.units.filter(u => u.faction === 'enemy' && u.hp <= 0).length,
+            housesDestroyed: housesDestroyed,
+            housesProtected: Math.max(0, this.initialHouseCount - housesDestroyed),
+            totalHouses: this.initialHouseCount,
+            turnNumber: this.turnNumber
+        };
+
+        if (won) {
+            const housesProtected = Math.min(3, this.finalStats.housesProtected);
+            const xpGained = Math.max(0, this.baseXP + housesProtected - this.finalStats.alliedCasualties);
+            this.finalStats.xpGained = xpGained;
+
+            // Save XP to characters
+            const gs = this.manager.gameState;
+            const unitXP = gs.get('unitXP') || {};
+            this.units.filter(u => u.faction === 'player').forEach(u => {
+                unitXP[u.id] = (unitXP[u.id] || 0) + xpGained;
+            });
+            gs.set('unitXP', unitXP);
+        }
+
+        this.clearBattleState();
     }
 
     startNpcPhase() {
@@ -167,7 +270,13 @@ export class TacticsScene extends BaseScene {
                 return;
             }
             
-            this.moveNpcAndTelegraph(npcs[index], () => {
+            const npc = npcs[index];
+            if (npc.hp <= 0 || npc.isGone) {
+                executeMoves(npcs, index + 1, onComplete);
+                return;
+            }
+
+            this.moveNpcAndTelegraph(npc, () => {
                 // Pause between individual NPC moves so player can follow
                 setTimeout(() => {
                     executeMoves(npcs, index + 1, onComplete);
@@ -386,6 +495,47 @@ export class TacticsScene extends BaseScene {
         }
     }
 
+    saveBattleState() {
+        const gs = this.manager.gameState;
+        const state = {
+            battleId: this.battleId,
+            turn: this.turn,
+            turnNumber: this.turnNumber,
+            weatherType: this.weatherType,
+            mapGen: this.mapGenParams,
+            grid: this.tacticsMap.grid.map(row => row.map(cell => ({
+                terrain: cell.terrain,
+                level: cell.level,
+                elevation: cell.elevation,
+                impassable: cell.impassable
+            }))),
+            units: this.units.map(u => ({
+                id: u.id,
+                name: u.name,
+                imgKey: u.imgKey,
+                faction: u.faction,
+                r: u.r,
+                q: u.q,
+                hp: u.hp,
+                maxHp: u.maxHp,
+                moveRange: u.moveRange,
+                hasMoved: u.hasMoved,
+                hasAttacked: u.hasAttacked,
+                hasActed: u.hasActed,
+                attacks: u.attacks,
+                intent: u.intent,
+                action: u.action,
+                isDrowning: u.isDrowning,
+                isGone: u.isGone
+            }))
+        };
+        gs.set('battleState', state);
+    }
+
+    clearBattleState() {
+        this.manager.gameState.set('battleState', null);
+    }
+
     startPlayerTurn() {
         this.turn = 'player';
         this.isProcessingTurn = false;
@@ -398,6 +548,7 @@ export class TacticsScene extends BaseScene {
         });
         
         this.saveTurnState();
+        this.saveBattleState();
     }
 
     startExecutionPhase() {
@@ -431,6 +582,14 @@ export class TacticsScene extends BaseScene {
                 return;
             }
             const unit = attackers[index];
+
+            // FIX: Skip unit if they died before their turn to attack (e.g. friendly fire)
+            // or if their intent was cleared
+            if (unit.hp <= 0 || unit.isGone || !unit.intent) {
+                executeAll(index + 1);
+                return;
+            }
+
             const targetCell = this.tacticsMap.getNeighborInDirection(unit.r, unit.q, unit.intent.dirIndex);
             
             if (targetCell) {
@@ -458,8 +617,10 @@ export class TacticsScene extends BaseScene {
         // Only spawn if captains are alive and we're low on grunts
         if (aliveCaptains.length > 0 && enemies.length < 5) {
             const spawnSpots = [
-                { r: 0, q: 0 }, { r: 0, q: this.manager.config.mapWidth - 1 },
-                { r: this.manager.config.mapHeight - 1, q: 0 }, { r: this.manager.config.mapHeight - 1, q: this.manager.config.mapWidth - 1 }
+                { r: this.manager.config.mapHeight - 1, q: 3 }, 
+                { r: this.manager.config.mapHeight - 1, q: 4 },
+                { r: this.manager.config.mapHeight - 1, q: 5 }, 
+                { r: this.manager.config.mapHeight - 1, q: 6 }
             ];
             
             let spawns = 0;
@@ -489,10 +650,69 @@ export class TacticsScene extends BaseScene {
                 const liubei = this.units.find(u => u.id === 'liubei');
                 if (liubei && liubei.hp > 0) {
                     liubei.dialogue = "They keep coming! We must defeat Deng Mao and Cheng Yuanzhi to break them!";
+                    liubei.voiceId = 'dx_lb_03';
                     this.activeDialogue = { unit: liubei, timer: 2000 };
+                    assets.playVoice(liubei.voiceId);
                 }
             }
         }
+    }
+
+    startRetreatPhase() {
+        this.isRetreating = true;
+        this.isProcessingTurn = true;
+        
+        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
+        if (enemies.length === 0) {
+            this.endBattle(true);
+            return;
+        }
+
+        // 1. One enemy speaks
+        const speaker = enemies[0];
+        speaker.dialogue = "Our leaders are dead! Run!";
+        speaker.voiceId = 'dx_yt_01';
+        this.activeDialogue = { unit: speaker, timer: 2500 };
+        assets.playVoice(speaker.voiceId);
+
+        // 2. Wait for dialogue, then make them run
+        setTimeout(() => {
+            this.activeDialogue = null;
+            
+            let movingCount = 0;
+            enemies.forEach(u => {
+                // Find path to bottom of map (any spot on bottom row)
+                const targetR = this.manager.config.mapHeight - 1;
+                const targetQ = u.q; // Just run straight down if possible
+                
+                const path = this.tacticsMap.getPath(u.r, u.q, targetR, targetQ, 20, u); // High move range for retreat
+                if (path) {
+                    const oldCell = this.tacticsMap.getCell(u.r, u.q);
+                    if (oldCell) oldCell.unit = null;
+                    u.startPath(path);
+                    movingCount++;
+                } else {
+                    // If no path, just disappear
+                    u.isGone = true;
+                }
+            });
+
+            const checkRetreatDone = () => {
+                const stillMoving = enemies.some(u => u.isMoving);
+                if (!stillMoving) {
+                    enemies.forEach(u => u.isGone = true);
+                    this.endBattle(true);
+                } else {
+                    setTimeout(checkRetreatDone, 100);
+                }
+            };
+            
+            if (movingCount > 0) {
+                checkRetreatDone();
+            } else {
+                this.endBattle(true);
+            }
+        }, 2000);
     }
 
     addDamageNumber(x, y, value) {
@@ -719,7 +939,9 @@ export class TacticsScene extends BaseScene {
         if (victim.hp <= 0) {
             victim.hp = 0;
             victim.action = 'death';
+            victim.intent = null;
             targetCell.unit = null;
+            assets.playSound('death', 0.6);
         }
 
         if (attack.push) {
@@ -771,7 +993,9 @@ export class TacticsScene extends BaseScene {
                             if (pushCell.unit.hp <= 0) {
                                 pushCell.unit.hp = 0;
                                 pushCell.unit.action = 'death';
+                                pushCell.unit.intent = null;
                                 pushCell.unit = null;
+                                assets.playSound('death', 0.6);
                             } else {
                                 pushCell.unit.action = 'hit';
                             }
@@ -780,6 +1004,7 @@ export class TacticsScene extends BaseScene {
                             victim.hp = 0;
                             victim.action = 'death';
                             targetCell.unit = null;
+                            assets.playSound('death', 0.6);
                         }
                     }, 125);
                 }
@@ -795,7 +1020,9 @@ export class TacticsScene extends BaseScene {
                     if (victim.hp <= 0) {
                         victim.hp = 0;
                         victim.action = 'death';
+                        victim.intent = null;
                         targetCell.unit = null;
+                        assets.playSound('death', 0.6);
                     }
                 }, 125);
             }
@@ -818,7 +1045,8 @@ export class TacticsScene extends BaseScene {
             attackOrder: u.attackOrder,
             flip: u.flip,
             action: u.action,
-            isDrowning: u.isDrowning
+            isDrowning: u.isDrowning,
+            isGone: u.isGone
         }));
     }
 
@@ -842,6 +1070,7 @@ export class TacticsScene extends BaseScene {
                 u.flip = state.flip;
                 u.action = state.action || 'standby';
                 u.isDrowning = state.isDrowning || false;
+                u.isGone = state.isGone || false;
                 
                 // Clear any mid-turn animation states
                 u.frame = 0;
@@ -974,7 +1203,7 @@ export class TacticsScene extends BaseScene {
         if (this.isGameOver) {
             this.gameOverTimer -= dt;
             if (this.gameOverTimer <= 0) {
-                this.manager.switchTo('title');
+                this.manager.switchTo('summary', this.finalStats);
                 return;
             }
         }
@@ -1178,7 +1407,7 @@ export class TacticsScene extends BaseScene {
         // Determine which units are being targeted by telegraphed attacks
         const targetedUnits = new Set();
         this.units.forEach(u => {
-            if (u.intent && u.intent.type === 'attack') {
+            if (u.hp > 0 && u.intent && u.intent.type === 'attack') {
                 const targetCell = this.tacticsMap.getNeighborInDirection(u.r, u.q, u.intent.dirIndex);
                 if (targetCell) {
                     const affected = this.getAffectedTiles(u, u.intent.attackKey, targetCell.r, targetCell.q);
@@ -1222,6 +1451,7 @@ export class TacticsScene extends BaseScene {
         // 2. Collect units (using their fractional sort row for depth)
         // Include dead units so their death animation/corpse is visible
         this.units.forEach(u => {
+            if (u.isGone) return;
             const pos = this.getPixelPos(u.r, u.q); // for stationary reference
                     drawCalls.push({
                         type: 'unit',
@@ -1436,6 +1666,11 @@ export class TacticsScene extends BaseScene {
         if (this.isIntroDialogueActive && this.introScript) {
             const step = this.introScript[this.dialogueStep];
             if (step) {
+                // Play voice if it hasn't been played for this step yet
+                if (step.voiceId && !step._voicePlayed) {
+                    assets.playVoice(step.voiceId);
+                    step._voicePlayed = true;
+                }
                 this.renderDialogueBox(ctx, canvas, {
                     portraitKey: step.portraitKey,
                     name: step.name,
@@ -1749,7 +1984,7 @@ export class TacticsScene extends BaseScene {
 
             // State/Intent
             let actionText = "IDLE";
-            if (u.intent && u.intent.type === 'attack') {
+            if (u.hp > 0 && u.intent && u.intent.type === 'attack') {
                 const attack = ATTACKS[u.intent.attackKey];
                 const actionName = attack ? attack.name.toUpperCase() : '???';
                 if (u.attackOrder) actionText = `INTENT: ${actionName} (ORD: ${u.attackOrder})`;

@@ -33,6 +33,24 @@ export class CampaignSelectionScene extends BaseScene {
     enter() {
         assets.playMusic('title_loop');
         
+        // Update availability based on GameState
+        const gs = this.manager.gameState;
+        const unlockedYears = gs.get('unlockedYears') || ['184'];
+        const completedCampaigns = gs.get('completedCampaigns') || [];
+
+        this.years.forEach(y => {
+            y.available = unlockedYears.includes(y.id);
+        });
+
+        // Example logic: if liubei campaign is completed, maybe unlock 189 AD?
+        if (completedCampaigns.includes('daxing')) {
+            if (!unlockedYears.includes('189')) {
+                unlockedYears.push('189');
+                gs.set('unlockedYears', unlockedYears);
+                this.years.find(y => y.id === '189').available = true;
+            }
+        }
+
         // Setup ESC key listener
         this._onKeyDown = (e) => {
             if (e.key === 'Escape') {
