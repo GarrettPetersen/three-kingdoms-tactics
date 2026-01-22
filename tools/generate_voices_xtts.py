@@ -1,0 +1,452 @@
+import os
+import sys
+import subprocess
+from TTS.api import TTS
+
+# --- Configuration ---
+# Use the Python 3.11 virtual environment we just set up
+VENV_PYTHON = "./tools/venv_xtts/bin/python3.11"
+OUTPUT_DIR = "assets/audio/voices"
+TARGETS_DIR = "assets/audio/targets"
+MODEL_NAME = "tts_models/multilingual/multi-dataset/xtts_v2"
+
+# Map characters to target wav files for cloning in assets/audio/targets/
+# You can put any 10-second wav file here to clone that voice!
+CHAR_TARGETS = {
+    "liubei": "liubei.wav",
+    "zhangfei": "zhangfei.wav",
+    "guanyu": "guanyu.wav",
+    "zhoujing": "zhoujing.wav",
+    "yellowturban": "yellowturban.wav",
+    "dengmao": "yellowturban.wav",
+    "chengyuanzhi": "yellowturban.wav",
+    "narrator": "narrator.wav",
+    "noticeboard": "narrator.wav",
+    "volunteer": "volunteer.wav",
+    "default": "narrator.wav"
+}
+
+# --- Initialize TTS ---
+print(f"Loading XTTS v2 model (this may take a long time on first run)...")
+# You must accept the Coqui TTS terms of service
+os.environ["COQUI_TOS_AGREED"] = "1"
+
+try:
+    # Use CPU for Intel Mac. If you have a GPU, change to "cuda"
+    tts = TTS(MODEL_NAME).to("cpu")
+except Exception as e:
+    print(f"CRITICAL ERROR: Failed to load TTS model: {e}")
+    sys.exit(1)
+
+def generate_voice(line_id, character, text, speed=1.0):
+    output_ogg = os.path.join(OUTPUT_DIR, f"{line_id}.ogg")
+    temp_wav = f"temp_{line_id}.wav"
+
+    if os.path.exists(output_ogg):
+        print(f"Skipping (already exists): {line_id}")
+        return
+
+    char_key = character.lower().replace(" ", "")
+    target_filename = CHAR_TARGETS.get(char_key, CHAR_TARGETS["default"])
+    target_path = os.path.join(TARGETS_DIR, target_filename)
+
+    if not os.path.exists(target_path):
+        print(f"ERROR: Reference voice for '{character}' not found at '{target_path}'.")
+        print(f"Please place a 10-second .wav sample in assets/audio/targets/ to clone this voice.")
+        sys.exit(1)
+
+    print(f"Generating (XTTS): {character} -> {line_id}")
+
+    try:
+        # Generate high quality audio using cloning
+        tts.tts_to_file(
+            text=text,
+            speaker_wav=target_path,
+            language="en",
+            file_path=temp_wav,
+            speed=speed
+        )
+
+        # Convert to OGG using ffmpeg (using the working settings from before)
+        result = subprocess.run(
+            [
+                "ffmpeg",
+                "-i", temp_wav,
+                "-ac", "2",
+                "-c:a", "vorbis",
+                "-strict", "-2",
+                "-q:a", "4",
+                "-y", output_ogg,
+            ],
+            capture_output=True
+        )
+
+        if result.returncode != 0:
+            raise Exception(f"FFmpeg failed: {result.stderr.decode('utf-8')}")
+
+        if os.path.exists(temp_wav):
+            os.remove(temp_wav)
+
+    except Exception as e:
+        print(f"CRITICAL ERROR generating {line_id}: {e}")
+        if os.path.exists(temp_wav):
+            os.remove(temp_wav)
+        sys.exit(1)
+
+# FULL GAME SCRIPT
+game_script = [
+    # --- Daxing Briefing (main.js) ---
+    {
+        "id": "daxing_zj_01",
+        "char": "zhoujing",
+        "text": "Who goes there? These men behind you... they have the look of tigers. You do not look like common recruits.",
+    },
+    {
+        "id": "daxing_lb_01",
+        "char": "liubei",
+        "text": "I am Lee-oh Bay, a descendant of Prince Jing of Zhong-shahn and great-great-grandson of Emperor Jing. These are my sworn brothers, Gwan Yoo and Jahng Fay.",
+    },
+    {
+        "id": "daxing_lb_02",
+        "char": "liubei",
+        "text": "We have raised a force of five hundred volunteers to serve our country and protect the people.",
+    },
+    {
+        "id": "daxing_zj_02",
+        "char": "zhoujing",
+        "text": "An Imperial kinsman! Truly, the Heavens have not abandoned the Han. Your arrival is most timely.",
+    },
+    {
+        "id": "daxing_zj_03",
+        "char": "zhoujing",
+        "text": "Scouts report that the rebel general Chung Ywan-Jur is marching upon us with fifty thousand Yellow Turbans.",
+    },
+    {
+        "id": "daxing_zf_01",
+        "char": "zhangfei",
+        "text": "Fifty thousand? Hah! They are but a mob of ants! Give us the order, Magistrate, and we shall scatter them like dust!",
+        "speed": 0.9,
+    },
+    {
+        "id": "daxing_gy_01",
+        "char": "guanyu",
+        "text": "Eldest brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march.",
+    },
+    {
+        "id": "daxing_lb_03",
+        "char": "liubei",
+        "text": "Magistrate Joe Jing, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion.",
+    },
+    {
+        "id": "daxing_zj_04",
+        "char": "zhoujing",
+        "text": "Very well! I shall lead the main force myself. Together, we shall strike at the heart of Chung Ywan-Jur's army!",
+    },
+    # --- Prologue Noticeboard (MapScene.js) ---
+    {
+        "id": "pro_nb_01",
+        "char": "noticeboard",
+        "text": "NOTICE: The Yellow Turban rebels under Zhang Jue have risen!",
+    },
+    {
+        "id": "pro_nb_02",
+        "char": "noticeboard",
+        "text": "All able-bodied men are called to defend the Han.",
+    },
+    {
+        "id": "pro_nb_03",
+        "char": "noticeboard",
+        "text": "Report to the local Magistrate at once.",
+    },
+    {
+        "id": "pro_lb_01",
+        "char": "liubei",
+        "text": "The Imperial Clan's blood flows in my veins...",
+    },
+    {
+        "id": "pro_lb_02",
+        "char": "liubei",
+        "text": "...yet I am but a poor straw-shoe seller.",
+    },
+    {
+        "id": "pro_lb_03",
+        "char": "liubei",
+        "text": "How can I possibly save the people from this chaos?",
+    },
+    {
+        "id": "pro_zf_01",
+        "char": "zhangfei",
+        "text": "Why sigh, O hero, if you do not help your country?",
+    },
+    {
+        "id": "pro_lb_choice_01",
+        "char": "liubei",
+        "text": "I sigh for the suffering people.",
+    },
+    {
+        "id": "pro_lb_choice_02",
+        "char": "liubei",
+        "text": "I sigh for my own lost status.",
+    },
+    {
+        "id": "pro_zf_02",
+        "char": "zhangfei",
+        "text": "A true hero's heart! You and I are of one mind.",
+    },
+    {
+        "id": "pro_zf_03",
+        "char": "zhangfei",
+        "text": "Status? Bah! In these times of chaos, only courage and wine matter!",
+        "speed": 0.9,
+    },
+    {
+        "id": "pro_zf_04",
+        "char": "zhangfei",
+        "text": "I am Jahng Fay, also known as Yee-Duh.",
+    },
+    {
+        "id": "pro_zf_05",
+        "char": "zhangfei",
+        "text": "I live in this county, where I have a farm. I sell wine and slaughter hogs.",
+    },
+    {
+        "id": "pro_lb_04",
+        "char": "liubei",
+        "text": "I am of the Imperial Clan. My name is Lee-oh Bay.",
+    },
+    {
+        "id": "pro_lb_05",
+        "char": "liubei",
+        "text": "I wish I could destroy these rebels and restore peace...",
+    },
+    {
+        "id": "pro_zf_06",
+        "char": "zhangfei",
+        "text": "I have some wealth! I am willing to use it to recruit volunteers.",
+    },
+    {"id": "pro_zf_07", "char": "zhangfei", "text": "What say you to that?"},
+    {
+        "id": "pro_lb_06",
+        "char": "liubei",
+        "text": "That would be a great blessing for the people!",
+    },
+    {
+        "id": "pro_zf_08",
+        "char": "zhangfei",
+        "text": "Then come! Let us go to the village inn and discuss our plans over wine.",
+    },
+    # --- Map Reminders ---
+    {
+        "id": "map_lb_rem_01",
+        "char": "liubei",
+        "text": "Off to the Magistrate! Magistrate Joe Jing's H-Q awaits our enlistment.",
+    },
+    # --- Inn Scene (MapScene.js) ---
+    {
+        "id": "inn_zf_01",
+        "char": "zhangfei",
+        "text": "This wine is good! Together, we shall raise an army that will make the rebels tremble.",
+        "speed": 1.1,
+    },
+    {"id": "inn_lb_01", "char": "liubei", "text": "Indeed. Honor and duty call us."},
+    {
+        "id": "inn_gy_01",
+        "char": "guanyu",
+        "text": "Quick! Bring me wine! I am in a hurry to get to town and join the volunteers!",
+    },
+    {
+        "id": "inn_lb_02",
+        "char": "liubei",
+        "text": "That man... his presence is extraordinary. Look at his majestic beard and phoenix-like eyes.",
+    },
+    {
+        "id": "inn_zf_02",
+        "char": "zhangfei",
+        "text": "Hey! You there! You're joining the volunteers too? Come, drink with us!",
+        "speed": 1.1,
+    },
+    {
+        "id": "inn_gy_02",
+        "char": "guanyu",
+        "text": "I am Gwan Yoo, courtesy name Yoon-Chahng. For years I have been a fugitive, for I slew a local bully who oppressed the weak.",
+    },
+    {
+        "id": "inn_gy_03",
+        "char": "guanyu",
+        "text": "Now I hear there is a call for volunteers, and I have come to join the cause.",
+    },
+    {
+        "id": "inn_lb_03",
+        "char": "liubei",
+        "text": "A noble heart! I am Lee-oh Bay, and this is Jahng Fay. We have just agreed to raise a volunteer army ourselves.",
+    },
+    {
+        "id": "inn_zf_03",
+        "char": "zhangfei",
+        "text": "Haha! The more the merrier! Drink, Yoon-Chahng! Let us toast to our new brotherhood!",
+        "speed": 1.2,
+    },
+    {
+        "id": "inn_zf_04",
+        "char": "zhangfei",
+        "text": "...and that is why the pig escaped! Haha! But seriously, my friends...",
+        "speed": 1.3,
+    },
+    {
+        "id": "inn_zf_05",
+        "char": "zhangfei",
+        "text": "I feel as though I have known you both for a lifetime.",
+        "speed": 1.3,
+    },
+    {
+        "id": "inn_gy_04",
+        "char": "guanyu",
+        "text": "The heavens have surely brought us together. We share one mind and one purpose.",
+    },
+    {
+        "id": "inn_lb_04",
+        "char": "liubei",
+        "text": "To restore the Han and bring peace to the common people. That is our shared destiny.",
+    },
+    {
+        "id": "inn_zf_06",
+        "char": "zhangfei",
+        "text": "Listen! Behind my farm is a peach garden. The flowers are in full bloom.",
+        "speed": 1.2,
+    },
+    {
+        "id": "inn_zf_07",
+        "char": "zhangfei",
+        "text": "Tomorrow, let us offer sacrifices there and swear to be brothers! To live and die as one!",
+        "speed": 1.2,
+    },
+    {
+        "id": "inn_lb_05",
+        "char": "liubei",
+        "text": "An excellent proposal. We shall do it!",
+    },
+    {
+        "id": "inn_gy_05",
+        "char": "guanyu",
+        "text": "I agree. We swear by the peach garden.",
+    },
+    # --- Peach Garden Oath (MapScene.js) ---
+    {
+        "id": "pg_nar_01",
+        "char": "narrator",
+        "text": "In the peach garden, among the blooming flowers, a black ox and a white horse are sacrificed.",
+    },
+    {
+        "id": "pg_lb_01",
+        "char": "liubei",
+        "text": "We three, Lee-oh Bay, Gwan Yoo, and Jahng Fay, though of different lineages, swear brotherhood and promise mutual help to one end.",
+    },
+    {
+        "id": "pg_gy_01",
+        "char": "guanyu",
+        "text": "We will rescue each other in difficulty; we will aid each other in danger.",
+    },
+    {
+        "id": "pg_zf_01",
+        "char": "zhangfei",
+        "text": "We swear to serve the state and save the people.",
+    },
+    {
+        "id": "pg_lb_02",
+        "char": "liubei",
+        "text": "We ask not the same day of birth, but we seek to die together on the same day.",
+    },
+    {
+        "id": "pg_lb_03",
+        "char": "liubei",
+        "text": "May the Heaven and the Earth read our hearts. If we turn aside from righteousness, may the Heaven and the Human smite us!",
+    },
+    {
+        "id": "pg_nar_02",
+        "char": "narrator",
+        "text": "The ritual complete, Lee-oh Bay is acknowledged as the eldest brother, Gwan Yoo the second, and Jahng Fay the youngest.",
+    },
+    {
+        "id": "pg_lb_04",
+        "char": "liubei",
+        "text": "The path ahead is long and full of peril, but together, we shall restore the Han!",
+    },
+    # --- Recruiting (MapScene.js) ---
+    {
+        "id": "rec_zf_01",
+        "char": "zhangfei",
+        "text": "CITIZENS OF ZHUO! The Yellow Turbans are coming! Who among you is brave enough to fight for your homes?",
+    },
+    {
+        "id": "rec_gy_01",
+        "char": "guanyu",
+        "text": "We offer no riches, only the chance to serve with honor under the banner of the Imperial Uncle, Liu Bei.",
+    },
+    {
+        "id": "rec_vol_01",
+        "char": "volunteer",
+        "text": "We have heard of your brotherhood! We are but simple men, but we will follow you to the death!",
+    },
+    {
+        "id": "rec_lb_01",
+        "char": "liubei",
+        "text": "Welcome, brothers. Today we are but a few, but tomorrow we shall be an army.",
+    },
+    {
+        "id": "rec_lb_02",
+        "char": "liubei",
+        "text": "Let us march! Our first destination: the headquarters of the local Magistrate.",
+    },
+    # --- Daxing Battle (TacticsScene.js) ---
+    {
+        "id": "dx_lb_01",
+        "char": "liubei",
+        "text": "The Yellow Turban vanguard is here. They seek to plunder Zhuo County!",
+    },
+    {
+        "id": "dx_gy_01",
+        "char": "guanyu",
+        "text": "Their numbers are great, but they are but a rabble without leadership.",
+    },
+    {
+        "id": "dx_zf_01",
+        "char": "zhangfei",
+        "text": "Let me at them! My Serpent Spear is thirsty for rebel blood!",
+    },
+    {
+        "id": "dx_dm_01",
+        "char": "dengmao",
+        "text": "Imperial dogs! You dare stand in the way of the Lord of Heaven?",
+    },
+    {
+        "id": "dx_cyz_01",
+        "char": "chengyuanzhi",
+        "text": "Slay them all! The Han is dead, the Yellow Heavens shall rise!",
+    },
+    {
+        "id": "dx_lb_02",
+        "char": "liubei",
+        "text": "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!",
+    },
+    {
+        "id": "dx_lb_03",
+        "char": "liubei",
+        "text": "They keep coming! We must defeat Dung Mao and Chung Ywan-Jur to break them!",
+    },
+    {"id": "dx_yt_01", "char": "yellowturban", "text": "Our leaders are dead! Run!"},
+    {
+        "id": "debug_narrative_01",
+        "char": "narrator",
+        "text": "Cheat code accepted. Narrative scene is functional.",
+    },
+]
+
+if __name__ == "__main__":
+    for line in game_script:
+        generate_voice(
+            line["id"],
+            line["char"],
+            line["text"],
+            line.get("speed", 1.0)
+        )
+
