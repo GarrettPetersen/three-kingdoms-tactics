@@ -28,13 +28,19 @@ def generate_voice(line_id, character, text, speed=1.0, speaker_id=None):
         character.lower().replace(" ", ""), VOICE_MODELS["default"]
     )
 
+    # Zhang Fei is a bit quiet, boost his volume
+    volume = 1.0
+    if character.lower() == "zhangfei":
+        volume = 1.5
+
     # Piper outputs wav by default
     temp_wav = f"temp_{line_id}.wav"
     output_ogg = os.path.join(OUTPUT_DIR, f"{line_id}.ogg")
 
     if os.path.exists(output_ogg):
-        print(f"Skipping (already exists): {line_id}")
-        return
+        # Even if it exists, check if it's a zhangfei line to boost it if we haven't yet
+        # For now, let's just allow force-regeneration via rm or check for specific char
+        pass
 
     if not os.path.exists(os.path.dirname(output_ogg)):
         os.makedirs(os.path.dirname(output_ogg))
@@ -48,6 +54,8 @@ def generate_voice(line_id, character, text, speed=1.0, speaker_id=None):
             model,
             "--length-scale",
             str(speed),
+            "--volume",
+            str(volume),
             "--output_file",
             temp_wav,
         ]
