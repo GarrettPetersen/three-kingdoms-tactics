@@ -337,7 +337,7 @@ game_script = [
     {
         "id": "inn_gy_05",
         "char": "guanyu",
-        "text": "I agree. We swear by the peach garden.",
+        "text": "I agree... We swear by the peach garden.",
     },
     # --- Peach Garden Oath (MapScene.js) ---
     {

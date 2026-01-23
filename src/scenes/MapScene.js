@@ -809,7 +809,7 @@ export class MapScene extends BaseScene {
                         position: 'top',
                         name: 'Guan Yu',
                         voiceId: 'inn_gy_05',
-                        text: "I agree. We swear by the peach garden."
+                        text: "I agree... We swear by the peach garden."
                     },
                     { type: 'command', action: 'fade', target: 1, speed: 0.0005 },
                     
