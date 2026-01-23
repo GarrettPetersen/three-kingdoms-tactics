@@ -7,23 +7,22 @@ from TTS.api import TTS
 # Use the Python 3.11 virtual environment we just set up
 VENV_PYTHON = "./tools/venv_xtts/bin/python3.11"
 OUTPUT_DIR = "assets/audio/voices"
-TARGETS_DIR = "assets/audio/targets"
+TARGETS_DIR = "assets/voice_samples"
 MODEL_NAME = "tts_models/multilingual/multi-dataset/xtts_v2"
 
-# Map characters to target wav files for cloning in assets/audio/targets/
-# You can put any 10-second wav file here to clone that voice!
+# Map characters to target wav/mp3 files for cloning in assets/voice_samples/
 CHAR_TARGETS = {
-    "liubei": "liubei.wav",
-    "zhangfei": "zhangfei.wav",
-    "guanyu": "guanyu.wav",
-    "zhoujing": "zhoujing.wav",
-    "yellowturban": "yellowturban.wav",
-    "dengmao": "yellowturban.wav",
-    "chengyuanzhi": "yellowturban.wav",
-    "narrator": "narrator.wav",
-    "noticeboard": "narrator.wav",
-    "volunteer": "volunteer.wav",
-    "default": "narrator.wav"
+    "liubei": "yunxi_young_adult_male_chinese.wav",
+    "zhangfei": "sanchi_fast_dramatic_male.mp3",
+    "guanyu": "wilson_deep_serious_neutral_senior_male.mp3",
+    "zhoujing": "guantangbao_deep_tender_mature_male.mp3",
+    "yellowturban": "jimmy_young_adult_male.mp3",
+    "dengmao": "jimmy_young_adult_male.mp3",
+    "chengyuanzhi": "jimmy_young_adult_male.mp3",
+    "narrator": "julia_young_adult_smooth_neutral_female.mp3",
+    "noticeboard": "keith_nonchalant_male.mp3",
+    "volunteer": "tungwong_young_adult_funny_friendly_male.mp3",
+    "default": "keith_nonchalant_male.mp3",
 }
 
 # --- Initialize TTS ---
@@ -37,6 +36,7 @@ try:
 except Exception as e:
     print(f"CRITICAL ERROR: Failed to load TTS model: {e}")
     sys.exit(1)
+
 
 def generate_voice(line_id, character, text, speed=1.0):
     output_ogg = os.path.join(OUTPUT_DIR, f"{line_id}.ogg")
@@ -52,7 +52,9 @@ def generate_voice(line_id, character, text, speed=1.0):
 
     if not os.path.exists(target_path):
         print(f"ERROR: Reference voice for '{character}' not found at '{target_path}'.")
-        print(f"Please place a 10-second .wav sample in assets/audio/targets/ to clone this voice.")
+        print(
+            f"Please place a 10-second .wav sample in assets/audio/targets/ to clone this voice."
+        )
         sys.exit(1)
 
     print(f"Generating (XTTS): {character} -> {line_id}")
@@ -64,21 +66,27 @@ def generate_voice(line_id, character, text, speed=1.0):
             speaker_wav=target_path,
             language="en",
             file_path=temp_wav,
-            speed=speed
+            speed=speed,
         )
 
         # Convert to OGG using ffmpeg (using the working settings from before)
         result = subprocess.run(
             [
                 "ffmpeg",
-                "-i", temp_wav,
-                "-ac", "2",
-                "-c:a", "vorbis",
-                "-strict", "-2",
-                "-q:a", "4",
-                "-y", output_ogg,
+                "-i",
+                temp_wav,
+                "-ac",
+                "2",
+                "-c:a",
+                "vorbis",
+                "-strict",
+                "-2",
+                "-q:a",
+                "4",
+                "-y",
+                output_ogg,
             ],
-            capture_output=True
+            capture_output=True,
         )
 
         if result.returncode != 0:
@@ -92,6 +100,7 @@ def generate_voice(line_id, character, text, speed=1.0):
         if os.path.exists(temp_wav):
             os.remove(temp_wav)
         sys.exit(1)
+
 
 # FULL GAME SCRIPT
 game_script = [
@@ -443,10 +452,4 @@ game_script = [
 
 if __name__ == "__main__":
     for line in game_script:
-        generate_voice(
-            line["id"],
-            line["char"],
-            line["text"],
-            line.get("speed", 1.0)
-        )
-
+        generate_voice(line["id"], line["char"], line["text"], line.get("speed", 1.0))
