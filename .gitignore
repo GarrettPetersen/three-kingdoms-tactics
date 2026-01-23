@@ -6,6 +6,11 @@ dist/
 models/
 tools/venv/
 tools/venv_xtts/
+tools/venv_uvr/
 tools/piper/
+tools/temp_separation/
 tts_models/
 temp_*.wav
+__pycache__/
+.env
+assets/voice_samples/movies/

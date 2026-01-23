@@ -78,7 +78,7 @@ export class BattleSummaryScene extends BaseScene {
             ctx.globalAlpha = 0.5 + pulse * 0.5;
             this.drawPixelText(ctx, "PRESS ANYWHERE TO CONTINUE", canvas.width / 2, 200, {
                 color: '#fff',
-                font: '8px Silkscreen',
+                font: '8px Dogica',
                 align: 'center'
             });
             ctx.restore();

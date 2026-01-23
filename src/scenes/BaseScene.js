@@ -148,7 +148,7 @@ export class BaseScene {
         let currentLine = '';
 
         ctx.save();
-        ctx.font = '8px Tiny5';
+        ctx.font = '8px Dogica';
         for (let n = 0; n < words.length; n++) {
             let testLine = currentLine + words[n] + ' ';
             if (ctx.measureText(testLine).width > maxWidth && n > 0) {
@@ -166,7 +166,7 @@ export class BaseScene {
     renderDialogueBox(ctx, canvas, step, options = {}) {
         const { subStep = 0 } = options;
         const margin = 5;
-        const panelHeight = 44;
+        const panelHeight = 50;
         const panelWidth = canvas.width - margin * 2;
         const px = margin;
         
@@ -181,9 +181,9 @@ export class BaseScene {
         ctx.strokeRect(px + 0.5, py + 0.5, panelWidth - 1, panelHeight - 1);
 
         // Portrait
-        const portraitSize = 34;
-        const portraitX = px + 5;
-        const portraitY = py + 5;
+        const portraitSize = 38;
+        const portraitX = px + 6;
+        const portraitY = py + 6;
         ctx.fillStyle = '#000';
         ctx.fillRect(portraitX, portraitY, portraitSize, portraitSize);
         ctx.strokeStyle = '#444';
@@ -193,14 +193,14 @@ export class BaseScene {
         const actorImg = assets.getImage(step.portraitKey);
         if (actorImg) {
             const crop = step.portraitRect || { x: 26, y: 20, w: 20, h: 20 };
-            const destSize = 28;
+            const destSize = 32;
             const destOffset = (portraitSize - destSize) / 2;
             ctx.drawImage(actorImg, crop.x, crop.y, crop.w, crop.h, portraitX + destOffset, portraitY + destOffset, destSize, destSize);
         }
 
         // Name
         const textX = portraitX + portraitSize + 8;
-        this.drawPixelText(ctx, (step.name || "").toUpperCase(), textX, py + 6, { color: '#ffd700', font: '8px Silkscreen' });
+        this.drawPixelText(ctx, (step.name || "").toUpperCase(), textX, py + 7, { color: '#ffd700', font: '8px Dogica' });
 
         // Text
         const maxWidth = panelWidth - portraitSize - 25;
@@ -209,20 +209,20 @@ export class BaseScene {
         const displayLines = lines.slice(start, start + 2);
         const hasNextChunk = (subStep + 1) * 2 < lines.length;
         
-        let lineY = py + 18;
+        let lineY = py + 22;
         displayLines.forEach((line, i) => {
             let text = line;
             if (i === displayLines.length - 1 && hasNextChunk) {
                 text += "...";
             }
-            this.drawPixelText(ctx, text, textX, lineY, { color: '#eee', font: '8px Tiny5' });
-            lineY += 10;
+            this.drawPixelText(ctx, text, textX, lineY, { color: '#eee', font: '8px Dogica' });
+            lineY += 12;
         });
 
         // Click prompt
         const pulse = Math.abs(Math.sin(Date.now() / 500));
         ctx.globalAlpha = pulse;
-        this.drawPixelText(ctx, "NEXT", px + panelWidth - 2, py + panelHeight - 8, { color: '#eee', font: '8px Tiny5', align: 'right' });
+        this.drawPixelText(ctx, "NEXT", px + panelWidth - 2, py + panelHeight - 8, { color: '#eee', font: '8px Dogica', align: 'right' });
         ctx.globalAlpha = 1.0;
 
         return { hasNextChunk, totalLines: lines.length };

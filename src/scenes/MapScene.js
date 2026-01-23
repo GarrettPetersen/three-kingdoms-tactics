@@ -158,12 +158,12 @@ export class MapScene extends BaseScene {
 
     drawLabel(ctx, name, x, y, prompt) {
         ctx.save();
-        ctx.font = '8px Silkscreen';
+        ctx.font = '8px Dogica';
         const metrics = ctx.measureText(name);
         ctx.restore();
 
         const boxW = Math.floor(metrics.width + 10);
-        const boxH = 24;
+        const boxH = 28;
         const bx = Math.floor(x - 20 - boxW);
         const by = Math.floor(y);
 
@@ -173,11 +173,11 @@ export class MapScene extends BaseScene {
         ctx.lineWidth = 1;
         ctx.strokeRect(bx + 0.5, by + 0.5, boxW - 1, boxH - 1);
 
-        this.drawPixelText(ctx, name.toUpperCase(), bx + 5, by + 3, { color: '#ffd700', font: '8px Silkscreen' });
+        this.drawPixelText(ctx, name.toUpperCase(), bx + 5, by + 4, { color: '#ffd700', font: '8px Dogica' });
         
         const pulse = Math.abs(Math.sin(Date.now() / 500));
         ctx.globalAlpha = pulse;
-        this.drawPixelText(ctx, prompt, bx + 5, by + 13, { color: '#eee', font: '8px Tiny5' });
+        this.drawPixelText(ctx, prompt, bx + 5, by + 16, { color: '#eee', font: '8px Dogica' });
         ctx.globalAlpha = 1.0;
     }
 
@@ -924,7 +924,7 @@ export class MapScene extends BaseScene {
                         position: 'top',
                         name: 'Guan Yu',
                         voiceId: 'rec_gy_01',
-                        text: "We offer no riches, only the chance to serve with honor under the banner of the Imperial Uncle, Liu Bei."
+                        text: "We offer no riches, only the chance to serve with honor under the banner of Liu Bei."
                     },
 
                     { type: 'command', action: 'addActor', id: 'volunteer1', imgKey: 'soldier', x: -50, y: 210, speed: 0.8 },

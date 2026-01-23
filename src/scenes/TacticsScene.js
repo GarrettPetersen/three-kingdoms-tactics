@@ -33,6 +33,7 @@ export class TacticsScene extends BaseScene {
         this.introDuration = 1000; // ms for the sequence
 
         this.showAttackOrder = false;
+        this.history = [];
     }
 
     enter(params = {}) {
@@ -499,7 +500,13 @@ export class TacticsScene extends BaseScene {
 
     saveBattleState() {
         const gs = this.manager.gameState;
-        const state = {
+        const state = this.captureState();
+        gs.set('battleState', state);
+    }
+
+    captureState() {
+        const config = this.manager.config;
+        return {
             battleId: this.battleId,
             turn: this.turn,
             turnNumber: this.turnNumber,
@@ -525,13 +532,89 @@ export class TacticsScene extends BaseScene {
                 hasAttacked: u.hasAttacked,
                 hasActed: u.hasActed,
                 attacks: u.attacks,
-                intent: u.intent,
+                intent: u.intent ? { ...u.intent } : null,
                 action: u.action,
                 isDrowning: u.isDrowning,
-                isGone: u.isGone
+                isGone: u.isGone,
+                flip: u.flip
             }))
         };
-        gs.set('battleState', state);
+    }
+
+    pushHistory() {
+        this.history.push(this.captureState());
+    }
+
+    restoreState(state) {
+        if (!state) return;
+        const config = this.manager.config;
+        
+        this.turn = state.turn;
+        this.turnNumber = state.turnNumber;
+        this.weatherType = state.weatherType;
+        
+        // Restore Grid
+        for (let r = 0; r < config.mapHeight; r++) {
+            for (let q = 0; q < config.mapWidth; q++) {
+                const cell = this.tacticsMap.getCell(r, q);
+                const savedCell = state.grid[r][q];
+                cell.terrain = savedCell.terrain;
+                cell.level = savedCell.level;
+                cell.elevation = savedCell.elevation;
+                cell.impassable = savedCell.impassable;
+                cell.unit = null; // Clear all units first
+            }
+        }
+
+        // Restore Units
+        state.units.forEach(uData => {
+            let u = this.units.find(unit => unit.id === uData.id);
+            if (!u) {
+                // If unit was somehow removed, we might need to recreate it, 
+                // but usually units just have isGone = true or hp = 0
+                return; 
+            }
+
+            u.r = uData.r;
+            u.q = uData.q;
+            u.hp = uData.hp;
+            u.maxHp = uData.maxHp;
+            u.hasMoved = uData.hasMoved;
+            u.hasAttacked = uData.hasAttacked;
+            u.hasActed = uData.hasActed;
+            u.intent = uData.intent ? { ...uData.intent } : null;
+            u.action = uData.action || 'standby';
+            u.isDrowning = uData.isDrowning || false;
+            u.isGone = uData.isGone || false;
+            u.flip = uData.flip || false;
+
+            // Clear animation states
+            u.frame = 0;
+            u.isMoving = false;
+            u.path = [];
+            u.pushData = null;
+            u.shakeTimer = 0;
+            u.visualOffsetX = 0;
+            u.visualOffsetY = 0;
+            u.updateVisualPos(() => this.getPixelPos(u.r, u.q));
+
+            const cell = this.tacticsMap.getCell(u.r, u.q);
+            if (cell) cell.unit = u;
+        });
+
+        this.selectedUnit = null;
+        this.selectedAttack = null;
+        this.reachableTiles.clear();
+        this.attackTiles.clear();
+        this.activeDialogue = null;
+    }
+
+    undo() {
+        if (this.history.length <= 1) return;
+        this.history.pop(); // Remove current state
+        const prevState = this.history[this.history.length - 1];
+        this.restoreState(prevState);
+        assets.playSound('ui_click', 0.5);
     }
 
     clearBattleState() {
@@ -549,7 +632,8 @@ export class TacticsScene extends BaseScene {
             }
         });
         
-        this.saveTurnState();
+        this.history = [];
+        this.pushHistory(); // Save start of turn state
         this.saveBattleState();
     }
 
@@ -1033,69 +1117,17 @@ export class TacticsScene extends BaseScene {
         }
     }
 
-    saveTurnState() {
-        this.turnStartState = this.units.map(u => ({
-            id: u.id,
-            r: u.r,
-            q: u.q,
-            hp: u.hp,
-            hasMoved: u.hasMoved,
-            hasAttacked: u.hasAttacked,
-            hasActed: u.hasActed,
-            faction: u.faction,
-            intent: u.intent ? { ...u.intent } : null,
-            attackOrder: u.attackOrder,
-            flip: u.flip,
-            action: u.action,
-            isDrowning: u.isDrowning,
-            isGone: u.isGone
-        }));
-    }
-
     resetTurn() {
         if (this.turn !== 'player' || this.isProcessingTurn) return;
+        if (this.history.length === 0) return;
 
-        this.units.forEach(u => {
-            const state = this.turnStartState.find(s => s.id === u.id);
-            if (state) {
-                const oldCell = this.tacticsMap.getCell(u.r, u.q);
-                if (oldCell && oldCell.unit === u) oldCell.unit = null;
-
-                u.r = state.r;
-                u.q = state.q;
-                u.hp = state.hp;
-                u.hasMoved = state.hasMoved;
-                u.hasAttacked = state.hasAttacked;
-                u.hasActed = state.hasActed;
-                u.intent = state.intent ? { ...state.intent } : null;
-                u.attackOrder = state.attackOrder;
-                u.flip = state.flip;
-                u.action = state.action || 'standby';
-                u.isDrowning = state.isDrowning || false;
-                u.isGone = state.isGone || false;
-                
-                // Clear any mid-turn animation states
-                u.frame = 0;
-                u.isMoving = false;
-                u.path = [];
-                u.pushData = null;
-                u.shakeTimer = 0;
-                u.visualOffsetX = 0;
-                u.visualOffsetY = 0;
-
-                if (u.hp > 0 && u.action === 'death') u.action = 'standby';
-
-                const newCell = this.tacticsMap.getCell(u.r, u.q);
-                if (newCell) newCell.unit = u;
-            }
-        });
-
-        this.selectedUnit = null;
-        this.selectedAttack = null;
-        this.reachableTiles.clear();
-        this.attackTiles.clear();
-        this.activeDialogue = null;
-        // No need to re-telegraph, we restored intents and orders
+        // Reset to the very first state in history (start of turn)
+        const startState = this.history[0];
+        this.restoreState(startState);
+        
+        // Keep only the start state in history
+        this.history = [startState];
+        assets.playSound('ui_click', 0.5);
     }
 
     placeInitialUnits(specifiedUnits) {
@@ -2006,10 +2038,10 @@ export class TacticsScene extends BaseScene {
             ctx.strokeRect(bx, by, boxW, barH - 4);
 
             // Name
-            this.drawPixelText(ctx, u.name, bx + 4, by + 4, { color: '#fff', font: '8px Silkscreen' });
+            this.drawPixelText(ctx, u.name, bx + 4, by + 4, { color: '#fff', font: '8px Dogica' });
             
             // HP
-            this.drawPixelText(ctx, `HP: ${u.hp}/${u.maxHp}`, bx + 4, by + 14, { color: '#eee', font: '8px Tiny5' });
+            this.drawPixelText(ctx, `HP: ${u.hp}/${u.maxHp}`, bx + 4, by + 16, { color: '#eee', font: '8px Dogica' });
 
             // State/Intent
             let actionText = "IDLE";
@@ -2021,7 +2053,7 @@ export class TacticsScene extends BaseScene {
             } else if (u.hasActed) {
                 actionText = "DONE";
             }
-            this.drawPixelText(ctx, actionText, bx + 4, by + 24, { color: '#aaa', font: '8px Tiny5' });
+            this.drawPixelText(ctx, actionText, bx + 4, by + 28, { color: '#aaa', font: '8px Dogica' });
         }
 
         // 2. Damage Numbers (Floating over world)
@@ -2031,7 +2063,7 @@ export class TacticsScene extends BaseScene {
             ctx.globalAlpha = alpha;
             this.drawPixelText(ctx, `-${dn.value}`, dn.x, dn.y, { 
                 color: '#f00', 
-                font: '10px Tiny5', 
+                font: '10px Dogica', 
                 align: 'center' 
             });
             ctx.restore();
@@ -2052,7 +2084,7 @@ export class TacticsScene extends BaseScene {
             color = '#fff';
         }
 
-        this.drawPixelText(ctx, turnText, 10, 8, { color, font: '8px Silkscreen' });
+        this.drawPixelText(ctx, turnText, 10, 8, { color, font: '8px Dogica' });
 
         // 4. End Turn / Reset Turn (Bottom Right)
         if (this.turn === 'player' && !this.isProcessingTurn) {
@@ -2066,7 +2098,7 @@ export class TacticsScene extends BaseScene {
             ctx.fillRect(rx, ey, btnW, btnH);
             ctx.strokeStyle = '#ffd700';
             ctx.strokeRect(rx + 0.5, ey + 0.5, btnW - 1, btnH - 1);
-            this.drawPixelText(ctx, "END TURN", rx + btnW / 2, ey + 4, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, "END TURN", rx + btnW / 2, ey + 5, { color: '#fff', font: '8px Dogica', align: 'center' });
             this.endTurnRect = { x: rx, y: ey, w: btnW, h: btnH };
 
             // RESET TURN
@@ -2075,7 +2107,7 @@ export class TacticsScene extends BaseScene {
             ctx.fillRect(rx, ry, btnW, btnH);
             ctx.strokeStyle = '#fff';
             ctx.strokeRect(rx + 0.5, ry + 0.5, btnW - 1, btnH - 1);
-            this.drawPixelText(ctx, "RESET", rx + btnW / 2, ry + 4, { color: '#eee', font: '8px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, "RESET", rx + btnW / 2, ry + 5, { color: '#eee', font: '8px Dogica', align: 'center' });
             this.resetTurnRect = { x: rx, y: ry, w: btnW, h: btnH };
 
             // ATTACK ORDER TOGGLE
@@ -2085,12 +2117,23 @@ export class TacticsScene extends BaseScene {
             ctx.fillRect(ax, ay, btnW, btnH);
             ctx.strokeStyle = this.showAttackOrder ? '#0f0' : '#888';
             ctx.strokeRect(ax + 0.5, ay + 0.5, btnW - 1, btnH - 1);
-            this.drawPixelText(ctx, "ORDER", ax + btnW / 2, ay + 4, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, "ORDER", ax + btnW / 2, ay + 5, { color: '#fff', font: '8px Dogica', align: 'center' });
             this.attackOrderRect = { x: ax, y: ay, w: btnW, h: btnH };
+
+            // UNDO
+            const uy = barY + 21;
+            const canUndo = this.history.length > 1;
+            ctx.fillStyle = canUndo ? 'rgba(40, 40, 40, 0.9)' : 'rgba(20, 20, 20, 0.6)';
+            ctx.fillRect(ax, uy, btnW, btnH);
+            ctx.strokeStyle = canUndo ? '#fff' : '#444';
+            ctx.strokeRect(ax + 0.5, uy + 0.5, btnW - 1, btnH - 1);
+            this.drawPixelText(ctx, "UNDO", ax + btnW / 2, uy + 5, { color: canUndo ? '#eee' : '#666', font: '8px Dogica', align: 'center' });
+            this.undoRect = { x: ax, y: uy, w: btnW, h: btnH };
         } else {
             this.endTurnRect = null;
             this.resetTurnRect = null;
             this.attackOrderRect = null;
+            this.undoRect = null;
         }
 
         // 5. Ability UI (Bottom Center)
@@ -2134,9 +2177,9 @@ export class TacticsScene extends BaseScene {
             ctx.strokeStyle = isSelected ? '#ffd700' : (isDisabled ? '#333' : '#888');
             ctx.strokeRect(ax + 0.5, ay + 0.5, aw - 1, ah - 1);
 
-            this.drawPixelText(ctx, attack.name, ax + aw / 2, ay + 5, { 
+            this.drawPixelText(ctx, attack.name, ax + aw / 2, ay + 6, { 
                 color: isDisabled ? '#555' : '#eee', 
-                font: '8px Tiny5',
+                font: '8px Dogica',
                 align: 'center' 
             });
 
@@ -2222,6 +2265,11 @@ export class TacticsScene extends BaseScene {
             assets.playSound('ui_click', 0.5);
             return;
         }
+        if (this.undoRect && x >= this.undoRect.x && x <= this.undoRect.x + this.undoRect.w &&
+            y >= this.undoRect.y && y <= this.undoRect.y + this.undoRect.h) {
+            this.undo();
+            return;
+        }
 
         // 2. Check Ability Buttons
         if (this.attackRects && this.selectedUnit && this.selectedUnit.faction === 'player') {
@@ -2264,6 +2312,7 @@ export class TacticsScene extends BaseScene {
             }
 
             if (targetCell) {
+                this.pushHistory();
                 this.executeAttack(this.selectedUnit, this.selectedAttack, targetCell.r, targetCell.q, () => {
                     this.selectedUnit.hasAttacked = true;
                     this.selectedUnit.hasActed = true;
@@ -2279,6 +2328,7 @@ export class TacticsScene extends BaseScene {
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && clickedCell && this.reachableTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
             // Check landing spot (cannot land on another unit)
             if (!clickedCell.unit || clickedCell.unit === this.selectedUnit) {
+                this.pushHistory();
                 const path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, clickedCell.r, clickedCell.q, this.selectedUnit.moveRange, this.selectedUnit);
                 if (path) {
                     const oldCell = this.tacticsMap.getCell(this.selectedUnit.r, this.selectedUnit.q);

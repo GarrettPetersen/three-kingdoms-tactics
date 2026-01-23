@@ -12,17 +12,17 @@ MODEL_NAME = "tts_models/multilingual/multi-dataset/xtts_v2"
 
 # Map characters to target wav/mp3 files for cloning in assets/voice_samples/
 CHAR_TARGETS = {
-    "liubei": "yunxi_young_adult_male_chinese.wav",
-    "zhangfei": "sanchi_fast_dramatic_male.mp3",
-    "guanyu": "wilson_deep_serious_neutral_senior_male.mp3",
-    "zhoujing": "guantangbao_deep_tender_mature_male.mp3",
-    "yellowturban": "jimmy_young_adult_male.mp3",
-    "dengmao": "jimmy_young_adult_male.mp3",
-    "chengyuanzhi": "jimmy_young_adult_male.mp3",
-    "narrator": "julia_young_adult_smooth_neutral_female.mp3",
-    "noticeboard": "keith_nonchalant_male.mp3",
-    "volunteer": "tungwong_young_adult_funny_friendly_male.mp3",
-    "default": "keith_nonchalant_male.mp3",
+    "liubei": "movies/clean/clean_mulans-dad.wav",
+    "zhangfei": "movies/clean/clean_kublai-khan.wav",
+    "guanyu": "movies/clean/clean_uncle-iroh.wav",
+    "zhoujing": "movies/clean/clean_mulan-emperor.wav",
+    "yellowturban": "ai/jimmy_young_adult_male.mp3",
+    "dengmao": "ai/jimmy_young_adult_male.mp3",
+    "chengyuanzhi": "ai/jimmy_young_adult_male.mp3",
+    "narrator": "ai/julia_young_adult_smooth_neutral_female.mp3",
+    "noticeboard": "ai/keith_nonchalant_male.mp3",
+    "volunteer": "ai/tungwong_young_adult_funny_friendly_male.mp3",
+    "default": "ai/keith_nonchalant_male.mp3",
 }
 
 # --- Initialize TTS ---
@@ -38,7 +38,7 @@ except Exception as e:
     sys.exit(1)
 
 
-def generate_voice(line_id, character, text, speed=1.0):
+def generate_voice(line_id, character, text, speed=1.0, emotion=None):
     output_ogg = os.path.join(OUTPUT_DIR, f"{line_id}.ogg")
     temp_wav = f"temp_{line_id}.wav"
 
@@ -53,20 +53,27 @@ def generate_voice(line_id, character, text, speed=1.0):
     if not os.path.exists(target_path):
         print(f"ERROR: Reference voice for '{character}' not found at '{target_path}'.")
         print(
-            f"Please place a 10-second .wav sample in assets/audio/targets/ to clone this voice."
+            f"Please place a 6-10 second clip in assets/voice_samples/ to clone this voice."
         )
         sys.exit(1)
 
-    print(f"Generating (XTTS): {character} -> {line_id}")
+    print(f"Generating (XTTS): {character} -> {line_id} (Acting Mode)")
 
     try:
-        # Generate high quality audio using cloning
+        # Generate high quality audio using cloning with 'Acting' parameters
+        # temperature: 0.75+ makes it more expressive/human, but less stable
+        # repetition_penalty: helps prevent stuttering on high temperature
         tts.tts_to_file(
             text=text,
             speaker_wav=target_path,
             language="en",
             file_path=temp_wav,
             speed=speed,
+            emotion=emotion,
+            temperature=0.75,
+            repetition_penalty=2.0,
+            top_k=50,
+            top_p=0.85,
         )
 
         # Convert to OGG using ffmpeg (using the working settings from before)
@@ -113,7 +120,7 @@ game_script = [
     {
         "id": "daxing_lb_01",
         "char": "liubei",
-        "text": "I am Lee-oh Bay, a descendant of Prince Jing of Zhong-shahn and great-great-grandson of Emperor Jing. These are my sworn brothers, Gwan Yoo and Jahng Fay.",
+        "text": "I am Liu Bei, a descendant of Prince Jing of Zhongshan and great-great-grandson of Emperor Jing. These are my sworn brothers, Guan Yu and Zhang Fei.",
     },
     {
         "id": "daxing_lb_02",
@@ -128,7 +135,7 @@ game_script = [
     {
         "id": "daxing_zj_03",
         "char": "zhoujing",
-        "text": "Scouts report that the rebel general Chung Ywan-Jur is marching upon us with fifty thousand Yellow Turbans.",
+        "text": "Scouts report that the rebel general Cheng Yuanzhi is marching upon us with fifty thousand Yellow Turbans.",
     },
     {
         "id": "daxing_zf_01",
@@ -144,12 +151,12 @@ game_script = [
     {
         "id": "daxing_lb_03",
         "char": "liubei",
-        "text": "Magistrate Joe Jing, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion.",
+        "text": "Magistrate Zhou Jing, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion.",
     },
     {
         "id": "daxing_zj_04",
         "char": "zhoujing",
-        "text": "Very well! I shall lead the main force myself. Together, we shall strike at the heart of Chung Ywan-Jur's army!",
+        "text": "Very well! I shall lead the main force myself. Together, we shall strike at the heart of Cheng Yuanzhi's army!",
     },
     # --- Prologue Noticeboard (MapScene.js) ---
     {
@@ -211,7 +218,7 @@ game_script = [
     {
         "id": "pro_zf_04",
         "char": "zhangfei",
-        "text": "I am Jahng Fay, also known as Yee-Duh.",
+        "text": "I am Zhang Fei, also known as Yide.",
     },
     {
         "id": "pro_zf_05",
@@ -221,7 +228,7 @@ game_script = [
     {
         "id": "pro_lb_04",
         "char": "liubei",
-        "text": "I am of the Imperial Clan. My name is Lee-oh Bay.",
+        "text": "I am of the Imperial Clan. My name is Liu Bei.",
     },
     {
         "id": "pro_lb_05",
@@ -248,7 +255,7 @@ game_script = [
     {
         "id": "map_lb_rem_01",
         "char": "liubei",
-        "text": "Off to the Magistrate! Magistrate Joe Jing's H-Q awaits our enlistment.",
+        "text": "Off to the Magistrate! Magistrate Zhou Jing's H-Q awaits our enlistment.",
     },
     # --- Inn Scene (MapScene.js) ---
     {
@@ -277,7 +284,7 @@ game_script = [
     {
         "id": "inn_gy_02",
         "char": "guanyu",
-        "text": "I am Gwan Yoo, courtesy name Yoon-Chahng. For years I have been a fugitive, for I slew a local bully who oppressed the weak.",
+        "text": "I am Guan Yu, courtesy name Yunchang. For years I have been a fugitive, for I slew a local bully who oppressed the weak.",
     },
     {
         "id": "inn_gy_03",
@@ -287,12 +294,12 @@ game_script = [
     {
         "id": "inn_lb_03",
         "char": "liubei",
-        "text": "A noble heart! I am Lee-oh Bay, and this is Jahng Fay. We have just agreed to raise a volunteer army ourselves.",
+        "text": "A noble heart! I am Liu Bei, and this is Zhang Fei. We have just agreed to raise a volunteer army ourselves.",
     },
     {
         "id": "inn_zf_03",
         "char": "zhangfei",
-        "text": "Haha! The more the merrier! Drink, Yoon-Chahng! Let us toast to our new brotherhood!",
+        "text": "Haha! The more the merrier! Drink, Yunchang! Let us toast to our new brotherhood!",
         "speed": 1.2,
     },
     {
@@ -348,7 +355,7 @@ game_script = [
     {
         "id": "pg_lb_01",
         "char": "liubei",
-        "text": "We three, Lee-oh Bay, Gwan Yoo, and Jahng Fay, though of different lineages, swear brotherhood and promise mutual help to one end.",
+        "text": "We three, Liu Bei, Guan Yu, and Zhang Fei, though of different lineages, swear brotherhood and promise mutual help to one end.",
     },
     {
         "id": "pg_gy_01",
@@ -373,7 +380,7 @@ game_script = [
     {
         "id": "pg_nar_02",
         "char": "narrator",
-        "text": "The ritual complete, Lee-oh Bay is acknowledged as the eldest brother, Gwan Yoo the second, and Jahng Fay the youngest.",
+        "text": "The ritual complete, Liu Bei is acknowledged as the eldest brother, Guan Yu the second, and Zhang Fei the youngest.",
     },
     {
         "id": "pg_lb_04",
@@ -389,7 +396,7 @@ game_script = [
     {
         "id": "rec_gy_01",
         "char": "guanyu",
-        "text": "We offer no riches, only the chance to serve with honor under the banner of the Imperial Uncle, Liu Bei.",
+        "text": "We offer no riches, only the chance to serve with honor under the banner of Liu Bei.",
     },
     {
         "id": "rec_vol_01",
@@ -421,26 +428,30 @@ game_script = [
         "id": "dx_zf_01",
         "char": "zhangfei",
         "text": "Let me at them! My Serpent Spear is thirsty for rebel blood!",
+        "emotion": "Angry",
     },
     {
         "id": "dx_dm_01",
         "char": "dengmao",
         "text": "Imperial dogs! You dare stand in the way of the Lord of Heaven?",
+        "emotion": "Angry",
     },
     {
         "id": "dx_cyz_01",
         "char": "chengyuanzhi",
         "text": "Slay them all! The Han is dead, the Yellow Heavens shall rise!",
+        "emotion": "Angry",
     },
     {
         "id": "dx_lb_02",
         "char": "liubei",
         "text": "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!",
+        "emotion": "Surprise",
     },
     {
         "id": "dx_lb_03",
         "char": "liubei",
-        "text": "They keep coming! We must defeat Dung Mao and Chung Ywan-Jur to break them!",
+        "text": "They keep coming! We must defeat Deng Mao and Cheng Yuanzhi to break them!",
     },
     {"id": "dx_yt_01", "char": "yellowturban", "text": "Our leaders are dead! Run!"},
     {
@@ -452,4 +463,10 @@ game_script = [
 
 if __name__ == "__main__":
     for line in game_script:
-        generate_voice(line["id"], line["char"], line["text"], line.get("speed", 1.0))
+        generate_voice(
+            line["id"],
+            line["char"],
+            line["text"],
+            speed=line.get("speed", 1.0),
+            emotion=line.get("emotion"),
+        )
