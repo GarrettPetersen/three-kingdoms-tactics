@@ -1,6 +1,10 @@
 import os
 import sys
 import subprocess
+import string
+import whisper
+import json
+from jiwer import wer
 from TTS.api import TTS
 
 # --- Configuration ---
@@ -9,6 +13,7 @@ VENV_PYTHON = "./tools/venv_xtts/bin/python3.11"
 OUTPUT_DIR = "assets/audio/voices"
 TARGETS_DIR = "assets/voice_samples"
 MODEL_NAME = "tts_models/multilingual/multi-dataset/xtts_v2"
+REPORT_FILE = "voice_verification_report.json"
 
 # Map characters to target wav/mp3 files for cloning in assets/voice_samples/
 CHAR_TARGETS = {
@@ -25,7 +30,7 @@ CHAR_TARGETS = {
     "default": "ai/keith_nonchalant_male.mp3",
 }
 
-# --- Initialize TTS ---
+# --- Initialize ---
 print(f"Loading XTTS v2 model (this may take a long time on first run)...")
 # You must accept the Coqui TTS terms of service
 os.environ["COQUI_TOS_AGREED"] = "1"
@@ -37,76 +42,119 @@ except Exception as e:
     print(f"CRITICAL ERROR: Failed to load TTS model: {e}")
     sys.exit(1)
 
+print("Loading Whisper model for verification...")
+stt_model = whisper.load_model("base")
 
-def generate_voice(line_id, character, text, speed=1.0, emotion=None):
+
+def verify_audio(audio_path, expected_text):
+    print(f"  Verifying audio quality...")
+    try:
+        # Transcribe (Whisper handles wav/ogg/mp3)
+        result = stt_model.transcribe(audio_path)
+        transcribed_text = result["text"].strip()
+        original_text = expected_text.strip()
+
+        # Cleanup punctuation for comparison
+        table = str.maketrans("", "", string.punctuation)
+        transcribed_clean = transcribed_text.lower().translate(table)
+        original_clean = original_text.lower().translate(table)
+
+        # Calculate Word Error Rate (WER)
+        error_rate = wer(original_clean, transcribed_clean)
+
+        print(f'    Transcribed: "{transcribed_text}"')
+        print(f"    WER: {error_rate:.2f}")
+
+        return {
+            "transcribed": transcribed_text,
+            "wer": error_rate,
+            "is_bad": error_rate > 0.4,
+        }
+    except Exception as e:
+        print(f"    Verification error: {e}")
+        return {"error": str(e), "is_bad": True}
+
+
+def generate_voice(
+    line_id, character, text, speed=1.0, emotion=None, phonetic_text=None
+):
     output_ogg = os.path.join(OUTPUT_DIR, f"{line_id}.ogg")
     temp_wav = f"temp_{line_id}.wav"
 
+    verification_result = None
+
     if os.path.exists(output_ogg):
-        print(f"Skipping (already exists): {line_id}")
-        return
+        print(f"Skipping generation (already exists): {line_id}")
+        # Still verify the existing file to generate the report
+        verification_result = verify_audio(output_ogg, text)
+    else:
+        char_key = character.lower().replace(" ", "")
+        target_filename = CHAR_TARGETS.get(char_key, CHAR_TARGETS["default"])
+        target_path = os.path.join(TARGETS_DIR, target_filename)
 
-    char_key = character.lower().replace(" ", "")
-    target_filename = CHAR_TARGETS.get(char_key, CHAR_TARGETS["default"])
-    target_path = os.path.join(TARGETS_DIR, target_filename)
+        if not os.path.exists(target_path):
+            print(
+                f"ERROR: Reference voice for '{character}' not found at '{target_path}'."
+            )
+            sys.exit(1)
 
-    if not os.path.exists(target_path):
-        print(f"ERROR: Reference voice for '{character}' not found at '{target_path}'.")
-        print(
-            f"Please place a 6-10 second clip in assets/voice_samples/ to clone this voice."
-        )
-        sys.exit(1)
+        # Use phonetic text for generation if provided, but verify against original text
+        gen_text = phonetic_text if phonetic_text else text
+        print(f"Generating (XTTS): {character} -> {line_id}")
+        if phonetic_text:
+            print(f'  Using phonetic override: "{phonetic_text}"')
 
-    print(f"Generating (XTTS): {character} -> {line_id} (Acting Mode)")
+        try:
+            # Generate high quality audio using cloning
+            tts.tts_to_file(
+                text=gen_text,
+                speaker_wav=target_path,
+                language="en",
+                file_path=temp_wav,
+                speed=speed,
+                emotion=emotion,
+                temperature=0.75,
+                repetition_penalty=2.0,
+                top_k=50,
+                top_p=0.85,
+            )
 
-    try:
-        # Generate high quality audio using cloning with 'Acting' parameters
-        # temperature: 0.75+ makes it more expressive/human, but less stable
-        # repetition_penalty: helps prevent stuttering on high temperature
-        tts.tts_to_file(
-            text=text,
-            speaker_wav=target_path,
-            language="en",
-            file_path=temp_wav,
-            speed=speed,
-            emotion=emotion,
-            temperature=0.75,
-            repetition_penalty=2.0,
-            top_k=50,
-            top_p=0.85,
-        )
+            # Verify quality before converting
+            verification_result = verify_audio(temp_wav, text)
 
-        # Convert to OGG using ffmpeg (using the working settings from before)
-        result = subprocess.run(
-            [
-                "ffmpeg",
-                "-i",
-                temp_wav,
-                "-ac",
-                "2",
-                "-c:a",
-                "vorbis",
-                "-strict",
-                "-2",
-                "-q:a",
-                "4",
-                "-y",
-                output_ogg,
-            ],
-            capture_output=True,
-        )
+            # Convert to OGG using ffmpeg
+            result = subprocess.run(
+                [
+                    "ffmpeg",
+                    "-i",
+                    temp_wav,
+                    "-ac",
+                    "2",
+                    "-c:a",
+                    "vorbis",
+                    "-strict",
+                    "-2",
+                    "-q:a",
+                    "4",
+                    "-y",
+                    output_ogg,
+                ],
+                capture_output=True,
+            )
 
-        if result.returncode != 0:
-            raise Exception(f"FFmpeg failed: {result.stderr.decode('utf-8')}")
+            if result.returncode != 0:
+                raise Exception(f"FFmpeg failed: {result.stderr.decode('utf-8')}")
 
-        if os.path.exists(temp_wav):
-            os.remove(temp_wav)
+            if os.path.exists(temp_wav):
+                os.remove(temp_wav)
 
-    except Exception as e:
-        print(f"CRITICAL ERROR generating {line_id}: {e}")
-        if os.path.exists(temp_wav):
-            os.remove(temp_wav)
-        sys.exit(1)
+        except Exception as e:
+            print(f"CRITICAL ERROR generating {line_id}: {e}")
+            if os.path.exists(temp_wav):
+                os.remove(temp_wav)
+            sys.exit(1)
+
+    return verification_result
 
 
 # FULL GAME SCRIPT
@@ -121,6 +169,7 @@ game_script = [
         "id": "daxing_lb_01",
         "char": "liubei",
         "text": "I am Liu Bei, a descendant of Prince Jing of Zhongshan and great-great-grandson of Emperor Jing. These are my sworn brothers, Guan Yu and Zhang Fei.",
+        "phonetic_text": "I am Liu Bay, a descendant of Prince Jing of Zhongshan and great-great-grandson of Emperor Jing. These are my sworn brothers, Guan Yu and Zhang Fei.",
     },
     {
         "id": "daxing_lb_02",
@@ -131,6 +180,7 @@ game_script = [
         "id": "daxing_zj_02",
         "char": "zhoujing",
         "text": "An Imperial kinsman! Truly, the Heavens have not abandoned the Han. Your arrival is most timely.",
+        "phonetic_text": "Ahn Imperial kinsman. Truly, the Heavens have not abandoned the Han. Your arrival is most timely.",
     },
     {
         "id": "daxing_zj_03",
@@ -147,6 +197,7 @@ game_script = [
         "id": "daxing_gy_01",
         "char": "guanyu",
         "text": "Eldest brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march.",
+        "phonetic_text": "Eldest brother is right. We have sworn to destroy these traitors and restore peace. We are ready now.",
     },
     {
         "id": "daxing_lb_03",
@@ -240,7 +291,12 @@ game_script = [
         "char": "zhangfei",
         "text": "I have some wealth! I am willing to use it to recruit volunteers.",
     },
-    {"id": "pro_zf_07", "char": "zhangfei", "text": "What say you to that?"},
+    {
+        "id": "pro_zf_07",
+        "char": "zhangfei",
+        "text": "What say you to that?",
+        "phonetic_text": "What say you, to that?",
+    },
     {
         "id": "pro_lb_06",
         "char": "liubei",
@@ -274,6 +330,7 @@ game_script = [
         "id": "inn_lb_02a",
         "char": "liubei",
         "text": "That man...",
+        "phonetic_text": "That man.",
     },
     {
         "id": "inn_lb_02b",
@@ -467,11 +524,25 @@ game_script = [
 ]
 
 if __name__ == "__main__":
+    report = {}
     for line in game_script:
-        generate_voice(
+        res = generate_voice(
             line["id"],
             line["char"],
             line["text"],
             speed=line.get("speed", 1.0),
             emotion=line.get("emotion"),
+            phonetic_text=line.get("phonetic_text"),
         )
+        report[line["id"]] = {
+            "character": line["char"],
+            "original_text": line["text"],
+            "stt_output": res.get("transcribed", "") if res else "",
+            "wer": res.get("wer", 0) if res else 0,
+            "is_bad": res.get("is_bad", False) if res else False,
+        }
+
+    # Save report
+    with open(REPORT_FILE, "w") as f:
+        json.dump(report, f, indent=4)
+    print(f"\nVerification report saved to {REPORT_FILE}")
