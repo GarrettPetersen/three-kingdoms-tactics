@@ -160,7 +160,7 @@ export class CampaignSelectionScene extends BaseScene {
             const lines = this.wrapText(ctx, selected.description, boxW - 10);
             let lineY = by + 18;
             lines.forEach(line => {
-                this.drawPixelText(ctx, line, bx + 5, lineY, { color: '#aaa', font: '8px Dogica' });
+                this.drawPixelText(ctx, line, bx + 5, lineY, { color: '#aaa', font: '8px Tiny5' });
                 lineY += 10;
             });
 
@@ -169,7 +169,7 @@ export class CampaignSelectionScene extends BaseScene {
             } else {
                 const pulse = Math.abs(Math.sin(Date.now() / 500));
                 ctx.globalAlpha = pulse;
-                this.drawPixelText(ctx, "CLICK CHARACTER TO BEGIN", bx + boxW / 2, by + boxH - 12, { color: '#eee', font: '8px Dogica', align: 'center' });
+                this.drawPixelText(ctx, "CLICK CHARACTER TO BEGIN", bx + boxW / 2, by + boxH - 10, { color: '#eee', font: '8px Tiny5', align: 'center' });
                 ctx.globalAlpha = 1.0;
             }
         }

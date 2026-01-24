@@ -78,7 +78,7 @@ export class BattleSummaryScene extends BaseScene {
             ctx.globalAlpha = 0.5 + pulse * 0.5;
             this.drawPixelText(ctx, "PRESS ANYWHERE TO CONTINUE", canvas.width / 2, 200, {
                 color: '#fff',
-                font: '8px Dogica',
+                font: '8px Silkscreen',
                 align: 'center'
             });
             ctx.restore();
@@ -110,8 +110,8 @@ export class BattleSummaryScene extends BaseScene {
             }
         }
 
-        this.drawPixelText(ctx, label, x, y, { color: '#aaa', font: '8px Dogica' });
-        this.drawPixelText(ctx, value.toString(), valX, y, { color: color, font: '8px Dogica', align: 'right' });
+        this.drawPixelText(ctx, label, x, y, { color: '#aaa', font: '8px Tiny5' });
+        this.drawPixelText(ctx, value.toString(), valX, y, { color: color, font: '8px Tiny5', align: 'right' });
     }
 
     handleInput(e) {

@@ -142,16 +142,17 @@ export class BaseScene {
         return alpha > 10; // Threshold for hit
     }
 
-    wrapText(ctx, text, maxWidth) {
+    wrapText(ctx, text, maxWidth, font = '8px Tiny5') {
         const words = (text || "").split(' ');
         const lines = [];
         let currentLine = '';
 
         ctx.save();
-        ctx.font = '8px Dogica';
+        ctx.font = font;
         for (let n = 0; n < words.length; n++) {
             let testLine = currentLine + words[n] + ' ';
-            if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+            // Subtract a small buffer (4px) to account for font rendering variations and ellipsis
+            if (ctx.measureText(testLine).width > maxWidth - 4 && n > 0) {
                 lines.push(currentLine.trim());
                 currentLine = words[n] + ' ';
             } else {
@@ -203,8 +204,9 @@ export class BaseScene {
         this.drawPixelText(ctx, (step.name || "").toUpperCase(), textX, py + 7, { color: '#ffd700', font: '8px Dogica' });
 
         // Text
-        const maxWidth = panelWidth - portraitSize - 25;
-        const lines = this.wrapText(ctx, step.text, maxWidth);
+        const textPaddingRight = 15;
+        const maxWidth = panelWidth - (textX - px) - textPaddingRight;
+        const lines = this.wrapText(ctx, step.text, maxWidth, '8px Dogica');
         const start = subStep * 2;
         const displayLines = lines.slice(start, start + 2);
         const hasNextChunk = (subStep + 1) * 2 < lines.length;

@@ -21,7 +21,7 @@ export class NarrativeScene extends BaseScene {
         } else if (params.keepMusic || assets.currentMusicKey === 'oath') {
             // Do nothing, keep current music if requested or if already playing oath music
         } else {
-            assets.playMusic('narrative', 0.5);
+        assets.playMusic('narrative', 0.5);
         }
         this.script = params.script || [];
         this.onComplete = params.onComplete || null;
@@ -221,7 +221,7 @@ export class NarrativeScene extends BaseScene {
                 
                 // Cap movement to prevent overshooting
                 if (moveDist > dist) moveDist = dist;
-
+                
                 // Auto-flip based on movement direction
                 // Sprites face RIGHT by default
                 if (dx > 0.1) a.flip = false; // Moving Right -> Face Right (default)
@@ -312,8 +312,8 @@ export class NarrativeScene extends BaseScene {
         const { ctx, canvas } = this.manager;
         const options = step.options || [];
         const padding = 10;
-        const lineSpacing = 12;
-        const optionSpacing = 8;
+        const lineSpacing = 10;
+        const optionSpacing = 6;
         const panelWidth = 200;
         
         // Pre-calculate wrapped lines and total height
@@ -323,7 +323,7 @@ export class NarrativeScene extends BaseScene {
             let currentLine = '';
             
             ctx.save();
-            ctx.font = '8px Dogica';
+            ctx.font = '8px Tiny5';
             for (let n = 0; n < words.length; n++) {
                 let testLine = currentLine + words[n] + ' ';
                 if (ctx.measureText(testLine).width > (panelWidth - 20) && n > 0) {
@@ -370,7 +370,7 @@ export class NarrativeScene extends BaseScene {
             lines.forEach((line, lineIdx) => {
                 this.drawPixelText(ctx, line, px + 10, optionTopY + lineIdx * lineSpacing, { 
                     color: isHovered ? '#fff' : '#ccc', 
-                    font: '8px Dogica' 
+                    font: '8px Tiny5' 
                 });
             });
 

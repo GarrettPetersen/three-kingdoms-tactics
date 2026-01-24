@@ -84,6 +84,7 @@ async function init() {
             if (inputBuffer.endsWith('brief')) {
                 // Jump to the Magistrate Briefing script
                 sceneManager.switchTo('narrative', {
+                    musicKey: 'forest',
                     onComplete: () => sceneManager.switchTo('tactics', {
                         battleId: 'daxing',
                         mapGen: {
@@ -158,7 +159,6 @@ async function init() {
                             voiceId: 'daxing_zf_01',
                             text: "Fifty thousand? Hah! They are but a mob of ants! Give us the order, Magistrate, and we shall scatter them like dust!"
                         },
-                        { type: 'command', action: 'playMusic', key: 'oath', volume: 0.5 },
                         {
                             type: 'dialogue',
                             portraitKey: 'guanyu',
@@ -273,7 +273,9 @@ async function init() {
                 battle_intro: 'assets/music/battle_intro.ogg',
                 battle_loop: 'assets/music/battle_loop.ogg',
                 oath_intro: 'assets/music/oath_intro.ogg',
-                oath_loop: 'assets/music/oath_loop.ogg'
+                oath_loop: 'assets/music/oath_loop.ogg',
+                forest_intro: 'assets/all_songs/Super Retro JRPG Music Pack ver1.1/Dungeon/Dungeon6 - Forest/intro&loop/SNES-Dungeon06_intro.ogg',
+                forest_loop: 'assets/all_songs/Super Retro JRPG Music Pack ver1.1/Dungeon/Dungeon6 - Forest/intro&loop/SNES-Dungeon06_loop.ogg'
             })
         ]);
 

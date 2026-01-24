@@ -98,7 +98,7 @@ export class CustomBattleMenuScene extends BaseScene {
         
         this.drawPixelText(ctx, text, rect.x + rect.w / 2, rect.y + rect.h / 2 - 4, { 
             color: isSelected ? '#000' : '#fff', 
-            font: '8px Dogica', 
+            font: '8px Tiny5', 
             align: 'center' 
         });
     }

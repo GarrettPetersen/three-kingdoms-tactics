@@ -34,6 +34,7 @@ export class TacticsScene extends BaseScene {
 
         this.showAttackOrder = false;
         this.history = [];
+        this.subStep = 0;
     }
 
     enter(params = {}) {
@@ -147,6 +148,7 @@ export class TacticsScene extends BaseScene {
     }
 
     startIntroDialogue() {
+        this.subStep = 0;
         this.introScript = null;
         if (this.battleId === 'daxing') {
             this.introScript = [
@@ -611,6 +613,13 @@ export class TacticsScene extends BaseScene {
 
     undo() {
         if (this.history.length <= 1) return;
+        
+        // Ensure we stop any active unit movement before restoring state
+        this.units.forEach(u => {
+            u.isMoving = false;
+            u.path = [];
+        });
+
         this.history.pop(); // Remove current state
         const prevState = this.history[this.history.length - 1];
         this.restoreState(prevState);
@@ -1709,7 +1718,7 @@ export class TacticsScene extends BaseScene {
                     portraitKey: step.portraitKey,
                     name: step.name,
                     text: step.text
-                });
+                }, { subStep: this.subStep || 0 });
             }
         }
 
@@ -2038,10 +2047,10 @@ export class TacticsScene extends BaseScene {
             ctx.strokeRect(bx, by, boxW, barH - 4);
 
             // Name
-            this.drawPixelText(ctx, u.name, bx + 4, by + 4, { color: '#fff', font: '8px Dogica' });
+            this.drawPixelText(ctx, u.name, bx + 4, by + 4, { color: '#fff', font: '8px Silkscreen' });
             
             // HP
-            this.drawPixelText(ctx, `HP: ${u.hp}/${u.maxHp}`, bx + 4, by + 16, { color: '#eee', font: '8px Dogica' });
+            this.drawPixelText(ctx, `HP: ${u.hp}/${u.maxHp}`, bx + 4, by + 14, { color: '#eee', font: '8px Tiny5' });
 
             // State/Intent
             let actionText = "IDLE";
@@ -2053,7 +2062,7 @@ export class TacticsScene extends BaseScene {
             } else if (u.hasActed) {
                 actionText = "DONE";
             }
-            this.drawPixelText(ctx, actionText, bx + 4, by + 28, { color: '#aaa', font: '8px Dogica' });
+            this.drawPixelText(ctx, actionText, bx + 4, by + 24, { color: '#aaa', font: '8px Tiny5' });
         }
 
         // 2. Damage Numbers (Floating over world)
@@ -2063,7 +2072,7 @@ export class TacticsScene extends BaseScene {
             ctx.globalAlpha = alpha;
             this.drawPixelText(ctx, `-${dn.value}`, dn.x, dn.y, { 
                 color: '#f00', 
-                font: '10px Dogica', 
+                font: '10px Tiny5', 
                 align: 'center' 
             });
             ctx.restore();
@@ -2084,7 +2093,7 @@ export class TacticsScene extends BaseScene {
             color = '#fff';
         }
 
-        this.drawPixelText(ctx, turnText, 10, 8, { color, font: '8px Dogica' });
+        this.drawPixelText(ctx, turnText, 10, 8, { color, font: '8px Silkscreen' });
 
         // 4. End Turn / Reset Turn (Bottom Right)
         if (this.turn === 'player' && !this.isProcessingTurn) {
@@ -2098,7 +2107,7 @@ export class TacticsScene extends BaseScene {
             ctx.fillRect(rx, ey, btnW, btnH);
             ctx.strokeStyle = '#ffd700';
             ctx.strokeRect(rx + 0.5, ey + 0.5, btnW - 1, btnH - 1);
-            this.drawPixelText(ctx, "END TURN", rx + btnW / 2, ey + 5, { color: '#fff', font: '8px Dogica', align: 'center' });
+            this.drawPixelText(ctx, "END TURN", rx + btnW / 2, ey + 4, { color: '#fff', font: '8px Tiny5', align: 'center' });
             this.endTurnRect = { x: rx, y: ey, w: btnW, h: btnH };
 
             // RESET TURN
@@ -2107,7 +2116,7 @@ export class TacticsScene extends BaseScene {
             ctx.fillRect(rx, ry, btnW, btnH);
             ctx.strokeStyle = '#fff';
             ctx.strokeRect(rx + 0.5, ry + 0.5, btnW - 1, btnH - 1);
-            this.drawPixelText(ctx, "RESET", rx + btnW / 2, ry + 5, { color: '#eee', font: '8px Dogica', align: 'center' });
+            this.drawPixelText(ctx, "RESET", rx + btnW / 2, ry + 4, { color: '#eee', font: '8px Tiny5', align: 'center' });
             this.resetTurnRect = { x: rx, y: ry, w: btnW, h: btnH };
 
             // ATTACK ORDER TOGGLE
@@ -2117,7 +2126,7 @@ export class TacticsScene extends BaseScene {
             ctx.fillRect(ax, ay, btnW, btnH);
             ctx.strokeStyle = this.showAttackOrder ? '#0f0' : '#888';
             ctx.strokeRect(ax + 0.5, ay + 0.5, btnW - 1, btnH - 1);
-            this.drawPixelText(ctx, "ORDER", ax + btnW / 2, ay + 5, { color: '#fff', font: '8px Dogica', align: 'center' });
+            this.drawPixelText(ctx, "ORDER", ax + btnW / 2, ay + 4, { color: '#fff', font: '8px Tiny5', align: 'center' });
             this.attackOrderRect = { x: ax, y: ay, w: btnW, h: btnH };
 
             // UNDO
@@ -2127,7 +2136,7 @@ export class TacticsScene extends BaseScene {
             ctx.fillRect(ax, uy, btnW, btnH);
             ctx.strokeStyle = canUndo ? '#fff' : '#444';
             ctx.strokeRect(ax + 0.5, uy + 0.5, btnW - 1, btnH - 1);
-            this.drawPixelText(ctx, "UNDO", ax + btnW / 2, uy + 5, { color: canUndo ? '#eee' : '#666', font: '8px Dogica', align: 'center' });
+            this.drawPixelText(ctx, "UNDO", ax + btnW / 2, uy + 4, { color: canUndo ? '#eee' : '#666', font: '8px Tiny5', align: 'center' });
             this.undoRect = { x: ax, y: uy, w: btnW, h: btnH };
         } else {
             this.endTurnRect = null;
@@ -2177,9 +2186,9 @@ export class TacticsScene extends BaseScene {
             ctx.strokeStyle = isSelected ? '#ffd700' : (isDisabled ? '#333' : '#888');
             ctx.strokeRect(ax + 0.5, ay + 0.5, aw - 1, ah - 1);
 
-            this.drawPixelText(ctx, attack.name, ax + aw / 2, ay + 6, { 
+            this.drawPixelText(ctx, attack.name, ax + aw / 2, ay + 5, { 
                 color: isDisabled ? '#555' : '#eee', 
-                font: '8px Dogica',
+                font: '8px Tiny5',
                 align: 'center' 
             });
 
@@ -2214,11 +2223,25 @@ export class TacticsScene extends BaseScene {
     }
 
     handleInput(e) {
+        const { x, y } = this.getMousePos(e);
+
         if (this.isIntroDialogueActive) {
-            this.dialogueStep++;
-            if (this.dialogueStep >= this.introScript.length) {
-                this.isIntroDialogueActive = false;
-                this.startNpcPhase();
+            const step = this.introScript[this.dialogueStep];
+            const status = this.renderDialogueBox(this.manager.ctx, this.manager.canvas, {
+                portraitKey: step.portraitKey,
+                name: step.name,
+                text: step.text
+            }, { subStep: this.subStep || 0 });
+
+            if (status.hasNextChunk) {
+                this.subStep = (this.subStep || 0) + 1;
+            } else {
+                this.subStep = 0;
+                this.dialogueStep++;
+                if (this.dialogueStep >= this.introScript.length) {
+                    this.isIntroDialogueActive = false;
+                    this.startNpcPhase();
+                }
             }
             return;
         }
@@ -2246,8 +2269,6 @@ export class TacticsScene extends BaseScene {
 
         if (this.isProcessingTurn || this.isIntroAnimating) return;
 
-        const { x, y } = this.getMousePos(e);
-        
         // 1. Check UI Buttons (End/Reset/Order)
         if (this.endTurnRect && x >= this.endTurnRect.x && x <= this.endTurnRect.x + this.endTurnRect.w &&
             y >= this.endTurnRect.y && y <= this.endTurnRect.y + this.endTurnRect.h) {
@@ -2312,13 +2333,19 @@ export class TacticsScene extends BaseScene {
             }
 
             if (targetCell) {
-                this.pushHistory();
-                this.executeAttack(this.selectedUnit, this.selectedAttack, targetCell.r, targetCell.q, () => {
-                    this.selectedUnit.hasAttacked = true;
-                    this.selectedUnit.hasActed = true;
-                    this.selectedUnit = null;
-                    this.selectedAttack = null;
-                    this.attackTiles.clear();
+                const attacker = this.selectedUnit;
+                this.executeAttack(attacker, this.selectedAttack, targetCell.r, targetCell.q, () => {
+                    // Safety: only apply if the action wasn't undone or state reset
+                    if (this.turn === 'player' && !this.isProcessingTurn && attacker.hp > 0) {
+                        attacker.hasAttacked = true;
+                        attacker.hasActed = true;
+                        if (this.selectedUnit === attacker) {
+                            this.selectedUnit = null;
+                            this.selectedAttack = null;
+                            this.attackTiles.clear();
+                        }
+                        this.pushHistory(); // Capture state AFTER attack
+                    }
                 });
                 return;
             }
@@ -2328,7 +2355,6 @@ export class TacticsScene extends BaseScene {
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && clickedCell && this.reachableTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
             // Check landing spot (cannot land on another unit)
             if (!clickedCell.unit || clickedCell.unit === this.selectedUnit) {
-                this.pushHistory();
                 const path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, clickedCell.r, clickedCell.q, this.selectedUnit.moveRange, this.selectedUnit);
                 if (path) {
                     const oldCell = this.tacticsMap.getCell(this.selectedUnit.r, this.selectedUnit.q);
@@ -2336,9 +2362,16 @@ export class TacticsScene extends BaseScene {
                     this.selectedUnit.startPath(path);
                     clickedCell.unit = this.selectedUnit;
                     this.selectedUnit.hasMoved = true;
+                    const movingUnit = this.selectedUnit;
                     const checkArrival = () => {
-                        if (!this.selectedUnit.isMoving) {
-                            if (this.selectedUnit.attacks.length > 0) this.selectAttack(this.selectedUnit.attacks[0]);
+                        // Safety: stop if turn changed or processing
+                        if (this.turn !== 'player' || this.isProcessingTurn) return;
+
+                        if (!movingUnit.isMoving) {
+                            if (this.selectedUnit === movingUnit) {
+                                if (movingUnit.attacks.length > 0) this.selectAttack(movingUnit.attacks[0]);
+                            }
+                            this.pushHistory(); // Capture state AFTER move completes
                         } else setTimeout(checkArrival, 100);
                     };
                     checkArrival();

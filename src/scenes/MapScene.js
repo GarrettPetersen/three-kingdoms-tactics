@@ -158,12 +158,12 @@ export class MapScene extends BaseScene {
 
     drawLabel(ctx, name, x, y, prompt) {
         ctx.save();
-        ctx.font = '8px Dogica';
+        ctx.font = '8px Silkscreen';
         const metrics = ctx.measureText(name);
         ctx.restore();
 
         const boxW = Math.floor(metrics.width + 10);
-        const boxH = 28;
+        const boxH = 24;
         const bx = Math.floor(x - 20 - boxW);
         const by = Math.floor(y);
 
@@ -173,11 +173,11 @@ export class MapScene extends BaseScene {
         ctx.lineWidth = 1;
         ctx.strokeRect(bx + 0.5, by + 0.5, boxW - 1, boxH - 1);
 
-        this.drawPixelText(ctx, name.toUpperCase(), bx + 5, by + 4, { color: '#ffd700', font: '8px Dogica' });
+        this.drawPixelText(ctx, name.toUpperCase(), bx + 5, by + 3, { color: '#ffd700', font: '8px Silkscreen' });
         
         const pulse = Math.abs(Math.sin(Date.now() / 500));
         ctx.globalAlpha = pulse;
-        this.drawPixelText(ctx, prompt, bx + 5, by + 16, { color: '#eee', font: '8px Dogica' });
+        this.drawPixelText(ctx, prompt, bx + 5, by + 13, { color: '#eee', font: '8px Tiny5' });
         ctx.globalAlpha = 1.0;
     }
 
@@ -312,6 +312,7 @@ export class MapScene extends BaseScene {
 
     startBriefing() {
         this.manager.switchTo('narrative', {
+            musicKey: 'forest',
             onComplete: () => {
                 this.manager.switchTo('tactics', {
                     battleId: 'daxing',
@@ -407,7 +408,6 @@ export class MapScene extends BaseScene {
                     voiceId: 'daxing_zf_01',
                     text: "Fifty thousand? Hah! They are but a mob of ants! Give us the order, Magistrate, and we shall scatter them like dust!"
                 },
-                { type: 'command', action: 'playMusic', key: 'oath', volume: 0.5 },
                 {
                     type: 'dialogue',
                     portraitKey: 'guanyu',

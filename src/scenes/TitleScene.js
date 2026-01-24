@@ -62,7 +62,7 @@ export class TitleScene extends BaseScene {
             // CONTINUE Button
             const contText = "CONTINUE";
             const contY = cy - 15;
-            const contMetrics = this.drawPixelText(ctx, contText, cx, contY, { color: '#ffd700', font: '8px Dogica', align: 'center' });
+            const contMetrics = this.drawPixelText(ctx, contText, cx, contY, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
             this.continueRect = {
                 x: Math.floor(cx - contMetrics.width / 2 - 10),
                 y: contY - 10,
@@ -73,7 +73,7 @@ export class TitleScene extends BaseScene {
             // Shift NEW GAME down
             const ngY = cy + 10;
             ctx.globalAlpha = pulse;
-            const ngMetrics = this.drawPixelText(ctx, ngText, cx, ngY, { color: '#ffd700', font: '8px Dogica', align: 'center' });
+            const ngMetrics = this.drawPixelText(ctx, ngText, cx, ngY, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
             ctx.globalAlpha = 1.0;
             this.newGameRect = { 
                 x: Math.floor(cx - ngMetrics.width / 2 - 10), 
@@ -85,7 +85,7 @@ export class TitleScene extends BaseScene {
             // Shift CUSTOM BATTLE down
             const cbText = "CUSTOM BATTLE";
             const cbY = cy + 35;
-            const cbMetrics = this.drawPixelText(ctx, cbText, cx, cbY, { color: '#ffd700', font: '8px Dogica', align: 'center' });
+            const cbMetrics = this.drawPixelText(ctx, cbText, cx, cbY, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
             this.customBattleRect = {
                 x: Math.floor(cx - cbMetrics.width / 2 - 10),
                 y: cbY - 10,
@@ -95,7 +95,7 @@ export class TitleScene extends BaseScene {
         } else {
             // Original Layout
             ctx.globalAlpha = pulse;
-            const ngMetrics = this.drawPixelText(ctx, ngText, cx, cy, { color: '#ffd700', font: '8px Dogica', align: 'center' });
+            const ngMetrics = this.drawPixelText(ctx, ngText, cx, cy, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
             ctx.globalAlpha = 1.0;
             this.newGameRect = { 
                 x: Math.floor(cx - ngMetrics.width / 2 - 10), 
@@ -106,7 +106,7 @@ export class TitleScene extends BaseScene {
 
             const cbText = "CUSTOM BATTLE";
             const cbY = cy + 25;
-            const cbMetrics = this.drawPixelText(ctx, cbText, cx, cbY, { color: '#ffd700', font: '8px Dogica', align: 'center' });
+            const cbMetrics = this.drawPixelText(ctx, cbText, cx, cbY, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
             this.customBattleRect = {
                 x: Math.floor(cx - cbMetrics.width / 2 - 10),
                 y: cbY - 10,
