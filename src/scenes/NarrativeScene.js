@@ -301,7 +301,20 @@ export class NarrativeScene extends BaseScene {
         if (step && step.type === 'title') {
             this.renderTitleCard(step);
         } else if (step && step.type === 'dialogue') {
-            const status = this.renderDialogueBox(ctx, canvas, step, { subStep: this.subStep });
+            let bgKey = step?.bg;
+            if (!bgKey) {
+                for (let i = this.currentStep; i >= 0; i--) {
+                    if (this.script[i].bg) {
+                        bgKey = this.script[i].bg;
+                        break;
+                    }
+                }
+            }
+            const bgImg = bgKey ? assets.getImage(bgKey) : null;
+            const status = this.renderDialogueBox(ctx, canvas, step, { 
+                subStep: this.subStep,
+                bgImg: bgImg 
+            });
             this.hasNextChunk = status.hasNextChunk;
         } else if (step && step.type === 'choice') {
             this.renderChoice(step);

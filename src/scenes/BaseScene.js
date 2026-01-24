@@ -165,9 +165,9 @@ export class BaseScene {
     }
 
     renderDialogueBox(ctx, canvas, step, options = {}) {
-        const { subStep = 0 } = options;
+        const { subStep = 0, bgImg = null } = options;
         const margin = 5;
-        const panelHeight = 50;
+        const panelHeight = 60; // Increased from 50 to fit 48px height portraits
         const panelWidth = canvas.width - margin * 2;
         const px = margin;
         
@@ -181,27 +181,68 @@ export class BaseScene {
         ctx.lineWidth = 1;
         ctx.strokeRect(px + 0.5, py + 0.5, panelWidth - 1, panelHeight - 1);
 
-        // Portrait
-        const portraitSize = 38;
+        // Portrait Box (Adjusted for 40x48)
+        const portraitW = 40;
+        const portraitH = 48;
         const portraitX = px + 6;
         const portraitY = py + 6;
+        
+        // Portrait Background/Border
         ctx.fillStyle = '#000';
-        ctx.fillRect(portraitX, portraitY, portraitSize, portraitSize);
+        ctx.fillRect(portraitX - 1, portraitY - 1, portraitW + 2, portraitH + 2);
         ctx.strokeStyle = '#444';
         ctx.lineWidth = 1;
-        ctx.strokeRect(portraitX + 0.5, portraitY + 0.5, portraitSize - 1, portraitSize - 1);
+        ctx.strokeRect(portraitX - 0.5, portraitY - 0.5, portraitW + 1, portraitH + 1);
 
-        const actorImg = assets.getImage(step.portraitKey);
-        if (actorImg) {
-            const crop = step.portraitRect || { x: 26, y: 20, w: 20, h: 20 };
-            const destSize = 32;
-            const destOffset = (portraitSize - destSize) / 2;
-            ctx.drawImage(actorImg, crop.x, crop.y, crop.w, crop.h, portraitX + destOffset, portraitY + destOffset, destSize, destSize);
+        const isNoticeboard = step.portraitKey === 'noticeboard' || (step.name && step.name.toLowerCase().includes('noticeboard'));
+        const isNarrator = step.portraitKey === 'narrator' || !step.name || step.name.toLowerCase() === 'narrator';
+
+        // Try to find a dedicated portrait first
+        let portraitImg = null;
+        if (isNoticeboard || isNarrator) {
+            if (bgImg) {
+                // Special case: Crop the center of the background image
+                const cw = bgImg.width;
+                const ch = bgImg.height;
+                const cropX = Math.floor((cw - portraitW) / 2);
+                const cropY = Math.floor((ch - portraitH) / 2);
+                ctx.drawImage(bgImg, cropX, cropY, portraitW, portraitH, portraitX, portraitY, portraitW, portraitH);
+            }
+            // If no bgImg, it just stays black (narrator/noticeboard default)
+        } else if (step.portraitKey) {
+            // 1. Try formatted name first (e.g. "portrait_Liu-Bei")
+            const formattedName = step.name ? step.name.replace(/ /g, '-') : '';
+            portraitImg = assets.getImage(`portrait_${formattedName}`);
+            
+            // 2. If name-based failed (e.g. name is "???"), try the portraitKey itself (e.g. "portrait_zhangfei")
+            if (!portraitImg) {
+                portraitImg = assets.getImage(`portrait_${step.portraitKey}`);
+            }
+
+            // 3. Special case for common variations
+            if (!portraitImg) {
+                // Try title case portraitKey (e.g. "portrait_Zhang-Fei")
+                const titleKey = step.portraitKey.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('-');
+                portraitImg = assets.getImage(`portrait_${titleKey}`);
+            }
+            
+            if (!portraitImg) {
+                // Fallback to the actor sprite sheet crop
+                portraitImg = assets.getImage(step.portraitKey);
+                if (portraitImg) {
+                    const crop = step.portraitRect || { x: 26, y: 20, w: 20, h: 20 };
+                    // Draw fallback at 2x to fill space (scaled pixel art, but better than nothing)
+                    ctx.drawImage(portraitImg, crop.x, crop.y, crop.w, crop.h, portraitX, portraitY + 4, 40, 40);
+                }
+            } else {
+                // Draw dedicated portrait at native 1:1 resolution
+                ctx.drawImage(portraitImg, portraitX, portraitY, portraitW, portraitH);
+            }
         }
 
         // Name
-        const textX = portraitX + portraitSize + 8;
-        this.drawPixelText(ctx, (step.name || "").toUpperCase(), textX, py + 7, { color: '#ffd700', font: '8px Dogica' });
+        const textX = portraitX + portraitW + 8;
+        this.drawPixelText(ctx, (step.name || "").toUpperCase(), textX, py + 6, { color: '#ffd700', font: '8px Silkscreen' });
 
         // Text
         const textPaddingRight = 15;
@@ -211,20 +252,20 @@ export class BaseScene {
         const displayLines = lines.slice(start, start + 2);
         const hasNextChunk = (subStep + 1) * 2 < lines.length;
         
-        let lineY = py + 22;
+        let lineY = py + 22; // Adjusted for taller box
         displayLines.forEach((line, i) => {
             let text = line;
             if (i === displayLines.length - 1 && hasNextChunk) {
                 text += "...";
             }
             this.drawPixelText(ctx, text, textX, lineY, { color: '#eee', font: '8px Dogica' });
-            lineY += 12;
+            lineY += 14; // Slightly more spacing for readability
         });
 
         // Click prompt
         const pulse = Math.abs(Math.sin(Date.now() / 500));
         ctx.globalAlpha = pulse;
-        this.drawPixelText(ctx, "NEXT", px + panelWidth - 2, py + panelHeight - 8, { color: '#eee', font: '8px Dogica', align: 'right' });
+        this.drawPixelText(ctx, "NEXT", px + panelWidth - 2, py + panelHeight - 10, { color: '#eee', font: '8px Tiny5', align: 'right' });
         ctx.globalAlpha = 1.0;
 
         return { hasNextChunk, totalLines: lines.length };

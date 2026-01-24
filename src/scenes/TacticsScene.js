@@ -152,12 +152,12 @@ export class TacticsScene extends BaseScene {
         this.introScript = null;
         if (this.battleId === 'daxing') {
             this.introScript = [
-                { portraitKey: 'liubei', name: 'Liu Bei', voiceId: 'dx_lb_01', text: "The Yellow Turban vanguard is here. They seek to plunder Zhuo County!" },
-                { portraitKey: 'guanyu', name: 'Guan Yu', voiceId: 'dx_gy_01', text: "Their numbers are great, but they are but a rabble without leadership." },
-                { portraitKey: 'zhangfei', name: 'Zhang Fei', voiceId: 'dx_zf_01', text: "Let me at them! My Serpent Spear is thirsty for rebel blood!" },
+                { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'dx_lb_01', text: "The Yellow Turban vanguard is here. They seek to plunder Zhuo County!" },
+                { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'dx_gy_01', text: "Their numbers are great, but they are but a rabble without leadership." },
+                { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'dx_zf_01', text: "Let me at them! My Serpent Spear is thirsty for rebel blood!" },
                 { portraitKey: 'bandit1', name: 'Deng Mao', voiceId: 'dx_dm_01', text: "Imperial dogs! You dare stand in the way of the Lord of Heaven?" },
                 { portraitKey: 'bandit2', name: 'Cheng Yuanzhi', voiceId: 'dx_cyz_01', text: "Slay them all! The Han is dead, the Yellow Heavens shall rise!" },
-                { portraitKey: 'liubei', name: 'Liu Bei', voiceId: 'dx_lb_02', text: "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!" }
+                { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'dx_lb_02', text: "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!" }
             ];
         }
         
@@ -598,7 +598,6 @@ export class TacticsScene extends BaseScene {
             u.shakeTimer = 0;
             u.visualOffsetX = 0;
             u.visualOffsetY = 0;
-            u.updateVisualPos(() => this.getPixelPos(u.r, u.q));
 
             const cell = this.tacticsMap.getCell(u.r, u.q);
             if (cell) cell.unit = u;
@@ -608,12 +607,20 @@ export class TacticsScene extends BaseScene {
         this.selectedAttack = null;
         this.reachableTiles.clear();
         this.attackTiles.clear();
+        this.attackRects = [];
         this.activeDialogue = null;
     }
 
     undo() {
         if (this.history.length <= 1) return;
         
+        // Ensure we stop any active selection/tiles immediately
+        this.selectedUnit = null;
+        this.selectedAttack = null;
+        this.attackTiles.clear();
+        this.reachableTiles.clear();
+        this.attackRects = [];
+
         // Ensure we stop any active unit movement before restoring state
         this.units.forEach(u => {
             u.isMoving = false;
@@ -2050,7 +2057,7 @@ export class TacticsScene extends BaseScene {
             this.drawPixelText(ctx, u.name, bx + 4, by + 4, { color: '#fff', font: '8px Silkscreen' });
             
             // HP
-            this.drawPixelText(ctx, `HP: ${u.hp}/${u.maxHp}`, bx + 4, by + 14, { color: '#eee', font: '8px Tiny5' });
+            this.drawPixelText(ctx, `HP: ${u.hp}/${u.maxHp}`, bx + 4, by + 12, { color: '#eee', font: '8px Tiny5' });
 
             // State/Intent
             let actionText = "IDLE";
@@ -2062,7 +2069,7 @@ export class TacticsScene extends BaseScene {
             } else if (u.hasActed) {
                 actionText = "DONE";
             }
-            this.drawPixelText(ctx, actionText, bx + 4, by + 24, { color: '#aaa', font: '8px Tiny5' });
+            this.drawPixelText(ctx, actionText, bx + 4, by + 20, { color: '#aaa', font: '8px Tiny5' });
         }
 
         // 2. Damage Numbers (Floating over world)
@@ -2095,11 +2102,12 @@ export class TacticsScene extends BaseScene {
 
         this.drawPixelText(ctx, turnText, 10, 8, { color, font: '8px Silkscreen' });
 
-        // 4. End Turn / Reset Turn (Bottom Right)
+        // 4. End Turn / Reset Turn / Order / Undo (Bottom Right)
         if (this.turn === 'player' && !this.isProcessingTurn) {
-            const btnW = 60;
-            const btnH = 16;
+            const btnW = 45;
+            const btnH = 8;
             const rx = canvas.width - btnW - 5;
+            const spacing = 1;
             
             // END TURN
             const ey = barY + 3;
@@ -2107,37 +2115,36 @@ export class TacticsScene extends BaseScene {
             ctx.fillRect(rx, ey, btnW, btnH);
             ctx.strokeStyle = '#ffd700';
             ctx.strokeRect(rx + 0.5, ey + 0.5, btnW - 1, btnH - 1);
-            this.drawPixelText(ctx, "END TURN", rx + btnW / 2, ey + 4, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, "END TURN", rx + btnW / 2, ey + 1, { color: '#fff', font: '8px Tiny5', align: 'center' });
             this.endTurnRect = { x: rx, y: ey, w: btnW, h: btnH };
 
             // RESET TURN
-            const ry = barY + 21;
+            const ry = ey + btnH + spacing;
             ctx.fillStyle = 'rgba(20, 20, 20, 0.9)';
             ctx.fillRect(rx, ry, btnW, btnH);
             ctx.strokeStyle = '#fff';
             ctx.strokeRect(rx + 0.5, ry + 0.5, btnW - 1, btnH - 1);
-            this.drawPixelText(ctx, "RESET", rx + btnW / 2, ry + 4, { color: '#eee', font: '8px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, "RESET", rx + btnW / 2, ry + 1, { color: '#eee', font: '8px Tiny5', align: 'center' });
             this.resetTurnRect = { x: rx, y: ry, w: btnW, h: btnH };
 
             // ATTACK ORDER TOGGLE
-            const ax = rx - btnW - 5;
-            const ay = barY + 3;
+            const ay = ry + btnH + spacing;
             ctx.fillStyle = this.showAttackOrder ? 'rgba(0, 80, 0, 0.9)' : 'rgba(20, 20, 20, 0.9)';
-            ctx.fillRect(ax, ay, btnW, btnH);
+            ctx.fillRect(rx, ay, btnW, btnH);
             ctx.strokeStyle = this.showAttackOrder ? '#0f0' : '#888';
-            ctx.strokeRect(ax + 0.5, ay + 0.5, btnW - 1, btnH - 1);
-            this.drawPixelText(ctx, "ORDER", ax + btnW / 2, ay + 4, { color: '#fff', font: '8px Tiny5', align: 'center' });
-            this.attackOrderRect = { x: ax, y: ay, w: btnW, h: btnH };
+            ctx.strokeRect(rx + 0.5, ay + 0.5, btnW - 1, btnH - 1);
+            this.drawPixelText(ctx, "ORDER", rx + btnW / 2, ay + 1, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.attackOrderRect = { x: rx, y: ay, w: btnW, h: btnH };
 
             // UNDO
-            const uy = barY + 21;
+            const uy = ay + btnH + spacing;
             const canUndo = this.history.length > 1;
             ctx.fillStyle = canUndo ? 'rgba(40, 40, 40, 0.9)' : 'rgba(20, 20, 20, 0.6)';
-            ctx.fillRect(ax, uy, btnW, btnH);
+            ctx.fillRect(rx, uy, btnW, btnH);
             ctx.strokeStyle = canUndo ? '#fff' : '#444';
-            ctx.strokeRect(ax + 0.5, uy + 0.5, btnW - 1, btnH - 1);
-            this.drawPixelText(ctx, "UNDO", ax + btnW / 2, uy + 4, { color: canUndo ? '#eee' : '#666', font: '8px Tiny5', align: 'center' });
-            this.undoRect = { x: ax, y: uy, w: btnW, h: btnH };
+            ctx.strokeRect(rx + 0.5, uy + 0.5, btnW - 1, btnH - 1);
+            this.drawPixelText(ctx, "UNDO", rx + btnW / 2, uy + 1, { color: canUndo ? '#eee' : '#666', font: '8px Tiny5', align: 'center' });
+            this.undoRect = { x: rx, y: uy, w: btnW, h: btnH };
         } else {
             this.endTurnRect = null;
             this.resetTurnRect = null;
@@ -2166,17 +2173,16 @@ export class TacticsScene extends BaseScene {
     drawUnitAbilityUI(ctx, canvas, unit) {
         // Positioned between Info Box and Turn Buttons
         const startX = 100;
-        const endX = canvas.width - 70;
         const barY = canvas.height - 40;
         
         // Attack buttons
         this.attackRects = [];
         unit.attacks.forEach((key, i) => {
             const attack = ATTACKS[key];
-            const aw = 65;
-            const ah = 20;
-            const ax = startX + i * (aw + 5);
-            const ay = barY + 10;
+            const aw = 55;
+            const ah = 14;
+            const ax = startX + i * (aw + 4);
+            const ay = barY + 13;
 
             const isSelected = this.selectedAttack === key;
             const isDisabled = unit.hasAttacked;
@@ -2186,7 +2192,7 @@ export class TacticsScene extends BaseScene {
             ctx.strokeStyle = isSelected ? '#ffd700' : (isDisabled ? '#333' : '#888');
             ctx.strokeRect(ax + 0.5, ay + 0.5, aw - 1, ah - 1);
 
-            this.drawPixelText(ctx, attack.name, ax + aw / 2, ay + 5, { 
+            this.drawPixelText(ctx, attack.name, ax + aw / 2, ay + 3, { 
                 color: isDisabled ? '#555' : '#eee', 
                 font: '8px Tiny5',
                 align: 'center' 
@@ -2237,10 +2243,10 @@ export class TacticsScene extends BaseScene {
                 this.subStep = (this.subStep || 0) + 1;
             } else {
                 this.subStep = 0;
-                this.dialogueStep++;
-                if (this.dialogueStep >= this.introScript.length) {
-                    this.isIntroDialogueActive = false;
-                    this.startNpcPhase();
+            this.dialogueStep++;
+            if (this.dialogueStep >= this.introScript.length) {
+                this.isIntroDialogueActive = false;
+                this.startNpcPhase();
                 }
             }
             return;
@@ -2340,9 +2346,9 @@ export class TacticsScene extends BaseScene {
                         attacker.hasAttacked = true;
                         attacker.hasActed = true;
                         if (this.selectedUnit === attacker) {
-                            this.selectedUnit = null;
-                            this.selectedAttack = null;
-                            this.attackTiles.clear();
+                    this.selectedUnit = null;
+                    this.selectedAttack = null;
+                    this.attackTiles.clear();
                         }
                         this.pushHistory(); // Capture state AFTER attack
                     }
@@ -2364,8 +2370,8 @@ export class TacticsScene extends BaseScene {
                     this.selectedUnit.hasMoved = true;
                     const movingUnit = this.selectedUnit;
                     const checkArrival = () => {
-                        // Safety: stop if turn changed or processing
-                        if (this.turn !== 'player' || this.isProcessingTurn) return;
+                        // Safety: stop if turn changed or processing or unit selection cleared (e.g. undo)
+                        if (this.turn !== 'player' || this.isProcessingTurn || !this.selectedUnit) return;
 
                         if (!movingUnit.isMoving) {
                             if (this.selectedUnit === movingUnit) {

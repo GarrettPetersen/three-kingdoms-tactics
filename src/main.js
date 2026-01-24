@@ -113,7 +113,7 @@ async function init() {
                         { type: 'command', action: 'move', id: 'zhangfei', x: 135, y: 190, wait: false },
                         {
                             type: 'dialogue',
-                            portraitKey: 'zhoujing',
+                            portraitKey: 'zhou-jing',
                             name: 'Zhou Jing',
                             position: 'top',
                             voiceId: 'daxing_zj_01',
@@ -121,7 +121,7 @@ async function init() {
                         },
                         {
                             type: 'dialogue',
-                            portraitKey: 'liubei',
+                            portraitKey: 'liu-bei',
                             name: 'Liu Bei',
                             position: 'top',
                             voiceId: 'daxing_lb_01',
@@ -129,7 +129,7 @@ async function init() {
                         },
                         {
                             type: 'dialogue',
-                            portraitKey: 'liubei',
+                            portraitKey: 'liu-bei',
                             name: 'Liu Bei',
                             position: 'top',
                             voiceId: 'daxing_lb_02',
@@ -137,7 +137,7 @@ async function init() {
                         },
                         {
                             type: 'dialogue',
-                            portraitKey: 'zhoujing',
+                            portraitKey: 'zhou-jing',
                             name: 'Zhou Jing',
                             position: 'top',
                             voiceId: 'daxing_zj_02',
@@ -145,7 +145,7 @@ async function init() {
                         },
                         {
                             type: 'dialogue',
-                            portraitKey: 'zhoujing',
+                            portraitKey: 'zhou-jing',
                             name: 'Zhou Jing',
                             position: 'top',
                             voiceId: 'daxing_zj_03',
@@ -153,7 +153,7 @@ async function init() {
                         },
                         {
                             type: 'dialogue',
-                            portraitKey: 'zhangfei',
+                            portraitKey: 'zhang-fei',
                             name: 'Zhang Fei',
                             position: 'top',
                             voiceId: 'daxing_zf_01',
@@ -161,7 +161,7 @@ async function init() {
                         },
                         {
                             type: 'dialogue',
-                            portraitKey: 'guanyu',
+                            portraitKey: 'guan-yu',
                             name: 'Guan Yu',
                             position: 'top',
                             voiceId: 'daxing_gy_01',
@@ -169,7 +169,7 @@ async function init() {
                         },
                         {
                             type: 'dialogue',
-                            portraitKey: 'liubei',
+                            portraitKey: 'liu-bei',
                             name: 'Liu Bei',
                             position: 'top',
                             voiceId: 'daxing_lb_03',
@@ -177,7 +177,7 @@ async function init() {
                         },
                         {
                             type: 'dialogue',
-                            portraitKey: 'zhoujing',
+                            portraitKey: 'zhou-jing',
                             name: 'Zhou Jing',
                             position: 'top',
                             voiceId: 'daxing_zj_04',
@@ -213,7 +213,14 @@ async function init() {
             terrainAssets[t] = `assets/terrain/individual/${t}.png`;
         });
 
+        // Character names for dedicated portraits
+        const portraitNames = [
+            'Liu-Bei', 'Guan-Yu', 'Zhang-Fei', 'Zhou-Jing', 'Diaochan', 
+            'Deng-Mao', 'Cheng-Yuanzhi', 'The-Noticeboard', 'Yellow-Turban'
+        ];
+
         await Promise.all([
+            assets.loadPortraits(portraitNames),
             assets.loadPalettes({
                 vinik24: 'assets/palettes/vinik24.txt'
             }),

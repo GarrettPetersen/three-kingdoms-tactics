@@ -43,8 +43,22 @@ def clean_sample(filename):
     if os.path.exists(vocal_source):
         output_filename = f"clean_{name_no_ext}.wav"
         output_path = os.path.join(OUTPUT_DIR, output_filename)
-        shutil.copy(vocal_source, output_path)
-        print(f"SUCCESS! Cleaned vocals saved to: {output_path}")
+        
+        print(f"Normalizing volume and saving to: {output_path}")
+        # Use ffmpeg to normalize volume (loudnorm) and convert to wav
+        # I=-16 is a standard loudness for speech
+        result = subprocess.run([
+            "ffmpeg", "-i", vocal_source,
+            "-af", "loudnorm=I=-16:TP=-1.5:LRA=11",
+            "-y", output_path
+        ], capture_output=True)
+
+        if result.returncode != 0:
+            print(f"Error: FFmpeg normalization failed: {result.stderr.decode('utf-8')}")
+            # Fallback to copy if normalization fails
+            shutil.copy(vocal_source, output_path)
+        else:
+            print(f"SUCCESS! Cleaned and normalized vocals saved to: {output_path}")
 
         # Cleanup temp files
         shutil.rmtree("tools/temp_separation")

@@ -12,13 +12,13 @@ MODEL_NAME = "tts_models/multilingual/multi-dataset/xtts_v2"
 
 # Map characters to target wav/mp3 files for cloning in assets/voice_samples/
 CHAR_TARGETS = {
-    "liubei": "movies/clean/clean_mulans-dad.wav",
+    "liubei": "movies/clean/clean_li-shang-captain-from-mulan.wav",
     "zhangfei": "movies/clean/clean_kublai-khan.wav",
-    "guanyu": "movies/clean/clean_uncle-iroh.wav",
-    "zhoujing": "movies/clean/clean_mulan-emperor.wav",
+    "guanyu": "movies/clean/clean_angry-mulans-dad.wav",
+    "zhoujing": "movies/clean/clean_mulans-dad.wav",
+    "chengyuanzhi": "movies/clean/clean_uncle-iroh.wav",
+    "dengmao": "movies/clean/clean_mulan-emperor.wav",
     "yellowturban": "ai/jimmy_young_adult_male.mp3",
-    "dengmao": "ai/jimmy_young_adult_male.mp3",
-    "chengyuanzhi": "ai/jimmy_young_adult_male.mp3",
     "narrator": "ai/julia_young_adult_smooth_neutral_female.mp3",
     "noticeboard": "ai/keith_nonchalant_male.mp3",
     "volunteer": "ai/tungwong_young_adult_funny_friendly_male.mp3",
@@ -271,9 +271,14 @@ game_script = [
         "text": "Quick! Bring me wine! I am in a hurry to get to town and join the volunteers!",
     },
     {
-        "id": "inn_lb_02",
+        "id": "inn_lb_02a",
         "char": "liubei",
-        "text": "That man... his presence is extraordinary. Look at his majestic beard and phoenix-like eyes.",
+        "text": "That man...",
+    },
+    {
+        "id": "inn_lb_02b",
+        "char": "liubei",
+        "text": "His presence is extraordinary. Look at his majestic beard and phoenix-like eyes.",
     },
     {
         "id": "inn_zf_02",

@@ -147,7 +147,7 @@ export class MapScene extends BaseScene {
 
         if (this.interactionSelected === 'hero_reminder') {
             const status = this.renderDialogueBox(ctx, canvas, {
-                portraitKey: 'liubei',
+                portraitKey: 'liu-bei',
                 name: 'Liu Bei',
                 voiceId: 'map_lb_rem_01',
                 text: "Off to the Magistrate! Magistrate Zhou Jing's HQ awaits our enlistment."
@@ -370,7 +370,7 @@ export class MapScene extends BaseScene {
                 },
                 {
                     type: 'dialogue',
-                    portraitKey: 'liubei',
+                    portraitKey: 'liu-bei',
                     name: 'Liu Bei',
                     position: 'top',
                     voiceId: 'daxing_lb_01',
@@ -378,7 +378,7 @@ export class MapScene extends BaseScene {
                 },
                 {
                     type: 'dialogue',
-                    portraitKey: 'liubei',
+                    portraitKey: 'liu-bei',
                     name: 'Liu Bei',
                     position: 'top',
                     voiceId: 'daxing_lb_02',
@@ -402,7 +402,7 @@ export class MapScene extends BaseScene {
                 },
                 {
                     type: 'dialogue',
-                    portraitKey: 'zhangfei',
+                    portraitKey: 'zhang-fei',
                     name: 'Zhang Fei',
                     position: 'top',
                     voiceId: 'daxing_zf_01',
@@ -410,7 +410,7 @@ export class MapScene extends BaseScene {
                 },
                 {
                     type: 'dialogue',
-                    portraitKey: 'guanyu',
+                    portraitKey: 'guan-yu',
                     name: 'Guan Yu',
                     position: 'top',
                     voiceId: 'daxing_gy_01',
@@ -418,7 +418,7 @@ export class MapScene extends BaseScene {
                 },
                 {
                     type: 'dialogue',
-                    portraitKey: 'liubei',
+                    portraitKey: 'liu-bei',
                     name: 'Liu Bei',
                     position: 'top',
                     voiceId: 'daxing_lb_03',
@@ -495,7 +495,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         position: 'top',
                         name: 'Liu Bei',
                         voiceId: 'pro_lb_01',
@@ -503,7 +503,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         position: 'top',
                         name: 'Liu Bei',
                         voiceId: 'pro_lb_02',
@@ -511,7 +511,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         position: 'top',
                         name: 'Liu Bei',
                         voiceId: 'pro_lb_03',
@@ -523,7 +523,7 @@ export class MapScene extends BaseScene {
                     
                     {
                         type: 'dialogue',
-                        portraitKey: 'zhangfei',
+                        portraitKey: 'zhang-fei',
                         position: 'top',
                         name: '???',
                         voiceId: 'pro_zf_01',
@@ -533,7 +533,7 @@ export class MapScene extends BaseScene {
                     { type: 'command', action: 'animate', id: 'liubei', animation: 'hit', wait: true },
                     {
                         type: 'choice',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         name: 'Liu Bei',
                         options: [
                             { 
@@ -542,7 +542,7 @@ export class MapScene extends BaseScene {
                                 result: [
                                     {
                                         type: 'dialogue',
-                                        portraitKey: 'zhangfei',
+                                        portraitKey: 'zhang-fei',
                                         position: 'top',
                                         name: '???',
                                         voiceId: 'pro_zf_02',
@@ -556,7 +556,7 @@ export class MapScene extends BaseScene {
                                 result: [
                                     {
                                         type: 'dialogue',
-                                        portraitKey: 'zhangfei',
+                                        portraitKey: 'zhang-fei',
                                         position: 'top',
                                         name: '???',
                                         voiceId: 'pro_zf_03',
@@ -572,7 +572,7 @@ export class MapScene extends BaseScene {
                     
                     {
                         type: 'dialogue',
-                        portraitKey: 'zhangfei',
+                        portraitKey: 'zhang-fei',
                         position: 'top',
                         name: 'Zhang Fei',
                         voiceId: 'pro_zf_04',
@@ -580,7 +580,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'zhangfei',
+                        portraitKey: 'zhang-fei',
                         position: 'top',
                         name: 'Zhang Fei',
                         voiceId: 'pro_zf_05',
@@ -588,7 +588,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         position: 'top',
                         name: 'Liu Bei',
                         voiceId: 'pro_lb_04',
@@ -596,7 +596,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         position: 'top',
                         name: 'Liu Bei',
                         voiceId: 'pro_lb_05',
@@ -607,7 +607,7 @@ export class MapScene extends BaseScene {
                         action: 'move', id: 'farmer', x: 250, y: 220 },
                     {
                         type: 'dialogue',
-                        portraitKey: 'zhangfei',
+                        portraitKey: 'zhang-fei',
                         position: 'top',
                         name: 'Zhang Fei',
                         voiceId: 'pro_zf_06',
@@ -615,7 +615,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'zhangfei',
+                        portraitKey: 'zhang-fei',
                         position: 'top',
                         name: 'Zhang Fei',
                         voiceId: 'pro_zf_07',
@@ -623,7 +623,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         position: 'top',
                         name: 'Liu Bei',
                         voiceId: 'pro_lb_06',
@@ -631,7 +631,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'zhangfei',
+                        portraitKey: 'zhang-fei',
                         position: 'top',
                         name: 'Zhang Fei',
                         voiceId: 'pro_zf_08',
@@ -655,7 +655,7 @@ export class MapScene extends BaseScene {
                     
                     {
                         type: 'dialogue',
-                        portraitKey: 'zhangfei',
+                        portraitKey: 'zhang-fei',
                         position: 'top',
                         name: 'Zhang Fei',
                         voiceId: 'inn_zf_01',
@@ -663,7 +663,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         position: 'top',
                         name: 'Liu Bei',
                         voiceId: 'inn_lb_01',
@@ -675,7 +675,7 @@ export class MapScene extends BaseScene {
                     
                     {
                         type: 'dialogue',
-                        portraitKey: 'guanyu',
+                        portraitKey: 'guan-yu',
                         position: 'top',
                         name: '???',
                         voiceId: 'inn_gy_01',
@@ -688,15 +688,23 @@ export class MapScene extends BaseScene {
 
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         position: 'top',
                         name: 'Liu Bei',
-                        voiceId: 'inn_lb_02',
-                        text: "That man... his presence is extraordinary. Look at his majestic beard and phoenix-like eyes."
+                        voiceId: 'inn_lb_02a',
+                        text: "That man..."
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'zhangfei',
+                        portraitKey: 'liu-bei',
+                        position: 'top',
+                        name: 'Liu Bei',
+                        voiceId: 'inn_lb_02b',
+                        text: "His presence is extraordinary. Look at his majestic beard and phoenix-like eyes."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'zhang-fei',
                         position: 'top',
                         name: 'Zhang Fei',
                         voiceId: 'inn_zf_02',
@@ -706,7 +714,7 @@ export class MapScene extends BaseScene {
                     { type: 'command', action: 'animate', id: 'guanyu', animation: 'recovery' },
                     {
                         type: 'dialogue',
-                        portraitKey: 'guanyu',
+                        portraitKey: 'guan-yu',
                         position: 'top',
                         name: 'Guan Yu',
                         voiceId: 'inn_gy_02',
@@ -714,7 +722,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'guanyu',
+                        portraitKey: 'guan-yu',
                         position: 'top',
                         name: 'Guan Yu',
                         voiceId: 'inn_gy_03',
@@ -722,7 +730,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         position: 'top',
                         name: 'Liu Bei',
                         voiceId: 'inn_lb_03',
@@ -730,7 +738,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'zhangfei',
+                        portraitKey: 'zhang-fei',
                         position: 'top',
                         name: 'Zhang Fei',
                         voiceId: 'inn_zf_03',
@@ -749,7 +757,7 @@ export class MapScene extends BaseScene {
 
                     {
                         type: 'dialogue',
-                        portraitKey: 'zhangfei',
+                        portraitKey: 'zhang-fei',
                         position: 'top',
                         name: 'Zhang Fei',
                         voiceId: 'inn_zf_04',
@@ -757,7 +765,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'zhangfei',
+                        portraitKey: 'zhang-fei',
                         position: 'top',
                         name: 'Zhang Fei',
                         voiceId: 'inn_zf_05',
@@ -765,7 +773,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'guanyu',
+                        portraitKey: 'guan-yu',
                         position: 'top',
                         name: 'Guan Yu',
                         voiceId: 'inn_gy_04',
@@ -773,7 +781,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         position: 'top',
                         name: 'Liu Bei',
                         voiceId: 'inn_lb_04',
@@ -781,7 +789,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'zhangfei',
+                        portraitKey: 'zhang-fei',
                         position: 'top',
                         name: 'Zhang Fei',
                         voiceId: 'inn_zf_06',
@@ -789,7 +797,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'zhangfei',
+                        portraitKey: 'zhang-fei',
                         position: 'top',
                         name: 'Zhang Fei',
                         voiceId: 'inn_zf_07',
@@ -797,7 +805,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         position: 'top',
                         name: 'Liu Bei',
                         voiceId: 'inn_lb_05',
@@ -805,7 +813,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'guanyu',
+                        portraitKey: 'guan-yu',
                         position: 'top',
                         name: 'Guan Yu',
                         voiceId: 'inn_gy_05',
@@ -843,7 +851,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         position: 'top',
                         name: 'Liu Bei',
                         voiceId: 'pg_lb_01',
@@ -851,7 +859,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'guanyu',
+                        portraitKey: 'guan-yu',
                         position: 'top',
                         name: 'Guan Yu',
                         voiceId: 'pg_gy_01',
@@ -859,7 +867,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'zhangfei',
+                        portraitKey: 'zhang-fei',
                         position: 'top',
                         name: 'Zhang Fei',
                         voiceId: 'pg_zf_01',
@@ -867,7 +875,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         position: 'top',
                         name: 'Liu Bei',
                         voiceId: 'pg_lb_02',
@@ -875,7 +883,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         position: 'top',
                         name: 'Liu Bei',
                         voiceId: 'pg_lb_03',
@@ -896,7 +904,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         name: 'Liu Bei',
                         voiceId: 'pg_lb_04',
                         text: "The path ahead is long and full of peril, but together, we shall restore the Han!"
@@ -912,7 +920,7 @@ export class MapScene extends BaseScene {
 
                     {
                         type: 'dialogue',
-                        portraitKey: 'zhangfei',
+                        portraitKey: 'zhang-fei',
                         position: 'top',
                         name: 'Zhang Fei',
                         voiceId: 'rec_zf_01',
@@ -920,7 +928,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'guanyu',
+                        portraitKey: 'guan-yu',
                         position: 'top',
                         name: 'Guan Yu',
                         voiceId: 'rec_gy_01',
@@ -942,7 +950,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         position: 'top',
                         name: 'Liu Bei',
                         voiceId: 'rec_lb_01',
@@ -950,7 +958,7 @@ export class MapScene extends BaseScene {
                     },
                     {
                         type: 'dialogue',
-                        portraitKey: 'liubei',
+                        portraitKey: 'liu-bei',
                         position: 'top',
                         name: 'Liu Bei',
                         voiceId: 'rec_lb_02',

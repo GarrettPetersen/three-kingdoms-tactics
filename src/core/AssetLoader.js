@@ -12,14 +12,19 @@ export class AssetLoader {
         this.currentLoop = null;
         this.fadeInterval = null;
         this.voices = {}; // Cache for recently played voices
+        this.currentVoice = null;
+        this.baseMusicVolume = 0.5;
     }
 
     async playVoice(voiceId, volume = 1.0) {
-        if (!voiceId) return;
+        if (!voiceId) {
+            this.stopVoice();
+            return;
+        }
         
-        // Stop current voice if any? Maybe just let them overlap for now or stop previous.
         if (this.currentVoice) {
             this.currentVoice.pause();
+            this.currentVoice.onended = null; // Clear previous callback
             this.currentVoice.currentTime = 0;
         }
 
@@ -30,10 +35,36 @@ export class AssetLoader {
             this.voices[voiceId] = audio;
             audio.volume = volume;
             this.currentVoice = audio;
+
+            // Duck music volume immediately
+            this.setMusicVolume(this.baseMusicVolume * 0.3);
+
+            audio.onended = () => {
+                if (this.currentVoice === audio) {
+                    this.stopVoice();
+                }
+            };
+
             await audio.play();
         } catch (e) {
             console.warn(`Voice line not found or playback failed: ${src}`, e);
+            this.stopVoice();
         }
+    }
+
+    stopVoice() {
+        if (this.currentVoice) {
+            this.currentVoice.pause();
+            this.currentVoice.onended = null;
+            this.currentVoice.currentTime = 0;
+            this.currentVoice = null;
+        }
+        this.setMusicVolume(this.baseMusicVolume);
+    }
+
+    setMusicVolume(volume) {
+        if (this.currentIntro) this.currentIntro.volume = volume;
+        if (this.currentLoop) this.currentLoop.volume = volume;
     }
 
     async loadPalettes(paletteAssets) {
@@ -132,8 +163,44 @@ export class AssetLoader {
                     this.images[key] = img;
                     resolve(img);
                 };
-                img.onerror = reject;
+                img.onerror = () => {
+                    console.warn(`Failed to load image: ${src}`);
+                    resolve(null);
+                };
                 img.src = src;
+            });
+        });
+        return Promise.all(promises);
+    }
+
+    async loadPortraits(characterNames) {
+        // Load dedicated portraits if they exist
+        const promises = characterNames.map(name => {
+            const formattedName = name.replace(/ /g, '-');
+            const key = `portrait_${formattedName}`;
+            // Try generated first, then raw
+            const srcGenerated = `assets/portraits/generated/${formattedName}.png`;
+            const srcRaw = `assets/portraits/snes_raw/${formattedName}.png`;
+            
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    this.images[key] = img;
+                    resolve(img);
+                };
+                img.onerror = () => {
+                    // Try raw if generated fails
+                    const rawImg = new Image();
+                    rawImg.onload = () => {
+                        this.images[key] = rawImg;
+                        resolve(rawImg);
+                    };
+                    rawImg.onerror = () => {
+                        resolve(null); // No portrait found
+                    };
+                    rawImg.src = srcRaw;
+                };
+                img.src = srcGenerated;
             });
         });
         return Promise.all(promises);
@@ -200,7 +267,13 @@ export class AssetLoader {
     }
 
     playMusic(key, targetVolume = 0.5) {
-        if (this.currentMusicKey === key) return;
+        if (this.currentMusicKey === key) {
+            this.baseMusicVolume = targetVolume;
+            return;
+        }
+
+        this.baseMusicVolume = targetVolume;
+        const actualVolume = this.currentVoice ? targetVolume * 0.3 : targetVolume;
 
         const nextIntro = this.getMusic(`${key}_intro`);
         const nextLoop = this.getMusic(`${key}_loop`);
@@ -231,7 +304,8 @@ export class AssetLoader {
         if (nextIntro && nextLoop) {
             nextIntro.onended = () => {
                 if (this.currentMusicKey === key) {
-                    nextLoop.volume = targetVolume;
+                    const currentTarget = this.currentVoice ? this.baseMusicVolume * 0.3 : this.baseMusicVolume;
+                    nextLoop.volume = currentTarget;
                     nextLoop.currentTime = 0;
                     nextLoop.play().catch(e => console.log("Music loop play prevented:", e));
                     this.currentIntro = null;
@@ -260,11 +334,12 @@ export class AssetLoader {
             });
 
             // Fade in new music
-            if (activeNextPart.volume < targetVolume - fadeInStep) {
+            const currentTarget = this.currentVoice ? this.baseMusicVolume * 0.3 : this.baseMusicVolume;
+            if (activeNextPart.volume < currentTarget - fadeInStep) {
                 activeNextPart.volume += fadeInStep;
                 finished = false;
             } else {
-                activeNextPart.volume = targetVolume;
+                activeNextPart.volume = currentTarget;
             }
 
             if (finished) {
