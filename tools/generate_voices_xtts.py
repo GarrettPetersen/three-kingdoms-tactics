@@ -169,7 +169,7 @@ game_script = [
         "id": "daxing_lb_01",
         "char": "liubei",
         "text": "I am Liu Bei, a descendant of Prince Jing of Zhongshan and great-great-grandson of Emperor Jing. These are my sworn brothers, Guan Yu and Zhang Fei.",
-        "phonetic_text": "I am Liu Bay, a descendant of Prince Jing of Zhongshan and great-great-grandson of Emperor Jing. These are my sworn brothers, Guan Yu and Zhang Fei.",
+        "phonetic_text": "I am Leeoo Bay. A descendant of Prince Jing of Zhongshan and great great grandson of Emperor Jing. These are my sworn brothers, Guan Yoo and Zhang Fay.",
     },
     {
         "id": "daxing_lb_02",
@@ -280,6 +280,7 @@ game_script = [
         "id": "pro_lb_04",
         "char": "liubei",
         "text": "I am of the Imperial Clan. My name is Liu Bei.",
+        "phonetic_text": "I am of the Imperial Clan. My name is Leeoo Bay.",
     },
     {
         "id": "pro_lb_05",
@@ -357,6 +358,7 @@ game_script = [
         "id": "inn_lb_03",
         "char": "liubei",
         "text": "A noble heart! I am Liu Bei, and this is Zhang Fei. We have just agreed to raise a volunteer army ourselves.",
+        "phonetic_text": "A noble heart! I am Leeoo Bay. And this is Zhang Fay. We have just agreed to raise a volunteer army ourselves.",
     },
     {
         "id": "inn_zf_03",
