@@ -197,7 +197,7 @@
     },
     "map_lb_rem_01": {
         "character": "liubei",
-        "original_text": "Off to the Magistrate! Magistrate Zhou Jing's H-Q awaits our enlistment.",
+        "original_text": "Off to the Magistrate! Magistrate Zhou Jing's HQ awaits our enlistment.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -541,36 +541,50 @@
     "map_lb_rem_02": {
         "character": "liubei",
         "original_text": "Qingzhou is under siege. We must march there at once to relieve Imperial Protector Gong Jing!",
-        "stt_output": "Ching-Soo is under Zieg. We must march there at once to relieve Imperial Protector Gong-Jing.",
-        "wer": 0.25,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "map_lb_rem_03": {
         "character": "liubei",
         "original_text": "The siege is lifted. We should return to the Magistrate to see where else we can be of service.",
-        "stt_output": "The siege is lifted. We should return to the magistrate to see where else we can be of service.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "qz_bt_lb_01": {
         "character": "liubei",
         "original_text": "The rebels have surrounded the city. We must break their lines!",
-        "stt_output": "The rebels have surrounded the city. We must break their lines.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "qz_bt_lb_02": {
         "character": "liubei",
         "original_text": "But look at their numbers... we must be cautious. I will draw them toward the hills.",
-        "stt_output": "But look at their numbers. Weenie must be cautious. I would draw them toward the hills.",
-        "wer": 0.125,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "qz_bt_lb_03": {
         "character": "liubei",
         "original_text": "I must reach the flag to signal the ambush!",
-        "stt_output": "I must reach the flag to signal the ambush.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "map_lb_defeat": {
+        "character": "liubei",
+        "original_text": "We were overwhelmed! We must regroup and strike again.",
+        "stt_output": "We were overwhelmed. We must regroup and strike again.",
         "wer": 0.0,
+        "is_bad": false
+    },
+    "qz_victory_lb_01": {
+        "character": "liubei",
+        "original_text": "The siege is lifted. We should report back to Magistrate Zhou Jing for our next assignment.",
+        "stt_output": "the Sieges lifted. We should report back to Magistrate Joe Jing for our next assignment.",
+        "wer": 0.1875,
         "is_bad": false
     }
 }
