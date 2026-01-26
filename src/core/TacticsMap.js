@@ -195,8 +195,30 @@ export class TacticsMap {
             this.generateFoothills();
         } else if (layout === 'city_gate') {
             this.generateCityGate();
+        } else if (layout === 'siege_walls') {
+            this.generateSiegeWalls();
         } else {
             this.generatePlains();
+        }
+    }
+
+    generateSiegeWalls() {
+        // Wall all the way up the left side
+        const wallQ = 1;
+        for (let r = 0; r < this.height; r++) {
+            for (let q = 0; q < this.width; q++) {
+                const cell = this.grid[r][q];
+                if (q === wallQ) {
+                    cell.terrain = 'wall_01';
+                    cell.impassable = true;
+                } else if (q < wallQ) {
+                    // Behind the wall
+                    cell.terrain = 'mud_01';
+                } else {
+                    // Outside the wall
+                    cell.terrain = this.getDefaultGrass();
+                }
+            }
         }
     }
 
@@ -256,26 +278,75 @@ export class TacticsMap {
 
     generateMountainPass() {
         // Mountains on top and bottom or left and right
-        const vertical = Math.random() > 0.5;
+        const vertical = this.params.orientation === 'ns' || Math.random() > 0.5;
         if (vertical) {
-            // Mountain ranges on left and right sides
+            // North-South Pass: Mountain ranges on left and right sides
             for (let r = 0; r < this.height; r++) {
+                // Left mountains
                 this.setMountain(r, 0);
                 this.setMountain(r, 1);
+                if (Math.random() < 0.6) this.setMountain(r, 2);
+                
+                // Right mountains
                 this.setMountain(r, this.width - 1);
                 this.setMountain(r, this.width - 2);
-                if (Math.random() < 0.5) this.setMountain(r, 2);
-                if (Math.random() < 0.5) this.setMountain(r, this.width - 3);
+                if (Math.random() < 0.6) this.setMountain(r, this.width - 3);
+
+                // Ensure a scalable slope on each side
+                if (r === Math.floor(this.height / 2)) {
+                    const leftSlope = this.getCell(r, 1);
+                    const rightSlope = this.getCell(r, this.width - 2);
+                    if (leftSlope) { 
+                        leftSlope.terrain = this.getDefaultGrass(); 
+                        leftSlope.level = 1; 
+                        leftSlope.impassable = false; 
+                    }
+                    if (rightSlope) { 
+                        rightSlope.terrain = this.getDefaultGrass(); 
+                        rightSlope.level = 1; 
+                        rightSlope.impassable = false; 
+                    }
+                    
+                    // Also make one mountain cell on each side climbable but high
+                    const leftHigh = this.getCell(r, 0);
+                    const rightHigh = this.getCell(r, this.width - 1);
+                    if (leftHigh) { leftHigh.impassable = false; leftHigh.level = 2; }
+                    if (rightHigh) { rightHigh.impassable = false; rightHigh.level = 2; }
+                }
             }
         } else {
-            // Mountain ranges on top and bottom
+            // East-West Pass: Mountain ranges on top and bottom
             for (let q = 0; q < this.width; q++) {
+                // Top mountains
                 this.setMountain(0, q);
                 this.setMountain(1, q);
+                if (Math.random() < 0.6) this.setMountain(2, q);
+                
+                // Bottom mountains
                 this.setMountain(this.height - 1, q);
                 this.setMountain(this.height - 2, q);
-                if (Math.random() < 0.5) this.setMountain(2, q);
-                if (Math.random() < 0.5) this.setMountain(this.height - 3, q);
+                if (Math.random() < 0.6) this.setMountain(this.height - 3, q);
+
+                // Ensure a scalable slope
+                if (q === Math.floor(this.width / 2)) {
+                    const topSlope = this.getCell(1, q);
+                    const bottomSlope = this.getCell(this.height - 2, q);
+                    if (topSlope) { 
+                        topSlope.terrain = this.getDefaultGrass(); 
+                        topSlope.level = 1; 
+                        topSlope.impassable = false; 
+                    }
+                    if (bottomSlope) { 
+                        bottomSlope.terrain = this.getDefaultGrass(); 
+                        bottomSlope.level = 1; 
+                        bottomSlope.impassable = false; 
+                    }
+                    
+                    const topHigh = this.getCell(0, q);
+                    const bottomHigh = this.getCell(this.height - 1, q);
+                    if (topHigh) { topHigh.impassable = false; topHigh.level = 2; }
+                    if (bottomHigh) { bottomHigh.impassable = false; bottomHigh.level = 2; }
+                }
             }
         }
     }

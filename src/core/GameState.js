@@ -8,12 +8,12 @@ export class GameState {
         return {
             version: 1,
             lastScene: 'title',
-            prologueComplete: false,
             unlockedYears: ['184'],
-            completedCampaigns: [],
+            milestones: [], // e.g. 'prologue_complete', 'daxing_won'
             currentCampaign: null,
             battleState: null,
-            unitXP: {} // { unitId: totalXP }
+            unitXP: {}, // { unitId: totalXP }
+            unitClasses: {} // { unitId: 'archer' }
         };
     }
 
@@ -26,8 +26,19 @@ export class GameState {
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
-                // Simple migration logic if needed
+                // Simple migration logic
                 this.data = { ...this.getDefaults(), ...parsed };
+                
+                // Migrate old flags
+                if (parsed.prologueComplete && !this.data.milestones.includes('prologue_complete')) {
+                    this.data.milestones.push('prologue_complete');
+                }
+                if (parsed.completedCampaigns) {
+                    parsed.completedCampaigns.forEach(c => {
+                        if (!this.data.milestones.includes(c)) this.data.milestones.push(c);
+                    });
+                }
+                
                 return true;
             } catch (e) {
                 console.error("Failed to parse save data", e);
@@ -35,6 +46,17 @@ export class GameState {
             }
         }
         return false;
+    }
+
+    addMilestone(id) {
+        if (!this.data.milestones.includes(id)) {
+            this.data.milestones.push(id);
+            this.save();
+        }
+    }
+
+    hasMilestone(id) {
+        return (this.data.milestones || []).includes(id);
     }
 
     hasSave() {

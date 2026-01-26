@@ -13,11 +13,16 @@ export class BattleSummaryScene extends BaseScene {
     enter(params) {
         this.stats = params;
         this.timer = 0;
+        this.lastTime = 0;
         this.showLines = 0;
         assets.playMusic('campaign', 0.4);
     }
 
-    update(dt) {
+    update(timestamp) {
+        if (this.lastTime === 0) this.lastTime = timestamp;
+        const dt = timestamp - this.lastTime;
+        this.lastTime = timestamp;
+
         this.timer += dt;
         for (let i = 0; i < this.lineDelays.length; i++) {
             if (this.timer > this.lineDelays[i]) {
@@ -48,35 +53,52 @@ export class BattleSummaryScene extends BaseScene {
         // Title
         const titleText = this.stats.won ? "VICTORY" : "DEFEAT";
         const titleColor = this.stats.won ? "#ffd700" : "#ff4444";
-        this.drawPixelText(ctx, titleText, canvas.width / 2, 40, { 
+        this.drawPixelText(ctx, titleText, canvas.width / 2, 30, { 
             color: titleColor, 
             font: '16px Silkscreen', 
             align: 'center' 
         });
 
+        const startY = 65;
+        const spacing = 18;
+
         if (this.showLines > 0) {
-            this.drawStatLine(ctx, "Allied Casualties:", this.stats.alliedCasualties, 80, '#0f0');
+            this.drawStatLine(ctx, "Allied Casualties:", this.stats.alliedCasualties, startY, '#0f0');
         }
         if (this.showLines > 1) {
-            this.drawStatLine(ctx, "Enemy Casualties:", this.stats.enemyCasualties, 100, '#f00');
+            this.drawStatLine(ctx, "Enemy Casualties:", this.stats.enemyCasualties, startY + spacing, '#f00');
         }
         if (this.showLines > 2) {
             const houseText = `${this.stats.housesProtected} / ${this.stats.totalHouses}`;
-            this.drawStatLine(ctx, "Houses Protected:", houseText, 120, '#0af');
+            this.drawStatLine(ctx, "Houses Protected:", houseText, startY + spacing * 2, '#0af');
         }
         if (this.showLines > 3) {
-            this.drawStatLine(ctx, "Turns Taken:", this.stats.turnNumber, 140, '#eee');
+            this.drawStatLine(ctx, "Turns Taken:", this.stats.turnNumber, startY + spacing * 3, '#eee');
         }
 
         if (this.showLines > 4 && this.stats.won) {
-            this.drawStatLine(ctx, "XP Gained:", this.stats.xpGained || 0, 160, '#ffd700');
+            this.drawStatLine(ctx, "XP Gained:", this.stats.xpGained || 0, startY + spacing * 4, '#ffd700');
+        }
+
+        // Recovery Info (Injured Heroes)
+        if (this.showLines > 5 && this.stats.recoveryInfo && this.stats.recoveryInfo.length > 0) {
+            let ry = startY + spacing * 5 + 5;
+            this.stats.recoveryInfo.forEach(info => {
+                const text = `${info.name} recovered. -${info.xpLost} XP`;
+                this.drawPixelText(ctx, text, canvas.width / 2, ry, { 
+                    color: '#ff4444', 
+                    font: '8px Tiny5', 
+                    align: 'center' 
+                });
+                ry += 10;
+            });
         }
 
         if (this.showLines > 5) {
             const pulse = Math.abs(Math.sin(Date.now() / 500));
             ctx.save();
             ctx.globalAlpha = 0.5 + pulse * 0.5;
-            this.drawPixelText(ctx, "PRESS ANYWHERE TO CONTINUE", canvas.width / 2, 200, {
+            this.drawPixelText(ctx, "PRESS ANYWHERE TO CONTINUE", canvas.width / 2, 230, {
                 color: '#fff',
                 font: '8px Silkscreen',
                 align: 'center'
@@ -116,7 +138,65 @@ export class BattleSummaryScene extends BaseScene {
 
     handleInput(e) {
         if (this.showLines >= this.lineDelays.length) {
-            this.manager.switchTo('title');
+            const isCustom = this.stats.battleId === 'custom';
+            const isGameOver = this.stats.battleId === 'qingzhou_siege' && this.stats.won;
+
+            if (this.stats.levelUps && this.stats.levelUps.length > 0) {
+                this.manager.switchTo('levelup', { 
+                    levelUps: this.stats.levelUps,
+                    isEndGame: isGameOver,
+                    isCustom: isCustom
+                });
+            } else if (isGameOver) {
+                this.manager.switchTo('credits');
+            } else if (isCustom) {
+                this.manager.switchTo('title');
+            } else if (!this.stats.won) {
+                this.manager.switchTo('map', { afterEvent: 'defeat' });
+            } else if (this.stats.battleId === 'daxing' && this.stats.won) {
+                this.manager.switchTo('narrative', {
+                    script: [
+                        { bg: 'army_camp', type: 'command', action: 'clearActors' },
+                        { type: 'command', action: 'addActor', id: 'messenger', imgKey: 'soldier', x: 230, y: 180, flip: true, speed: 2 },
+                        { type: 'command', action: 'addActor', id: 'zhoujing', imgKey: 'zhoujing', x: 180, y: 160, flip: true },
+                        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 60, y: 200 },
+                        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 20, y: 210 },
+                        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 100, y: 210 },
+                        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+                        { type: 'command', action: 'move', id: 'messenger', x: 140, y: 180 },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'soldier',
+                            name: 'Messenger',
+                            position: 'top',
+                            voiceId: 'qz_ms_01',
+                            text: "URGENT! Imperial Protector Gong Jing of Qingzhou Region is under siege! The city is near falling!"
+                        },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'liu-bei',
+                            name: 'Liu Bei',
+                            position: 'top',
+                            voiceId: 'qz_lb_01',
+                            text: "I will go. We cannot let the people of Qingzhou suffer."
+                        },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhou-jing',
+                            name: 'Zhou Jing',
+                            position: 'top',
+                            voiceId: 'qz_zj_01',
+                            text: "I shall reinforce you with five thousand of my best soldiers. March at once!"
+                        },
+                        { type: 'command', action: 'fade', target: 1, speed: 0.001 }
+                    ],
+                    onComplete: () => {
+                        this.manager.switchTo('map', { afterEvent: 'daxing' });
+                    }
+                });
+            } else {
+                this.manager.switchTo('map', { afterEvent: this.stats.battleId });
+            }
         } else {
             // Skip animations
             this.timer = 10000;

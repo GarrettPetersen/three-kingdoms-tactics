@@ -13,6 +13,7 @@ export class NarrativeScene extends BaseScene {
         this.fadeAlpha = 0;
         this.fadeTarget = 0;
         this.fadeSpeed = 0.002;
+        this.elapsedInStep = 0;
     }
 
     enter(params) {
@@ -41,6 +42,8 @@ export class NarrativeScene extends BaseScene {
         const step = this.script[this.currentStep];
         if (!step) return;
 
+        this.elapsedInStep = 0;
+
         // Trigger voice if present
         if (step.voiceId) {
             assets.playVoice(step.voiceId);
@@ -59,6 +62,7 @@ export class NarrativeScene extends BaseScene {
             this.actors[cmd.id] = {
                 x: cmd.x,
                 y: cmd.y,
+                imgKey: cmd.imgKey,
                 img: assets.getImage(cmd.imgKey),
                 action: 'standby',
                 frame: 0,
@@ -130,6 +134,7 @@ export class NarrativeScene extends BaseScene {
         if (step && step.type === 'dialogue') {
             if (this.hasNextChunk) {
                 this.subStep++;
+                this.elapsedInStep = 0; // Reset timer for the next chunk
                 return;
             }
         }
@@ -137,6 +142,7 @@ export class NarrativeScene extends BaseScene {
         this.subStep = 0;
         this.currentStep++;
         this.isWaiting = false;
+        this.timer = 0;
 
         if (this.currentStep >= this.script.length) {
             if (this.onComplete) {
@@ -151,6 +157,8 @@ export class NarrativeScene extends BaseScene {
     update(timestamp) {
         const dt = timestamp - (this.lastTime || timestamp);
         this.lastTime = timestamp;
+
+        this.elapsedInStep += dt;
 
         // Mouse tracking for hover effects in choices
         this.lastMouseX = this.manager.logicalMouseX;
@@ -288,6 +296,9 @@ export class NarrativeScene extends BaseScene {
 
         const sortedActors = Object.values(this.actors).sort((a, b) => a.y - b.y);
         sortedActors.forEach(a => {
+            if (!a.img && a.imgKey) {
+                a.img = assets.getImage(a.imgKey);
+            }
             this.drawCharacter(ctx, a.img, a.action, a.frame, bgX + a.x, bgY + a.y, { flip: a.flip });
         });
         ctx.restore();
@@ -318,7 +329,64 @@ export class NarrativeScene extends BaseScene {
             this.hasNextChunk = status.hasNextChunk;
         } else if (step && step.type === 'choice') {
             this.renderChoice(step);
+        } else if (step && step.type === 'prompt') {
+            this.renderPrompt(step);
         }
+    }
+
+    renderPrompt(step) {
+        const { ctx, canvas } = this.manager;
+        const cx = Math.floor(canvas.width / 2);
+        
+        // Settings for the "To Inn" style prompt
+        const w = 60;
+        const h = 25;
+        const margin = 10;
+        
+        let px = margin;
+        let py = Math.floor(canvas.height / 2) - Math.floor(h / 2);
+        
+        if (step.position === 'right') {
+            px = canvas.width - w - margin;
+        }
+
+        const isHovered = this.lastMouseX >= px && this.lastMouseX <= px + w &&
+                          this.lastMouseY >= py && this.lastMouseY <= py + h;
+
+        // Draw Box
+        ctx.fillStyle = isHovered ? 'rgba(40, 40, 40, 0.95)' : 'rgba(20, 20, 20, 0.95)';
+        ctx.fillRect(px, py, w, h);
+        ctx.strokeStyle = isHovered ? '#fff' : '#ffd700';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(px + 0.5, py + 0.5, w - 1, h - 1);
+
+        // Draw Arrow pointing left
+        const pulse = Math.abs(Math.sin(Date.now() / 400)) * 5;
+        if (step.position !== 'right') {
+            ctx.fillStyle = isHovered ? '#fff' : '#ffd700';
+            ctx.beginPath();
+            ctx.moveTo(px - 5 - pulse, py + h / 2);
+            ctx.lineTo(px + 2 - pulse, py + h / 2 - 5);
+            ctx.lineTo(px + 2 - pulse, py + h / 2 + 5);
+            ctx.fill();
+        } else {
+            // Arrow pointing right
+            ctx.fillStyle = isHovered ? '#fff' : '#ffd700';
+            ctx.beginPath();
+            ctx.moveTo(px + w + 5 + pulse, py + h / 2);
+            ctx.lineTo(px + w - 2 + pulse, py + h / 2 - 5);
+            ctx.lineTo(px + w - 2 + pulse, py + h / 2 + 5);
+            ctx.fill();
+        }
+
+        this.drawPixelText(ctx, step.text, px + Math.floor(w / 2), py + Math.floor(h / 2) - 4, {
+            color: isHovered ? '#fff' : '#ffd700',
+            font: '8px Silkscreen',
+            align: 'center'
+        });
+
+        // Store metadata for hit detection
+        step._rect = { x: px, y: py, w, h };
     }
 
     renderChoice(step) {
@@ -407,11 +475,30 @@ export class NarrativeScene extends BaseScene {
         if (step.subtext) {
             this.drawPixelText(ctx, step.subtext, cx, cy + 6, { color: '#eee', font: '8px Silkscreen', align: 'center' });
         }
+
+        // Pulse "CLICK TO CONTINUE" if player is waiting
+        if (this.elapsedInStep > 3500) {
+            const pulse = Math.abs(Math.sin(Date.now() / 500)) * 0.5 + 0.5;
+            ctx.globalAlpha = pulse;
+            this.drawPixelText(ctx, "CLICK TO CONTINUE", cx, canvas.height - 30, { 
+                color: '#ffd700', 
+                font: '8px Silkscreen', 
+                align: 'center' 
+            });
+            ctx.globalAlpha = 1.0;
+        }
     }
 
     handleInput(e) {
         const step = this.script[this.currentStep];
-        if (this.isWaiting) return;
+        
+        // Cooldown to prevent accidental double-clicks and glitches when skipping too fast
+        if (this.elapsedInStep < 250) return;
+
+        // Allow advancing dialogue/title even if isWaiting (e.g. during a duration timer)
+        const canForceAdvance = step && (step.type === 'dialogue' || step.type === 'title');
+        
+        if (this.isWaiting && !canForceAdvance) return;
 
         const { x, y } = this.getMousePos(e);
 
@@ -441,6 +528,15 @@ export class NarrativeScene extends BaseScene {
                 }
                 currentY += optionHeight + m.optionSpacing;
             });
+            return;
+        }
+
+        if (step && step.type === 'prompt' && step._rect) {
+            const r = step._rect;
+            if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) {
+                assets.playSound('ui_click');
+                this.nextStep();
+            }
             return;
         }
         

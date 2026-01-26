@@ -38,6 +38,7 @@ export class SceneManager {
         }
         
         this.currentScene = this.scenes[name];
+        this.currentSceneKey = name;
         
         if (this.currentScene && this.currentScene.enter) {
             this.currentScene.enter(params);

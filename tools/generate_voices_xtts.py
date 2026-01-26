@@ -6,6 +6,8 @@ import whisper
 import json
 from jiwer import wer
 from TTS.api import TTS
+from pydub import AudioSegment
+from pydub.silence import split_on_silence
 
 # --- Configuration ---
 # Use the Python 3.11 virtual environment we just set up
@@ -75,6 +77,38 @@ def verify_audio(audio_path, expected_text):
         return {"error": str(e), "is_bad": True}
 
 
+def trim_long_pauses(audio_path, max_pause_ms=600):
+    """Detects pauses longer than max_pause_ms and trims them down to that length."""
+    print(f"  Trimming long pauses (max {max_pause_ms}ms)...")
+    try:
+        audio = AudioSegment.from_file(audio_path)
+
+        # Split on silence
+        # min_silence_len: how long silence needs to be to be considered a 'pause'
+        # silence_thresh: dB below average to be considered silence
+        chunks = split_on_silence(
+            audio,
+            min_silence_len=400,
+            silence_thresh=audio.dBFS - 16,
+            keep_silence=250,  # Keep a bit of silence on each end of chunks
+        )
+
+        if not chunks:
+            return  # Nothing to do
+
+        # Recombine chunks
+        combined = AudioSegment.empty()
+        for i, chunk in enumerate(chunks):
+            combined += chunk
+            # Add a small normalized silence between chunks if not the last chunk
+            if i < len(chunks) - 1:
+                combined += AudioSegment.silent(duration=min(max_pause_ms, 400))
+
+        combined.export(audio_path, format="wav")
+    except Exception as e:
+        print(f"    Trimming error: {e}")
+
+
 def generate_voice(
     line_id, character, text, speed=1.0, emotion=None, phonetic_text=None
 ):
@@ -85,8 +119,7 @@ def generate_voice(
 
     if os.path.exists(output_ogg):
         print(f"Skipping generation (already exists): {line_id}")
-        # Still verify the existing file to generate the report
-        verification_result = verify_audio(output_ogg, text)
+        return None  # Skip everything for existing files
     else:
         char_key = character.lower().replace(" ", "")
         target_filename = CHAR_TARGETS.get(char_key, CHAR_TARGETS["default"])
@@ -118,6 +151,9 @@ def generate_voice(
                 top_k=50,
                 top_p=0.85,
             )
+
+            # Trim excessive pauses
+            trim_long_pauses(temp_wav)
 
             # Verify quality before converting
             verification_result = verify_audio(temp_wav, text)
@@ -313,6 +349,16 @@ game_script = [
         "id": "map_lb_rem_01",
         "char": "liubei",
         "text": "Off to the Magistrate! Magistrate Zhou Jing's H-Q awaits our enlistment.",
+    },
+    {
+        "id": "map_lb_rem_02",
+        "char": "liubei",
+        "text": "Qingzhou is under siege. We must march there at once to relieve Imperial Protector Gong Jing!",
+    },
+    {
+        "id": "map_lb_rem_03",
+        "char": "liubei",
+        "text": "The siege is lifted. We should return to the Magistrate to see where else we can be of service.",
     },
     # --- Inn Scene (MapScene.js) ---
     {
@@ -523,6 +569,91 @@ game_script = [
         "char": "narrator",
         "text": "Cheat code accepted. Narrative scene is functional.",
     },
+    # --- Qingzhou Briefing (MapScene.js) ---
+    {
+        "id": "qz_ms_01",
+        "char": "volunteer",  # Using volunteer as placeholder for messenger
+        "text": "URGENT! Imperial Protector Gong Jing of Qingzhou Region is under siege! The city is near falling!",
+    },
+    {
+        "id": "qz_lb_01",
+        "char": "liubei",
+        "text": "I will go. We cannot let the people of Qingzhou suffer.",
+        "phonetic_text": "I will go. We cannot let the people of Qingzhou suffer.",
+    },
+    {
+        "id": "qz_zj_01",
+        "char": "zhoujing",
+        "text": "I shall reinforce you with five thousand of my best soldiers. March at once!",
+    },
+    {
+        "id": "qz_lb_02",
+        "char": "liubei",
+        "text": "They are many and we but few. We cannot prevail in a direct assault.",
+    },
+    {
+        "id": "qz_lb_03",
+        "char": "liubei",
+        "text": "Guan Yu, Zhang Fei—take half our forces and hide behind the hills. When the gongs beat, strike from the flanks!",
+        "phonetic_text": "Guan Yoo, Zhang Fay. Take half our forces and hide behind the hills. When the gongs beat, strike from the flanks!",
+    },
+    {
+        "id": "qz_gy_01",
+        "char": "guanyu",
+        "text": "A superior strategy, brother. We go at once.",
+    },
+    {
+        "id": "qz_lb_amb_01",
+        "char": "liubei",
+        "text": "BEAT THE GONGS! Brothers, strike now!",
+    },
+    {
+        "id": "qz_gy_surp_01",
+        "char": "guanyu",
+        "text": "Brother! We heard the signal was... oh. They are all fallen.",
+    },
+    # --- Qingzhou Battle Intro (TacticsScene.js) ---
+    {
+        "id": "qz_bt_lb_01",
+        "char": "liubei",
+        "text": "The rebels have surrounded the city. We must break their lines!",
+    },
+    {
+        "id": "qz_bt_lb_02",
+        "char": "liubei",
+        "text": "But look at their numbers... we must be cautious. I will draw them toward the hills.",
+    },
+    {
+        "id": "qz_bt_lb_03",
+        "char": "liubei",
+        "text": "I must reach the flag to signal the ambush!",
+    },
+    # --- Map Scene Reminders & Events (MapScene.js) ---
+    {
+        "id": "map_lb_defeat",
+        "char": "liubei",
+        "text": "We were overwhelmed! We must regroup and strike again.",
+    },
+    {
+        "id": "qz_victory_lb_01",
+        "char": "liubei",
+        "text": "The siege is lifted. We should report back to Magistrate Zhou Jing for our next assignment.",
+    },
+    {
+        "id": "map_lb_rem_01",
+        "char": "liubei",
+        "text": "Off to the Magistrate! Magistrate Zhou Jing's HQ awaits our enlistment.",
+    },
+    {
+        "id": "map_lb_rem_02",
+        "char": "liubei",
+        "text": "Qingzhou is under siege. We must march there at once to relieve Imperial Protector Gong Jing!",
+    },
+    {
+        "id": "map_lb_rem_03",
+        "char": "liubei",
+        "text": "The siege is lifted. We should return to the Magistrate to see where else we can be of service.",
+    },
 ]
 
 if __name__ == "__main__":
@@ -545,6 +676,19 @@ if __name__ == "__main__":
         }
 
     # Save report
+    if os.path.exists(REPORT_FILE):
+        with open(REPORT_FILE, "r") as f:
+            try:
+                existing_report = json.load(f)
+            except:
+                existing_report = {}
+    else:
+        existing_report = {}
+
+    for line_id, data in report.items():
+        if data is not None:
+            existing_report[line_id] = data
+
     with open(REPORT_FILE, "w") as f:
-        json.dump(report, f, indent=4)
-    print(f"\nVerification report saved to {REPORT_FILE}")
+        json.dump(existing_report, f, indent=4)
+    print(f"\nVerification report updated in {REPORT_FILE}")

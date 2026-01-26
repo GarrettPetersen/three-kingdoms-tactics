@@ -48,6 +48,7 @@ export class Unit {
         this.isGone = config.isGone || false;
         this.drownTimer = 0;
         this.stepTimer = 0;
+        this.level = config.level || 1;
     }
 
     update(dt, getPixelPos, shouldAnimate = true, terrainType = 'grass_01') {

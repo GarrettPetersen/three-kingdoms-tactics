@@ -2,10 +2,81 @@ import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 import { ANIMATIONS } from '../core/Constants.js';
 
+const LOCATIONS = {
+    zhuo: {
+        id: 'zhuo',
+        x: 190,
+        y: 70,
+        name: 'Zhuo County',
+        imgKey: 'hut',
+        campaignId: 'liubei',
+        unlockCondition: (gs) => !gs.hasMilestone('prologue_complete') && !gs.hasMilestone('daxing') && !gs.hasMilestone('qingzhou_siege')
+    },
+    magistrate: {
+        id: 'magistrate',
+        x: 182,
+        y: 85,
+        name: 'Magistrate Zhou Jing',
+        imgKey: 'tent',
+        battleId: 'daxing',
+        unlockCondition: (gs) => gs.hasMilestone('prologue_complete') && !gs.hasMilestone('daxing'),
+        isCompleted: (gs) => gs.hasMilestone('daxing')
+    },
+    qingzhou: {
+        id: 'qingzhou',
+        x: 220,
+        y: 95,
+        name: 'Qingzhou Region',
+        imgKey: 'city',
+        battleId: 'qingzhou_siege',
+        unlockCondition: (gs) => gs.hasMilestone('daxing') && !gs.hasMilestone('qingzhou_siege'),
+        isCompleted: (gs) => gs.hasMilestone('qingzhou_siege')
+    }
+};
+
+const STORY_EVENTS = {
+    'defeat': {
+        type: 'dialogue',
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_defeat',
+        text: "We were overwhelmed! We must regroup and strike again."
+    },
+    'qingzhou_siege': {
+        type: 'dialogue',
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'qz_victory_lb_01',
+        text: "The siege is lifted. We should report back to Magistrate Zhou Jing for our next assignment."
+    }
+};
+
+const HERO_REMINDERS = {
+    'start': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_rem_01',
+        text: "Off to the Magistrate! Magistrate Zhou Jing's HQ awaits our enlistment."
+    },
+    'daxing_done': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_rem_02',
+        text: "Qingzhou is under siege. We must march there at once to relieve Imperial Protector Gong Jing!"
+    },
+    'qingzhou_siege_done': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_rem_03',
+        text: "The siege is lifted. We should return to the Magistrate to see where else we can be of service."
+    }
+};
+
 export class MapScene extends BaseScene {
     constructor() {
         super();
         this.selectedLocation = null;
+        this.dialogueElapsed = 0;
         this.prologueComplete = false;
         this.interactionSelected = null;
         this.subStep = 0;
@@ -26,13 +97,6 @@ export class MapScene extends BaseScene {
             y: 70,
             imgKey: 'liubei'
         };
-        this.magistrate = {
-            id: 'magistrate',
-            x: 182,
-            y: 85,
-            name: 'Magistrate Zhou Jing',
-            location: 'Zhuo County HQ'
-        };
         this.lastClickTime = 0;
     }
 
@@ -45,7 +109,19 @@ export class MapScene extends BaseScene {
         
         // Load state if it exists
         const gs = this.manager.gameState;
-        this.prologueComplete = gs.get('prologueComplete') || false;
+        this.dialogueElapsed = 0;
+        gs.set('lastScene', 'map'); // Ensure we return here on continue
+        this.prologueComplete = gs.hasMilestone('prologue_complete') || gs.hasMilestone('daxing') || gs.hasMilestone('qingzhou_siege');
+
+        if (params && params.afterEvent) {
+            const event = STORY_EVENTS[params.afterEvent];
+            if (event) {
+                this.interactionSelected = 'story_event';
+                this.currentEvent = event;
+                this.subStep = 0;
+                if (event.voiceId) assets.playVoice(event.voiceId);
+            }
+        }
 
         if (params && params.campaignId) {
             this.currentCampaignId = params.campaignId;
@@ -101,17 +177,27 @@ export class MapScene extends BaseScene {
         const my = Math.floor((canvas.height - mapImg.height) / 2);
         ctx.drawImage(mapImg, mx, my);
 
-        // Draw Magistrate HQ if prologue is complete
-        if (this.prologueComplete) {
-            const tentImg = assets.getImage('tent');
-            if (tentImg) {
-                const tx = mx + this.magistrate.x;
-                const ty = my + this.magistrate.y;
-                // Draw yellow tent
-                ctx.drawImage(tentImg, Math.floor(tx - 18), Math.floor(ty - 18), 36, 36);
+        // Draw dynamic locations
+        const gs = this.manager.gameState;
+        for (const locId in LOCATIONS) {
+            const loc = LOCATIONS[locId];
+            if (loc.unlockCondition(gs)) {
+                const lx = mx + loc.x;
+                const ly = my + loc.y;
+                const isDone = loc.isCompleted ? loc.isCompleted(gs) : false;
+                
+                const img = assets.getImage(loc.imgKey);
+                if (img) {
+                    ctx.save();
+                    if (isDone) ctx.globalAlpha = 0.5;
+                    
+                    // Draw centered at the location coordinates
+                    ctx.drawImage(img, Math.floor(lx - img.width / 2), Math.floor(ly - img.height / 2), img.width, img.height);
+                    ctx.restore();
 
-                if (this.interactionSelected === 'magistrate') {
-                    this.drawLabel(ctx, this.magistrate.name, tx, ty - 10, "Click to March");
+                    if (this.interactionSelected === locId) {
+                        this.drawLabel(ctx, loc.name, lx, ly - 10, isDone ? "COMPLETED" : "Click to March");
+                    }
                 }
             }
         }
@@ -139,19 +225,13 @@ export class MapScene extends BaseScene {
             }
 
             this.drawCharacter(ctx, charImg, action, frameIdx, cx, cy, { flip });
-
-            if (!this.prologueComplete && !this.moveState.isMoving) {
-                this.drawLabel(ctx, "ZHUO COUNTY", cx, cy - 45, "Click to Enter");
-            }
         }
 
-        if (this.interactionSelected === 'hero_reminder') {
-            const status = this.renderDialogueBox(ctx, canvas, {
-                portraitKey: 'liu-bei',
-                name: 'Liu Bei',
-                voiceId: 'map_lb_rem_01',
-                text: "Off to the Magistrate! Magistrate Zhou Jing's HQ awaits our enlistment."
-            }, { subStep: this.subStep });
+        if (this.interactionSelected === 'hero_reminder' && this.currentReminder) {
+            const status = this.renderDialogueBox(ctx, canvas, this.currentReminder, { subStep: this.subStep });
+            this.hasNextChunk = status.hasNextChunk;
+        } else if (this.interactionSelected === 'story_event' && this.currentEvent) {
+            const status = this.renderDialogueBox(ctx, canvas, this.currentEvent, { subStep: this.subStep });
             this.hasNextChunk = status.hasNextChunk;
         }
     }
@@ -182,6 +262,15 @@ export class MapScene extends BaseScene {
     }
 
     update(timestamp) {
+        const dt = timestamp - (this.lastTime || timestamp);
+        this.lastTime = timestamp;
+
+        if (this.interactionSelected === 'hero_reminder' || this.interactionSelected === 'story_event') {
+            this.dialogueElapsed = (this.dialogueElapsed || 0) + dt;
+        } else {
+            this.dialogueElapsed = 0;
+        }
+
         if (this.moveState.isMoving) {
             this.moveState.progress += 0.015;
             if (this.moveState.progress >= 1) {
@@ -206,43 +295,61 @@ export class MapScene extends BaseScene {
         const my = 0;
 
         // Advance dialogue if active
-        if (this.interactionSelected === 'hero_reminder') {
+        if (this.interactionSelected === 'hero_reminder' || this.interactionSelected === 'story_event') {
+            if (this.dialogueElapsed < 250) return;
+
             if (this.hasNextChunk) {
                 this.subStep++;
+                this.dialogueElapsed = 0;
             } else {
                 this.interactionSelected = null;
                 this.subStep = 0;
+                this.currentEvent = null;
+                this.currentReminder = null;
+                this.dialogueElapsed = 0;
             }
             return;
         }
 
-        // 1. Handle Magistrate HQ click if prologue is done
-        if (this.prologueComplete && !this.moveState.isMoving) {
-            const tx = mx + this.magistrate.x;
-            const ty = my + this.magistrate.y;
-            
-            const tentHit = (mouseX >= tx - 18 && mouseX <= tx + 18 && mouseY >= ty - 18 && mouseY <= ty + 18);
-            
-            let labelHit = false;
-            if (this.interactionSelected === 'magistrate') {
-                const metrics = this.manager.ctx.measureText(this.magistrate.name);
-                const boxW = Math.floor(metrics.width + 10);
-                const boxH = 24;
-                const bx = Math.floor(tx - 20 - boxW);
-                const by = Math.floor(ty - 10);
-                labelHit = (mouseX >= bx && mouseX <= bx + boxW && mouseY >= by && mouseY <= by + boxH);
-            }
-
-            if (tentHit || labelHit) {
-                if (this.interactionSelected === 'magistrate') {
-                    this.heroMoveTo(this.magistrate.x, this.magistrate.y, () => {
-                        this.startBriefing();
-                    });
-                } else {
-                    this.interactionSelected = 'magistrate';
-                    this.selectedLocation = 'magistrate';
+        // Handle dynamic location clicks
+        const gs = this.manager.gameState;
+        for (const locId in LOCATIONS) {
+            const loc = LOCATIONS[locId];
+            if (loc.unlockCondition(gs)) {
+                const lx = mx + loc.x;
+                const ly = my + loc.y;
+                
+                const img = assets.getImage(loc.imgKey);
+                const iw = img ? img.width : 36;
+                const ih = img ? img.height : 36;
+                
+                const hit = (mouseX >= lx - iw/2 && mouseX <= lx + iw/2 && mouseY >= ly - ih/2 && mouseY <= ly + ih/2);
+                
+                let labelHit = false;
+                if (this.interactionSelected === locId) {
+                    const metrics = this.manager.ctx.measureText(loc.name);
+                    const boxW = Math.floor(metrics.width + 10);
+                    const bx = Math.floor(lx - 20 - boxW);
+                    const by = Math.floor(ly - 10);
+                    labelHit = (mouseX >= bx && mouseX <= bx + boxW && mouseY >= by && mouseY <= by + 24);
                 }
-                return;
+
+                if (hit || labelHit) {
+                    if (this.interactionSelected === locId) {
+                        const isDone = loc.isCompleted ? loc.isCompleted(gs) : false;
+                        if (!isDone) {
+                            this.heroMoveTo(loc.x, loc.y, () => {
+                                if (loc.campaignId) this.startCampaign(loc.campaignId);
+                                else if (loc.battleId === 'daxing') this.startBriefing();
+                                else if (loc.battleId === 'qingzhou_siege') this.startQingzhouBriefing();
+                            });
+                        }
+                    } else {
+                        this.interactionSelected = locId;
+                        this.selectedLocation = locId;
+                    }
+                    return;
+                }
             }
         }
 
@@ -286,28 +393,51 @@ export class MapScene extends BaseScene {
         }
 
         if (charHit || boxHit) {
+            const isZhuoAvailable = !gs.hasMilestone('prologue_complete') && !gs.hasMilestone('daxing') && !gs.hasMilestone('qingzhou_siege');
+            
             // Always enter immediately if the prologue is not complete
-            if (!this.prologueComplete || boxHit || this.selectedLocation === 'zhuo') {
-                if (this.prologueComplete) {
+            if (isZhuoAvailable || boxHit || this.selectedLocation === 'zhuo') {
+                if (gs.hasMilestone('prologue_complete') || gs.hasMilestone('daxing') || gs.hasMilestone('qingzhou_siege')) {
+                    let reminderKey = 'start';
+                    if (gs.hasMilestone('qingzhou_siege')) reminderKey = 'qingzhou_siege_done';
+                    else if (gs.hasMilestone('daxing')) reminderKey = 'daxing_done';
+                    
                     this.interactionSelected = 'hero_reminder';
+                    this.currentReminder = HERO_REMINDERS[reminderKey];
                     this.subStep = 0;
-                    assets.playVoice('map_lb_rem_01');
+                    if (this.currentReminder.voiceId) assets.playVoice(this.currentReminder.voiceId);
                 } else {
                     this.startCampaign('liubei');
                 }
             } else {
-                // First click on character selects the location (post-prologue)
-                this.selectedLocation = 'zhuo';
+                // First click on character selects the location (if available)
+                if (isZhuoAvailable) {
+                    this.selectedLocation = 'zhuo';
+                }
                 this.interactionSelected = null;
                 this.subStep = 0;
             }
             return;
         } else {
             this.selectedLocation = null;
-            if (this.interactionSelected !== 'hero_reminder') {
+            if (this.interactionSelected !== 'hero_reminder' && this.interactionSelected !== 'story_event') {
                 this.interactionSelected = null;
             }
         }
+    }
+
+    startQingzhouBriefing() {
+        this.manager.switchTo('tactics', {
+            battleId: 'qingzhou_prelude',
+            mapGen: {
+                biome: 'central',
+                layout: 'city_gate',
+                forestDensity: 0.05,
+                mountainDensity: 0.0,
+                riverDensity: 0.0,
+                houseDensity: 0.2
+            }
+        });
     }
 
     startBriefing() {
@@ -362,7 +492,7 @@ export class MapScene extends BaseScene {
 
                 {
                     type: 'dialogue',
-                    portraitKey: 'zhoujing',
+                    portraitKey: 'zhou-jing',
                     name: 'Zhou Jing',
                     position: 'top',
                     voiceId: 'daxing_zj_01',
@@ -386,7 +516,7 @@ export class MapScene extends BaseScene {
                 },
                 {
                     type: 'dialogue',
-                    portraitKey: 'zhoujing',
+                    portraitKey: 'zhou-jing',
                     name: 'Zhou Jing',
                     position: 'top',
                     voiceId: 'daxing_zj_02',
@@ -394,7 +524,7 @@ export class MapScene extends BaseScene {
                 },
                 {
                     type: 'dialogue',
-                    portraitKey: 'zhoujing',
+                    portraitKey: 'zhou-jing',
                     name: 'Zhou Jing',
                     position: 'top',
                     voiceId: 'daxing_zj_03',
@@ -426,7 +556,7 @@ export class MapScene extends BaseScene {
                 },
                 {
                     type: 'dialogue',
-                    portraitKey: 'zhoujing',
+                    portraitKey: 'zhou-jing',
                     name: 'Zhou Jing',
                     position: 'top',
                     voiceId: 'daxing_zj_04',
@@ -447,8 +577,7 @@ export class MapScene extends BaseScene {
         if (id === 'liubei') {
             this.manager.switchTo('narrative', {
                 onComplete: () => {
-                    this.prologueComplete = true;
-                    this.manager.gameState.set('prologueComplete', true);
+                    this.manager.gameState.addMilestone('prologue_complete');
                     this.manager.switchTo('map');
                 },
                 script: [
@@ -637,6 +766,7 @@ export class MapScene extends BaseScene {
                         voiceId: 'pro_zf_08',
                         text: "Then come! Let us go to the village inn and discuss our plans over wine."
                     },
+                    { type: 'prompt', text: 'TO INN', position: 'left' },
                     { type: 'command', action: 'flip', id: 'liubei', flip: true },
                     { type: 'command', action: 'move', id: 'liubei', x: -50, y: 240, wait: false },
                     { type: 'command', action: 'move', id: 'zhangfei', x: -50, y: 240 },

@@ -7,6 +7,8 @@ import { MapScene } from './scenes/MapScene.js';
 import { TacticsScene } from './scenes/TacticsScene.js';
 import { NarrativeScene } from './scenes/NarrativeScene.js';
 import { BattleSummaryScene } from './scenes/BattleSummaryScene.js';
+import { LevelUpScene } from './scenes/LevelUpScene.js';
+import { CreditsScene } from './scenes/CreditsScene.js';
 
 const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
@@ -70,6 +72,8 @@ async function init() {
     sceneManager.addScene('tactics', new TacticsScene());
     sceneManager.addScene('narrative', new NarrativeScene());
     sceneManager.addScene('summary', new BattleSummaryScene());
+    sceneManager.addScene('levelup', new LevelUpScene());
+    sceneManager.addScene('credits', new CreditsScene());
 
     canvas.addEventListener('pointerdown', (e) => sceneManager.handleInput(e));
 
@@ -77,12 +81,18 @@ async function init() {
     window.addEventListener('keydown', (e) => {
         if (e.key.length === 1) {
             inputBuffer += e.key.toLowerCase();
-            if (inputBuffer.endsWith('title')) sceneManager.switchTo('title');
-            if (inputBuffer.endsWith('camp')) sceneManager.switchTo('campaign_selection');
-            if (inputBuffer.endsWith('map')) sceneManager.switchTo('map');
-            if (inputBuffer.endsWith('battle')) sceneManager.switchTo('tactics', { battleId: 'custom' });
+            if (inputBuffer.endsWith('title')) { sceneManager.switchTo('title'); inputBuffer = ""; }
+            if (inputBuffer.endsWith('camp')) { sceneManager.switchTo('campaign_selection'); inputBuffer = ""; }
+            if (inputBuffer.endsWith('map')) { sceneManager.switchTo('map'); inputBuffer = ""; }
+            if (inputBuffer.endsWith('battle')) { 
+                inputBuffer = ""; 
+                sceneManager.gameState.addMilestone('prologue_complete');
+                sceneManager.switchTo('tactics', { battleId: 'daxing' }); 
+            }
             if (inputBuffer.endsWith('brief')) {
+                inputBuffer = "";
                 // Jump to the Magistrate Briefing script
+                sceneManager.gameState.addMilestone('prologue_complete');
                 sceneManager.switchTo('narrative', {
                     musicKey: 'forest',
                     onComplete: () => sceneManager.switchTo('tactics', {
@@ -194,12 +204,19 @@ async function init() {
                 });
             }
             if (inputBuffer.endsWith('story')) {
+                inputBuffer = "";
                 sceneManager.switchTo('narrative', {
                     script: [
                         { type: 'title', text: 'DEBUG: NARRATIVE', subtext: 'Testing narrative scene' },
                         { type: 'dialogue', name: 'System', voiceId: 'debug_narrative_01', text: 'Cheat code accepted. Narrative scene is functional.' }
                     ]
                 });
+            }
+            if (inputBuffer.endsWith('win')) {
+                if (sceneManager.currentSceneKey === 'tactics' && sceneManager.currentScene) {
+                    sceneManager.currentScene.endBattle(true);
+                    inputBuffer = "";
+                }
             }
             if (inputBuffer.length > 20) inputBuffer = inputBuffer.slice(-20);
         }
@@ -216,7 +233,8 @@ async function init() {
         // Character names for dedicated portraits
         const portraitNames = [
             'Liu-Bei', 'Guan-Yu', 'Zhang-Fei', 'Zhou-Jing', 'Diaochan', 
-            'Deng-Mao', 'Cheng-Yuanzhi', 'The-Noticeboard', 'Yellow-Turban'
+            'Deng-Mao', 'Cheng-Yuanzhi', 'The-Noticeboard', 'Yellow-Turban',
+            'Dong-Zhuo', 'Zhang-Jiao'
         ];
 
         await Promise.all([
@@ -226,6 +244,14 @@ async function init() {
             }),
             assets.loadImages({
                 title: 'assets/misc/three_kingdoms_stratagem_title.png',
+                intro_sky: 'assets/intro_animation/00_sky.png',
+                intro_hills: 'assets/intro_animation/01_hills.png',
+                intro_distant_army: 'assets/intro_animation/02_distant_army.png',
+                intro_midground_army: 'assets/intro_animation/03_midground_army.png',
+                intro_field: 'assets/intro_animation/04_field.png',
+                intro_grass: 'assets/intro_animation/05_grass.png',
+                intro_horse: 'assets/intro_animation/06_horse.png',
+                intro_guandao: 'assets/intro_animation/07_guandao.png',
                 noticeboard: 'assets/settings/village_noticeboard.png',
                 inn: 'assets/settings/village_inn.png',
                 inn_evening: 'assets/settings/village_inn_evening.png',
@@ -233,6 +259,8 @@ async function init() {
                 army_camp: 'assets/settings/army_camp.png',
                 china_map: 'assets/settings/china_map.png',
                 tent: 'assets/terrain/buildings/yellow_tent.png',
+                hut: 'assets/terrain/buildings/green_hut.png',
+                city: 'assets/terrain/buildings/red_house.png',
                 lvbu: 'assets/characters/001_lvbu.png',
                 dongzhuo: 'assets/characters/002_dongzhuo.png',
                 liubei: 'assets/characters/048_liubei.png',
@@ -245,6 +273,7 @@ async function init() {
                 blacksmith: 'assets/characters/091_tiejiang01.png',
                 bandit1: 'assets/characters/088_qiangdao01.png',
                 bandit2: 'assets/characters/089_qiangdao02.png',
+                archer: 'assets/characters/098_archer.png',
                 zhangjiao: 'assets/characters/005_zhangjiao.png',
                 zhangbao: 'assets/characters/006_zhangbao.png',
                 zhangliang: 'assets/characters/007_zhangliang.png',
@@ -254,6 +283,7 @@ async function init() {
                 farmer2: 'assets/characters/084_nongfu02.png',
                 soldier: 'assets/characters/081_shibing001.png',
                 butcher: 'assets/characters/082_tufu01.png',
+                flag_01: 'assets/misc/flag_01.png',
                 ...terrainAssets
             }),
             assets.loadSounds({
@@ -262,6 +292,12 @@ async function init() {
                 double_blades: 'assets/sfx/double_blades.wav',
                 green_dragon: 'assets/sfx/green_dragon.wav',
                 bash: 'assets/sfx/bash.wav',
+                whiff: 'assets/sfx/whiff.wav',
+                bow_fire: 'assets/sfx/bow_fire.wav',
+                arrow_hit: 'assets/sfx/arrow_hit.wav',
+                building_damage: 'assets/sfx/building_damage.wav',
+                ice_crack: 'assets/sfx/ice_crack.wav',
+                ice_break: 'assets/sfx/ice_break.wav',
                 collision: 'assets/sfx/collision.wav',
                 splash: 'assets/sfx/splash.wav',
                 step_grass: 'assets/sfx/step_grass.wav',
