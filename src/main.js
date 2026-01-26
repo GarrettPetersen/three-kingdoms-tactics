@@ -317,8 +317,8 @@ async function init() {
                 battle_loop: 'assets/music/battle_loop.ogg',
                 oath_intro: 'assets/music/oath_intro.ogg',
                 oath_loop: 'assets/music/oath_loop.ogg',
-                forest_intro: 'assets/all_songs/Super Retro JRPG Music Pack ver1.1/Dungeon/Dungeon6 - Forest/intro&loop/SNES-Dungeon06_intro.ogg',
-                forest_loop: 'assets/all_songs/Super Retro JRPG Music Pack ver1.1/Dungeon/Dungeon6 - Forest/intro&loop/SNES-Dungeon06_loop.ogg'
+                forest_intro: 'assets/music/forest_intro.ogg',
+                forest_loop: 'assets/music/forest_loop.ogg'
             })
         ]);
 
