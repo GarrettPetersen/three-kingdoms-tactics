@@ -15,9 +15,12 @@ export class TitleScene extends BaseScene {
             { key: 'intro_sky', speed: 0.1 },
             { key: 'intro_hills', speed: 0.3 },
             { key: 'intro_distant_army', speed: 0.6 },
+            { key: 'intro_distant_army_flags', speed: 0.6, wave: 'flags' },
             { key: 'intro_midground_army', speed: 1.0 },
+            { key: 'intro_midground_army_flags', speed: 1.0, wave: 'flags' },
             { key: 'intro_field', speed: 1.1 },
-            { key: 'intro_grass', speed: 2.2 }
+            { key: 'intro_grass', speed: 2.2 },
+            { key: 'intro_blades', speed: 2.2, wave: 'grass' }
         ];
         
         this.horseX = 400; // Start position of horse
@@ -109,6 +112,7 @@ export class TitleScene extends BaseScene {
             if (this.animationProgress > 1) {
                 this.animationProgress = 1;
                 this.state = 'GUANDAO';
+                assets.playSound('shing', 0.6);
             }
 
             // Ease in-out cubic
@@ -163,10 +167,48 @@ export class TitleScene extends BaseScene {
             const img = assets.getImage(layer.key);
             if (!img) return;
             
-            const x = -((this.panX * layer.speed) % img.width);
-            ctx.drawImage(img, Math.floor(x), 0);
-            if (x < 0) {
-                ctx.drawImage(img, Math.floor(x + img.width), 0);
+            const baseX = -((this.panX * layer.speed) % img.width);
+            
+            if (!layer.wave) {
+                ctx.drawImage(img, Math.floor(baseX), 0);
+                if (baseX < 0) {
+                    ctx.drawImage(img, Math.floor(baseX + img.width), 0);
+                }
+            } else if (layer.wave === 'flags') {
+                // Wave moving left to right (offset Y based on X)
+                const waveAmp = 0.6;
+                const waveFreq = 0.06;
+                const waveSpeed = 0.002;
+                const time = timestamp * waveSpeed;
+                
+                // Draw in segments to simulate wave
+                const segmentWidth = 4;
+                for (let sx = 0; sx < img.width; sx += segmentWidth) {
+                    const sw = Math.min(segmentWidth, img.width - sx);
+                    const offY = Math.sin(time + sx * waveFreq) * waveAmp;
+                    
+                    ctx.drawImage(img, sx, 0, sw, img.height, Math.floor(baseX + sx), Math.floor(offY), sw, img.height);
+                    if (baseX < 0) {
+                        ctx.drawImage(img, sx, 0, sw, img.height, Math.floor(baseX + img.width + sx), Math.floor(offY), sw, img.height);
+                    }
+                }
+            } else if (layer.wave === 'grass') {
+                // Wave moving top to bottom (offset X based on Y)
+                const waveAmp = 0.8;
+                const waveFreq = 0.1;
+                const waveSpeed = 0.002;
+                const time = timestamp * waveSpeed;
+                
+                const segmentHeight = 2;
+                for (let sy = 0; sy < img.height; sy += segmentHeight) {
+                    const sh = Math.min(segmentHeight, img.height - sy);
+                    const offX = Math.sin(time + sy * waveFreq) * waveAmp;
+                    
+                    ctx.drawImage(img, 0, sy, img.width, sh, Math.floor(baseX + offX), sy, img.width, sh);
+                    if (baseX < 0) {
+                        ctx.drawImage(img, 0, sy, img.width, sh, Math.floor(baseX + img.width + offX), sy, img.width, sh);
+                    }
+                }
             }
         });
 
