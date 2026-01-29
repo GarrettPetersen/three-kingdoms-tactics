@@ -52,19 +52,19 @@ const STORY_EVENTS = {
 };
 
 const HERO_REMINDERS = {
-    'start': {
+    'prologue_complete': {
         portraitKey: 'liu-bei',
         name: 'Liu Bei',
         voiceId: 'map_lb_rem_01',
-        text: "Off to the Magistrate! Magistrate Zhou Jing's HQ awaits our enlistment."
+        text: "Magistrate Zhou Jing's headquarters is to the East. We must report there at once to begin our service."
     },
-    'daxing_done': {
+    'daxing': {
         portraitKey: 'liu-bei',
         name: 'Liu Bei',
         voiceId: 'map_lb_rem_02',
         text: "Qingzhou is under siege. We must march there at once to relieve Imperial Protector Gong Jing!"
     },
-    'qingzhou_siege_done': {
+    'qingzhou_siege': {
         portraitKey: 'liu-bei',
         name: 'Liu Bei',
         voiceId: 'map_lb_rem_03',
@@ -398,14 +398,15 @@ export class MapScene extends BaseScene {
             // Always enter immediately if the prologue is not complete
             if (isZhuoAvailable || boxHit || this.selectedLocation === 'zhuo') {
                 if (gs.hasMilestone('prologue_complete') || gs.hasMilestone('daxing') || gs.hasMilestone('qingzhou_siege')) {
-                    let reminderKey = 'start';
-                    if (gs.hasMilestone('qingzhou_siege')) reminderKey = 'qingzhou_siege_done';
-                    else if (gs.hasMilestone('daxing')) reminderKey = 'daxing_done';
+                    let reminderKey = 'prologue_complete';
+                    
+                    if (gs.hasMilestone('qingzhou_siege')) reminderKey = 'qingzhou_siege';
+                    else if (gs.hasMilestone('daxing')) reminderKey = 'daxing';
                     
                     this.interactionSelected = 'hero_reminder';
                     this.currentReminder = HERO_REMINDERS[reminderKey];
                     this.subStep = 0;
-                    if (this.currentReminder.voiceId) assets.playVoice(this.currentReminder.voiceId);
+                    if (this.currentReminder && this.currentReminder.voiceId) assets.playVoice(this.currentReminder.voiceId);
                 } else {
                     this.startCampaign('liubei');
                 }
@@ -544,7 +545,7 @@ export class MapScene extends BaseScene {
                     name: 'Guan Yu',
                     position: 'top',
                     voiceId: 'daxing_gy_01',
-                    text: "Eldest brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march."
+                    text: "Third brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march."
                 },
                 {
                     type: 'dialogue',

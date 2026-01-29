@@ -77,7 +77,7 @@ def verify_audio(audio_path, expected_text):
         return {"error": str(e), "is_bad": True}
 
 
-def trim_long_pauses(audio_path, max_pause_ms=600):
+def trim_long_pauses(audio_path, max_pause_ms=300):
     """Detects pauses longer than max_pause_ms and trims them down to that length."""
     print(f"  Trimming long pauses (max {max_pause_ms}ms)...")
     try:
@@ -88,9 +88,9 @@ def trim_long_pauses(audio_path, max_pause_ms=600):
         # silence_thresh: dB below average to be considered silence
         chunks = split_on_silence(
             audio,
-            min_silence_len=400,
+            min_silence_len=250,
             silence_thresh=audio.dBFS - 16,
-            keep_silence=250,  # Keep a bit of silence on each end of chunks
+            keep_silence=100,  # Keep a bit of silence on each end of chunks
         )
 
         if not chunks:
@@ -102,11 +102,41 @@ def trim_long_pauses(audio_path, max_pause_ms=600):
             combined += chunk
             # Add a small normalized silence between chunks if not the last chunk
             if i < len(chunks) - 1:
-                combined += AudioSegment.silent(duration=min(max_pause_ms, 400))
+                combined += AudioSegment.silent(duration=150)
 
         combined.export(audio_path, format="wav")
     except Exception as e:
         print(f"    Trimming error: {e}")
+
+
+def convert_to_ogg(input_wav, output_ogg):
+    """Convert wav to ogg using ffmpeg with libopus codec (more stable than native vorbis)."""
+    print(f"  Converting to OGG: {output_ogg}")
+    try:
+        # Using libopus for better stability and quality in OGG container
+        result = subprocess.run(
+            [
+                "ffmpeg",
+                "-y",
+                "-i",
+                input_wav,
+                "-ac",
+                "2",
+                "-c:a",
+                "libopus",
+                "-b:a",
+                "64k",
+                output_ogg,
+            ],
+            capture_output=True,
+        )
+        if result.returncode != 0:
+            print(f"    FFmpeg error: {result.stderr.decode('utf-8')}")
+            return False
+        return True
+    except Exception as e:
+        print(f"    Conversion error: {e}")
+        return False
 
 
 def generate_voice(
@@ -118,77 +148,74 @@ def generate_voice(
     verification_result = None
 
     if os.path.exists(output_ogg):
-        print(f"Skipping generation (already exists): {line_id}")
-        return None  # Skip everything for existing files
-    else:
-        char_key = character.lower().replace(" ", "")
-        target_filename = CHAR_TARGETS.get(char_key, CHAR_TARGETS["default"])
-        target_path = os.path.join(TARGETS_DIR, target_filename)
+        # Even if it exists, let's re-trim it to ensure the silence fixes are applied
+        # But only if it's 0 bytes or we want to force re-processing
+        if os.path.getsize(output_ogg) == 0:
+            print(f"Regenerating 0-byte file: {line_id}")
+        else:
+            print(f"Skipping generation (already exists): {line_id}")
+            try:
+                # Convert ogg to temp wav for trimming
+                audio = AudioSegment.from_file(output_ogg)
+                audio.export(temp_wav, format="wav")
+                trim_long_pauses(temp_wav)
+                # Re-export to ogg using our fixed converter
+                if convert_to_ogg(temp_wav, output_ogg):
+                    if os.path.exists(temp_wav):
+                        os.remove(temp_wav)
+                else:
+                    print(f"    Failed to re-trim {line_id}")
+            except Exception as e:
+                print(f"    Re-trim error: {e}")
+            return None
 
-        if not os.path.exists(target_path):
-            print(
-                f"ERROR: Reference voice for '{character}' not found at '{target_path}'."
-            )
-            sys.exit(1)
+    char_key = character.lower().replace(" ", "")
+    target_filename = CHAR_TARGETS.get(char_key, CHAR_TARGETS["default"])
+    target_path = os.path.join(TARGETS_DIR, target_filename)
 
-        # Use phonetic text for generation if provided, but verify against original text
-        gen_text = phonetic_text if phonetic_text else text
-        print(f"Generating (XTTS): {character} -> {line_id}")
-        if phonetic_text:
-            print(f'  Using phonetic override: "{phonetic_text}"')
+    if not os.path.exists(target_path):
+        print(f"ERROR: Reference voice for '{character}' not found at '{target_path}'.")
+        sys.exit(1)
 
-        try:
-            # Generate high quality audio using cloning
-            tts.tts_to_file(
-                text=gen_text,
-                speaker_wav=target_path,
-                language="en",
-                file_path=temp_wav,
-                speed=speed,
-                emotion=emotion,
-                temperature=0.75,
-                repetition_penalty=2.0,
-                top_k=50,
-                top_p=0.85,
-            )
+    # Use phonetic text for generation if provided, but verify against original text
+    gen_text = phonetic_text if phonetic_text else text
+    print(f"Generating (XTTS): {character} -> {line_id}")
+    if phonetic_text:
+        print(f'  Using phonetic override: "{phonetic_text}"')
 
-            # Trim excessive pauses
-            trim_long_pauses(temp_wav)
+    try:
+        # Generate high quality audio using cloning
+        tts.tts_to_file(
+            text=gen_text,
+            speaker_wav=target_path,
+            language="en",
+            file_path=temp_wav,
+            speed=speed,
+            emotion=emotion,
+            temperature=0.75,
+            repetition_penalty=2.0,
+            top_k=50,
+            top_p=0.85,
+        )
 
-            # Verify quality before converting
-            verification_result = verify_audio(temp_wav, text)
+        # Trim excessive pauses
+        trim_long_pauses(temp_wav)
 
-            # Convert to OGG using ffmpeg
-            result = subprocess.run(
-                [
-                    "ffmpeg",
-                    "-i",
-                    temp_wav,
-                    "-ac",
-                    "2",
-                    "-c:a",
-                    "vorbis",
-                    "-strict",
-                    "-2",
-                    "-q:a",
-                    "4",
-                    "-y",
-                    output_ogg,
-                ],
-                capture_output=True,
-            )
+        # Verify quality before converting
+        verification_result = verify_audio(temp_wav, text)
 
-            if result.returncode != 0:
-                raise Exception(f"FFmpeg failed: {result.stderr.decode('utf-8')}")
+        # Convert to OGG using our fixed converter
+        if not convert_to_ogg(temp_wav, output_ogg):
+            raise Exception("FFmpeg conversion failed")
 
-            if os.path.exists(temp_wav):
-                os.remove(temp_wav)
+        if os.path.exists(temp_wav):
+            os.remove(temp_wav)
 
-        except Exception as e:
-            print(f"CRITICAL ERROR generating {line_id}: {e}")
-            if os.path.exists(temp_wav):
-                os.remove(temp_wav)
-            sys.exit(1)
+    except Exception as e:
+        print(f"CRITICAL ERROR generating {line_id}: {e}")
+        if os.path.exists(temp_wav):
+            os.remove(temp_wav)
+        sys.exit(1)
 
     return verification_result
 
@@ -232,8 +259,8 @@ game_script = [
     {
         "id": "daxing_gy_01",
         "char": "guanyu",
-        "text": "Eldest brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march.",
-        "phonetic_text": "Eldest brother is right. We have sworn to destroy these traitors and restore peace. We are ready now.",
+        "text": "Third brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march.",
+        "phonetic_text": "Third brother is right. We have sworn to destroy these traitors and restore peace. We are ready now.",
     },
     {
         "id": "daxing_lb_03",
@@ -653,6 +680,22 @@ game_script = [
         "id": "map_lb_rem_03",
         "char": "liubei",
         "text": "The siege is lifted. We should return to the Magistrate to see where else we can be of service.",
+    },
+    # --- Recovery Lines ---
+    {
+        "id": "recov_lb_01",
+        "char": "liubei",
+        "text": "My apologies, brothers. I let my guard down, but my spirit remains unbroken.",
+    },
+    {
+        "id": "recov_gy_01",
+        "char": "guanyu",
+        "text": "A momentary lapse in focus. I shall return to the field with renewed vigor.",
+    },
+    {
+        "id": "recov_zf_01",
+        "char": "zhangfei",
+        "text": "Bah! Those rascals got a lucky hit in! Next time, they won't be so fortunate!",
     },
 ]
 

@@ -13,7 +13,14 @@ export class GameState {
             currentCampaign: null,
             battleState: null,
             unitXP: {}, // { unitId: totalXP }
-            unitClasses: {} // { unitId: 'archer' }
+            unitClasses: {}, // { unitId: 'archer' }
+            customStats: {
+                totalBattles: 0,
+                wins: 0,
+                losses: 0,
+                enemiesDefeated: 0,
+                unitsLost: 0
+            }
         };
     }
 

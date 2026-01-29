@@ -43,10 +43,10 @@
     },
     "daxing_gy_01": {
         "character": "guanyu",
-        "original_text": "Eldest brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
+        "original_text": "Third brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march.",
+        "stt_output": "Third brother is right. New moon, distant years, or town. We have sworn to destroy these traitors and restore peace. We are ready now.",
+        "wer": 0.42105263157894735,
+        "is_bad": true
     },
     "daxing_lb_03": {
         "character": "liubei",
@@ -576,15 +576,36 @@
     "map_lb_defeat": {
         "character": "liubei",
         "original_text": "We were overwhelmed! We must regroup and strike again.",
-        "stt_output": "We were overwhelmed. We must regroup and strike again.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "qz_victory_lb_01": {
         "character": "liubei",
         "original_text": "The siege is lifted. We should report back to Magistrate Zhou Jing for our next assignment.",
-        "stt_output": "the Sieges lifted. We should report back to Magistrate Joe Jing for our next assignment.",
-        "wer": 0.1875,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "recov_lb_01": {
+        "character": "liubei",
+        "original_text": "My apologies, brothers. I let my guard down, but my spirit remains unbroken.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "recov_gy_01": {
+        "character": "guanyu",
+        "original_text": "A momentary lapse in focus. I shall return to the field with renewed vigor.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "recov_zf_01": {
+        "character": "zhangfei",
+        "original_text": "Bah! Those rascals got a lucky hit in! Next time, they won't be so fortunate!",
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     }
 }

@@ -8,6 +8,7 @@ import { TacticsScene } from './scenes/TacticsScene.js';
 import { NarrativeScene } from './scenes/NarrativeScene.js';
 import { BattleSummaryScene } from './scenes/BattleSummaryScene.js';
 import { LevelUpScene } from './scenes/LevelUpScene.js';
+import { RecoveryScene } from './scenes/RecoveryScene.js';
 import { CreditsScene } from './scenes/CreditsScene.js';
 
 const canvas = document.getElementById('game-canvas');
@@ -72,6 +73,7 @@ async function init() {
     sceneManager.addScene('tactics', new TacticsScene());
     sceneManager.addScene('narrative', new NarrativeScene());
     sceneManager.addScene('summary', new BattleSummaryScene());
+    sceneManager.addScene('recovery', new RecoveryScene());
     sceneManager.addScene('levelup', new LevelUpScene());
     sceneManager.addScene('credits', new CreditsScene());
 
@@ -175,7 +177,7 @@ async function init() {
                             name: 'Guan Yu',
                             position: 'top',
                             voiceId: 'daxing_gy_01',
-                            text: "Eldest brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march."
+                            text: "Third brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march."
                         },
                         {
                             type: 'dialogue',
@@ -309,6 +311,7 @@ async function init() {
                 step_sand: 'assets/sfx/step_sand.wav',
                 step_stone: 'assets/sfx/step_stone.wav',
                 step_generic: 'assets/sfx/step_generic.wav',
+                ui_click: 'assets/sfx/step_generic.wav',
                 step_water_walk: 'assets/sfx/step_water_walk.wav',
                 death: 'assets/sfx/death.wav'
             }),

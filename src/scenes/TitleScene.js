@@ -176,7 +176,7 @@ export class TitleScene extends BaseScene {
                 }
             } else if (layer.wave === 'flags') {
                 // Wave moving left to right (offset Y based on X)
-                const waveAmp = 0.6;
+                const waveAmp = 1.2;
                 const waveFreq = 0.06;
                 const waveSpeed = 0.002;
                 const time = timestamp * waveSpeed;

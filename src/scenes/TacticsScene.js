@@ -50,7 +50,9 @@ export class TacticsScene extends BaseScene {
         this.battleId = params.battleId || gs.get('currentBattleId') || 'daxing'; 
         gs.set('currentBattleId', this.battleId);
 
-        const musicKey = this.battleId === 'daxing' ? 'oath' : 'battle';
+        console.log(`Entering battle: ${this.battleId}`);
+
+        const musicKey = (this.battleId === 'daxing' || this.battleId === 'qingzhou_prelude') ? 'oath' : 'battle';
         assets.playMusic(musicKey, 0.4);
         
         this.isCustom = params.isCustom || this.battleId === 'custom';
@@ -63,16 +65,33 @@ export class TacticsScene extends BaseScene {
         this.startX = Math.floor((canvas.width - mapPixelWidth) / 2);
         this.startY = Math.floor((canvas.height - mapPixelHeight) / 2);
 
-        // Reset Intro Animation
-        this.isIntroAnimating = true;
-        this.introTimer = 0;
-        this.lastTime = 0;
+        // HARD RESET all scene state to prevent bleed from previous battles
+        this.units = [];
+        this.selectedUnit = null;
+        this.selectedAttack = null;
+        this.hoveredCell = null;
+        this.activeDialogue = null;
+        this.introScript = null; // Fix dialogue flicker
+        this.reachableTiles = new Map();
+        this.attackTiles = new Map();
+        this.projectiles = [];
+        this.particles = [];
+        this.damageNumbers = [];
+        this.ambushTriggered = false;
+        this.reachedFlag = false;
+        this.isProcessingTurn = false;
+        this.isRetreating = false;
+        this.turnNumber = 1;
+        this.turn = 'player';
+        this.dialogueElapsed = 0;
+        this.dialogueStep = 0;
+        this.subStep = 0;
         this.gameOverTimer = 0;
         this.isGameOver = false;
         this.enemiesKilled = 0;
-        this.ambushTriggered = false;
-        this.reachedFlag = false;
-        this.dialogueElapsed = 0;
+        this.isIntroAnimating = true;
+        this.introTimer = 0;
+        this.lastTime = 0;
         
         if (this.battleId === 'qingzhou_siege') {
             this.flagPos = { r: 1, q: 4 };
@@ -81,7 +100,6 @@ export class TacticsScene extends BaseScene {
         }
         
         this.baseXP = 5; // Default base XP for battles
-        this.isRetreating = false;
 
         // Check for saved battle state
         const savedState = gs.get('battleState');
@@ -155,7 +173,7 @@ export class TacticsScene extends BaseScene {
                 else if (this.mapGenParams.biome === 'southern' && Math.random() < 0.3) this.weatherType = 'rain';
             }
             
-            this.isIntroDialogueActive = true;
+            this.isIntroDialogueActive = false; // Set to false initially
             this.dialogueStep = 0;
             
             // Wait for intro animation then start dialogue
@@ -234,7 +252,9 @@ export class TacticsScene extends BaseScene {
             }
         } else if (this.battleId === 'qingzhou_prelude') {
             // The prelude ends after the intro dialogue is finished
-            if (!this.isIntroDialogueActive) {
+            if (!this.isIntroDialogueActive && !this.isGameOver) {
+                console.log("Prelude finished, switching to siege battle...");
+                this.isGameOver = true; // Use this as a flag to prevent multiple switches
                 this.manager.switchTo('tactics', {
                     battleId: 'qingzhou_siege',
                     mapGen: {
@@ -247,6 +267,7 @@ export class TacticsScene extends BaseScene {
                         houseDensity: 0.0
                     }
                 });
+                return; // CRITICAL: Stop processing checkWinLoss for this frame
             }
         } else if (this.battleId === 'qingzhou_siege') {
             const liubei = this.units.find(u => u.id === 'liubei' && u.hp > 0);
@@ -261,16 +282,33 @@ export class TacticsScene extends BaseScene {
             // Objective 1: Retreat to the flag
             if (!this.reachedFlag && liubei.r === this.flagPos.r && liubei.q === this.flagPos.q) {
                 this.reachedFlag = true;
+                this.isProcessingTurn = true; // Prevent input during ambush sequence
                 this.triggerAmbush();
+                
+                // Release processing after a delay to allow animations/spawning to finish
+                setTimeout(() => {
+                    this.isProcessingTurn = false;
+                }, 2500);
             }
 
             // Objective 2: Kill all enemies (after ambush OR if Liu Bei is a beast)
+            // Safety: Don't win instantly on turn 1 before enemies have even spawned
             if (enemyUnits.length === 0) {
-                if (!this.ambushTriggered) {
-                    // Surprise! All enemies are dead before ambush
+                // If intro animation or dialogue is STILL active, definitely don't check win loss
+                if (this.isIntroAnimating || this.isIntroDialogueActive) return;
+
+                // Wait for ambush to at least trigger and spawn some units
+                if (this.ambushTriggered) {
+                    // Only win if we've reached turn 3 or later, ensuring reinforcements had a chance
+                    if (this.turnNumber > 2) {
+                        this.endBattle(true);
+                    }
+                } else if (this.turnNumber > 2) {
+                    // Surprise! All enemies are dead before ambush triggered (Liu Bei is a beast)
                     this.triggerAmbush(true); // pass true for 'surprised' mode
                 } else {
-                    this.endBattle(true);
+                    // Turn 1 or 2 and no enemies yet - wait for reinforcements
+                    return;
                 }
             }
         } else {
@@ -314,20 +352,25 @@ export class TacticsScene extends BaseScene {
         if (liubei) {
             liubei.dialogue = "BEAT THE GONGS! Brothers, strike now!";
             liubei.voiceId = 'qz_lb_amb_01';
-            this.activeDialogue = { unit: liubei, timer: 2000 };
+            this.activeDialogue = { unit: liubei, timer: 1500 };
             assets.playVoice(liubei.voiceId);
             assets.playSound('bash', 1.5); // Using bash as a gong placeholder
         }
 
         // Add Guan Yu, Zhang Fei and the 3 campaign soldiers at the flanks
-        // Left flank
-        this.addAmbushUnit('guanyu', 'Guan Yu', 'guanyu', 2, 3, ['green_dragon_slash']);
-        this.addAmbushUnit('ambush_ally1', 'Soldier', 'soldier', 1, 3, ['slash']);
-        
-        // Right flank
-        this.addAmbushUnit('zhangfei', 'Zhang Fei', 'zhangfei', 2, 5, ['serpent_spear']);
-        this.addAmbushUnit('ambush_ally2', 'Soldier', 'soldier', 1, 5, ['slash']);
-        this.addAmbushUnit('ambush_ally3', 'Soldier', 'soldier', 3, 5, ['slash']);
+        // We delay them slightly for a cooler effect
+        setTimeout(() => {
+            // Left flank
+            this.addAmbushUnit('guanyu', 'Guan Yu', 'guanyu', 2, 3, ['green_dragon_slash']);
+            this.addAmbushUnit('ambush_ally1', 'Soldier', 'soldier', 1, 3, ['slash']);
+            
+            setTimeout(() => {
+                // Right flank
+                this.addAmbushUnit('zhangfei', 'Zhang Fei', 'zhangfei', 2, 5, ['serpent_spear']);
+                this.addAmbushUnit('ambush_ally2', 'Soldier', 'soldier', 1, 5, ['slash']);
+                this.addAmbushUnit('ambush_ally3', 'Soldier', 'soldier', 3, 5, ['slash']);
+            }, 300);
+        }, 500);
     }
 
     addAmbushUnit(id, name, imgKey, r, q, attacks) {
@@ -350,22 +393,47 @@ export class TacticsScene extends BaseScene {
         let finalQ = q;
         const startCell = this.tacticsMap.getCell(r, q);
         if (!startCell || startCell.unit || startCell.impassable) {
-            const neighbors = this.tacticsMap.getNeighbors(r, q);
-            const free = neighbors.find(n => !n.unit && !n.impassable);
-            if (free) {
-                finalR = free.r;
-                finalQ = free.q;
+            // BFS for nearest free tile
+            const queue = [{ r, q, d: 0 }];
+            const visited = new Set([`${r},${q}`]);
+            let found = false;
+
+            while (queue.length > 0) {
+                const current = queue.shift();
+                const cell = this.tacticsMap.getCell(current.r, current.q);
+                if (cell && !cell.unit && !cell.impassable) {
+                    finalR = current.r;
+                    finalQ = current.q;
+                    found = true;
+                    break;
+                }
+
+                if (current.d < 3) { // Limit search radius
+                    const neighbors = this.tacticsMap.getNeighbors(current.r, current.q);
+                    for (const n of neighbors) {
+                        const key = `${n.r},${n.q}`;
+                        if (!visited.has(key)) {
+                            visited.add(key);
+                            queue.push({ r: n.r, q: n.q, d: current.d + 1 });
+                        }
+                    }
+                }
             }
         }
 
         unit.r = finalR;
         unit.q = finalQ;
         
-        this.units.push(unit);
-        const cell = this.tacticsMap.getCell(finalR, finalQ);
-        if (cell) cell.unit = unit;
+        // If we STILL couldn't find a spot, just don't add the unit to prevent crashes/overlaps
+        const finalCell = this.tacticsMap.getCell(finalR, finalQ);
+        if (finalCell && !finalCell.unit) {
+            this.units.push(unit);
+            finalCell.unit = unit;
+            this.addDamageNumber(this.getPixelPos(finalR, finalQ).x, this.getPixelPos(finalR, finalQ).y - 20, "AMBUSH!", '#ffd700');
+        } else {
+            console.warn(`Could not find a free spot for ambush unit ${id} at (${r},${q})`);
+        }
         
-        this.addDamageNumber(this.getPixelPos(finalR, finalQ).x, this.getPixelPos(finalR, finalQ).y - 20, "AMBUSH!", '#ffd700');
         return unit;
     }
 
@@ -426,7 +494,7 @@ export class TacticsScene extends BaseScene {
         this.gameOverTimer = 2500; // Time before showing summary
         this.isProcessingTurn = true;
 
-        const gs = this.manager.gameState;
+            const gs = this.manager.gameState;
         gs.set('battleState', null); // Clear state on completion
         
         const unitXP = gs.get('unitXP') || {};
@@ -514,6 +582,16 @@ export class TacticsScene extends BaseScene {
             recoveryInfo: recoveryInfo,
             levelUps: levelUps
         };
+
+        if (this.isCustom) {
+            const stats = gs.get('customStats') || { totalBattles: 0, wins: 0, losses: 0, enemiesDefeated: 0, unitsLost: 0 };
+            stats.totalBattles++;
+            if (won) stats.wins++;
+            else stats.losses++;
+            stats.enemiesDefeated += this.finalStats.enemyCasualties;
+            stats.unitsLost += this.finalStats.alliedCasualties;
+            gs.set('customStats', stats);
+        }
 
         this.clearBattleState();
     }
@@ -604,6 +682,11 @@ export class TacticsScene extends BaseScene {
     }
 
     moveNpcAndTelegraph(unit, onComplete) {
+        const attackKey = unit.attacks[0] || 'stab';
+        const attackConfig = ATTACKS[attackKey] || ATTACKS.stab;
+        const minRange = attackConfig.minRange || 1;
+        const maxRange = attackConfig.range || 1;
+
         const targetFaction = unit.faction === 'enemy' ? ['player', 'allied'] : ['enemy'];
         const unitTargets = this.units.filter(u => targetFaction.includes(u.faction) && u.hp > 0);
         const reachableData = this.tacticsMap.getReachableData(unit.r, unit.q, unit.moveRange, unit);
@@ -625,14 +708,27 @@ export class TacticsScene extends BaseScene {
         let unitAttackTiles = [];
         validDestinations.forEach((data, key) => {
             const [r, q] = key.split(',').map(Number);
-            const neighbors = this.tacticsMap.getNeighbors(r, q);
-            const unitNeighbor = neighbors.find(n => n.unit && n.unit.hp > 0 && targetFaction.includes(n.unit.faction));
-            if (unitNeighbor) {
-                unitAttackTiles.push({ r, q, target: unitNeighbor.unit });
+            
+            // Look for targets within range from this tile
+            const potentialTarget = unitTargets.find(t => {
+                const dist = this.tacticsMap.getDistance(r, q, t.r, t.q);
+                return dist >= minRange && dist <= maxRange;
+            });
+
+            if (potentialTarget) {
+                unitAttackTiles.push({ r, q, target: potentialTarget });
             }
         });
 
         if (unitAttackTiles.length > 0) {
+            // Pick a tile that allows attacking a unit. 
+            // Prefer tiles that are closer to the unit's current position if multiple exist? 
+            // Or just the first one. Let's pick the one that lets us hit the closest target.
+            unitAttackTiles.sort((a, b) => {
+                const distA = this.tacticsMap.getDistance(a.r, a.q, a.target.r, a.target.q);
+                const distB = this.tacticsMap.getDistance(b.r, b.q, b.target.r, b.target.q);
+                return distA - distB;
+            });
             bestTile = unitAttackTiles[0];
             chosenTargetPos = { r: bestTile.target.r, q: bestTile.target.q };
         } 
@@ -641,6 +737,9 @@ export class TacticsScene extends BaseScene {
             let houseAttackTiles = [];
             validDestinations.forEach((data, key) => {
                 const [r, q] = key.split(',').map(Number);
+                
+                // For houses, we'll still mostly look for adjacent ones unless we want archers to snipe houses
+                // For now let's keep it simple and just use maxRange 1 for houses unless it's a dedicated siege unit
                 const neighbors = this.tacticsMap.getNeighbors(r, q);
                 const houseNeighbor = neighbors.find(n => n.terrain.includes('house') && !n.terrain.includes('destroyed'));
                 if (houseNeighbor) {
@@ -738,32 +837,47 @@ export class TacticsScene extends BaseScene {
 
     telegraphSingleNpc(unit) {
         const attackKey = unit.attacks[0] || 'stab';
+        const attackConfig = ATTACKS[attackKey] || ATTACKS.stab;
+        const minRange = attackConfig.minRange || 1;
+        const maxRange = attackConfig.range || 1;
         const targetFaction = unit.faction === 'enemy' ? ['player', 'allied'] : ['enemy'];
         
-        // Find adjacent units to target
-        const neighbors = this.tacticsMap.getNeighbors(unit.r, unit.q);
-        const adjacentUnit = neighbors.find(n => n.unit && n.unit.hp > 0 && targetFaction.includes(n.unit.faction));
+        // Find units within range
+        const unitTargets = this.units.filter(u => targetFaction.includes(u.faction) && u.hp > 0);
+        const targetUnit = unitTargets.find(t => {
+            const dist = this.tacticsMap.getDistance(unit.r, unit.q, t.r, t.q);
+            return dist >= minRange && dist <= maxRange;
+        });
         
-        let dirIndex = -1;
-        if (adjacentUnit) {
-            dirIndex = this.tacticsMap.getDirectionIndex(unit.r, unit.q, adjacentUnit.r, adjacentUnit.q);
+        let targetPos = null;
+        if (targetUnit) {
+            targetPos = { r: targetUnit.r, q: targetUnit.q };
         } else if (unit.faction === 'enemy') {
             // Enemies look for adjacent houses if no units are nearby
+            const neighbors = this.tacticsMap.getNeighbors(unit.r, unit.q);
             const adjacentHouse = neighbors.find(n => n.terrain.includes('house') && !n.terrain.includes('destroyed'));
             if (adjacentHouse) {
-                dirIndex = this.tacticsMap.getDirectionIndex(unit.r, unit.q, adjacentHouse.r, adjacentHouse.q);
+                targetPos = { r: adjacentHouse.r, q: adjacentHouse.q };
             }
         }
 
-        if (dirIndex !== -1) {
-            unit.intent = { type: 'attack', dirIndex, attackKey };
-            const targetCell = this.tacticsMap.getNeighborInDirection(unit.r, unit.q, dirIndex);
-            if (targetCell) {
-                const startPos = this.getPixelPos(unit.r, unit.q);
-                const endPos = this.getPixelPos(targetCell.r, targetCell.q);
-                if (endPos.x < startPos.x) unit.flip = true;
-                if (endPos.x > startPos.x) unit.flip = false;
-            }
+        if (targetPos) {
+            const fromCube = this.tacticsMap.offsetToCube(unit.r, unit.q);
+            const toCube = this.tacticsMap.offsetToCube(targetPos.r, targetPos.q);
+            
+            // RELATIVE INTENT: Store the relative cube vector
+            unit.intent = { 
+                type: 'attack', 
+                relX: toCube.x - fromCube.x,
+                relY: toCube.y - fromCube.y,
+                relZ: toCube.z - fromCube.z,
+                attackKey 
+            };
+            
+            const startPos = this.getPixelPos(unit.r, unit.q);
+            const endPos = this.getPixelPos(targetPos.r, targetPos.q);
+            if (endPos.x < startPos.x) unit.flip = true;
+            if (endPos.x > startPos.x) unit.flip = false;
         } else {
             unit.intent = null;
         }
@@ -815,6 +929,18 @@ export class TacticsScene extends BaseScene {
 
     pushHistory() {
         this.history.push(this.captureState());
+    }
+
+    getIntentTargetCell(unit) {
+        if (!unit || !unit.intent) return null;
+        if (unit.intent.relX === undefined) return null;
+
+        const currentCube = this.tacticsMap.offsetToCube(unit.r, unit.q);
+        return this.tacticsMap.getCellByCube(
+            currentCube.x + unit.intent.relX,
+            currentCube.y + unit.intent.relY,
+            currentCube.z + unit.intent.relZ
+        );
     }
 
     restoreState(state) {
@@ -959,7 +1085,8 @@ export class TacticsScene extends BaseScene {
                 return;
             }
 
-            const targetCell = this.tacticsMap.getNeighborInDirection(unit.r, unit.q, unit.intent.dirIndex);
+            // RELATIVE TARGET CALCULATION
+            const targetCell = this.getIntentTargetCell(unit);
             
             if (targetCell) {
                 this.executeAttack(unit, unit.intent.attackKey, targetCell.r, targetCell.q, () => {
@@ -969,6 +1096,7 @@ export class TacticsScene extends BaseScene {
                     }, 500);
                 });
             } else {
+                // Target is off-map or unreachable relatively (attack cancelled)
                 executeAll(index + 1);
             }
         };
@@ -1180,22 +1308,31 @@ export class TacticsScene extends BaseScene {
 
     executeAttack(attacker, attackKey, targetR, targetQ, onComplete) {
         // Safety check: Only player can trigger attacks via this method during their turn
-        if (this.turn === 'player' && attacker.faction !== 'player') return;
+        if (this.turn === 'player' && attacker.faction !== 'player') {
+            if (onComplete) onComplete();
+            return;
+        }
+
+        // Emergency timeout to prevent execution phase hangs
+        let completed = false;
+        const wrappedOnComplete = () => {
+            if (completed) return;
+            completed = true;
+            if (onComplete) onComplete();
+        };
+        setTimeout(() => {
+            if (!completed) {
+                console.warn(`Attack ${attackKey} by ${attacker.id} timed out. Forcing completion.`);
+                wrappedOnComplete();
+            }
+        }, 3000); // 3s fallback
 
         attacker.intent = null; // Clear intent so arrow disappears
         const attack = ATTACKS[attackKey];
 
-        // Check if there is anything to actually hit before playing sounds/anims
         const targetCell = this.tacticsMap.getCell(targetR, targetQ);
         const victim = targetCell ? targetCell.unit : null;
         const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
-
-        if (!victim && !isDestructible && attackKey !== 'double_blades' && attackKey !== 'green_dragon_slash' && attackKey !== 'serpent_spear') {
-            // Standard attacks (bash, slash, etc.) played into thin air: play whiff sound
-            assets.playSound('whiff');
-            if (onComplete) onComplete();
-            return;
-        }
 
         // Play attack sound
         if (attackKey.startsWith('serpent_spear')) assets.playSound('stab');
@@ -1204,9 +1341,6 @@ export class TacticsScene extends BaseScene {
         else if (attackKey === 'bash') assets.playSound('bash');
         else if (attackKey.startsWith('slash')) assets.playSound('slash');
         else if (attackKey === 'stab') assets.playSound('stab');
-        else if (attackKey.startsWith('arrow_shot')) {
-            // Sound played during release in executeStandardAttack
-        }
 
         const startPos = this.getPixelPos(attacker.r, attacker.q);
         const targetPos = this.getPixelPos(targetR, targetQ);
@@ -1216,14 +1350,14 @@ export class TacticsScene extends BaseScene {
         if (targetPos.x > startPos.x) attacker.flip = false;
 
         if (attackKey === 'double_blades') {
-            this.executeDoubleBlades(attacker, targetR, targetQ, onComplete);
-        } else if (attackKey === 'green_dragon_slash') {
-            this.executeGreenDragonSlash(attacker, targetR, targetQ, onComplete);
-        } else if (attackKey === 'serpent_spear') {
-            this.executeSerpentSpear(attacker, targetR, targetQ, onComplete);
+            this.executeDoubleBlades(attacker, targetR, targetQ, wrappedOnComplete);
+        } else if (attackKey.startsWith('green_dragon_slash')) {
+            this.executeGreenDragonSlash(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
+        } else if (attackKey.startsWith('serpent_spear')) {
+            this.executeSerpentSpear(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
         } else {
             // Standard single-target attack (Bash, etc.)
-            this.executeStandardAttack(attacker, attackKey, targetR, targetQ, onComplete);
+            this.executeStandardAttack(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
         }
     }
 
@@ -1251,7 +1385,7 @@ export class TacticsScene extends BaseScene {
                         startX: startPos.x,
                         startY: startPos.y - 20, // Fire from bow height
                         targetX: endPos.x,
-                        targetY: endPos.y,
+                        targetY: victim ? endPos.y - 15 : endPos.y, // Target center mass if enemy exists
                         progress: 0,
                         type: 'arrow',
                         duration: 500,
@@ -1289,21 +1423,21 @@ export class TacticsScene extends BaseScene {
                 if (onComplete) onComplete();
             }, 1000);
         } else {
-            setTimeout(() => {
-                // Apply dialogue trigger for boss deaths in Daxing
-                if (victim && victim.hp > 0 && (victim.id === 'dengmao' || victim.id === 'chengyuanzhi')) {
-                    // Potential for mid-attack dialogue if needed
-                }
+        setTimeout(() => {
+            const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
 
-                this.damageCell(targetR, targetQ);
-                if (victim) {
-                    this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos);
-                }
-                setTimeout(() => {
-                    attacker.action = 'standby';
-                    if (onComplete) onComplete();
-                }, 400);
+            this.damageCell(targetR, targetQ);
+            if (victim) {
+                this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos);
+            } else if (!isDestructible) {
+                assets.playSound('whiff');
+            }
+            
+            setTimeout(() => {
+                attacker.action = 'standby';
+                if (onComplete) onComplete();
             }, 400);
+        }, 400);
         }
     }
 
@@ -1323,12 +1457,17 @@ export class TacticsScene extends BaseScene {
         const targetCell = this.tacticsMap.getCell(targetR, targetQ);
         const frontVictim = targetCell ? targetCell.unit : null;
         const backVictim = backCell ? backCell.unit : null;
+        
+        const isFrontDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
+        const isBackDestructible = backCell && (backCell.terrain.includes('house') || backCell.terrain.includes('ice')) && !backCell.terrain.includes('destroyed') && !backCell.terrain.includes('broken');
 
         // First strike (Front)
         setTimeout(() => {
             this.damageCell(targetR, targetQ);
             if (frontVictim) {
                 this.applyDamageAndPush(attacker, frontVictim, ATTACKS.double_blades, targetR, targetQ, startPos, frontPos);
+            } else if (!isFrontDestructible) {
+                assets.playSound('whiff', 0.6);
             }
 
             // Turn around
@@ -1343,6 +1482,8 @@ export class TacticsScene extends BaseScene {
                     if (backCell) this.damageCell(backCell.r, backCell.q);
                     if (backVictim && backCell) {
                         this.applyDamageAndPush(attacker, backVictim, ATTACKS.double_blades, backCell.r, backCell.q, startPos, backPos);
+                    } else if (!isBackDestructible) {
+                        assets.playSound('whiff', 0.6);
                     }
                     setTimeout(() => {
                         attacker.action = 'standby';
@@ -1353,23 +1494,35 @@ export class TacticsScene extends BaseScene {
         }, 400);
     }
 
-    executeGreenDragonSlash(attacker, targetR, targetQ, onComplete) {
-        attacker.action = 'attack_1';
+    executeGreenDragonSlash(attacker, attackKey, targetR, targetQ, onComplete) {
+        const attack = ATTACKS[attackKey] || ATTACKS.green_dragon_slash;
+        attacker.action = attack.animation || 'attack_1';
         attacker.frame = 0;
 
         const startPos = this.getPixelPos(attacker.r, attacker.q);
-        const affected = this.getAffectedTiles(attacker, 'green_dragon_slash', targetR, targetQ);
+        const affected = this.getAffectedTiles(attacker, attackKey, targetR, targetQ);
 
         setTimeout(() => {
+            let hitAnything = false;
             affected.forEach(pos => {
                 this.damageCell(pos.r, pos.q);
                 const cell = this.tacticsMap.getCell(pos.r, pos.q);
-                if (cell && cell.unit) {
+                if (cell) {
+                    const isDestructible = (cell.terrain.includes('house') || cell.terrain.includes('ice')) && !cell.terrain.includes('destroyed') && !cell.terrain.includes('broken');
+                    if (isDestructible) hitAnything = true;
+                    
+                    if (cell.unit) {
                     const victim = cell.unit;
                     const victimPos = this.getPixelPos(cell.r, cell.q);
-                    this.applyDamageAndPush(attacker, victim, ATTACKS.green_dragon_slash, cell.r, cell.q, startPos, victimPos);
+                        this.applyDamageAndPush(attacker, victim, attack, cell.r, cell.q, startPos, victimPos);
+                        hitAnything = true;
+                    }
                 }
             });
+
+            if (!hitAnything) {
+                assets.playSound('whiff', 0.8);
+            }
 
             setTimeout(() => {
                 attacker.action = 'standby';
@@ -1378,23 +1531,36 @@ export class TacticsScene extends BaseScene {
         }, 400);
     }
 
-    executeSerpentSpear(attacker, targetR, targetQ, onComplete) {
-        attacker.action = 'attack_2';
+    executeSerpentSpear(attacker, attackKey, targetR, targetQ, onComplete) {
+        const attack = ATTACKS[attackKey] || ATTACKS.serpent_spear;
+        attacker.action = attack.animation || 'attack_2';
         attacker.frame = 0;
 
         const startPos = this.getPixelPos(attacker.r, attacker.q);
-        const affected = this.getAffectedTiles(attacker, 'serpent_spear', targetR, targetQ);
+        const affected = this.getAffectedTiles(attacker, attackKey, targetR, targetQ);
 
         setTimeout(() => {
+            let hitAnything = false;
             affected.forEach(pos => {
                 this.damageCell(pos.r, pos.q);
                 const cell = this.tacticsMap.getCell(pos.r, pos.q);
-                if (cell && cell.unit) {
+                if (cell) {
+                    const isDestructible = (cell.terrain.includes('house') || cell.terrain.includes('ice')) && !cell.terrain.includes('destroyed') && !cell.terrain.includes('broken');
+                    if (isDestructible) hitAnything = true;
+
+                    if (cell.unit) {
                     const victim = cell.unit;
                     const victimPos = this.getPixelPos(cell.r, cell.q);
-                    this.applyDamageAndPush(attacker, victim, ATTACKS.serpent_spear, cell.r, cell.q, startPos, victimPos);
+                        // Pass the original targetR/targetQ so we know which hex is the "furthest" one for pushing
+                        this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, victimPos);
+                        hitAnything = true;
+                    }
                 }
             });
+
+            if (!hitAnything) {
+                assets.playSound('whiff', 0.8);
+            }
 
             setTimeout(() => {
                 attacker.action = 'standby';
@@ -1454,7 +1620,7 @@ export class TacticsScene extends BaseScene {
         // Apply damage & Shake
         victim.hp -= finalDamage;
         if (finalDamage > 0) {
-            victim.triggerShake(startPos.x, startPos.y, endPos.x, endPos.y);
+        victim.triggerShake(startPos.x, startPos.y, endPos.x, endPos.y);
         }
 
         // Visual Feedback
@@ -1474,7 +1640,7 @@ export class TacticsScene extends BaseScene {
             victim.hp = 0;
             victim.action = 'death';
             victim.intent = null;
-            targetCell.unit = null;
+            if (targetCell) targetCell.unit = null;
             assets.playSound('death', 0.6);
             if (victim.faction === 'enemy') {
                 this.enemiesKilled++;
@@ -1482,16 +1648,17 @@ export class TacticsScene extends BaseScene {
         }
 
         if (attack.push) {
-            // Special Case: Zhang Fei only pushes the furthest hex initially
+            // Special Case: Zhang Fei only pushes the furthest hex initially (the one targeted)
             if (attack.push === 'furthest') {
-                const distFromAttacker = this.tacticsMap.getDistance(attacker.r, attacker.q, victim.r, victim.q);
-                if (distFromAttacker < attack.range) {
+                if (victim.r !== targetR || victim.q !== targetQ) {
                     return; // Don't push intermediate targets
                 }
             }
 
             // Handle push
             const dirIndex = this.tacticsMap.getDirectionIndex(attacker.r, attacker.q, targetR, targetQ);
+            if (dirIndex === -1) return; // Cannot push if direction is undefined
+
             const pushCell = this.tacticsMap.getNeighborInDirection(targetR, targetQ, dirIndex);
             
             const victimPos = this.getPixelPos(victim.r, victim.q);
@@ -1501,7 +1668,7 @@ export class TacticsScene extends BaseScene {
 
                 if (pushCell.terrain.includes('water_deep')) {
                     // Drown
-                    targetCell.unit = null;
+                    if (targetCell) targetCell.unit = null;
                     victim.setPosition(pushCell.r, pushCell.q);
                     victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false);
                     setTimeout(() => { 
@@ -1511,7 +1678,7 @@ export class TacticsScene extends BaseScene {
                     }, 300);
                 } else if (!pushCell.impassable && !pushCell.unit) {
                     // Valid empty tile
-                    targetCell.unit = null;
+                    if (targetCell) targetCell.unit = null;
                     victim.setPosition(pushCell.r, pushCell.q);
                     // Only occupy the new cell if still alive
                     if (victim.hp > 0) {
@@ -1548,7 +1715,7 @@ export class TacticsScene extends BaseScene {
                         if (victim.hp <= 0) {
                             victim.hp = 0;
                             victim.action = 'death';
-                            targetCell.unit = null;
+                            if (targetCell) targetCell.unit = null;
                             assets.playSound('death', 0.6);
                         }
                     }, 125);
@@ -1566,7 +1733,7 @@ export class TacticsScene extends BaseScene {
                         victim.hp = 0;
                         victim.action = 'death';
                         victim.intent = null;
-                        targetCell.unit = null;
+                        if (targetCell) targetCell.unit = null;
                         assets.playSound('death', 0.6);
                     }
                 }, 125);
@@ -1614,12 +1781,12 @@ export class TacticsScene extends BaseScene {
 
         if (!unitsToPlace) {
             if (this.battleId === 'daxing') {
-                unitsToPlace = [
-                    { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
-                    { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
-                    { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
-                    { id: 'ally1', name: 'Soldier', imgKey: 'soldier', r: 1, q: 3, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] },
-                    { id: 'ally2', name: 'Soldier', imgKey: 'soldier', r: 1, q: 4, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] },
+            unitsToPlace = [
+                { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
+                { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
+                { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
+                { id: 'ally1', name: 'Soldier', imgKey: 'soldier', r: 1, q: 3, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] },
+                { id: 'ally2', name: 'Soldier', imgKey: 'soldier', r: 1, q: 4, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] },
                     { id: 'ally3', name: 'Soldier', imgKey: 'soldier', r: 1, q: 5, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] },
                     { id: 'dengmao', name: 'Deng Mao', imgKey: 'bandit1', r: 8, q: 4, moveRange: 3, hp: 5, faction: 'enemy', attacks: ['heavy_thrust'] },
                     { id: 'chengyuanzhi', name: 'Cheng Yuanzhi', imgKey: 'bandit2', r: 9, q: 5, moveRange: 3, hp: 5, faction: 'enemy', attacks: ['whirlwind'] },
@@ -1655,24 +1822,45 @@ export class TacticsScene extends BaseScene {
 
                 // NO enemies initially - they will enter as reinforcements
             } else if (this.battleId === 'custom') {
-                unitsToPlace = [
-                    { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
-                    { id: 'rebel1', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 2, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
-                    { id: 'rebel2', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 4, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
-                    { id: 'rebel3', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 6, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
-                    { id: 'rebel4', name: 'Yellow Turban', imgKey: 'yellowturban', r: 9, q: 3, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
-                    { id: 'rebel5', name: 'Yellow Turban', imgKey: 'yellowturban', r: 9, q: 5, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
-                    { id: 'rebel6', name: 'Yellow Turban', imgKey: 'yellowturban', r: 9, q: 7, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] }
-                ];
-            } else {
-                // Default fallback
+                const enemyType = this.mapGenParams.enemyType || 'yellowturban';
+                const enemyCount = this.mapGenParams.enemyCount || 6;
+
                 unitsToPlace = [
                     { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
                     { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
                     { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
-                    { id: 'rebel1', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 4, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
-                    { id: 'rebel2', name: 'Yellow Turban', imgKey: 'yellowturban', r: 8, q: 5, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] }
+                    { id: 'ally1', name: 'Volunteer', imgKey: 'soldier', r: 1, q: 3, moveRange: 3, hp: 3, faction: 'allied', attacks: ['bash'] },
+                    { id: 'ally2', name: 'Volunteer', imgKey: 'soldier', r: 1, q: 4, moveRange: 3, hp: 3, faction: 'allied', attacks: ['bash'] },
+                    { id: 'ally3', name: 'Volunteer', imgKey: 'soldier', r: 1, q: 5, moveRange: 3, hp: 3, faction: 'allied', attacks: ['bash'] }
                 ];
+
+                for (let i = 0; i < enemyCount; i++) {
+                    let type = enemyType;
+                    if (type === 'random_mix') type = Math.random() < 0.5 ? 'yellowturban' : 'archer';
+                    
+                    const r = 7 + Math.floor(i / 3);
+                    const q = 2 + (i % 5);
+                    
+                    unitsToPlace.push({
+                        id: `custom_rebel_${i}`,
+                        name: type === 'archer' ? 'Archer' : 'Yellow Turban',
+                        imgKey: type === 'archer' ? 'archer' : 'yellowturban',
+                        r: r, q: q,
+                        moveRange: 3,
+                        hp: type === 'archer' ? 2 : 3,
+                        faction: 'enemy',
+                        attacks: type === 'archer' ? ['arrow_shot'] : ['bash']
+                    });
+                }
+            } else {
+                // Default fallback
+            unitsToPlace = [
+                { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
+                { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
+                { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
+                { id: 'rebel1', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 4, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
+                { id: 'rebel2', name: 'Yellow Turban', imgKey: 'yellowturban', r: 8, q: 5, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] }
+            ];
             }
         }
 
@@ -1760,7 +1948,7 @@ export class TacticsScene extends BaseScene {
 
     update(timestamp) {
         const dt = timestamp - (this.lastTime || timestamp);
-        this.lastTime = timestamp;
+            this.lastTime = timestamp;
 
         if (this.isIntroAnimating) {
             this.introTimer += dt;
@@ -1783,6 +1971,19 @@ export class TacticsScene extends BaseScene {
         
         if (this.isIntroDialogueActive || this.activeDialogue) {
             this.dialogueElapsed = (this.dialogueElapsed || 0) + dt;
+            
+            // Auto-clear activeDialogue after its timer expires
+            if (this.activeDialogue && this.activeDialogue.timer !== undefined) {
+                this.activeDialogue.timer -= dt;
+                if (this.activeDialogue.timer <= 0) {
+                    if (this.activeDialogue.unit) {
+                        this.activeDialogue.unit.dialogue = "";
+                        this.activeDialogue.unit.voiceId = null;
+                    }
+                    this.activeDialogue = null;
+                    this.dialogueElapsed = 0;
+                }
+            }
         } else {
             this.dialogueElapsed = 0;
         }
@@ -2078,7 +2279,8 @@ export class TacticsScene extends BaseScene {
         const targetedUnits = new Set();
         this.units.forEach(u => {
             if (u.hp > 0 && u.intent && u.intent.type === 'attack') {
-                const targetCell = this.tacticsMap.getNeighborInDirection(u.r, u.q, u.intent.dirIndex);
+                const targetCell = this.getIntentTargetCell(u);
+                
                 if (targetCell) {
                     const affected = this.getAffectedTiles(u, u.intent.attackKey, targetCell.r, targetCell.q);
                     affected.forEach(t => {
@@ -2305,10 +2507,14 @@ export class TacticsScene extends BaseScene {
                 if (u.hp > 0 && u.faction === 'enemy' && u.intent && u.intent.type === 'attack') {
                     const attack = ATTACKS[u.intent.attackKey];
                     if (attack && attack.push) {
-                        const targetCell = this.tacticsMap.getNeighborInDirection(u.r, u.q, u.intent.dirIndex);
+                        const targetCell = this.getIntentTargetCell(u);
+                        
                         // Only show arrow if there's a unit to be pushed
                         if (targetCell && targetCell.unit) {
-                            this.drawPushArrow(ctx, targetCell.r, targetCell.q, u.intent.dirIndex);
+                            const dirIndex = this.tacticsMap.getDirectionIndex(u.r, u.q, targetCell.r, targetCell.q);
+                            if (dirIndex !== -1) {
+                                this.drawPushArrow(ctx, targetCell.r, targetCell.q, dirIndex);
+                            }
                         }
                     }
                 }
@@ -2425,7 +2631,8 @@ export class TacticsScene extends BaseScene {
     drawIntent(ctx, unit, x, y) {
         if (!unit.intent) return;
         
-        const targetCell = this.tacticsMap.getNeighborInDirection(unit.r, unit.q, unit.intent.dirIndex);
+        const targetCell = this.getIntentTargetCell(unit);
+        
         if (!targetCell) return;
 
         // Target pixel position
@@ -2831,7 +3038,7 @@ export class TacticsScene extends BaseScene {
                 // Pulsing red glow
                 ctx.fillStyle = `rgba(${120 + pulse * 135}, 20, 20, 0.95)`;
             } else {
-                ctx.fillStyle = 'rgba(40, 20, 20, 0.9)';
+            ctx.fillStyle = 'rgba(40, 20, 20, 0.9)';
             }
             
             ctx.fillRect(rx, ey, btnW, btnH);
@@ -3051,7 +3258,7 @@ export class TacticsScene extends BaseScene {
                 if (this.battleId === 'qingzhou_prelude') {
                     this.checkWinLoss(); // Trigger transition immediately
                 } else {
-                    this.startNpcPhase();
+                this.startNpcPhase();
                 }
             }
             }
@@ -3094,7 +3301,7 @@ export class TacticsScene extends BaseScene {
             y >= this.endTurnRect.y && y <= this.endTurnRect.y + this.endTurnRect.h) {
             
             if (this.allUnitsActed()) {
-                this.startExecutionPhase();
+            this.startExecutionPhase();
             } else {
                 assets.playSound('ui_click');
                 this.showEndTurnConfirm = true;
@@ -3160,9 +3367,9 @@ export class TacticsScene extends BaseScene {
                         attacker.hasAttacked = true;
                         attacker.hasActed = true;
                         if (this.selectedUnit === attacker) {
-                            this.selectedUnit = null;
-                            this.selectedAttack = null;
-                            this.attackTiles.clear();
+                    this.selectedUnit = null;
+                    this.selectedAttack = null;
+                    this.attackTiles.clear();
                         }
                         this.pushHistory(); // Capture state AFTER attack
                     }

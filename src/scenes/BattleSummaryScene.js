@@ -80,21 +80,18 @@ export class BattleSummaryScene extends BaseScene {
             this.drawStatLine(ctx, "XP Gained:", this.stats.xpGained || 0, startY + spacing * 4, '#ffd700');
         }
 
-        // Recovery Info (Injured Heroes)
-        if (this.showLines > 5 && this.stats.recoveryInfo && this.stats.recoveryInfo.length > 0) {
-            let ry = startY + spacing * 5 + 5;
-            this.stats.recoveryInfo.forEach(info => {
-                const text = `${info.name} recovered. -${info.xpLost} XP`;
-                this.drawPixelText(ctx, text, canvas.width / 2, ry, { 
-                    color: '#ff4444', 
-                    font: '8px Tiny5', 
-                    align: 'center' 
-                });
-                ry += 10;
-            });
-        }
-
         if (this.showLines > 5) {
+            if (this.stats.battleId === 'custom') {
+                const gs = this.manager.gameState;
+                const cs = gs.get('customStats') || { wins: 0, totalBattles: 0 };
+                const text = `CUSTOM RECORD: ${cs.wins} - ${cs.totalBattles - cs.wins}`;
+                this.drawPixelText(ctx, text, canvas.width / 2, 205, {
+                    color: '#0af',
+                    font: '8px Silkscreen',
+                    align: 'center'
+                });
+            }
+
             const pulse = Math.abs(Math.sin(Date.now() / 500));
             ctx.save();
             ctx.globalAlpha = 0.5 + pulse * 0.5;
@@ -141,7 +138,15 @@ export class BattleSummaryScene extends BaseScene {
             const isCustom = this.stats.battleId === 'custom';
             const isGameOver = this.stats.battleId === 'qingzhou_siege' && this.stats.won;
 
-            if (this.stats.levelUps && this.stats.levelUps.length > 0) {
+            if (this.stats.recoveryInfo && this.stats.recoveryInfo.length > 0) {
+                this.manager.switchTo('recovery', {
+                    recoveryInfo: this.stats.recoveryInfo,
+                    levelUps: this.stats.levelUps,
+                    isEndGame: isGameOver,
+                    isCustom: isCustom,
+                    battleId: this.stats.battleId
+                });
+            } else if (this.stats.levelUps && this.stats.levelUps.length > 0) {
                 this.manager.switchTo('levelup', { 
                     levelUps: this.stats.levelUps,
                     isEndGame: isGameOver,

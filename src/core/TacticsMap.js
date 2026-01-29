@@ -139,6 +139,25 @@ export class TacticsMap {
         return this.getCell(r + d.dr, q + d.dq);
     }
 
+    getCellAtDirectionDistance(r, q, dirIndex, dist) {
+        if (dirIndex === -1 || dist <= 0) return null;
+        let currentR = r;
+        let currentQ = q;
+        for (let i = 0; i < dist; i++) {
+            const directions = this.getDirections(currentR);
+            const d = directions[dirIndex];
+            currentR += d.dr;
+            currentQ += d.dq;
+        }
+        return this.getCell(currentR, currentQ);
+    }
+
+    getCellByCube(x, y, z) {
+        const r = z;
+        const q = x + Math.floor(r / 2);
+        return this.getCell(r, q);
+    }
+
     generate(params = {}) {
         const { 
             seed = Math.random(), 
@@ -167,6 +186,9 @@ export class TacticsMap {
 
             this.placeProps(forestDensity, houseDensity);
             
+            // Post-process to ensure all passable tiles are actually reachable
+            this.ensureReachability();
+
             // General connectivity check to ensure the map isn't totally segmented
             success = this.checkGeneralConnectivity();
             attempts++;
@@ -294,19 +316,24 @@ export class TacticsMap {
 
                 // Ensure a scalable slope on each side
                 if (r === Math.floor(this.height / 2)) {
-                    const leftSlope = this.getCell(r, 1);
-                    const rightSlope = this.getCell(r, this.width - 2);
-                    if (leftSlope) { 
-                        leftSlope.terrain = this.getDefaultGrass(); 
-                        leftSlope.level = 1; 
-                        leftSlope.impassable = false; 
+                    // Clear the row to ensure the slope is reachable from the center
+                    for (let q = 1; q < 4; q++) {
+                        const cell = this.getCell(r, q);
+                        if (cell) {
+                            cell.terrain = this.getDefaultGrass();
+                            cell.impassable = false;
+                            cell.level = Math.max(0, 2 - (q)); // Smooth descent
+                        }
                     }
-                    if (rightSlope) { 
-                        rightSlope.terrain = this.getDefaultGrass(); 
-                        rightSlope.level = 1; 
-                        rightSlope.impassable = false; 
+                    for (let q = this.width - 2; q > this.width - 5; q--) {
+                        const cell = this.getCell(r, q);
+                        if (cell) {
+                            cell.terrain = this.getDefaultGrass();
+                            cell.impassable = false;
+                            cell.level = Math.max(0, 2 - (this.width - 1 - q)); // Smooth descent
+                        }
                     }
-                    
+
                     // Also make one mountain cell on each side climbable but high
                     const leftHigh = this.getCell(r, 0);
                     const rightHigh = this.getCell(r, this.width - 1);
@@ -329,17 +356,21 @@ export class TacticsMap {
 
                 // Ensure a scalable slope
                 if (q === Math.floor(this.width / 2)) {
-                    const topSlope = this.getCell(1, q);
-                    const bottomSlope = this.getCell(this.height - 2, q);
-                    if (topSlope) { 
-                        topSlope.terrain = this.getDefaultGrass(); 
-                        topSlope.level = 1; 
-                        topSlope.impassable = false; 
+                    for (let r = 1; r < 4; r++) {
+                        const cell = this.getCell(r, q);
+                        if (cell) {
+                            cell.terrain = this.getDefaultGrass();
+                            cell.impassable = false;
+                            cell.level = Math.max(0, 2 - r);
+                        }
                     }
-                    if (bottomSlope) { 
-                        bottomSlope.terrain = this.getDefaultGrass(); 
-                        bottomSlope.level = 1; 
-                        bottomSlope.impassable = false; 
+                    for (let r = this.height - 2; r > this.height - 5; r--) {
+                        const cell = this.getCell(r, q);
+                        if (cell) {
+                            cell.terrain = this.getDefaultGrass();
+                            cell.impassable = false;
+                            cell.level = Math.max(0, 2 - (this.height - 1 - r));
+                        }
                     }
                     
                     const topHigh = this.getCell(0, q);
@@ -349,6 +380,125 @@ export class TacticsMap {
                 }
             }
         }
+    }
+
+    ensureReachability() {
+        // Find a guaranteed reachable starting point (the center of the map/valley)
+        const startR = Math.floor(this.height / 2);
+        const startQ = Math.floor(this.width / 2);
+        const startCell = this.getCell(startR, startQ);
+        if (!startCell) return;
+        
+        // Force start cell to be passable
+        startCell.impassable = false;
+        startCell.level = 0;
+
+        // BFS to find all reachable cells
+        const reachable = new Set();
+        const queue = [{ r: startR, q: startQ }];
+        reachable.add(`${startR},${startQ}`);
+
+        while (queue.length > 0) {
+            const current = queue.shift();
+            const neighbors = this.getNeighbors(current.r, current.q);
+            for (const n of neighbors) {
+                if (n.impassable) continue;
+                
+                // Climbing rule check
+                const currentCell = this.getCell(current.r, current.q);
+                if (Math.abs(n.level - currentCell.level) > 1) continue;
+
+                const key = `${n.r},${n.q}`;
+                if (!reachable.has(key)) {
+                    reachable.add(key);
+                    queue.push({ r: n.r, q: n.q });
+                }
+            }
+        }
+
+        // Now find any intended-to-be-passable cells that were NOT reached
+        // and create a path to them by modifying terrain/levels
+        for (let r = 0; r < this.height; r++) {
+            for (let q = 0; q < this.width; q++) {
+                const cell = this.grid[r][q];
+                if (cell.impassable) continue;
+                
+                const key = `${r},${q}`;
+                if (!reachable.has(key)) {
+                    // This cell is isolated. Let's force a path to it.
+                    // Simple approach: find nearest reachable neighbor and flatten path
+                    let nearestReachable = null;
+                    let minDist = Infinity;
+                    
+                    for (const reachKey of reachable) {
+                        const [rr, rq] = reachKey.split(',').map(Number);
+                        const dist = this.getDistance(r, q, rr, rq);
+                        if (dist < minDist) {
+                            minDist = dist;
+                            nearestReachable = { r: rr, q: rq };
+                        }
+                    }
+
+                    if (nearestReachable) {
+                        // Create a "corridor" of passable, level-adjusted cells
+                        const path = this.getLine(r, q, nearestReachable.r, nearestReachable.q);
+                        let lastLevel = this.getCell(nearestReachable.r, nearestReachable.q).level;
+                        
+                        for (const step of path) {
+                            const stepCell = this.getCell(step.r, step.q);
+                            if (!stepCell) continue;
+                            
+                            stepCell.impassable = false;
+                            // Smoothly adjust level if diff > 1
+                            if (Math.abs(stepCell.level - lastLevel) > 1) {
+                                stepCell.level = lastLevel > stepCell.level ? lastLevel - 1 : lastLevel + 1;
+                            }
+                            if (stepCell.terrain.includes('mountain') || stepCell.terrain.includes('wall')) {
+                                stepCell.terrain = this.getDefaultGrass();
+                            }
+                            lastLevel = stepCell.level;
+                            reachable.add(`${step.r},${step.q}`);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    getLine(r1, q1, r2, q2) {
+        const line = [];
+        const dist = this.getDistance(r1, q1, r2, q2);
+        if (dist === 0) return line;
+
+        const from = this.offsetToCube(r1, q1);
+        const to = this.offsetToCube(r2, q2);
+
+        for (let i = 0; i <= dist; i++) {
+            const t = i / dist;
+            const q = from.x + (to.x - from.x) * t;
+            const r = from.z + (to.z - from.z) * t;
+            const s = -q - r;
+
+            // Round cube coordinates
+            let rq = Math.round(q);
+            let rr = Math.round(r);
+            let rs = Math.round(s);
+
+            const q_diff = Math.abs(rq - q);
+            const r_diff = Math.abs(rr - r);
+            const s_diff = Math.abs(rs - s);
+
+            if (q_diff > r_diff && q_diff > s_diff) {
+                rq = -rr - rs;
+            } else if (r_diff > s_diff) {
+                rr = -rq - rs;
+            }
+
+            const finalR = rr;
+            const finalQ = rq + Math.floor(rr / 2);
+            line.push({ r: finalR, q: finalQ });
+        }
+        return line;
     }
 
     generateRiver() {
