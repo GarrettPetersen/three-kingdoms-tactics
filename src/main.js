@@ -313,7 +313,9 @@ async function init() {
                 step_generic: 'assets/sfx/step_generic.wav',
                 ui_click: 'assets/sfx/step_generic.wav',
                 step_water_walk: 'assets/sfx/step_water_walk.wav',
-                death: 'assets/sfx/death.wav'
+                death: 'assets/sfx/death.wav',
+                gong: 'assets/sfx/gong.mp3',
+                unsheath_sword: 'assets/sfx/unsheath_sword.mp3'
             }),
             assets.loadMusic({
                 title_loop: 'assets/music/title_loop.ogg',

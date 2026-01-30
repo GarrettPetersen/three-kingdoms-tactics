@@ -112,7 +112,7 @@ export class TitleScene extends BaseScene {
             if (this.animationProgress > 1) {
                 this.animationProgress = 1;
                 this.state = 'GUANDAO';
-                assets.playSound('shing', 0.6);
+                assets.playSound('unsheath_sword', 0.6);
             }
 
             // Ease in-out cubic
@@ -161,7 +161,7 @@ export class TitleScene extends BaseScene {
         
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+        
         // Draw parallax layers
         this.layers.forEach(layer => {
             const img = assets.getImage(layer.key);
@@ -257,8 +257,8 @@ export class TitleScene extends BaseScene {
         
         // Reset alpha just in case
         ctx.globalAlpha = 1.0;
-    }
-
+        }
+        
     renderMenu(ctx, canvas) {
         const cx = Math.floor(canvas.width / 2);
         const cy = canvas.height - 70;
@@ -388,7 +388,7 @@ export class TitleScene extends BaseScene {
             // Handle Yes
             if (this.confirmYesRect && x >= this.confirmYesRect.x && x <= this.confirmYesRect.x + this.confirmYesRect.w &&
                 y >= this.confirmYesRect.y && y <= this.confirmYesRect.y + this.confirmYesRect.h) {
-                assets.playSound('ui_click');
+                assets.playSound('gong', 0.8);
                 this.manager.gameState.reset();
                 this.manager.switchTo('campaign_selection');
                 return;
@@ -402,10 +402,10 @@ export class TitleScene extends BaseScene {
             }
             return; // Block other inputs while confirm is visible
         }
-
+        
         if (this.continueRect && x >= this.continueRect.x && x <= this.continueRect.x + this.continueRect.w &&
             y >= this.continueRect.y && y <= this.continueRect.y + this.continueRect.h) {
-            assets.playSound('ui_click');
+            assets.playSound('gong', 0.8);
             const lastScene = this.manager.gameState.get('lastScene') || 'campaign_selection';
             const campaignId = this.manager.gameState.get('currentCampaign');
             this.manager.switchTo(lastScene, { campaignId, isResume: true });
@@ -422,7 +422,7 @@ export class TitleScene extends BaseScene {
                 return;
             }
 
-            assets.playSound('ui_click');
+            assets.playSound('gong', 0.8);
             this.manager.gameState.reset();
             this.manager.switchTo('campaign_selection');
             return;

@@ -230,16 +230,25 @@ export class TacticsScene extends BaseScene {
                 }
             } else if (vc.type === 'reach_flag_then_defeat_all') {
                 const liubei = playerUnits.find(u => u.id === 'liubei');
-                if (!this.reachedFlag && liubei && liubei.r === this.flagPos.r && liubei.q === this.flagPos.q) {
+                // Only trigger if Liu Bei is NOT currently moving to avoid race conditions with checkArrival
+                // and ensure flagPos exists to prevent crashes
+                if (!this.reachedFlag && liubei && !liubei.isMoving && this.flagPos && liubei.r === this.flagPos.r && liubei.q === this.flagPos.q) {
                     this.reachedFlag = true;
                     this.isProcessingTurn = true;
                     this.activeDialogue = null;
                     this.triggerAmbush();
-                    setTimeout(() => { this.isProcessingTurn = false; }, 3500);
+                    
+                    // Clear the lock after animations/spawns are likely done.
+                    // 3 seconds is enough for the gongs and spawns.
+                    setTimeout(() => { 
+                        if (this.isProcessingTurn && !this.isGameOver) {
+                            this.isProcessingTurn = false; 
+                        }
+                    }, 3000);
                 }
 
                 if (enemyUnits.length === 0) {
-                    if (this.isIntroAnimating || this.isIntroDialogueActive) return;
+                    if (this.isIntroAnimating || this.isIntroDialogueActive || this.isProcessingTurn) return;
                     if (this.ambushTriggered) {
                         if (this.turnNumber > 2) this.endBattle(true);
                     } else if (this.turnNumber > 2) {
@@ -267,8 +276,8 @@ export class TacticsScene extends BaseScene {
             }
             
             setTimeout(() => {
-                const guanyu = this.addAmbushUnit('guanyu', 'Guan Yu', 'guanyu', 2, 3, ['green_dragon_slash']);
-                const zhangfei = this.addAmbushUnit('zhangfei', 'Zhang Fei', 'zhangfei', 2, 5, ['serpent_spear']);
+                const zhangfei = this.addAmbushUnit('zhangfei', 'Zhang Fei', 'zhangfei', 10, 1, ['serpent_spear']);
+                const guanyu = this.addAmbushUnit('guanyu', 'Guan Yu', 'guanyu', 10, 8, ['green_dragon_slash']);
                 
                 if (guanyu) {
                     guanyu.dialogue = "Brother! We heard the signal was... oh. They are all fallen.";
@@ -288,21 +297,23 @@ export class TacticsScene extends BaseScene {
             liubei.voiceId = 'qz_lb_amb_01';
             this.activeDialogue = { unit: liubei, timer: 1500 };
             assets.playVoice(liubei.voiceId);
-            assets.playSound('bash', 1.5); // Using bash as a gong placeholder
+            assets.playSound('gong', 1.0);
         }
 
         // Add Guan Yu, Zhang Fei and the 3 campaign soldiers at the flanks
         // We delay them slightly for a cooler effect
         setTimeout(() => {
-            // Left flank
-            this.addAmbushUnit('guanyu', 'Guan Yu', 'guanyu', 2, 3, ['green_dragon_slash']);
-            this.addAmbushUnit('ambush_ally1', 'Soldier', 'soldier', 1, 3, ['slash']);
+            // Bottom Left
+            this.addAmbushUnit('zhangfei', 'Zhang Fei', 'zhangfei', 10, 1, ['serpent_spear']);
+            this.addAmbushUnit('ambush_ally1', 'Soldier', 'soldier', 11, 0, ['slash']);
             
+            // Top (Blocking/Reinforcing)
+            this.addAmbushUnit('ambush_ally3', 'Soldier', 'soldier', 0, 5, ['slash']);
+
             setTimeout(() => {
-                // Right flank
-                this.addAmbushUnit('zhangfei', 'Zhang Fei', 'zhangfei', 2, 5, ['serpent_spear']);
-                this.addAmbushUnit('ambush_ally2', 'Soldier', 'soldier', 1, 5, ['slash']);
-                this.addAmbushUnit('ambush_ally3', 'Soldier', 'soldier', 3, 5, ['slash']);
+                // Bottom Right
+                this.addAmbushUnit('guanyu', 'Guan Yu', 'guanyu', 10, 8, ['green_dragon_slash']);
+                this.addAmbushUnit('ambush_ally2', 'Soldier', 'soldier', 11, 9, ['slash']);
             }, 300);
         }, 500);
     }
@@ -1181,7 +1192,7 @@ export class TacticsScene extends BaseScene {
             cell.impassable = false;
             const pos = this.getPixelPos(r, q);
             this.addDamageNumber(pos.x, pos.y - 20, "DESTROYED");
-            assets.playSound('building_damage', 1.2); // Louder for destruction
+            assets.playSound('building_damage', 1.0); // Clamped to max 1.0
         } else if (cell.terrain === 'wall_01') {
             // Walls are sturdy and don't break yet, but we play a sound
             assets.playSound('building_damage', 0.6);
@@ -1714,9 +1725,17 @@ export class TacticsScene extends BaseScene {
             const battleDef = BATTLES[this.battleId];
             if (battleDef && battleDef.units) {
                 unitsToPlace = battleDef.units.map(uDef => {
-                    const template = UNIT_TEMPLATES[uDef.type][uDef.id] || UNIT_TEMPLATES[uDef.type][uDef.id.split('_')[0]];
+                    const typeTemplates = UNIT_TEMPLATES[uDef.type];
+                    if (!typeTemplates) {
+                        console.warn(`No templates found for type: ${uDef.type}`);
+                        return null;
+                    }
+                    
+                    const baseId = uDef.id.replace(/\d+$/, ''); // Strip trailing digits (e.g., ally1 -> ally)
+                    const template = typeTemplates[uDef.id] || typeTemplates[uDef.id.split('_')[0]] || typeTemplates[baseId];
+                    
                     if (!template) {
-                        console.warn(`No template found for unit: ${uDef.id} (type: ${uDef.type})`);
+                        console.warn(`No template found for unit: ${uDef.id} (type: ${uDef.type}, baseId: ${baseId})`);
                         return null;
                     }
                     return {
@@ -3297,8 +3316,10 @@ export class TacticsScene extends BaseScene {
                     this.selectedUnit.hasMoved = true;
                     const movingUnit = this.selectedUnit;
                     const checkArrival = () => {
-                        // Safety: stop if turn changed or processing or unit selection cleared (e.g. undo)
-                        if (this.turn !== 'player' || this.isProcessingTurn || !this.selectedUnit) return;
+                        // Safety: stop if turn changed or unit selection cleared (e.g. undo)
+                        // We DON'T stop just because isProcessingTurn is true, as reaching a flag 
+                        // might set that but we still need the move to "finish" logically.
+                        if (this.turn !== 'player' || !this.selectedUnit) return;
 
                         if (!movingUnit.isMoving) {
                             if (this.selectedUnit === movingUnit) {

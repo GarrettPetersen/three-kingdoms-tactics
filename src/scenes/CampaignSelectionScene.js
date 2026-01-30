@@ -31,7 +31,7 @@ export class CampaignSelectionScene extends BaseScene {
     }
 
     enter() {
-        assets.playMusic('title_loop');
+        assets.playMusic('title');
         
         // Update availability based on GameState
         const gs = this.manager.gameState;

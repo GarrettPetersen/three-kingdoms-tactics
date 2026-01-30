@@ -218,7 +218,7 @@ export class CustomBattleMenuScene extends BaseScene {
                 this.manager.switchTo('title');
                 assets.playSound('ui_click');
             } else if (btn.type === 'start') {
-                assets.playSound('ui_click');
+                assets.playSound('gong', 0.8);
                 this.manager.switchTo('tactics', {
                     battleId: 'custom',
                     isCustom: true,

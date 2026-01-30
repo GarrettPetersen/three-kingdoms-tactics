@@ -392,6 +392,9 @@ export class TacticsMap {
         // Force start cell to be passable
         startCell.impassable = false;
         startCell.level = 0;
+        if (startCell.terrain.includes('mountain') || startCell.terrain.includes('wall') || startCell.terrain.includes('water_deep') || startCell.terrain.includes('house')) {
+            startCell.terrain = this.getDefaultGrass();
+        }
 
         // BFS to find all reachable cells
         const reachable = new Set();
@@ -453,8 +456,11 @@ export class TacticsMap {
                             if (Math.abs(stepCell.level - lastLevel) > 1) {
                                 stepCell.level = lastLevel > stepCell.level ? lastLevel - 1 : lastLevel + 1;
                             }
-                            if (stepCell.terrain.includes('mountain') || stepCell.terrain.includes('wall')) {
+                            if (stepCell.terrain.includes('mountain') || stepCell.terrain.includes('wall') || stepCell.terrain.includes('house')) {
                                 stepCell.terrain = this.getDefaultGrass();
+                            }
+                            if (stepCell.terrain.includes('water_deep')) {
+                                stepCell.terrain = 'water_shallow_01'; // Bridge or shallow it
                             }
                             lastLevel = stepCell.level;
                             reachable.add(`${step.r},${step.q}`);

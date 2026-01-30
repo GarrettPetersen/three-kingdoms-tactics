@@ -261,7 +261,8 @@ export class AssetLoader {
         const sound = this.getSound(key);
         if (sound) {
             const clone = sound.cloneNode();
-            clone.volume = volume;
+            // Clamp volume between 0 and 1 to prevent IndexSizeError
+            clone.volume = Math.max(0, Math.min(1, volume));
             clone.play().catch(e => console.log("Sound play prevented:", e));
         }
     }
