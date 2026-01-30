@@ -1,7 +1,9 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 import { ANIMATIONS } from '../core/Constants.js';
+import { CHAPTERS } from '../data/Chapters.js';
 
+// Locations and reminders will eventually be moved to CHAPTERS data
 const LOCATIONS = {
     zhuo: {
         id: 'zhuo',

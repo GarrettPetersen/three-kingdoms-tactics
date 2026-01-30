@@ -1,6 +1,7 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 import { ANIMATIONS } from '../core/Constants.js';
+import { NARRATIVE_SCRIPTS } from '../data/NarrativeScripts.js';
 
 export class NarrativeScene extends BaseScene {
     constructor() {
@@ -22,9 +23,15 @@ export class NarrativeScene extends BaseScene {
         } else if (params.keepMusic || assets.currentMusicKey === 'oath') {
             // Do nothing, keep current music if requested or if already playing oath music
         } else {
-        assets.playMusic('narrative', 0.5);
+            assets.playMusic('narrative', 0.5);
         }
-        this.script = params.script || [];
+        
+        if (params.scriptId && NARRATIVE_SCRIPTS[params.scriptId]) {
+            this.script = NARRATIVE_SCRIPTS[params.scriptId];
+        } else {
+            this.script = params.script || [];
+        }
+
         this.onComplete = params.onComplete || null;
         this.currentStep = 0;
         this.subStep = 0; // Track 2-line chunks for long dialogue

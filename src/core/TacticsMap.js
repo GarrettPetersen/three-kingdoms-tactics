@@ -304,15 +304,15 @@ export class TacticsMap {
         if (vertical) {
             // North-South Pass: Mountain ranges on left and right sides
             for (let r = 0; r < this.height; r++) {
-                // Left mountains
-                this.setMountain(r, 0);
-                this.setMountain(r, 1);
-                if (Math.random() < 0.6) this.setMountain(r, 2);
+                // Left mountains (Height increases towards the edge)
+                this.setMountain(r, 0, 4);
+                this.setMountain(r, 1, 3);
+                if (Math.random() < 0.6) this.setMountain(r, 2, 2);
                 
-                // Right mountains
-                this.setMountain(r, this.width - 1);
-                this.setMountain(r, this.width - 2);
-                if (Math.random() < 0.6) this.setMountain(r, this.width - 3);
+                // Right mountains (Height increases towards the edge)
+                this.setMountain(r, this.width - 1, 4);
+                this.setMountain(r, this.width - 2, 3);
+                if (Math.random() < 0.6) this.setMountain(r, this.width - 3, 2);
 
                 // Ensure a scalable slope on each side
                 if (r === Math.floor(this.height / 2)) {
@@ -322,7 +322,7 @@ export class TacticsMap {
                         if (cell) {
                             cell.terrain = this.getDefaultGrass();
                             cell.impassable = false;
-                            cell.level = Math.max(0, 2 - (q)); // Smooth descent
+                            cell.level = Math.max(0, 3 - q); // Smooth descent from 2 to 0
                         }
                     }
                     for (let q = this.width - 2; q > this.width - 5; q--) {
@@ -330,29 +330,29 @@ export class TacticsMap {
                         if (cell) {
                             cell.terrain = this.getDefaultGrass();
                             cell.impassable = false;
-                            cell.level = Math.max(0, 2 - (this.width - 1 - q)); // Smooth descent
+                            cell.level = Math.max(0, 3 - (this.width - 1 - q)); // Smooth descent from 2 to 0
                         }
                     }
 
                     // Also make one mountain cell on each side climbable but high
                     const leftHigh = this.getCell(r, 0);
                     const rightHigh = this.getCell(r, this.width - 1);
-                    if (leftHigh) { leftHigh.impassable = false; leftHigh.level = 2; }
-                    if (rightHigh) { rightHigh.impassable = false; rightHigh.level = 2; }
+                    if (leftHigh) { leftHigh.impassable = false; leftHigh.level = 3; }
+                    if (rightHigh) { rightHigh.impassable = false; rightHigh.level = 3; }
                 }
             }
         } else {
             // East-West Pass: Mountain ranges on top and bottom
             for (let q = 0; q < this.width; q++) {
                 // Top mountains
-                this.setMountain(0, q);
-                this.setMountain(1, q);
-                if (Math.random() < 0.6) this.setMountain(2, q);
+                this.setMountain(0, q, 4);
+                this.setMountain(1, q, 3);
+                if (Math.random() < 0.6) this.setMountain(2, q, 2);
                 
                 // Bottom mountains
-                this.setMountain(this.height - 1, q);
-                this.setMountain(this.height - 2, q);
-                if (Math.random() < 0.6) this.setMountain(this.height - 3, q);
+                this.setMountain(this.height - 1, q, 4);
+                this.setMountain(this.height - 2, q, 3);
+                if (Math.random() < 0.6) this.setMountain(this.height - 3, q, 2);
 
                 // Ensure a scalable slope
                 if (q === Math.floor(this.width / 2)) {
@@ -361,7 +361,7 @@ export class TacticsMap {
                         if (cell) {
                             cell.terrain = this.getDefaultGrass();
                             cell.impassable = false;
-                            cell.level = Math.max(0, 2 - r);
+                            cell.level = Math.max(0, 3 - r);
                         }
                     }
                     for (let r = this.height - 2; r > this.height - 5; r--) {
@@ -369,14 +369,14 @@ export class TacticsMap {
                         if (cell) {
                             cell.terrain = this.getDefaultGrass();
                             cell.impassable = false;
-                            cell.level = Math.max(0, 2 - (this.height - 1 - r));
+                            cell.level = Math.max(0, 3 - (this.height - 1 - r));
                         }
                     }
                     
                     const topHigh = this.getCell(0, q);
                     const bottomHigh = this.getCell(this.height - 1, q);
-                    if (topHigh) { topHigh.impassable = false; topHigh.level = 2; }
-                    if (bottomHigh) { bottomHigh.impassable = false; bottomHigh.level = 2; }
+                    if (topHigh) { topHigh.impassable = false; topHigh.level = 3; }
+                    if (bottomHigh) { bottomHigh.impassable = false; bottomHigh.level = 3; }
                 }
             }
         }
@@ -533,7 +533,7 @@ export class TacticsMap {
         }
     }
 
-    setMountain(r, q) {
+    setMountain(r, q, level = 2) {
         const cell = this.getCell(r, q);
         if (!cell) return;
         if (this.biome === 'northern_snowy' && Math.random() < 0.6) {
@@ -541,7 +541,7 @@ export class TacticsMap {
         } else {
             cell.terrain = 'mountain_stone_01';
         }
-        cell.level = 2;
+        cell.level = level;
         cell.impassable = true;
     }
 
@@ -572,7 +572,8 @@ export class TacticsMap {
         for (let r = 0; r < this.height; r++) {
             for (let q = 0; q < this.width; q++) {
                 const cell = this.grid[r][q];
-                cell.elevation = cell.level * 6;
+                // Elevation pixels = level * 8 for more distinct 3D look
+                cell.elevation = cell.level * 8;
             }
         }
     }

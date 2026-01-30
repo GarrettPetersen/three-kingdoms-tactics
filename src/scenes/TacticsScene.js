@@ -3,6 +3,7 @@ import { assets } from '../core/AssetLoader.js';
 import { ANIMATIONS, ATTACKS, UPGRADE_PATHS } from '../core/Constants.js';
 import { TacticsMap } from '../core/TacticsMap.js';
 import { Unit } from '../entities/Unit.js';
+import { BATTLES, UNIT_TEMPLATES } from '../data/Battles.js';
 
 export class TacticsScene extends BaseScene {
     constructor() {
@@ -93,52 +94,11 @@ export class TacticsScene extends BaseScene {
         this.introTimer = 0;
         this.lastTime = 0;
         
-        if (this.battleId === 'qingzhou_siege') {
-            this.flagPos = { r: 1, q: 4 };
+        const battleDef = BATTLES[this.battleId];
+        if (battleDef) {
+            this.mapGenParams = params.mapGen || battleDef.map;
         } else {
-            this.flagPos = null;
-        }
-        
-        this.baseXP = 5; // Default base XP for battles
-
-        // Check for saved battle state
-        const savedState = gs.get('battleState');
-
-        if (params.isResume && savedState && savedState.battleId === this.battleId) {
-            // Restore from save
-            this.turn = savedState.turn;
-            this.turnNumber = savedState.turnNumber;
-            this.weatherType = savedState.weatherType;
-            this.mapGenParams = savedState.mapGen;
-            
-            // Restore Map
-            for (let r = 0; r < config.mapHeight; r++) {
-                for (let q = 0; q < config.mapWidth; q++) {
-                    const cell = this.tacticsMap.getCell(r, q);
-                    const savedCell = savedState.grid[r][q];
-                    cell.terrain = savedCell.terrain;
-                    cell.level = savedCell.level;
-                    cell.elevation = savedCell.elevation;
-                    cell.impassable = savedCell.impassable;
-                }
-            }
-
-            // Restore Units
-            this.units = savedState.units.map(uData => {
-                const u = new Unit(uData.id, {
-                    ...uData,
-                    img: assets.getImage(uData.imgKey)
-                });
-                // Sync positions on the map
-                const cell = this.tacticsMap.getCell(u.r, u.q);
-                if (cell) cell.unit = u;
-                return u;
-            });
-
-            this.isIntroAnimating = false;
-            this.isIntroDialogueActive = false;
-        } else {
-            // Original initialization
+            // Original initialization for custom/fallbacks
             this.mapGenParams = params.mapGen || {
                 biome: 'central',
                 layout: 'river', 
@@ -147,8 +107,25 @@ export class TacticsScene extends BaseScene {
                 riverDensity: 0.05,
                 houseDensity: 0.03
             };
-            
-            this.tacticsMap.generate(this.mapGenParams);
+        }
+
+        this.tacticsMap.generate(this.mapGenParams);
+
+        if (battleDef && battleDef.flagPos) {
+            // Find a suitable spot for the flag if specified spot is impassable
+            let r = battleDef.flagPos.r, q = battleDef.flagPos.q;
+            let cell = this.tacticsMap.getCell(r, q);
+            if (!cell || cell.impassable) {
+                const foundCell = this.findNearestFreeCell(r, q);
+                if (foundCell) {
+                    r = foundCell.r;
+                    q = foundCell.q;
+                }
+            }
+            this.flagPos = { r, q };
+        } else {
+            this.flagPos = null;
+        }
             
             // Reachability Check for Qingzhou Siege Flag
             if (this.battleId === 'qingzhou_siege' && this.flagPos) {
@@ -162,33 +139,32 @@ export class TacticsScene extends BaseScene {
                 }
             }
 
-            this.placeInitialUnits(params.units);
-            
-            // Setup Weather
-            this.weatherType = this.mapGenParams.weather || null;
-            if (this.weatherType === 'none') this.weatherType = null;
-            
-            if (!this.weatherType) {
-                if (this.mapGenParams.biome === 'northern_snowy') this.weatherType = 'snow';
-                else if (this.mapGenParams.biome === 'southern' && Math.random() < 0.3) this.weatherType = 'rain';
-            }
-            
-            this.isIntroDialogueActive = false; // Set to false initially
-            this.dialogueStep = 0;
-            
-            // Wait for intro animation then start dialogue
-            setTimeout(() => {
-                this.startIntroDialogue();
-            }, 1500);
+        this.placeInitialUnits(params.units);
+        
+        // Setup Weather
+        this.weatherType = this.mapGenParams.weather || null;
+        if (this.weatherType === 'none') this.weatherType = null;
+        
+        if (!this.weatherType) {
+            if (this.mapGenParams.biome === 'northern_snowy') this.weatherType = 'snow';
+            else if (this.mapGenParams.biome === 'southern' && Math.random() < 0.3) this.weatherType = 'rain';
         }
+        
+        this.isIntroDialogueActive = false; // Set to false initially
+        this.dialogueStep = 0;
+        
+        // Wait for intro animation then start dialogue
+        setTimeout(() => {
+            this.startIntroDialogue();
+        }, 1500);
 
         this.particles = [];
         this.manager.gameState.set('lastScene', 'tactics');
 
         // Track initial houses
         this.initialHouseCount = 0;
-        for (let r = 0; r < config.mapHeight; r++) {
-            for (let q = 0; q < config.mapWidth; q++) {
+        for (let r = 0; r < this.manager.config.mapHeight; r++) {
+            for (let q = 0; q < this.manager.config.mapWidth; q++) {
                 const cell = this.tacticsMap.getCell(r, q);
                 if (cell && cell.terrain.includes('house') && !cell.terrain.includes('destroyed')) {
                     this.initialHouseCount++;
@@ -200,25 +176,10 @@ export class TacticsScene extends BaseScene {
     startIntroDialogue() {
         this.subStep = 0;
         this.introScript = null;
-        if (this.battleId === 'daxing') {
-            this.introScript = [
-                { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'dx_lb_01', text: "The Yellow Turban vanguard is here. They seek to plunder Zhuo County!" },
-                { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'dx_gy_01', text: "Their numbers are great, but they are but a rabble without leadership." },
-                { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'dx_zf_01', text: "Let me at them! My Serpent Spear is thirsty for rebel blood!" },
-                { portraitKey: 'bandit1', name: 'Deng Mao', voiceId: 'dx_dm_01', text: "Imperial dogs! You dare stand in the way of the Lord of Heaven?" },
-                { portraitKey: 'bandit2', name: 'Cheng Yuanzhi', voiceId: 'dx_cyz_01', text: "Slay them all! The Han is dead, the Yellow Heavens shall rise!" },
-                { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'dx_lb_02', text: "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!" }
-            ];
-        } else if (this.battleId === 'qingzhou_prelude') {
-            this.introScript = [
-                { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'qz_lb_02', text: "They are many and we but few. We cannot prevail in a direct assault." },
-                { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'qz_lb_03', text: "Guan Yu, Zhang Fei—take half our forces and hide behind the hills. When the gongs beat, strike from the flanks!" },
-                { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'qz_gy_01', text: "A superior strategy, brother. We go at once." }
-            ];
-        } else if (this.battleId === 'qingzhou_siege') {
-            this.introScript = [
-                { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'qz_bt_lb_03', text: "I must reach the flag to signal the ambush!" }
-            ];
+        const battleDef = BATTLES[this.battleId];
+        
+        if (battleDef && battleDef.introScript) {
+            this.introScript = battleDef.introScript;
         }
         
         if (this.introScript) {
@@ -233,91 +194,64 @@ export class TacticsScene extends BaseScene {
     checkWinLoss() {
         if (this.isGameOver || this.isIntroAnimating || this.isIntroDialogueActive) return;
 
-        // Custom Win/Loss for Battle 1 (Daxing)
-        if (this.battleId === 'daxing') {
-            const oathBrothers = this.units.filter(u => (u.id === 'liubei' || u.id === 'guanyu' || u.id === 'zhangfei') && u.hp > 0);
-            const alliedSoldiers = this.units.filter(u => u.faction === 'allied' && u.hp > 0);
-            const captains = this.units.filter(u => (u.id === 'dengmao' || u.id === 'chengyuanzhi') && u.hp > 0);
+        const battleDef = BATTLES[this.battleId];
+        const playerUnits = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp > 0);
+        const enemyUnits = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
 
-            // Loss: All oath brothers die OR all allied soldiers die
-            if (oathBrothers.length === 0 || alliedSoldiers.length === 0) {
-                this.endBattle(false);
-                return;
-            }
+        // Loss: All player team wiped
+        if (playerUnits.length === 0) {
+            this.endBattle(false);
+            return;
+        }
 
-            // Win: Both captains defeated
-            if (captains.length === 0 && !this.isRetreating) {
-                this.startRetreatPhase();
-                return;
-            }
-        } else if (this.battleId === 'qingzhou_prelude') {
-            // The prelude ends after the intro dialogue is finished
-            if (!this.isIntroDialogueActive && !this.isGameOver) {
-                console.log("Prelude finished, switching to siege battle...");
-                this.isGameOver = true; // Use this as a flag to prevent multiple switches
-                this.manager.switchTo('tactics', {
-                    battleId: 'qingzhou_siege',
-                    mapGen: {
-                        biome: 'central',
-                        layout: 'mountain_pass',
-                        orientation: 'ns', // North-South pass
-                        forestDensity: 0.1,
-                        mountainDensity: 0.15,
-                        riverDensity: 0.0,
-                        houseDensity: 0.0
-                    }
-                });
-                return; // CRITICAL: Stop processing checkWinLoss for this frame
-            }
-        } else if (this.battleId === 'qingzhou_siege') {
-            const liubei = this.units.find(u => u.id === 'liubei' && u.hp > 0);
-            const enemyUnits = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
-
-            // Loss: Liu Bei dies
-            if (!liubei) {
-                this.endBattle(false);
-                return;
-            }
-
-            // Objective 1: Retreat to the flag
-            if (!this.reachedFlag && liubei.r === this.flagPos.r && liubei.q === this.flagPos.q) {
-                this.reachedFlag = true;
-                this.isProcessingTurn = true; // Prevent input during ambush sequence
-                this.triggerAmbush();
-                
-                // Release processing after a delay to allow animations/spawning to finish
-                setTimeout(() => {
-                    this.isProcessingTurn = false;
-                }, 2500);
-            }
-
-            // Objective 2: Kill all enemies (after ambush OR if Liu Bei is a beast)
-            // Safety: Don't win instantly on turn 1 before enemies have even spawned
-            if (enemyUnits.length === 0) {
-                // If intro animation or dialogue is STILL active, definitely don't check win loss
-                if (this.isIntroAnimating || this.isIntroDialogueActive) return;
-
-                // Wait for ambush to at least trigger and spawn some units
-                if (this.ambushTriggered) {
-                    // Only win if we've reached turn 3 or later, ensuring reinforcements had a chance
-                    if (this.turnNumber > 2) {
-                        this.endBattle(true);
-                    }
-                } else if (this.turnNumber > 2) {
-                    // Surprise! All enemies are dead before ambush triggered (Liu Bei is a beast)
-                    this.triggerAmbush(true); // pass true for 'surprised' mode
-                } else {
-                    // Turn 1 or 2 and no enemies yet - wait for reinforcements
+        if (battleDef && battleDef.victoryCondition) {
+            const vc = battleDef.victoryCondition;
+            
+            // Check Must Survive conditions
+            if (vc.mustSurvive) {
+                const deadRequired = vc.mustSurvive.some(id => !this.units.find(u => u.id === id && u.hp > 0));
+                if (deadRequired) {
+                    this.endBattle(false);
                     return;
                 }
             }
-        } else {
-            // Default Win/Loss
-            const playerUnits = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp > 0);
-            const enemyUnits = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
 
-            if (playerUnits.length === 0) this.endBattle(false);
-            else if (enemyUnits.length === 0) this.endBattle(true);
+            if (vc.type === 'defeat_captains') {
+                const captains = enemyUnits.filter(u => vc.captains.includes(u.id));
+                if (captains.length === 0 && !this.isRetreating) {
+                    this.startRetreatPhase();
+                    return;
+                }
+            } else if (vc.type === 'prelude') {
+                if (!this.isIntroDialogueActive && !this.isGameOver) {
+                    this.isGameOver = true;
+                    this.manager.switchTo('tactics', { battleId: 'qingzhou_siege' });
+                    return;
+                }
+            } else if (vc.type === 'reach_flag_then_defeat_all') {
+                const liubei = playerUnits.find(u => u.id === 'liubei');
+                if (!this.reachedFlag && liubei && liubei.r === this.flagPos.r && liubei.q === this.flagPos.q) {
+                    this.reachedFlag = true;
+                    this.isProcessingTurn = true;
+                    this.activeDialogue = null;
+                    this.triggerAmbush();
+                    setTimeout(() => { this.isProcessingTurn = false; }, 3500);
+                }
+
+                if (enemyUnits.length === 0) {
+                    if (this.isIntroAnimating || this.isIntroDialogueActive) return;
+                    if (this.ambushTriggered) {
+                        if (this.turnNumber > 2) this.endBattle(true);
+                    } else if (this.turnNumber > 2) {
+                        this.triggerAmbush(true);
+                    }
+                }
+            }
+        } else {
+            // Default: defeat all enemies
+            if (enemyUnits.length === 0) {
+                this.endBattle(true);
+            }
         }
     }
 
@@ -381,58 +315,23 @@ export class TacticsScene extends BaseScene {
         const level = this.getLevelFromXP(xp);
         const finalMaxHp = this.getMaxHpForLevel(level, 4);
         
+        // Find closest free spot if r,q is taken
+        const finalCell = this.findNearestFreeCell(r, q, 3);
+        if (!finalCell) {
+            console.warn(`Could not find a free spot for ambush unit ${id} at (${r},${q})`);
+            return null;
+        }
+
         const unit = new Unit(id, {
-            id, name, imgKey, r, q,
+            id, name, imgKey, r: finalCell.r, q: finalCell.q,
             level, hp: finalMaxHp, maxHp: finalMaxHp,
             faction: 'player', moveRange: 4, attacks,
             img: assets.getImage(imgKey)
         });
         
-        // Find closest free spot if r,q is taken
-        let finalR = r;
-        let finalQ = q;
-        const startCell = this.tacticsMap.getCell(r, q);
-        if (!startCell || startCell.unit || startCell.impassable) {
-            // BFS for nearest free tile
-            const queue = [{ r, q, d: 0 }];
-            const visited = new Set([`${r},${q}`]);
-            let found = false;
-
-            while (queue.length > 0) {
-                const current = queue.shift();
-                const cell = this.tacticsMap.getCell(current.r, current.q);
-                if (cell && !cell.unit && !cell.impassable) {
-                    finalR = current.r;
-                    finalQ = current.q;
-                    found = true;
-                    break;
-                }
-
-                if (current.d < 3) { // Limit search radius
-                    const neighbors = this.tacticsMap.getNeighbors(current.r, current.q);
-                    for (const n of neighbors) {
-                        const key = `${n.r},${n.q}`;
-                        if (!visited.has(key)) {
-                            visited.add(key);
-                            queue.push({ r: n.r, q: n.q, d: current.d + 1 });
-                        }
-                    }
-                }
-            }
-        }
-
-        unit.r = finalR;
-        unit.q = finalQ;
-        
-        // If we STILL couldn't find a spot, just don't add the unit to prevent crashes/overlaps
-        const finalCell = this.tacticsMap.getCell(finalR, finalQ);
-        if (finalCell && !finalCell.unit) {
-            this.units.push(unit);
-            finalCell.unit = unit;
-            this.addDamageNumber(this.getPixelPos(finalR, finalQ).x, this.getPixelPos(finalR, finalQ).y - 20, "AMBUSH!", '#ffd700');
-        } else {
-            console.warn(`Could not find a free spot for ambush unit ${id} at (${r},${q})`);
-        }
+        this.units.push(unit);
+        finalCell.unit = unit;
+        this.addDamageNumber(this.getPixelPos(finalCell.r, finalCell.q).x, this.getPixelPos(finalCell.r, finalCell.q).y - 20, "AMBUSH!", '#ffd700');
         
         return unit;
     }
@@ -1123,8 +1022,8 @@ export class TacticsScene extends BaseScene {
             let spawns = 0;
             spawnSpots.forEach(spot => {
                 if (spawns >= 2) return;
-                const cell = this.tacticsMap.getCell(spot.r, spot.q);
-                if (cell && !cell.unit && !cell.impassable) {
+                const cell = this.findNearestFreeCell(spot.r, spot.q, 5);
+                if (cell) {
                     const id = `reinforcement_${Date.now()}_${spawns}`;
                     const config = {
                         name: "Yellow Turban",
@@ -1132,7 +1031,7 @@ export class TacticsScene extends BaseScene {
                         faction: 'enemy',
                         hp: 3,
                         attacks: ['bash'],
-                        r: spot.r, q: spot.q
+                        r: cell.r, q: cell.q
                     };
                     const unit = new Unit(id, config);
                     unit.img = assets.getImage('yellowturban');
@@ -1157,6 +1056,9 @@ export class TacticsScene extends BaseScene {
 
     checkQingzhouReinforcements() {
         // 5 enter on turn 1, 5 enter on turn 2
+        // If ambush was triggered, we might want to stop these or change them, 
+        // but the prompt says "5 enemies appearing on the first turn and then 5 more on the next turn"
+        // which usually refers to the start of the battle.
         if (this.turnNumber === 1 || this.turnNumber === 2) {
             const spawnSpots = [
                 { r: this.manager.config.mapHeight - 1, q: 2 },
@@ -1168,8 +1070,8 @@ export class TacticsScene extends BaseScene {
 
             let spawns = 0;
             spawnSpots.forEach((spot, i) => {
-                const cell = this.tacticsMap.getCell(spot.r, spot.q);
-                if (cell && !cell.unit && !cell.impassable) {
+                const cell = this.findNearestFreeCell(spot.r, spot.q, 5);
+                if (cell) {
                     const id = `qz_rebel_t${this.turnNumber}_${i}`;
                     const config = {
                         name: "Yellow Turban",
@@ -1177,7 +1079,7 @@ export class TacticsScene extends BaseScene {
                         faction: 'enemy',
                         hp: 3,
                         attacks: ['bash'],
-                        r: spot.r, q: spot.q
+                        r: cell.r, q: cell.q
                     };
                     const unit = new Unit(id, config);
                     unit.img = assets.getImage('yellowturban');
@@ -1770,6 +1672,35 @@ export class TacticsScene extends BaseScene {
         return Math.min(10, baseHp + bonus);
     }
 
+    findNearestFreeCell(r, q, maxDist = 5) {
+        const startCell = this.tacticsMap.getCell(r, q);
+        if (startCell && !startCell.unit && !startCell.impassable) {
+            return startCell;
+        }
+
+        const queue = [{ r, q, d: 0 }];
+        const visited = new Set([`${r},${q}`]);
+
+        while (queue.length > 0) {
+            const current = queue.shift();
+
+            if (current.d < maxDist) {
+                const neighbors = this.tacticsMap.getNeighbors(current.r, current.q);
+                for (const n of neighbors) {
+                    const key = `${n.r},${n.q}`;
+                    if (!visited.has(key)) {
+                        visited.add(key);
+                        if (!n.unit && !n.impassable) {
+                            return n;
+                        }
+                        queue.push({ r: n.r, q: n.q, d: current.d + 1 });
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     getXPForLevel(level) {
         if (level <= 1) return 0;
         return 5 * level * (level + 1) - 10;
@@ -1780,47 +1711,21 @@ export class TacticsScene extends BaseScene {
         let unitsToPlace = specifiedUnits;
 
         if (!unitsToPlace) {
-            if (this.battleId === 'daxing') {
-            unitsToPlace = [
-                { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
-                { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
-                { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
-                { id: 'ally1', name: 'Soldier', imgKey: 'soldier', r: 1, q: 3, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] },
-                { id: 'ally2', name: 'Soldier', imgKey: 'soldier', r: 1, q: 4, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] },
-                    { id: 'ally3', name: 'Soldier', imgKey: 'soldier', r: 1, q: 5, moveRange: 3, hp: 2, faction: 'allied', attacks: ['slash'] },
-                    { id: 'dengmao', name: 'Deng Mao', imgKey: 'bandit1', r: 8, q: 4, moveRange: 3, hp: 5, faction: 'enemy', attacks: ['heavy_thrust'] },
-                    { id: 'chengyuanzhi', name: 'Cheng Yuanzhi', imgKey: 'bandit2', r: 9, q: 5, moveRange: 3, hp: 5, faction: 'enemy', attacks: ['whirlwind'] },
-                    { id: 'rebel1', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 3, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
-                    { id: 'rebel2', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 5, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] }
-                ];
-            } else if (this.battleId === 'qingzhou_prelude') {
-                // The 3 brothers in a corner
-                unitsToPlace = [
-                    { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 1, q: 1, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
-                    { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 2, q: 1, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
-                    { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 1, q: 2, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] }
-                ];
-                // Tons of enemies behind the wall/gate
-                for (let i = 0; i < 20; i++) {
-                    unitsToPlace.push({
-                        id: `rebel_pre_${i}`,
-                        name: 'Yellow Turban',
-                        imgKey: 'yellowturban',
-                        r: 6 + Math.floor(i / 5),
-                        q: 1 + (i % 8),
-                        moveRange: 3,
-                        hp: 3,
-                        faction: 'enemy',
-                        attacks: ['bash']
-                    });
-                }
-            } else if (this.battleId === 'qingzhou_siege') {
-                // Liu Bei starts alone, next to the enemies
-                unitsToPlace = [
-                    { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 7, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] }
-                ];
-
-                // NO enemies initially - they will enter as reinforcements
+            const battleDef = BATTLES[this.battleId];
+            if (battleDef && battleDef.units) {
+                unitsToPlace = battleDef.units.map(uDef => {
+                    const template = UNIT_TEMPLATES[uDef.type][uDef.id] || UNIT_TEMPLATES[uDef.type][uDef.id.split('_')[0]];
+                    if (!template) {
+                        console.warn(`No template found for unit: ${uDef.id} (type: ${uDef.type})`);
+                        return null;
+                    }
+                    return {
+                        ...template,
+                        id: uDef.id,
+                        r: uDef.r,
+                        q: uDef.q
+                    };
+                }).filter(u => u !== null);
             } else if (this.battleId === 'custom') {
                 const enemyType = this.mapGenParams.enemyType || 'yellowturban';
                 const enemyCount = this.mapGenParams.enemyCount || 6;
@@ -1854,13 +1759,13 @@ export class TacticsScene extends BaseScene {
                 }
             } else {
                 // Default fallback
-            unitsToPlace = [
-                { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
-                { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
-                { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
-                { id: 'rebel1', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 4, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
-                { id: 'rebel2', name: 'Yellow Turban', imgKey: 'yellowturban', r: 8, q: 5, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] }
-            ];
+                unitsToPlace = [
+                    { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
+                    { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
+                    { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
+                    { id: 'rebel1', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 4, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
+                    { id: 'rebel2', name: 'Yellow Turban', imgKey: 'yellowturban', r: 8, q: 5, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] }
+                ];
             }
         }
 
@@ -1870,70 +1775,58 @@ export class TacticsScene extends BaseScene {
             const unitClasses = gs.get('unitClasses') || {};
 
             unitsToPlace.forEach(u => {
-            let finalR = u.r;
-            let finalQ = u.q;
-            
-            const cell = this.tacticsMap.getCell(finalR, finalQ);
-            if (!cell || cell.impassable || cell.unit) {
-                let found = false;
-                for (let dist = 1; dist < 5 && !found; dist++) {
-                    for (let dr = -dist; dr <= dist && !found; dr++) {
-                        for (let dq = -dist; dq <= dist && !found; dq++) {
-                            const testCell = this.tacticsMap.getCell(u.r + dr, u.q + dq);
-                            if (testCell && !testCell.impassable && !testCell.unit) {
-                                finalR = u.r + dr;
-                                finalQ = u.q + dq;
-                                found = true;
+                const cell = this.findNearestFreeCell(u.r, u.q, 5);
+                if (!cell) {
+                    console.warn(`Could not find a free spot for unit ${u.id} at (${u.r},${u.q})`);
+                    return;
+                }
+
+                const finalR = cell.r;
+                const finalQ = cell.q;
+
+                const xp = unitXP[u.id] || 0;
+                const level = this.getLevelFromXP(xp);
+
+                // Level bonuses
+                const finalMaxHp = this.getMaxHpForLevel(level, u.maxHp || u.hp || 4);
+
+                // Check for class change (e.g. Soldier -> Archer)
+                let imgKey = u.imgKey;
+                let attacks = [...u.attacks];
+                const unitClass = unitClasses[u.id] || (u.id.startsWith('ally') ? 'soldier' : u.id);
+                
+                if (unitClass === 'archer') {
+                    imgKey = 'archer';
+                    attacks = ['arrow_shot'];
+                }
+
+                // Apply weapon upgrades based on level
+                const path = UPGRADE_PATHS[unitClass];
+                if (path) {
+                    Object.keys(path).forEach(lvl => {
+                        if (level >= parseInt(lvl)) {
+                            const upgrade = path[lvl];
+                            if (upgrade.attack) {
+                                // Replace the primary attack with the upgraded version
+                                attacks[0] = upgrade.attack;
                             }
                         }
-                    }
+                    });
                 }
-            }
 
-            const xp = unitXP[u.id] || 0;
-            const level = this.getLevelFromXP(xp);
-
-            // Level bonuses
-            const finalMaxHp = this.getMaxHpForLevel(level, u.maxHp || u.hp || 4);
-
-            // Check for class change (e.g. Soldier -> Archer)
-            let imgKey = u.imgKey;
-            let attacks = [...u.attacks];
-            const unitClass = unitClasses[u.id] || (u.id.startsWith('ally') ? 'soldier' : u.id);
-            
-            if (unitClass === 'archer') {
-                imgKey = 'archer';
-                attacks = ['arrow_shot'];
-            }
-
-            // Apply weapon upgrades based on level
-            const path = UPGRADE_PATHS[unitClass];
-            if (path) {
-                Object.keys(path).forEach(lvl => {
-                    if (level >= parseInt(lvl)) {
-                        const upgrade = path[lvl];
-                        if (upgrade.attack) {
-                            // Replace the primary attack with the upgraded version
-                            attacks[0] = upgrade.attack;
-                        }
-                    }
+                const unit = new Unit(u.id, {
+                    ...u,
+                    imgKey: imgKey,
+                    r: finalR,
+                    q: finalQ,
+                    level: level,
+                    hp: finalMaxHp, // Start at full health with bonus
+                    maxHp: finalMaxHp,
+                    attacks: attacks,
+                    img: assets.getImage(imgKey)
                 });
-            }
-
-            const unit = new Unit(u.id, {
-                ...u,
-                imgKey: imgKey,
-                r: finalR,
-                q: finalQ,
-                level: level,
-                hp: finalMaxHp, // Start at full health with bonus
-                maxHp: finalMaxHp,
-                attacks: attacks,
-                img: assets.getImage(imgKey)
-            });
-            this.units.push(unit);
-            const finalCell = this.tacticsMap.getCell(finalR, finalQ);
-            if (finalCell) finalCell.unit = unit;
+                this.units.push(unit);
+                cell.unit = unit;
             });
         }
     }
@@ -3266,8 +3159,21 @@ export class TacticsScene extends BaseScene {
         }
 
         if (this.activeDialogue) {
+            // Allow clicking to skip/advance dialogue if it's been visible for a moment
             if (this.dialogueElapsed < 250) return;
-            // Check if there are more lines to show
+            
+            // If the dialogue has a timer (auto-clearing), clicking it should clear it immediately
+            if (this.activeDialogue.timer !== undefined) {
+                if (this.activeDialogue.unit) {
+                    this.activeDialogue.unit.dialogue = "";
+                    this.activeDialogue.unit.voiceId = null;
+                }
+                this.activeDialogue = null;
+                this.dialogueElapsed = 0;
+                return;
+            }
+
+            // Check if there are more lines to show (for manual dialogue)
             const result = this.renderDialogueBox(this.manager.ctx, this.manager.canvas, {
                 portraitKey: this.activeDialogue.unit.imgKey,
                 name: this.activeDialogue.unit.name,
