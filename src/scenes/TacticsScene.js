@@ -100,6 +100,9 @@ export class TacticsScene extends BaseScene {
         this.isVictoryDialogueActive = false;
         this.victoryScript = null;
         this.victoryOnComplete = null;
+        this.isCleanupDialogueActive = false;
+        this.cleanupDialogueScript = null;
+        this.cleanupDialogueStep = 0;
         this.enemiesKilled = 0;
         this.isIntroAnimating = true;
         this.introTimer = 0;
@@ -214,6 +217,9 @@ export class TacticsScene extends BaseScene {
         if (this.introScript) {
             this.isIntroDialogueActive = true;
             this.dialogueStep = 0;
+        } else if (this.isCutscene) {
+            // Cutscenes handle their own flow - don't start NPC phase
+            this.isIntroDialogueActive = false;
         } else {
             this.isIntroDialogueActive = false;
             this.startNpcPhase(); // Skip to NPC phase if no dialogue
@@ -235,7 +241,7 @@ export class TacticsScene extends BaseScene {
     }
 
     checkWinLoss() {
-        if (this.isGameOver || this.isIntroAnimating || this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCutscene) return;
+        if (this.isGameOver || this.isIntroAnimating || this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCleanupDialogueActive || this.isCutscene) return;
 
         const battleDef = BATTLES[this.battleId];
         const playerUnits = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp > 0);
@@ -323,6 +329,10 @@ export class TacticsScene extends BaseScene {
     triggerQingzhouCleanup() {
         const guards = this.units.filter(u => u.id.startsWith('guard'));
         const rebels = this.units.filter(u => u.id.startsWith('rebel_cleanup'));
+        const liubei = this.units.find(u => u.id === 'liubei');
+        const guanyu = this.units.find(u => u.id === 'guanyu');
+        const zhangfei = this.units.find(u => u.id === 'zhangfei');
+        const gongjing = this.units.find(u => u.id === 'gongjing');
         
         if (guards.length >= 2 && rebels.length >= 2) {
             // Guard 1 attacks Rebel 1
@@ -333,6 +343,7 @@ export class TacticsScene extends BaseScene {
                     const pos = this.getPixelPos(rebels[0].r, rebels[0].q);
                     this.addDamageNumber(pos.x, pos.y - 20, 99);
                     assets.playSound('slash');
+                    guards[0].action = 'standby';
                 }, 300);
             }, 500);
 
@@ -344,16 +355,104 @@ export class TacticsScene extends BaseScene {
                     const pos = this.getPixelPos(rebels[1].r, rebels[1].q);
                     this.addDamageNumber(pos.x, pos.y - 20, 99);
                     assets.playSound('slash');
+                    guards[1].action = 'standby';
                 }, 300);
             }, 1000);
 
-            // Finish cutscene lock after animations
+            // After kills, oath brothers walk towards Gong Jing
             setTimeout(() => {
-                this.isProcessingTurn = false;
-                // Transition will now happen when player clicks
-            }, 2500);
+                // Move Liu Bei towards Gong Jing
+                if (liubei) {
+                    const pathLiubei = this.tacticsMap.getPath(liubei.r, liubei.q, 4, 4, 10, liubei);
+                    if (pathLiubei) {
+                        const oldCell = this.tacticsMap.getCell(liubei.r, liubei.q);
+                        if (oldCell) oldCell.unit = null;
+                        liubei.startPath(pathLiubei);
+                        const newCell = this.tacticsMap.getCell(4, 4);
+                        if (newCell) newCell.unit = liubei;
+                        liubei.r = 4; liubei.q = 4;
+                    }
+                }
+                // Move Guan Yu
+                if (guanyu) {
+                    setTimeout(() => {
+                        const pathGuanyu = this.tacticsMap.getPath(guanyu.r, guanyu.q, 5, 4, 10, guanyu);
+                        if (pathGuanyu) {
+                            const oldCell = this.tacticsMap.getCell(guanyu.r, guanyu.q);
+                            if (oldCell) oldCell.unit = null;
+                            guanyu.startPath(pathGuanyu);
+                            const newCell = this.tacticsMap.getCell(5, 4);
+                            if (newCell) newCell.unit = guanyu;
+                            guanyu.r = 5; guanyu.q = 4;
+                        }
+                    }, 200);
+                }
+                // Move Zhang Fei
+                if (zhangfei) {
+                    setTimeout(() => {
+                        const pathZhangfei = this.tacticsMap.getPath(zhangfei.r, zhangfei.q, 4, 6, 10, zhangfei);
+                        if (pathZhangfei) {
+                            const oldCell = this.tacticsMap.getCell(zhangfei.r, zhangfei.q);
+                            if (oldCell) oldCell.unit = null;
+                            zhangfei.startPath(pathZhangfei);
+                            const newCell = this.tacticsMap.getCell(4, 6);
+                            if (newCell) newCell.unit = zhangfei;
+                            zhangfei.r = 4; zhangfei.q = 6;
+                        }
+                    }, 400);
+                }
+            }, 2000);
+
+            // Start dialogue after movement
+            setTimeout(() => {
+                this.startCleanupDialogue();
+            }, 4500);
         } else {
             this.isProcessingTurn = false;
+        }
+    }
+
+    startCleanupDialogue() {
+        // Use victory dialogue system to show dialogue on the map
+        this.cleanupDialogueScript = [
+            {
+                type: 'dialogue',
+                speaker: 'gongjing',
+                name: 'Protector Gong Jing',
+                voiceId: 'qz_ret_gj_01',
+                text: "Heroic brothers! You have saved Qingzhou! When your signal echoed through the pass, we charged from the gates. The rebels were caught between us and slaughtered."
+            },
+            {
+                type: 'dialogue',
+                speaker: 'liubei',
+                name: 'Liu Bei',
+                voiceId: 'qz_ret_lb_01',
+                text: "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere."
+            },
+            {
+                type: 'dialogue',
+                speaker: 'gongjing',
+                name: 'Protector Gong Jing',
+                voiceId: 'qz_ret_gj_02',
+                text: "Indeed. I have heard that Commander Lu Zhi is hard-pressed at Guangzong by the chief rebel, Zhang Jue himself."
+            },
+            {
+                type: 'dialogue',
+                speaker: 'liubei',
+                name: 'Liu Bei',
+                voiceId: 'qz_ret_lb_02',
+                text: "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!"
+            }
+        ];
+        this.cleanupDialogueStep = 0;
+        this.isCleanupDialogueActive = true;
+        this.dialogueElapsed = 0;
+        this.isProcessingTurn = false;
+        
+        // Play voice for first step
+        const firstStep = this.cleanupDialogueScript[0];
+        if (firstStep && firstStep.voiceId) {
+            assets.playVoice(firstStep.voiceId);
         }
     }
 
@@ -2003,7 +2102,8 @@ export class TacticsScene extends BaseScene {
                         ...template,
                         id: uDef.id,
                         r: uDef.r,
-                        q: uDef.q
+                        q: uDef.q,
+                        isDead: uDef.isDead || false  // Preserve isDead flag for corpses
                     };
                 }).filter(u => u !== null);
             } else if (this.battleId === 'custom') {
@@ -2148,7 +2248,7 @@ export class TacticsScene extends BaseScene {
 
         this.animationFrame = Math.floor(timestamp / 150) % 4;
         
-        if (this.isIntroDialogueActive || this.activeDialogue || this.isVictoryDialogueActive || this.isCutscene) {
+        if (this.isIntroDialogueActive || this.activeDialogue || this.isVictoryDialogueActive || this.isCleanupDialogueActive || this.isCutscene) {
             this.dialogueElapsed = (this.dialogueElapsed || 0) + dt;
             
             // Auto-clear activeDialogue after its timer expires
@@ -2700,8 +2800,8 @@ export class TacticsScene extends BaseScene {
                     this.drawIntent(ctx, u, u.visualX, surfaceY);
                 }
 
-                // Draw HP bar
-                if (u.name !== 'Boulder' && (!u.isDrowning || u.drownTimer < 500)) {
+                // Draw HP bar (not for dead units, boulders, or drowning units)
+                if (u.hp > 0 && u.name !== 'Boulder' && (!u.isDrowning || u.drownTimer < 500)) {
                     this.drawHpBar(ctx, u, u.visualX, surfaceY);
                 }
             });
@@ -2776,6 +2876,24 @@ export class TacticsScene extends BaseScene {
                 }
                 this.renderDialogueBox(ctx, canvas, {
                     portraitKey: step.portraitKey,
+                    name: step.name,
+                    text: step.text
+                }, { subStep: this.subStep || 0 });
+            }
+        }
+
+        // Cleanup dialogue (qingzhou_cleanup cutscene)
+        if (this.isCleanupDialogueActive && this.cleanupDialogueScript) {
+            const step = this.cleanupDialogueScript[this.cleanupDialogueStep];
+            if (step) {
+                const portraitMap = {
+                    'liubei': 'liu-bei',
+                    'guanyu': 'guan-yu',
+                    'zhangfei': 'zhang-fei',
+                    'gongjing': 'custom-male-17'  // Older official portrait for Imperial Protector
+                };
+                this.renderDialogueBox(ctx, canvas, {
+                    portraitKey: portraitMap[step.speaker] || step.speaker,
                     name: step.name,
                     text: step.text
                 }, { subStep: this.subStep || 0 });
@@ -3481,17 +3599,14 @@ export class TacticsScene extends BaseScene {
     handleInput(e) {
         const { x, y } = this.getMousePos(e);
 
-        if (this.isCutscene && !this.isIntroAnimating && !this.isProcessingTurn) {
+        // Don't process cutscene clicks if cleanup dialogue is playing on the map
+        if (this.isCutscene && !this.isIntroAnimating && !this.isProcessingTurn && !this.isCleanupDialogueActive) {
             const battleDef = BATTLES[this.battleId];
             if (battleDef && battleDef.nextScene) {
-                // Special handling for cutscenes that need onComplete for the narrative
+                // qingzhou_cleanup now handles dialogue on-map, so skip this
                 if (this.battleId === 'qingzhou_cleanup') {
-                    this.manager.switchTo('narrative', {
-                        scriptId: 'qingzhou_gate_return',
-                        onComplete: () => {
-                            this.manager.switchTo('tactics', { battleId: 'guangzong_camp' });
-                        }
-                    });
+                    // Don't do anything - dialogue will be triggered by triggerQingzhouCleanup
+                    return;
                 } else if (this.battleId === 'guangzong_camp') {
                     this.manager.gameState.addMilestone('guangzong_camp');
                     this.manager.switchTo('narrative', {
@@ -3560,6 +3675,48 @@ export class TacticsScene extends BaseScene {
             return;
         }
 
+        if (this.isCleanupDialogueActive) {
+            if (this.dialogueElapsed < 250) return;
+            const step = this.cleanupDialogueScript[this.cleanupDialogueStep];
+            
+            // Map speaker to portrait key
+            const portraitMap = {
+                'liubei': 'liu-bei',
+                'guanyu': 'guan-yu',
+                'zhangfei': 'zhang-fei',
+                'gongjing': 'custom-male-17'  // Older official portrait for Imperial Protector
+            };
+            
+            const status = this.renderDialogueBox(this.manager.ctx, this.manager.canvas, {
+                portraitKey: portraitMap[step.speaker] || step.speaker,
+                name: step.name,
+                text: step.text
+            }, { subStep: this.subStep || 0 });
+
+            if (status.hasNextChunk) {
+                this.subStep = (this.subStep || 0) + 1;
+                this.dialogueElapsed = 0;
+            } else {
+                this.subStep = 0;
+                this.cleanupDialogueStep++;
+                this.dialogueElapsed = 0;
+                
+                if (this.cleanupDialogueStep >= this.cleanupDialogueScript.length) {
+                    this.isCleanupDialogueActive = false;
+                    // Go to the map - player will click on Guangzong to march there
+                    this.manager.gameState.addMilestone('qingzhou_cleanup');
+                    this.manager.switchTo('map', { campaignId: 'liubei' });
+                } else {
+                    // Play voice for next step
+                    const nextStep = this.cleanupDialogueScript[this.cleanupDialogueStep];
+                    if (nextStep && nextStep.voiceId) {
+                        assets.playVoice(nextStep.voiceId);
+                    }
+                }
+            }
+            return;
+        }
+
         if (this.activeDialogue) {
             // Allow clicking to skip/advance dialogue if it's been visible for a moment
             if (this.dialogueElapsed < 250) return;
@@ -3598,7 +3755,8 @@ export class TacticsScene extends BaseScene {
         }
 
         if (this.isGameOver) {
-            this.manager.switchTo('title');
+            // Game over state - wait for gameOverTimer to transition to summary
+            // Don't allow clicking to go anywhere during this period
             return;
         }
 

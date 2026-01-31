@@ -102,15 +102,22 @@ export const BATTLES = {
             houseDensity: 0.0
         },
         units: [
-            { id: 'liubei', r: 10, q: 5, type: 'hero' },
-            { id: 'guanyu', r: 11, q: 5, type: 'hero' },
-            { id: 'zhangfei', r: 10, q: 6, type: 'hero' },
-            { id: 'guard1', r: 8, q: 4, type: 'allied_soldier' },
-            { id: 'guard2', r: 8, q: 6, type: 'allied_soldier' },
-            { id: 'gongjing', r: 7, q: 5, type: 'commander' },
+            // Oath brothers start at top left
+            { id: 'liubei', r: 2, q: 2, type: 'hero' },
+            { id: 'guanyu', r: 3, q: 2, type: 'hero' },
+            { id: 'zhangfei', r: 2, q: 3, type: 'hero' },
+            // Guards and Gong Jing near the gate
+            { id: 'guard1', r: 6, q: 4, type: 'allied_soldier' },
+            { id: 'guard2', r: 6, q: 6, type: 'allied_soldier' },
+            { id: 'gongjing', r: 5, q: 5, type: 'commander' },
+            // Dead yellow turbans scattered around
+            { id: 'rebel_corpse1', r: 7, q: 3, type: 'enemy_soldier', isDead: true },
+            { id: 'rebel_corpse2', r: 8, q: 6, type: 'enemy_soldier', isDead: true },
+            { id: 'rebel_corpse3', r: 9, q: 4, type: 'enemy_soldier', isDead: true },
+            { id: 'rebel_corpse4', r: 10, q: 5, type: 'enemy_soldier', isDead: true },
             // Rebels that will be executed in the cutscene
-            { id: 'rebel_cleanup1', r: 9, q: 4, type: 'enemy_soldier' },
-            { id: 'rebel_cleanup2', r: 9, q: 6, type: 'enemy_soldier' }
+            { id: 'rebel_cleanup1', r: 7, q: 4, type: 'enemy_soldier' },
+            { id: 'rebel_cleanup2', r: 7, q: 6, type: 'enemy_soldier' }
         ],
         isCutscene: true,
         nextScene: 'narrative',

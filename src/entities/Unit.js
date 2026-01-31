@@ -19,8 +19,8 @@ export class Unit {
         
         // State
         this.action = config.action || 'standby';
-        this.currentAnimAction = config.action || 'standby';
-        this.frame = 0;
+        this.currentAnimAction = config.currentAnimAction || config.action || 'standby';
+        this.frame = (config.frame !== undefined) ? config.frame : 0;
         this.flip = config.flip || false;
         this.dialogue = config.dialogue || "";
         this.hasMoved = config.hasMoved || false;

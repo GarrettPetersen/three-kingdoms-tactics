@@ -41,7 +41,7 @@ const LOCATIONS = {
         name: 'Guangzong Region',
         imgKey: 'tent',
         battleId: 'guangzong_camp',
-        unlockCondition: (gs) => gs.hasMilestone('qingzhou_siege') && !gs.hasMilestone('guangzong_camp'),
+        unlockCondition: (gs) => gs.hasMilestone('qingzhou_cleanup') && !gs.hasMilestone('guangzong_camp'),
         isCompleted: (gs) => gs.hasMilestone('guangzong_camp')
     }
 };
@@ -81,6 +81,12 @@ const HERO_REMINDERS = {
         name: 'Liu Bei',
         voiceId: 'map_lb_rem_03',
         text: "The siege is lifted. We should return to the Magistrate to see where else we can be of service."
+    },
+    'qingzhou_cleanup': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_rem_04',
+        text: "Lu Zhi, my old teacher, is hard-pressed at Guangzong. We must march north to aid him against Zhang Jue's horde!"
     }
 };
 
@@ -405,14 +411,15 @@ export class MapScene extends BaseScene {
         }
 
         if (charHit || boxHit) {
-            const isZhuoAvailable = !gs.hasMilestone('prologue_complete') && !gs.hasMilestone('daxing') && !gs.hasMilestone('qingzhou_siege');
+            const isZhuoAvailable = !gs.hasMilestone('prologue_complete') && !gs.hasMilestone('daxing') && !gs.hasMilestone('qingzhou_siege') && !gs.hasMilestone('qingzhou_cleanup');
             
             // Always enter immediately if the prologue is not complete
             if (isZhuoAvailable || boxHit || this.selectedLocation === 'zhuo') {
-                if (gs.hasMilestone('prologue_complete') || gs.hasMilestone('daxing') || gs.hasMilestone('qingzhou_siege')) {
+                if (gs.hasMilestone('prologue_complete') || gs.hasMilestone('daxing') || gs.hasMilestone('qingzhou_siege') || gs.hasMilestone('qingzhou_cleanup')) {
                     let reminderKey = 'prologue_complete';
                     
-                    if (gs.hasMilestone('qingzhou_siege')) reminderKey = 'qingzhou_siege';
+                    if (gs.hasMilestone('qingzhou_cleanup')) reminderKey = 'qingzhou_cleanup';
+                    else if (gs.hasMilestone('qingzhou_siege')) reminderKey = 'qingzhou_siege';
                     else if (gs.hasMilestone('daxing')) reminderKey = 'daxing';
                     
                     this.interactionSelected = 'hero_reminder';

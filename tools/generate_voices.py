@@ -11,6 +11,8 @@ VOICE_MODELS = {
     "zhangfei": "models/en_GB-northern_english_male-medium.onnx",
     "guanyu": "models/en_US-ryan-high.onnx",
     "zhoujing": "models/en_US-ryan-high.onnx",  # Authoritative US voice for the Magistrate
+    "gongjing": "models/en_US-ryan-high.onnx",  # Imperial Protector - authoritative voice
+    "luzhi": "models/en_GB-alan-medium.onnx",  # Lu Zhi - scholarly, similar to Liu Bei
     "yellowturban": "models/en_US-patrick-medium.onnx",
     "dengmao": "models/en_US-patrick-medium.onnx",
     "chengyuanzhi": "models/en_US-patrick-medium.onnx",
@@ -454,6 +456,90 @@ game_script = [
         "id": "debug_narrative_01",
         "char": "narrator",
         "text": "Cheat code accepted. Narrative scene is functional.",
+    },
+    # --- Map Reminders (continued) ---
+    {
+        "id": "map_lb_rem_02",
+        "char": "liubei",
+        "text": "Qingzhou is under siege. We must march there at once to relieve Imperial Protector Gong Jing!",
+    },
+    {
+        "id": "map_lb_rem_03",
+        "char": "liubei",
+        "text": "The siege is lifted. We should return to the Magistrate to see where else we can be of service.",
+    },
+    {
+        "id": "map_lb_rem_04",
+        "char": "liubei",
+        "text": "Lu Zhi, my old teacher, is hard-pressed at Guangzong. We must march north to aid him against Zhang Jue's horde!",
+    },
+    # --- Qingzhou Victory (TacticsScene.js) ---
+    {
+        "id": "qz_vic_zf_01",
+        "char": "zhangfei",
+        "text": "Look at them run! Like rats from a sinking ship! We've broken their spirit.",
+    },
+    {
+        "id": "qz_vic_gy_01",
+        "char": "guanyu",
+        "text": "A well-executed trap, Brother. The high ground served us well.",
+    },
+    {
+        "id": "qz_vic_lb_01",
+        "char": "liubei",
+        "text": "Let us not tarry. The city is still in peril. We must return to the gates and ensure the Imperial Protector is safe.",
+    },
+    {
+        "id": "qz_vic_nar_01",
+        "char": "narrator",
+        "text": "Though fierce as tigers soldiers be, Battles are won by strategy. A hero comes; he gains renown, Already destined for a crown.",
+    },
+    # --- Qingzhou Gate Return (NarrativeScripts.js / TacticsScene.js) ---
+    {
+        "id": "qz_ret_gj_01",
+        "char": "gongjing",
+        "text": "Heroic brothers! You have saved Qingzhou! When your signal echoed through the pass, we charged from the gates. The rebels were caught between us and slaughtered.",
+    },
+    {
+        "id": "qz_ret_lb_01",
+        "char": "liubei",
+        "text": "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere.",
+    },
+    {
+        "id": "qz_ret_gj_02",
+        "char": "gongjing",
+        "text": "Indeed. I have heard that Commander Lu Zhi is hard-pressed at Guangzong by the chief rebel, Zhang Jue himself.",
+    },
+    {
+        "id": "qz_ret_lb_02",
+        "char": "liubei",
+        "text": "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!",
+    },
+    # --- Guangzong Arrival (NarrativeScripts.js) ---
+    {
+        "id": "gz_lb_01",
+        "char": "liubei",
+        "text": "The siege lines are vast. Lu Zhi's forces are outnumbered three to one.",
+    },
+    {
+        "id": "gz_lz_01",
+        "char": "luzhi",
+        "text": "Xuande! Is it truly you? I remember you well from our time in the library. Your arrival is most welcome.",
+    },
+    {
+        "id": "gz_lb_02",
+        "char": "liubei",
+        "text": "Master, we have come to offer our blades. Tell us the situation.",
+    },
+    {
+        "id": "gz_lz_02",
+        "char": "luzhi",
+        "text": "Zhang Jue is here with 150,000 men. I can hold him, but his brothers Zhang Bao and Zhang Liang are at Yingchuan, fighting Huangfu Song and Zhu Jun. If they break through there, we are lost.",
+    },
+    {
+        "id": "gz_lb_03",
+        "char": "liubei",
+        "text": "Then we shall go to Yingchuan. We will bolster the Imperial lines and strike at the rebel brothers.",
     },
 ]
 

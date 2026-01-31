@@ -93,6 +93,7 @@ export const NARRATIVE_SCRIPTS = {
             type: 'dialogue',
             portraitKey: 'zhang-fei',
             name: 'Zhang Fei',
+            voiceId: 'qz_vic_zf_01',
             position: 'top',
             text: "Look at them run! Like rats from a sinking ship! We've broken their spirit."
         },
@@ -100,6 +101,7 @@ export const NARRATIVE_SCRIPTS = {
             type: 'dialogue',
             portraitKey: 'guan-yu',
             name: 'Guan Yu',
+            voiceId: 'qz_vic_gy_01',
             position: 'top',
             text: "A well-executed trap, Brother. The high ground served us well."
         },
@@ -107,19 +109,22 @@ export const NARRATIVE_SCRIPTS = {
             type: 'dialogue',
             portraitKey: 'liu-bei',
             name: 'Liu Bei',
+            voiceId: 'qz_vic_lb_01',
             position: 'top',
             text: "Let us not tarry. The city is still in peril. We must return to the gates and ensure the Imperial Protector is safe."
         },
         {
             type: 'narrator',
+            voiceId: 'qz_vic_nar_01',
             text: "Though fierce as tigers soldiers be, Battles are won by strategy.\nA hero comes; he gains renown, Already destined for a crown."
         }
     ],
     'qingzhou_gate_return': [
         {
             type: 'dialogue',
-            portraitKey: 'zhou-jing',
+            portraitKey: 'custom-male-17',
             name: 'Protector Gong Jing',
+            voiceId: 'qz_ret_gj_01',
             position: 'top',
             text: "Heroic brothers! You have saved Qingzhou! When your signal echoed through the pass, we charged from the gates. The rebels were caught between us and slaughtered."
         },
@@ -127,13 +132,15 @@ export const NARRATIVE_SCRIPTS = {
             type: 'dialogue',
             portraitKey: 'liu-bei',
             name: 'Liu Bei',
+            voiceId: 'qz_ret_lb_01',
             position: 'top',
             text: "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere."
         },
         {
             type: 'dialogue',
-            portraitKey: 'zhou-jing',
+            portraitKey: 'custom-male-17',
             name: 'Protector Gong Jing',
+            voiceId: 'qz_ret_gj_02',
             position: 'top',
             text: "Indeed. I have heard that Commander Lu Zhi is hard-pressed at Guangzong by the chief rebel, Zhang Jue himself."
         },
@@ -141,6 +148,7 @@ export const NARRATIVE_SCRIPTS = {
             type: 'dialogue',
             portraitKey: 'liu-bei',
             name: 'Liu Bei',
+            voiceId: 'qz_ret_lb_02',
             position: 'top',
             text: "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!"
         }
@@ -150,13 +158,15 @@ export const NARRATIVE_SCRIPTS = {
             type: 'dialogue',
             portraitKey: 'liu-bei',
             name: 'Liu Bei',
+            voiceId: 'gz_lb_01',
             position: 'top',
             text: "The siege lines are vast. Lu Zhi's forces are outnumbered three to one."
         },
         {
             type: 'dialogue',
-            portraitKey: 'zhou-jing',
+            portraitKey: 'custom-male-22',
             name: 'Commander Lu Zhi',
+            voiceId: 'gz_lz_01',
             position: 'top',
             text: "Xuande! Is it truly you? I remember you well from our time in the library. Your arrival is most welcome."
         },
@@ -164,13 +174,15 @@ export const NARRATIVE_SCRIPTS = {
             type: 'dialogue',
             portraitKey: 'liu-bei',
             name: 'Liu Bei',
+            voiceId: 'gz_lb_02',
             position: 'top',
             text: "Master, we have come to offer our blades. Tell us the situation."
         },
         {
             type: 'dialogue',
-            portraitKey: 'zhou-jing',
+            portraitKey: 'custom-male-22',
             name: 'Commander Lu Zhi',
+            voiceId: 'gz_lz_02',
             position: 'top',
             text: "Zhang Jue is here with 150,000 men. I can hold him, but his brothers Zhang Bao and Zhang Liang are at Yingchuan, fighting Huangfu Song and Zhu Jun. If they break through there, we are lost."
         },
@@ -178,6 +190,7 @@ export const NARRATIVE_SCRIPTS = {
             type: 'dialogue',
             portraitKey: 'liu-bei',
             name: 'Liu Bei',
+            voiceId: 'gz_lb_03',
             position: 'top',
             text: "Then we shall go to Yingchuan. We will bolster the Imperial lines and strike at the rebel brothers."
         }
