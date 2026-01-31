@@ -185,6 +185,8 @@ export class RecoveryScene extends BaseScene {
             });
         } else if (this.isEndGame) {
             this.manager.switchTo('credits');
+        } else if (this.battleId === 'qingzhou_siege') {
+            this.manager.switchTo('tactics', { battleId: 'qingzhou_cleanup' });
         } else if (this.isCustom) {
             this.manager.switchTo('title');
         } else if (this.battleId === 'daxing' && this.manager.gameState.get('battleState')?.won !== false) {

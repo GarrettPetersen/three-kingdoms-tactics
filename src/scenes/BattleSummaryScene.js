@@ -108,6 +108,8 @@ export class BattleSummaryScene extends BaseScene {
         const x = 50;
         const valX = 200;
         
+        if (value === undefined || value === null) value = 0;
+        
         // Icon
         let imgKey = null;
         if (label.includes("Allied")) imgKey = 'soldier';
@@ -136,24 +138,26 @@ export class BattleSummaryScene extends BaseScene {
     handleInput(e) {
         if (this.showLines >= this.lineDelays.length) {
             const isCustom = this.stats.battleId === 'custom';
-            const isGameOver = this.stats.battleId === 'qingzhou_siege' && this.stats.won;
+            // isEndGame should be false for qingzhou_siege as it's not the final battle
+            const isEndGame = false; // Will be set to true for actual final battle
 
             if (this.stats.recoveryInfo && this.stats.recoveryInfo.length > 0) {
                 this.manager.switchTo('recovery', {
                     recoveryInfo: this.stats.recoveryInfo,
                     levelUps: this.stats.levelUps,
-                    isEndGame: isGameOver,
+                    isEndGame: isEndGame,
                     isCustom: isCustom,
                     battleId: this.stats.battleId
                 });
             } else if (this.stats.levelUps && this.stats.levelUps.length > 0) {
                 this.manager.switchTo('levelup', { 
                     levelUps: this.stats.levelUps,
-                    isEndGame: isGameOver,
-                    isCustom: isCustom
+                    isEndGame: isEndGame,
+                    isCustom: isCustom,
+                    battleId: this.stats.battleId
                 });
-            } else if (isGameOver) {
-                this.manager.switchTo('credits');
+            } else if (this.stats.battleId === 'qingzhou_siege' && this.stats.won) {
+                this.manager.switchTo('tactics', { battleId: 'qingzhou_cleanup' });
             } else if (isCustom) {
                 this.manager.switchTo('title');
             } else if (!this.stats.won) {

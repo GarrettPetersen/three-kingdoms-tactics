@@ -216,9 +216,26 @@ async function init() {
             }
             if (inputBuffer.endsWith('win')) {
                 if (sceneManager.currentSceneKey === 'tactics' && sceneManager.currentScene) {
-                    sceneManager.currentScene.endBattle(true);
+                    if (sceneManager.currentScene.cheatWin) {
+                        sceneManager.currentScene.cheatWin();
+                    } else {
+                        sceneManager.currentScene.endBattle(true);
+                    }
                     inputBuffer = "";
                 }
+            }
+            if (inputBuffer.endsWith('qingzhou')) {
+                inputBuffer = "";
+                sceneManager.gameState.addMilestone('prologue_complete');
+                sceneManager.gameState.addMilestone('daxing');
+                sceneManager.switchTo('map', { campaignId: 'liubei', partyX: 182, partyY: 85 });
+            }
+            if (inputBuffer.endsWith('guangzong')) {
+                inputBuffer = "";
+                sceneManager.gameState.addMilestone('prologue_complete');
+                sceneManager.gameState.addMilestone('daxing');
+                sceneManager.gameState.addMilestone('qingzhou_siege');
+                sceneManager.switchTo('map', { campaignId: 'liubei', partyX: 220, partyY: 95 });
             }
             if (inputBuffer.length > 20) inputBuffer = inputBuffer.slice(-20);
         }
@@ -236,7 +253,7 @@ async function init() {
         const portraitNames = [
             'Liu-Bei', 'Guan-Yu', 'Zhang-Fei', 'Zhou-Jing', 'Diaochan', 
             'Deng-Mao', 'Cheng-Yuanzhi', 'The-Noticeboard', 'Yellow-Turban',
-            'Dong-Zhuo', 'Zhang-Jiao'
+            'Dong-Zhuo', 'Zhang-Jiao', 'Gong-Jing', 'Lu-Zhi'
         ];
 
         await Promise.all([
@@ -289,6 +306,8 @@ async function init() {
                 soldier: 'assets/characters/081_shibing001.png',
                 butcher: 'assets/characters/082_tufu01.png',
                 flag_01: 'assets/misc/flag_01.png',
+                boulder: 'assets/misc/boulder.png',
+                boulder_cracked: 'assets/misc/boulder_cracked.png',
                 ...terrainAssets
             }),
             assets.loadSounds({

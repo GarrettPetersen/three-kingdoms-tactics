@@ -150,6 +150,8 @@ export class AssetLoader {
             const original = this.getImage(key);
             if (original) {
                 const palettized = this.palettizeImage(original, paletteKey);
+                // Re-attach or re-calculate silhouette for the new palettized canvas
+                palettized.silhouette = original.silhouette || this.analyzeSilhouette(palettized);
                 this.images[key] = palettized;
             }
         });
@@ -161,6 +163,8 @@ export class AssetLoader {
                 const img = new Image();
                 img.onload = () => {
                     this.images[key] = img;
+                    // Pre-analyze silhouette for impassable edge highlighting
+                    img.silhouette = this.analyzeSilhouette(img);
                     resolve(img);
                 };
                 img.onerror = () => {
@@ -171,6 +175,37 @@ export class AssetLoader {
             });
         });
         return Promise.all(promises);
+    }
+
+    analyzeSilhouette(img) {
+        if (!img.width || !img.height) return null;
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        
+        try {
+            const imageData = ctx.getImageData(0, 0, img.width, img.height);
+            const data = imageData.data;
+            const top = new Int32Array(img.width).fill(-1);
+            const bottom = new Int32Array(img.width).fill(-1);
+            
+            for (let x = 0; x < img.width; x++) {
+                for (let y = 0; y < img.height; y++) {
+                    const alpha = data[(y * img.width + x) * 4 + 3];
+                    if (alpha > 50) {
+                        if (top[x] === -1) top[x] = y;
+                        bottom[x] = y;
+                    }
+                }
+            }
+            return { top, bottom };
+        } catch (e) {
+            console.warn("Could not analyze silhouette (CORS?):", img.src);
+            return null;
+        }
     }
 
     async loadPortraits(characterNames) {

@@ -146,7 +146,7 @@ game_script = [
     {
         "id": "daxing_gy_01",
         "char": "guanyu",
-        "text": "Eldest brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march.",
+        "text": "Third brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march.",
     },
     {
         "id": "daxing_lb_03",

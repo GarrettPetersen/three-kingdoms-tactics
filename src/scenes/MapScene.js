@@ -33,6 +33,16 @@ const LOCATIONS = {
         battleId: 'qingzhou_siege',
         unlockCondition: (gs) => gs.hasMilestone('daxing') && !gs.hasMilestone('qingzhou_siege'),
         isCompleted: (gs) => gs.hasMilestone('qingzhou_siege')
+    },
+    guangzong: {
+        id: 'guangzong',
+        x: 150,
+        y: 50,
+        name: 'Guangzong Region',
+        imgKey: 'tent',
+        battleId: 'guangzong_camp',
+        unlockCondition: (gs) => gs.hasMilestone('qingzhou_siege') && !gs.hasMilestone('guangzong_camp'),
+        isCompleted: (gs) => gs.hasMilestone('guangzong_camp')
     }
 };
 
@@ -135,8 +145,8 @@ export class MapScene extends BaseScene {
                 this.party = { 
                     id: 'liubei', 
                     name: 'Liu Bei', 
-                    x: 190, 
-                    y: 70,
+                    x: params.partyX !== undefined ? params.partyX : 190, 
+                    y: params.partyY !== undefined ? params.partyY : 70,
                     imgKey: 'liubei'
                 };
             }

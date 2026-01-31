@@ -4,6 +4,7 @@ import { ANIMATIONS, ATTACKS, UPGRADE_PATHS } from '../core/Constants.js';
 import { TacticsMap } from '../core/TacticsMap.js';
 import { Unit } from '../entities/Unit.js';
 import { BATTLES, UNIT_TEMPLATES } from '../data/Battles.js';
+import { NARRATIVE_SCRIPTS } from '../data/NarrativeScripts.js';
 
 export class TacticsScene extends BaseScene {
     constructor() {
@@ -49,14 +50,20 @@ export class TacticsScene extends BaseScene {
         
         // Scenario-specific initialization
         this.battleId = params.battleId || gs.get('currentBattleId') || 'daxing'; 
-        gs.set('currentBattleId', this.battleId);
+        this.isCustom = params.isCustom || this.battleId === 'custom';
+        
+        const battleDef = BATTLES[this.battleId];
+        this.isCutscene = battleDef?.isCutscene || false;
+
+        if (!this.isCustom) {
+            gs.set('currentBattleId', this.battleId);
+        }
 
         console.log(`Entering battle: ${this.battleId}`);
 
         const musicKey = (this.battleId === 'daxing' || this.battleId === 'qingzhou_prelude') ? 'oath' : 'battle';
         assets.playMusic(musicKey, 0.4);
         
-        this.isCustom = params.isCustom || this.battleId === 'custom';
         const { config, canvas } = this.manager;
         this.tacticsMap = new TacticsMap(config.mapWidth, config.mapHeight);
 
@@ -84,17 +91,20 @@ export class TacticsScene extends BaseScene {
         this.isRetreating = false;
         this.turnNumber = 1;
         this.turn = 'player';
+        this.baseXP = 5; // Baseline XP for victory
         this.dialogueElapsed = 0;
         this.dialogueStep = 0;
         this.subStep = 0;
         this.gameOverTimer = 0;
         this.isGameOver = false;
+        this.isVictoryDialogueActive = false;
+        this.victoryScript = null;
+        this.victoryOnComplete = null;
         this.enemiesKilled = 0;
         this.isIntroAnimating = true;
         this.introTimer = 0;
         this.lastTime = 0;
         
-        const battleDef = BATTLES[this.battleId];
         if (battleDef) {
             this.mapGenParams = params.mapGen || battleDef.map;
         } else {
@@ -141,6 +151,16 @@ export class TacticsScene extends BaseScene {
 
         this.placeInitialUnits(params.units);
         
+        // Spawn random boulders on mountain maps
+        if (this.mapGenParams.layout === 'mountain_pass' || this.mapGenParams.mountainDensity > 0.1) {
+            this.spawnRandomBoulders();
+        }
+
+        // Specific boulder placement for Qingzhou Ambush
+        if (this.battleId === 'qingzhou_siege') {
+            this.placeAmbushBoulders();
+        }
+        
         // Setup Weather
         this.weatherType = this.mapGenParams.weather || null;
         if (this.weatherType === 'none') this.weatherType = null;
@@ -159,7 +179,16 @@ export class TacticsScene extends BaseScene {
         }, 1500);
 
         this.particles = [];
-        this.manager.gameState.set('lastScene', 'tactics');
+        if (!this.isCustom) {
+            this.manager.gameState.set('lastScene', 'tactics');
+        }
+
+        if (this.battleId === 'qingzhou_cleanup') {
+            this.isProcessingTurn = true;
+            setTimeout(() => {
+                this.triggerQingzhouCleanup();
+            }, 2000);
+        }
 
         // Track initial houses
         this.initialHouseCount = 0;
@@ -191,12 +220,41 @@ export class TacticsScene extends BaseScene {
         }
     }
 
+    startVictoryDialogue(scriptId, onComplete) {
+        if (!NARRATIVE_SCRIPTS[scriptId]) {
+            if (onComplete) onComplete();
+            return;
+        }
+        
+        this.isVictoryDialogueActive = true;
+        this.victoryScript = NARRATIVE_SCRIPTS[scriptId];
+        this.dialogueStep = 0;
+        this.subStep = 0;
+        this.dialogueElapsed = 0;
+        this.victoryOnComplete = onComplete;
+    }
+
     checkWinLoss() {
-        if (this.isGameOver || this.isIntroAnimating || this.isIntroDialogueActive) return;
+        if (this.isGameOver || this.isIntroAnimating || this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCutscene) return;
 
         const battleDef = BATTLES[this.battleId];
         const playerUnits = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp > 0);
         const enemyUnits = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
+
+        // Special handling for victory in the ambush battle
+        if (this.battleId === 'qingzhou_siege' && this.ambushTriggered && enemyUnits.length === 0) {
+            this.manager.gameState.addMilestone('qingzhou_siege');
+            
+            // Play victory dialogue over the map
+            this.startVictoryDialogue('qingzhou_victory', () => {
+                this.endBattle(true);
+            });
+            return;
+        }
+
+        if (this.isCutscene) {
+            return;
+        }
 
         // Loss: All player team wiped
         if (playerUnits.length === 0) {
@@ -236,15 +294,13 @@ export class TacticsScene extends BaseScene {
                     this.reachedFlag = true;
                     this.isProcessingTurn = true;
                     this.activeDialogue = null;
-                    this.triggerAmbush();
                     
-                    // Clear the lock after animations/spawns are likely done.
-                    // 3 seconds is enough for the gongs and spawns.
-                    setTimeout(() => { 
-                        if (this.isProcessingTurn && !this.isGameOver) {
-                            this.isProcessingTurn = false; 
-                        }
-                    }, 3000);
+                    try {
+                        this.triggerAmbush();
+                    } catch (e) {
+                        console.error("Ambush trigger failed:", e);
+                        this.isProcessingTurn = false;
+                    }
                 }
 
                 if (enemyUnits.length === 0) {
@@ -264,8 +320,46 @@ export class TacticsScene extends BaseScene {
         }
     }
 
+    triggerQingzhouCleanup() {
+        const guards = this.units.filter(u => u.id.startsWith('guard'));
+        const rebels = this.units.filter(u => u.id.startsWith('rebel_cleanup'));
+        
+        if (guards.length >= 2 && rebels.length >= 2) {
+            // Guard 1 attacks Rebel 1
+            setTimeout(() => {
+                guards[0].action = 'attack_1';
+                setTimeout(() => {
+                    this.applyUnitDamage(rebels[0], 99);
+                    const pos = this.getPixelPos(rebels[0].r, rebels[0].q);
+                    this.addDamageNumber(pos.x, pos.y - 20, 99);
+                    assets.playSound('slash');
+                }, 300);
+            }, 500);
+
+            // Guard 2 attacks Rebel 2
+            setTimeout(() => {
+                guards[1].action = 'attack_1';
+                setTimeout(() => {
+                    this.applyUnitDamage(rebels[1], 99);
+                    const pos = this.getPixelPos(rebels[1].r, rebels[1].q);
+                    this.addDamageNumber(pos.x, pos.y - 20, 99);
+                    assets.playSound('slash');
+                }, 300);
+            }, 1000);
+
+            // Finish cutscene lock after animations
+            setTimeout(() => {
+                this.isProcessingTurn = false;
+                // Transition will now happen when player clicks
+            }, 2500);
+        } else {
+            this.isProcessingTurn = false;
+        }
+    }
+
     triggerAmbush(surprised = false) {
         this.ambushTriggered = true;
+        // Don't clear history immediately; wait until units are fully added to set NEW baseline
         
         const liubei = this.units.find(u => u.id === 'liubei');
         
@@ -276,18 +370,23 @@ export class TacticsScene extends BaseScene {
             }
             
             setTimeout(() => {
-                const zhangfei = this.addAmbushUnit('zhangfei', 'Zhang Fei', 'zhangfei', 10, 1, ['serpent_spear']);
-                const guanyu = this.addAmbushUnit('guanyu', 'Guan Yu', 'guanyu', 10, 8, ['green_dragon_slash']);
-                
-                if (guanyu) {
-                    guanyu.dialogue = "Brother! We heard the signal was... oh. They are all fallen.";
-                    this.activeDialogue = { unit: guanyu, timer: 3000 };
-                    assets.playVoice('qz_gy_surp_01');
+                try {
+                    this.addAmbushUnit('zhangfei', 'Zhang Fei', 'zhangfei', 10, 1, ['serpent_spear'], false);
+                    this.addAmbushUnit('guanyu', 'Guan Yu', 'guanyu', 10, 8, ['green_dragon_slash'], true);
+                    
+                    if (guanyu) {
+                        guanyu.dialogue = "Brother! We heard the signal was... oh. They are all fallen.";
+                        this.activeDialogue = { unit: guanyu, timer: 3000 };
+                        assets.playVoice('qz_gy_surp_01');
+                    }
+                    
+                    setTimeout(() => {
+                        this.endBattle(true);
+                    }, 3000);
+                } catch (e) {
+                    console.error("Surprised ambush failed:", e);
+                    this.isProcessingTurn = false;
                 }
-                
-                setTimeout(() => {
-                    this.endBattle(true);
-                }, 3000);
             }, 1000);
             return;
         }
@@ -301,43 +400,109 @@ export class TacticsScene extends BaseScene {
         }
 
         // Add Guan Yu, Zhang Fei and the 3 campaign soldiers at the flanks
-        // We delay them slightly for a cooler effect
         setTimeout(() => {
-            // Bottom Left
-            this.addAmbushUnit('zhangfei', 'Zhang Fei', 'zhangfei', 10, 1, ['serpent_spear']);
-            this.addAmbushUnit('ambush_ally1', 'Soldier', 'soldier', 11, 0, ['slash']);
-            
-            // Top (Blocking/Reinforcing)
-            this.addAmbushUnit('ambush_ally3', 'Soldier', 'soldier', 0, 5, ['slash']);
+            try {
+                // Bottom Left (Zhang Fei + Ally 1) - Facing Right
+                this.addAmbushUnit('zhangfei', 'Zhang Fei', 'zhangfei', 10, 1, ['serpent_spear'], false);
+                this.addAmbushUnit('ally1', 'Volunteer', 'soldier', 11, 0, ['slash'], false);
+                
+                // Top (Blocking/Reinforcing - Ally 3) - Facing Down
+                this.addAmbushUnit('ally3', 'Volunteer', 'soldier', 0, 5, ['slash'], false);
 
-            setTimeout(() => {
-                // Bottom Right
-                this.addAmbushUnit('guanyu', 'Guan Yu', 'guanyu', 10, 8, ['green_dragon_slash']);
-                this.addAmbushUnit('ambush_ally2', 'Soldier', 'soldier', 11, 9, ['slash']);
-            }, 300);
+                setTimeout(() => {
+                    try {
+                        // Bottom Right (Guan Yu + Ally 2) - Facing Left
+                        this.addAmbushUnit('guanyu', 'Guan Yu', 'guanyu', 10, 8, ['green_dragon_slash'], true);
+                        this.addAmbushUnit('ally2', 'Volunteer', 'soldier', 11, 9, ['slash'], true);
+
+                        // FINAL STEP: All units are in place. Set the new baseline for undo/reset.
+                        setTimeout(() => {
+                            this.history = []; // Clear old history
+                            this.pushHistory(); // Capture new state as the first baseline entry
+                            this.isProcessingTurn = false; // Allow player to move
+                        }, 1000);
+                    } catch (e) {
+                        console.error("Ambush part 2 failed:", e);
+                        this.isProcessingTurn = false;
+                    }
+                }, 300);
+            } catch (e) {
+                console.error("Ambush part 1 failed:", e);
+                this.isProcessingTurn = false;
+            }
         }, 500);
     }
 
-    addAmbushUnit(id, name, imgKey, r, q, attacks) {
+    addAmbushUnit(id, name, imgKey, r, q, attacks, flip = false) {
         const gs = this.manager.gameState;
         const unitXP = gs.get('unitXP') || {};
+        const unitClasses = gs.get('unitClasses') || {};
         
         const xp = unitXP[id] || 0;
         const level = this.getLevelFromXP(xp);
-        const finalMaxHp = this.getMaxHpForLevel(level, 4);
         
+        // Continuity: Check for promoted class (e.g. Soldier -> Archer)
+        let finalImgKey = imgKey;
+        let finalAttacks = [...attacks];
+        const unitClass = unitClasses[id] || (id.startsWith('ally') ? 'soldier' : id);
+        
+        if (unitClass === 'archer') {
+            finalImgKey = 'archer';
+            finalAttacks = ['arrow_shot'];
+        }
+
+        // Apply weapon upgrades based on level
+        const path = UPGRADE_PATHS[unitClass];
+        if (path) {
+            Object.keys(path).forEach(lvl => {
+                if (level >= parseInt(lvl)) {
+                    const upgrade = path[lvl];
+                    if (upgrade.attack) {
+                        finalAttacks[0] = upgrade.attack;
+                    }
+                }
+            });
+        }
+
+        const faction = (id === 'liubei' || id === 'guanyu' || id === 'zhangfei') ? 'player' : 'allied';
+        const finalMaxHp = this.getMaxHpForLevel(level, (faction === 'player' ? 4 : 2));
+
+        // AMBUSH SPECIAL: Force the target cell to be passable so they can appear on mountains
+        const targetCell = this.tacticsMap.getCell(r, q);
+        if (targetCell) {
+            targetCell.impassable = false;
+            // Carve a ramp to ensure they can reach level 0/1
+            // We'll find a path to the center and ensure level diffs are <= 1
+            const centerR = Math.floor(this.manager.config.mapHeight / 2);
+            const centerQ = Math.floor(this.manager.config.mapWidth / 2);
+            const path = this.tacticsMap.getLine(r, q, centerR, centerQ);
+            let lastLevel = targetCell.level;
+            for (const step of path) {
+                const cell = this.tacticsMap.getCell(step.r, step.q);
+                if (!cell) continue;
+                cell.impassable = false;
+                if (Math.abs(cell.level - lastLevel) > 1) {
+                    cell.level = lastLevel > cell.level ? lastLevel - 1 : lastLevel + 1;
+                }
+                lastLevel = cell.level;
+            }
+        }
+
         // Find closest free spot if r,q is taken
-        const finalCell = this.findNearestFreeCell(r, q, 3);
+        const finalCell = this.findNearestFreeCell(r, q, 5);
         if (!finalCell) {
             console.warn(`Could not find a free spot for ambush unit ${id} at (${r},${q})`);
             return null;
         }
 
         const unit = new Unit(id, {
-            id, name, imgKey, r: finalCell.r, q: finalCell.q,
+            id, name, imgKey: finalImgKey, r: finalCell.r, q: finalCell.q,
             level, hp: finalMaxHp, maxHp: finalMaxHp,
-            faction: 'player', moveRange: 4, attacks,
-            img: assets.getImage(imgKey)
+            faction: faction, 
+            moveRange: (unitClass === 'archer' ? 3 : 4), 
+            attacks: finalAttacks,
+            flip: flip,
+            img: assets.getImage(finalImgKey)
         });
         
         this.units.push(unit);
@@ -404,8 +569,7 @@ export class TacticsScene extends BaseScene {
         this.gameOverTimer = 2500; // Time before showing summary
         this.isProcessingTurn = true;
 
-            const gs = this.manager.gameState;
-        gs.set('battleState', null); // Clear state on completion
+        const gs = this.manager.gameState;
         
         const unitXP = gs.get('unitXP') || {};
         const recoveryInfo = [];
@@ -503,7 +667,9 @@ export class TacticsScene extends BaseScene {
             gs.set('customStats', stats);
         }
 
-        this.clearBattleState();
+        if (!this.isCustom) {
+            this.clearBattleState();
+        }
     }
 
     startNpcPhase() {
@@ -887,6 +1053,8 @@ export class TacticsScene extends BaseScene {
             u.q = uData.q;
             u.hp = uData.hp;
             u.maxHp = uData.maxHp;
+            u.imgKey = uData.imgKey;
+            u.img = assets.getImage(uData.imgKey);
             u.hasMoved = uData.hasMoved;
             u.hasAttacked = uData.hasAttacked;
             u.hasActed = uData.hasActed;
@@ -1106,6 +1274,61 @@ export class TacticsScene extends BaseScene {
         }
     }
 
+    spawnRandomBoulders() {
+        const count = 3 + Math.floor(Math.random() * 4);
+        for (let i = 0; i < count; i++) {
+            // Find a high spot (level 2+) that is free
+            let attempts = 0;
+            while (attempts < 20) {
+                const r = Math.floor(Math.random() * this.manager.config.mapHeight);
+                const q = Math.floor(Math.random() * this.manager.config.mapWidth);
+                const cell = this.tacticsMap.getCell(r, q);
+                if (cell && !cell.impassable && !cell.unit && cell.level >= 2) {
+                    this.addBoulder(r, q);
+                    break;
+                }
+                attempts++;
+            }
+        }
+    }
+
+    placeAmbushBoulders() {
+        // Specifically place boulders on the ridges overlooking the main path
+        // In the NS mountain pass, ridges are around q=1,2 and q=w-2,w-3
+        const ridgeQ = [1, 2, this.manager.config.mapWidth - 2, this.manager.config.mapWidth - 3];
+        const rows = [4, 5, 6, 7]; // Mid-map rows
+        
+        rows.forEach(r => {
+            ridgeQ.forEach(q => {
+                if (Math.random() < 0.4) {
+                    const cell = this.tacticsMap.getCell(r, q);
+                    if (cell && !cell.unit && !cell.impassable && cell.level >= 2) {
+                        this.addBoulder(r, q);
+                    }
+                }
+            });
+        });
+    }
+
+    addBoulder(r, q) {
+        const id = `boulder_${r}_${q}`;
+        const boulder = new Unit(id, {
+            id,
+            name: "Boulder",
+            imgKey: 'boulder',
+            img: assets.getImage('boulder'),
+            r, q,
+            hp: 2,
+            maxHp: 2,
+            faction: 'neutral',
+            moveRange: 0,
+            attacks: []
+        });
+        this.units.push(boulder);
+        const cell = this.tacticsMap.getCell(r, q);
+        if (cell) cell.unit = boulder;
+    }
+
     startRetreatPhase() {
         this.isRetreating = true;
         this.isProcessingTurn = true;
@@ -1220,6 +1443,10 @@ export class TacticsScene extends BaseScene {
     }
 
     executeAttack(attacker, attackKey, targetR, targetQ, onComplete) {
+        // Mark which units were alive at the very start of this logical action
+        // to determine if a collision should occur vs sliding over a corpse.
+        this.units.forEach(u => u._aliveAtStartOfAction = u.hp > 0);
+
         // Safety check: Only player can trigger attacks via this method during their turn
         if (this.turn === 'player' && attacker.faction !== 'player') {
             if (onComplete) onComplete();
@@ -1462,9 +1689,9 @@ export class TacticsScene extends BaseScene {
                     if (isDestructible) hitAnything = true;
 
                     if (cell.unit) {
-                    const victim = cell.unit;
-                    const victimPos = this.getPixelPos(cell.r, cell.q);
-                        // Pass the original targetR/targetQ so we know which hex is the "furthest" one for pushing
+                        const victim = cell.unit;
+                        const victimPos = this.getPixelPos(cell.r, cell.q);
+                        // Pass the original targetR/targetQ so only the furthest hex (clicked) gets pushed
                         this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, victimPos);
                         hitAnything = true;
                     }
@@ -1480,6 +1707,43 @@ export class TacticsScene extends BaseScene {
                 if (onComplete) onComplete();
             }, 400);
         }, 400);
+    }
+
+    applyUnitDamage(victim, damage, sourceCell = null) {
+        let finalDamage = damage;
+        
+        // Boulder Special Logic: Cracked on first damage, destroyed on second
+        if (victim.name === 'Boulder') {
+            if (victim.hp === 2) {
+                finalDamage = 1; // Only crack it
+                victim.imgKey = 'boulder_cracked';
+                victim.img = assets.getImage('boulder_cracked');
+            } else {
+                finalDamage = 1; // Break it
+            }
+        }
+
+        victim.hp -= finalDamage;
+
+        if (victim.hp <= 0) {
+            victim.hp = 0;
+            if (victim.name !== 'Boulder') {
+                victim.action = 'death';
+            }
+            victim.intent = null;
+            const currentCell = sourceCell || this.tacticsMap.getCell(victim.r, victim.q);
+            if (currentCell) currentCell.unit = null;
+            assets.playSound('death', 0.6);
+            if (victim.faction === 'enemy') {
+                this.enemiesKilled++;
+            }
+        } else {
+            if (victim.name !== 'Boulder') {
+                victim.action = 'hit';
+            }
+        }
+
+        return finalDamage;
     }
 
     applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos) {
@@ -1531,9 +1795,9 @@ export class TacticsScene extends BaseScene {
         }
 
         // Apply damage & Shake
-        victim.hp -= finalDamage;
+        finalDamage = this.applyUnitDamage(victim, finalDamage, victimCell);
         if (finalDamage > 0) {
-        victim.triggerShake(startPos.x, startPos.y, endPos.x, endPos.y);
+            victim.triggerShake(startPos.x, startPos.y, endPos.x, endPos.y);
         }
 
         // Visual Feedback
@@ -1544,20 +1808,6 @@ export class TacticsScene extends BaseScene {
             this.addDamageNumber(endPos.x, endPos.y - 30, `${finalDamage} ${critText}`, '#ff0000');
         } else {
             this.addDamageNumber(endPos.x, endPos.y - 30, finalDamage);
-        }
-        
-        const targetCell = this.tacticsMap.getCell(targetR, targetQ);
-
-        // Handle death
-        if (victim.hp <= 0) {
-            victim.hp = 0;
-            victim.action = 'death';
-            victim.intent = null;
-            if (targetCell) targetCell.unit = null;
-            assets.playSound('death', 0.6);
-            if (victim.faction === 'enemy') {
-                this.enemiesKilled++;
-            }
         }
 
         if (attack.push) {
@@ -1572,84 +1822,74 @@ export class TacticsScene extends BaseScene {
             const dirIndex = this.tacticsMap.getDirectionIndex(attacker.r, attacker.q, targetR, targetQ);
             if (dirIndex === -1) return; // Cannot push if direction is undefined
 
-            const pushCell = this.tacticsMap.getNeighborInDirection(targetR, targetQ, dirIndex);
+            const pushCell = this.tacticsMap.getNeighborInDirection(victim.r, victim.q, dirIndex);
             
             const victimPos = this.getPixelPos(victim.r, victim.q);
 
             if (pushCell) {
                 const targetPos = this.getPixelPos(pushCell.r, pushCell.q);
+                const levelDiff = pushCell.level - victimCell.level;
 
-                if (pushCell.terrain.includes('water_deep')) {
-                    // Drown
-                    if (targetCell) targetCell.unit = null;
-                    victim.setPosition(pushCell.r, pushCell.q);
-                    victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false);
-                    setTimeout(() => { 
-                        assets.playSound('splash');
-                        victim.isDrowning = true;
-                        victim.drownTimer = 0;
-                    }, 300);
-                } else if (!pushCell.impassable && !pushCell.unit) {
-                    // Valid empty tile
-                    if (targetCell) targetCell.unit = null;
-                    victim.setPosition(pushCell.r, pushCell.q);
-                    // Only occupy the new cell if still alive
-                    if (victim.hp > 0) {
-                        pushCell.unit = victim;
+                // 1. COLLISION (Pushing into a wall/high cliff or another living unit)
+                const isHighCliff = levelDiff > 1;
+                const isImpassable = pushCell.impassable;
+                const isOccupiedByLiving = pushCell.unit && pushCell.unit._aliveAtStartOfAction;
+
+                if (isHighCliff || isImpassable || isOccupiedByLiving) {
+                    victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, true); // true = bounce
+                    this.executePushCollision(victim, pushCell, victimPos, targetPos);
+                } 
+                // 2. FALLING (Pushing off a cliff)
+                else if (levelDiff < -1) {
+                    const fallDamage = Math.max(0, Math.abs(levelDiff) - 1);
+                    const occupant = pushCell.unit; // Could be a corpse or a living unit (if not _aliveAtStartOfAction)
+
+                    victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false, Math.abs(levelDiff));
+                    victimCell.unit = null;
+
+                    if (occupant && occupant.hp > 0) {
+                        // CRUSH MECHANIC
+                        this.handleCrushLanding(victim, occupant, pushCell, levelDiff, targetPos);
+                    } else {
+                        // Normal fall landing
+                        setTimeout(() => {
+                            assets.playSound('collision', 0.8);
+                            this.applyUnitDamage(victim, fallDamage);
+                            this.addDamageNumber(targetPos.x, targetPos.y - 30, fallDamage);
+                            victim.setPosition(pushCell.r, pushCell.q);
+                            pushCell.unit = victim;
+                        }, 400);
                     }
+                }
+                // 3. NORMAL PUSH (Same level or slight elevation change)
+                else {
+                    victimCell.unit = null;
+                    victim.setPosition(pushCell.r, pushCell.q);
+                    pushCell.unit = victim;
                     victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false);
-                } else {
-                    // Collision
-                    victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, true); 
-                    setTimeout(() => {
-                        assets.playSound('collision');
-                        
-                        // Ice doesn't take damage from bumps
-                        if (!pushCell.terrain.includes('ice')) {
-                            this.damageCell(pushCell.r, pushCell.q);
-                        }
 
-                        victim.hp -= 1;
-                        this.addDamageNumber(victimPos.x, victimPos.y - 30, 1);
-                        if (pushCell.unit) {
-                            pushCell.unit.hp -= 1;
-                            this.addDamageNumber(targetPos.x, targetPos.y - 30, 1);
-                            pushCell.unit.triggerShake(victimPos.x, victimPos.y, targetPos.x, targetPos.y);
-                            if (pushCell.unit.hp <= 0) {
-                                pushCell.unit.hp = 0;
-                                pushCell.unit.action = 'death';
-                                pushCell.unit.intent = null;
+                    // Deep water drowning
+                    if (pushCell.terrain === 'deep_water') {
+                        setTimeout(() => {
+                            if (victim.name === 'Boulder') {
+                                assets.playSound('drown');
+                                pushCell.terrain = 'shallow_water';
+                                victim.isGone = true;
                                 pushCell.unit = null;
-                                assets.playSound('death', 0.6);
                             } else {
-                                pushCell.unit.action = 'hit';
+                                victim.isDrowning = true;
+                                assets.playSound('drown');
                             }
-                        }
-                        if (victim.hp <= 0) {
-                            victim.hp = 0;
-                            victim.action = 'death';
-                            if (targetCell) targetCell.unit = null;
-                            assets.playSound('death', 0.6);
-                        }
-                    }, 125);
+                        }, 250);
+                    } else {
+                        assets.playSound('bash', 0.5);
+                    }
                 }
             } else {
-                // Edge of map
-                const dummyX = victimPos.x + (victimPos.x - startPos.x) * 0.5;
-                const dummyY = victimPos.y + (victimPos.y - startPos.y) * 0.5;
-                victim.startPush(victimPos.x, victimPos.y, dummyX, dummyY, true);
-                setTimeout(() => {
-                    assets.playSound('collision');
-                    victim.hp -= 1;
-                    this.addDamageNumber(victimPos.x, victimPos.y - 30, 1);
-                    if (victim.hp <= 0) {
-                        victim.hp = 0;
-                        victim.action = 'death';
-                        victim.intent = null;
-                        if (targetCell) targetCell.unit = null;
-                        assets.playSound('death', 0.6);
-                    }
-                }, 125);
+                // Edge of map: The push is blocked by an invisible wall.
+                // No damage, no displacement. The unit just shakes in place.
+                victim.action = 'hit';
+                assets.playSound('collision', 0.5); // Quieter collision sound
             }
         } else {
             victim.action = 'hit';
@@ -1681,6 +1921,27 @@ export class TacticsScene extends BaseScene {
         // Max bonus is 6 (at level=inf), so 4 + 6 = 10.
         const bonus = Math.floor(6 * (level - 1) / (level + 5));
         return Math.min(10, baseHp + bonus);
+    }
+
+    cheatWin() {
+        if (this.isGameOver || this.isVictoryDialogueActive) return;
+        
+        // Advance to flag if not already there for Qingzhou
+        if (this.battleId === 'qingzhou_siege' && !this.reachedFlag) {
+            this.reachedFlag = true;
+            this.ambushTriggered = true;
+            this.triggerAmbush();
+        }
+
+        // Kill all enemies
+        this.units.forEach(u => {
+            if (u.faction === 'enemy' && u.hp > 0) {
+                u.hp = 0;
+                this.applyUnitDamage(u, 999); // Use official damage system
+            }
+        });
+
+        // Let checkWinLoss handle the transition on the next frame
     }
 
     findNearestFreeCell(r, q, maxDist = 5) {
@@ -1839,11 +2100,17 @@ export class TacticsScene extends BaseScene {
                     r: finalR,
                     q: finalQ,
                     level: level,
-                    hp: finalMaxHp, // Start at full health with bonus
+                    hp: u.isDead ? 0 : finalMaxHp, // Support pre-killed units for scenes
                     maxHp: finalMaxHp,
                     attacks: attacks,
-                    img: assets.getImage(imgKey)
+                    img: assets.getImage(imgKey),
+                    action: u.isDead ? 'death' : 'standby',
+                    currentAnimAction: u.isDead ? 'death' : 'standby',
+                    frame: u.isDead ? 100 : 0 // Ensure it's at the end of death anim
                 });
+                
+                if (u.isDead) unit.isGone = false; // We want corpses to stay visible
+                
                 this.units.push(unit);
                 cell.unit = unit;
             });
@@ -1881,7 +2148,7 @@ export class TacticsScene extends BaseScene {
 
         this.animationFrame = Math.floor(timestamp / 150) % 4;
         
-        if (this.isIntroDialogueActive || this.activeDialogue) {
+        if (this.isIntroDialogueActive || this.activeDialogue || this.isVictoryDialogueActive || this.isCutscene) {
             this.dialogueElapsed = (this.dialogueElapsed || 0) + dt;
             
             // Auto-clear activeDialogue after its timer expires
@@ -1957,8 +2224,18 @@ export class TacticsScene extends BaseScene {
             else {
                 const cell = this.tacticsMap.getCell(u.r, u.q);
                 if (cell && cell.terrain.includes('water_shallow')) sinkOffset = 4;
+                
+                // Standing on corpse? Raise hit box by 4px
+                if (u.hp > 0 && !u.isMoving && !u.pushData) {
+                    const hasCorpse = this.units.some(other => other !== u && other.r === u.r && other.q === u.q && other.hp <= 0 && !other.isGone);
+                    if (hasCorpse) sinkOffset -= 4;
+                }
             }
-            if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, hx, hy, { flip: u.flip, sinkOffset })) {
+            if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, hx, hy, { 
+                flip: u.flip, 
+                sinkOffset,
+                isProp: u.name === 'Boulder'
+            })) {
                 hoveredUnit = u;
                 break;
             }
@@ -2282,10 +2559,17 @@ export class TacticsScene extends BaseScene {
             if (depthA !== depthB) return depthA - depthB;
             
             // Priority within same depth
-            const priorities = { 'hex': 0, 'particle': 1, 'unit': 2 };
+            const priorities = { 'hex': 0, 'particle': 1, 'unit': 2, 'flag': 1.5 };
             if (priorities[a.type] !== priorities[b.type]) return priorities[a.type] - priorities[b.type];
             
             // Within same type and row:
+            if (a.type === 'unit' && b.type === 'unit') {
+                // Living units on top of dead ones
+                const isDeadA = a.unit.hp <= 0;
+                const isDeadB = b.unit.hp <= 0;
+                if (isDeadA !== isDeadB) return isDeadA ? -1 : 1;
+            }
+
             if (a.type === 'hex' && b.type === 'hex') {
                 // Use terrain layer to determine overlap (e.g. grass over sand, trees over grass)
                 if (a.layer !== b.layer) return a.layer - b.layer;
@@ -2303,7 +2587,8 @@ export class TacticsScene extends BaseScene {
 
             if (call.type === 'hex') {
                 const surfaceY = call.y - call.elevation + effect.yOffset;
-                this.drawTile(call.terrain, call.x, surfaceY, call.elevation, call.r, call.q);
+                const edgeStatus = this.tacticsMap.getEdgeStatus(call.r, call.q);
+                this.drawTile(call.terrain, call.x, surfaceY, call.elevation, call.r, call.q, edgeStatus);
                 
                 if (call.isReachable) {
                     this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 215, 0, 0.3)');
@@ -2323,7 +2608,18 @@ export class TacticsScene extends BaseScene {
                 const cell = this.tacticsMap.getCell(u.r, u.q);
                 let surfaceY = u.visualY + effect.yOffset; 
                 
-                let drawOptions = { flip: u.flip };
+                let drawOptions = { 
+                    flip: u.flip,
+                    isProp: u.name === 'Boulder'
+                };
+
+                // Raise living units if they are standing on a corpse
+                if (u.hp > 0 && !u.isMoving && !u.pushData) {
+                    const hasCorpse = this.units.some(other => other !== u && other.r === u.r && other.q === u.q && other.hp <= 0 && !other.isGone);
+                    if (hasCorpse) {
+                        surfaceY -= 4; // Standing on top of the body
+                    }
+                }
                 
                 // Check for water effects
                 if (u.isDrowning) {
@@ -2405,7 +2701,7 @@ export class TacticsScene extends BaseScene {
                 }
 
                 // Draw HP bar
-                if (!u.isDrowning || u.drownTimer < 500) {
+                if (u.name !== 'Boulder' && (!u.isDrowning || u.drownTimer < 500)) {
                     this.drawHpBar(ctx, u, u.visualX, surfaceY);
                 }
             });
@@ -2469,8 +2765,9 @@ export class TacticsScene extends BaseScene {
             }
         }
 
-        if (this.isIntroDialogueActive && this.introScript) {
-            const step = this.introScript[this.dialogueStep];
+        if ((this.isIntroDialogueActive && this.introScript) || (this.isVictoryDialogueActive && this.victoryScript)) {
+            const script = this.isIntroDialogueActive ? this.introScript : this.victoryScript;
+            const step = script[this.dialogueStep];
             if (step) {
                 // Play voice if it hasn't been played for this step yet
                 if (step.voiceId && !step._voicePlayed) {
@@ -2754,7 +3051,7 @@ export class TacticsScene extends BaseScene {
         }
     }
 
-    drawTile(terrainType, x, y, elevation = 0, r = 0, q = 0) {
+    drawTile(terrainType, x, y, elevation = 0, r = 0, q = 0, edgeStatus = {}) {
         const { ctx, config } = this.manager;
         const animatedKey = this.getAnimatedTerrain(terrainType, r, q);
         const img = assets.getImage(animatedKey);
@@ -2769,8 +3066,9 @@ export class TacticsScene extends BaseScene {
         const isTall = img.height > 36;
         const dy = Math.floor(y - 18) - (isTall ? 36 : 0);
         const sourceHeight = img.height;
-        const displayHeight = sourceHeight;
         
+        const silhouette = img.silhouette;
+
         for (let ix = 0; ix < 36; ix++) {
             let edgeY = null;
             // The hex footprint logic (bottom 36px)
@@ -2784,6 +3082,27 @@ export class TacticsScene extends BaseScene {
                 const topPartHeight = footprintStart + edgeY;
                 ctx.drawImage(img, ix, 0, 1, topPartHeight, dx + ix, dy, 1, topPartHeight);
                 
+                // Impassable Edge Highlighting (Black Outline)
+                ctx.fillStyle = '#000000';
+                if (silhouette) {
+                    // Top edges (NW/NE) - follow the silhouette
+                    if ((edgeStatus.NW && ix < 18) || (edgeStatus.NE && ix >= 18)) {
+                        const sy = silhouette.top[ix];
+                        if (sy !== -1 && sy < topPartHeight) {
+                            ctx.fillRect(dx + ix, dy + sy, 1, 2); // 2px height for visibility
+                        }
+                    }
+                    // Bottom edges (SW/SE) - follow the footprint edge
+                    if ((edgeStatus.SW && ix < 18) || (edgeStatus.SE && ix >= 18)) {
+                        ctx.fillRect(dx + ix, dy + topPartHeight - 1, 1, 2);
+                    }
+                } else {
+                    // Fallback without silhouette
+                    if ((edgeStatus.NW && ix < 18) || (edgeStatus.NE && ix >= 18)) {
+                        ctx.fillRect(dx + ix, dy, 1, 2);
+                    }
+                }
+
                 // The vertical "side" edge
                 ctx.drawImage(img, ix, topPartHeight, 1, 1, dx + ix, dy + topPartHeight, 1, extraDepth);
                 
@@ -2792,11 +3111,41 @@ export class TacticsScene extends BaseScene {
                 ctx.drawImage(img, ix, topPartHeight, 1, bottomPartHeight, dx + ix, dy + topPartHeight + extraDepth, 1, bottomPartHeight);
             } else {
                 ctx.drawImage(img, ix, 0, 1, sourceHeight, dx + ix, dy, 1, sourceHeight);
+
+                // Handle edges for the sides of the hex (columns 0-6 and 29-35)
+                ctx.fillStyle = '#000000';
+                if (silhouette) {
+                    if ((edgeStatus.NW || edgeStatus.W) && ix < 7) {
+                        const sy = silhouette.top[ix];
+                        if (sy !== -1) ctx.fillRect(dx + ix, dy + sy, 2, 2);
+                    }
+                    if ((edgeStatus.NE || edgeStatus.E) && ix > 28) {
+                        const sy = silhouette.top[ix];
+                        if (sy !== -1) ctx.fillRect(dx + ix, dy + sy, 2, 2);
+                    }
+                } else {
+                    if ((edgeStatus.NW || edgeStatus.W) && ix < 7) ctx.fillRect(dx + ix, dy, 2, 2);
+                    if ((edgeStatus.NE || edgeStatus.E) && ix > 28) ctx.fillRect(dx + ix, dy, 2, 2);
+                }
             }
         }
     }
 
     drawUI() {
+        if (this.isCutscene) {
+            const { ctx, canvas } = this.manager;
+            if (this.isIntroAnimating || this.isProcessingTurn) return;
+            
+            // Draw a simple prompt to click to continue
+            const pulse = Math.abs(Math.sin(Date.now() * 0.003));
+            this.drawPixelText(ctx, "CLICK TO CONTINUE", canvas.width / 2, canvas.height - 20, { 
+                color: `rgba(255, 255, 255, ${0.5 + pulse * 0.5})`,
+                align: 'center',
+                font: '10px Silkscreen'
+            });
+            return;
+        }
+
         const { ctx, canvas } = this.manager;
         
         // During intro, UI is mostly hidden or faded
@@ -3132,6 +3481,33 @@ export class TacticsScene extends BaseScene {
     handleInput(e) {
         const { x, y } = this.getMousePos(e);
 
+        if (this.isCutscene && !this.isIntroAnimating && !this.isProcessingTurn) {
+            const battleDef = BATTLES[this.battleId];
+            if (battleDef && battleDef.nextScene) {
+                // Special handling for cutscenes that need onComplete for the narrative
+                if (this.battleId === 'qingzhou_cleanup') {
+                    this.manager.switchTo('narrative', {
+                        scriptId: 'qingzhou_gate_return',
+                        onComplete: () => {
+                            this.manager.switchTo('tactics', { battleId: 'guangzong_camp' });
+                        }
+                    });
+                } else if (this.battleId === 'guangzong_camp') {
+                    this.manager.gameState.addMilestone('guangzong_camp');
+                    this.manager.switchTo('narrative', {
+                        scriptId: 'guangzong_arrival',
+                        onComplete: () => {
+                            // Return to the world map after the Guangzong narrative
+                            this.manager.switchTo('map', { campaignId: 'liubei' });
+                        }
+                    });
+                } else {
+                    this.manager.switchTo(battleDef.nextScene, battleDef.nextParams);
+                }
+                return;
+            }
+        }
+
         if (this.showEndTurnConfirm) {
             if (this.confirmYesRect && x >= this.confirmYesRect.x && x <= this.confirmYesRect.x + this.confirmYesRect.w &&
                 y >= this.confirmYesRect.y && y <= this.confirmYesRect.y + this.confirmYesRect.h) {
@@ -3149,9 +3525,10 @@ export class TacticsScene extends BaseScene {
             return; // Block other inputs while confirm is visible
         }
 
-        if (this.isIntroDialogueActive) {
+        if (this.isIntroDialogueActive || this.isVictoryDialogueActive) {
             if (this.dialogueElapsed < 250) return;
-            const step = this.introScript[this.dialogueStep];
+            const script = this.isIntroDialogueActive ? this.introScript : this.victoryScript;
+            const step = script[this.dialogueStep];
             const status = this.renderDialogueBox(this.manager.ctx, this.manager.canvas, {
                 portraitKey: step.portraitKey,
                 name: step.name,
@@ -3163,16 +3540,22 @@ export class TacticsScene extends BaseScene {
                 this.dialogueElapsed = 0;
             } else {
                 this.subStep = 0;
-            this.dialogueStep++;
-            this.dialogueElapsed = 0;
-            if (this.dialogueStep >= this.introScript.length) {
-                this.isIntroDialogueActive = false;
-                if (this.battleId === 'qingzhou_prelude') {
-                    this.checkWinLoss(); // Trigger transition immediately
-                } else {
-                this.startNpcPhase();
+                this.dialogueStep++;
+                this.dialogueElapsed = 0;
+                
+                if (this.dialogueStep >= script.length) {
+                    if (this.isIntroDialogueActive) {
+                        this.isIntroDialogueActive = false;
+                        if (this.battleId === 'qingzhou_prelude') {
+                            this.checkWinLoss(); // Trigger transition immediately
+                        } else {
+                            this.startNpcPhase();
+                        }
+                    } else if (this.isVictoryDialogueActive) {
+                        this.isVictoryDialogueActive = false;
+                        if (this.victoryOnComplete) this.victoryOnComplete();
+                    }
                 }
-            }
             }
             return;
         }
@@ -3271,8 +3654,18 @@ export class TacticsScene extends BaseScene {
             else {
                 const cell = this.tacticsMap.getCell(u.r, u.q);
                 if (cell && cell.terrain.includes('water_shallow')) sinkOffset = 4;
+                
+                // Standing on corpse? Raise hit box by 4px
+                if (u.hp > 0 && !u.isMoving && !u.pushData) {
+                    const hasCorpse = this.units.some(other => other !== u && other.r === u.r && other.q === u.q && other.hp <= 0 && !other.isGone);
+                    if (hasCorpse) sinkOffset -= 4;
+                }
             }
-            if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, x, y, { flip: u.flip, sinkOffset })) {
+            if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, x, y, { 
+                flip: u.flip, 
+                sinkOffset,
+                isProp: u.name === 'Boulder'
+            })) {
                 spriteUnit = u;
                 break;
             }
@@ -3286,18 +3679,21 @@ export class TacticsScene extends BaseScene {
             // Use the same hoveredCell calculated in update() to ensure consistency
             if (this.hoveredCell && this.attackTiles.has(`${this.hoveredCell.r},${this.hoveredCell.q}`)) {
                 const attacker = this.selectedUnit;
+                this.isProcessingTurn = true; // Lock turn during animation
+                
                 this.executeAttack(attacker, this.selectedAttack, this.hoveredCell.r, this.hoveredCell.q, () => {
                     // Safety: only apply if the action wasn't undone or state reset
-                    if (this.turn === 'player' && !this.isProcessingTurn && attacker.hp > 0) {
+                    if (this.turn === 'player' && attacker.hp > 0) {
                         attacker.hasAttacked = true;
                         attacker.hasActed = true;
                         if (this.selectedUnit === attacker) {
-                    this.selectedUnit = null;
-                    this.selectedAttack = null;
-                    this.attackTiles.clear();
+                            this.selectedUnit = null;
+                            this.selectedAttack = null;
+                            this.attackTiles.clear();
                         }
                         this.pushHistory(); // Capture state AFTER attack
                     }
+                    this.isProcessingTurn = false; // Unlock turn
                 });
                 return;
             }
@@ -3309,6 +3705,7 @@ export class TacticsScene extends BaseScene {
             if (!clickedCell.unit || clickedCell.unit === this.selectedUnit) {
                 const path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, clickedCell.r, clickedCell.q, this.selectedUnit.moveRange, this.selectedUnit);
                 if (path) {
+                    this.isProcessingTurn = true; // Lock turn during move
                     const oldCell = this.tacticsMap.getCell(this.selectedUnit.r, this.selectedUnit.q);
                     if (oldCell) oldCell.unit = null;
                     this.selectedUnit.startPath(path);
@@ -3317,15 +3714,17 @@ export class TacticsScene extends BaseScene {
                     const movingUnit = this.selectedUnit;
                     const checkArrival = () => {
                         // Safety: stop if turn changed or unit selection cleared (e.g. undo)
-                        // We DON'T stop just because isProcessingTurn is true, as reaching a flag 
-                        // might set that but we still need the move to "finish" logically.
-                        if (this.turn !== 'player' || !this.selectedUnit) return;
+                        if (this.turn !== 'player' || !movingUnit) {
+                            this.isProcessingTurn = false;
+                            return;
+                        }
 
                         if (!movingUnit.isMoving) {
                             if (this.selectedUnit === movingUnit) {
                                 if (movingUnit.attacks.length > 0) this.selectAttack(movingUnit.attacks[0]);
                             }
                             this.pushHistory(); // Capture state AFTER move completes
+                            this.isProcessingTurn = false; // Unlock turn
                         } else setTimeout(checkArrival, 100);
                     };
                     checkArrival();
@@ -3367,5 +3766,64 @@ export class TacticsScene extends BaseScene {
         this.attackTiles.clear();
         this.attackRects = [];
         this.activeDialogue = null;
+    }
+
+    executePushCollision(victim, pushCell, victimPos, targetPos) {
+        setTimeout(() => {
+            assets.playSound('collision');
+            
+            // Ice doesn't take damage from bumps
+            if (!pushCell.terrain.includes('ice')) {
+                this.damageCell(pushCell.r, pushCell.q);
+            }
+
+            this.applyUnitDamage(victim, 1);
+            this.addDamageNumber(victimPos.x, victimPos.y - 30, 1);
+            
+            if (pushCell.unit && pushCell.unit.hp > 0) { // Only damage if the unit is still alive
+                this.applyUnitDamage(pushCell.unit, 1);
+                this.addDamageNumber(targetPos.x, targetPos.y - 30, 1);
+                pushCell.unit.triggerShake(victimPos.x, victimPos.y, targetPos.x, targetPos.y);
+            }
+        }, 125);
+    }
+
+    handleCrushLanding(faller, occupant, targetCell, levelDiff, targetPos) {
+        setTimeout(() => {
+            assets.playSound('collision'); // Heavy impact
+            
+            const fallDamage = Math.max(0, Math.abs(levelDiff) - 1);
+            const crushDamage = fallDamage + 1; // Collision bonus
+            
+            // Damage both
+            this.applyUnitDamage(faller, crushDamage);
+            this.addDamageNumber(targetPos.x, targetPos.y - 40, crushDamage);
+            
+            this.applyUnitDamage(occupant, crushDamage);
+            this.addDamageNumber(targetPos.x, targetPos.y - 20, crushDamage);
+            occupant.triggerShake(targetPos.x, targetPos.y - 10, targetPos.x, targetPos.y);
+
+            // Resolve Occupancy
+            if (occupant.hp <= 0) {
+                // Occupant dies, faller stands on corpse
+                targetCell.unit = (faller.hp > 0) ? faller : null;
+            } else {
+                // Occupant survives, they get "squished" to a neighbor cell
+                const freeCell = this.findNearestFreeCell(targetCell.r, targetCell.q, 1);
+                if (freeCell) {
+                    targetCell.unit = (faller.hp > 0) ? faller : null;
+                    const oldPos = this.getPixelPos(occupant.r, occupant.q);
+                    occupant.setPosition(freeCell.r, freeCell.q);
+                    freeCell.unit = occupant;
+                    const newPos = this.getPixelPos(freeCell.r, freeCell.q);
+                    occupant.startPush(oldPos.x, oldPos.y, newPos.x, newPos.y, false);
+                } else {
+                    // No room to squish! Fatal crush.
+                    this.applyUnitDamage(occupant, 999); // Force death
+                    this.addDamageNumber(targetPos.x, targetPos.y - 20, "CRUSHED", '#ff0000');
+                    targetCell.unit = (faller.hp > 0) ? faller : null;
+                }
+            }
+        }, 400); // Wait for fall animation
     }
 }

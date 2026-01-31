@@ -89,6 +89,56 @@ export const BATTLES = {
         introScript: [
             { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'qz_bt_lb_03', text: "I must reach the flag to signal the ambush!" }
         ]
+    },
+    'qingzhou_cleanup': {
+        name: 'Qingzhou Gate - Victory',
+        map: {
+            biome: 'central',
+            layout: 'city_gate',
+            seed: 'qingzhou_gate',
+            forestDensity: 0.1,
+            mountainDensity: 0.1,
+            riverDensity: 0.0,
+            houseDensity: 0.0
+        },
+        units: [
+            { id: 'liubei', r: 10, q: 5, type: 'hero' },
+            { id: 'guanyu', r: 11, q: 5, type: 'hero' },
+            { id: 'zhangfei', r: 10, q: 6, type: 'hero' },
+            { id: 'guard1', r: 8, q: 4, type: 'allied_soldier' },
+            { id: 'guard2', r: 8, q: 6, type: 'allied_soldier' },
+            { id: 'gongjing', r: 7, q: 5, type: 'commander' },
+            // Rebels that will be executed in the cutscene
+            { id: 'rebel_cleanup1', r: 9, q: 4, type: 'enemy_soldier' },
+            { id: 'rebel_cleanup2', r: 9, q: 6, type: 'enemy_soldier' }
+        ],
+        isCutscene: true,
+        nextScene: 'narrative',
+        nextParams: { scriptId: 'qingzhou_gate_return' }
+    },
+    'guangzong_camp': {
+        name: 'Guangzong - Lu Zhi\'s Camp',
+        map: {
+            biome: 'northern',
+            layout: 'army_camp',
+            seed: 'guangzong',
+            mirror: true,
+            forestDensity: 0.2,
+            mountainDensity: 0.1,
+            riverDensity: 0.0,
+            houseDensity: 0.0
+        },
+        units: [
+            { id: 'liubei', r: 8, q: 5, type: 'hero' },
+            { id: 'guanyu', r: 9, q: 5, type: 'hero' },
+            { id: 'zhangfei', r: 8, q: 6, type: 'hero' },
+            { id: 'luzhi', r: 5, q: 5, type: 'commander' },
+            { id: 'camp_guard1', r: 4, q: 4, type: 'allied_soldier' },
+            { id: 'camp_guard2', r: 4, q: 6, type: 'allied_soldier' }
+        ],
+        isCutscene: true,
+        nextScene: 'narrative',
+        nextParams: { scriptId: 'guangzong_arrival' }
     }
 };
 
@@ -99,7 +149,8 @@ export const UNIT_TEMPLATES = {
         'zhangfei': { name: 'Zhang Fei', imgKey: 'zhangfei', hp: 4, moveRange: 4, attacks: ['serpent_spear'], faction: 'player' }
     },
     'allied_soldier': {
-        'ally': { name: 'Volunteer', imgKey: 'soldier', hp: 2, moveRange: 3, attacks: ['slash'], faction: 'allied' }
+        'ally': { name: 'Volunteer', imgKey: 'soldier', hp: 2, moveRange: 3, attacks: ['slash'], faction: 'allied' },
+        'guard': { name: 'Qingzhou Guard', imgKey: 'soldier', hp: 3, moveRange: 3, attacks: ['slash'], faction: 'allied' }
     },
     'enemy_soldier': {
         'rebel': { name: 'Yellow Turban', imgKey: 'yellowturban', hp: 3, moveRange: 3, attacks: ['bash'], faction: 'enemy' }
@@ -107,5 +158,12 @@ export const UNIT_TEMPLATES = {
     'enemy_captain': {
         'dengmao': { name: 'Deng Mao', imgKey: 'bandit1', hp: 5, moveRange: 3, attacks: ['heavy_thrust'], faction: 'enemy' },
         'chengyuanzhi': { name: 'Cheng Yuanzhi', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['whirlwind'], faction: 'enemy' }
+    },
+    'commander': {
+        'gongjing': { name: 'Gong Jing', imgKey: 'zhoujing', hp: 5, moveRange: 3, attacks: ['slash'], faction: 'allied' },
+        'luzhi': { name: 'Lu Zhi', imgKey: 'zhoujing', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' }
+    },
+    'prop': {
+        'boulder': { name: 'Boulder', imgKey: 'boulder', hp: 2, moveRange: 0, attacks: [], faction: 'neutral' }
     }
 };

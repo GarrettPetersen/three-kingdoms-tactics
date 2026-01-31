@@ -17,6 +17,7 @@ export class LevelUpScene extends BaseScene {
         this.levelUps = params.levelUps || [];
         this.isEndGame = params.isEndGame || false;
         this.isCustom = params.isCustom || false;
+        this.battleId = params.battleId || null;
         this.currentIndex = 0;
         this.timer = 0;
         this.lastTime = 0;
@@ -247,6 +248,8 @@ export class LevelUpScene extends BaseScene {
         if (this.currentIndex >= this.levelUps.length) {
             if (this.isEndGame) {
                 this.manager.switchTo('credits');
+            } else if (this.battleId === 'qingzhou_siege') {
+                this.manager.switchTo('tactics', { battleId: 'qingzhou_cleanup' });
             } else if (this.isCustom) {
                 this.manager.switchTo('title');
             } else if (this.manager.gameState.get('currentBattleId') === 'daxing') {

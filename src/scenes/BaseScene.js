@@ -25,8 +25,24 @@ export class BaseScene {
 
     drawCharacter(ctx, img, action, frame, x, y, options = {}) {
         if (!img) return;
-        const { flip = false, sinkOffset = 0, isSubmerged = false, tint = null, hideBottom = 0, scale = 1.0 } = options;
+        const { flip = false, sinkOffset = 0, isSubmerged = false, tint = null, hideBottom = 0, scale = 1.0, isProp = false } = options;
         const sourceSize = 72;
+
+        if (isProp) {
+            // Props are single images, not spritesheets. Center them.
+            ctx.save();
+            ctx.translate(Math.floor(x), Math.floor(y + sinkOffset));
+            if (flip) ctx.scale(-1, 1);
+            if (scale !== 1.0) ctx.scale(scale, scale);
+            
+            // Draw centered horizontally. 
+            // For vertical, we align the visible bottom (assuming 5px padding) to the ground.
+            const visibleHeight = img.height - 5;
+            ctx.drawImage(img, -img.width / 2, -visibleHeight);
+            ctx.restore();
+            return;
+        }
+
         const anim = ANIMATIONS[action] || ANIMATIONS.standby;
         const f = Math.floor(frame) % anim.length;
         const frameIdx = anim.start + f;
@@ -96,8 +112,37 @@ export class BaseScene {
 
     checkCharacterHit(img, action, frame, x, y, clickX, clickY, options = {}) {
         if (!img) return false;
-        const { flip = false, sinkOffset = 0 } = options;
+        const { flip = false, sinkOffset = 0, isProp = false } = options;
         const sourceSize = 72;
+
+        if (isProp) {
+            const bx = x - img.width / 2;
+            const by = y + sinkOffset - (img.height - 5);
+            if (clickX < bx || clickX > bx + img.width || clickY < by || clickY > by + img.height) {
+                return false;
+            }
+            // Pixel perfect check for props
+            if (!this._hitCanvas) {
+                this._hitCanvas = document.createElement('canvas');
+                this._hitCanvas.width = 1;
+                this._hitCanvas.height = 1;
+                this._hitCtx = this._hitCanvas.getContext('2d', { willReadFrequently: true });
+            }
+            const hctx = this._hitCtx;
+            hctx.clearRect(0, 0, 1, 1);
+            hctx.save();
+            hctx.translate(-(clickX - bx), -(clickY - by));
+            if (flip) {
+                hctx.translate(img.width / 2, 0);
+                hctx.scale(-1, 1);
+                hctx.translate(-img.width / 2, 0);
+            }
+            hctx.drawImage(img, 0, 0);
+            hctx.restore();
+            const alpha = hctx.getImageData(0, 0, 1, 1).data[3];
+            return alpha > 10;
+        }
+
         const anim = ANIMATIONS[action] || ANIMATIONS.standby;
         const f = Math.floor(frame) % anim.length;
         const frameIdx = anim.start + f;
@@ -195,18 +240,29 @@ export class BaseScene {
         ctx.strokeRect(portraitX - 0.5, portraitY - 0.5, portraitW + 1, portraitH + 1);
 
         const isNoticeboard = step.portraitKey === 'noticeboard' || (step.name && step.name.toLowerCase().includes('noticeboard'));
-        const isNarrator = step.portraitKey === 'narrator' || !step.name || step.name.toLowerCase() === 'narrator';
+        let isNarrator = step.portraitKey === 'narrator' || !step.name || step.name.toLowerCase() === 'narrator';
+        
+        // Force Narrator name if not set
+        if (isNarrator && (!step.name || step.name.toLowerCase() === 'narrator')) {
+            step.name = "Narrator";
+        }
 
         // Try to find a dedicated portrait first
         let portraitImg = null;
         if (isNoticeboard || isNarrator) {
-            if (bgImg) {
+            let useBg = bgImg;
+            if (isNarrator && !useBg) {
+                // Default narrator background to peach garden for a nice visual
+                useBg = assets.getImage('peach_garden');
+            }
+
+            if (useBg) {
                 // Special case: Crop the center of the background image
-                const cw = bgImg.width;
-                const ch = bgImg.height;
+                const cw = useBg.width;
+                const ch = useBg.height;
                 const cropX = Math.floor((cw - portraitW) / 2);
                 const cropY = Math.floor((ch - portraitH) / 2);
-                ctx.drawImage(bgImg, cropX, cropY, portraitW, portraitH, portraitX, portraitY, portraitW, portraitH);
+                ctx.drawImage(useBg, cropX, cropY, portraitW, portraitH, portraitX, portraitY, portraitW, portraitH);
             }
             // If no bgImg, it just stays black (narrator/noticeboard default)
         } else if (step.portraitKey) {

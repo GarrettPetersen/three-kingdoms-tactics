@@ -143,8 +143,12 @@ export class Unit {
 
         // Handle Push Animation
         if (this.pushData) {
-            this.action = 'hit';
-            this.pushData.progress += dt * 0.004;
+            if (this.name !== 'Boulder') {
+                this.action = 'hit';
+            }
+            // Pushes are 250ms (0.004), Falls are slower 400ms (0.0025)
+            const speed = this.pushData.fallHeight > 0 ? 0.0025 : 0.004;
+            this.pushData.progress += dt * speed;
             const p = Math.min(1, this.pushData.progress);
             
             let interp = p;
@@ -155,6 +159,15 @@ export class Unit {
 
             this.visualX = this.pushData.startX + (this.pushData.targetX - this.pushData.startX) * interp;
             this.visualY = this.pushData.startY + (this.pushData.targetY - this.pushData.startY) * interp;
+
+            // Handle Parabolic Fall
+            if (this.pushData.fallHeight > 0) {
+                // Parabola: y = -4 * h * p * (p - 1)
+                // This adds a peak in the middle of the fall
+                const arcHeight = 20; // Max height of the jump/fall arc
+                const parabola = -4 * arcHeight * p * (p - 1);
+                this.visualY -= parabola;
+            }
 
             if (p >= 1) {
                 this.pushData = null;
@@ -222,8 +235,8 @@ export class Unit {
         this.stepTimer = 0; // Play first step immediately
     }
 
-    startPush(startX, startY, targetX, targetY, isBounce = false) {
-        this.pushData = { startX, startY, targetX, targetY, progress: 0, isBounce };
+    startPush(startX, startY, targetX, targetY, isBounce = false, fallHeight = 0) {
+        this.pushData = { startX, startY, targetX, targetY, progress: 0, isBounce, fallHeight };
         this.action = 'hit';
         this.frame = 0;
     }
