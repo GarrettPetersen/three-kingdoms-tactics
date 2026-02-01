@@ -146,6 +146,81 @@ export const BATTLES = {
         isCutscene: true,
         nextScene: 'narrative',
         nextParams: { scriptId: 'guangzong_arrival' }
+    },
+    'guangzong_encounter': {
+        name: 'The Road to Guangzong',
+        map: {
+            biome: 'northern',
+            layout: 'road',
+            seed: 'luzhi_road',
+            forestDensity: 0.08,  // Some trees on the sides
+            mountainDensity: 0.0,
+            riverDensity: 0.0,
+            houseDensity: 0.0
+        },
+        units: [
+            // Heroes approaching from the left on the road
+            { id: 'liubei', r: 6, q: 1, type: 'hero' },
+            { id: 'guanyu', r: 5, q: 1, type: 'hero' },
+            { id: 'zhangfei', r: 7, q: 1, type: 'hero' },
+            // Lu Zhi in a cage on the road, being escorted
+            { id: 'luzhi', r: 6, q: 6, type: 'commander', caged: true },
+            // Imperial escort soldiers - some surrounding Lu Zhi, some blocking the way
+            { id: 'escort1', r: 5, q: 6, type: 'imperial_soldier' },
+            { id: 'escort2', r: 7, q: 6, type: 'imperial_soldier' },
+            { id: 'escort3', r: 6, q: 7, type: 'imperial_soldier' },
+            { id: 'escort4', r: 6, q: 8, type: 'imperial_soldier' },
+            // Escorts blocking the path to the cage
+            { id: 'escort5', r: 5, q: 4, type: 'imperial_soldier' },
+            { id: 'escort6', r: 6, q: 4, type: 'imperial_soldier' },
+            { id: 'escort7', r: 7, q: 4, type: 'imperial_soldier' }
+        ],
+        isCutscene: true,
+        victoryCondition: 'defeat_all_enemies',
+        introScript: [
+            { speaker: 'liubei', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_lb_01', text: "What is this? Commander Lu Zhi... in chains?" },
+            { speaker: 'luzhi', portraitKey: 'custom-male-22', name: 'Lu Zhi', voiceId: 'gz_lz_explain_01', text: "Xuande! I had the rebels surrounded and was on the point of smashing them, when Zhang Jue employed sorcery to prevent my victory." },
+            { speaker: 'luzhi', portraitKey: 'custom-male-22', name: 'Lu Zhi', voiceId: 'gz_lz_explain_02', text: "The court sent Eunuch Zuo Feng to inquire. He demanded a bribe, but where could I find gold in such circumstances? He reported that I hid behind ramparts and disheartened my army." },
+            { speaker: 'luzhi', portraitKey: 'custom-male-22', name: 'Lu Zhi', voiceId: 'gz_lz_explain_03', text: "So I was superseded by Dong Zhuo, and now I go to the capital to answer false charges." },
+            { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_01', text: "This is outrage! Let me slay these dogs and free you, Master!" }
+        ],
+        // Choice will be handled by TacticsScene after intro dialogue
+        hasChoice: true
+    },
+    'guangzong_escort': {
+        name: 'Free Lu Zhi',
+        map: {
+            biome: 'northern',
+            layout: 'road',
+            seed: 'luzhi_road',  // Same seed so map looks the same
+            forestDensity: 0.08,
+            mountainDensity: 0.0,
+            riverDensity: 0.0,
+            houseDensity: 0.0
+        },
+        units: [
+            // Heroes on the left - same positions as encounter
+            { id: 'liubei', r: 6, q: 1, type: 'hero' },
+            { id: 'guanyu', r: 5, q: 1, type: 'hero' },
+            { id: 'zhangfei', r: 7, q: 1, type: 'hero' },
+            // Lu Zhi in a cage (allied, to be protected)
+            { id: 'luzhi', r: 6, q: 6, type: 'commander', caged: true },
+            // Imperial escort soldiers (enemies) - same as encounter
+            { id: 'escort1', r: 5, q: 6, type: 'imperial_soldier' },
+            { id: 'escort2', r: 7, q: 6, type: 'imperial_soldier' },
+            { id: 'escort3', r: 6, q: 7, type: 'imperial_soldier' },
+            { id: 'escort4', r: 6, q: 8, type: 'imperial_soldier' },
+            // Escorts blocking the path to the cage
+            { id: 'escort5', r: 5, q: 4, type: 'imperial_soldier' },
+            { id: 'escort6', r: 6, q: 4, type: 'imperial_soldier' },
+            { id: 'escort7', r: 7, q: 4, type: 'imperial_soldier' }
+        ],
+        victoryCondition: 'defeat_all_enemies',
+        introScript: [
+            { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_free_01', text: "HA! Now you're talking, brother! Come on!" },
+            { speaker: 'guanyu', portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'gz_gy_free_01', text: "Brother, there may be consequences for this..." },
+            { speaker: 'liubei', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_lb_free_02', text: "We have made our choice. Now we fight!" }
+        ]
     }
 };
 
@@ -162,12 +237,15 @@ export const UNIT_TEMPLATES = {
     'enemy_soldier': {
         'rebel': { name: 'Yellow Turban', imgKey: 'yellowturban', hp: 3, moveRange: 3, attacks: ['bash'], faction: 'enemy' }
     },
+    'imperial_soldier': {
+        'escort': { name: 'Imperial Escort', imgKey: 'soldier', hp: 3, moveRange: 3, attacks: ['slash'], faction: 'enemy' }
+    },
     'enemy_captain': {
         'dengmao': { name: 'Deng Mao', imgKey: 'bandit1', hp: 5, moveRange: 3, attacks: ['heavy_thrust'], faction: 'enemy' },
         'chengyuanzhi': { name: 'Cheng Yuanzhi', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['whirlwind'], faction: 'enemy' }
     },
     'commander': {
-        'gongjing': { name: 'Gong Jing', imgKey: 'zhoujing', hp: 5, moveRange: 3, attacks: ['slash'], faction: 'allied' },
+        'gongjing': { name: 'Gong Jing', imgKey: 'gongjing_sprite', hp: 5, moveRange: 3, attacks: ['slash'], faction: 'allied' },
         'luzhi': { name: 'Lu Zhi', imgKey: 'zhoujing', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' }
     },
     'prop': {

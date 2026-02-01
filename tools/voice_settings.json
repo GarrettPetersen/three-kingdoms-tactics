@@ -1,0 +1,7 @@
+{
+  "_comment": "Per-line voice settings. Keys are voiceIds. Options: speed (0.5-2.0), emotion, phonetic_text",
+  "qz_vic_zf_01": {
+    "speed": 0.9
+  }
+}
+

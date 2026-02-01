@@ -191,9 +191,23 @@ export class NarrativeScene extends BaseScene {
             }
         }
 
+        // Determine current speaker for animation (only speaker animates during dialogue)
+        const currentStep = this.script[this.currentStep];
+        let currentSpeakerId = null;
+        if (currentStep && currentStep.type === 'dialogue' && currentStep.portraitKey) {
+            // Convert portrait key to actor id (e.g., 'zhou-jing' -> 'zhoujing', 'liu-bei' -> 'liubei')
+            currentSpeakerId = currentStep.portraitKey.replace(/-/g, '');
+        }
+        
         let allMoved = true;
         for (let id in this.actors) {
             const a = this.actors[id];
+            
+            // Only animate the speaking actor during dialogue, or actors that are moving/attacking
+            const isMoving = Math.abs(a.targetX - a.x) > 1 || Math.abs(a.targetY - a.y) > 1;
+            const isSpecialAction = a.action === 'hit' || a.action === 'attack_1' || a.action === 'attack_2' || a.action === 'walk';
+            const isSpeaking = currentSpeakerId && id === currentSpeakerId;
+            const shouldAnimate = isMoving || isSpecialAction || isSpeaking || !currentStep || currentStep.type !== 'dialogue';
             
             // Animation
             const anim = ANIMATIONS[a.action] || ANIMATIONS.standby;
@@ -214,7 +228,7 @@ export class NarrativeScene extends BaseScene {
                         a.isAnimating = false;
                     }
                 }
-            } else {
+            } else if (shouldAnimate) {
                 a.frame += dt * 0.008;
                 if (a.frame >= anim.length) {
                     if (a.action === 'hit' || a.action === 'attack_1' || a.action === 'attack_2') {
@@ -223,6 +237,9 @@ export class NarrativeScene extends BaseScene {
                     }
                     a.frame = 0;
                 }
+            } else {
+                // Non-speaking actors during dialogue: stay on frame 0
+                a.frame = 0;
             }
 
             // Movement

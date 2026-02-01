@@ -49,6 +49,7 @@ export class Unit {
         this.drownTimer = 0;
         this.stepTimer = 0;
         this.level = config.level || 1;
+        this.caged = config.caged || false;  // For cage overlay rendering
     }
 
     update(dt, getPixelPos, shouldAnimate = true, terrainType = 'grass_01') {

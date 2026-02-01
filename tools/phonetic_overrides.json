@@ -1,0 +1,5 @@
+{
+  "_comment": "Phonetic overrides for voice generation. Use when pronunciation differs from displayed text.",
+  "_example": "voiceId: 'phonetic text to speak instead of original'"
+}
+

@@ -152,49 +152,9 @@ export const NARRATIVE_SCRIPTS = {
             position: 'top',
             text: "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!"
         }
-    ],
-    'guangzong_arrival': [
-        {
-            type: 'dialogue',
-            portraitKey: 'liu-bei',
-            name: 'Liu Bei',
-            voiceId: 'gz_lb_01',
-            position: 'top',
-            text: "The siege lines are vast. Lu Zhi's forces are outnumbered three to one."
-        },
-        {
-            type: 'dialogue',
-            portraitKey: 'custom-male-22',
-            name: 'Commander Lu Zhi',
-            voiceId: 'gz_lz_01',
-            position: 'top',
-            text: "Xuande! Is it truly you? I remember you well from our time in the library. Your arrival is most welcome."
-        },
-        {
-            type: 'dialogue',
-            portraitKey: 'liu-bei',
-            name: 'Liu Bei',
-            voiceId: 'gz_lb_02',
-            position: 'top',
-            text: "Master, we have come to offer our blades. Tell us the situation."
-        },
-        {
-            type: 'dialogue',
-            portraitKey: 'custom-male-22',
-            name: 'Commander Lu Zhi',
-            voiceId: 'gz_lz_02',
-            position: 'top',
-            text: "Zhang Jue is here with 150,000 men. I can hold him, but his brothers Zhang Bao and Zhang Liang are at Yingchuan, fighting Huangfu Song and Zhu Jun. If they break through there, we are lost."
-        },
-        {
-            type: 'dialogue',
-            portraitKey: 'liu-bei',
-            name: 'Liu Bei',
-            voiceId: 'gz_lb_03',
-            position: 'top',
-            text: "Then we shall go to Yingchuan. We will bolster the Imperial lines and strike at the rebel brothers."
-        }
     ]
+    // Note: Guangzong scene is now handled inline in MapScene.startGuangzongBriefing()
+    // following the novel where Lu Zhi was arrested and Liu Bei encounters Dong Zhuo
 };
 
 

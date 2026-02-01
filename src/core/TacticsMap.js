@@ -226,6 +226,9 @@ export class TacticsMap {
             
             // Finally set the visual elevation properties
             this.smoothElevation();
+            
+            // Add terrain variety at elevation changes to make cliffs more visually clear
+            this.varyCliffTerrain();
 
             // General connectivity check to ensure the map isn't totally segmented
             success = this.checkGeneralConnectivity();
@@ -266,6 +269,8 @@ export class TacticsMap {
             this.generateMountainPass();
         } else if (layout === 'foothills') {
             this.generateFoothills();
+        } else if (layout === 'road') {
+            this.generateRoad();
         } else if (layout === 'city_gate') {
             this.generateCityGate();
         } else if (layout === 'siege_walls') {
@@ -337,6 +342,57 @@ export class TacticsMap {
         // Mostly flat, small random elevation bumps
         for (let i = 0; i < 5; i++) {
             this.createElevationBlob(Math.floor(Math.random() * this.height), Math.floor(Math.random() * this.width), 1, 2);
+        }
+    }
+
+    generateRoad() {
+        // Grassy field with a mud road running through it
+        // Road goes roughly from left to right with some gentle curves
+        
+        // First, fill with grass (already done by default)
+        
+        // Create a winding road path from left to right
+        const roadCenterRow = Math.floor(this.height / 2);
+        let currentRow = roadCenterRow;
+        
+        for (let q = 0; q < this.width; q++) {
+            // Gentle random wandering
+            if (Math.random() < 0.3) {
+                currentRow += Math.random() < 0.5 ? -1 : 1;
+                // Keep road in bounds
+                currentRow = Math.max(2, Math.min(this.height - 3, currentRow));
+            }
+            
+            // Road is 2-3 hexes wide
+            const roadWidth = 2 + (q % 3 === 0 ? 1 : 0);
+            const startRow = currentRow - Math.floor(roadWidth / 2);
+            
+            for (let r = startRow; r < startRow + roadWidth; r++) {
+                const cell = this.getCell(r, q);
+                if (cell) {
+                    cell.terrain = 'mud_01';
+                    cell.level = 0;
+                }
+            }
+            
+            // Add some worn grass edges
+            const aboveRoad = this.getCell(startRow - 1, q);
+            if (aboveRoad && Math.random() < 0.4) {
+                aboveRoad.terrain = 'earth_cracked';
+            }
+            const belowRoad = this.getCell(startRow + roadWidth, q);
+            if (belowRoad && Math.random() < 0.4) {
+                belowRoad.terrain = 'earth_cracked';
+            }
+        }
+        
+        // Add some gentle elevation variation to the grass areas (not the road)
+        for (let i = 0; i < 3; i++) {
+            const r = Math.random() < 0.5 ? 
+                Math.floor(Math.random() * (roadCenterRow - 3)) : 
+                roadCenterRow + 2 + Math.floor(Math.random() * (this.height - roadCenterRow - 3));
+            const q = Math.floor(Math.random() * this.width);
+            this.createElevationBlob(r, q, 1, 2);
         }
     }
 
@@ -671,6 +727,64 @@ export class TacticsMap {
             for (let q = 0; q < this.width; q++) {
                 const cell = this.grid[r][q];
                 cell.elevation = cell.level * this.elevationStep;
+            }
+        }
+    }
+
+    varyCliffTerrain() {
+        // When two adjacent hexes have different elevation but the same terrain type,
+        // change the higher one to rock/mud to make the cliff visually clear.
+        // This prevents confusing cliffs between two identical grass/mud hexes.
+        
+        const grassTypes = ['grass_01', 'grass_02', 'grass_03'];
+        const mudTypes = ['mud_01', 'earth_cracked', 'earth_rocky'];
+        const rockTypes = ['mountain_01', 'mountain_02'];
+        
+        // Higher elevation alternatives based on biome
+        const cliffAlternatives = {
+            grass: ['mud_01', 'earth_rocky', 'earth_cracked'],
+            mud: ['earth_rocky', 'sand_01', 'grass_01'],
+            earth: ['mud_01', 'grass_01', 'sand_01']
+        };
+        
+        for (let r = 0; r < this.height; r++) {
+            for (let q = 0; q < this.width; q++) {
+                const cell = this.grid[r][q];
+                if (!cell || cell.impassable) continue;
+                
+                // Skip non-base terrain
+                const isGrass = grassTypes.includes(cell.terrain);
+                const isMud = mudTypes.includes(cell.terrain);
+                const isEarth = cell.terrain.startsWith('earth');
+                if (!isGrass && !isMud && !isEarth) continue;
+                
+                const neighbors = this.getNeighbors(r, q);
+                for (const neighbor of neighbors) {
+                    if (!neighbor || neighbor.impassable) continue;
+                    
+                    // Check if there's an elevation difference
+                    const levelDiff = Math.abs(cell.level - neighbor.level);
+                    if (levelDiff === 0) continue;
+                    
+                    // Check if they have the same terrain type
+                    const sameType = cell.terrain === neighbor.terrain ||
+                        (isGrass && grassTypes.includes(neighbor.terrain)) ||
+                        (isMud && mudTypes.includes(neighbor.terrain));
+                    
+                    if (sameType) {
+                        // Change the higher cell to a rocky variant
+                        const higherCell = cell.level > neighbor.level ? cell : neighbor;
+                        
+                        // Don't change if already varied
+                        if (higherCell.terrain.includes('earth') || higherCell.terrain.includes('rock')) continue;
+                        
+                        // Pick a cliff alternative
+                        const terrainType = grassTypes.includes(higherCell.terrain) ? 'grass' : 
+                                          mudTypes.includes(higherCell.terrain) ? 'mud' : 'earth';
+                        const alternatives = cliffAlternatives[terrainType] || ['earth_rocky'];
+                        higherCell.terrain = alternatives[Math.floor(Math.random() * alternatives.length)];
+                    }
+                }
             }
         }
     }

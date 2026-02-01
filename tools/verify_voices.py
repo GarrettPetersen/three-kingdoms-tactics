@@ -13,8 +13,8 @@ from jiwer import wer
 VOICES_DIR = "assets/audio/voices"
 REPORT_FILE = "voice_verification_report.json"
 
-# Import the game script from generate_voices.py
-from generate_voices import game_script, VOICE_MODELS
+# Import the game script from generate_voices_xtts.py
+from generate_voices_xtts import game_script, VOICE_SAMPLES
 
 # WER threshold for marking as bad
 WER_THRESHOLD = 0.3  # 30% word error rate

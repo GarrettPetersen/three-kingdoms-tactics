@@ -54,6 +54,7 @@ export class TacticsScene extends BaseScene {
         
         const battleDef = BATTLES[this.battleId];
         this.isCutscene = battleDef?.isCutscene || false;
+        this.hasChoice = battleDef?.hasChoice || false;
 
         if (!this.isCustom) {
             gs.set('currentBattleId', this.battleId);
@@ -61,7 +62,19 @@ export class TacticsScene extends BaseScene {
 
         console.log(`Entering battle: ${this.battleId}`);
 
-        const musicKey = (this.battleId === 'daxing' || this.battleId === 'qingzhou_prelude') ? 'oath' : 'battle';
+        // Determine music: cutscenes with choices stay on map music, regular battles play battle music
+        let musicKey = params.musicKey;
+        if (!musicKey) {
+            if (this.isCutscene && battleDef?.hasChoice) {
+                musicKey = 'forest';  // Keep map music for encounter scenes with choices
+            } else if (this.battleId === 'daxing' || this.battleId === 'qingzhou_prelude') {
+                musicKey = 'oath';
+            } else if (this.isCutscene) {
+                musicKey = 'forest';  // Keep map music for other cutscenes
+            } else {
+                musicKey = 'battle';
+            }
+        }
         assets.playMusic(musicKey, 0.4);
         
         const { config, canvas } = this.manager;
@@ -107,6 +120,14 @@ export class TacticsScene extends BaseScene {
         this.isIntroAnimating = true;
         this.introTimer = 0;
         this.lastTime = 0;
+        this.onVictoryCallback = params.onVictory || null; // Custom callback for battle result
+        this.onChoiceRestrain = params.onChoiceRestrain || null; // Callback for peaceful choice
+        this.onChoiceFight = params.onChoiceFight || null; // Callback for fight choice
+        this.onFightVictory = params.onFightVictory || null; // Callback for cage-break victory
+        // Note: this.hasChoice is already set from battleDef earlier in enter()
+        this.isChoiceActive = false; // Currently showing choice UI
+        this.choiceHovered = -1; // Which choice option is hovered
+        this.isFightMode = false; // True when player chose to fight in encounter
         
         if (battleDef) {
             this.mapGenParams = params.mapGen || battleDef.map;
@@ -121,8 +142,22 @@ export class TacticsScene extends BaseScene {
                 houseDensity: 0.03
             };
         }
+            
+            this.tacticsMap.generate(this.mapGenParams);
 
-        this.tacticsMap.generate(this.mapGenParams);
+        // Apply terrain overrides from battle definition
+        if (battleDef && battleDef.terrainOverrides) {
+            for (const override of battleDef.terrainOverrides) {
+                const cell = this.tacticsMap.getCell(override.r, override.q);
+                if (cell) {
+                    cell.terrain = override.terrain;
+                    // Clear impassable flag if setting to a traversable terrain
+                    if (!override.terrain.includes('water_deep') && !override.terrain.includes('mountain')) {
+                        cell.impassable = false;
+                    }
+                }
+            }
+        }
 
         if (battleDef && battleDef.flagPos) {
             // Find a suitable spot for the flag if specified spot is impassable
@@ -152,7 +187,7 @@ export class TacticsScene extends BaseScene {
                 }
             }
 
-        this.placeInitialUnits(params.units);
+            this.placeInitialUnits(params.units);
         
         // Spawn random boulders on mountain maps
         if (this.mapGenParams.layout === 'mountain_pass' || this.mapGenParams.mountainDensity > 0.1) {
@@ -163,27 +198,27 @@ export class TacticsScene extends BaseScene {
         if (this.battleId === 'qingzhou_siege') {
             this.placeAmbushBoulders();
         }
-        
-        // Setup Weather
-        this.weatherType = this.mapGenParams.weather || null;
-        if (this.weatherType === 'none') this.weatherType = null;
-        
-        if (!this.weatherType) {
-            if (this.mapGenParams.biome === 'northern_snowy') this.weatherType = 'snow';
-            else if (this.mapGenParams.biome === 'southern' && Math.random() < 0.3) this.weatherType = 'rain';
-        }
-        
+            
+            // Setup Weather
+            this.weatherType = this.mapGenParams.weather || null;
+            if (this.weatherType === 'none') this.weatherType = null;
+            
+            if (!this.weatherType) {
+                if (this.mapGenParams.biome === 'northern_snowy') this.weatherType = 'snow';
+                else if (this.mapGenParams.biome === 'southern' && Math.random() < 0.3) this.weatherType = 'rain';
+            }
+            
         this.isIntroDialogueActive = false; // Set to false initially
-        this.dialogueStep = 0;
-        
-        // Wait for intro animation then start dialogue
-        setTimeout(() => {
-            this.startIntroDialogue();
-        }, 1500);
+            this.dialogueStep = 0;
+            
+            // Wait for intro animation then start dialogue
+            setTimeout(() => {
+                this.startIntroDialogue();
+            }, 1500);
 
         this.particles = [];
         if (!this.isCustom) {
-            this.manager.gameState.set('lastScene', 'tactics');
+        this.manager.gameState.set('lastScene', 'tactics');
         }
 
         if (this.battleId === 'qingzhou_cleanup') {
@@ -264,9 +299,9 @@ export class TacticsScene extends BaseScene {
 
         // Loss: All player team wiped
         if (playerUnits.length === 0) {
-            this.endBattle(false);
-            return;
-        }
+                this.endBattle(false);
+                return;
+            }
 
         if (battleDef && battleDef.victoryCondition) {
             const vc = battleDef.victoryCondition;
@@ -276,7 +311,7 @@ export class TacticsScene extends BaseScene {
                 const deadRequired = vc.mustSurvive.some(id => !this.units.find(u => u.id === id && u.hp > 0));
                 if (deadRequired) {
                     this.endBattle(false);
-                    return;
+                return;
                 }
             }
 
@@ -564,7 +599,13 @@ export class TacticsScene extends BaseScene {
         }
 
         const faction = (id === 'liubei' || id === 'guanyu' || id === 'zhangfei') ? 'player' : 'allied';
-        const finalMaxHp = this.getMaxHpForLevel(level, (faction === 'player' ? 4 : 2));
+        // Heroes have 4 base HP, soldiers gain +1 HP at level 2+, archers stay at 2
+        const isArcher = unitClass === 'archer';
+        let baseHp = 4;
+        if (faction !== 'player') {
+            baseHp = isArcher ? 2 : (level >= 2 ? 3 : 2);
+        }
+        const finalMaxHp = this.getMaxHpForLevel(level, baseHp);
 
         // AMBUSH SPECIAL: Force the target cell to be passable so they can appear on mountains
         const targetCell = this.tacticsMap.getCell(r, q);
@@ -668,7 +709,7 @@ export class TacticsScene extends BaseScene {
         this.gameOverTimer = 2500; // Time before showing summary
         this.isProcessingTurn = true;
 
-        const gs = this.manager.gameState;
+            const gs = this.manager.gameState;
         
         const unitXP = gs.get('unitXP') || {};
         const recoveryInfo = [];
@@ -767,8 +808,67 @@ export class TacticsScene extends BaseScene {
         }
 
         if (!this.isCustom) {
-            this.clearBattleState();
+        this.clearBattleState();
         }
+    }
+
+    startFight() {
+        // Transition from encounter cutscene to actual battle
+        // Keep the same map, units in same positions
+        
+        // Switch to battle music
+        assets.playMusic('battle', 0.4);
+        
+        // Disable cutscene mode
+        this.isCutscene = false;
+        this.isFightMode = true;
+        
+        // Add the 3 existing campaign soldiers with their XP
+        const gs = this.manager.gameState;
+        const unitXP = gs.get('unitXP') || {};
+        const unitClasses = gs.get('unitClasses') || {};
+        
+        const allyPositions = [
+            { id: 'ally1', r: 5, q: 0 },
+            { id: 'ally2', r: 7, q: 0 },
+            { id: 'ally3', r: 4, q: 2 }
+        ];
+        
+        allyPositions.forEach((allyDef) => {
+            const cell = this.findNearestFreeCell(allyDef.r, allyDef.q, 3);
+            if (cell) {
+                const xp = unitXP[allyDef.id] || 0;
+                const level = this.getLevelFromXP(xp);
+                const unitClass = unitClasses[allyDef.id] || 'soldier';
+                
+                const isArcher = unitClass === 'archer';
+                // Soldiers gain +1 HP at level 2+, archers stay at 2 base HP
+                const baseHp = isArcher ? 2 : (level >= 2 ? 3 : 2);
+                const finalMaxHp = this.getMaxHpForLevel(level, baseHp);
+                
+                const ally = new Unit(allyDef.id, {
+                    name: 'Volunteer',
+                    imgKey: isArcher ? 'archer' : 'soldier',
+                    img: assets.getImage(isArcher ? 'archer' : 'soldier'),
+                    faction: 'allied',
+                    hp: finalMaxHp,
+                    maxHp: finalMaxHp,
+                    moveRange: 3,
+                    attacks: isArcher ? ['arrow_shot'] : ['slash'],
+                    r: cell.r,
+                    q: cell.q,
+                    level: level
+                });
+                this.units.push(ally);
+                cell.unit = ally;
+            }
+        });
+        
+        // Show objective
+        this.addDamageNumber(this.manager.canvas.width / 2, 40, "BREAK THE CAGE!", '#ffd700');
+        
+        // Start with NPC phase so enemies get their first turn to move and telegraph
+        this.startNpcPhase();
     }
 
     startNpcPhase() {
@@ -863,7 +963,13 @@ export class TacticsScene extends BaseScene {
         const maxRange = attackConfig.range || 1;
 
         const targetFaction = unit.faction === 'enemy' ? ['player', 'allied'] : ['enemy'];
-        const unitTargets = this.units.filter(u => targetFaction.includes(u.faction) && u.hp > 0);
+        // Don't target caged units - enemies protect the prisoner, allies want to free them
+        const unitTargets = this.units.filter(u => {
+            if (!targetFaction.includes(u.faction)) return false;
+            if (u.hp <= 0) return false;
+            if (u.caged) return false;  // Caged units cannot be targeted by anyone
+            return true;
+        });
         const reachableData = this.tacticsMap.getReachableData(unit.r, unit.q, unit.moveRange, unit);
         
         let bestTile = { r: unit.r, q: unit.q };
@@ -1049,10 +1155,10 @@ export class TacticsScene extends BaseScene {
                 attackKey 
             };
             
-            const startPos = this.getPixelPos(unit.r, unit.q);
+                const startPos = this.getPixelPos(unit.r, unit.q);
             const endPos = this.getPixelPos(targetPos.r, targetPos.q);
-            if (endPos.x < startPos.x) unit.flip = true;
-            if (endPos.x > startPos.x) unit.flip = false;
+                if (endPos.x < startPos.x) unit.flip = true;
+                if (endPos.x > startPos.x) unit.flip = false;
         } else {
             unit.intent = null;
         }
@@ -1788,8 +1894,8 @@ export class TacticsScene extends BaseScene {
                     if (isDestructible) hitAnything = true;
 
                     if (cell.unit) {
-                        const victim = cell.unit;
-                        const victimPos = this.getPixelPos(cell.r, cell.q);
+                    const victim = cell.unit;
+                    const victimPos = this.getPixelPos(cell.r, cell.q);
                         // Pass the original targetR/targetQ so only the furthest hex (clicked) gets pushed
                         this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, victimPos);
                         hitAnything = true;
@@ -1809,6 +1915,47 @@ export class TacticsScene extends BaseScene {
     }
 
     applyUnitDamage(victim, damage, sourceCell = null) {
+        // Caged units - damage the cage, not the unit
+        if (victim.caged) {
+            // Initialize cage HP if not set
+            if (victim.cageHp === undefined) {
+                victim.cageHp = 3;  // Cage has 3 HP
+            }
+            
+            victim.cageHp -= damage;
+            
+            if (victim.cageHp <= 0) {
+                // Cage broken! Free the prisoner
+                victim.caged = false;
+                victim.cageHp = 0;
+                this.addDamageNumber(victim.visualX, victim.visualY - 20, "FREED!", '#00ff00');
+                assets.playSound('building_damage', 1.0);
+                
+                // Check for victory condition
+                if (this.isFightMode && this.onFightVictory) {
+                    // Show victory message and end
+                    setTimeout(() => {
+                        this.addDamageNumber(this.manager.canvas.width / 2, 50, "VICTORY!", '#ffd700');
+                        setTimeout(() => {
+                            this.onFightVictory();
+                        }, 1500);
+                    }, 500);
+                }
+            } else {
+                // Show cage damage
+                this.addDamageNumber(victim.visualX, victim.visualY - 20, `CAGE: ${victim.cageHp}/3`);
+                assets.playSound('building_damage', 0.7);
+                
+                // Visual: switch cage sprite based on damage
+                if (victim.cageHp <= 1) {
+                    victim.cageSprite = 'cage_more_damaged';
+                } else if (victim.cageHp <= 2) {
+                    victim.cageSprite = 'cage_damaged';
+                }
+            }
+            return 0;  // No damage to the unit itself
+        }
+        
         let finalDamage = damage;
         
         // Boulder Special Logic: Cracked on first damage, destroyed on second
@@ -1827,7 +1974,7 @@ export class TacticsScene extends BaseScene {
         if (victim.hp <= 0) {
             victim.hp = 0;
             if (victim.name !== 'Boulder') {
-                victim.action = 'death';
+            victim.action = 'death';
             }
             victim.intent = null;
             const currentCell = sourceCell || this.tacticsMap.getCell(victim.r, victim.q);
@@ -1951,12 +2098,12 @@ export class TacticsScene extends BaseScene {
                         this.handleCrushLanding(victim, occupant, pushCell, levelDiff, targetPos);
                     } else {
                         // Normal fall landing
-                        setTimeout(() => {
+                    setTimeout(() => { 
                             assets.playSound('collision', 0.8);
                             this.applyUnitDamage(victim, fallDamage);
                             this.addDamageNumber(targetPos.x, targetPos.y - 30, fallDamage);
-                            victim.setPosition(pushCell.r, pushCell.q);
-                            pushCell.unit = victim;
+                    victim.setPosition(pushCell.r, pushCell.q);
+                        pushCell.unit = victim;
                         }, 400);
                     }
                 }
@@ -2009,10 +2156,11 @@ export class TacticsScene extends BaseScene {
     }
 
     getLevelFromXP(xp) {
-        if (xp < 20) return 1;
-        // Formula: TotalXP(L) = 5L^2 + 5L - 10
-        // Solving for L: L = (-5 + sqrt(225 + 20*XP)) / 10
-        return Math.floor((-5 + Math.sqrt(225 + 20 * xp)) / 10);
+        if (xp < 10) return 1;
+        // Formula: TotalXP(L) = 2.5*L^2 + 2.5*L - 5
+        // Level 2 at 10 XP, Level 3 at 25 XP, Level 4 at 45 XP, etc.
+        // Solving for L: L = (-1 + sqrt(9 + 1.6*xp)) / 2
+        return Math.floor((-1 + Math.sqrt(9 + 1.6 * xp)) / 2);
     }
 
     getMaxHpForLevel(level, baseHp = 4) {
@@ -2074,7 +2222,8 @@ export class TacticsScene extends BaseScene {
 
     getXPForLevel(level) {
         if (level <= 1) return 0;
-        return 5 * level * (level + 1) - 10;
+        // Level 2 at 10 XP, Level 3 at 25 XP, Level 4 at 45 XP, etc.
+        return 2.5 * level * level + 2.5 * level - 5;
     }
 
     placeInitialUnits(specifiedUnits) {
@@ -2103,17 +2252,18 @@ export class TacticsScene extends BaseScene {
                         id: uDef.id,
                         r: uDef.r,
                         q: uDef.q,
-                        isDead: uDef.isDead || false  // Preserve isDead flag for corpses
+                        isDead: uDef.isDead || false,  // Preserve isDead flag for corpses
+                        caged: uDef.caged || false     // Preserve caged flag
                     };
                 }).filter(u => u !== null);
             } else if (this.battleId === 'custom') {
                 const enemyType = this.mapGenParams.enemyType || 'yellowturban';
                 const enemyCount = this.mapGenParams.enemyCount || 6;
 
-                unitsToPlace = [
-                    { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
-                    { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
-                    { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
+            unitsToPlace = [
+                { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
+                { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
+                { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
                     { id: 'ally1', name: 'Volunteer', imgKey: 'soldier', r: 1, q: 3, moveRange: 3, hp: 3, faction: 'allied', attacks: ['bash'] },
                     { id: 'ally2', name: 'Volunteer', imgKey: 'soldier', r: 1, q: 4, moveRange: 3, hp: 3, faction: 'allied', attacks: ['bash'] },
                     { id: 'ally3', name: 'Volunteer', imgKey: 'soldier', r: 1, q: 5, moveRange: 3, hp: 3, faction: 'allied', attacks: ['bash'] }
@@ -2139,13 +2289,13 @@ export class TacticsScene extends BaseScene {
                 }
             } else {
                 // Default fallback
-                unitsToPlace = [
-                    { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
-                    { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
-                    { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
-                    { id: 'rebel1', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 4, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
-                    { id: 'rebel2', name: 'Yellow Turban', imgKey: 'yellowturban', r: 8, q: 5, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] }
-                ];
+            unitsToPlace = [
+                { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
+                { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
+                { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
+                { id: 'rebel1', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 4, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
+                { id: 'rebel2', name: 'Yellow Turban', imgKey: 'yellowturban', r: 8, q: 5, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] }
+            ];
             }
         }
 
@@ -2167,13 +2317,19 @@ export class TacticsScene extends BaseScene {
                 const xp = unitXP[u.id] || 0;
                 const level = this.getLevelFromXP(xp);
 
-                // Level bonuses
-                const finalMaxHp = this.getMaxHpForLevel(level, u.maxHp || u.hp || 4);
-
                 // Check for class change (e.g. Soldier -> Archer)
                 let imgKey = u.imgKey;
                 let attacks = [...u.attacks];
                 const unitClass = unitClasses[u.id] || (u.id.startsWith('ally') ? 'soldier' : u.id);
+                
+                // Level bonuses - soldiers gain +1 HP at level 2+, archers stay at 2 base
+                const isAlly = u.id.startsWith('ally') || u.id.startsWith('guard');
+                const isArcher = unitClass === 'archer';
+                let baseHp = u.maxHp || u.hp || 4;
+                if (isAlly) {
+                    baseHp = isArcher ? 2 : (level >= 2 ? 3 : 2);
+                }
+                const finalMaxHp = this.getMaxHpForLevel(level, baseHp);
                 
                 if (unitClass === 'archer') {
                     imgKey = 'archer';
@@ -2192,13 +2348,13 @@ export class TacticsScene extends BaseScene {
                             }
                         }
                     });
-                }
+            }
 
-                const unit = new Unit(u.id, {
-                    ...u,
+            const unit = new Unit(u.id, {
+                ...u,
                     imgKey: imgKey,
-                    r: finalR,
-                    q: finalQ,
+                r: finalR,
+                q: finalQ,
                     level: level,
                     hp: u.isDead ? 0 : finalMaxHp, // Support pre-killed units for scenes
                     maxHp: finalMaxHp,
@@ -2211,7 +2367,7 @@ export class TacticsScene extends BaseScene {
                 
                 if (u.isDead) unit.isGone = false; // We want corpses to stay visible
                 
-                this.units.push(unit);
+            this.units.push(unit);
                 cell.unit = unit;
             });
         }
@@ -2241,6 +2397,11 @@ export class TacticsScene extends BaseScene {
         if (this.isGameOver) {
             this.gameOverTimer -= dt;
             if (this.gameOverTimer <= 0) {
+                // If there's a custom victory callback, use it instead of normal flow
+                if (this.won && this.onVictoryCallback) {
+                    this.onVictoryCallback();
+                    return;
+                }
                 this.manager.switchTo('summary', this.finalStats);
                 return;
             }
@@ -2277,7 +2438,20 @@ export class TacticsScene extends BaseScene {
             // Only animate player units that haven't acted, or units currently moving
             const isPlayerActive = (this.turn === 'player' && u.faction === 'player' && !u.hasActed);
             const isEnemyActive = (this.turn === 'enemy' && u.faction === 'enemy');
-            const shouldAnimate = isPlayerActive || isEnemyActive;
+            
+            // In cutscene dialogue, only animate the speaking character
+            let shouldAnimate = isPlayerActive || isEnemyActive;
+            if (this.isCutscene && this.isCleanupDialogueActive && this.cleanupDialogueScript) {
+                const currentStep = this.cleanupDialogueScript[this.cleanupDialogueStep];
+                if (currentStep && currentStep.speaker) {
+                    shouldAnimate = (u.id === currentStep.speaker);
+                } else {
+                    shouldAnimate = false;
+                }
+            } else if (this.isCutscene && !this.isCleanupDialogueActive) {
+                // During cutscene but not in dialogue - no one animates
+                shouldAnimate = false;
+            }
             
             // Get current terrain for footstep sounds
             const cell = this.tacticsMap.getCell(u.r, u.q);
@@ -2304,6 +2478,19 @@ export class TacticsScene extends BaseScene {
                 p.progress = 1;
                 if (p.onComplete) p.onComplete();
                 this.projectiles.splice(i, 1);
+            }
+        }
+
+        // --- UPDATE CHOICE HOVER ---
+        if (this.isChoiceActive && this.choiceRects) {
+            const mx = this.manager.logicalMouseX;
+            const my = this.manager.logicalMouseY;
+            this.choiceHovered = -1;
+            for (const rect of this.choiceRects) {
+                if (mx >= rect.x && mx <= rect.x + rect.w && my >= rect.y && my <= rect.y + rect.h) {
+                    this.choiceHovered = rect.index;
+                    break;
+                }
             }
         }
 
@@ -2750,6 +2937,21 @@ export class TacticsScene extends BaseScene {
                 }
 
                 this.drawCharacter(ctx, u.img, u.currentAnimAction || u.action, u.frame, u.visualX + u.visualOffsetX, surfaceY + u.visualOffsetY, drawOptions);
+                
+                // Draw cage overlay if unit is caged
+                if (u.caged) {
+                    const cageKey = u.cageSprite || 'cage';
+                    const cageImg = assets.getImage(cageKey);
+                    if (cageImg) {
+                        // Center cage horizontally over the hex (cage is 36x72)
+                        const cageX = Math.floor(u.visualX - cageImg.width / 2);
+                        // Align cage bottom with hex bottom
+                        // Hex is 36x36 centered at surfaceY, so bottom is surfaceY + 18
+                        // Cage is 72 tall, so top should be at (surfaceY + 18) - 72 = surfaceY - 54
+                        const cageY = Math.floor(surfaceY - 54);
+                        ctx.drawImage(cageImg, cageX, cageY);
+                    }
+                }
             } else if (call.type === 'flag') {
                 const img = assets.getImage('flag_01');
                 if (img) {
@@ -2933,6 +3135,61 @@ export class TacticsScene extends BaseScene {
                 this.drawPixelText(ctx, "The Yellow Turbans scatter!", canvas.width / 2, canvas.height / 2 + 15, { color: '#aaa', font: '8px Tiny5', align: 'center' });
             }
         }
+    }
+
+    drawChoiceUI() {
+        const { ctx, canvas } = this.manager;
+        
+        // Semi-transparent overlay - taller to fit wrapped text
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        ctx.fillRect(0, canvas.height - 90, canvas.width, 90);
+        
+        // Choice prompt
+        this.drawPixelText(ctx, "What will you do?", canvas.width / 2, canvas.height - 82, {
+            color: '#ffd700',
+            align: 'center',
+            font: '10px Silkscreen'
+        });
+        
+        // Choice options - two lines each
+        const options = [
+            { lines: ["Stay your hand,", "brother!"], color: '#88ff88', hoverColor: '#aaffaa' },
+            { lines: ["Free him,", "brothers!"], color: '#ff8888', hoverColor: '#ffaaaa' }
+        ];
+        
+        const optionWidth = 100;
+        const optionHeight = 36;
+        const spacing = 16;
+        const startX = canvas.width / 2 - (options.length * optionWidth + (options.length - 1) * spacing) / 2;
+        const optionY = canvas.height - 68;
+        
+        this.choiceRects = [];
+        
+        options.forEach((opt, i) => {
+            const ox = startX + i * (optionWidth + spacing);
+            const isHovered = this.choiceHovered === i;
+            
+            // Store rect for hit detection
+            this.choiceRects.push({ x: ox, y: optionY, w: optionWidth, h: optionHeight, index: i });
+            
+            // Draw option box
+            ctx.fillStyle = isHovered ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(ox, optionY, optionWidth, optionHeight);
+            ctx.strokeStyle = isHovered ? opt.hoverColor : opt.color;
+            ctx.lineWidth = 1;
+            ctx.strokeRect(ox + 0.5, optionY + 0.5, optionWidth - 1, optionHeight - 1);
+            
+            // Draw text - two lines
+            const lineHeight = 10;
+            const textColor = isHovered ? opt.hoverColor : opt.color;
+            opt.lines.forEach((line, lineIdx) => {
+                this.drawPixelText(ctx, line, ox + optionWidth / 2, optionY + 8 + lineIdx * lineHeight, {
+                    color: textColor,
+                    align: 'center',
+                    font: '8px Silkscreen'
+                });
+            });
+        });
     }
 
     drawHpBar(ctx, unit, x, y) {
@@ -3186,7 +3443,7 @@ export class TacticsScene extends BaseScene {
         const sourceHeight = img.height;
         
         const silhouette = img.silhouette;
-
+        
         for (let ix = 0; ix < 36; ix++) {
             let edgeY = null;
             // The hex footprint logic (bottom 36px)
@@ -3220,7 +3477,7 @@ export class TacticsScene extends BaseScene {
                         ctx.fillRect(dx + ix, dy, 1, 2);
                     }
                 }
-
+                
                 // The vertical "side" edge
                 ctx.drawImage(img, ix, topPartHeight, 1, 1, dx + ix, dy + topPartHeight, 1, extraDepth);
                 
@@ -3250,6 +3507,11 @@ export class TacticsScene extends BaseScene {
     }
 
     drawUI() {
+        if (this.isChoiceActive) {
+            this.drawChoiceUI();
+            return;
+        }
+        
         if (this.isCutscene) {
             const { ctx, canvas } = this.manager;
             if (this.isIntroAnimating || this.isProcessingTurn) return;
@@ -3388,6 +3650,12 @@ export class TacticsScene extends BaseScene {
                 objectiveText = "GOAL: DEFEAT ALL REBELS";
             }
             this.drawPixelText(ctx, objectiveText, canvas.width / 2, 8, { 
+                color: '#fff', 
+                font: '8px Tiny5', 
+                align: 'center' 
+            });
+        } else if (this.isFightMode) {
+            this.drawPixelText(ctx, "GOAL: FREE LU ZHI", canvas.width / 2, 8, { 
                 color: '#fff', 
                 font: '8px Tiny5', 
                 align: 'center' 
@@ -3599,6 +3867,24 @@ export class TacticsScene extends BaseScene {
     handleInput(e) {
         const { x, y } = this.getMousePos(e);
 
+        // Handle choice selection
+        if (this.isChoiceActive && this.choiceRects) {
+            for (const rect of this.choiceRects) {
+                if (x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h) {
+                    this.isChoiceActive = false;
+                    if (rect.index === 0 && this.onChoiceRestrain) {
+                        // Peaceful choice - restrain Zhang Fei
+                        this.onChoiceRestrain();
+                    } else if (rect.index === 1) {
+                        // Fight choice - start fight in current map
+                        this.startFight();
+                    }
+                    return;
+                }
+            }
+            return;
+        }
+
         // Don't process cutscene clicks if cleanup dialogue is playing on the map
         if (this.isCutscene && !this.isIntroAnimating && !this.isProcessingTurn && !this.isCleanupDialogueActive) {
             const battleDef = BATTLES[this.battleId];
@@ -3655,15 +3941,18 @@ export class TacticsScene extends BaseScene {
                 this.dialogueElapsed = 0;
             } else {
                 this.subStep = 0;
-                this.dialogueStep++;
+            this.dialogueStep++;
                 this.dialogueElapsed = 0;
                 
                 if (this.dialogueStep >= script.length) {
                     if (this.isIntroDialogueActive) {
                         this.isIntroDialogueActive = false;
-                        if (this.battleId === 'qingzhou_prelude') {
+                        if (this.hasChoice && (this.onChoiceRestrain || this.onChoiceFight)) {
+                            // Show choice UI instead of starting battle
+                            this.isChoiceActive = true;
+                        } else if (this.battleId === 'qingzhou_prelude') {
                             this.checkWinLoss(); // Trigger transition immediately
-                        } else {
+                        } else if (!this.isCutscene) {
                             this.startNpcPhase();
                         }
                     } else if (this.isVictoryDialogueActive) {
@@ -3845,9 +4134,9 @@ export class TacticsScene extends BaseScene {
                         attacker.hasAttacked = true;
                         attacker.hasActed = true;
                         if (this.selectedUnit === attacker) {
-                            this.selectedUnit = null;
-                            this.selectedAttack = null;
-                            this.attackTiles.clear();
+                    this.selectedUnit = null;
+                    this.selectedAttack = null;
+                    this.attackTiles.clear();
                         }
                         this.pushHistory(); // Capture state AFTER attack
                     }

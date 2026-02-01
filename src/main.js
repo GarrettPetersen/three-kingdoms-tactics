@@ -235,6 +235,8 @@ async function init() {
                 sceneManager.gameState.addMilestone('prologue_complete');
                 sceneManager.gameState.addMilestone('daxing');
                 sceneManager.gameState.addMilestone('qingzhou_siege');
+                sceneManager.gameState.addMilestone('qingzhou_cleanup');
+                // Place Liu Bei at Qingzhou (220, 95) - he needs to march to Guangzong
                 sceneManager.switchTo('map', { campaignId: 'liubei', partyX: 220, partyY: 95 });
             }
             if (inputBuffer.length > 20) inputBuffer = inputBuffer.slice(-20);
@@ -253,7 +255,10 @@ async function init() {
         const portraitNames = [
             'Liu-Bei', 'Guan-Yu', 'Zhang-Fei', 'Zhou-Jing', 'Diaochan', 
             'Deng-Mao', 'Cheng-Yuanzhi', 'The-Noticeboard', 'Yellow-Turban',
-            'Dong-Zhuo', 'Zhang-Jiao', 'Gong-Jing', 'Lu-Zhi'
+            'Dong-Zhuo', 'Zhang-Jiao',
+            // Custom portraits for NPCs
+            'Custom-Male-17',  // Gong Jing (Imperial Protector)
+            'Custom-Male-22'   // Lu Zhi (Commander)
         ];
 
         await Promise.all([
@@ -289,7 +294,8 @@ async function init() {
                 guanyu: 'assets/characters/049_guanyu.png',
                 zhangfei: 'assets/characters/050_zhangfei.png',
                 zhugeliang: 'assets/characters/051_zhugeliang.png',
-                zhoujing: 'assets/characters/064_jiangwan.png',
+                zhoujing: 'assets/characters/071_chendeng.png',
+                gongjing_sprite: 'assets/characters/067_dongyun.png',
                 yellowturban: 'assets/characters/097_yellowturban.png',
                 merchant: 'assets/characters/090_fushang01.png',
                 blacksmith: 'assets/characters/091_tiejiang01.png',
@@ -308,6 +314,10 @@ async function init() {
                 flag_01: 'assets/misc/flag_01.png',
                 boulder: 'assets/misc/boulder.png',
                 boulder_cracked: 'assets/misc/boulder_cracked.png',
+                cage: 'assets/terrain/individual/cage.png',
+                cage_damaged: 'assets/terrain/individual/cage_damaged.png',
+                cage_more_damaged: 'assets/terrain/individual/cage_more_damaged.png',
+                cage_destroyed: 'assets/terrain/individual/cage_destroyed.png',
                 ...terrainAssets
             }),
             assets.loadSounds({
@@ -349,6 +359,32 @@ async function init() {
                 forest_loop: 'assets/music/forest_loop.ogg'
             })
         ]);
+
+        // Create flipped/recolored version of army_camp for Lu Zhi's camp
+        const armyCamp = assets.getImage('army_camp');
+        if (armyCamp) {
+            const canvas = document.createElement('canvas');
+            canvas.width = armyCamp.width;
+            canvas.height = armyCamp.height;
+            const ctx = canvas.getContext('2d');
+            // Flip horizontally
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(armyCamp, 0, 0);
+            // Apply slight color shift for different look (more blue/grey tones)
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                // Shift towards cooler tones (reduce red, boost blue slightly)
+                data[i] = Math.max(0, data[i] - 15);      // R
+                data[i + 2] = Math.min(255, data[i + 2] + 10); // B
+            }
+            ctx.putImageData(imageData, 0, 0);
+            // Store as new image
+            const flippedImg = new Image();
+            flippedImg.src = canvas.toDataURL();
+            assets.images['army_camp_flipped'] = flippedImg;
+        }
 
         // Apply palette to terrain assets
         assets.palettizeKeys(TERRAIN_TYPES, 'vinik24');

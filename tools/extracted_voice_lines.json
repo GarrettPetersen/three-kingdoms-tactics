@@ -1,0 +1,632 @@
+[
+  {
+    "id": "daxing_gy_01",
+    "char": "guanyu",
+    "text": "Third brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_lb_01",
+    "char": "liubei",
+    "text": "I am Liu Bei, a descendant of Prince Jing of Zhongshan and great-great-grandson of Emperor Jing. These are my sworn brothers, Guan Yu and Zhang Fei.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_lb_02",
+    "char": "liubei",
+    "text": "We have raised a force of five hundred volunteers to serve our country and protect the people.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_lb_03",
+    "char": "liubei",
+    "text": "Magistrate Zhou, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_zf_01",
+    "char": "zhangfei",
+    "text": "Fifty thousand? Hah! They are but a mob of ants! Give us the order, Magistrate, and we shall scatter them like dust!",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_zj_01",
+    "char": "zhoujing",
+    "text": "Who goes there? These men behind you... they have the look of tigers. You do not look like common recruits.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_zj_02",
+    "char": "zhoujing",
+    "text": "An Imperial kinsman! Truly, the Heavens have not abandoned the Han. Your arrival is most timely.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_zj_03",
+    "char": "zhoujing",
+    "text": "Scouts report that the rebel general Cheng Yuanzhi is marching upon us with fifty thousand Yellow Turbans.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_zj_04",
+    "char": "zhoujing",
+    "text": "Very well! I shall lead the main force myself. Together, we shall strike at the heart of Cheng Yuanzhi's army!",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "debug_narrative_01",
+    "char": "system",
+    "text": "Cheat code accepted. Narrative scene is functional.",
+    "source": "main.js"
+  },
+  {
+    "id": "dx_cyz_01",
+    "char": "chengyuanzhi",
+    "text": "Slay them all! The Han is dead, the Yellow Heavens shall rise!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "dx_dm_01",
+    "char": "dengmao",
+    "text": "Imperial dogs! You dare stand in the way of the Lord of Heaven?",
+    "source": "Battles.js"
+  },
+  {
+    "id": "dx_gy_01",
+    "char": "guanyu",
+    "text": "Their numbers are great, but they are but a rabble without leadership.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "dx_lb_01",
+    "char": "liubei",
+    "text": "The Yellow Turban vanguard is here. They seek to plunder Zhuo County!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "dx_lb_02",
+    "char": "liubei",
+    "text": "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "dx_zf_01",
+    "char": "zhangfei",
+    "text": "Let me at them! My Serpent Spear is thirsty for rebel blood!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_dz_01",
+    "char": "dongzhuo",
+    "text": "What offices do you three hold?",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "gz_dz_02",
+    "char": "dongzhuo",
+    "text": "Hmph. Common men with no rank. You may go.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "gz_gy_01",
+    "char": "guanyu",
+    "text": "Lu Zhi has been arrested. There is no point continuing to Guangzong. Let us return toward Zhuo.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "gz_gy_free_01",
+    "char": "guanyu",
+    "text": "Brother, there may be consequences for this...",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_lb_01",
+    "char": "liubei",
+    "text": "What is this? Commander Lu Zhi... in chains?",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_lb_03",
+    "char": "liubei",
+    "text": "That banner reads 'Zhang Jue, Lord of Heaven!' Brothers, we attack!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "gz_lb_04",
+    "char": "liubei",
+    "text": "We hold no official positions, my lord. We are but volunteers who answered the call to arms.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "gz_lb_05",
+    "char": "liubei",
+    "text": "Patience, brother. A man's worth is not measured by titles. Our day will come. Let us seek another commander who values true courage.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "gz_lb_free_02",
+    "char": "liubei",
+    "text": "We have made our choice. Now we fight!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_lb_freed_02",
+    "char": "liubei",
+    "text": "Master, I could not stand by while a loyal commander was led to unjust execution.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "gz_lb_freed_03",
+    "char": "liubei",
+    "text": "We shall continue to fight for the people, regardless of titles or recognition. That is our oath.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "gz_lz_explain_01",
+    "char": "luzhi",
+    "text": "Xuande! I had the rebels surrounded and was on the point of smashing them, when Zhang Jue employed sorcery to prevent my victory.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_lz_explain_02",
+    "char": "luzhi",
+    "text": "The court sent Eunuch Zuo Feng to inquire. He demanded a bribe, but where could I find gold in such circumstances? He reported that I hid behind ramparts and disheartened my army.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_lz_explain_03",
+    "char": "luzhi",
+    "text": "So I was superseded by Dong Zhuo, and now I go to the capital to answer false charges.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_lz_freed_01",
+    "char": "luzhi",
+    "text": "Xuande! You have saved me, but at great cost. The court will brand you as rebels for attacking imperial soldiers.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "gz_lz_freed_02",
+    "char": "luzhi",
+    "text": "Your loyalty does you credit, but now you must flee. I will return to Guangzong in secret. Perhaps one day, when the dynasty is restored, your name will be cleared.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "gz_nar_01",
+    "char": "narrator",
+    "text": "Two days later, the brothers heard the thunder of battle. From a hilltop, they beheld government soldiers in full retreat, pursued by a sea of Yellow Scarves.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "gz_nar_02",
+    "char": "narrator",
+    "text": "The three brothers dashed into Zhang Jue's army, threw his ranks into confusion, and drove him back fifteen miles.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "gz_zf_01",
+    "char": "zhangfei",
+    "text": "This is outrage! Let me slay these dogs and free you, Master!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_zf_02",
+    "char": "zhangfei",
+    "text": "We saved that wretch in bloody battle and he treats us with contempt! Let me go back and take his head!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "gz_zf_free_01",
+    "char": "zhangfei",
+    "text": "HA! Now you're talking, brother! Come on!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_zf_freed_02",
+    "char": "zhangfei",
+    "text": "Cleared? Bah! We did what was right! Let the corrupt court call us what they will!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_gy_01",
+    "char": "guanyu",
+    "text": "Quick! Bring me wine! I am in a hurry to get to town and join the volunteers!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_gy_02",
+    "char": "guanyu",
+    "text": "I am Guan Yu, courtesy name Yunchang. For years I have been a fugitive, for I slew a local bully who oppressed the weak.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_gy_03",
+    "char": "guanyu",
+    "text": "Now I hear there is a call for volunteers, and I have come to join the cause.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_gy_04",
+    "char": "guanyu",
+    "text": "The heavens have surely brought us together. We share one mind and one purpose.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_gy_05",
+    "char": "guanyu",
+    "text": "I agree... We swear by the peach garden.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_lb_01",
+    "char": "liubei",
+    "text": "Indeed. Honor and duty call us.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_lb_02a",
+    "char": "liubei",
+    "text": "That man...",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_lb_02b",
+    "char": "liubei",
+    "text": "His presence is extraordinary. Look at his majestic beard and phoenix-like eyes.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_lb_03",
+    "char": "liubei",
+    "text": "A noble heart! I am Liu Bei, and this is Zhang Fei. We have just agreed to raise a volunteer army ourselves.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_lb_04",
+    "char": "liubei",
+    "text": "To restore the Han and bring peace to the common people. That is our shared destiny.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_lb_05",
+    "char": "liubei",
+    "text": "An excellent proposal. We shall do it!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_zf_01",
+    "char": "zhangfei",
+    "text": "This wine is good! Together, we shall raise an army that will make the rebels tremble.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_zf_02",
+    "char": "zhangfei",
+    "text": "Hey! You there! You're joining the volunteers too? Come, drink with us!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_zf_03",
+    "char": "zhangfei",
+    "text": "Haha! The more the merrier! Drink, Yunchang! Let us toast to our new brotherhood!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_zf_04",
+    "char": "zhangfei",
+    "text": "...and that is why the pig escaped! Haha! But seriously, my friends...",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_zf_05",
+    "char": "zhangfei",
+    "text": "I feel as though I have known you both for a lifetime.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_zf_06",
+    "char": "zhangfei",
+    "text": "Listen! Behind my farm is a peach garden. The flowers are in full bloom.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "inn_zf_07",
+    "char": "zhangfei",
+    "text": "Tomorrow, let us offer sacrifices there and swear to be brothers! To live and die as one!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_defeat",
+    "char": "liubei",
+    "text": "We were overwhelmed! We must regroup and strike again.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_rem_01",
+    "char": "liubei",
+    "text": "Magistrate Zhou Jing's headquarters is to the East. We must report there at once to begin our service.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_rem_02",
+    "char": "liubei",
+    "text": "Qingzhou is under siege. We must march there at once to relieve Imperial Protector Gong Jing!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_rem_03",
+    "char": "liubei",
+    "text": "The siege is lifted. We should return to the Magistrate to see where else we can be of service.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_rem_04",
+    "char": "liubei",
+    "text": "Lu Zhi, my old teacher, is hard-pressed at Guangzong. We must march north to aid him against Zhang Jue's horde!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pg_gy_01",
+    "char": "guanyu",
+    "text": "We will rescue each other in difficulty; we will aid each other in danger.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pg_lb_01",
+    "char": "liubei",
+    "text": "We three, Liu Bei, Guan Yu, and Zhang Fei, though of different lineages, swear brotherhood and promise mutual help to one end.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pg_lb_02",
+    "char": "liubei",
+    "text": "We ask not the same day of birth, but we seek to die together on the same day.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pg_lb_03",
+    "char": "liubei",
+    "text": "May the Heaven and the Earth read our hearts. If we turn aside from righteousness, may the Heaven and the Human smite us!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pg_lb_04",
+    "char": "liubei",
+    "text": "The path ahead is long and full of peril, but together, we shall restore the Han!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pg_zf_01",
+    "char": "zhangfei",
+    "text": "We swear to serve the state and save the people.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_lb_01",
+    "char": "liubei",
+    "text": "The Imperial Clan's blood flows in my veins...",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_lb_02",
+    "char": "liubei",
+    "text": "...yet I am but a poor straw-shoe seller.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_lb_03",
+    "char": "liubei",
+    "text": "How can I possibly save the people from this chaos?",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_lb_04",
+    "char": "liubei",
+    "text": "I am of the Imperial Clan. My name is Liu Bei.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_lb_05",
+    "char": "liubei",
+    "text": "I wish I could destroy these rebels and restore peace...",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_lb_06",
+    "char": "liubei",
+    "text": "That would be a great blessing for the people!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_zf_01",
+    "char": "zhangfei",
+    "text": "Why sigh, O hero, if you do not help your country?",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_zf_02",
+    "char": "zhangfei",
+    "text": "A true hero's heart! You and I are of one mind.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_zf_03",
+    "char": "zhangfei",
+    "text": "Status? Bah! In these times of chaos, only courage and wine matter!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_zf_04",
+    "char": "zhangfei",
+    "text": "I am Zhang Fei, aka Yide.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_zf_05",
+    "char": "zhangfei",
+    "text": "I live in this county, where I have a farm. I sell wine and slaughter hogs.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_zf_06",
+    "char": "zhangfei",
+    "text": "I have some wealth! I am willing to use it to recruit volunteers.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_zf_07",
+    "char": "zhangfei",
+    "text": "What say you to that?",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_zf_08",
+    "char": "zhangfei",
+    "text": "Then come! Let us go to the village inn and discuss our plans over wine.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "qz_bt_lb_03",
+    "char": "liubei",
+    "text": "I must reach the flag to signal the ambush!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "qz_gy_01",
+    "char": "guanyu",
+    "text": "A superior strategy, brother. We go at once.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "qz_lb_01",
+    "char": "liubei",
+    "text": "I will go. We cannot let the people of Qingzhou suffer.",
+    "source": "BattleSummaryScene.js"
+  },
+  {
+    "id": "qz_lb_02",
+    "char": "liubei",
+    "text": "They are many and we but few. We cannot prevail in a direct assault.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "qz_lb_03",
+    "char": "liubei",
+    "text": "Guan Yu, Zhang Fei—take half our forces and hide behind the hills. When the gongs beat, strike from the flanks!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "qz_ms_01",
+    "char": "soldier",
+    "text": "URGENT! Imperial Protector Gong Jing of Qingzhou Region is under siege! The city is near falling!",
+    "source": "BattleSummaryScene.js"
+  },
+  {
+    "id": "qz_ret_gj_01",
+    "char": "gongjing",
+    "text": "Heroic brothers! You have saved Qingzhou! When your signal echoed through the pass, we charged from the gates. The rebels were caught between us and slaughtered.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_ret_gj_02",
+    "char": "gongjing",
+    "text": "Indeed. I have heard that Commander Lu Zhi is hard-pressed at Guangzong by the chief rebel, Zhang Jue himself.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_ret_lb_01",
+    "char": "liubei",
+    "text": "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_ret_lb_02",
+    "char": "liubei",
+    "text": "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_vic_gy_01",
+    "char": "guanyu",
+    "text": "A well-executed trap, Brother. The high ground served us well.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_vic_lb_01",
+    "char": "liubei",
+    "text": "Let us not tarry. The city is still in peril. We must return to the gates and ensure the Imperial Protector is safe.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_vic_nar_01",
+    "char": "narrator",
+    "text": "Though fierce as tigers soldiers be, Battles are won by strategy. A hero comes; he gains renown, Already destined for a crown.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_vic_zf_01",
+    "char": "zhangfei",
+    "text": "Look at them run! Like rats from a sinking ship! We've broken their spirit.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_victory_lb_01",
+    "char": "liubei",
+    "text": "The siege is lifted. We should report back to Magistrate Zhou Jing for our next assignment.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "qz_zj_01",
+    "char": "zhoujing",
+    "text": "I shall reinforce you with five thousand of my best soldiers. March at once!",
+    "source": "BattleSummaryScene.js"
+  },
+  {
+    "id": "rec_gy_01",
+    "char": "guanyu",
+    "text": "We offer no riches, only the chance to serve with honor under the banner of Liu Bei.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "rec_lb_01",
+    "char": "liubei",
+    "text": "Welcome, brothers. Today we are but a few, but tomorrow we shall be an army.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "rec_lb_02",
+    "char": "liubei",
+    "text": "Let us march! Our first destination: the headquarters of the local Magistrate.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "rec_vol_01",
+    "char": "soldier",
+    "text": "We have heard of your brotherhood! We are but simple men, but we will follow you to the death!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "rec_zf_01",
+    "char": "zhangfei",
+    "text": "CITIZENS OF ZHUO! The Yellow Turbans are coming! Who among you is brave enough to fight for your homes?",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "recov_gy_01",
+    "char": "guanyu",
+    "text": "A momentary lapse in focus. I shall return to the field with renewed vigor.",
+    "source": "RecoveryScene.js"
+  },
+  {
+    "id": "recov_lb_01",
+    "char": "liubei",
+    "text": "My apologies, brothers. I let my guard down, but my spirit remains unbroken.",
+    "source": "RecoveryScene.js"
+  },
+  {
+    "id": "recov_zf_01",
+    "char": "zhangfei",
+    "text": "Bah! Those rascals got a lucky hit in! Next time, they won't be so fortunate!",
+    "source": "RecoveryScene.js"
+  }
+]
