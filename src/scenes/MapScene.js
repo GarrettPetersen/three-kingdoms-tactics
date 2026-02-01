@@ -552,7 +552,7 @@ export class MapScene extends BaseScene {
             musicKey: 'oath',
             onComplete: () => {
                 this.manager.gameState.addMilestone('chapter1_complete');
-                this.manager.switchTo('campaign'); // Back to story selection
+                this.manager.switchTo('campaign_selection'); // Back to story selection
             },
             script: [
                 { bg: 'black', type: 'command', action: 'clearActors' },
@@ -564,10 +564,20 @@ export class MapScene extends BaseScene {
                 },
                 {
                     type: 'narrator',
-                    voiceId: 'ch1_end_01',
-                    text: "Dong Zhuo's fate will be unrolled in later chapters..."
+                    voiceId: 'gz_nar_poem_01',
+                    text: "As it was in olden time so it is today,\nThe simple wight may merit well,\nOfficialdom holds sway;\nZhang Fei, the blunt and hasty,\nWhere can you find his peer?"
                 },
-                { type: 'command', action: 'wait', duration: 2000 },
+                {
+                    type: 'narrator',
+                    voiceId: 'ch1_end_01',
+                    text: "But slaying the ungrateful would\nMean many deaths a year.\n\nDong Zhuo's fate will be unrolled in later chapters..."
+                },
+                { 
+                    type: 'title', 
+                    text: "END OF CHAPTER 1", 
+                    subtext: "Liu Bei's Story will continue...",
+                    duration: 5000 
+                },
                 { type: 'command', action: 'fade', target: 1, speed: 0.001 }
             ]
         });

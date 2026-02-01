@@ -319,7 +319,7 @@ export const UNIT_TEMPLATES = {
         'luzhi': { name: 'Lu Zhi', imgKey: 'zhoujing', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' }
     },
     'warlord': {
-        'dongzhuo': { name: 'Dong Zhuo', imgKey: 'dongzhuo', hp: 8, moveRange: 3, attacks: ['tyrant_sweep'], faction: 'allied' }
+        'dongzhuo': { name: 'Dong Zhuo', imgKey: 'dongzhuo', hp: 9, moveRange: 3, attacks: ['tyrant_sweep'], faction: 'allied' }
     },
     'prop': {
         'boulder': { name: 'Boulder', imgKey: 'boulder', hp: 2, moveRange: 0, attacks: [], faction: 'neutral' }

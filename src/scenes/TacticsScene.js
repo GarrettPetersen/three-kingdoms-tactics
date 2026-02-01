@@ -773,7 +773,8 @@ export class TacticsScene extends BaseScene {
         }
 
         const housesProtected = Math.max(0, this.initialHouseCount - housesDestroyed);
-        const xpGained = this.isCustom ? 0 : Math.max(0, this.baseXP + Math.min(3, housesProtected) - this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp <= 0).length);
+        const casualties = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp <= 0 && !u.isPreDead).length;
+        const xpGained = this.isCustom ? 0 : Math.max(0, this.baseXP + Math.min(3, housesProtected) - casualties);
 
         if (!this.isCustom) {
             // Process XP and Injuries
@@ -827,7 +828,7 @@ export class TacticsScene extends BaseScene {
         this.finalStats = {
             won: won,
             battleId: this.battleId,
-            alliedCasualties: this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp <= 0).length,
+            alliedCasualties: casualties,
             enemyCasualties: this.units.filter(u => u.faction === 'enemy' && u.hp <= 0).length,
             housesDestroyed: housesDestroyed,
             housesProtected: housesProtected,
@@ -2535,6 +2536,7 @@ export class TacticsScene extends BaseScene {
                         r: uDef.r,
                         q: uDef.q,
                         isDead: uDef.isDead || false,  // Preserve isDead flag for corpses
+                        isPreDead: uDef.isDead || false, // NEW: Track if unit started dead
                         caged: uDef.caged || false,     // Preserve caged flag
                         frame: uDef.frame !== undefined ? uDef.frame : undefined
                     };
@@ -2640,6 +2642,7 @@ export class TacticsScene extends BaseScene {
                 q: finalQ,
                     level: level,
                     hp: u.isDead ? 0 : finalMaxHp, // Support pre-killed units for scenes
+                    isPreDead: u.isPreDead || false,
                     maxHp: finalMaxHp,
                     attacks: attacks,
                     img: assets.getImage(imgKey),
@@ -4525,10 +4528,11 @@ export class TacticsScene extends BaseScene {
             this.applyUnitDamage(victim, 1);
             this.addDamageNumber(victimPos.x, victimPos.y - 30, 1);
             
-            if (pushCell.unit && pushCell.unit.hp > 0) { // Only damage if the unit is still alive
-                this.applyUnitDamage(pushCell.unit, 1);
+            const bumpVictim = pushCell.unit;
+            if (bumpVictim && bumpVictim.hp > 0) { // Only damage if the unit is still alive
+                this.applyUnitDamage(bumpVictim, 1);
                 this.addDamageNumber(targetPos.x, targetPos.y - 30, 1);
-                pushCell.unit.triggerShake(victimPos.x, victimPos.y, targetPos.x, targetPos.y);
+                if (bumpVictim) bumpVictim.triggerShake(victimPos.x, victimPos.y, targetPos.x, targetPos.y);
             }
         }, 125);
     }
