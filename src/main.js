@@ -284,6 +284,7 @@ async function init() {
                 inn_evening: 'assets/settings/village_inn_evening.png',
                 peach_garden: 'assets/settings/peach_garden.png',
                 army_camp: 'assets/settings/army_camp.png',
+                dirt_road_city_in_distance: 'assets/settings/dirt_road_city_in_distance.png',
                 china_map: 'assets/settings/china_map.png',
                 tent: 'assets/terrain/buildings/yellow_tent.png',
                 hut: 'assets/terrain/buildings/green_hut.png',

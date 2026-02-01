@@ -62,8 +62,42 @@ def calculate_wer(original, transcribed):
         return 0.0
 
 
+def check_for_duplicates(lines):
+    """Check for duplicate voice IDs with different text"""
+    seen_ids = {}
+    duplicates = []
+    for line in lines:
+        line_id = line['id']
+        line_text = line['text']
+        if line_id in seen_ids:
+            if seen_ids[line_id] != line_text:
+                duplicates.append({
+                    'id': line_id,
+                    'text1': seen_ids[line_id],
+                    'text2': line_text
+                })
+        else:
+            seen_ids[line_id] = line_text
+    return duplicates
+
+
 def verify_all_voices():
     """Verify all voice files and generate report"""
+    
+    # Check for duplicates first
+    duplicates = check_for_duplicates(game_script)
+    if duplicates:
+        print("\n" + "=" * 60)
+        print("ERROR: Duplicate voice IDs with different text detected!")
+        print("=" * 60)
+        for dup in duplicates:
+            print(f"\nID: {dup['id']}")
+            print(f"  Text 1: \"{dup['text1'][:60]}...\"" if len(dup['text1']) > 60 else f"  Text 1: \"{dup['text1']}\"")
+            print(f"  Text 2: \"{dup['text2'][:60]}...\"" if len(dup['text2']) > 60 else f"  Text 2: \"{dup['text2']}\"")
+        print("\nFix these duplicates before verifying voices!")
+        import sys
+        sys.exit(1)
+    
     model = load_whisper_model()
     report = {}
     

@@ -147,6 +147,15 @@ export const ATTACKS = {
         animation: 'attack_1',
         description: 'A fierce spinning strike that hits and pushes.'
     },
+    tyrant_sweep: {
+        name: 'Tyrant Sweep',
+        damage: 2,
+        range: 1,
+        arc: 3,  // Hits 3 adjacent hexes in a wide arc
+        push: true,  // Pushes all 3 targets
+        animation: 'attack_1',
+        description: 'A brutal sweep that strikes 3 adjacent foes and sends them flying.'
+    },
     heavy_thrust: {
         name: 'Heavy Thrust',
         damage: 2,

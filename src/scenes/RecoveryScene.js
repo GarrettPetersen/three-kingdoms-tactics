@@ -28,6 +28,7 @@ export class RecoveryScene extends BaseScene {
     enter(params) {
         this.recoveryInfo = params.recoveryInfo || [];
         this.levelUps = params.levelUps || [];
+        this.onComplete = params.onComplete || null;
         this.isEndGame = params.isEndGame || false;
         this.isCustom = params.isCustom || false;
         this.battleId = params.battleId;
@@ -181,8 +182,11 @@ export class RecoveryScene extends BaseScene {
                 levelUps: this.levelUps,
                 isEndGame: this.isEndGame,
                 isCustom: this.isCustom,
-                battleId: this.battleId
+                battleId: this.battleId,
+                onComplete: this.onComplete
             });
+        } else if (this.onComplete) {
+            this.onComplete();
         } else if (this.isEndGame) {
             this.manager.switchTo('credits');
         } else if (this.battleId === 'qingzhou_siege') {

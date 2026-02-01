@@ -1,5 +1,11 @@
 {
   "_comment": "Phonetic overrides for voice generation. Use when pronunciation differs from displayed text.",
-  "_example": "voiceId: 'phonetic text to speak instead of original'"
+  "gz_dz_help_01": "CURSE THESE REBBELS! They have slaughtered my men! Is there no one left to fight?!",
+  "gz_lz_explain_01": "Shwan Day! I had the rebels surrounded and was on the point of smashing them, when Zhang Jway employed sorcery to prevent my victory.",
+  "gz_lz_explain_02": "The court sent Yoonuck Zwoh Fung to inquire. He demanded a bribe, but where could I find gold in such circumstances? He reported that I hid behind ramparts and disheartened my army.",
+  "gz_lz_explain_03": "So I was superseded by Dong Jwoh, and now I go to the capital to answer false charges.",
+  "gz_lz_freed_01": "Shwan Day! You have saved me, but at great cost. The court will brand you as rebels for attacking imperial soldiers.",
+  "gz_lz_freed_02": "Your loyalty does you credit. I will return to Guangzong in secret. Go now, before more soldiers come.",
+  "gz_zf_01": "This is outrage! Let me slay these dogs and free you, Master!"
 }
 

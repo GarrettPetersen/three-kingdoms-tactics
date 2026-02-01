@@ -19,7 +19,7 @@ export const BATTLES = {
             { id: 'ally3', r: 1, q: 5, type: 'allied_soldier' },
             { id: 'dengmao', r: 8, q: 4, type: 'enemy_captain' },
             { id: 'chengyuanzhi', r: 9, q: 5, type: 'enemy_captain' },
-            { id: 'rebel1', r: 7, q: 3, type: 'enemy_soldier' },
+            { id: 'rebel1', r: 7, q: 3, type: 'enemy_soldier_weak' },
             { id: 'rebel2', r: 7, q: 5, type: 'enemy_soldier' }
         ],
         victoryCondition: {
@@ -53,8 +53,16 @@ export const BATTLES = {
             { id: 'liubei', r: 1, q: 1, type: 'hero' },
             { id: 'guanyu', r: 2, q: 1, type: 'hero' },
             { id: 'zhangfei', r: 1, q: 2, type: 'hero' },
-            // Generate 20 rebels
-            ...Array.from({length: 20}, (_, i) => ({ id: `rebel_pre_${i}`, r: 6 + Math.floor(i / 5), q: 1 + (i % 8), type: 'enemy_soldier' }))
+            { id: 'ally1', r: 2, q: 2, type: 'allied_soldier' },
+            { id: 'ally2', r: 1, q: 0, type: 'allied_soldier' },
+            { id: 'ally3', r: 0, q: 1, type: 'allied_soldier' },
+            // Generate 20 rebels - half weak (level 1, 2HP), half normal (level 2, 3HP)
+            ...Array.from({length: 20}, (_, i) => ({ 
+                id: `rebel_pre_${i}`, 
+                r: 6 + Math.floor(i / 5), 
+                q: 1 + (i % 8), 
+                type: i % 2 === 0 ? 'enemy_soldier_weak' : 'enemy_soldier' 
+            }))
         ],
         victoryCondition: {
             type: 'prelude'
@@ -163,6 +171,10 @@ export const BATTLES = {
             { id: 'liubei', r: 6, q: 1, type: 'hero' },
             { id: 'guanyu', r: 5, q: 1, type: 'hero' },
             { id: 'zhangfei', r: 7, q: 1, type: 'hero' },
+            // Our 3 campaign soldiers
+            { id: 'ally1', r: 5, q: 0, type: 'allied_soldier' },
+            { id: 'ally2', r: 7, q: 0, type: 'allied_soldier' },
+            { id: 'ally3', r: 4, q: 2, type: 'allied_soldier' },
             // Lu Zhi in a cage on the road, being escorted
             { id: 'luzhi', r: 6, q: 6, type: 'commander', caged: true },
             // Imperial escort soldiers - some surrounding Lu Zhi, some blocking the way
@@ -203,6 +215,10 @@ export const BATTLES = {
             { id: 'liubei', r: 6, q: 1, type: 'hero' },
             { id: 'guanyu', r: 5, q: 1, type: 'hero' },
             { id: 'zhangfei', r: 7, q: 1, type: 'hero' },
+            // Our 3 campaign soldiers
+            { id: 'ally1', r: 5, q: 0, type: 'allied_soldier' },
+            { id: 'ally2', r: 7, q: 0, type: 'allied_soldier' },
+            { id: 'ally3', r: 4, q: 2, type: 'allied_soldier' },
             // Lu Zhi in a cage (allied, to be protected)
             { id: 'luzhi', r: 6, q: 6, type: 'commander', caged: true },
             // Imperial escort soldiers (enemies) - same as encounter
@@ -221,6 +237,55 @@ export const BATTLES = {
             { speaker: 'guanyu', portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'gz_gy_free_01', text: "Brother, there may be consequences for this..." },
             { speaker: 'liubei', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_lb_free_02', text: "We have made our choice. Now we fight!" }
         ]
+    },
+    'dongzhuo_battle': {
+        name: 'Rescue Dong Zhuo',
+        map: {
+            biome: 'northern',
+            layout: 'river',
+            seed: 'dongzhuo_rescue',
+            forestDensity: 0.1,
+            mountainDensity: 0.05,
+            riverDensity: 0.0,
+            houseDensity: 0.08  // Non-zero to generate some houses automatically
+        },
+        units: [
+            // Heroes charging in from the left
+            { id: 'liubei', r: 6, q: 1, type: 'hero' },
+            { id: 'guanyu', r: 5, q: 0, type: 'hero' },
+            { id: 'zhangfei', r: 7, q: 0, type: 'hero' },
+            // Our 3 campaign soldiers
+            { id: 'ally1', r: 5, q: 1, type: 'allied_soldier' },
+            { id: 'ally2', r: 7, q: 1, type: 'allied_soldier' },
+            { id: 'ally3', r: 6, q: 0, type: 'allied_soldier' },
+            // Dong Zhuo - allied NPC being rescued
+            { id: 'dongzhuo', r: 6, q: 8, type: 'warlord' },
+            // Dead soldiers around Dong Zhuo
+            { id: 'dead_guard1', r: 5, q: 8, type: 'allied_soldier', isDead: true, frame: 2 },
+            { id: 'dead_guard2', r: 7, q: 8, type: 'allied_soldier', isDead: true, frame: 2 },
+            { id: 'dead_guard3', r: 6, q: 9, type: 'allied_soldier', isDead: true, frame: 2 },
+            // Yellow Turbans attacking Dong Zhuo - half weak (2HP), half normal (3HP)
+            { id: 'rebel1', r: 5, q: 5, type: 'enemy_soldier_weak' },
+            { id: 'rebel2', r: 6, q: 5, type: 'enemy_soldier' },
+            { id: 'rebel3', r: 7, q: 5, type: 'enemy_soldier_weak' },
+            { id: 'rebel4', r: 6, q: 6, type: 'enemy_soldier' },
+            { id: 'rebel5', r: 5, q: 7, type: 'enemy_soldier_weak' },
+            { id: 'rebel6', r: 7, q: 7, type: 'enemy_soldier' },
+            { id: 'rebel7', r: 5, q: 6, type: 'enemy_soldier' },
+            { id: 'rebel8', r: 7, q: 6, type: 'enemy_soldier_weak' },
+            // Yellow Turban captain
+            { id: 'zhang_jue_captain', r: 6, q: 4, type: 'enemy_captain' }
+        ],
+        victoryCondition: {
+            type: 'defeat_all_enemies',
+            mustSurvive: ['dongzhuo']
+        },
+        introScript: [
+            { speaker: 'dongzhuo', portraitKey: 'dong-zhuo', name: 'Dong Zhuo', voiceId: 'gz_dz_help_01', text: "CURSE THESE REBELS! They have slaughtered my men! Is there no one left to fight?!" },
+            { speaker: 'liubei', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_lb_attack_01', text: "That banner reads 'Zhang Jue, Lord of Heaven!' Government soldiers are losing! Brothers, we attack!" },
+            { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_attack_01', text: "HA! Finally some Yellow Turbans to smash! Let's go!" }
+        ],
+        hasVictoryDialogue: true  // Flag to trigger on-map victory dialogue
     }
 };
 
@@ -232,21 +297,29 @@ export const UNIT_TEMPLATES = {
     },
     'allied_soldier': {
         'ally': { name: 'Volunteer', imgKey: 'soldier', hp: 2, moveRange: 3, attacks: ['slash'], faction: 'allied' },
-        'guard': { name: 'Qingzhou Guard', imgKey: 'soldier', hp: 3, moveRange: 3, attacks: ['slash'], faction: 'allied' }
+        'guard': { name: 'Qingzhou Guard', imgKey: 'soldier', hp: 3, moveRange: 3, attacks: ['slash'], faction: 'allied' },
+        'dead_guard': { name: 'Imperial Guard', imgKey: 'soldier', hp: 0, moveRange: 0, attacks: [], faction: 'allied' }
     },
     'enemy_soldier': {
-        'rebel': { name: 'Yellow Turban', imgKey: 'yellowturban', hp: 3, moveRange: 3, attacks: ['bash'], faction: 'enemy' }
+        'rebel': { name: 'Yellow Turban', imgKey: 'yellowturban', hp: 3, moveRange: 3, attacks: ['bash'], faction: 'enemy', level: 2 }
+    },
+    'enemy_soldier_weak': {
+        'rebel': { name: 'Yellow Turban', imgKey: 'yellowturban', hp: 2, moveRange: 3, attacks: ['bash'], faction: 'enemy', level: 1 }
     },
     'imperial_soldier': {
         'escort': { name: 'Imperial Escort', imgKey: 'soldier', hp: 3, moveRange: 3, attacks: ['slash'], faction: 'enemy' }
     },
     'enemy_captain': {
         'dengmao': { name: 'Deng Mao', imgKey: 'bandit1', hp: 5, moveRange: 3, attacks: ['heavy_thrust'], faction: 'enemy' },
-        'chengyuanzhi': { name: 'Cheng Yuanzhi', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['whirlwind'], faction: 'enemy' }
+        'chengyuanzhi': { name: 'Cheng Yuanzhi', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['whirlwind'], faction: 'enemy' },
+        'zhang_jue_captain': { name: 'Yellow Turban Captain', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['whirlwind'], faction: 'enemy' }
     },
     'commander': {
         'gongjing': { name: 'Gong Jing', imgKey: 'gongjing_sprite', hp: 5, moveRange: 3, attacks: ['slash'], faction: 'allied' },
         'luzhi': { name: 'Lu Zhi', imgKey: 'zhoujing', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' }
+    },
+    'warlord': {
+        'dongzhuo': { name: 'Dong Zhuo', imgKey: 'dongzhuo', hp: 8, moveRange: 3, attacks: ['tyrant_sweep'], faction: 'allied' }
     },
     'prop': {
         'boulder': { name: 'Boulder', imgKey: 'boulder', hp: 2, moveRange: 0, attacks: [], faction: 'neutral' }

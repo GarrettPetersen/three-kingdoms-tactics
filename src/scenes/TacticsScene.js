@@ -116,6 +116,7 @@ export class TacticsScene extends BaseScene {
         this.isCleanupDialogueActive = false;
         this.cleanupDialogueScript = null;
         this.cleanupDialogueStep = 0;
+        this.cleanupDialogueOnComplete = null;
         this.enemiesKilled = 0;
         this.isIntroAnimating = true;
         this.introTimer = 0;
@@ -124,6 +125,33 @@ export class TacticsScene extends BaseScene {
         this.onChoiceRestrain = params.onChoiceRestrain || null; // Callback for peaceful choice
         this.onChoiceFight = params.onChoiceFight || null; // Callback for fight choice
         this.onFightVictory = params.onFightVictory || null; // Callback for cage-break victory
+        
+        // If resuming a battle with choices but no callbacks provided, set them up dynamically
+        if (this.hasChoice && !this.onChoiceRestrain && this.battleId === 'guangzong_encounter') {
+            this.onChoiceRestrain = () => {
+                // Peaceful path - switch to map and continue to Dong Zhuo
+                this.manager.gameState.addMilestone('guangzong_encounter');
+                this.manager.switchTo('map', { 
+                    campaignId: 'liubei',
+                    partyX: 205,
+                    partyY: 55
+                });
+            };
+            this.onChoiceFight = () => {}; // Empty - startFight() handles this
+            this.onFightVictory = () => {
+                this.manager.gameState.addMilestone('freed_luzhi');
+                // Use MapScene logic to show story
+                const mapScene = this.manager.getScene('map');
+                if (mapScene) {
+                    mapScene.continueAfterEscortBattle();
+                } else {
+                    this.manager.switchTo('map', { campaignId: 'liubei' });
+                }
+            };
+            // Also set fallback victory callback
+            this.onVictoryCallback = this.onFightVictory;
+        }
+        
         // Note: this.hasChoice is already set from battleDef earlier in enter()
         this.isChoiceActive = false; // Currently showing choice UI
         this.choiceHovered = -1; // Which choice option is hovered
@@ -303,31 +331,33 @@ export class TacticsScene extends BaseScene {
                 return;
             }
 
-        if (battleDef && battleDef.victoryCondition) {
-            const vc = battleDef.victoryCondition;
-            
+        const vc = battleDef ? battleDef.victoryCondition : null;
+        const victoryType = (vc && typeof vc === 'object') ? vc.type : vc;
+
+        if (battleDef && vc) {
             // Check Must Survive conditions
-            if (vc.mustSurvive) {
-                const deadRequired = vc.mustSurvive.some(id => !this.units.find(u => u.id === id && u.hp > 0));
+            const mustSurvive = (vc && typeof vc === 'object' && vc.mustSurvive) ? vc.mustSurvive : null;
+            if (mustSurvive) {
+                const deadRequired = mustSurvive.some(id => !this.units.find(u => u.id === id && u.hp > 0));
                 if (deadRequired) {
                     this.endBattle(false);
-                return;
+                    return;
                 }
             }
 
-            if (vc.type === 'defeat_captains') {
+            if (victoryType === 'defeat_captains') {
                 const captains = enemyUnits.filter(u => vc.captains.includes(u.id));
                 if (captains.length === 0 && !this.isRetreating) {
                     this.startRetreatPhase();
                     return;
                 }
-            } else if (vc.type === 'prelude') {
+            } else if (victoryType === 'prelude') {
                 if (!this.isIntroDialogueActive && !this.isGameOver) {
                     this.isGameOver = true;
                     this.manager.switchTo('tactics', { battleId: 'qingzhou_siege' });
                     return;
                 }
-            } else if (vc.type === 'reach_flag_then_defeat_all') {
+            } else if (victoryType === 'reach_flag_then_defeat_all') {
                 const liubei = playerUnits.find(u => u.id === 'liubei');
                 // Only trigger if Liu Bei is NOT currently moving to avoid race conditions with checkArrival
                 // and ensure flagPos exists to prevent crashes
@@ -350,6 +380,17 @@ export class TacticsScene extends BaseScene {
                         if (this.turnNumber > 2) this.endBattle(true);
                     } else if (this.turnNumber > 2) {
                         this.triggerAmbush(true);
+                    }
+                }
+            } else if (victoryType === 'defeat_all_enemies' || !victoryType) {
+                // Standard victory: defeat all enemies
+                if (enemyUnits.length === 0) {
+                    // Check for on-map victory dialogue (used by Dong Zhuo battle)
+                    if (battleDef && battleDef.hasVictoryDialogue && this.battleId === 'dongzhuo_battle') {
+                        this.manager.gameState.addMilestone('guangzong_encounter');
+                        this.startDongZhuoVictoryDialogue();
+                    } else {
+                        this.endBattle(true);
                     }
                 }
             }
@@ -790,12 +831,15 @@ export class TacticsScene extends BaseScene {
             enemyCasualties: this.units.filter(u => u.faction === 'enemy' && u.hp <= 0).length,
             housesDestroyed: housesDestroyed,
             housesProtected: housesProtected,
-            totalHouses: this.initialHouseCount,
+            totalHouses: this.initialHouseCount || 0,
             turnNumber: this.turnNumber,
             xpGained: xpGained,
             recoveryInfo: recoveryInfo,
             levelUps: levelUps
         };
+        
+        // Store in gameState so callbacks can access it
+        gs.set('lastBattleStats', this.finalStats);
 
         if (this.isCustom) {
             const stats = gs.get('customStats') || { totalBattles: 0, wins: 0, losses: 0, enemiesDefeated: 0, unitsLost: 0 };
@@ -835,6 +879,9 @@ export class TacticsScene extends BaseScene {
         ];
         
         allyPositions.forEach((allyDef) => {
+            // Only add if not already present
+            if (this.units.find(u => u.id === allyDef.id)) return;
+
             const cell = this.findNearestFreeCell(allyDef.r, allyDef.q, 3);
             if (cell) {
                 const xp = unitXP[allyDef.id] || 0;
@@ -871,6 +918,172 @@ export class TacticsScene extends BaseScene {
         this.startNpcPhase();
     }
 
+    startRestrainDialogue() {
+        // Show dialogue on the tactics map after choosing to restrain Zhang Fei
+        this.cleanupDialogueScript = [
+            {
+                speaker: 'guanyu',
+                portraitKey: 'guan-yu',
+                name: 'Guan Yu',
+                voiceId: 'gz_gy_restrain_01',
+                text: "It was wise to stay your hand, brother. The law must take its course. Let us return toward Zhuo."
+            },
+            {
+                speaker: 'zhangfei',
+                portraitKey: 'zhang-fei',
+                name: 'Zhang Fei',
+                voiceId: 'gz_zf_restrain_01',
+                text: "BAH! This stinks of corruption! But... I will follow your lead, eldest brother."
+            },
+            {
+                speaker: 'narrator',
+                portraitKey: null,
+                name: 'Narrator',
+                voiceId: 'gz_nar_restrain_01',
+                text: "And so the escort and the three brothers went two ways. It was useless to continue on that road to Guangzong."
+            },
+            {
+                speaker: 'guanyu',
+                portraitKey: 'guan-yu',
+                name: 'Guan Yu',
+                voiceId: 'gz_gy_return_01',
+                text: "Let us return toward Zhuo County. There is nothing more for us here."
+            }
+        ];
+        
+        this.cleanupDialogueStep = 0;
+        this.dialogueElapsed = 0;
+        this.isCleanupDialogueActive = true;
+        
+        // Store the callback to call when dialogue ends
+        this.cleanupDialogueOnComplete = () => {
+            if (this.onChoiceRestrain) {
+                this.onChoiceRestrain();
+            }
+        };
+        
+        // Play first voice line
+        const firstStep = this.cleanupDialogueScript[0];
+        if (firstStep.voiceId) assets.playVoice(firstStep.voiceId);
+    }
+    
+    startDongZhuoVictoryDialogue() {
+        // Show dialogue on the tactics map after defeating Yellow Turbans with Dong Zhuo
+        const freedLuZhi = this.manager.gameState.hasMilestone('freed_luzhi');
+        
+        if (freedLuZhi) {
+            // Outlaw path - Dong Zhuo recognizes them as the ones who freed Lu Zhi
+            this.cleanupDialogueScript = [
+                {
+                    speaker: 'dongzhuo',
+                    portraitKey: 'dong-zhuo',
+                    name: 'Dong Zhuo',
+                    voiceId: 'gz_dz_outlaw_01',
+                    text: "Wait... I know you. You're the ones who attacked imperial escorts and freed that traitor Lu Zhi!"
+                },
+                {
+                    speaker: 'liubei',
+                    portraitKey: 'liu-bei',
+                    name: 'Liu Bei',
+                    voiceId: 'gz_lb_defend_01',
+                    text: "Lu Zhi was no traitor. He was unjustly accused by corrupt officials."
+                },
+                {
+                    speaker: 'dongzhuo',
+                    portraitKey: 'dong-zhuo',
+                    name: 'Dong Zhuo',
+                    voiceId: 'gz_dz_outlaw_02',
+                    text: "Hmph! You dare lecture me? I should have you arrested! But... you did save my life today. Leave now, before I change my mind."
+                },
+                {
+                    speaker: 'zhangfei',
+                    portraitKey: 'zhang-fei',
+                    name: 'Zhang Fei',
+                    voiceId: 'gz_zf_rage_outlaw_01',
+                    text: "The nerve of that swine! First we save Lu Zhi from injustice, now we save Dong Zhuo from death, and this is our thanks?!"
+                },
+                {
+                    speaker: 'guanyu',
+                    portraitKey: 'guan-yu',
+                    name: 'Guan Yu',
+                    voiceId: 'gz_gy_calm_01',
+                    text: "Let it go, brother. We have made our choice. History will judge us kindly."
+                },
+                {
+                    speaker: 'narrator',
+                    portraitKey: null,
+                    name: 'Narrator',
+                    voiceId: 'gz_nar_poem_01',
+                    text: "As it was in olden time so it is today, The simple wight may merit well, Officialdom holds sway; Zhang Fei, the blunt and hasty, Where can you find his peer? But slaying the ungrateful would Mean many deaths a year. Dong Zhuo's fate will be unrolled in later chapters."
+                }
+            ];
+        } else {
+            // Lawful path - Dong Zhuo is just rude because they have no rank
+            this.cleanupDialogueScript = [
+                {
+                    speaker: 'dongzhuo',
+                    portraitKey: 'dong-zhuo',
+                    name: 'Dong Zhuo',
+                    voiceId: 'gz_dz_01',
+                    text: "What offices do you three hold?"
+                },
+                {
+                    speaker: 'liubei',
+                    portraitKey: 'liu-bei',
+                    name: 'Liu Bei',
+                    voiceId: 'gz_lb_office_01',
+                    text: "We hold no official positions, my lord. We are but volunteers who answered the call to arms."
+                },
+                {
+                    speaker: 'dongzhuo',
+                    portraitKey: 'dong-zhuo',
+                    name: 'Dong Zhuo',
+                    voiceId: 'gz_dz_02',
+                    text: "Hmph. Common men with no rank. You may go."
+                },
+                {
+                    speaker: 'zhangfei',
+                    portraitKey: 'zhang-fei',
+                    name: 'Zhang Fei',
+                    voiceId: 'gz_zf_rage_01',
+                    text: "We saved that wretch in bloody battle and he treats us with contempt! Let me go back and take his head!"
+                },
+                {
+                    speaker: 'liubei',
+                    portraitKey: 'liu-bei',
+                    name: 'Liu Bei',
+                    voiceId: 'gz_lb_patience_01',
+                    text: "Patience, brother. He may be ungrateful, but killing him would make us criminals. Come, let us leave this place."
+                },
+                {
+                    speaker: 'narrator',
+                    portraitKey: null,
+                    name: 'Narrator',
+                    voiceId: 'gz_nar_poem_01',
+                    text: "As it was in olden time so it is today, The simple wight may merit well, Officialdom holds sway; Zhang Fei, the blunt and hasty, Where can you find his peer? But slaying the ungrateful would Mean many deaths a year. Dong Zhuo's fate will be unrolled in later chapters."
+                }
+            ];
+        }
+        
+        this.cleanupDialogueStep = 0;
+        this.dialogueElapsed = 0;
+        this.isCleanupDialogueActive = true;
+        
+        // This is a cutscene now
+        this.isCutscene = true;
+        this.isGameOver = false;
+        
+        // Store the callback to call when dialogue ends
+        this.cleanupDialogueOnComplete = () => {
+            this.isCutscene = false;
+            this.endBattle(true);
+        };
+        
+        // Play first voice line
+        const firstStep = this.cleanupDialogueScript[0];
+        if (firstStep.voiceId) assets.playVoice(firstStep.voiceId);
+    }
+
     startNpcPhase() {
         this.turn = 'allied_moving';
         this.isProcessingTurn = true;
@@ -883,8 +1096,9 @@ export class TacticsScene extends BaseScene {
             }
         });
 
-        const allies = this.units.filter(u => u.faction === 'allied' && u.hp > 0);
-        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
+        // Caged units cannot act - they're trapped!
+        const allies = this.units.filter(u => u.faction === 'allied' && u.hp > 0 && !u.caged);
+        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.caged);
         
         const executeMoves = (npcs, index, onComplete) => {
             if (index >= npcs.length) {
@@ -962,13 +1176,22 @@ export class TacticsScene extends BaseScene {
         const minRange = attackConfig.minRange || 1;
         const maxRange = attackConfig.range || 1;
 
-        const targetFaction = unit.faction === 'enemy' ? ['player', 'allied'] : ['enemy'];
-        // Don't target caged units - enemies protect the prisoner, allies want to free them
+        // Determine valid targets based on faction
+        // - Enemies target player and allied units, but NOT caged allies (they're protecting the cage)
+        // - Allies target enemy units AND caged allies (to free them by breaking the cage)
         const unitTargets = this.units.filter(u => {
-            if (!targetFaction.includes(u.faction)) return false;
             if (u.hp <= 0) return false;
-            if (u.caged) return false;  // Caged units cannot be targeted by anyone
-            return true;
+            
+            if (unit.faction === 'enemy') {
+                // Enemies attack player and allied units, but NOT caged ones
+                if (u.caged) return false;  // Don't attack the prisoner you're escorting!
+                return u.faction === 'player' || u.faction === 'allied';
+            } else {
+                // Allied soldiers attack enemies OR caged allies (to break the cage)
+                if (u.faction === 'enemy') return true;
+                if (u.caged && u.faction === 'allied') return true;  // Attack cage to free ally
+                return false;
+            }
         });
         const reachableData = this.tacticsMap.getReachableData(unit.r, unit.q, unit.moveRange, unit);
         
@@ -991,24 +1214,42 @@ export class TacticsScene extends BaseScene {
             const [r, q] = key.split(',').map(Number);
             
             // Look for targets within range from this tile
-            const potentialTarget = unitTargets.find(t => {
+            unitTargets.forEach(t => {
                 const dist = this.tacticsMap.getDistance(r, q, t.r, t.q);
-                return dist >= minRange && dist <= maxRange;
+                if (dist >= minRange && dist <= maxRange) {
+                    unitAttackTiles.push({ r, q, target: t });
+                }
             });
-
-            if (potentialTarget) {
-                unitAttackTiles.push({ r, q, target: potentialTarget });
-            }
         });
 
         if (unitAttackTiles.length > 0) {
-            // Pick a tile that allows attacking a unit. 
-            // Prefer tiles that are closer to the unit's current position if multiple exist? 
-            // Or just the first one. Let's pick the one that lets us hit the closest target.
+            // Rank potential attacks by distance, dog-piling, and type
+            const isRanged = maxRange > 1;
+            
             unitAttackTiles.sort((a, b) => {
                 const distA = this.tacticsMap.getDistance(a.r, a.q, a.target.r, a.target.q);
                 const distB = this.tacticsMap.getDistance(b.r, b.q, b.target.r, b.target.q);
-                return distA - distB;
+                
+                // Base score: Melee prefers close, Ranged prefers far
+                let scoreA = isRanged ? distA : (10 - distA);
+                let scoreB = isRanged ? distB : (10 - distB);
+                
+                // Randomized jitter (0-2 points)
+                scoreA += Math.random() * 2;
+                scoreB += Math.random() * 2;
+                
+                // Penalty for dog-piling: Check if another unit of same faction already targeting this unit
+                const targetersA = this.units.filter(u => u !== unit && u.faction === unit.faction && u.intent && u.intent.targetId === a.target.id).length;
+                const targetersB = this.units.filter(u => u !== unit && u.faction === unit.faction && u.intent && u.intent.targetId === b.target.id).length;
+                
+                scoreA -= targetersA * 3;
+                scoreB -= targetersB * 3;
+
+                // Priority for Dong Zhuo for enemies (but with the dog-piling penalty it should balance out)
+                if (unit.faction === 'enemy' && a.target.id === 'dongzhuo') scoreA += 4;
+                if (unit.faction === 'enemy' && b.target.id === 'dongzhuo') scoreB += 4;
+
+                return scoreB - scoreA;
             });
             bestTile = unitAttackTiles[0];
             chosenTargetPos = { r: bestTile.target.r, q: bestTile.target.q };
@@ -1040,13 +1281,18 @@ export class TacticsScene extends BaseScene {
             let minDist = Infinity;
 
             if (unitTargets.length > 0) {
-                unitTargets.forEach(t => {
-                    const dist = this.tacticsMap.getDistance(unit.r, unit.q, t.r, t.q);
-                    if (dist < minDist) {
-                        minDist = dist;
-                        nearestTargetPos = { r: t.r, q: t.q };
-                    }
-                });
+                // Get all targets with distances
+                const targetsWithDist = unitTargets.map(t => ({
+                    t,
+                    dist: this.tacticsMap.getDistance(unit.r, unit.q, t.r, t.q)
+                })).sort((a, b) => a.dist - b.dist);
+
+                // 30% chance to pick second nearest if it exists, to split up forces
+                if (targetsWithDist.length > 1 && Math.random() < 0.3) {
+                    nearestTargetPos = { r: targetsWithDist[1].t.r, q: targetsWithDist[1].t.q };
+                } else {
+                    nearestTargetPos = { r: targetsWithDist[0].t.r, q: targetsWithDist[0].t.q };
+                }
             } else if (unit.faction === 'enemy') {
                 // Fallback to houses if no units exist
                 for (let r = 0; r < this.manager.config.mapHeight; r++) {
@@ -1121,10 +1367,23 @@ export class TacticsScene extends BaseScene {
         const attackConfig = ATTACKS[attackKey] || ATTACKS.stab;
         const minRange = attackConfig.minRange || 1;
         const maxRange = attackConfig.range || 1;
-        const targetFaction = unit.faction === 'enemy' ? ['player', 'allied'] : ['enemy'];
         
-        // Find units within range
-        const unitTargets = this.units.filter(u => targetFaction.includes(u.faction) && u.hp > 0);
+        // Same targeting logic as moveNpcAndTelegraph:
+        // - Enemies target player and allied units, but NOT caged allies
+        // - Allies target enemy units AND caged allies (to free them)
+        const unitTargets = this.units.filter(u => {
+            if (u.hp <= 0) return false;
+            
+            if (unit.faction === 'enemy') {
+                if (u.caged) return false;  // Don't attack the prisoner!
+                return u.faction === 'player' || u.faction === 'allied';
+            } else {
+                if (u.faction === 'enemy') return true;
+                if (u.caged && u.faction === 'allied') return true;  // Attack cage to free ally
+                return false;
+            }
+        });
+        
         const targetUnit = unitTargets.find(t => {
             const dist = this.tacticsMap.getDistance(unit.r, unit.q, t.r, t.q);
             return dist >= minRange && dist <= maxRange;
@@ -1203,7 +1462,10 @@ export class TacticsScene extends BaseScene {
                 action: u.action,
                 isDrowning: u.isDrowning,
                 isGone: u.isGone,
-                flip: u.flip
+                flip: u.flip,
+                caged: u.caged,
+                cageHp: u.cageHp,
+                cageSprite: u.cageSprite
             }))
         };
     }
@@ -1268,6 +1530,9 @@ export class TacticsScene extends BaseScene {
             u.isDrowning = uData.isDrowning || false;
             u.isGone = uData.isGone || false;
             u.flip = uData.flip || false;
+            u.caged = uData.caged || false;
+            u.cageHp = uData.cageHp;
+            u.cageSprite = uData.cageSprite;
 
             // Clear animation states
             u.frame = 0;
@@ -1409,11 +1674,15 @@ export class TacticsScene extends BaseScene {
                 const cell = this.findNearestFreeCell(spot.r, spot.q, 5);
                 if (cell) {
                     const id = `reinforcement_${Date.now()}_${spawns}`;
+                    // Alternate between weak (2HP) and normal (3HP) Yellow Turbans
+                    const isWeak = spawns % 2 === 0;
                     const config = {
                         name: "Yellow Turban",
                         imgKey: 'yellowturban',
                         faction: 'enemy',
-                        hp: 3,
+                        hp: isWeak ? 2 : 3,
+                        maxHp: isWeak ? 2 : 3,
+                        level: isWeak ? 1 : 2,
                         attacks: ['bash'],
                         r: cell.r, q: cell.q
                     };
@@ -1457,11 +1726,15 @@ export class TacticsScene extends BaseScene {
                 const cell = this.findNearestFreeCell(spot.r, spot.q, 5);
                 if (cell) {
                     const id = `qz_rebel_t${this.turnNumber}_${i}`;
+                    // Alternate between weak (2HP) and normal (3HP) Yellow Turbans
+                    const isWeak = i % 2 === 0;
                     const config = {
                         name: "Yellow Turban",
                         imgKey: 'yellowturban',
                         faction: 'enemy',
-                        hp: 3,
+                        hp: isWeak ? 2 : 3,
+                        maxHp: isWeak ? 2 : 3,
+                        level: isWeak ? 1 : 2,
                         attacks: ['bash'],
                         r: cell.r, q: cell.q
                     };
@@ -1682,6 +1955,7 @@ export class TacticsScene extends BaseScene {
         // Play attack sound
         if (attackKey.startsWith('serpent_spear')) assets.playSound('stab');
         else if (attackKey.startsWith('green_dragon_slash')) assets.playSound('green_dragon');
+        else if (attackKey === 'tyrant_sweep') assets.playSound('green_dragon');  // Same sound as green dragon
         else if (attackKey === 'double_blades') assets.playSound('double_blades');
         else if (attackKey === 'bash') assets.playSound('bash');
         else if (attackKey.startsWith('slash')) assets.playSound('slash');
@@ -1696,7 +1970,7 @@ export class TacticsScene extends BaseScene {
 
         if (attackKey === 'double_blades') {
             this.executeDoubleBlades(attacker, targetR, targetQ, wrappedOnComplete);
-        } else if (attackKey.startsWith('green_dragon_slash')) {
+        } else if (attackKey.startsWith('green_dragon_slash') || attackKey === 'tyrant_sweep') {
             this.executeGreenDragonSlash(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
         } else if (attackKey.startsWith('serpent_spear')) {
             this.executeSerpentSpear(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
@@ -1933,11 +2207,14 @@ export class TacticsScene extends BaseScene {
                 
                 // Check for victory condition
                 if (this.isFightMode && this.onFightVictory) {
-                    // Show victory message and end
+                    // Set the callback IMMEDIATELY to prevent race conditions with checkWinLoss
+                    this.onVictoryCallback = this.onFightVictory;
+                    
+                    // Show victory message and end - use endBattle to compute stats
                     setTimeout(() => {
                         this.addDamageNumber(this.manager.canvas.width / 2, 50, "VICTORY!", '#ffd700');
                         setTimeout(() => {
-                            this.onFightVictory();
+                            this.endBattle(true);
                         }, 1500);
                     }, 500);
                 }
@@ -2075,10 +2352,11 @@ export class TacticsScene extends BaseScene {
             if (pushCell) {
                 const targetPos = this.getPixelPos(pushCell.r, pushCell.q);
                 const levelDiff = pushCell.level - victimCell.level;
+                const isDeepWater = pushCell.terrain && pushCell.terrain.includes('water_deep');
 
                 // 1. COLLISION (Pushing into a wall/high cliff or another living unit)
                 const isHighCliff = levelDiff > 1;
-                const isImpassable = pushCell.impassable;
+                const isImpassable = pushCell.impassable && !isDeepWater;
                 const isOccupiedByLiving = pushCell.unit && pushCell.unit._aliveAtStartOfAction;
 
                 if (isHighCliff || isImpassable || isOccupiedByLiving) {
@@ -2098,12 +2376,17 @@ export class TacticsScene extends BaseScene {
                         this.handleCrushLanding(victim, occupant, pushCell, levelDiff, targetPos);
                     } else {
                         // Normal fall landing
-                    setTimeout(() => { 
-                            assets.playSound('collision', 0.8);
-                            this.applyUnitDamage(victim, fallDamage);
-                            this.addDamageNumber(targetPos.x, targetPos.y - 30, fallDamage);
-                    victim.setPosition(pushCell.r, pushCell.q);
-                        pushCell.unit = victim;
+                        setTimeout(() => { 
+                            if (isDeepWater) {
+                                victim.isDrowning = true;
+                                assets.playSound('drown');
+                            } else {
+                                assets.playSound('collision', 0.8);
+                                this.applyUnitDamage(victim, fallDamage);
+                                this.addDamageNumber(targetPos.x, targetPos.y - 30, fallDamage);
+                            }
+                            victim.setPosition(pushCell.r, pushCell.q);
+                            pushCell.unit = victim;
                         }, 400);
                     }
                 }
@@ -2115,11 +2398,11 @@ export class TacticsScene extends BaseScene {
                     victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false);
 
                     // Deep water drowning
-                    if (pushCell.terrain === 'deep_water') {
+                    if (isDeepWater) {
                         setTimeout(() => {
                             if (victim.name === 'Boulder') {
                                 assets.playSound('drown');
-                                pushCell.terrain = 'shallow_water';
+                                pushCell.terrain = 'water_shallow_01'; // Fill in deep water with boulder
                                 victim.isGone = true;
                                 pushCell.unit = null;
                             } else {
@@ -2180,10 +2463,9 @@ export class TacticsScene extends BaseScene {
             this.triggerAmbush();
         }
 
-        // Kill all enemies
+        // Kill all enemies only
         this.units.forEach(u => {
             if (u.faction === 'enemy' && u.hp > 0) {
-                u.hp = 0;
                 this.applyUnitDamage(u, 999); // Use official damage system
             }
         });
@@ -2253,7 +2535,8 @@ export class TacticsScene extends BaseScene {
                         r: uDef.r,
                         q: uDef.q,
                         isDead: uDef.isDead || false,  // Preserve isDead flag for corpses
-                        caged: uDef.caged || false     // Preserve caged flag
+                        caged: uDef.caged || false,     // Preserve caged flag
+                        frame: uDef.frame !== undefined ? uDef.frame : undefined
                     };
                 }).filter(u => u !== null);
             } else if (this.battleId === 'custom') {
@@ -2657,7 +2940,7 @@ export class TacticsScene extends BaseScene {
                     affected.push(intermediate);
                 }
             }
-        } else if (attackKey.startsWith('green_dragon_slash')) {
+        } else if (attackKey.startsWith('green_dragon_slash') || attackKey === 'tyrant_sweep') {
             // Hits target and its neighbors that are at the same distance from attacker
             // This creates a consistent 3-tile arc at any range (1 or 2).
             affected.push({ r: targetR, q: targetQ });
@@ -3092,6 +3375,7 @@ export class TacticsScene extends BaseScene {
                     'liubei': 'liu-bei',
                     'guanyu': 'guan-yu',
                     'zhangfei': 'zhang-fei',
+                    'dongzhuo': 'dong-zhuo',
                     'gongjing': 'custom-male-17'  // Older official portrait for Imperial Protector
                 };
                 this.renderDialogueBox(ctx, canvas, {
@@ -3660,6 +3944,12 @@ export class TacticsScene extends BaseScene {
                 font: '8px Tiny5', 
                 align: 'center' 
             });
+        } else if (this.battleId === 'dongzhuo_battle') {
+            this.drawPixelText(ctx, "GOAL: SAVE DONG ZHUO", canvas.width / 2, 8, { 
+                color: '#fff', 
+                font: '8px Tiny5', 
+                align: 'center' 
+            });
         }
 
         // 4. End Turn / Reset Turn / Order / Undo (Bottom Right)
@@ -3872,9 +4162,9 @@ export class TacticsScene extends BaseScene {
             for (const rect of this.choiceRects) {
                 if (x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h) {
                     this.isChoiceActive = false;
-                    if (rect.index === 0 && this.onChoiceRestrain) {
-                        // Peaceful choice - restrain Zhang Fei
-                        this.onChoiceRestrain();
+                    if (rect.index === 0) {
+                        // Peaceful choice - restrain Zhang Fei, show dialogue on map
+                        this.startRestrainDialogue();
                     } else if (rect.index === 1) {
                         // Fight choice - start fight in current map
                         this.startFight();
@@ -3941,7 +4231,7 @@ export class TacticsScene extends BaseScene {
                 this.dialogueElapsed = 0;
             } else {
                 this.subStep = 0;
-            this.dialogueStep++;
+                this.dialogueStep++;
                 this.dialogueElapsed = 0;
                 
                 if (this.dialogueStep >= script.length) {
@@ -3973,6 +4263,7 @@ export class TacticsScene extends BaseScene {
                 'liubei': 'liu-bei',
                 'guanyu': 'guan-yu',
                 'zhangfei': 'zhang-fei',
+                'dongzhuo': 'dong-zhuo',
                 'gongjing': 'custom-male-17'  // Older official portrait for Imperial Protector
             };
             
@@ -3992,9 +4283,16 @@ export class TacticsScene extends BaseScene {
                 
                 if (this.cleanupDialogueStep >= this.cleanupDialogueScript.length) {
                     this.isCleanupDialogueActive = false;
-                    // Go to the map - player will click on Guangzong to march there
-                    this.manager.gameState.addMilestone('qingzhou_cleanup');
-                    this.manager.switchTo('map', { campaignId: 'liubei' });
+                    
+                    // Call completion callback if set, otherwise use default behavior
+                    if (this.cleanupDialogueOnComplete) {
+                        this.cleanupDialogueOnComplete();
+                        this.cleanupDialogueOnComplete = null;
+                    } else {
+                        // Default: Go to the map after Qingzhou cleanup
+                        this.manager.gameState.addMilestone('qingzhou_cleanup');
+                        this.manager.switchTo('map', { campaignId: 'liubei' });
+                    }
                 } else {
                     // Play voice for next step
                     const nextStep = this.cleanupDialogueScript[this.cleanupDialogueStep];

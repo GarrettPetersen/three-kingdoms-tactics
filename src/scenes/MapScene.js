@@ -41,8 +41,18 @@ const LOCATIONS = {
         name: 'Guangzong Region',
         imgKey: 'tent',
         battleId: 'guangzong_encounter',
-        unlockCondition: (gs) => gs.hasMilestone('qingzhou_cleanup') && !gs.hasMilestone('guangzong_camp'),
-        isCompleted: (gs) => gs.hasMilestone('guangzong_camp')
+        unlockCondition: (gs) => gs.hasMilestone('qingzhou_cleanup') && !gs.hasMilestone('guangzong_encounter'),
+        isCompleted: (gs) => gs.hasMilestone('guangzong_encounter')
+    },
+    zhuo_county: {
+        id: 'zhuo_county',
+        x: 190,
+        y: 70,
+        name: 'Zhuo County',
+        imgKey: 'hut',
+        battleId: 'zhuo_return',
+        unlockCondition: (gs) => gs.hasMilestone('guangzong_encounter') && !gs.hasMilestone('chapter1_complete'),
+        isCompleted: (gs) => gs.hasMilestone('chapter1_complete')
     }
 };
 
@@ -87,6 +97,12 @@ const HERO_REMINDERS = {
         name: 'Liu Bei',
         voiceId: 'map_lb_rem_04',
         text: "Lu Zhi, my old teacher, is hard-pressed at Guangzong. We must march north to aid him against Zhang Jue's horde!"
+    },
+    'guangzong_encounter': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_rem_05',
+        text: "There is nothing more for us at Guangzong. Let us return to Zhuo County."
     }
 };
 
@@ -138,6 +154,16 @@ export class MapScene extends BaseScene {
                 this.currentEvent = event;
                 this.subStep = 0;
                 if (event.voiceId) assets.playVoice(event.voiceId);
+            }
+        }
+
+        // Handle post-choice continuation from resumed battles
+        if (params && params.afterChoice) {
+            if (params.afterChoice === 'guangzong_restrain') {
+                // Return to map - player will click Zhuo County
+            } else if (params.afterChoice === 'guangzong_fight') {
+                // After fighting to free Lu Zhi
+                setTimeout(() => this.continueAfterEscortBattle(), 100);
             }
         }
 
@@ -370,6 +396,7 @@ export class MapScene extends BaseScene {
                                 else if (loc.battleId === 'daxing') this.startBriefing();
                                 else if (loc.battleId === 'qingzhou_siege') this.startQingzhouBriefing();
                                 else if (loc.battleId === 'guangzong_encounter') this.startGuangzongBriefing();
+                                else if (loc.battleId === 'zhuo_return') this.startZhuoReturn();
                             });
                         }
                     } else {
@@ -425,10 +452,11 @@ export class MapScene extends BaseScene {
             
             // Always enter immediately if the prologue is not complete
             if (isZhuoAvailable || boxHit || this.selectedLocation === 'zhuo') {
-                if (gs.hasMilestone('prologue_complete') || gs.hasMilestone('daxing') || gs.hasMilestone('qingzhou_siege') || gs.hasMilestone('qingzhou_cleanup')) {
+                if (gs.hasMilestone('prologue_complete') || gs.hasMilestone('daxing') || gs.hasMilestone('qingzhou_siege') || gs.hasMilestone('qingzhou_cleanup') || gs.hasMilestone('guangzong_encounter')) {
                     let reminderKey = 'prologue_complete';
                     
-                    if (gs.hasMilestone('qingzhou_cleanup')) reminderKey = 'qingzhou_cleanup';
+                    if (gs.hasMilestone('guangzong_encounter')) reminderKey = 'guangzong_encounter';
+                    else if (gs.hasMilestone('qingzhou_cleanup')) reminderKey = 'qingzhou_cleanup';
                     else if (gs.hasMilestone('qingzhou_siege')) reminderKey = 'qingzhou_siege';
                     else if (gs.hasMilestone('daxing')) reminderKey = 'daxing';
                     
@@ -476,8 +504,13 @@ export class MapScene extends BaseScene {
         this.manager.switchTo('tactics', {
             battleId: 'guangzong_encounter',
             onChoiceRestrain: () => {
-                // Peaceful path - continue to Dong Zhuo encounter
-                this.continueToDongZhuo();
+                // Peaceful path - go to map, player clicks Zhuo County
+                this.manager.gameState.addMilestone('guangzong_encounter');
+                this.manager.switchTo('map', { 
+                    campaignId: 'liubei',
+                    partyX: 205,  // Near Guangzong
+                    partyY: 55
+                });
             },
             onChoiceFight: () => {
                 // Battle path - start fight in the same map (handled by TacticsScene)
@@ -487,174 +520,119 @@ export class MapScene extends BaseScene {
                 // Called when cage is broken and Lu Zhi is freed
                 this.manager.gameState.addMilestone('freed_luzhi');
                 this.continueAfterEscortBattle();
+            },
+            onVictory: () => {
+                // Fallback for if they kill all enemies without breaking the cage
+                this.manager.gameState.addMilestone('freed_luzhi');
+                this.continueAfterEscortBattle();
             }
         });
     }
 
-    continueToDongZhuo() {
-        // After choosing to restrain Zhang Fei, continue the story
+    startZhuoReturn() {
+        // Go directly to the Dong Zhuo battle - dialogue happens on the battle screen
+        const gs = this.manager.gameState;
+        const freedLuZhi = gs.hasMilestone('freed_luzhi');
+        
+        this.manager.switchTo('tactics', {
+            battleId: 'dongzhuo_battle',
+            onVictory: () => {
+                // After battle, show Chapter 1 end
+                this.showChapter1End();
+            },
+            // Pass which path we're on for post-battle dialogue
+            freedLuZhi: freedLuZhi
+        });
+    }
+    
+    
+    showChapter1End() {
+        // Show "End of Chapter 1" screen
         this.manager.switchTo('narrative', {
-            musicKey: 'forest',
+            musicKey: 'oath',
             onComplete: () => {
-                this.manager.gameState.addMilestone('guangzong_camp');
-                this.manager.switchTo('map', { campaignId: 'liubei' });
+                this.manager.gameState.addMilestone('chapter1_complete');
+                this.manager.switchTo('campaign'); // Back to story selection
             },
             script: [
-                // Guan Yu's response to restraining Zhang Fei
-                { bg: 'intro_hills', type: 'command', action: 'clearActors' },
-                { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 100, y: 180 },
-                { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 120, y: 190 },
-                { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 110, y: 200 },
-                
+                { bg: 'black', type: 'command', action: 'clearActors' },
                 {
-                    type: 'dialogue',
-                    portraitKey: 'guan-yu',
-                    name: 'Guan Yu',
-                    position: 'top',
-                    voiceId: 'gz_gy_01',
-                    text: "Lu Zhi has been arrested. There is no point continuing to Guangzong. Let us return toward Zhuo."
-                },
-                
-                // Scene 2: Two days later - encountering Dong Zhuo's defeat
-                { type: 'command', action: 'fade', target: 1, speed: 0.003 },
-                { type: 'command', action: 'wait', duration: 500 },
-                { bg: 'army_camp_flipped', type: 'command', action: 'clearActors' },
-                { type: 'command', action: 'fade', target: 0, speed: 0.003 },
-                
-                {
-                    type: 'dialogue',
-                    portraitKey: 'narrator',
-                    name: 'Narrator',
-                    position: 'top',
-                    voiceId: 'gz_nar_01',
-                    text: "Two days later, the brothers heard the thunder of battle. From a hilltop, they beheld government soldiers in full retreat, pursued by a sea of Yellow Scarves."
-                },
-                
-                // Dong Zhuo fleeing, Yellow Turbans chasing
-                { type: 'command', action: 'addActor', id: 'dongzhuo', imgKey: 'dongzhuo', x: 180, y: 170 },
-                { type: 'command', action: 'addActor', id: 'yt1', imgKey: 'yellowturban', x: 80, y: 160, flip: true },
-                { type: 'command', action: 'addActor', id: 'yt2', imgKey: 'yellowturban', x: 60, y: 180, flip: true },
-                { type: 'command', action: 'addActor', id: 'yt3', imgKey: 'yellowturban', x: 100, y: 190, flip: true },
-                
-                // Brothers charge in from the right
-                { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 280, y: 180, flip: true },
-                { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 300, y: 170, flip: true },
-                { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 290, y: 200, flip: true },
-                
-                {
-                    type: 'dialogue',
-                    portraitKey: 'liu-bei',
-                    name: 'Liu Bei',
-                    position: 'top',
-                    voiceId: 'gz_lb_03',
-                    text: "That banner reads 'Zhang Jue, Lord of Heaven!' Brothers, we attack!"
-                },
-                
-                // Brothers charge
-                { type: 'command', action: 'moveActor', id: 'liubei', x: 120, y: 175, duration: 800 },
-                { type: 'command', action: 'moveActor', id: 'guanyu', x: 100, y: 165, duration: 900 },
-                { type: 'command', action: 'moveActor', id: 'zhangfei', x: 80, y: 185, duration: 1000 },
-                { type: 'command', action: 'wait', duration: 1200 },
-                
-                // Yellow Turbans flee
-                { type: 'command', action: 'moveActor', id: 'yt1', x: -50, y: 160, duration: 600 },
-                { type: 'command', action: 'moveActor', id: 'yt2', x: -70, y: 180, duration: 700 },
-                { type: 'command', action: 'moveActor', id: 'yt3', x: -30, y: 200, duration: 800 },
-                { type: 'command', action: 'wait', duration: 1000 },
-                
-                {
-                    type: 'dialogue',
-                    portraitKey: 'narrator',
-                    name: 'Narrator',
-                    position: 'top',
-                    voiceId: 'gz_nar_02',
-                    text: "The three brothers dashed into Zhang Jue's army, threw his ranks into confusion, and drove him back fifteen miles."
-                },
-                
-                // Scene 3: At Dong Zhuo's camp - the insult
-                { type: 'command', action: 'fade', target: 1, speed: 0.003 },
-                { type: 'command', action: 'wait', duration: 500 },
-                { bg: 'army_camp', type: 'command', action: 'clearActors' },
-                { type: 'command', action: 'fade', target: 0, speed: 0.003 },
-                
-                { type: 'command', action: 'addActor', id: 'dongzhuo', imgKey: 'dongzhuo', x: 130, y: 160, flip: true },
-                { type: 'command', action: 'addActor', id: 'guard1', imgKey: 'soldier', x: 100, y: 150, flip: true },
-                { type: 'command', action: 'addActor', id: 'guard2', imgKey: 'soldier', x: 160, y: 150, flip: true },
-                { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 200, y: 180 },
-                { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 220, y: 170 },
-                { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 210, y: 195 },
-                
-                {
-                    type: 'dialogue',
-                    portraitKey: 'dong-zhuo',
-                    name: 'Dong Zhuo',
-                    position: 'top',
-                    voiceId: 'gz_dz_01',
-                    text: "What offices do you three hold?"
+                    type: 'title',
+                    text: "CHAPTER 1 COMPLETE",
+                    subtext: "The Oath in the Peach Garden",
+                    duration: 4000
                 },
                 {
-                    type: 'dialogue',
-                    portraitKey: 'liu-bei',
-                    name: 'Liu Bei',
-                    position: 'top',
-                    voiceId: 'gz_lb_04',
-                    text: "We hold no official positions, my lord. We are but volunteers who answered the call to arms."
+                    type: 'narrator',
+                    voiceId: 'ch1_end_01',
+                    text: "Dong Zhuo's fate will be unrolled in later chapters..."
                 },
-                {
-                    type: 'dialogue',
-                    portraitKey: 'dong-zhuo',
-                    name: 'Dong Zhuo',
-                    position: 'top',
-                    voiceId: 'gz_dz_02',
-                    text: "Hmph. Common men with no rank. You may go."
-                },
-                
-                // Brothers exit, Zhang Fei angry
-                { type: 'command', action: 'moveActor', id: 'liubei', x: 280, y: 180, duration: 800 },
-                { type: 'command', action: 'moveActor', id: 'guanyu', x: 300, y: 170, duration: 900 },
-                { type: 'command', action: 'moveActor', id: 'zhangfei', x: 290, y: 195, duration: 700 },
-                { type: 'command', action: 'wait', duration: 1000 },
-                
-                {
-                    type: 'dialogue',
-                    portraitKey: 'zhang-fei',
-                    name: 'Zhang Fei',
-                    position: 'top',
-                    voiceId: 'gz_zf_02',
-                    text: "We saved that wretch in bloody battle and he treats us with contempt! Let me go back and take his head!"
-                },
-                {
-                    type: 'dialogue',
-                    portraitKey: 'liu-bei',
-                    name: 'Liu Bei',
-                    position: 'top',
-                    voiceId: 'gz_lb_05',
-                    text: "Patience, brother. A man's worth is not measured by titles. Our day will come. Let us seek another commander who values true courage."
-                },
-                
-                { type: 'command', action: 'fade', target: 1, speed: 0.002 }
+                { type: 'command', action: 'wait', duration: 2000 },
+                { type: 'command', action: 'fade', target: 1, speed: 0.001 }
             ]
         });
     }
 
     continueAfterEscortBattle() {
-        // Alternate story path after freeing Lu Zhi
+        // First show battle summary, then continue story (outlaw path)
+        // Get stats computed by TacticsScene.endBattle()
+        const stats = this.manager.gameState.get('lastBattleStats') || {
+            won: true,
+            battleId: 'guangzong_escort',
+            alliedCasualties: 0,
+            enemyCasualties: 0,
+            housesDestroyed: 0,
+            housesProtected: 0,
+            totalHouses: 0,
+            turnNumber: 1,
+            xpGained: 5,
+            recoveryInfo: [],
+            levelUps: []
+        };
+        
+        this.manager.switchTo('summary', {
+            ...stats,
+            onComplete: () => {
+                this.showOutlawStory();
+            }
+        });
+    }
+    
+    showOutlawStory() {
+        // After freeing Lu Zhi - characters walk up on dirt road, have conversation, then go to map
         this.manager.switchTo('narrative', {
             musicKey: 'forest',
             onComplete: () => {
-                this.manager.gameState.addMilestone('guangzong_camp');
-                this.manager.switchTo('map', { campaignId: 'liubei' });
+                // Go to map - player will march to Zhuo County
+                this.manager.gameState.addMilestone('guangzong_encounter');
+                this.manager.switchTo('map', { 
+                    campaignId: 'liubei',
+                    partyX: 205,  // Near where they were (Guangzong area)
+                    partyY: 55
+                });
             },
             script: [
-                { bg: 'intro_hills', type: 'command', action: 'clearActors' },
-                { type: 'command', action: 'addActor', id: 'luzhi', imgKey: 'zhoujing', x: 110, y: 160 },
-                { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 150, y: 170 },
-                { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 170, y: 180 },
-                { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 160, y: 190 },
+                // Characters walk up from bottom on dirt_road_city_in_distance
+                { bg: 'dirt_road_city_in_distance', type: 'command', action: 'clearActors' },
+                { type: 'command', action: 'fade', target: 0, speed: 0.002 },
                 
+                // Start characters off-screen bottom
+                { type: 'command', action: 'addActor', id: 'luzhi', imgKey: 'zhoujing', x: 100, y: 280 },
+                { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 130, y: 285 },
+                { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 160, y: 290 },
+                { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 145, y: 295 },
+                
+                // Walk up to 1/3 up the screen (around y=180-200)
+                { type: 'command', action: 'move', id: 'luzhi', x: 100, y: 180, wait: false },
+                { type: 'command', action: 'move', id: 'liubei', x: 130, y: 185, wait: false },
+                { type: 'command', action: 'move', id: 'guanyu', x: 160, y: 190, wait: false },
+                { type: 'command', action: 'move', id: 'zhangfei', x: 145, y: 195, wait: true },
+                
+                // Lu Zhi thanks them but warns of consequences
                 {
                     type: 'dialogue',
                     portraitKey: 'custom-male-22',
+                    speaker: 'luzhi',
                     name: 'Commander Lu Zhi',
                     position: 'top',
                     voiceId: 'gz_lz_freed_01',
@@ -663,6 +641,7 @@ export class MapScene extends BaseScene {
                 {
                     type: 'dialogue',
                     portraitKey: 'liu-bei',
+                    speaker: 'liubei',
                     name: 'Liu Bei',
                     position: 'top',
                     voiceId: 'gz_lb_freed_02',
@@ -671,26 +650,20 @@ export class MapScene extends BaseScene {
                 {
                     type: 'dialogue',
                     portraitKey: 'custom-male-22',
+                    speaker: 'luzhi',
                     name: 'Commander Lu Zhi',
                     position: 'top',
                     voiceId: 'gz_lz_freed_02',
-                    text: "Your loyalty does you credit, but now you must flee. I will return to Guangzong in secret. Perhaps one day, when the dynasty is restored, your name will be cleared."
+                    text: "Your loyalty does you credit. I will return to Guangzong in secret. Go now, before more soldiers come."
                 },
                 {
                     type: 'dialogue',
-                    portraitKey: 'zhang-fei',
-                    name: 'Zhang Fei',
+                    portraitKey: 'guan-yu',
+                    speaker: 'guanyu',
+                    name: 'Guan Yu',
                     position: 'top',
-                    voiceId: 'gz_zf_freed_02',
-                    text: "Cleared? Bah! We did what was right! Let the corrupt court call us what they will!"
-                },
-                {
-                    type: 'dialogue',
-                    portraitKey: 'liu-bei',
-                    name: 'Liu Bei',
-                    position: 'top',
-                    voiceId: 'gz_lb_freed_03',
-                    text: "We shall continue to fight for the people, regardless of titles or recognition. That is our oath."
+                    voiceId: 'gz_gy_outlaw_01',
+                    text: "Let us make for Zhuo County. We can regroup there and decide our next move."
                 },
                 
                 { type: 'command', action: 'fade', target: 1, speed: 0.002 }

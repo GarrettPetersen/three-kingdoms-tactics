@@ -202,26 +202,12 @@ def generate_voice(
     verification_result = None
 
     if os.path.exists(output_ogg):
-        # Even if it exists, let's re-trim it to ensure the silence fixes are applied
-        # But only if it's 0 bytes or we want to force re-processing
-        if os.path.getsize(output_ogg) == 0:
-            print(f"Regenerating 0-byte file: {line_id}")
-        else:
-            print(f"Skipping generation (already exists): {line_id}")
-            try:
-                # Convert ogg to temp wav for trimming
-                audio = AudioSegment.from_file(output_ogg)
-                audio.export(temp_wav, format="wav")
-                trim_long_pauses(temp_wav)
-                # Re-export to ogg using our fixed converter
-                if convert_to_ogg(temp_wav, output_ogg):
-                    if os.path.exists(temp_wav):
-                        os.remove(temp_wav)
-                else:
-                    print(f"    Failed to re-trim {line_id}")
-            except Exception as e:
-                print(f"    Re-trim error: {e}")
+        # Skip if file exists and has content
+        if os.path.getsize(output_ogg) > 0:
+            # Already exists - skip entirely (no re-processing)
             return None
+        else:
+            print(f"Regenerating 0-byte file: {line_id}")
 
     char_key = character.lower().replace(" ", "")
     target_filename = CHAR_TARGETS.get(char_key, CHAR_TARGETS["default"])
@@ -981,6 +967,51 @@ if __name__ == "__main__":
             "\nFalling back to hardcoded game_script (run extract_voice_lines.py to update)"
         )
         voice_lines = game_script
+
+    # Check for duplicate voice IDs with different text
+    seen_ids = {}
+    duplicates = []
+    for line in voice_lines:
+        line_id = line["id"]
+        line_text = line["text"]
+        if line_id in seen_ids:
+            if seen_ids[line_id] != line_text:
+                duplicates.append(
+                    {"id": line_id, "text1": seen_ids[line_id], "text2": line_text}
+                )
+        else:
+            seen_ids[line_id] = line_text
+
+    if duplicates:
+        print("\n" + "=" * 60)
+        print("ERROR: Duplicate voice IDs with different text detected!")
+        print("=" * 60)
+        for dup in duplicates:
+            print(f"\nID: {dup['id']}")
+            print(
+                f"  Text 1: \"{dup['text1'][:60]}...\""
+                if len(dup["text1"]) > 60
+                else f"  Text 1: \"{dup['text1']}\""
+            )
+            print(
+                f"  Text 2: \"{dup['text2'][:60]}...\""
+                if len(dup["text2"]) > 60
+                else f"  Text 2: \"{dup['text2']}\""
+            )
+        print("\nFix these duplicates before generating voices!")
+        sys.exit(1)
+
+    # Quick count of files that need generation
+    missing_count = 0
+    for line in voice_lines:
+        output_ogg = os.path.join(OUTPUT_DIR, f"{line['id']}.ogg")
+        if not os.path.exists(output_ogg) or os.path.getsize(output_ogg) == 0:
+            missing_count += 1
+
+    if missing_count == 0:
+        print("All voice files already exist. Nothing to generate.")
+    else:
+        print(f"Need to generate {missing_count} voice file(s)...\n")
 
     report = {}
     for line in voice_lines:

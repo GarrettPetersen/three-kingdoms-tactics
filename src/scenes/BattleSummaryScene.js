@@ -12,6 +12,7 @@ export class BattleSummaryScene extends BaseScene {
 
     enter(params) {
         this.stats = params;
+        this.onComplete = params.onComplete || null;
         this.timer = 0;
         this.lastTime = 0;
         this.showLines = 0;
@@ -69,15 +70,25 @@ export class BattleSummaryScene extends BaseScene {
             this.drawStatLine(ctx, "Enemy Casualties:", this.stats.enemyCasualties, startY + spacing, '#f00');
         }
         if (this.showLines > 2) {
-            const houseText = `${this.stats.housesProtected} / ${this.stats.totalHouses}`;
-            this.drawStatLine(ctx, "Houses Protected:", houseText, startY + spacing * 2, '#0af');
+            const housesProtected = this.stats.housesProtected || 0;
+            const totalHouses = this.stats.totalHouses || 0;
+            if (totalHouses > 0) {
+                const houseText = `${housesProtected} / ${totalHouses}`;
+                this.drawStatLine(ctx, "Houses Protected:", houseText, startY + spacing * 2, '#0af');
+            } else {
+                // Skip houses for battles without houses - show next stat instead
+                this.drawStatLine(ctx, "Turns Taken:", this.stats.turnNumber || 1, startY + spacing * 2, '#eee');
+            }
         }
-        if (this.showLines > 3) {
-            this.drawStatLine(ctx, "Turns Taken:", this.stats.turnNumber, startY + spacing * 3, '#eee');
+        const hasHouses = (this.stats.totalHouses || 0) > 0;
+        if (this.showLines > 3 && hasHouses) {
+            this.drawStatLine(ctx, "Turns Taken:", this.stats.turnNumber || 1, startY + spacing * 3, '#eee');
         }
 
-        if (this.showLines > 4 && this.stats.won) {
-            this.drawStatLine(ctx, "XP Gained:", this.stats.xpGained || 0, startY + spacing * 4, '#ffd700');
+        // XP line - adjust position based on whether we showed houses
+        const xpLineNum = hasHouses ? 4 : 3;
+        if (this.showLines > xpLineNum && this.stats.won) {
+            this.drawStatLine(ctx, "XP Gained:", this.stats.xpGained || 0, startY + spacing * xpLineNum, '#ffd700');
         }
 
         if (this.showLines > 5) {
@@ -147,15 +158,19 @@ export class BattleSummaryScene extends BaseScene {
                     levelUps: this.stats.levelUps,
                     isEndGame: isEndGame,
                     isCustom: isCustom,
-                    battleId: this.stats.battleId
+                    battleId: this.stats.battleId,
+                    onComplete: this.onComplete
                 });
             } else if (this.stats.levelUps && this.stats.levelUps.length > 0) {
                 this.manager.switchTo('levelup', { 
                     levelUps: this.stats.levelUps,
                     isEndGame: isEndGame,
                     isCustom: isCustom,
-                    battleId: this.stats.battleId
+                    battleId: this.stats.battleId,
+                    onComplete: this.onComplete
                 });
+            } else if (this.onComplete) {
+                this.onComplete();
             } else if (this.stats.battleId === 'qingzhou_siege' && this.stats.won) {
                 this.manager.switchTo('tactics', { battleId: 'qingzhou_cleanup' });
             } else if (isCustom) {

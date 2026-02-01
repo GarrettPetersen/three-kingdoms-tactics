@@ -11,10 +11,12 @@ export class LevelUpScene extends BaseScene {
         this.showBonuses = false;
         this.isPromoting = false;
         this.promotionChoice = null;
+        this.chosenClass = null;
     }
 
     enter(params) {
         this.levelUps = params.levelUps || [];
+        this.onComplete = params.onComplete || null;
         this.isEndGame = params.isEndGame || false;
         this.isCustom = params.isCustom || false;
         this.battleId = params.battleId || null;
@@ -24,6 +26,7 @@ export class LevelUpScene extends BaseScene {
         this.showBonuses = false;
         this.isPromoting = false;
         this.promotionChoice = null;
+        this.chosenClass = null;
         
         if (this.levelUps.length > 0) {
             assets.playSound('victory', 0.5);
@@ -127,12 +130,21 @@ export class LevelUpScene extends BaseScene {
             // 2. Weapon Upgrades
             const gs = this.manager.gameState;
             const unitClasses = gs.get('unitClasses') || {};
-            const unitClass = unitClasses[current.id] || (current.id.startsWith('ally') ? 'soldier' : current.id);
+            const unitClass = this.chosenClass || unitClasses[current.id] || (current.id.startsWith('ally') ? 'soldier' : current.id);
             const path = UPGRADE_PATHS[unitClass];
             if (path && path[current.newLevel]) {
                 const upgrade = path[current.newLevel];
                 const attackName = ATTACKS[upgrade.attack]?.name || "New Technique";
                 bonuses.push(`Learned ${attackName}: ${upgrade.text}`);
+            }
+
+            // 3. Class specific bonuses added AFTER selection
+            if (this.chosenClass === 'soldier') {
+                bonuses.push("+ Melee Attack");
+                bonuses.push("+ 1 HP");
+            } else if (this.chosenClass === 'archer') {
+                bonuses.push("+ Ranged Attack");
+                bonuses.push("+ Range 2");
             }
 
             bonuses.forEach(b => {
@@ -176,7 +188,7 @@ export class LevelUpScene extends BaseScene {
         this.drawPixelText(ctx, "CHOOSE PROMOTION:", cx, y, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
         
         const bw = 80;
-        const bh = 20;
+        const bh = 40; // Taller to fit bonuses
         
         // Soldier Button
         const sx = cx - bw - 10;
@@ -186,7 +198,7 @@ export class LevelUpScene extends BaseScene {
         ctx.lineWidth = 2;
         ctx.fillRect(sx, sy, bw, bh);
         ctx.strokeRect(sx + 1, sy + 1, bw - 2, bh - 2);
-        this.drawPixelText(ctx, "SOLDIER", sx + bw/2, sy + 6, { color: '#fff', font: '8px Tiny5', align: 'center' });
+        this.drawPixelText(ctx, "SOLDIER", sx + bw/2, sy + bh/2 - 4, { color: '#fff', font: '8px Tiny5', align: 'center' });
         this.soldierRect = { x: sx, y: sy, w: bw, h: bh };
 
         // Archer Button
@@ -197,7 +209,7 @@ export class LevelUpScene extends BaseScene {
         ctx.lineWidth = 2;
         ctx.fillRect(ax, ay, bw, bh);
         ctx.strokeRect(ax + 1, ay + 1, bw - 2, bh - 2);
-        this.drawPixelText(ctx, "ARCHER", ax + bw/2, ay + 6, { color: '#fff', font: '8px Tiny5', align: 'center' });
+        this.drawPixelText(ctx, "ARCHER", ax + bw/2, ay + bh/2 - 4, { color: '#fff', font: '8px Tiny5', align: 'center' });
         this.archerRect = { x: ax, y: ay, w: bw, h: bh };
     }
 
@@ -236,6 +248,7 @@ export class LevelUpScene extends BaseScene {
         
         assets.playSound('ui_click');
         this.isPromoting = false;
+        this.chosenClass = choice;
         
         // Update current display info
         if (choice === 'archer') {
@@ -246,6 +259,10 @@ export class LevelUpScene extends BaseScene {
     next() {
         this.currentIndex++;
         if (this.currentIndex >= this.levelUps.length) {
+            if (this.onComplete) {
+                this.onComplete();
+                return;
+            }
             if (this.isEndGame) {
                 this.manager.switchTo('credits');
             } else if (this.battleId === 'qingzhou_siege') {
@@ -301,6 +318,7 @@ export class LevelUpScene extends BaseScene {
             this.showBonuses = false;
             this.isPromoting = false;
             this.promotionChoice = null;
+            this.chosenClass = null;
             assets.playSound('victory', 0.5);
             this.checkPromotion();
         }

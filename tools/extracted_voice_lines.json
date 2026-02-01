@@ -1,5 +1,11 @@
 [
   {
+    "id": "ch1_end_01",
+    "char": "narrator",
+    "text": "Dong Zhuo's fate will be unrolled in later chapters...",
+    "source": "MapScene.js"
+  },
+  {
     "id": "daxing_gy_01",
     "char": "guanyu",
     "text": "Third brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march.",
@@ -99,19 +105,37 @@
     "id": "gz_dz_01",
     "char": "dongzhuo",
     "text": "What offices do you three hold?",
-    "source": "MapScene.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "gz_dz_02",
     "char": "dongzhuo",
     "text": "Hmph. Common men with no rank. You may go.",
-    "source": "MapScene.js"
+    "source": "TacticsScene.js"
   },
   {
-    "id": "gz_gy_01",
+    "id": "gz_dz_help_01",
+    "char": "dongzhuo",
+    "text": "CURSE THESE REBELS! They have slaughtered my men! Is there no one left to fight?!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_dz_outlaw_01",
+    "char": "dongzhuo",
+    "text": "Wait... I know you. You're the ones who attacked imperial escorts and freed that traitor Lu Zhi!",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "gz_dz_outlaw_02",
+    "char": "dongzhuo",
+    "text": "Hmph! You dare lecture me? I should have you arrested! But... you did save my life today. Leave now, before I change my mind.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "gz_gy_calm_01",
     "char": "guanyu",
-    "text": "Lu Zhi has been arrested. There is no point continuing to Guangzong. Let us return toward Zhuo.",
-    "source": "MapScene.js"
+    "text": "Let it go, brother. We have made our choice. History will judge us kindly.",
+    "source": "TacticsScene.js"
   },
   {
     "id": "gz_gy_free_01",
@@ -120,28 +144,40 @@
     "source": "Battles.js"
   },
   {
+    "id": "gz_gy_outlaw_01",
+    "char": "guanyu",
+    "text": "Let us make for Zhuo County. We can regroup there and decide our next move.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "gz_gy_restrain_01",
+    "char": "guanyu",
+    "text": "It was wise to stay your hand, brother. The law must take its course. Let us return toward Zhuo.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "gz_gy_return_01",
+    "char": "guanyu",
+    "text": "Let us return toward Zhuo County. There is nothing more for us here.",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "gz_lb_01",
     "char": "liubei",
     "text": "What is this? Commander Lu Zhi... in chains?",
     "source": "Battles.js"
   },
   {
-    "id": "gz_lb_03",
+    "id": "gz_lb_attack_01",
     "char": "liubei",
-    "text": "That banner reads 'Zhang Jue, Lord of Heaven!' Brothers, we attack!",
-    "source": "MapScene.js"
+    "text": "That banner reads 'Zhang Jue, Lord of Heaven!' Government soldiers are losing! Brothers, we attack!",
+    "source": "Battles.js"
   },
   {
-    "id": "gz_lb_04",
+    "id": "gz_lb_defend_01",
     "char": "liubei",
-    "text": "We hold no official positions, my lord. We are but volunteers who answered the call to arms.",
-    "source": "MapScene.js"
-  },
-  {
-    "id": "gz_lb_05",
-    "char": "liubei",
-    "text": "Patience, brother. A man's worth is not measured by titles. Our day will come. Let us seek another commander who values true courage.",
-    "source": "MapScene.js"
+    "text": "Lu Zhi was no traitor. He was unjustly accused by corrupt officials.",
+    "source": "TacticsScene.js"
   },
   {
     "id": "gz_lb_free_02",
@@ -156,10 +192,16 @@
     "source": "MapScene.js"
   },
   {
-    "id": "gz_lb_freed_03",
+    "id": "gz_lb_office_01",
     "char": "liubei",
-    "text": "We shall continue to fight for the people, regardless of titles or recognition. That is our oath.",
-    "source": "MapScene.js"
+    "text": "We hold no official positions, my lord. We are but volunteers who answered the call to arms.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "gz_lb_patience_01",
+    "char": "liubei",
+    "text": "Patience, brother. He may be ungrateful, but killing him would make us criminals. Come, let us leave this place.",
+    "source": "TacticsScene.js"
   },
   {
     "id": "gz_lz_explain_01",
@@ -188,20 +230,20 @@
   {
     "id": "gz_lz_freed_02",
     "char": "luzhi",
-    "text": "Your loyalty does you credit, but now you must flee. I will return to Guangzong in secret. Perhaps one day, when the dynasty is restored, your name will be cleared.",
+    "text": "Your loyalty does you credit. I will return to Guangzong in secret. Go now, before more soldiers come.",
     "source": "MapScene.js"
   },
   {
-    "id": "gz_nar_01",
+    "id": "gz_nar_poem_01",
     "char": "narrator",
-    "text": "Two days later, the brothers heard the thunder of battle. From a hilltop, they beheld government soldiers in full retreat, pursued by a sea of Yellow Scarves.",
-    "source": "MapScene.js"
+    "text": "As it was in olden time so it is today, The simple wight may merit well, Officialdom holds sway; Zhang Fei, the blunt and hasty, Where can you find his peer? But slaying the ungrateful would Mean many deaths a year. Dong Zhuo's fate will be unrolled in later chapters.",
+    "source": "TacticsScene.js"
   },
   {
-    "id": "gz_nar_02",
+    "id": "gz_nar_restrain_01",
     "char": "narrator",
-    "text": "The three brothers dashed into Zhang Jue's army, threw his ranks into confusion, and drove him back fifteen miles.",
-    "source": "MapScene.js"
+    "text": "And so the escort and the three brothers went two ways. It was useless to continue on that road to Guangzong.",
+    "source": "TacticsScene.js"
   },
   {
     "id": "gz_zf_01",
@@ -210,10 +252,10 @@
     "source": "Battles.js"
   },
   {
-    "id": "gz_zf_02",
+    "id": "gz_zf_attack_01",
     "char": "zhangfei",
-    "text": "We saved that wretch in bloody battle and he treats us with contempt! Let me go back and take his head!",
-    "source": "MapScene.js"
+    "text": "HA! Finally some Yellow Turbans to smash! Let's go!",
+    "source": "Battles.js"
   },
   {
     "id": "gz_zf_free_01",
@@ -222,10 +264,22 @@
     "source": "Battles.js"
   },
   {
-    "id": "gz_zf_freed_02",
+    "id": "gz_zf_rage_01",
     "char": "zhangfei",
-    "text": "Cleared? Bah! We did what was right! Let the corrupt court call us what they will!",
-    "source": "MapScene.js"
+    "text": "We saved that wretch in bloody battle and he treats us with contempt! Let me go back and take his head!",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "gz_zf_rage_outlaw_01",
+    "char": "zhangfei",
+    "text": "The nerve of that swine! First we save Lu Zhi from injustice, now we save Dong Zhuo from death, and this is our thanks?!",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "gz_zf_restrain_01",
+    "char": "zhangfei",
+    "text": "BAH! This stinks of corruption! But... I will follow your lead, eldest brother.",
+    "source": "TacticsScene.js"
   },
   {
     "id": "inn_gy_01",
@@ -363,6 +417,12 @@
     "id": "map_lb_rem_04",
     "char": "liubei",
     "text": "Lu Zhi, my old teacher, is hard-pressed at Guangzong. We must march north to aid him against Zhang Jue's horde!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_rem_05",
+    "char": "liubei",
+    "text": "There is nothing more for us at Guangzong. Let us return to Zhuo County.",
     "source": "MapScene.js"
   },
   {

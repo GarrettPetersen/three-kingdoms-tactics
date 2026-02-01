@@ -18,8 +18,8 @@ export class Unit {
         this.moveRange = config.moveRange || 3;
         
         // State
-        this.action = config.action || 'standby';
-        this.currentAnimAction = config.currentAnimAction || config.action || 'standby';
+        this.action = config.action || (this.hp <= 0 ? 'death' : 'standby');
+        this.currentAnimAction = config.currentAnimAction || this.action || 'standby';
         this.frame = (config.frame !== undefined) ? config.frame : 0;
         this.flip = config.flip || false;
         this.dialogue = config.dialogue || "";
