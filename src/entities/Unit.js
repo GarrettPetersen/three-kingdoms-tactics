@@ -146,7 +146,7 @@ export class Unit {
         // Handle Push Animation
         if (this.pushData) {
             if (this.name !== 'Boulder') {
-                this.action = 'hit';
+            this.action = 'hit';
             }
             // Pushes are 250ms (0.004), Falls are slower 400ms (0.0025)
             const speed = this.pushData.fallHeight > 0 ? 0.0025 : 0.004;

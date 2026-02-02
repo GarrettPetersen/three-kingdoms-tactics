@@ -65,6 +65,11 @@ export class CampaignSelectionScene extends BaseScene {
 
                 // Ensure lastScene is set to campaign_selection once complete
                 gs.set('lastScene', 'campaign_selection');
+            } else {
+                // Reset to default state when not complete
+                liubei.isComplete = false;
+                liubei.name = 'THE OATH IN THE PEACH GARDEN';
+                liubei.description = 'In the waning days of the Han, three heroes meet to swear an oath that will change history.';
             }
         }
 

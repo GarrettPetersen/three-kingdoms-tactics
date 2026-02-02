@@ -2,19 +2,31 @@ import os
 import sys
 import subprocess
 import string
-import whisper
+try:
+    import whisper
+except ImportError:
+    whisper = None  # Optional dependency
 import json
 from pathlib import Path
-from jiwer import wer
-from TTS.api import TTS
-from pydub import AudioSegment
-from pydub.silence import split_on_silence
+try:
+    from jiwer import wer
+except ImportError:
+    wer = None  # Optional dependency
+try:
+    from TTS.api import TTS
+except ImportError:
+    TTS = None  # Optional dependency
+try:
+    from pydub import AudioSegment
+    from pydub.silence import split_on_silence
+except ImportError:
+    AudioSegment = None  # Optional dependency
 
 # --- Configuration ---
 # Use the Python 3.11 virtual environment we just set up
 VENV_PYTHON = "./tools/venv_xtts/bin/python3.11"
-OUTPUT_DIR = "assets/audio/voices"
-TARGETS_DIR = "assets/voice_samples"
+OUTPUT_DIR = "public/assets/audio/voices"
+TARGETS_DIR = "public/assets/voice_samples"
 MODEL_NAME = "tts_models/multilingual/multi-dataset/xtts_v2"
 REPORT_FILE = "voice_verification_report.json"
 EXTRACTED_LINES_FILE = "tools/extracted_voice_lines.json"
@@ -52,7 +64,10 @@ except Exception as e:
     sys.exit(1)
 
 print("Loading Whisper model for verification...")
-stt_model = whisper.load_model("base")
+if whisper:
+    stt_model = whisper.load_model("base")
+else:
+    stt_model = None
 
 
 def load_voice_lines_from_extracted():

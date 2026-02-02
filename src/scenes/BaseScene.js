@@ -286,7 +286,7 @@ export class BaseScene {
                 // Fallback to the actor sprite sheet crop
                 portraitImg = assets.getImage(step.portraitKey);
                 if (portraitImg) {
-                    const crop = step.portraitRect || { x: 26, y: 20, w: 20, h: 20 };
+            const crop = step.portraitRect || { x: 26, y: 20, w: 20, h: 20 };
                     // Draw fallback at 2x to fill space (scaled pixel art, but better than nothing)
                     ctx.drawImage(portraitImg, crop.x, crop.y, crop.w, crop.h, portraitX, portraitY + 4, 40, 40);
                 }
@@ -341,7 +341,7 @@ export class BaseScene {
         ctx.font = font;
         ctx.textAlign = align; 
         ctx.textBaseline = 'top'; 
-
+        
         if (outline) {
             ctx.strokeStyle = outlineColor;
             ctx.lineWidth = 2;

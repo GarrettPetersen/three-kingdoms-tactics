@@ -1,7 +1,14 @@
 {
-    "daxing_zj_01": {
-        "character": "zhoujing",
-        "original_text": "Who goes there? These men behind you... they have the look of tigers. You do not look like common recruits.",
+    "ch1_end_01": {
+        "character": "narrator",
+        "original_text": "But slaying the ungrateful would Mean many deaths a year.  Dong Zhuo's fate will be unrolled in later chapters...",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "daxing_gy_01": {
+        "character": "guanyu",
+        "original_text": "Third brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -20,6 +27,27 @@
         "wer": 0,
         "is_bad": false
     },
+    "daxing_lb_03": {
+        "character": "liubei",
+        "original_text": "Magistrate Zhou, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "daxing_zf_01": {
+        "character": "zhangfei",
+        "original_text": "Fifty thousand? Hah! They are but a mob of ants! Give us the order, Magistrate, and we shall scatter them like dust!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "daxing_zj_01": {
+        "character": "zhoujing",
+        "original_text": "Who goes there? These men behind you... they have the look of tigers. You do not look like common recruits.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
     "daxing_zj_02": {
         "character": "zhoujing",
         "original_text": "An Imperial kinsman! Truly, the Heavens have not abandoned the Han. Your arrival is most timely.",
@@ -34,436 +62,9 @@
         "wer": 0,
         "is_bad": false
     },
-    "daxing_zf_01": {
-        "character": "zhangfei",
-        "original_text": "Fifty thousand? Hah! They are but a mob of ants! Give us the order, Magistrate, and we shall scatter them like dust!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "daxing_gy_01": {
-        "character": "guanyu",
-        "original_text": "Third brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "daxing_lb_03": {
-        "character": "liubei",
-        "original_text": "Magistrate Zhou, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
     "daxing_zj_04": {
         "character": "zhoujing",
         "original_text": "Very well! I shall lead the main force myself. Together, we shall strike at the heart of Cheng Yuanzhi's army!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_nb_01": {
-        "character": "noticeboard",
-        "original_text": "NOTICE: The Yellow Turban rebels under Zhang Jue have risen!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_nb_02": {
-        "character": "noticeboard",
-        "original_text": "All able-bodied men are called to defend the Han.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_nb_03": {
-        "character": "noticeboard",
-        "original_text": "Report to the local Magistrate at once.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_lb_01": {
-        "character": "liubei",
-        "original_text": "The Imperial Clan's blood flows in my veins...",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_lb_02": {
-        "character": "liubei",
-        "original_text": "...yet I am but a poor straw-shoe seller.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_lb_03": {
-        "character": "liubei",
-        "original_text": "How can I possibly save the people from this chaos?",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_zf_01": {
-        "character": "zhangfei",
-        "original_text": "Why sigh, O hero, if you do not help your country?",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_lb_choice_01": {
-        "character": "liubei",
-        "original_text": "I sigh for the suffering people.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_lb_choice_02": {
-        "character": "liubei",
-        "original_text": "I sigh for my own lost status.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_zf_02": {
-        "character": "zhangfei",
-        "original_text": "A true hero's heart! You and I are of one mind.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_zf_03": {
-        "character": "zhangfei",
-        "original_text": "Status? Bah! In these times of chaos, only courage and wine matter!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_zf_04": {
-        "character": "zhangfei",
-        "original_text": "I am Zhang Fei, aka Yide.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_zf_05": {
-        "character": "zhangfei",
-        "original_text": "I live in this county, where I have a farm. I sell wine and slaughter hogs.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_lb_04": {
-        "character": "liubei",
-        "original_text": "I am of the Imperial Clan. My name is Liu Bei.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_lb_05": {
-        "character": "liubei",
-        "original_text": "I wish I could destroy these rebels and restore peace...",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_zf_06": {
-        "character": "zhangfei",
-        "original_text": "I have some wealth! I am willing to use it to recruit volunteers.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_zf_07": {
-        "character": "zhangfei",
-        "original_text": "What say you to that?",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_lb_06": {
-        "character": "liubei",
-        "original_text": "That would be a great blessing for the people!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pro_zf_08": {
-        "character": "zhangfei",
-        "original_text": "Then come! Let us go to the village inn and discuss our plans over wine.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "map_lb_rem_01": {
-        "character": "liubei",
-        "original_text": "Magistrate Zhou Jing's headquarters is to the East. We must report there at once to begin our service.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_zf_01": {
-        "character": "zhangfei",
-        "original_text": "This wine is good! Together, we shall raise an army that will make the rebels tremble.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_lb_01": {
-        "character": "liubei",
-        "original_text": "Indeed. Honor and duty call us.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_gy_01": {
-        "character": "guanyu",
-        "original_text": "Quick! Bring me wine! I am in a hurry to get to town and join the volunteers!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_lb_02": {
-        "character": "liubei",
-        "original_text": "His presence is extraordinary. Look at his majestic beard and phoenix-like eyes.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_zf_02": {
-        "character": "zhangfei",
-        "original_text": "Hey! You there! You're joining the volunteers too? Come, drink with us!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_gy_02": {
-        "character": "guanyu",
-        "original_text": "I am Guan Yu, courtesy name Yunchang. For years I have been a fugitive, for I slew a local bully who oppressed the weak.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_gy_03": {
-        "character": "guanyu",
-        "original_text": "Now I hear there is a call for volunteers, and I have come to join the cause.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_lb_03": {
-        "character": "liubei",
-        "original_text": "A noble heart! I am Liu Bei, and this is Zhang Fei. We have just agreed to raise a volunteer army ourselves.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_zf_03": {
-        "character": "zhangfei",
-        "original_text": "Haha! The more the merrier! Drink, Yunchang! Let us toast to our new brotherhood!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_zf_04": {
-        "character": "zhangfei",
-        "original_text": "...and that is why the pig escaped! Haha! But seriously, my friends...",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_zf_05": {
-        "character": "zhangfei",
-        "original_text": "I feel as though I have known you both for a lifetime.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_gy_04": {
-        "character": "guanyu",
-        "original_text": "The heavens have surely brought us together. We share one mind and one purpose.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_lb_04": {
-        "character": "liubei",
-        "original_text": "To restore the Han and bring peace to the common people. That is our shared destiny.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_zf_06": {
-        "character": "zhangfei",
-        "original_text": "Listen! Behind my farm is a peach garden. The flowers are in full bloom.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_zf_07": {
-        "character": "zhangfei",
-        "original_text": "Tomorrow, let us offer sacrifices there and swear to be brothers! To live and die as one!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_lb_05": {
-        "character": "liubei",
-        "original_text": "An excellent proposal. We shall do it!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_gy_05": {
-        "character": "guanyu",
-        "original_text": "I agree... We swear by the peach garden.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pg_nar_01": {
-        "character": "narrator",
-        "original_text": "In the peach garden, among the blooming flowers, a black ox and a white horse are sacrificed.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pg_lb_01": {
-        "character": "liubei",
-        "original_text": "We three, Liu Bei, Guan Yu, and Zhang Fei, though of different lineages, swear brotherhood and promise mutual help to one end.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pg_gy_01": {
-        "character": "guanyu",
-        "original_text": "We will rescue each other in difficulty; we will aid each other in danger.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pg_zf_01": {
-        "character": "zhangfei",
-        "original_text": "We swear to serve the state and save the people.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pg_lb_02": {
-        "character": "liubei",
-        "original_text": "We ask not the same day of birth, but we seek to die together on the same day.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pg_lb_03": {
-        "character": "liubei",
-        "original_text": "May the Heaven and the Earth read our hearts. If we turn aside from righteousness, may the Heaven and the Human smite us!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pg_nar_02": {
-        "character": "narrator",
-        "original_text": "The ritual complete, Liu Bei is acknowledged as the eldest brother, Guan Yu the second, and Zhang Fei the youngest.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "pg_lb_04": {
-        "character": "liubei",
-        "original_text": "The path ahead is long and full of peril, but together, we shall restore the Han!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "rec_zf_01": {
-        "character": "zhangfei",
-        "original_text": "CITIZENS OF ZHUO! The Yellow Turbans are coming! Who among you is brave enough to fight for your homes?",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "rec_gy_01": {
-        "character": "guanyu",
-        "original_text": "We offer no riches, only the chance to serve with honor under the banner of Liu Bei.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "rec_vol_01": {
-        "character": "soldier",
-        "original_text": "We have heard of your brotherhood! We are but simple men, but we will follow you to the death!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "rec_lb_01": {
-        "character": "liubei",
-        "original_text": "Welcome, brothers. Today we are but a few, but tomorrow we shall be an army.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "rec_lb_02": {
-        "character": "liubei",
-        "original_text": "Let us march! Our first destination: the headquarters of the local Magistrate.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "dx_lb_01": {
-        "character": "liubei",
-        "original_text": "The Yellow Turban vanguard is here. They seek to plunder Zhuo County!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "dx_gy_01": {
-        "character": "guanyu",
-        "original_text": "Their numbers are great, but they are but a rabble without leadership.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "dx_zf_01": {
-        "character": "zhangfei",
-        "original_text": "Let me at them! My Serpent Spear is thirsty for rebel blood!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "dx_dm_01": {
-        "character": "dengmao",
-        "original_text": "Imperial dogs! You dare stand in the way of the Lord of Heaven?",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "dx_cyz_01": {
-        "character": "chengyuanzhi",
-        "original_text": "Slay them all! The Han is dead, the Yellow Heavens shall rise!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "dx_lb_02": {
-        "character": "liubei",
-        "original_text": "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "dx_lb_03": {
-        "character": "liubei",
-        "original_text": "They keep coming! We must defeat Deng Mao and Cheng Yuanzhi to break them!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "dx_yt_01": {
-        "character": "yellowturban",
-        "original_text": "Our leaders are dead! Run!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -475,296 +76,44 @@
         "wer": 0,
         "is_bad": false
     },
-    "map_lb_rem_02": {
-        "character": "liubei",
-        "original_text": "Qingzhou is under siege. We must march there at once to relieve Imperial Protector Gong Jing!",
+    "dx_cyz_01": {
+        "character": "chengyuanzhi",
+        "original_text": "Slay them all! The Han is dead, the Yellow Heavens shall rise!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
     },
-    "map_lb_rem_03": {
-        "character": "liubei",
-        "original_text": "The siege is lifted. We should return to the Magistrate to see where else we can be of service.",
+    "dx_dm_01": {
+        "character": "dengmao",
+        "original_text": "Imperial dogs! You dare stand in the way of the Lord of Heaven?",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
     },
-    "map_lb_rem_04": {
-        "character": "liubei",
-        "original_text": "Lu Zhi, my old teacher, is hard-pressed at Guangzong. We must march north to aid him against Zhang Jue's horde!",
+    "dx_gy_01": {
+        "character": "guanyu",
+        "original_text": "Their numbers are great, but they are but a rabble without leadership.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
     },
-    "qz_vic_zf_01": {
+    "dx_lb_01": {
+        "character": "liubei",
+        "original_text": "The Yellow Turban vanguard is here. They seek to plunder Zhuo County!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "dx_lb_02": {
+        "character": "liubei",
+        "original_text": "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "dx_zf_01": {
         "character": "zhangfei",
-        "original_text": "Look at them run! Like rats from a sinking ship! We've broken their spirit.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_vic_gy_01": {
-        "character": "guanyu",
-        "original_text": "A well-executed trap, Brother. The high ground served us well.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_vic_lb_01": {
-        "character": "liubei",
-        "original_text": "Let us not tarry. The city is still in peril. We must return to the gates and ensure the Imperial Protector is safe.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_vic_nar_01": {
-        "character": "narrator",
-        "original_text": "Though fierce as tigers soldiers be, Battles are won by strategy. A hero comes; he gains renown, Already destined for a crown.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_ret_gj_01": {
-        "character": "gongjing",
-        "original_text": "Heroic brothers! You have saved Qingzhou! When your signal echoed through the pass, we charged from the gates. The rebels were caught between us and slaughtered.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_ret_lb_01": {
-        "character": "liubei",
-        "original_text": "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_ret_gj_02": {
-        "character": "gongjing",
-        "original_text": "Indeed. I have heard that Commander Lu Zhi is hard-pressed at Guangzong by the chief rebel, Zhang Jue himself.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_ret_lb_02": {
-        "character": "liubei",
-        "original_text": "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_lb_01": {
-        "character": "liubei",
-        "original_text": "What is this? Commander Lu Zhi... in chains?",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_lz_01": {
-        "character": "luzhi",
-        "original_text": "Liu Bei? Little Xuande, is that truly you? You have grown into a fine warrior.",
-        "stt_output": "Liu Bei, little shwandaise that truly you, you have grown into a fine warrior.",
-        "wer": 0.13333333333333333,
-        "is_bad": false
-    },
-    "gz_lb_02": {
-        "character": "liubei",
-        "original_text": "Stay your hand, brother! The government will take its due course. We must not act rashly.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_lz_02": {
-        "character": "luzhi",
-        "original_text": "Your timing is most fortunate. The rebel host is vast, but their morale wavers. Zhang Jue relies on sorcery and superstition to hold them together. If we can break their spirit, victory shall be ours.",
-        "stt_output": "Your timing is most fortunate. The Rebel host is vast, but their morale wavers. Shang Yu release on sorcery and superstition to hold them together. If we can break their spirit, victory shall be ours.",
-        "wer": 0.08571428571428572,
-        "is_bad": false
-    },
-    "gz_lb_03": {
-        "character": "liubei",
-        "original_text": "That banner reads 'Zhang Jue, Lord of Heaven!' Brothers, we attack!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_lb_02a": {
-        "character": "liubei",
-        "original_text": "That man...",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "inn_lb_02b": {
-        "character": "liubei",
-        "original_text": "His presence is extraordinary. Look at his majestic beard and phoenix-like eyes.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_ms_01": {
-        "character": "soldier",
-        "original_text": "URGENT! Imperial Protector Gong Jing of Qingzhou Region is under siege! The city is near falling!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_lb_01": {
-        "character": "liubei",
-        "original_text": "I will go. We cannot let the people of Qingzhou suffer.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_zj_01": {
-        "character": "zhoujing",
-        "original_text": "I shall reinforce you with five thousand of my best soldiers. March at once!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_lb_02": {
-        "character": "liubei",
-        "original_text": "They are many and we but few. We cannot prevail in a direct assault.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_lb_03": {
-        "character": "liubei",
-        "original_text": "Guan Yu, Zhang Fei\u2014take half our forces and hide behind the hills. When the gongs beat, strike from the flanks!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_gy_01": {
-        "character": "guanyu",
-        "original_text": "A superior strategy, brother. We go at once.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_lb_amb_01": {
-        "character": "liubei",
-        "original_text": "BEAT THE GONGS! Brothers, strike now!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_gy_surp_01": {
-        "character": "guanyu",
-        "original_text": "Brother! We heard the signal was... oh. They are all fallen.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_bt_lb_01": {
-        "character": "liubei",
-        "original_text": "The rebels have surrounded the city. We must break their lines!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_bt_lb_02": {
-        "character": "liubei",
-        "original_text": "But look at their numbers... we must be cautious. I will draw them toward the hills.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_bt_lb_03": {
-        "character": "liubei",
-        "original_text": "I must reach the flag to signal the ambush!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "map_lb_defeat": {
-        "character": "liubei",
-        "original_text": "We were overwhelmed! We must regroup and strike again.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_victory_lb_01": {
-        "character": "liubei",
-        "original_text": "The siege is lifted. We should report back to Magistrate Zhou Jing for our next assignment.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "recov_lb_01": {
-        "character": "liubei",
-        "original_text": "My apologies, brothers. I let my guard down, but my spirit remains unbroken.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "recov_gy_01": {
-        "character": "guanyu",
-        "original_text": "A momentary lapse in focus. I shall return to the field with renewed vigor.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "recov_zf_01": {
-        "character": "zhangfei",
-        "original_text": "Bah! Those rascals got a lucky hit in! Next time, they won't be so fortunate!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_zf_01": {
-        "character": "zhangfei",
-        "original_text": "Let's crush these vermin! My spear thirsts for rebel blood!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_nar_01": {
-        "character": "narrator",
-        "original_text": "Liu Bei rides boldly toward the rebel host, daring them to give chase...",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_gj_01": {
-        "character": "gongjing",
-        "original_text": "Heroic brothers! You have saved Qingzhou! When your signal echoed through the pass, we charged from the gates. The rebels were caught between us and slaughtered.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "qz_gj_02": {
-        "character": "gongjing",
-        "original_text": "Indeed. I have heard that Commander Lu Zhi is hard-pressed at Guangzong by the chief rebel, Zhang Jue himself.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_zf_01": {
-        "character": "zhangfei",
-        "original_text": "This is outrage! Let me slay these dogs and free you, Master!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_gy_01": {
-        "character": "guanyu",
-        "original_text": "Lu Zhi has been arrested. There is no point continuing to Guangzong. Let us return toward Zhuo.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_nar_01": {
-        "character": "narrator",
-        "original_text": "Two days later, the brothers heard the thunder of battle. From a hilltop, they beheld government soldiers in full retreat, pursued by a sea of Yellow Scarves.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_nar_02": {
-        "character": "narrator",
-        "original_text": "The three brothers dashed into Zhang Jue's army, threw his ranks into confusion, and drove him back fifteen miles.",
+        "original_text": "Let me at them! My Serpent Spear is thirsty for rebel blood!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -776,13 +125,6 @@
         "wer": 0,
         "is_bad": false
     },
-    "gz_lb_04": {
-        "character": "liubei",
-        "original_text": "We hold no official positions, my lord. We are but volunteers who answered the call to arms.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
     "gz_dz_02": {
         "character": "dongzhuo",
         "original_text": "Hmph. Common men with no rank. You may go.",
@@ -790,30 +132,23 @@
         "wer": 0,
         "is_bad": false
     },
-    "gz_zf_02": {
-        "character": "zhangfei",
-        "original_text": "We saved that wretch in bloody battle and he treats us with contempt! Let me go back and take his head!",
+    "gz_dz_help_01": {
+        "character": "dongzhuo",
+        "original_text": "CURSE THESE REBELS! They have slaughtered my men! Is there no one left to fight?!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
     },
-    "gz_lb_05": {
-        "character": "liubei",
-        "original_text": "Patience, brother. A man's worth is not measured by titles. Our day will come. Let us seek another commander who values true courage.",
+    "gz_dz_outlaw_01": {
+        "character": "dongzhuo",
+        "original_text": "Wait... I know you. You're the ones who attacked imperial escorts and freed that traitor Lu Zhi!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
     },
-    "gz_lb_free_01": {
-        "character": "liubei",
-        "original_text": "Very well. Free him, brothers!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_zf_free_01": {
-        "character": "zhangfei",
-        "original_text": "HA! Now you're talking, brother! Come on!",
+    "gz_dz_outlaw_02": {
+        "character": "dongzhuo",
+        "original_text": "Hmph! You dare lecture me? I should have you arrested! But... you did save my life today. Leave now, before I change my mind.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -825,16 +160,51 @@
         "wer": 0,
         "is_bad": false
     },
-    "gz_lb_free_02": {
-        "character": "liubei",
-        "original_text": "We have made our choice. Now we fight!",
+    "gz_gy_outlaw_01": {
+        "character": "guanyu",
+        "original_text": "Brother, we cannot stay. If Dong Zhuo learns we freed Lu Zhi, he will have us executed on this spot.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
     },
-    "gz_lz_freed_01": {
-        "character": "luzhi",
-        "original_text": "Xuande! You have saved me, but at great cost. The court will brand you as rebels for attacking imperial soldiers.",
+    "gz_gy_restrain_01": {
+        "character": "guanyu",
+        "original_text": "It was wise to stay your hand, brother. The law must take its course. Let us return toward Zhuo.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "gz_gy_return_01": {
+        "character": "guanyu",
+        "original_text": "Let us return toward Zhuo County. There is nothing more for us here.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "gz_lb_01": {
+        "character": "liubei",
+        "original_text": "What is this? Commander Lu Zhi... in chains?",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "gz_lb_attack_01": {
+        "character": "liubei",
+        "original_text": "That banner reads 'Zhang Jue, Lord of Heaven!' Government soldiers are losing! Brothers, we attack!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "gz_lb_defend_01": {
+        "character": "liubei",
+        "original_text": "Lu Zhi was no traitor. He was unjustly accused by corrupt officials.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "gz_lb_free_02": {
+        "character": "liubei",
+        "original_text": "We have made our choice. Now we fight!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -846,23 +216,9 @@
         "wer": 0,
         "is_bad": false
     },
-    "gz_lz_freed_02": {
-        "character": "luzhi",
-        "original_text": "Your loyalty does you credit. I will return to Guangzong in secret. Go now, before more soldiers come.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_zf_freed_02": {
-        "character": "zhangfei",
-        "original_text": "Cleared? Bah! We did what was right! Let the corrupt court call us what they will!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_lb_freed_03": {
+    "gz_lb_office_01": {
         "character": "liubei",
-        "original_text": "We shall continue to fight for the people, regardless of titles or recognition. That is our oath.",
+        "original_text": "None.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -888,72 +244,16 @@
         "wer": 0,
         "is_bad": false
     },
-    "gz_gy_outlaw_01": {
-        "character": "guanyu",
-        "original_text": "Let us make for Zhuo County. We can regroup there and decide our next move.",
+    "gz_lz_freed_01": {
+        "character": "luzhi",
+        "original_text": "Xuande! You have saved me, but at great cost. The court will brand you as rebels for attacking imperial soldiers.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
     },
-    "gz_gy_restrain_01": {
-        "character": "guanyu",
-        "original_text": "It was wise to stay your hand, brother. The law must take its course. Let us return toward Zhuo.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_lb_attack_01": {
-        "character": "liubei",
-        "original_text": "That banner reads 'Zhang Jue, Lord of Heaven!' Government soldiers are losing! Brothers, we attack!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_lb_office_01": {
-        "character": "liubei",
-        "original_text": "None.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_lb_outlaw_01": {
-        "character": "liubei",
-        "original_text": "Lu Zhi was no traitor. He was unjustly accused.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_lb_outlaw_02": {
-        "character": "liubei",
-        "original_text": "You are right. We have done what we came to do. Let us go before we are recognized.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_lb_patience_01": {
-        "character": "liubei",
-        "original_text": "Patience, brother. He may be ungrateful, but killing him would make us criminals. Come, let us leave this place.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_nar_attack_01": {
-        "character": "narrator",
-        "original_text": "The three brothers dashed into Zhang Jue's army, threw his ranks into confusion, and drove him back fifteen miles.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_nar_outlaw_01": {
-        "character": "narrator",
-        "original_text": "Now marked as outlaws, the brothers fled toward Zhuo. Two days later, they heard the thunder of battle behind some hills.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_nar_outlaw_02": {
-        "character": "narrator",
-        "original_text": "The brothers slipped away before Dong Zhuo could learn their names, their good deed destined to go unrecognized by the corrupt general.",
+    "gz_lz_freed_02": {
+        "character": "luzhi",
+        "original_text": "Your loyalty does you credit. I will return to Guangzong in secret. Go now, before more soldiers come.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -965,62 +265,6 @@
         "wer": 0,
         "is_bad": false
     },
-    "gz_nar_road_01": {
-        "character": "narrator",
-        "original_text": "Two days later, the brothers heard the thunder of battle behind some hills. Hastening to the top, they beheld government soldiers suffering great loss.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_zf_outlaw_01": {
-        "character": "zhangfei",
-        "original_text": "Yellow Turbans attacking imperial soldiers! Even as outlaws, we cannot let these rebels win!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_zf_outlaw_02": {
-        "character": "zhangfei",
-        "original_text": "Just as well! I'd have taken that fat pig's head if he showed us disrespect!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_zf_rage_01": {
-        "character": "zhangfei",
-        "original_text": "We have just rescued this menial in a bloody fight, and now he is rude to us! Nothing but his death can slake my anger.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "ch1_end_01": {
-        "character": "narrator",
-        "original_text": "But slaying the ungrateful would Mean many deaths a year.  Dong Zhuo's fate will be unrolled in later chapters...",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_dz_outlaw_01": {
-        "character": "dongzhuo",
-        "original_text": "Wait... I know you. You're the ones who attacked imperial escorts and freed that traitor Lu Zhi!",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_dz_outlaw_02": {
-        "character": "dongzhuo",
-        "original_text": "Hmph! You dare lecture me? I should have you arrested! But... you did save my life today. Leave now, before I change my mind.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_gy_return_01": {
-        "character": "guanyu",
-        "original_text": "Let us return toward Zhuo County. There is nothing more for us here.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
     "gz_nar_restrain_01": {
         "character": "narrator",
         "original_text": "And so the escort and the three brothers went two ways. It was useless to continue on that road to Guangzong.",
@@ -1028,30 +272,9 @@
         "wer": 0,
         "is_bad": false
     },
-    "gz_zf_restrain_01": {
+    "gz_zf_01": {
         "character": "zhangfei",
-        "original_text": "BAH! This stinks of corruption! But... I will follow your lead, eldest brother.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "map_lb_rem_05": {
-        "character": "liubei",
-        "original_text": "There is nothing more for us at Guangzong. Let us return to Zhuo County.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_gy_calm_01": {
-        "character": "guanyu",
-        "original_text": "Let it go, brother. We have made our choice. History will judge us kindly.",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false
-    },
-    "gz_lb_defend_01": {
-        "character": "liubei",
-        "original_text": "Lu Zhi was no traitor. He was unjustly accused by corrupt officials.",
+        "original_text": "This is outrage! Let me slay these dogs and free you, Master!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -1063,6 +286,20 @@
         "wer": 0,
         "is_bad": false
     },
+    "gz_zf_free_01": {
+        "character": "zhangfei",
+        "original_text": "HA! Now you're talking, brother! Come on!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "gz_zf_rage_01": {
+        "character": "zhangfei",
+        "original_text": "We have just rescued this menial in a bloody fight, and now he is rude to us! Nothing but his death can slake my anger.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
     "gz_zf_rage_outlaw_01": {
         "character": "zhangfei",
         "original_text": "The nerve of that swine! First we save Lu Zhi from injustice, now we save Dong Zhuo from death, and this is our thanks?! Nothing but his death can slake my anger!",
@@ -1070,9 +307,135 @@
         "wer": 0,
         "is_bad": false
     },
-    "gz_dz_help_01": {
-        "character": "dongzhuo",
-        "original_text": "CURSE THESE REBELS! They have slaughtered my men! Is there no one left to fight?!",
+    "gz_zf_restrain_01": {
+        "character": "zhangfei",
+        "original_text": "BAH! This stinks of corruption! But... I will follow your lead, eldest brother.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_gy_01": {
+        "character": "guanyu",
+        "original_text": "Quick! Bring me wine! I am in a hurry to get to town and join the volunteers!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_gy_02": {
+        "character": "guanyu",
+        "original_text": "I am Guan Yu, courtesy name Yunchang. For years I have been a fugitive, for I slew a local bully who oppressed the weak.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_gy_03": {
+        "character": "guanyu",
+        "original_text": "Now I hear there is a call for volunteers, and I have come to join the cause.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_gy_04": {
+        "character": "guanyu",
+        "original_text": "The heavens have surely brought us together. We share one mind and one purpose.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_gy_05": {
+        "character": "guanyu",
+        "original_text": "I agree... We swear by the peach garden.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_lb_01": {
+        "character": "liubei",
+        "original_text": "Indeed. Honor and duty call us.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_lb_02a": {
+        "character": "liubei",
+        "original_text": "That man...",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_lb_02b": {
+        "character": "liubei",
+        "original_text": "His presence is extraordinary. Look at his majestic beard and phoenix-like eyes.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_lb_03": {
+        "character": "liubei",
+        "original_text": "A noble heart! I am Liu Bei, and this is Zhang Fei. We have just agreed to raise a volunteer army ourselves.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_lb_04": {
+        "character": "liubei",
+        "original_text": "To restore the Han and bring peace to the common people. That is our shared destiny.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_lb_05": {
+        "character": "liubei",
+        "original_text": "An excellent proposal. We shall do it!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_zf_01": {
+        "character": "zhangfei",
+        "original_text": "This wine is good! Together, we shall raise an army that will make the rebels tremble.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_zf_02": {
+        "character": "zhangfei",
+        "original_text": "Hey! You there! You're joining the volunteers too? Come, drink with us!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_zf_03": {
+        "character": "zhangfei",
+        "original_text": "Haha! The more the merrier! Drink, Yunchang! Let us toast to our new brotherhood!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_zf_04": {
+        "character": "zhangfei",
+        "original_text": "...and that is why the pig escaped! Haha! But seriously, my friends...",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_zf_05": {
+        "character": "zhangfei",
+        "original_text": "I feel as though I have known you both for a lifetime.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_zf_06": {
+        "character": "zhangfei",
+        "original_text": "Listen! Behind my farm is a peach garden. The flowers are in full bloom.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_zf_07": {
+        "character": "zhangfei",
+        "original_text": "Tomorrow, let us offer sacrifices there and swear to be brothers! To live and die as one!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -1080,8 +443,407 @@
     "intro_narrator_01": {
         "character": "narrator",
         "original_text": "The world under heaven, long divided, must unite; long united, must divide.",
-        "stt_output": "The world under heaven, long divided, must unite, long united, must divide.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "map_lb_defeat": {
+        "character": "liubei",
+        "original_text": "We were overwhelmed! We must regroup and strike again.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "map_lb_rem_01": {
+        "character": "liubei",
+        "original_text": "Magistrate Zhou Jing's headquarters is to the East. We must report there at once to begin our service.",
+        "stt_output": "Magistrate Joe Jing's headquarters is to the east. We must report there at once to begin our service.",
         "wer": 0.0,
+        "is_bad": false
+    },
+    "map_lb_rem_02": {
+        "character": "liubei",
+        "original_text": "Qingzhou is under siege. We must march there at once to relieve Imperial Protector Gong Jing!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "map_lb_rem_03": {
+        "character": "liubei",
+        "original_text": "The siege is lifted. We should return to the Magistrate to see where else we can be of service.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "map_lb_rem_04": {
+        "character": "liubei",
+        "original_text": "Lu Zhi, my old teacher, is hard-pressed at Guangzong. We must march north to aid him against Zhang Jue's horde!",
+        "stt_output": "Lu Ye, my old teacher, is hard-pressed at Guangdong. We must march north to aid him against Zhang Zhuai's horde.",
+        "wer": 0.2,
+        "is_bad": false
+    },
+    "map_lb_rem_05": {
+        "character": "liubei",
+        "original_text": "There is nothing more for us at Guangzong. Let us return to Zhuo County.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pg_gy_01": {
+        "character": "guanyu",
+        "original_text": "We will rescue each other in difficulty; we will aid each other in danger.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pg_lb_01": {
+        "character": "liubei",
+        "original_text": "We three, Liu Bei, Guan Yu, and Zhang Fei, though of different lineages, swear brotherhood and promise mutual help to one end.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pg_lb_02": {
+        "character": "liubei",
+        "original_text": "We ask not the same day of birth, but we seek to die together on the same day.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pg_lb_03": {
+        "character": "liubei",
+        "original_text": "May the Heaven and the Earth read our hearts. If we turn aside from righteousness, may the Heaven and the Human smite us!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pg_lb_04": {
+        "character": "liubei",
+        "original_text": "The path ahead is long and full of peril, but together, we shall restore the Han!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pg_nar_01": {
+        "character": "narrator",
+        "original_text": "In the peach garden, among the blooming flowers, a black ox and a white horse are sacrificed.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pg_nar_02": {
+        "character": "narrator",
+        "original_text": "The ritual complete, Liu Bei is acknowledged as the eldest brother, Guan Yu the second, and Zhang Fei the youngest.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pg_zf_01": {
+        "character": "zhangfei",
+        "original_text": "We swear to serve the state and save the people.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_lb_01": {
+        "character": "liubei",
+        "original_text": "The Imperial Clan's blood flows in my veins...",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_lb_02": {
+        "character": "liubei",
+        "original_text": "...yet I am but a poor straw-shoe seller.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_lb_03": {
+        "character": "liubei",
+        "original_text": "How can I possibly save the people from this chaos?",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_lb_04": {
+        "character": "liubei",
+        "original_text": "I am of the Imperial Clan. My name is Liu Bei.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_lb_05": {
+        "character": "liubei",
+        "original_text": "I wish I could destroy these rebels and restore peace...",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_lb_06": {
+        "character": "liubei",
+        "original_text": "That would be a great blessing for the people!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_lb_choice_01": {
+        "character": "zhangfei",
+        "original_text": "I sigh for the suffering people.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_lb_choice_02": {
+        "character": "zhangfei",
+        "original_text": "I sigh for my own lost status.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_nb_01": {
+        "character": "narrator",
+        "original_text": "NOTICE: The Yellow Turban rebels under Zhang Jue have risen!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_nb_02": {
+        "character": "narrator",
+        "original_text": "All able-bodied men are called to defend the Han.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_nb_03": {
+        "character": "narrator",
+        "original_text": "Report to the local Magistrate at once.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_zf_01": {
+        "character": "zhangfei",
+        "original_text": "Why sigh, O hero, if you do not help your country?",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_zf_02": {
+        "character": "zhangfei",
+        "original_text": "A true hero's heart! You and I are of one mind.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_zf_03": {
+        "character": "zhangfei",
+        "original_text": "Status? Bah! In these times of chaos, only courage and wine matter!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_zf_04": {
+        "character": "zhangfei",
+        "original_text": "I am Zhang Fei, aka Yide.",
+        "stt_output": "I am Jan Faye, a K.A.E.D.",
+        "wer": 0.6666666666666666,
+        "is_bad": true
+    },
+    "pro_zf_05": {
+        "character": "zhangfei",
+        "original_text": "I live in this county, where I have a farm. I sell wine and slaughter hogs.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_zf_06": {
+        "character": "zhangfei",
+        "original_text": "I have some wealth! I am willing to use it to recruit volunteers.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_zf_07": {
+        "character": "zhangfei",
+        "original_text": "What say you to that?",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "pro_zf_08": {
+        "character": "zhangfei",
+        "original_text": "Then come! Let us go to the village inn and discuss our plans over wine.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_bt_lb_03": {
+        "character": "liubei",
+        "original_text": "I must reach the flag to signal the ambush!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_gy_01": {
+        "character": "guanyu",
+        "original_text": "A superior strategy, brother. We go at once.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_lb_01": {
+        "character": "liubei",
+        "original_text": "I will go. We cannot let the people of Qingzhou suffer.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_lb_02": {
+        "character": "liubei",
+        "original_text": "They are many and we but few. We cannot prevail in a direct assault.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_lb_03": {
+        "character": "liubei",
+        "original_text": "Guan Yu, Zhang Fei\u2014take half our forces and hide behind the hills. When the gongs beat, strike from the flanks!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_ms_01": {
+        "character": "soldier",
+        "original_text": "URGENT! Imperial Protector Gong Jing of Qingzhou Region is under siege! The city is near falling!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_ret_gj_01": {
+        "character": "gongjing",
+        "original_text": "Heroic brothers! You have saved Qingzhou! When your signal echoed through the pass, we charged from the gates. The rebels were caught between us and slaughtered.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_ret_gj_02": {
+        "character": "gongjing",
+        "original_text": "Indeed. I have heard that Commander Lu Zhi is hard-pressed at Guangzong by the chief rebel, Zhang Jue himself.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_ret_lb_01": {
+        "character": "liubei",
+        "original_text": "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_ret_lb_02": {
+        "character": "liubei",
+        "original_text": "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_vic_gy_01": {
+        "character": "guanyu",
+        "original_text": "A well-executed trap, Brother. The high ground served us well.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_vic_lb_01": {
+        "character": "liubei",
+        "original_text": "Let us not tarry. The city is still in peril. We must return to the gates and ensure the Imperial Protector is safe.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_vic_nar_01": {
+        "character": "narrator",
+        "original_text": "Though fierce as tigers soldiers be, Battles are won by strategy. A hero comes; he gains renown, Already destined for a crown.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_vic_zf_01": {
+        "character": "zhangfei",
+        "original_text": "Look at them run! Like rats from a sinking ship! We've broken their spirit.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_victory_lb_01": {
+        "character": "liubei",
+        "original_text": "The siege is lifted. We should report back to Magistrate Zhou Jing for our next assignment.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_zj_01": {
+        "character": "zhoujing",
+        "original_text": "I shall reinforce you with five thousand of my best soldiers. March at once!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "rec_gy_01": {
+        "character": "guanyu",
+        "original_text": "We offer no riches, only the chance to serve with honor under the banner of Liu Bei.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "rec_lb_01": {
+        "character": "liubei",
+        "original_text": "Welcome, brothers. Today we are but a few, but tomorrow we shall be an army.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "rec_lb_02": {
+        "character": "liubei",
+        "original_text": "Let us march! Our first destination: the headquarters of the local Magistrate.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "rec_vol_01": {
+        "character": "soldier",
+        "original_text": "We have heard of your brotherhood! We are but simple men, but we will follow you to the death!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "rec_zf_01": {
+        "character": "zhangfei",
+        "original_text": "CITIZENS OF ZHUO! The Yellow Turbans are coming! Who among you is brave enough to fight for your homes?",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "recov_gy_01": {
+        "character": "guanyu",
+        "original_text": "A momentary lapse in focus. I shall return to the field with renewed vigor.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "recov_lb_01": {
+        "character": "liubei",
+        "original_text": "My apologies, brothers. I let my guard down, but my spirit remains unbroken.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "recov_zf_01": {
+        "character": "zhangfei",
+        "original_text": "Bah! Those rascals got a lucky hit in! Next time, they won't be so fortunate!",
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     }
 }

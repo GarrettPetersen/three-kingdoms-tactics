@@ -210,7 +210,7 @@ export class TacticsMap {
             if (mirror) {
                 this.mirrorGrid();
             }
-
+            
             // Post-process for ice in snowy biomes
             if (this.biome === 'northern_snowy') {
                 this.applyIce();
@@ -229,7 +229,7 @@ export class TacticsMap {
             
             // Add terrain variety at elevation changes to make cliffs more visually clear
             this.varyCliffTerrain();
-
+            
             // General connectivity check to ensure the map isn't totally segmented
             success = this.checkGeneralConnectivity();
             attempts++;
@@ -437,7 +437,7 @@ export class TacticsMap {
             // East-West Pass
             const hRidgeWidth = Math.floor(this.height * 0.3);
             for (let r = 0; r < this.height; r++) {
-                for (let q = 0; q < this.width; q++) {
+            for (let q = 0; q < this.width; q++) {
                     const cell = this.grid[r][q];
                     if (r < hRidgeWidth) {
                         // Top ridge

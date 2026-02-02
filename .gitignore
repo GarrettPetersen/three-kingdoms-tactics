@@ -1,8 +1,20 @@
+# Old asset paths (if they still exist)
 assets/all_sound_effects
 assets/all_songs
+assets/voice_samples/movies/
+
+# New public asset paths (development libraries not used in game)
+public/assets/all_sound_effects/**
+public/assets/all_songs/**
+public/assets/voice_samples/**
+
+# Build artifacts
 node_modules/
 .DS_Store
 dist/
+release/
+
+# Python
 models/
 tools/venv/
 tools/venv_xtts/
@@ -13,4 +25,3 @@ tts_models/
 temp_*.wav
 __pycache__/
 .env
-assets/voice_samples/movies/

@@ -1,11 +1,66 @@
 {
   "name": "three-kingdoms-tactics",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "electron-main.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "electron": "electron .",
+    "electron:dev": "NODE_ENV=development electron .",
+    "dist": "npm run build && electron-builder --mac dir",
+    "dist:dmg": "npm run build && electron-builder --mac dmg",
+    "dist:win": "npm run build && electron-builder --win portable",
+    "dist:linux": "npm run build && electron-builder --linux AppImage",
+    "dist:all": "npm run build && electron-builder --mac dir --win portable --linux AppImage"
+  },
+  "build": {
+    "appId": "com.garrettpetersen.three-kingdoms-tactics",
+    "productName": "Three Kingdoms: Stratagem",
+    "files": [
+      "dist/**/*",
+      "electron-main.js",
+      "preload.js",
+      "!dist/assets/all_sound_effects/**/*",
+      "!dist/assets/all_songs/**/*",
+      "!dist/assets/voice_samples/**/*"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "mac": {
+      "target": "dir",
+      "category": "public.app-category.games",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "identity": "Developer ID Application"
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 380
+      }
+    },
+    "win": {
+      "target": "portable"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   },
   "repository": {
     "type": "git",
@@ -20,9 +75,11 @@
   "homepage": "https://github.com/GarrettPetersen/three-kingdoms-tactics#readme",
   "description": "",
   "devDependencies": {
+    "electron": "^40.1.0",
+    "electron-builder": "^26.7.0",
+    "sharp": "^0.34.5",
     "vite": "^7.3.1"
   },
   "dependencies": {
-    "sharp": "^0.34.5"
   }
 }

@@ -142,7 +142,7 @@
   {
     "id": "gz_gy_outlaw_01",
     "char": "guanyu",
-    "text": "Let us make for Zhuo County. We can regroup there and decide our next move.",
+    "text": "Brother, we cannot stay. If Dong Zhuo learns we freed Lu Zhi, he will have us executed on this spot.",
     "source": "MapScene.js"
   },
   {
@@ -460,6 +460,18 @@
     "source": "MapScene.js"
   },
   {
+    "id": "pg_nar_01",
+    "char": "narrator",
+    "text": "In the peach garden, among the blooming flowers, a black ox and a white horse are sacrificed.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pg_nar_02",
+    "char": "narrator",
+    "text": "The ritual complete, Liu Bei is acknowledged as the eldest brother, Guan Yu the second, and Zhang Fei the youngest.",
+    "source": "MapScene.js"
+  },
+  {
     "id": "pg_zf_01",
     "char": "zhangfei",
     "text": "We swear to serve the state and save the people.",
@@ -499,6 +511,36 @@
     "id": "pro_lb_06",
     "char": "liubei",
     "text": "That would be a great blessing for the people!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_lb_choice_01",
+    "char": "zhangfei",
+    "text": "I sigh for the suffering people.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_lb_choice_02",
+    "char": "zhangfei",
+    "text": "I sigh for my own lost status.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_nb_01",
+    "char": "narrator",
+    "text": "NOTICE: The Yellow Turban rebels under Zhang Jue have risen!",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_nb_02",
+    "char": "narrator",
+    "text": "All able-bodied men are called to defend the Han.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "pro_nb_03",
+    "char": "narrator",
+    "text": "Report to the local Magistrate at once.",
     "source": "MapScene.js"
   },
   {

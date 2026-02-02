@@ -37,6 +37,9 @@ PORTRAIT_TO_CHAR = {
     'bandit1': 'dengmao',
     'bandit2': 'chengyuanzhi',
     'dong-zhuo': 'dongzhuo',
+    'peach_garden': 'narrator',
+    'noticeboard': 'narrator',
+    'narrator': 'narrator',
 }
 
 # Fallback: if no portrait key, try to derive from name
@@ -62,20 +65,47 @@ def extract_voice_lines_from_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
     
-    # Pattern to match objects with voiceId and text fields
-    # This handles both single-line and multi-line formats
+    # Find all voiceId occurrences
+    vid_pattern = r'voiceId\s*:\s*[\'"]([^\'"]+)[\'"]'
     
-    # First, find all voiceId occurrences and extract surrounding context
-    pattern = r'\{[^{}]*voiceId\s*:\s*[\'"]([^\'"]+)[\'"][^{}]*\}'
-    
-    for match in re.finditer(pattern, content, re.DOTALL):
-        obj_str = match.group(0)
+    for match in re.finditer(vid_pattern, content):
         voice_id = match.group(1)
+        start_pos = match.start()
+        
+        # Find start of object (backwards from voiceId)
+        bracket_count = 0
+        obj_start = -1
+        for i in range(start_pos, -1, -1):
+            if content[i] == '}': bracket_count += 1
+            if content[i] == '{':
+                if bracket_count == 0:
+                    obj_start = i
+                    break
+                else:
+                    bracket_count -= 1
+        
+        if obj_start == -1: continue
+        
+        # Find end of object (forwards from voiceId)
+        bracket_count = 0
+        obj_end = -1
+        for i in range(start_pos, len(content)):
+            if content[i] == '{': bracket_count += 1
+            if content[i] == '}':
+                if bracket_count == 0:
+                    obj_end = i + 1
+                    break
+                else:
+                    bracket_count -= 1
+        
+        if obj_end == -1: continue
+        
+        obj_str = content[obj_start:obj_end]
         
         # Extract text field
         text_match = re.search(r'text\s*:\s*[\'"](.+?)[\'"](?:\s*[,}])', obj_str, re.DOTALL)
         if not text_match:
-            # Try escaped quotes
+            # Try escaped quotes or other formats
             text_match = re.search(r'text\s*:\s*[\'"](.+?)[\'"]', obj_str, re.DOTALL)
         
         if not text_match:
@@ -116,8 +146,6 @@ def extract_voice_lines_from_file(filepath):
         
         # Try to infer character from voiceId prefix
         if not char or char == 'unknown':
-            # Voice IDs often follow pattern: prefix_charabbrev_num
-            # e.g., recov_lb_01 -> liubei, qz_zf_01 -> zhangfei
             vid_parts = voice_id.split('_')
             char_abbrev_map = {
                 'lb': 'liubei', 'gy': 'guanyu', 'zf': 'zhangfei',
@@ -131,7 +159,6 @@ def extract_voice_lines_from_file(filepath):
                     break
         
         if not char:
-            print(f"  Warning: No character found for voiceId '{voice_id}' in {filepath}")
             char = 'unknown'
         
         lines.append({
@@ -206,7 +233,7 @@ def main():
         print(f"  {char}: {count}")
     
     # Check for missing lines in current voice files
-    voices_dir = project_root / 'assets' / 'audio' / 'voices'
+    voices_dir = project_root / 'public' / 'assets' / 'audio' / 'voices'
     if voices_dir.exists():
         existing = set(f.stem for f in voices_dir.glob('*.ogg'))
         extracted = set(line['id'] for line in all_lines)

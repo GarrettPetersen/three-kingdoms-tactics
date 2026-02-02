@@ -6,15 +6,17 @@ and comparing to the original text.
 
 import os
 import json
-import whisper
+from faster_whisper import WhisperModel
 from jiwer import wer
 
 # Paths
-VOICES_DIR = "assets/audio/voices"
+VOICES_DIR = "public/assets/audio/voices"
 REPORT_FILE = "voice_verification_report.json"
 
-# Import the game script from generate_voices_xtts.py
-from generate_voices_xtts import game_script, VOICE_SAMPLES
+# Load game script from extracted voice lines
+EXTRACTED_LINES_FILE = "tools/extracted_voice_lines.json"
+with open(EXTRACTED_LINES_FILE, 'r') as f:
+    game_script = json.load(f)
 
 # WER threshold for marking as bad
 WER_THRESHOLD = 0.3  # 30% word error rate
@@ -23,7 +25,7 @@ WER_THRESHOLD = 0.3  # 30% word error rate
 def load_whisper_model():
     """Load the Whisper model (using 'base' for speed, 'medium' for accuracy)"""
     print("Loading Whisper model...")
-    model = whisper.load_model("base")
+    model = WhisperModel("base", device="cpu", compute_type="int8")
     print("Model loaded!")
     return model
 
@@ -31,8 +33,9 @@ def load_whisper_model():
 def transcribe_audio(model, audio_path):
     """Transcribe an audio file using Whisper"""
     try:
-        result = model.transcribe(audio_path, language="en")
-        return result["text"].strip()
+        segments, info = model.transcribe(audio_path, language="en")
+        text = " ".join([segment.text for segment in segments])
+        return text.strip()
     except Exception as e:
         print(f"Error transcribing {audio_path}: {e}")
         return ""

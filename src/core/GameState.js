@@ -105,6 +105,8 @@ export class GameState {
     reset() {
         this.data = this.getDefaults();
         localStorage.removeItem(this.saveKey);
+        // Save the reset state to ensure it's persisted
+        this.save();
     }
 
     // Convenience getters/setters

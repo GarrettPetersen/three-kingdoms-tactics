@@ -257,7 +257,7 @@ export class TacticsScene extends BaseScene {
 
         this.particles = [];
         if (!this.isCustom) {
-            this.manager.gameState.set('lastScene', 'tactics');
+        this.manager.gameState.set('lastScene', 'tactics');
             this.manager.gameState.set('currentBattleId', this.battleId);
         }
 
@@ -353,8 +353,8 @@ export class TacticsScene extends BaseScene {
                 const deadRequired = mustSurvive.some(id => !this.units.find(u => u.id === id && u.hp > 0));
                 if (deadRequired) {
                     this.endBattle(false);
-                    return;
-                }
+                return;
+            }
             }
 
             if (victoryType === 'defeat_captains') {
@@ -401,7 +401,7 @@ export class TacticsScene extends BaseScene {
                     if (battleDef && battleDef.hasVictoryDialogue && this.battleId === 'dongzhuo_battle') {
                         this.manager.gameState.addMilestone('guangzong_encounter');
                         this.startDongZhuoVictoryDialogue();
-                    } else {
+        } else {
                         this.endBattle(true);
                     }
                 }
@@ -2362,17 +2362,17 @@ export class TacticsScene extends BaseScene {
                         this.handleCrushLanding(victim, occupant, pushCell, levelDiff, targetPos);
                     } else {
                         // Normal fall landing
-                        setTimeout(() => { 
+                    setTimeout(() => { 
                             if (isDeepWater) {
-                                victim.isDrowning = true;
+                        victim.isDrowning = true;
                                 assets.playSound('drown');
                             } else {
                                 assets.playSound('collision', 0.8);
                                 this.applyUnitDamage(victim, fallDamage);
                                 this.addDamageNumber(targetPos.x, targetPos.y - 30, fallDamage);
                             }
-                            victim.setPosition(pushCell.r, pushCell.q);
-                            pushCell.unit = victim;
+                    victim.setPosition(pushCell.r, pushCell.q);
+                        pushCell.unit = victim;
                         }, 400);
                     }
                 }
@@ -2613,13 +2613,13 @@ export class TacticsScene extends BaseScene {
                             }
                         }
                     });
-                }
+            }
 
-                const unit = new Unit(u.id, {
-                    ...u,
+            const unit = new Unit(u.id, {
+                ...u,
                     imgKey: imgKey,
-                    r: finalR,
-                    q: finalQ,
+                r: finalR,
+                q: finalQ,
                     level: level,
                     hp: u.isDead ? 0 : finalMaxHp, // Support pre-killed units for scenes
                     isPreDead: u.isPreDead || false,
@@ -3020,8 +3020,9 @@ export class TacticsScene extends BaseScene {
 
         const drawCalls = [];
 
-        // Determine which units are being targeted by telegraphed attacks
+        // Determine which units and tiles are being targeted by telegraphed attacks
         const targetedUnits = new Set();
+        const telegraphedTiles = new Set();
         this.units.forEach(u => {
             if (u.hp > 0 && u.intent && u.intent.type === 'attack') {
                 const targetCell = this.getIntentTargetCell(u);
@@ -3029,6 +3030,7 @@ export class TacticsScene extends BaseScene {
                 if (targetCell) {
                     const affected = this.getAffectedTiles(u, u.intent.attackKey, targetCell.r, targetCell.q);
                     affected.forEach(t => {
+                        telegraphedTiles.add(`${t.r},${t.q}`);
                         const cell = this.tacticsMap.getCell(t.r, t.q);
                         if (cell && cell.unit) targetedUnits.add(cell.unit);
                     });
@@ -3060,6 +3062,7 @@ export class TacticsScene extends BaseScene {
                     isReachable: this.reachableTiles.has(`${r},${q}`),
                     isAttackRange: this.attackTiles.has(`${r},${q}`),
                     isAffected: affectedTiles.has(`${r},${q}`),
+                    isTelegraphed: telegraphedTiles.has(`${r},${q}`),
                     isHovered: this.hoveredCell === cell
                 });
             }
@@ -3153,6 +3156,9 @@ export class TacticsScene extends BaseScene {
                 if (call.isAffected) {
                     // Impact preview (Red)
                     this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 0, 0, 0.5)');
+                } else if (call.isTelegraphed) {
+                    // Telegraphed attack area (Subtle Red)
+                    this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 0, 0, 0.25)');
                 } else if (call.isAttackRange) {
                     // Possible targets (Subtle)
                     this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 0, 0, 0.15)');
@@ -4222,19 +4228,19 @@ export class TacticsScene extends BaseScene {
                 this.dialogueElapsed = 0;
             } else {
                 this.subStep = 0;
-                this.dialogueStep++;
+            this.dialogueStep++;
                 this.dialogueElapsed = 0;
                 
                 if (this.dialogueStep >= script.length) {
                     if (this.isIntroDialogueActive) {
-                        this.isIntroDialogueActive = false;
+                this.isIntroDialogueActive = false;
                         if (this.hasChoice && (this.onChoiceRestrain || this.onChoiceFight)) {
                             // Show choice UI instead of starting battle
                             this.isChoiceActive = true;
                         } else if (this.battleId === 'qingzhou_prelude') {
                             this.checkWinLoss(); // Trigger transition immediately
                         } else if (!this.isCutscene) {
-                            this.startNpcPhase();
+                this.startNpcPhase();
                         }
                     } else if (this.isVictoryDialogueActive) {
                         this.isVictoryDialogueActive = false;

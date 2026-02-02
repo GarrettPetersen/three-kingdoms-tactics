@@ -414,15 +414,15 @@ export class MapScene extends BaseScene {
                 const ih = img ? img.height : 36;
                 
                 const hit = (mouseX >= lx - iw/2 && mouseX <= lx + iw/2 && mouseY >= ly - ih/2 && mouseY <= ly + ih/2);
-                
-                let labelHit = false;
+            
+            let labelHit = false;
                 if (this.interactionSelected === locId) {
                     const metrics = this.manager.ctx.measureText(loc.name);
-                    const boxW = Math.floor(metrics.width + 10);
+                const boxW = Math.floor(metrics.width + 10);
                     const bx = Math.floor(lx - 20 - boxW);
                     const by = Math.floor(ly - 10);
                     labelHit = (mouseX >= bx && mouseX <= bx + boxW && mouseY >= by && mouseY <= by + 24);
-                }
+            }
 
                 if (hit || labelHit) {
                     if (this.interactionSelected === locId) {
@@ -436,11 +436,11 @@ export class MapScene extends BaseScene {
                                 else if (loc.battleId === 'zhuo_return') this.startZhuoReturn();
                             });
                         }
-                    } else {
+                } else {
                         this.interactionSelected = locId;
                         this.selectedLocation = locId;
-                    }
-                    return;
+                }
+                return;
                 }
             }
         }
@@ -507,7 +507,7 @@ export class MapScene extends BaseScene {
             } else {
                 // First click on character selects the location (if available)
                 if (isZhuoAvailable) {
-                    this.selectedLocation = 'zhuo';
+                this.selectedLocation = 'zhuo';
                 }
                 this.interactionSelected = null;
                 this.subStep = 0;
@@ -712,7 +712,7 @@ export class MapScene extends BaseScene {
                     name: 'Guan Yu',
                     position: 'top',
                     voiceId: 'gz_gy_outlaw_01',
-                    text: "Let us make for Zhuo County. We can regroup there and decide our next move."
+                    text: "Brother, we cannot stay. If Dong Zhuo learns we freed Lu Zhi, he will have us executed on this spot."
                 },
                 
                 { type: 'command', action: 'fade', target: 1, speed: 0.002 }

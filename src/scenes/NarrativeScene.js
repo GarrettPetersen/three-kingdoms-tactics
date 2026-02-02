@@ -23,13 +23,13 @@ export class NarrativeScene extends BaseScene {
         } else if (params.keepMusic || assets.currentMusicKey === 'oath') {
             // Do nothing, keep current music if requested or if already playing oath music
         } else {
-            assets.playMusic('narrative', 0.5);
+        assets.playMusic('narrative', 0.5);
         }
         
         if (params.scriptId && NARRATIVE_SCRIPTS[params.scriptId]) {
             this.script = NARRATIVE_SCRIPTS[params.scriptId];
         } else {
-            this.script = params.script || [];
+        this.script = params.script || [];
         }
 
         this.onComplete = params.onComplete || null;
@@ -198,7 +198,7 @@ export class NarrativeScene extends BaseScene {
             // Convert portrait key to actor id (e.g., 'zhou-jing' -> 'zhoujing', 'liu-bei' -> 'liubei')
             currentSpeakerId = currentStep.portraitKey.replace(/-/g, '');
         }
-        
+
         let allMoved = true;
         for (let id in this.actors) {
             const a = this.actors[id];
