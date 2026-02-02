@@ -62,5 +62,11 @@ export class SceneManager {
             this.currentScene.handleInput(e);
         }
     }
+
+    handleKeyDown(e) {
+        if (this.currentScene && this.currentScene.handleKeyDown) {
+            this.currentScene.handleKeyDown(e);
+        }
+    }
 }
 

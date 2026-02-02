@@ -1,4 +1,14 @@
 export const NARRATIVE_SCRIPTS = {
+    'intro_poem': [
+        { bg: 'peach_garden', type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'wait', duration: 1000 },
+        {
+            type: 'narrator',
+            text: "The world under heaven, long divided, must unite; long united, must divide.",
+            voiceId: 'intro_narrator_01'
+        },
+        { type: 'command', action: 'fade', target: 1, speed: 0.001 }
+    ],
     'magistrate_briefing': [
         { type: 'title', text: "THE VOLUNTEER ARMY", subtext: "Zhuo County Headquarters", duration: 3000 },
         { bg: 'army_camp', type: 'command', action: 'clearActors' },
@@ -114,7 +124,8 @@ export const NARRATIVE_SCRIPTS = {
             text: "Let us not tarry. The city is still in peril. We must return to the gates and ensure the Imperial Protector is safe."
         },
         {
-            type: 'narrator',
+            type: 'dialogue',
+            portraitKey: 'narrator',
             voiceId: 'qz_vic_nar_01',
             text: "Though fierce as tigers soldiers be, Battles are won by strategy.\nA hero comes; he gains renown, Already destined for a crown."
         }

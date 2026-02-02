@@ -127,7 +127,7 @@ export class TacticsScene extends BaseScene {
         this.onFightVictory = params.onFightVictory || null; // Callback for cage-break victory
         
         // If resuming a battle with choices but no callbacks provided, set them up dynamically
-        if (this.hasChoice && !this.onChoiceRestrain && this.battleId === 'guangzong_encounter') {
+        if (this.battleId === 'guangzong_encounter' && !this.onChoiceRestrain) {
             this.onChoiceRestrain = () => {
                 // Peaceful path - switch to map and continue to Dong Zhuo
                 this.manager.gameState.addMilestone('guangzong_encounter');
@@ -141,7 +141,7 @@ export class TacticsScene extends BaseScene {
             this.onFightVictory = () => {
                 this.manager.gameState.addMilestone('freed_luzhi');
                 // Use MapScene logic to show story
-                const mapScene = this.manager.getScene('map');
+                const mapScene = this.manager.scenes['map'];
                 if (mapScene) {
                     mapScene.continueAfterEscortBattle();
                 } else {
@@ -150,6 +150,17 @@ export class TacticsScene extends BaseScene {
             };
             // Also set fallback victory callback
             this.onVictoryCallback = this.onFightVictory;
+        }
+
+        if (this.battleId === 'dongzhuo_battle' && !this.onVictoryCallback) {
+            this.onVictoryCallback = () => {
+                const mapScene = this.manager.scenes['map'];
+                if (mapScene && mapScene.showChapter1End) {
+                    mapScene.showChapter1End();
+                } else {
+                    this.manager.switchTo('map', { afterEvent: 'dongzhuo_battle' });
+                }
+            };
         }
         
         // Note: this.hasChoice is already set from battleDef earlier in enter()
@@ -246,7 +257,8 @@ export class TacticsScene extends BaseScene {
 
         this.particles = [];
         if (!this.isCustom) {
-        this.manager.gameState.set('lastScene', 'tactics');
+            this.manager.gameState.set('lastScene', 'tactics');
+            this.manager.gameState.set('currentBattleId', this.battleId);
         }
 
         if (this.battleId === 'qingzhou_cleanup') {
@@ -610,8 +622,8 @@ export class TacticsScene extends BaseScene {
 
     addAmbushUnit(id, name, imgKey, r, q, attacks, flip = false) {
         const gs = this.manager.gameState;
-        const unitXP = gs.get('unitXP') || {};
-        const unitClasses = gs.get('unitClasses') || {};
+        const unitXP = gs.getCampaignVar('unitXP') || {};
+        const unitClasses = gs.getCampaignVar('unitClasses') || {};
         
         const xp = unitXP[id] || 0;
         const level = this.getLevelFromXP(xp);
@@ -752,7 +764,7 @@ export class TacticsScene extends BaseScene {
 
             const gs = this.manager.gameState;
         
-        const unitXP = gs.get('unitXP') || {};
+        const unitXP = gs.getCampaignVar('unitXP') || {};
         const recoveryInfo = [];
         const levelUps = [];
 
@@ -799,9 +811,9 @@ export class TacticsScene extends BaseScene {
                         } else if (u.faction === 'allied') {
                             // Allied soldiers are replaced with Level 1 (0 XP)
                             unitXP[u.id] = 0;
-                            const unitClasses = gs.get('unitClasses') || {};
+                            const unitClasses = gs.getCampaignVar('unitClasses') || {};
                             delete unitClasses[u.id];
-                            gs.set('unitClasses', unitClasses);
+                            gs.setCampaignVar('unitClasses', unitClasses);
                         }
                     } else if (won) {
                         // Character SURVIVED and WON
@@ -822,7 +834,7 @@ export class TacticsScene extends BaseScene {
                     }
                 }
             });
-            gs.set('unitXP', unitXP);
+            gs.setCampaignVar('unitXP', unitXP);
         }
 
         this.finalStats = {
@@ -870,8 +882,8 @@ export class TacticsScene extends BaseScene {
         
         // Add the 3 existing campaign soldiers with their XP
         const gs = this.manager.gameState;
-        const unitXP = gs.get('unitXP') || {};
-        const unitClasses = gs.get('unitClasses') || {};
+        const unitXP = gs.getCampaignVar('unitXP') || {};
+        const unitClasses = gs.getCampaignVar('unitClasses') || {};
         
         const allyPositions = [
             { id: 'ally1', r: 5, q: 0 },
@@ -1001,21 +1013,7 @@ export class TacticsScene extends BaseScene {
                     portraitKey: 'zhang-fei',
                     name: 'Zhang Fei',
                     voiceId: 'gz_zf_rage_outlaw_01',
-                    text: "The nerve of that swine! First we save Lu Zhi from injustice, now we save Dong Zhuo from death, and this is our thanks?!"
-                },
-                {
-                    speaker: 'guanyu',
-                    portraitKey: 'guan-yu',
-                    name: 'Guan Yu',
-                    voiceId: 'gz_gy_calm_01',
-                    text: "Let it go, brother. We have made our choice. History will judge us kindly."
-                },
-                {
-                    speaker: 'narrator',
-                    portraitKey: null,
-                    name: 'Narrator',
-                    voiceId: 'gz_nar_poem_01',
-                    text: "As it was in olden time so it is today, The simple wight may merit well, Officialdom holds sway; Zhang Fei, the blunt and hasty, Where can you find his peer? But slaying the ungrateful would Mean many deaths a year. Dong Zhuo's fate will be unrolled in later chapters."
+                    text: "The nerve of that swine! First we save Lu Zhi from injustice, now we save Dong Zhuo from death, and this is our thanks?! Nothing but his death can slake my anger!"
                 }
             ];
         } else {
@@ -1033,7 +1031,7 @@ export class TacticsScene extends BaseScene {
                     portraitKey: 'liu-bei',
                     name: 'Liu Bei',
                     voiceId: 'gz_lb_office_01',
-                    text: "We hold no official positions, my lord. We are but volunteers who answered the call to arms."
+                    text: "None."
                 },
                 {
                     speaker: 'dongzhuo',
@@ -1047,23 +1045,10 @@ export class TacticsScene extends BaseScene {
                     portraitKey: 'zhang-fei',
                     name: 'Zhang Fei',
                     voiceId: 'gz_zf_rage_01',
-                    text: "We saved that wretch in bloody battle and he treats us with contempt! Let me go back and take his head!"
-                },
-                {
-                    speaker: 'liubei',
-                    portraitKey: 'liu-bei',
-                    name: 'Liu Bei',
-                    voiceId: 'gz_lb_patience_01',
-                    text: "Patience, brother. He may be ungrateful, but killing him would make us criminals. Come, let us leave this place."
-                },
-                {
-                    speaker: 'narrator',
-                    portraitKey: null,
-                    name: 'Narrator',
-                    voiceId: 'gz_nar_poem_01',
-                    text: "As it was in olden time so it is today, The simple wight may merit well, Officialdom holds sway; Zhang Fei, the blunt and hasty, Where can you find his peer? But slaying the ungrateful would Mean many deaths a year. Dong Zhuo's fate will be unrolled in later chapters."
+                    text: "We have just rescued this menial in a bloody fight, and now he is rude to us! Nothing but his death can slake my anger."
                 }
             ];
+            // No Liu Bei restraint line here anymore
         }
         
         this.cleanupDialogueStep = 0;
@@ -2542,36 +2527,8 @@ export class TacticsScene extends BaseScene {
                     };
                 }).filter(u => u !== null);
             } else if (this.battleId === 'custom') {
-                const enemyType = this.mapGenParams.enemyType || 'yellowturban';
-                const enemyCount = this.mapGenParams.enemyCount || 6;
-
-            unitsToPlace = [
-                { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
-                { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
-                { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
-                    { id: 'ally1', name: 'Volunteer', imgKey: 'soldier', r: 1, q: 3, moveRange: 3, hp: 3, faction: 'allied', attacks: ['bash'] },
-                    { id: 'ally2', name: 'Volunteer', imgKey: 'soldier', r: 1, q: 4, moveRange: 3, hp: 3, faction: 'allied', attacks: ['bash'] },
-                    { id: 'ally3', name: 'Volunteer', imgKey: 'soldier', r: 1, q: 5, moveRange: 3, hp: 3, faction: 'allied', attacks: ['bash'] }
-                ];
-
-                for (let i = 0; i < enemyCount; i++) {
-                    let type = enemyType;
-                    if (type === 'random_mix') type = Math.random() < 0.5 ? 'yellowturban' : 'archer';
-                    
-                    const r = 7 + Math.floor(i / 3);
-                    const q = 2 + (i % 5);
-                    
-                    unitsToPlace.push({
-                        id: `custom_rebel_${i}`,
-                        name: type === 'archer' ? 'Archer' : 'Yellow Turban',
-                        imgKey: type === 'archer' ? 'archer' : 'yellowturban',
-                        r: r, q: q,
-                        moveRange: 3,
-                        hp: type === 'archer' ? 2 : 3,
-                        faction: 'enemy',
-                        attacks: type === 'archer' ? ['arrow_shot'] : ['bash']
-                    });
-                }
+                // Roster provided by CustomBattleMenuScene
+                unitsToPlace = specifiedUnits || [];
             } else {
                 // Default fallback
             unitsToPlace = [
@@ -2586,8 +2543,8 @@ export class TacticsScene extends BaseScene {
 
         if (unitsToPlace) {
             const gs = this.manager.gameState;
-            const unitXP = gs.get('unitXP') || {};
-            const unitClasses = gs.get('unitClasses') || {};
+            const unitXP = gs.getCampaignVar('unitXP') || {};
+            const unitClasses = gs.getCampaignVar('unitClasses') || {};
 
             unitsToPlace.forEach(u => {
                 const cell = this.findNearestFreeCell(u.r, u.q, 5);
@@ -2599,16 +2556,29 @@ export class TacticsScene extends BaseScene {
                 const finalR = cell.r;
                 const finalQ = cell.q;
 
-                const xp = unitXP[u.id] || 0;
-                const level = this.getLevelFromXP(xp);
+                let level = u.level;
+                if (!this.isCustom || !level) {
+                    const xp = unitXP[u.id] || 0;
+                    level = this.getLevelFromXP(xp);
+                }
 
                 // Check for class change (e.g. Soldier -> Archer)
                 let imgKey = u.imgKey;
-                let attacks = [...u.attacks];
-                const unitClass = unitClasses[u.id] || (u.id.startsWith('ally') ? 'soldier' : u.id);
+                let attacks = u.attacks ? [...u.attacks] : [];
+                
+                let unitClass = u.templateId || u.id.replace(/\d+$/, '');
+                if (!this.isCustom) {
+                    unitClass = unitClasses[u.id] || (u.id.startsWith('ally') ? 'soldier' : u.id);
+                } else {
+                    if (u.isArcher) {
+                        unitClass = 'archer';
+                    } else if (unitClass === 'ally' || unitClass === 'guard' || unitClass.includes('custom_ally') || unitClass.includes('custom_guard')) {
+                        unitClass = 'soldier';
+                    }
+                }
                 
                 // Level bonuses - soldiers gain +1 HP at level 2+, archers stay at 2 base
-                const isAlly = u.id.startsWith('ally') || u.id.startsWith('guard');
+                const isAlly = u.id.startsWith('ally') || u.id.startsWith('guard') || u.id.includes('custom_ally') || u.id.includes('custom_guard');
                 const isArcher = unitClass === 'archer';
                 let baseHp = u.maxHp || u.hp || 4;
                 if (isAlly) {
@@ -2619,6 +2589,16 @@ export class TacticsScene extends BaseScene {
                 if (unitClass === 'archer') {
                     imgKey = 'archer';
                     attacks = ['arrow_shot'];
+                }
+
+                // Apply template if missing data (for custom roster)
+                if (this.isCustom && !u.hp) {
+                    const typeTemplates = UNIT_TEMPLATES[u.type];
+                    const template = typeTemplates ? (typeTemplates[u.templateId] || Object.values(typeTemplates)[0]) : null;
+                    if (template) {
+                        if (!attacks.length) attacks = [...template.attacks];
+                        if (!u.moveRange) u.moveRange = template.moveRange;
+                    }
                 }
 
                 // Apply weapon upgrades based on level
@@ -2633,13 +2613,13 @@ export class TacticsScene extends BaseScene {
                             }
                         }
                     });
-            }
+                }
 
-            const unit = new Unit(u.id, {
-                ...u,
+                const unit = new Unit(u.id, {
+                    ...u,
                     imgKey: imgKey,
-                r: finalR,
-                q: finalQ,
+                    r: finalR,
+                    q: finalQ,
                     level: level,
                     hp: u.isDead ? 0 : finalMaxHp, // Support pre-killed units for scenes
                     isPreDead: u.isPreDead || false,
@@ -2683,9 +2663,12 @@ export class TacticsScene extends BaseScene {
         if (this.isGameOver) {
             this.gameOverTimer -= dt;
             if (this.gameOverTimer <= 0) {
-                // If there's a custom victory callback, use it instead of normal flow
+                // If there's a custom victory callback, pass it to the summary screen
                 if (this.won && this.onVictoryCallback) {
-                    this.onVictoryCallback();
+                    this.manager.switchTo('summary', {
+                        ...this.finalStats,
+                        onComplete: this.onVictoryCallback
+                    });
                     return;
                 }
                 this.manager.switchTo('summary', this.finalStats);
@@ -4158,10 +4141,16 @@ export class TacticsScene extends BaseScene {
     }
 
     handleInput(e) {
-        const { x, y } = this.getMousePos(e);
+        let x = -1000, y = -1000;
+        if (e && e.clientX !== undefined) {
+            const pos = this.getMousePos(e);
+            x = pos.x;
+            y = pos.y;
+        }
 
         // Handle choice selection
         if (this.isChoiceActive && this.choiceRects) {
+            if (x === -1000) return; // Mouse only for choices for now
             for (const rect of this.choiceRects) {
                 if (x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h) {
                     this.isChoiceActive = false;
@@ -4182,16 +4171,13 @@ export class TacticsScene extends BaseScene {
         if (this.isCutscene && !this.isIntroAnimating && !this.isProcessingTurn && !this.isCleanupDialogueActive) {
             const battleDef = BATTLES[this.battleId];
             if (battleDef && battleDef.nextScene) {
-                // qingzhou_cleanup now handles dialogue on-map, so skip this
                 if (this.battleId === 'qingzhou_cleanup') {
-                    // Don't do anything - dialogue will be triggered by triggerQingzhouCleanup
                     return;
                 } else if (this.battleId === 'guangzong_camp') {
                     this.manager.gameState.addMilestone('guangzong_camp');
                     this.manager.switchTo('narrative', {
                         scriptId: 'guangzong_arrival',
                         onComplete: () => {
-                            // Return to the world map after the Guangzong narrative
                             this.manager.switchTo('map', { campaignId: 'liubei' });
                         }
                     });
@@ -4203,18 +4189,20 @@ export class TacticsScene extends BaseScene {
         }
 
         if (this.showEndTurnConfirm) {
-            if (this.confirmYesRect && x >= this.confirmYesRect.x && x <= this.confirmYesRect.x + this.confirmYesRect.w &&
-                y >= this.confirmYesRect.y && y <= this.confirmYesRect.y + this.confirmYesRect.h) {
-                assets.playSound('ui_click');
-                this.showEndTurnConfirm = false;
-                this.startExecutionPhase();
-                return;
-            }
-            if (this.confirmNoRect && x >= this.confirmNoRect.x && x <= this.confirmNoRect.x + this.confirmNoRect.w &&
-                y >= this.confirmNoRect.y && y <= this.confirmNoRect.y + this.confirmNoRect.h) {
-                assets.playSound('ui_click');
-                this.showEndTurnConfirm = false;
-                return;
+            if (x !== -1000) {
+                if (this.confirmYesRect && x >= this.confirmYesRect.x && x <= this.confirmYesRect.x + this.confirmYesRect.w &&
+                    y >= this.confirmYesRect.y && y <= this.confirmYesRect.y + this.confirmYesRect.h) {
+                    assets.playSound('ui_click');
+                    this.showEndTurnConfirm = false;
+                    this.startExecutionPhase();
+                    return;
+                }
+                if (this.confirmNoRect && x >= this.confirmNoRect.x && x <= this.confirmNoRect.x + this.confirmNoRect.w &&
+                    y >= this.confirmNoRect.y && y <= this.confirmNoRect.y + this.confirmNoRect.h) {
+                    assets.playSound('ui_click');
+                    this.showEndTurnConfirm = false;
+                    return;
+                }
             }
             return; // Block other inputs while confirm is visible
         }
@@ -4343,6 +4331,8 @@ export class TacticsScene extends BaseScene {
             }
             return;
         }
+
+        if (x === -1000) return; // Remaining checks are mouse only
 
         if (this.isGameOver) {
             // Game over state - wait for gameOverTimer to transition to summary
@@ -4574,5 +4564,14 @@ export class TacticsScene extends BaseScene {
                 }
             }
         }, 400); // Wait for fall animation
+    }
+
+    handleKeyDown(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            // Only advance if dialogue is active
+            if (this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCleanupDialogueActive || this.activeDialogue) {
+                this.handleInput(e);
+            }
+        }
     }
 }

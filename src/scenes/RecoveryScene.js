@@ -202,5 +202,11 @@ export class RecoveryScene extends BaseScene {
             this.manager.switchTo('map', { afterEvent: this.battleId });
         }
     }
+
+    handleKeyDown(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            this.handleInput(e);
+        }
+    }
 }
 

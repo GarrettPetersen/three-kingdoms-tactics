@@ -247,7 +247,7 @@ export const BATTLES = {
             forestDensity: 0.1,
             mountainDensity: 0.05,
             riverDensity: 0.0,
-            houseDensity: 0.08  // Non-zero to generate some houses automatically
+            houseDensity: 0.04  // Reduced for rural setting
         },
         units: [
             // Heroes charging in from the left
@@ -264,17 +264,19 @@ export const BATTLES = {
             { id: 'dead_guard1', r: 5, q: 8, type: 'allied_soldier', isDead: true, frame: 2 },
             { id: 'dead_guard2', r: 7, q: 8, type: 'allied_soldier', isDead: true, frame: 2 },
             { id: 'dead_guard3', r: 6, q: 9, type: 'allied_soldier', isDead: true, frame: 2 },
-            // Yellow Turbans attacking Dong Zhuo - half weak (2HP), half normal (3HP)
-            { id: 'rebel1', r: 5, q: 5, type: 'enemy_soldier_weak' },
-            { id: 'rebel2', r: 6, q: 5, type: 'enemy_soldier' },
-            { id: 'rebel3', r: 7, q: 5, type: 'enemy_soldier_weak' },
-            { id: 'rebel4', r: 6, q: 6, type: 'enemy_soldier' },
-            { id: 'rebel5', r: 5, q: 7, type: 'enemy_soldier_weak' },
-            { id: 'rebel6', r: 7, q: 7, type: 'enemy_soldier' },
-            { id: 'rebel7', r: 5, q: 6, type: 'enemy_soldier' },
-            { id: 'rebel8', r: 7, q: 6, type: 'enemy_soldier_weak' },
+            // Yellow Turbans attacking Dong Zhuo - Spread out more
+            { id: 'rebel1', r: 4, q: 4, type: 'enemy_soldier_weak' },
+            { id: 'rebel2', r: 6, q: 3, type: 'enemy_soldier' },
+            { id: 'rebel3', r: 8, q: 4, type: 'enemy_soldier_weak' },
+            { id: 'rebel4', r: 5, q: 6, type: 'enemy_soldier' },
+            { id: 'rebel5', r: 3, q: 6, type: 'enemy_soldier_weak' },
+            { id: 'rebel6', r: 9, q: 6, type: 'enemy_soldier' },
+            { id: 'rebel7', r: 4, q: 7, type: 'enemy_soldier' },
+            { id: 'rebel8', r: 8, q: 7, type: 'enemy_soldier_weak' },
+            { id: 'rebel9', r: 3, q: 4, type: 'enemy_soldier' },
+            { id: 'rebel10', r: 9, q: 4, type: 'enemy_soldier_weak' },
             // Yellow Turban captain
-            { id: 'zhang_jue_captain', r: 6, q: 4, type: 'enemy_captain' }
+            { id: 'zhang_jue_captain', r: 6, q: 2, type: 'enemy_captain' }
         ],
         victoryCondition: {
             type: 'defeat_all_enemies',

@@ -11,9 +11,8 @@ export class GameState {
             unlockedYears: ['184'],
             milestones: [], // e.g. 'prologue_complete', 'daxing_won'
             currentCampaign: null,
-            battleState: null,
-            unitXP: {}, // { unitId: totalXP }
-            unitClasses: {}, // { unitId: 'archer' }
+            // Campaign-specific states (isolated)
+            campaignState: {}, // { 'liubei': { partyX, partyY, unitXP, unitClasses, lastScene } }
             customStats: {
                 totalBattles: 0,
                 wins: 0,
@@ -22,6 +21,24 @@ export class GameState {
                 unitsLost: 0
             }
         };
+    }
+
+    // Isolated campaign state management
+    setCampaignVar(key, value, campaignId = null) {
+        const id = campaignId || this.data.currentCampaign;
+        if (!id) return;
+        
+        if (!this.data.campaignState[id]) {
+            this.data.campaignState[id] = {};
+        }
+        this.data.campaignState[id][key] = value;
+        this.save();
+    }
+
+    getCampaignVar(key, campaignId = null) {
+        const id = campaignId || this.data.currentCampaign;
+        if (!id || !this.data.campaignState[id]) return undefined;
+        return this.data.campaignState[id][key];
     }
 
     save() {
@@ -36,6 +53,21 @@ export class GameState {
                 // Simple migration logic
                 this.data = { ...this.getDefaults(), ...parsed };
                 
+                // Migrate top-level unit data to campaign state if not already there
+                // (Assuming 'liubei' was the only campaign before this change)
+                if (parsed.unitXP && !this.data.campaignState['liubei']?.unitXP) {
+                    this.setCampaignVar('unitXP', parsed.unitXP, 'liubei');
+                }
+                if (parsed.unitClasses && !this.data.campaignState['liubei']?.unitClasses) {
+                    this.setCampaignVar('unitClasses', parsed.unitClasses, 'liubei');
+                }
+                if (parsed.partyX !== undefined && !this.data.campaignState['liubei']?.partyX) {
+                    this.setCampaignVar('partyX', parsed.partyX, 'liubei');
+                }
+                if (parsed.partyY !== undefined && !this.data.campaignState['liubei']?.partyY) {
+                    this.setCampaignVar('partyY', parsed.partyY, 'liubei');
+                }
+
                 // Migrate old flags
                 if (parsed.prologueComplete && !this.data.milestones.includes('prologue_complete')) {
                     this.data.milestones.push('prologue_complete');

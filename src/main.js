@@ -81,6 +81,9 @@ async function init() {
 
     let inputBuffer = "";
     window.addEventListener('keydown', (e) => {
+        // Allow scenes to handle specific keys (like Enter to advance text)
+        sceneManager.handleKeyDown(e);
+
         if (e.key.length === 1) {
             inputBuffer += e.key.toLowerCase();
             if (inputBuffer.endsWith('title')) { sceneManager.switchTo('title'); inputBuffer = ""; }

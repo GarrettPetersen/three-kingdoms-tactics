@@ -390,7 +390,11 @@ export class TitleScene extends BaseScene {
                 y >= this.confirmYesRect.y && y <= this.confirmYesRect.y + this.confirmYesRect.h) {
                 assets.playSound('gong', 0.8);
                 this.manager.gameState.reset();
-                this.manager.switchTo('campaign_selection');
+                this.manager.switchTo('narrative', {
+                    scriptId: 'intro_poem',
+                    keepMusic: true,
+                    onComplete: () => this.manager.switchTo('campaign_selection')
+                });
                 return;
             }
             // Handle No
@@ -424,7 +428,11 @@ export class TitleScene extends BaseScene {
 
             assets.playSound('gong', 0.8);
             this.manager.gameState.reset();
-            this.manager.switchTo('campaign_selection');
+            this.manager.switchTo('narrative', {
+                scriptId: 'intro_poem',
+                keepMusic: true,
+                onComplete: () => this.manager.switchTo('campaign_selection')
+            });
             return;
         }
 

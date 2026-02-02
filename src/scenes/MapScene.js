@@ -51,8 +51,8 @@ const LOCATIONS = {
         name: 'Zhuo County',
         imgKey: 'hut',
         battleId: 'zhuo_return',
-        unlockCondition: (gs) => gs.hasMilestone('guangzong_encounter') && !gs.hasMilestone('chapter1_complete'),
-        isCompleted: (gs) => gs.hasMilestone('chapter1_complete')
+        unlockCondition: (gs) => gs.hasMilestone('guangzong_encounter') && !gs.hasMilestone('dongzhuo_battle') && !gs.hasMilestone('chapter1_complete'),
+        isCompleted: (gs) => gs.hasMilestone('chapter1_complete') || gs.hasMilestone('dongzhuo_battle')
     }
 };
 
@@ -175,8 +175,8 @@ export class MapScene extends BaseScene {
             // Initialize party based on campaign
             if (params.campaignId === 'liubei') {
                 // Prefer explicit params, then saved position, then default
-                const savedX = gs.get('partyX');
-                const savedY = gs.get('partyY');
+                const savedX = gs.getCampaignVar('partyX');
+                const savedY = gs.getCampaignVar('partyY');
                 this.party = { 
                     id: 'liubei', 
                     name: 'Liu Bei', 
@@ -188,8 +188,8 @@ export class MapScene extends BaseScene {
         } else {
             // No params (coming from Continue), restore from save
             this.currentCampaignId = gs.get('currentCampaign');
-            const savedX = gs.get('partyX');
-            const savedY = gs.get('partyY');
+            const savedX = gs.getCampaignVar('partyX');
+            const savedY = gs.getCampaignVar('partyY');
             if (this.currentCampaignId === 'liubei') {
                 this.party = { 
                     id: 'liubei', 
@@ -283,6 +283,24 @@ export class MapScene extends BaseScene {
             const status = this.renderDialogueBox(ctx, canvas, this.currentEvent, { subStep: this.subStep });
             this.hasNextChunk = status.hasNextChunk;
         }
+
+        // Draw Back Button (Top Right)
+        const backW = 40;
+        const backH = 15;
+        const bx = canvas.width - backW - 5;
+        const by = 5;
+        
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(bx, by, backW, backH);
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(bx + 0.5, by + 0.5, backW - 1, backH - 1);
+        
+        this.drawPixelText(ctx, "RETURN", bx + backW/2, by + 4, { 
+            color: '#ffd700', 
+            font: '8px Silkscreen', 
+            align: 'center' 
+        });
     }
 
     drawLabel(ctx, name, x, y, prompt) {
@@ -330,9 +348,9 @@ export class MapScene extends BaseScene {
                 this.party.x = this.moveState.targetX;
                 this.party.y = this.moveState.targetY;
 
-                // Save party position to gameState for persistence
-                this.manager.gameState.set('partyX', this.party.x);
-                this.manager.gameState.set('partyY', this.party.y);
+                // Save party position to campaign state for persistence
+                this.manager.gameState.setCampaignVar('partyX', this.party.x);
+                this.manager.gameState.setCampaignVar('partyY', this.party.y);
 
                 if (this.moveState.onComplete) {
                     this.moveState.onComplete();
@@ -343,6 +361,25 @@ export class MapScene extends BaseScene {
 
     handleInput(e) {
         const { x: mouseX, y: mouseY } = this.getMousePos(e);
+        const { canvas } = this.manager;
+
+        // Back button (top right)
+        const backW = 40;
+        const backH = 15;
+        const bx = canvas.width - backW - 5;
+        const by = 5;
+        
+        const isBackHovered = mouseX >= bx && mouseX <= bx + backW && mouseY >= by && mouseY <= by + backH;
+        
+        if (isBackHovered) {
+            assets.playSound('ui_click');
+            // If the story is complete, ensure we don't prompt "New Game" when returning later
+            if (this.manager.gameState.hasMilestone('chapter1_complete')) {
+                this.manager.gameState.set('lastScene', 'campaign_selection');
+            }
+            this.manager.switchTo('campaign_selection');
+            return;
+        }
 
         const mx = 0; // Fixed 256x256 resolution
         const my = 0;
@@ -563,12 +600,14 @@ export class MapScene extends BaseScene {
                     duration: 4000
                 },
                 {
-                    type: 'narrator',
+                    type: 'dialogue',
+                    portraitKey: 'narrator',
                     voiceId: 'gz_nar_poem_01',
                     text: "As it was in olden time so it is today,\nThe simple wight may merit well,\nOfficialdom holds sway;\nZhang Fei, the blunt and hasty,\nWhere can you find his peer?"
                 },
                 {
-                    type: 'narrator',
+                    type: 'dialogue',
+                    portraitKey: 'narrator',
                     voiceId: 'ch1_end_01',
                     text: "But slaying the ungrateful would\nMean many deaths a year.\n\nDong Zhuo's fate will be unrolled in later chapters..."
                 },

@@ -744,8 +744,8 @@
     "gz_zf_01": {
         "character": "zhangfei",
         "original_text": "This is outrage! Let me slay these dogs and free you, Master!",
-        "stt_output": "This is outrage! Let me slay these dogs and free you, master.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "gz_gy_01": {
@@ -835,8 +835,8 @@
     "gz_lz_freed_01": {
         "character": "luzhi",
         "original_text": "Xuande! You have saved me, but at great cost. The court will brand you as rebels for attacking imperial soldiers.",
-        "stt_output": "Shuande, you have saved me, but a great cost. The court will brand you as rebels for attacking imperial soldiers.",
-        "wer": 0.1,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "gz_lb_freed_02": {
@@ -849,8 +849,8 @@
     "gz_lz_freed_02": {
         "character": "luzhi",
         "original_text": "Your loyalty does you credit. I will return to Guangzong in secret. Go now, before more soldiers come.",
-        "stt_output": "Your loyalty does you credit. I will return to Guangdong in secret. Go now, before more soldiers come.",
-        "wer": 0.05555555555555555,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "gz_zf_freed_02": {
@@ -870,22 +870,22 @@
     "gz_lz_explain_01": {
         "character": "luzhi",
         "original_text": "Xuande! I had the rebels surrounded and was on the point of smashing them, when Zhang Jue employed sorcery to prevent my victory.",
-        "stt_output": "Shohande, I had the rebels surrounded and was on the point of smashing them, when Zhang Zhu employed sorcery to prevent my victory.",
-        "wer": 0.08695652173913043,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "gz_lz_explain_02": {
         "character": "luzhi",
         "original_text": "The court sent Eunuch Zuo Feng to inquire. He demanded a bribe, but where could I find gold in such circumstances? He reported that I hid behind ramparts and disheartened my army.",
-        "stt_output": "The court sent Yuna Zuo, Feng to inquire. He demanded a bribe. But where could I find gold in such circumstances? He reported that I hid behind ramparts and disheartened my army.",
-        "wer": 0.03125,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "gz_lz_explain_03": {
         "character": "luzhi",
         "original_text": "So I was superseded by Dong Zhuo, and now I go to the capital to answer false charges.",
-        "stt_output": "So I was superseded by Don Schwul, and now I go to the capital to answer false charges.",
-        "wer": 0.1111111111111111,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "gz_gy_outlaw_01": {
@@ -911,7 +911,7 @@
     },
     "gz_lb_office_01": {
         "character": "liubei",
-        "original_text": "We hold no official positions, my lord. We are but volunteers who answered the call to arms.",
+        "original_text": "None.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -960,7 +960,7 @@
     },
     "gz_nar_poem_01": {
         "character": "narrator",
-        "original_text": "As it was in olden time so it is today, The simple wight may merit well, Officialdom holds sway; Zhang Fei, the blunt and hasty, Where can you find his peer? But slaying the ungrateful would Mean many deaths a year. Dong Zhuo's fate will be unrolled in later chapters.",
+        "original_text": "As it was in olden time so it is today, The simple wight may merit well, Officialdom holds sway; Zhang Fei, the blunt and hasty, Where can you find his peer?",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -988,14 +988,14 @@
     },
     "gz_zf_rage_01": {
         "character": "zhangfei",
-        "original_text": "We saved that wretch in bloody battle and he treats us with contempt! Let me go back and take his head!",
+        "original_text": "We have just rescued this menial in a bloody fight, and now he is rude to us! Nothing but his death can slake my anger.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
     },
     "ch1_end_01": {
         "character": "narrator",
-        "original_text": "Dong Zhuo's fate will be unrolled in later chapters...",
+        "original_text": "But slaying the ungrateful would Mean many deaths a year.  Dong Zhuo's fate will be unrolled in later chapters...",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -1065,7 +1065,7 @@
     },
     "gz_zf_rage_outlaw_01": {
         "character": "zhangfei",
-        "original_text": "The nerve of that swine! First we save Lu Zhi from injustice, now we save Dong Zhuo from death, and this is our thanks?!",
+        "original_text": "The nerve of that swine! First we save Lu Zhi from injustice, now we save Dong Zhuo from death, and this is our thanks?! Nothing but his death can slake my anger!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -1073,7 +1073,14 @@
     "gz_dz_help_01": {
         "character": "dongzhuo",
         "original_text": "CURSE THESE REBELS! They have slaughtered my men! Is there no one left to fight?!",
-        "stt_output": "Curse these rebels. They have slaughtered my men. Is there no one left to fight?",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_narrator_01": {
+        "character": "narrator",
+        "original_text": "The world under heaven, long divided, must unite; long united, must divide.",
+        "stt_output": "The world under heaven, long divided, must unite, long united, must divide.",
         "wer": 0.0,
         "is_bad": false
     }

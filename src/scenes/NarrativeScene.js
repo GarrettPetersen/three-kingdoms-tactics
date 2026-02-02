@@ -58,7 +58,7 @@ export class NarrativeScene extends BaseScene {
 
         if (step.type === 'command') {
             this.handleCommand(step);
-        } else if ((step.type === 'title' || step.type === 'dialogue') && step.duration) {
+        } else if ((step.type === 'title' || step.type === 'dialogue' || step.type === 'narrator') && step.duration) {
             this.timer = step.duration;
             this.isWaiting = true;
         }
@@ -138,7 +138,7 @@ export class NarrativeScene extends BaseScene {
 
     nextStep() {
         const step = this.script[this.currentStep];
-        if (step && step.type === 'dialogue') {
+        if (step && (step.type === 'dialogue' || step.type === 'narrator')) {
             if (this.hasNextChunk) {
                 this.subStep++;
                 this.elapsedInStep = 0; // Reset timer for the next chunk
@@ -335,7 +335,7 @@ export class NarrativeScene extends BaseScene {
 
         if (step && step.type === 'title') {
             this.renderTitleCard(step);
-        } else if (step && step.type === 'dialogue') {
+        } else if (step && (step.type === 'dialogue' || step.type === 'narrator')) {
             let bgKey = step?.bg;
             if (!bgKey) {
                 for (let i = this.currentStep; i >= 0; i--) {
@@ -520,11 +520,16 @@ export class NarrativeScene extends BaseScene {
         if (this.elapsedInStep < 250) return;
 
         // Allow advancing dialogue/title even if isWaiting (e.g. during a duration timer)
-        const canForceAdvance = step && (step.type === 'dialogue' || step.type === 'title');
+        const canForceAdvance = step && (step.type === 'dialogue' || step.type === 'title' || step.type === 'narrator');
         
         if (this.isWaiting && !canForceAdvance) return;
 
-        const { x, y } = this.getMousePos(e);
+        let x = -1000, y = -1000;
+        if (e && e.clientX !== undefined) {
+            const pos = this.getMousePos(e);
+            x = pos.x;
+            y = pos.y;
+        }
 
         if (step && step.type === 'choice' && step._panelMetadata) {
             const m = step._panelMetadata;
@@ -565,8 +570,14 @@ export class NarrativeScene extends BaseScene {
         }
         
         // Advance script on any pointerdown (if not waiting for command)
-        if (step && (step.type === 'dialogue' || step.type === 'title')) {
+        if (step && (step.type === 'dialogue' || step.type === 'title' || step.type === 'narrator')) {
             this.nextStep();
+        }
+    }
+
+    handleKeyDown(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            this.handleInput(e);
         }
     }
 }

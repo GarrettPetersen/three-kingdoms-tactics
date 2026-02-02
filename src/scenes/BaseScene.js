@@ -355,4 +355,3 @@ export class BaseScene {
         return metrics;
     }
 }
-

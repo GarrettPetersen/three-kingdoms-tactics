@@ -19,6 +19,7 @@ MODEL_NAME = "tts_models/multilingual/multi-dataset/xtts_v2"
 REPORT_FILE = "voice_verification_report.json"
 EXTRACTED_LINES_FILE = "tools/extracted_voice_lines.json"
 VOICE_SETTINGS_FILE = "tools/voice_settings.json"
+PHONETIC_OVERRIDES_FILE = "tools/phonetic_overrides.json"
 
 # Map characters to target wav/mp3 files for cloning in assets/voice_samples/
 CHAR_TARGETS = {
@@ -26,10 +27,10 @@ CHAR_TARGETS = {
     "zhangfei": "movies/clean/clean_kublai-khan.wav",
     "guanyu": "movies/clean/clean_angry-mulans-dad.wav",
     "zhoujing": "movies/clean/clean_mulans-dad.wav",
-    "chengyuanzhi": "movies/clean/clean_uncle-iroh.wav",
+    "chengyuanzhi": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
     "dengmao": "movies/clean/clean_mulan-emperor.wav",
     "yellowturban": "ai/jimmy_young_adult_male.mp3",
-    "narrator": "ai/julia_young_adult_smooth_neutral_female.mp3",
+    "narrator": "movies/clean/clean_uncle-iroh.wav",
     "noticeboard": "ai/keith_nonchalant_male.mp3",
     "volunteer": "ai/tungwong_young_adult_funny_friendly_male.mp3",
     "gongjing": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
@@ -75,11 +76,18 @@ def load_voice_lines_from_extracted():
         with open(VOICE_SETTINGS_FILE, "r", encoding="utf-8") as f:
             settings = json.load(f)
 
+    # Load phonetic overrides
+    phonetic_overrides = {}
+    if os.path.exists(PHONETIC_OVERRIDES_FILE):
+        with open(PHONETIC_OVERRIDES_FILE, "r", encoding="utf-8") as f:
+            phonetic_overrides = json.load(f)
+
     # Merge settings into lines
     result = []
     for line in lines:
+        line_id = line["id"]
         entry = {
-            "id": line["id"],
+            "id": line_id,
             "char": line["char"],
             "text": line.get(
                 "phonetic_text", line["text"]
@@ -87,9 +95,13 @@ def load_voice_lines_from_extracted():
             "original_text": line["text"],  # Keep original for reference
         }
 
+        # Apply phonetic overrides from external file
+        if line_id in phonetic_overrides:
+            entry["text"] = phonetic_overrides[line_id]
+
         # Apply per-line settings
-        if line["id"] in settings:
-            s = settings[line["id"]]
+        if line_id in settings:
+            s = settings[line_id]
             if "speed" in s:
                 entry["speed"] = s["speed"]
             if "emotion" in s:

@@ -14,6 +14,8 @@ export class CampaignSelectionScene extends BaseScene {
         this.selectedChapterIndex = 0;
         this.message = null;
         this.messageTimer = 0;
+        this.lastTime = 0;
+        this.fadeAlpha = 1;
         
         // Campaigns available in the selected chapter
         this.campaigns = [
@@ -32,8 +34,11 @@ export class CampaignSelectionScene extends BaseScene {
     }
 
     enter() {
-        assets.playMusic('title');
+        if (assets.currentMusicKey !== 'title') {
+            assets.playMusic('title');
+        }
         
+        this.fadeAlpha = 1;
         const gs = this.manager.gameState;
         const isComplete = gs.hasMilestone('chapter1_complete');
         const freedLuZhi = gs.hasMilestone('freed_luzhi');
@@ -43,15 +48,23 @@ export class CampaignSelectionScene extends BaseScene {
 
         // Update Liu Bei campaign info if complete
         const liubei = this.campaigns.find(c => c.id === 'liubei');
-        if (liubei && isComplete) {
-            liubei.isComplete = true;
-            liubei.name = 'THE OATH - STORY COMPLETE';
-            liubei.description = 'You formed a brotherhood to fight the Yellow Turban rebels and rescued general Dong Zhuo from certain death.';
+        if (liubei) {
+            // Check progress
+            liubei.isInProgress = (gs.get('currentCampaign') === 'liubei') || gs.hasMilestone('prologue_complete');
             
-            if (freedLuZhi) {
-                liubei.description += ' You chose the path of loyalty, freeing Lu Zhi and becoming an outlaw in the eyes of the corrupt court.';
-            } else {
-                liubei.description += ' You followed the law, allowing Lu Zhi to be taken to the capital despite the injustice of the charges.';
+            if (isComplete) {
+                liubei.isComplete = true;
+                liubei.name = 'THE OATH - STORY COMPLETE';
+                liubei.description = 'You formed a brotherhood to fight the Yellow Turban rebels and rescued general Dong Zhuo from certain death.';
+                
+                if (freedLuZhi) {
+                    liubei.description += ' You chose the path of loyalty, freeing Lu Zhi and becoming an outlaw in the eyes of the corrupt court.';
+                } else {
+                    liubei.description += ' You followed the law, allowing Lu Zhi to be taken to the capital despite the injustice of the charges.';
+                }
+
+                // Ensure lastScene is set to campaign_selection once complete
+                gs.set('lastScene', 'campaign_selection');
             }
         }
 
@@ -77,6 +90,11 @@ export class CampaignSelectionScene extends BaseScene {
         if (this.lastTime === 0) this.lastTime = timestamp;
         const dt = timestamp - this.lastTime;
         this.lastTime = timestamp;
+
+        if (this.fadeAlpha > 0) {
+            this.fadeAlpha -= dt * 0.001;
+            if (this.fadeAlpha < 0) this.fadeAlpha = 0;
+        }
 
         if (this.messageTimer > 0) {
             this.messageTimer -= dt;
@@ -117,6 +135,11 @@ export class CampaignSelectionScene extends BaseScene {
             const isSelected = this.selectedChapterIndex === i;
             const ty = timelineY + i * timelineSpacing;
             
+            // Check if this chapter has an active message
+            const hasMessage = this.message && this.message.chapterIndex === i;
+            const displayText = hasMessage ? this.message.text : ch.title;
+            const displayColor = hasMessage ? this.message.color : (isSelected ? '#ffd700' : (ch.available ? '#aaa' : '#444'));
+
             // Node circle
             ctx.fillStyle = isSelected ? '#ffd700' : (ch.available ? '#888' : '#333');
             ctx.beginPath();
@@ -129,8 +152,7 @@ export class CampaignSelectionScene extends BaseScene {
                 ctx.stroke();
             }
 
-            const color = isSelected ? '#ffd700' : (ch.available ? '#aaa' : '#444');
-            this.drawPixelText(ctx, ch.title, timelineX + 22, ty, { color, font: '8px Silkscreen' });
+            this.drawPixelText(ctx, displayText, timelineX + 22, ty, { color: displayColor, font: '8px Silkscreen' });
         });
 
         // 2. CHARACTER ICONS ON MAP
@@ -159,6 +181,24 @@ export class CampaignSelectionScene extends BaseScene {
                 // If complete, no idle animation
                 const animFrame = c.isComplete ? 0 : frame;
                 this.drawCharacter(ctx, charImg, 'standby', animFrame, c.x, c.y, { flip: false });
+
+                // Red "COMPLETE" text over character if complete
+                if (c.isComplete) {
+                    this.drawPixelText(ctx, "COMPLETE", c.x, c.y - 15, { 
+                        color: '#f00', 
+                        font: '8px Silkscreen', 
+                        align: 'center',
+                        outline: true
+                    });
+                } else if (c.isInProgress) {
+                    // Yellow "IN PROGRESS" text over character if in progress
+                    this.drawPixelText(ctx, "IN PROGRESS", c.x, c.y - 15, { 
+                        color: '#ffd700', 
+                        font: '8px Silkscreen', 
+                        align: 'center',
+                        outline: true
+                    });
+                }
                 
                 // Name label above head
                 const nameColor = isSelected ? '#ffd700' : (c.locked ? '#444' : '#fff');
@@ -171,10 +211,10 @@ export class CampaignSelectionScene extends BaseScene {
         // 3. SELECTION INFO BOX (Bottom Center)
         const selected = this.campaigns[this.selectedIndex];
         if (selected) {
-            const boxH = 65;
+            const boxH = 80; // Increased from 65 to accommodate 5 lines
             const boxW = canvas.width - 60;
             const bx = 45;
-            const by = canvas.height - boxH - 20;
+            const by = canvas.height - boxH - 10; // Moved up slightly to fit taller box
 
             ctx.fillStyle = 'rgba(10, 10, 10, 0.9)';
             ctx.fillRect(bx, by, boxW, boxH);
@@ -193,14 +233,15 @@ export class CampaignSelectionScene extends BaseScene {
 
             if (selected.locked) {
                 this.drawPixelText(ctx, "CAMPAIGN LOCKED", bx + boxW / 2, by + boxH - 10, { color: '#8b0000', font: '8px Silkscreen', align: 'center' });
-            } else if (this.message) {
+            } else if (this.message && this.message.chapterIndex === null) {
                 this.drawPixelText(ctx, this.message.text, bx + boxW / 2, by + boxH - 10, { color: this.message.color, font: '8px Silkscreen', align: 'center' });
             } else if (selected.isComplete) {
                 this.drawPixelText(ctx, "STORY COMPLETE", bx + boxW / 2, by + boxH - 10, { color: '#ff4444', font: '8px Silkscreen', align: 'center' });
             } else {
                 const pulse = Math.abs(Math.sin(Date.now() / 500));
                 ctx.globalAlpha = pulse;
-                this.drawPixelText(ctx, "CLICK CHARACTER TO BEGIN", bx + boxW / 2, by + boxH - 10, { color: '#eee', font: '8px Tiny5', align: 'center' });
+                const promptText = selected.isInProgress ? "CLICK CHARACTER TO CONTINUE" : "CLICK CHARACTER TO BEGIN";
+                this.drawPixelText(ctx, promptText, bx + boxW / 2, by + boxH - 10, { color: '#eee', font: '8px Tiny5', align: 'center' });
                 ctx.globalAlpha = 1.0;
             }
         }
@@ -221,10 +262,16 @@ export class CampaignSelectionScene extends BaseScene {
 
         // Visual helper for ESC
         this.drawPixelText(ctx, "[ESC]", backRect.x - 2, backRect.y + 3, { color: '#444', font: '8px Tiny5', align: 'right' });
+
+        // Fade Overlay
+        if (this.fadeAlpha > 0) {
+            ctx.fillStyle = `rgba(0, 0, 0, ${this.fadeAlpha})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
     }
 
-    addMessage(text, color = '#eee') {
-        this.message = { text, color };
+    addMessage(text, color = '#eee', chapterIndex = null) {
+        this.message = { text, color, chapterIndex };
         this.messageTimer = 2000;
         assets.playSound('ui_click');
     }
@@ -245,13 +292,16 @@ export class CampaignSelectionScene extends BaseScene {
         const timelineSpacing = 25;
         this.chapters.forEach((ch, i) => {
             const ty = timelineY + i * timelineSpacing;
-            if (x >= timelineX && x <= timelineX + 80 && y >= ty && y <= ty + 20) {
+            // Wider hit area for the timeline items
+            if (x >= 0 && x <= 120 && y >= ty - 5 && y <= ty + 20) {
+                // For now, only Chapter 1 is implemented
+                if (i > 0) {
+                    this.addMessage("COMING SOON!", '#ffd700', i);
+                    return;
+                }
+                
                 if (ch.available) {
                     this.selectedChapterIndex = i;
-                    if (ch.id === '2') {
-                        // Special "Coming soon" message for Chapter 2
-                        this.addMessage("Chapter 2: Coming soon!", '#ffd700');
-                    }
                 }
             }
         });

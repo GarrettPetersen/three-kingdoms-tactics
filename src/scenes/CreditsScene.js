@@ -16,7 +16,9 @@ export class CreditsScene extends BaseScene {
         this.scrollPos = 0;
         this.isLoaded = false;
         
-        assets.playMusic('title', 0.3); // Reuse title music or specific credits music
+        if (assets.currentMusicKey !== 'title') {
+            assets.playMusic('title', 0.3);
+        }
 
         try {
             const response = await fetch('credits.md');

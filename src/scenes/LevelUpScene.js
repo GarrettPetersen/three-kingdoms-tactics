@@ -38,7 +38,7 @@ export class LevelUpScene extends BaseScene {
         const current = this.levelUps[this.currentIndex];
         if (current && current.id.startsWith('ally') && current.newLevel === 2) {
             const gs = this.manager.gameState;
-            const classes = gs.get('unitClasses') || {};
+            const classes = gs.getCampaignVar('unitClasses') || {};
             if (!classes[current.id] || classes[current.id] === 'soldier') {
                 this.isPromoting = true;
             }
@@ -129,7 +129,7 @@ export class LevelUpScene extends BaseScene {
 
             // 2. Weapon Upgrades
             const gs = this.manager.gameState;
-            const unitClasses = gs.get('unitClasses') || {};
+            const unitClasses = gs.getCampaignVar('unitClasses') || {};
             const unitClass = this.chosenClass || unitClasses[current.id] || (current.id.startsWith('ally') ? 'soldier' : current.id);
             const path = UPGRADE_PATHS[unitClass];
             if (path && path[current.newLevel]) {
@@ -242,9 +242,9 @@ export class LevelUpScene extends BaseScene {
     selectPromotion(choice) {
         const current = this.levelUps[this.currentIndex];
         const gs = this.manager.gameState;
-        const classes = gs.get('unitClasses') || {};
+        const classes = gs.getCampaignVar('unitClasses') || {};
         classes[current.id] = choice;
-        gs.set('unitClasses', classes);
+        gs.setCampaignVar('unitClasses', classes);
         
         assets.playSound('ui_click');
         this.isPromoting = false;
@@ -321,6 +321,12 @@ export class LevelUpScene extends BaseScene {
             this.chosenClass = null;
             assets.playSound('victory', 0.5);
             this.checkPromotion();
+        }
+    }
+
+    handleKeyDown(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            this.handleInput(e);
         }
     }
 }

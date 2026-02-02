@@ -226,5 +226,11 @@ export class BattleSummaryScene extends BaseScene {
             this.timer = 10000;
         }
     }
+
+    handleKeyDown(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            this.handleInput(e);
+        }
+    }
 }
 
