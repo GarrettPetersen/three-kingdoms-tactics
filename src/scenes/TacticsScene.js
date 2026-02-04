@@ -3147,7 +3147,8 @@ export class TacticsScene extends BaseScene {
             if (call.type === 'hex') {
                 const surfaceY = call.y - call.elevation + effect.yOffset;
                 const edgeStatus = this.tacticsMap.getEdgeStatus(call.r, call.q);
-                this.drawTile(call.terrain, call.x, surfaceY, call.elevation, call.r, call.q, edgeStatus);
+                const slopeInfo = this.tacticsMap.getSlopeInfo(call.r, call.q);
+                this.drawTile(call.terrain, call.x, surfaceY, call.elevation, call.r, call.q, edgeStatus, slopeInfo);
                 
                 if (call.isReachable) {
                     this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 215, 0, 0.3)');
@@ -3702,7 +3703,7 @@ export class TacticsScene extends BaseScene {
         }
     }
 
-    drawTile(terrainType, x, y, elevation = 0, r = 0, q = 0, edgeStatus = {}) {
+    drawTile(terrainType, x, y, elevation = 0, r = 0, q = 0, edgeStatus = {}, slopeInfo = {}) {
         const { ctx, config } = this.manager;
         const animatedKey = this.getAnimatedTerrain(terrainType, r, q);
         const img = assets.getImage(animatedKey);
@@ -3719,6 +3720,88 @@ export class TacticsScene extends BaseScene {
         const sourceHeight = img.height;
         
         const silhouette = img.silhouette;
+        const elevationStep = this.tacticsMap.elevationStep; // Height difference per level (3 pixels)
+        
+        // Get neighbor positions for slope calculations
+        const getNeighborElevation = (direction) => {
+            const neighbor = this.tacticsMap.getCell(r + direction.dr, q + direction.dq);
+            if (!neighbor) return null;
+            return neighbor.elevation || 0;
+        };
+        
+        const directions = this.tacticsMap.getDirections(r);
+        const labels = ['NE', 'E', 'SE', 'SW', 'W', 'NW'];
+        const currentCell = this.tacticsMap.getCell(r, q);
+        const isCurrentBuilding = currentCell && (currentCell.terrain.includes('house') || currentCell.terrain.includes('wall'));
+        
+        // Helper to check if an edge should show black outline (cliffs only, not buildings)
+        const isCliffEdge = (edgeLabel) => {
+            if (!edgeStatus[edgeLabel]) return false;
+            const direction = directions[labels.indexOf(edgeLabel)];
+            if (!direction) return false;
+            const neighbor = this.tacticsMap.getCell(r + direction.dr, q + direction.dq);
+            if (!neighbor) return false;
+            // Don't show black edges for buildings
+            if (isCurrentBuilding) return false;
+            const isNeighborBuilding = neighbor.terrain && (neighbor.terrain.includes('house') || neighbor.terrain.includes('wall'));
+            if (isNeighborBuilding) return false;
+            // Only show black edge if it's a cliff (height diff > 1)
+            const levelDiff = Math.abs((neighbor.level || 0) - (currentCell?.level || 0));
+            return levelDiff > 1;
+        };
+        
+        // Determine which edge each column is on, with smooth blending at boundaries
+        const getEdgeForColumn = (ix) => {
+            if (ix >= 7 && ix <= 17) {
+                // Smooth transition between NW and SW around column 12
+                if (ix <= 10) return 'NW';
+                if (ix >= 14) return 'SW';
+                // Blend zone: columns 11-13
+                return null; // Will be handled specially
+            }
+            if (ix >= 18 && ix <= 28) {
+                // Smooth transition between NE and SE around column 23
+                if (ix <= 21) return 'NE';
+                if (ix >= 25) return 'SE';
+                // Blend zone: columns 22-24
+                return null; // Will be handled specially
+            }
+            if (ix < 7) return 'W';
+            if (ix > 28) return 'E';
+            return null;
+        };
+        
+        // Helper to blend slope offsets from two edges
+        const blendSlopeOffset = (ix, edge1, edge2, blendStart, blendEnd) => {
+            if (!slopeInfo[edge1] && !slopeInfo[edge2]) return 0;
+            
+            const blendProgress = (ix - blendStart) / (blendEnd - blendStart);
+            const direction1 = directions[labels.indexOf(edge1)];
+            const direction2 = directions[labels.indexOf(edge2)];
+            const elev1 = getNeighborElevation(direction1);
+            const elev2 = getNeighborElevation(direction2);
+            
+            let offset1 = 0, offset2 = 0;
+            if (slopeInfo[edge1] && elev1 !== null) {
+                const slopeDir1 = slopeInfo[edge1];
+                const slopeHeight1 = slopeDir1 * elevationStep;
+                // Calculate progress along edge1 (approaching the blend zone)
+                const edgeProgress1 = 1.0; // At the end of edge1
+                offset1 = slopeHeight1 * edgeProgress1;
+            }
+            if (slopeInfo[edge2] && elev2 !== null) {
+                const slopeDir2 = slopeInfo[edge2];
+                const slopeHeight2 = slopeDir2 * elevationStep;
+                // Calculate progress along edge2 (starting from the blend zone)
+                const edgeProgress2 = 0.0; // At the start of edge2
+                offset2 = slopeHeight2 * edgeProgress2;
+            }
+            
+            // Smooth blend between the two edges
+            const t = blendProgress;
+            const smoothT = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+            return offset1 * (1 - smoothT) + offset2 * smoothT;
+        };
         
         for (let ix = 0; ix < 36; ix++) {
             let edgeY = null;
@@ -3728,55 +3811,170 @@ export class TacticsScene extends BaseScene {
             if (relIx >= 7 && relIx <= 17) edgeY = 25 + Math.floor((relIx - 7) * (30 - 25) / 10);
             else if (relIx >= 18 && relIx <= 28) edgeY = 30 + Math.floor((relIx - 18) * (25 - 30) / 10);
 
+            // Check if this column is on a sloped edge
+            const edge = getEdgeForColumn(ix);
+            let slopeOffset = 0;
+            let hasSlope = false;
+            
+            // Handle blend zones (smooth transitions between edges)
+            if (edge === null && ix >= 11 && ix <= 13) {
+                // Blend zone between NW and SW
+                slopeOffset = blendSlopeOffset(ix, 'NW', 'SW', 11, 13);
+                hasSlope = slopeOffset !== 0;
+            } else if (edge === null && ix >= 22 && ix <= 24) {
+                // Blend zone between NE and SE
+                slopeOffset = blendSlopeOffset(ix, 'NE', 'SE', 22, 24);
+                hasSlope = slopeOffset !== 0;
+            } else if (edge && slopeInfo[edge] !== undefined) {
+                hasSlope = true;
+                const direction = directions[labels.indexOf(edge)];
+                const neighborElevation = getNeighborElevation(direction);
+                if (neighborElevation !== null && direction) {
+                    const slopeDirection = slopeInfo[edge]; // +1 = uphill, -1 = downhill
+                    // Calculate how much to stretch this column
+                    // For columns on the edge, we stretch them to connect to the neighbor
+                    const slopeHeight = slopeDirection * elevationStep;
+                    
+                    // Determine how far along the edge this column is (0 to 1)
+                    let edgeProgress = 0;
+                    if (edge === 'NW') {
+                        edgeProgress = Math.max(0, Math.min(1, (ix - 7) / 3)); // Columns 7-10, normalized to 0-1
+                    } else if (edge === 'SW') {
+                        edgeProgress = Math.max(0, Math.min(1, (ix - 14) / 3)); // Columns 14-17, normalized to 0-1
+                    } else if (edge === 'NE') {
+                        edgeProgress = Math.max(0, Math.min(1, (ix - 18) / 3)); // Columns 18-21, normalized to 0-1
+                    } else if (edge === 'SE') {
+                        edgeProgress = Math.max(0, Math.min(1, (ix - 25) / 3)); // Columns 25-28, normalized to 0-1
+                    } else if (edge === 'W') {
+                        edgeProgress = Math.max(0, Math.min(1, ix / 6)); // Columns 0-6, clamped
+                    } else if (edge === 'E') {
+                        edgeProgress = Math.max(0, Math.min(1, (ix - 29) / 6)); // Columns 29-35, clamped
+                    }
+                    
+                    // Apply smooth easing to reduce visible steps
+                    // Ease-in-out cubic for smoother transitions
+                    const t = edgeProgress;
+                    const smoothProgress = t < 0.5 
+                        ? 4 * t * t * t 
+                        : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                    
+                    // Interpolate the slope offset based on position along edge
+                    slopeOffset = slopeHeight * smoothProgress;
+                }
+            }
+
             if (edgeY !== null) {
                 // Top part (above the footprint edges)
                 const topPartHeight = footprintStart + edgeY;
-                ctx.drawImage(img, ix, 0, 1, topPartHeight, dx + ix, dy, 1, topPartHeight);
                 
-                // Impassable Edge Highlighting (Black Outline)
+                // If there's a slope, stretch the column vertically
+                if (hasSlope && slopeOffset !== 0) {
+                    // Stretch the top part to create the ramp
+                    // slopeOffset is positive for uphill (neighbor higher), negative for downhill (neighbor lower)
+                    const stretchedHeight = topPartHeight + Math.abs(slopeOffset);
+                    // For downhill (negative offset), we need to start drawing earlier (move up)
+                    // For uphill (positive offset), we extend downward from the same start point
+                    const stretchY = slopeOffset < 0 ? slopeOffset : 0;
+                    
+                    // Draw stretched column - clamp to prevent going off-screen
+                    const drawY = dy + stretchY;
+                    if (drawY >= 0 && drawY < this.manager.canvas.height) {
+                        ctx.drawImage(img, ix, 0, 1, topPartHeight, dx + ix, drawY, 1, stretchedHeight);
+                    } else {
+                        // Fallback: draw normally if coordinates are invalid
+                        ctx.drawImage(img, ix, 0, 1, topPartHeight, dx + ix, dy, 1, topPartHeight);
+                    }
+                } else {
+                    ctx.drawImage(img, ix, 0, 1, topPartHeight, dx + ix, dy, 1, topPartHeight);
+                }
+                
+                // Impassable Edge Highlighting (Black Outline) - only for cliffs, not buildings
                 ctx.fillStyle = '#000000';
                 if (silhouette) {
                     // Top edges (NW/NE) - follow the silhouette
-                    if ((edgeStatus.NW && ix < 18) || (edgeStatus.NE && ix >= 18)) {
+                    if (((edgeStatus.NW && isCliffEdge('NW') && ix < 18) || (edgeStatus.NE && isCliffEdge('NE') && ix >= 18))) {
                         const sy = silhouette.top[ix];
                         if (sy !== -1 && sy < topPartHeight) {
-                            ctx.fillRect(dx + ix, dy + sy, 1, 2); // 2px height for visibility
+                            const highlightY = hasSlope && slopeOffset < 0 ? dy + sy + slopeOffset : dy + sy;
+                            ctx.fillRect(dx + ix, Math.max(0, highlightY), 1, 2);
                         }
                     }
                     // Bottom edges (SW/SE) - follow the footprint edge
-                    if ((edgeStatus.SW && ix < 18) || (edgeStatus.SE && ix >= 18)) {
-                        ctx.fillRect(dx + ix, dy + topPartHeight - 1, 1, 2);
+                    if (((edgeStatus.SW && isCliffEdge('SW') && ix < 18) || (edgeStatus.SE && isCliffEdge('SE') && ix >= 18))) {
+                        const edgeYPos = hasSlope && slopeOffset < 0 ? dy + topPartHeight - 1 + slopeOffset : dy + topPartHeight - 1;
+                        ctx.fillRect(dx + ix, Math.max(0, edgeYPos), 1, 2);
                     }
                 } else {
                     // Fallback without silhouette
-                    if ((edgeStatus.NW && ix < 18) || (edgeStatus.NE && ix >= 18)) {
-                        ctx.fillRect(dx + ix, dy, 1, 2);
+                    if (((edgeStatus.NW && isCliffEdge('NW') && ix < 18) || (edgeStatus.NE && isCliffEdge('NE') && ix >= 18))) {
+                        const highlightY = hasSlope && slopeOffset < 0 ? dy + slopeOffset : dy;
+                        ctx.fillRect(dx + ix, Math.max(0, highlightY), 1, 2);
                     }
                 }
                 
-                // The vertical "side" edge
-                ctx.drawImage(img, ix, topPartHeight, 1, 1, dx + ix, dy + topPartHeight, 1, extraDepth);
+                // The vertical "side" edge - keep it aligned with the top part
+                // Calculate where the side edge should be based on the stretched top part
+                let sideY = dy + topPartHeight;
+                if (hasSlope && slopeOffset !== 0) {
+                    // If we stretched upward (downhill), adjust the side edge position
+                    if (slopeOffset < 0) {
+                        sideY = dy + topPartHeight + slopeOffset;
+                    }
+                    // If uphill (slopeOffset > 0), the side edge stays at the same position
+                }
+                ctx.drawImage(img, ix, topPartHeight, 1, 1, dx + ix, sideY, 1, extraDepth);
                 
                 // The bottom part of the hex "lip"
                 const bottomPartHeight = sourceHeight - topPartHeight;
-                ctx.drawImage(img, ix, topPartHeight, 1, bottomPartHeight, dx + ix, dy + topPartHeight + extraDepth, 1, bottomPartHeight);
+                ctx.drawImage(img, ix, topPartHeight, 1, bottomPartHeight, dx + ix, sideY + extraDepth, 1, bottomPartHeight);
             } else {
-                ctx.drawImage(img, ix, 0, 1, sourceHeight, dx + ix, dy, 1, sourceHeight);
-
-                // Handle edges for the sides of the hex (columns 0-6 and 29-35)
-                ctx.fillStyle = '#000000';
-                if (silhouette) {
-                    if ((edgeStatus.NW || edgeStatus.W) && ix < 7) {
-                        const sy = silhouette.top[ix];
-                        if (sy !== -1) ctx.fillRect(dx + ix, dy + sy, 2, 2);
-                    }
-                    if ((edgeStatus.NE || edgeStatus.E) && ix > 28) {
-                        const sy = silhouette.top[ix];
-                        if (sy !== -1) ctx.fillRect(dx + ix, dy + sy, 2, 2);
+                // For side columns (W/E), also handle slopes
+                if (hasSlope && slopeOffset !== 0) {
+                    const stretchedHeight = sourceHeight + Math.abs(slopeOffset);
+                    const stretchY = slopeOffset < 0 ? slopeOffset : 0;
+                    const drawY = dy + stretchY;
+                    if (drawY >= 0 && drawY < this.manager.canvas.height) {
+                        ctx.drawImage(img, ix, 0, 1, sourceHeight, dx + ix, drawY, 1, stretchedHeight);
+                    } else {
+                        // Fallback: draw normally if coordinates are invalid
+                        ctx.drawImage(img, ix, 0, 1, sourceHeight, dx + ix, dy, 1, sourceHeight);
                     }
                 } else {
-                    if ((edgeStatus.NW || edgeStatus.W) && ix < 7) ctx.fillRect(dx + ix, dy, 2, 2);
-                    if ((edgeStatus.NE || edgeStatus.E) && ix > 28) ctx.fillRect(dx + ix, dy, 2, 2);
+                    ctx.drawImage(img, ix, 0, 1, sourceHeight, dx + ix, dy, 1, sourceHeight);
+                }
+
+                // Handle edges for the sides of the hex (columns 0-6 and 29-35)
+                // For left side (columns 0-6), check W edge specifically
+                // For right side (columns 29-35), check E edge specifically
+                ctx.fillStyle = '#000000';
+                if (silhouette) {
+                    // Left side (W edge) - columns 0-6
+                    if (ix < 7 && edgeStatus.W && isCliffEdge('W')) {
+                        const sy = silhouette.top[ix];
+                        if (sy !== -1) {
+                            const highlightY = hasSlope && slopeOffset < 0 ? dy + slopeOffset + sy : dy + sy;
+                            ctx.fillRect(dx + ix, Math.max(0, highlightY), 2, 2);
+                        }
+                    }
+                    // Right side (E edge) - columns 29-35
+                    if (ix > 28 && edgeStatus.E && isCliffEdge('E')) {
+                        const sy = silhouette.top[ix];
+                        if (sy !== -1) {
+                            const highlightY = hasSlope && slopeOffset < 0 ? dy + slopeOffset + sy : dy + sy;
+                            ctx.fillRect(dx + ix, Math.max(0, highlightY), 2, 2);
+                        }
+                    }
+                } else {
+                    // Left side (W edge) - columns 0-6
+                    if (ix < 7 && edgeStatus.W && isCliffEdge('W')) {
+                        const highlightY = hasSlope && slopeOffset < 0 ? dy + slopeOffset : dy;
+                        ctx.fillRect(dx + ix, Math.max(0, highlightY), 2, 2);
+                    }
+                    // Right side (E edge) - columns 29-35
+                    if (ix > 28 && edgeStatus.E && isCliffEdge('E')) {
+                        const highlightY = hasSlope && slopeOffset < 0 ? dy + slopeOffset : dy;
+                        ctx.fillRect(dx + ix, Math.max(0, highlightY), 2, 2);
+                    }
                 }
             }
         }

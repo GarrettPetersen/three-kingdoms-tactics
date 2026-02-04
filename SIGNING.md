@@ -93,3 +93,4 @@ Notarization happens automatically after signing.
 - You need to notarize the app (see above)
 - Or users need to right-click → Open (first time only)
 
+

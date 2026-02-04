@@ -106,6 +106,38 @@ export class TacticsMap {
         return status;
     }
 
+    getSlopeInfo(r, q) {
+        const cell = this.getCell(r, q);
+        if (!cell) return {};
+        
+        // Never create slopes for buildings/walls - they should always be cliffs
+        const isBuilding = cell.terrain && (cell.terrain.includes('house') || cell.terrain.includes('wall'));
+        if (isBuilding) return {};
+        
+        const slopes = {};
+        const directions = this.getDirections(r);
+        const labels = ['NE', 'E', 'SE', 'SW', 'W', 'NW'];
+        
+        directions.forEach((d, i) => {
+            const n = this.getCell(r + d.dr, q + d.dq);
+            const label = labels[i];
+            if (n) {
+                // Also check if neighbor is a building - don't create slopes to/from buildings
+                const neighborIsBuilding = n.terrain && (n.terrain.includes('house') || n.terrain.includes('wall'));
+                if (neighborIsBuilding) return;
+                
+                const levelDiff = (n.level || 0) - (cell.level || 0);
+                // Slope exists if height difference is exactly 1 (walkable)
+                // Positive = neighbor is higher (uphill slope)
+                // Negative = neighbor is lower (downhill slope)
+                if (Math.abs(levelDiff) === 1) {
+                    slopes[label] = levelDiff;
+                }
+            }
+        });
+        return slopes;
+    }
+
     getDirectionIndex(fromR, fromQ, toR, toQ) {
         const directions = this.getDirections(fromR);
         // Check distance 1 neighbors
@@ -220,6 +252,11 @@ export class TacticsMap {
             
             // First smooth out any single-tile elevation islands
             this.smoothLevels();
+            
+            // For river/lake layouts, ensure no cliffs (max 1 level difference between neighbors)
+            if (layout === 'river' || layout === 'lake_edge') {
+                this.ensureGradualSlopes();
+            }
             
             // Then ensure everything is reachable based on the smoothed levels
             this.ensureReachability();
@@ -612,21 +649,79 @@ export class TacticsMap {
 
     generateRiver() {
         // A winding river from one side to another
+        // River is at level 0 (lowest point), banks rise to level 1 (same as surrounding plain)
+        // River (0) -> Bank (1) -> Plain (1) - all walkable slopes
+        
+        // First, set all terrain to plain at level 1 (the elevated plain)
+        for (let r = 0; r < this.height; r++) {
+            for (let q = 0; q < this.width; q++) {
+                const cell = this.grid[r][q];
+                if (cell && !cell.terrain.includes('house') && !cell.terrain.includes('wall')) {
+                    cell.level = 1;
+                    cell.terrain = this.getDefaultGrass();
+                }
+            }
+        }
+        
+        // Now carve the river at level 0
         let r = Math.floor(Math.random() * this.height);
         let q = 0;
+        const riverCells = new Set();
+        
         while (q < this.width) {
-            this.setWater(r, q, true); // Deep
+            const cell = this.getCell(r, q);
+            if (cell) {
+                this.setWater(r, q, true); // Deep water at level 0
+                cell.level = 0; // River is lowest
+                riverCells.add(`${r},${q}`);
+            }
+            
+            // Mark shallow water banks
             const neighbors = this.getNeighbors(r, q);
-            neighbors.forEach(n => { if (Math.random() < 0.4) this.setWater(n.r, n.q, false); }); // Shallow banks
+            neighbors.forEach(n => { 
+                if (Math.random() < 0.4) {
+                    this.setWater(n.r, n.q, false); // Shallow water at level 0
+                    n.level = 0; // River is lowest
+                    riverCells.add(`${n.r},${n.q}`);
+                }
+            });
             
             q++;
             if (Math.random() < 0.3) r = Math.max(0, Math.min(this.height - 1, r + (Math.random() > 0.5 ? 1 : -1)));
         }
+        
+        // Create gradual banks around the river
+        // River (0) -> Bank (1) -> Plain (1) - all walkable slopes
+        const bankCells = new Set();
+        riverCells.forEach(key => {
+            const [r, q] = key.split(',').map(Number);
+            const neighbors = this.getNeighbors(r, q);
+            neighbors.forEach(n => {
+                const nKey = `${n.r},${n.q}`;
+                if (!riverCells.has(nKey)) {
+                    bankCells.add(nKey);
+                    // Banks are at level 1 (same as plain, walkable slope from level 0)
+                    n.level = 1;
+                    // Use sand, mud, or earth for bank terrain (not mountain stone)
+                    if (!n.terrain.includes('house') && !n.terrain.includes('wall')) {
+                        const bankTerrain = Math.random() < 0.4 ? 'sand_01' : 
+                                          (Math.random() < 0.5 ? 'mud_01' : 'earth_cracked');
+                        n.terrain = bankTerrain;
+                    }
+                }
+            });
+        });
+        
+        // All other cells remain at level 1 (the plain), matching the bank height
     }
 
     generateLake() {
         // Large body of water on one edge
+        // Water at level 0, then sand, then bank (level 1-2) up to other terrain
         const edge = Math.floor(Math.random() * 4); // 0: Top, 1: Right, 2: Bottom, 3: Left
+        const waterCells = new Set();
+        const sandCells = new Set();
+        
         for (let r = 0; r < this.height; r++) {
             for (let q = 0; q < this.width; q++) {
                 let dist = 0;
@@ -636,10 +731,66 @@ export class TacticsMap {
                 if (edge === 3) dist = q;
 
                 if (dist < 3) {
-                    this.setWater(r, q, dist < 2);
+                    if (dist < 2) {
+                        // Deep water at level 0
+                        this.setWater(r, q, true);
+                        waterCells.add(`${r},${q}`);
+                    } else {
+                        // Shallow water/sand transition at level 0
+                        this.setWater(r, q, false);
+                        const cell = this.getCell(r, q);
+                        if (cell && Math.random() < 0.7) {
+                            cell.terrain = 'sand_01';
+                            sandCells.add(`${r},${q}`);
+                        } else {
+                            waterCells.add(`${r},${q}`);
+                        }
+                    }
                 }
             }
         }
+        
+        // Create bank around the lake (sand/water area)
+        const allWaterCells = new Set([...waterCells, ...sandCells]);
+        const bankCells = new Set();
+        
+        // First tier: immediate neighbors become level 1 bank
+        allWaterCells.forEach(key => {
+            const [r, q] = key.split(',').map(Number);
+            const neighbors = this.getNeighbors(r, q);
+            neighbors.forEach(n => {
+                const nKey = `${n.r},${n.q}`;
+                if (!allWaterCells.has(nKey)) {
+                    bankCells.add(nKey);
+                    n.level = 1;
+                    // Use sand for the immediate bank
+                    if (!n.terrain.includes('house') && !n.terrain.includes('wall')) {
+                        n.terrain = 'sand_01';
+                    }
+                }
+            });
+        });
+        
+        // Second tier: further neighbors become level 2 (gradual slope up)
+        bankCells.forEach(key => {
+            const [r, q] = key.split(',').map(Number);
+            const neighbors = this.getNeighbors(r, q);
+            neighbors.forEach(n => {
+                const nKey = `${n.r},${n.q}`;
+                if (!allWaterCells.has(nKey) && !bankCells.has(nKey)) {
+                    // Second tier bank at level 2
+                    if (n.level === 0 && !n.terrain.includes('house') && !n.terrain.includes('wall')) {
+                        if (Math.random() < 0.7) {
+                            n.level = 2;
+                            // Transition from sand to earth/grass
+                            if (Math.random() < 0.5) {
+                                n.terrain = 'earth_cracked';
+                            }
+                        }
+                    }
+                }
+            });
+        });
     }
 
     setMountain(r, q, level = 2, impassable = true) {
@@ -721,6 +872,39 @@ export class TacticsMap {
         }
     }
 
+    ensureGradualSlopes() {
+        // Ensure no cliffs (max 1 level difference) for river/lake layouts
+        // This creates smooth slopes instead of cliffs
+        let changed = true;
+        let iterations = 0;
+        while (changed && iterations < 10) {
+            changed = false;
+            for (let r = 0; r < this.height; r++) {
+                for (let q = 0; q < this.width; q++) {
+                    const cell = this.grid[r][q];
+                    if (!cell) continue;
+                    
+                    const neighbors = this.getNeighbors(r, q);
+                    for (const neighbor of neighbors) {
+                        const levelDiff = Math.abs(cell.level - neighbor.level);
+                        if (levelDiff > 1) {
+                            // Too steep! Adjust to create a gradual slope
+                            if (cell.level > neighbor.level) {
+                                // Cell is higher - lower it to be 1 level above neighbor
+                                cell.level = neighbor.level + 1;
+                            } else {
+                                // Neighbor is higher - raise cell to be 1 level below neighbor
+                                cell.level = neighbor.level - 1;
+                            }
+                            changed = true;
+                        }
+                    }
+                }
+            }
+            iterations++;
+        }
+    }
+
     smoothElevation() {
         // Elevation pixels = level * elevationStep for more distinct 3D look
         for (let r = 0; r < this.height; r++) {
@@ -735,6 +919,11 @@ export class TacticsMap {
         // When two adjacent hexes have different elevation but the same terrain type,
         // change the higher one to rock/mud to make the cliff visually clear.
         // This prevents confusing cliffs between two identical grass/mud hexes.
+        // Skip this for river/lake layouts to preserve bank terrain.
+        const layout = this.params?.layout || 'plain';
+        if (layout === 'river' || layout === 'lake_edge') {
+            return; // Don't vary terrain for river/lake - banks should stay as sand/mud/earth
+        }
         
         const grassTypes = ['grass_01', 'grass_02', 'grass_03'];
         const mudTypes = ['mud_01', 'earth_cracked', 'earth_rocky'];
@@ -752,6 +941,9 @@ export class TacticsMap {
                 const cell = this.grid[r][q];
                 if (!cell || cell.impassable) continue;
                 
+                // Skip water and sand (river/lake terrain)
+                if (cell.terrain.includes('water') || cell.terrain.includes('sand')) continue;
+                
                 // Skip non-base terrain
                 const isGrass = grassTypes.includes(cell.terrain);
                 const isMud = mudTypes.includes(cell.terrain);
@@ -762,9 +954,15 @@ export class TacticsMap {
                 for (const neighbor of neighbors) {
                     if (!neighbor || neighbor.impassable) continue;
                     
+                    // Skip water and sand neighbors
+                    if (neighbor.terrain.includes('water') || neighbor.terrain.includes('sand')) continue;
+                    
                     // Check if there's an elevation difference
                     const levelDiff = Math.abs(cell.level - neighbor.level);
                     if (levelDiff === 0) continue;
+                    
+                    // Only vary terrain for actual cliffs (level diff > 1), not slopes
+                    if (levelDiff <= 1) continue;
                     
                     // Check if they have the same terrain type
                     const sameType = cell.terrain === neighbor.terrain ||

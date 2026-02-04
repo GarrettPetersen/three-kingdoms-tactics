@@ -144,7 +144,7 @@ export class CampaignSelectionScene extends BaseScene {
             const hasMessage = this.message && this.message.chapterIndex === i;
             const displayText = hasMessage ? this.message.text : ch.title;
             const displayColor = hasMessage ? this.message.color : (isSelected ? '#ffd700' : (ch.available ? '#aaa' : '#444'));
-
+            
             // Node circle
             ctx.fillStyle = isSelected ? '#ffd700' : (ch.available ? '#888' : '#333');
             ctx.beginPath();
@@ -322,7 +322,7 @@ export class CampaignSelectionScene extends BaseScene {
                     if (c.isComplete) {
                         this.addMessage("This story is complete.", '#ff4444');
                     } else {
-                        this.manager.switchTo('map', { campaignId: c.id });
+                    this.manager.switchTo('map', { campaignId: c.id });
                     }
                 } else {
                     this.selectedIndex = i;

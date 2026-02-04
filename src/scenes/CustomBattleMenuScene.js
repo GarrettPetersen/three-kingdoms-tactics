@@ -274,9 +274,12 @@ export class CustomBattleMenuScene extends BaseScene {
                 this.drawCharacter(ctx, charImg, 'standby', 0, 0, 0);
                 ctx.restore();
             }
-            this.drawPixelText(ctx, u.name.toUpperCase(), rect.x + rect.w/2, rect.y + 2, { 
+            // Truncate name with ellipsis if too long
+            const maxWidth = rect.w - 4; // Leave some padding
+            const truncatedName = this.truncateText(ctx, u.name.toUpperCase(), maxWidth, '8px Tiny5');
+            this.drawPixelText(ctx, truncatedName, rect.x + rect.w/2, rect.y + 2, { 
                 color: '#fff', 
-                font: u.name.length > 8 ? '5px Silkscreen' : '8px Tiny5',
+                font: '8px Tiny5',
                 align: 'center' 
             });
             this.buttonRects.push(rect);
@@ -318,8 +321,10 @@ export class CustomBattleMenuScene extends BaseScene {
             }
 
             const nameColor = factionColors[u.faction] || '#fff';
-            const name = i >= 11 ? u.name.substring(0, 5) : u.name;
-            this.drawPixelText(ctx, name.toUpperCase(), rect.x + 18, rect.y + 3, { color: nameColor, font: '8px Tiny5' });
+            // Truncate name with ellipsis if too long (account for sprite width ~16px)
+            const maxWidth = rect.w - 18 - 2; // Leave space for sprite and padding
+            const truncatedName = this.truncateText(ctx, u.name.toUpperCase(), maxWidth, '8px Tiny5');
+            this.drawPixelText(ctx, truncatedName, rect.x + 18, rect.y + 3, { color: nameColor, font: '8px Tiny5' });
             this.buttonRects.push(rect);
         });
 
@@ -356,6 +361,40 @@ export class CustomBattleMenuScene extends BaseScene {
         const backRect = { x: cx - 40, y: 210, w: 80, h: 20, type: 'menu_view' };
         this.drawButton(ctx, "RETURN", backRect, false, '#444');
         this.buttonRects.push(backRect);
+    }
+
+    truncateText(ctx, text, maxWidth, font = '8px Tiny5') {
+        ctx.save();
+        ctx.font = font;
+        const ellipsis = '...';
+        const ellipsisWidth = ctx.measureText(ellipsis).width;
+        
+        // If text fits, return as-is
+        if (ctx.measureText(text).width <= maxWidth) {
+            ctx.restore();
+            return text;
+        }
+        
+        // Binary search for the longest text that fits
+        let low = 0;
+        let high = text.length;
+        let best = 0;
+        
+        while (low <= high) {
+            const mid = Math.floor((low + high) / 2);
+            const testText = text.substring(0, mid) + ellipsis;
+            const width = ctx.measureText(testText).width;
+            
+            if (width <= maxWidth) {
+                best = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        
+        ctx.restore();
+        return best > 0 ? text.substring(0, best) + ellipsis : ellipsis;
     }
 
     drawButton(ctx, text, rect, isSelected, bgColor = '#333') {
