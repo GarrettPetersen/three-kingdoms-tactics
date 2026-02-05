@@ -289,15 +289,186 @@ export class TacticsScene extends BaseScene {
             this.introScript = battleDef.introScript;
         }
         
-        if (this.introScript) {
+        if (this.introScript && this.introScript.length > 0) {
             this.isIntroDialogueActive = true;
             this.dialogueStep = 0;
+        } else if (this.battleId === 'yellow_turban_rout') {
+            // Start combat immediately, dialogue comes after
+            this.isIntroDialogueActive = false;
+            this.startYellowTurbanCutsceneCombat();
         } else if (this.isCutscene) {
             // Cutscenes handle their own flow - don't start NPC phase
             this.isIntroDialogueActive = false;
         } else {
             this.isIntroDialogueActive = false;
             this.startNpcPhase(); // Skip to NPC phase if no dialogue
+        }
+    }
+
+    startYellowTurbanCutsceneCombat() {
+        this.isProcessingTurn = true;
+        this.cutsceneCombatComplete = false; // Flag to track when combat is done
+        
+        // Reset all units for combat
+        this.units.forEach(u => {
+            u.hasMoved = false;
+            u.hasAttacked = false;
+            u.hasActed = false;
+        });
+        
+        // Use normal NPC phase (allied move → enemy move → telegraph → execution)
+        // This will be intercepted to skip player turn and go straight to execution
+        this.startNpcPhase();
+    }
+    
+    checkCutsceneCombatComplete() {
+        // After execution phase, start retreat
+        const soldiers = this.units.filter(u => u.id.startsWith('soldier'));
+        const survivors = soldiers.filter(s => s.hp > 0);
+        
+        // Phase 2: Surviving soldiers flee completely offscreen
+        this.isProcessingTurn = true;
+        let retreatIndex = 0;
+        
+        const executeRetreat = () => {
+            if (retreatIndex >= survivors.length) {
+                // Phase 3: Zhang brothers move to center
+                const zhangBrothers = this.units.filter(u => u.id === 'zhangjue' || u.id === 'zhangbao' || u.id === 'zhangliang');
+                const centerR = Math.floor(this.manager.config.mapHeight / 2);
+                const centerQ = Math.floor(this.manager.config.mapWidth / 2);
+                let brotherIndex = 0;
+                
+                const executeBrotherMove = () => {
+                    if (brotherIndex >= zhangBrothers.length) {
+                        // Phase 4: Show Zhang brothers dialogue
+                        setTimeout(() => {
+                            this.isProcessingTurn = false;
+                            this.startPostCombatDialogue();
+                        }, 500);
+                        return;
+                    }
+                    
+                    const brother = zhangBrothers[brotherIndex];
+                    if (brother && brother.hp > 0) {
+                        // Move to center area (spread them out slightly)
+                        const targetQ = centerQ + (brotherIndex - 1); // -1, 0, +1
+                        const targetR = centerR;
+                        
+                        const path = this.tacticsMap.getPath(brother.r, brother.q, targetR, targetQ, 10, brother);
+                        if (path && path.length > 1) {
+                            const targetCell = this.tacticsMap.getCell(targetR, targetQ);
+                            if (targetCell && !targetCell.unit && !targetCell.impassable) {
+                                const oldCell = this.tacticsMap.getCell(brother.r, brother.q);
+                                if (oldCell) oldCell.unit = null;
+                                
+                                brother.startPath(path);
+                                targetCell.unit = brother;
+                                brother.r = targetR;
+                                brother.q = targetQ;
+                                
+                                setTimeout(() => {
+                                    brotherIndex++;
+                                    executeBrotherMove();
+                                }, 800);
+                            } else {
+                                brotherIndex++;
+                                setTimeout(executeBrotherMove, 100);
+                            }
+                        } else {
+                            brotherIndex++;
+                            setTimeout(executeBrotherMove, 100);
+                        }
+                    } else {
+                        brotherIndex++;
+                        setTimeout(executeBrotherMove, 100);
+                    }
+                };
+                executeBrotherMove();
+                return;
+            }
+            
+            const soldier = survivors[retreatIndex];
+            if (soldier && soldier.hp > 0) {
+                // Move completely offscreen (beyond map edge)
+                const rightmostQ = this.manager.config.mapWidth - 1;
+                const targetR = soldier.r;
+                const path = this.tacticsMap.getPath(soldier.r, soldier.q, targetR, rightmostQ, 20, soldier);
+                
+                if (path && path.length > 1) {
+                    const oldCell = this.tacticsMap.getCell(soldier.r, soldier.q);
+                    if (oldCell) oldCell.unit = null;
+                    
+                    // Move to rightmost edge
+                    soldier.startPath(path);
+                    const targetCell = this.tacticsMap.getCell(targetR, rightmostQ);
+                    if (targetCell) targetCell.unit = soldier;
+                    soldier.r = targetR;
+                    soldier.q = rightmostQ;
+                    
+                    // Wait for path to complete, then move visually offscreen
+                    const checkPathComplete = () => {
+                        if (soldier.isMoving) {
+                            setTimeout(checkPathComplete, 100);
+                        } else {
+                            // Path complete, now move visually offscreen
+                            const edgePos = this.getPixelPos(targetR, rightmostQ);
+                            const offscreenQ = this.manager.config.mapWidth + 3;
+                            const offscreenPos = this.getPixelPos(targetR, offscreenQ);
+                            
+                            // Animate moving offscreen
+                            const startX = edgePos.x;
+                            const startY = edgePos.y;
+                            const endX = offscreenPos.x;
+                            const endY = offscreenPos.y;
+                            const duration = 800;
+                            const startTime = Date.now();
+                            
+                            const animateOffscreen = () => {
+                                const elapsed = Date.now() - startTime;
+                                const progress = Math.min(elapsed / duration, 1);
+                                
+                                soldier.visualX = startX + (endX - startX) * progress;
+                                soldier.visualY = startY + (endY - startY) * progress;
+                                
+                                if (progress < 1) {
+                                    requestAnimationFrame(animateOffscreen);
+                                } else {
+                                    soldier.isGone = true; // Mark as gone so it doesn't render
+                                    const finalCell = this.tacticsMap.getCell(targetR, rightmostQ);
+                                    if (finalCell) finalCell.unit = null;
+                                    retreatIndex++;
+                                    executeRetreat();
+                                }
+                            };
+                            animateOffscreen();
+                        }
+                    };
+                    setTimeout(checkPathComplete, 100);
+                } else {
+                    // Can't path, just mark as gone
+                    soldier.isGone = true;
+                    const oldCell = this.tacticsMap.getCell(soldier.r, soldier.q);
+                    if (oldCell) oldCell.unit = null;
+                    retreatIndex++;
+                    setTimeout(executeRetreat, 100);
+                }
+            } else {
+                retreatIndex++;
+                setTimeout(executeRetreat, 100);
+            }
+        };
+        
+        setTimeout(executeRetreat, 800);
+    }
+
+    startPostCombatDialogue() {
+        const battleDef = BATTLES[this.battleId];
+        if (battleDef && battleDef.postCombatScript) {
+            this.introScript = battleDef.postCombatScript;
+            this.isIntroDialogueActive = true;
+            this.dialogueStep = 0;
+            this.dialogueElapsed = 0;
+            this.subStep = 0;
         }
     }
 
@@ -1071,7 +1242,15 @@ export class TacticsScene extends BaseScene {
     }
 
     startNpcPhase() {
-        this.turn = 'allied_moving';
+        // For yellow_turban_rout cutscene, alternate between enemy and allied phases
+        if (this.battleId === 'yellow_turban_rout' && this.cutsceneCombatTurns !== undefined) {
+            // Determine which phase based on current turn state
+            const isEnemyPhase = this.turn === 'enemy' || this.turn === 'enemy_moving';
+            this.turn = isEnemyPhase ? 'enemy_moving' : 'allied_moving';
+        } else {
+            this.turn = 'allied_moving';
+        }
+        
         this.isProcessingTurn = true;
         
         // Clear old intents before starting new phase
@@ -1106,7 +1285,7 @@ export class TacticsScene extends BaseScene {
             });
         };
         
-        // Allied Phase
+        // Normal battle flow: Allied Phase first, then Enemy Phase
         setTimeout(() => {
             executeMoves(allies, 0, () => {
                 // Enemy Phase
@@ -1121,7 +1300,12 @@ export class TacticsScene extends BaseScene {
                         // Final pause to see the last move
                         setTimeout(() => {
                             this.telegraphAllNpcs();
-                            this.startPlayerTurn();
+                            // Special handling for yellow_turban_rout cutscene - skip player turn, go straight to execution
+                            if (this.battleId === 'yellow_turban_rout' && this.cutsceneCombatComplete !== undefined) {
+                                this.startExecutionPhase();
+                            } else {
+                                this.startPlayerTurn();
+                            }
                         }, 300);
                     });
                 }, 400);
@@ -1601,6 +1785,12 @@ export class TacticsScene extends BaseScene {
             if (index >= attackers.length) {
                 // Short pause after the final attack before next phase
                 setTimeout(() => {
+                    // Special handling for yellow_turban_rout cutscene
+                    if (this.battleId === 'yellow_turban_rout' && this.cutsceneCombatComplete !== undefined) {
+                        this.checkCutsceneCombatComplete();
+                        return;
+                    }
+                    
                     this.checkWinLoss();
                     
                     if (!this.isGameOver) {
@@ -4372,7 +4562,7 @@ export class TacticsScene extends BaseScene {
         }
 
         // Don't process cutscene clicks if cleanup dialogue is playing on the map
-        if (this.isCutscene && !this.isIntroAnimating && !this.isProcessingTurn && !this.isCleanupDialogueActive) {
+        if (this.isCutscene && !this.isIntroAnimating && !this.isProcessingTurn && !this.isCleanupDialogueActive && !this.isIntroDialogueActive && !this.isVictoryDialogueActive) {
             const battleDef = BATTLES[this.battleId];
             if (battleDef && battleDef.nextScene) {
                 if (this.battleId === 'qingzhou_cleanup') {
@@ -4383,6 +4573,20 @@ export class TacticsScene extends BaseScene {
                         scriptId: 'guangzong_arrival',
                         onComplete: () => {
                             this.manager.switchTo('map', { campaignId: 'liubei' });
+                        }
+                    });
+                } else if (this.battleId === 'yellow_turban_rout') {
+                    // Go to noticeboard scene, then inn scene, then map
+                    this.manager.switchTo('narrative', {
+                        scriptId: 'noticeboard',
+                        onComplete: () => {
+                            this.manager.switchTo('narrative', {
+                                scriptId: 'inn',
+                                onComplete: () => {
+                                    this.manager.gameState.addMilestone('prologue_complete');
+                                    this.manager.switchTo('map');
+                                }
+                            });
                         }
                     });
                 } else {
@@ -4437,6 +4641,15 @@ export class TacticsScene extends BaseScene {
                             this.isChoiceActive = true;
                         } else if (this.battleId === 'qingzhou_prelude') {
                             this.checkWinLoss(); // Trigger transition immediately
+                        } else if (this.battleId === 'yellow_turban_rout') {
+                            // Post-combat dialogue finished, transition to noticeboard
+                            this.manager.switchTo('narrative', {
+                                scriptId: 'noticeboard',
+                                onComplete: () => {
+                                    this.manager.gameState.addMilestone('prologue_complete');
+                                    this.manager.switchTo('map');
+                                }
+                            });
                         } else if (!this.isCutscene) {
                 this.startNpcPhase();
                         }

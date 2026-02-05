@@ -2,12 +2,14 @@ import os
 import sys
 import subprocess
 import string
+
 try:
     import whisper
 except ImportError:
     whisper = None  # Optional dependency
 import json
 from pathlib import Path
+
 try:
     from jiwer import wer
 except ImportError:
@@ -41,14 +43,18 @@ CHAR_TARGETS = {
     "zhoujing": "movies/clean/clean_mulans-dad.wav",
     "chengyuanzhi": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
     "dengmao": "movies/clean/clean_mulan-emperor.wav",
-    "yellowturban": "ai/jimmy_young_adult_male.mp3",
+    "yellowturban": "movies/clean/clean_kublai-khan.wav",  # Aggressive warrior voice (shared with zhangfei, dongzhuo, zhangbao)
     "narrator": "movies/clean/clean_uncle-iroh.wav",
-    "noticeboard": "ai/keith_nonchalant_male.mp3",
-    "volunteer": "ai/tungwong_young_adult_funny_friendly_male.mp3",
+    "noticeboard": "movies/clean/clean_mulan-emperor.wav",  # Authoritative voice (shared with dengmao, luzhi, zhangliang)
+    "volunteer": "movies/clean/clean_mulans-dad.wav",  # Friendly, common voice (shared with zhoujing)
     "gongjing": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
     "luzhi": "movies/clean/clean_mulan-emperor.wav",
     "dongzhuo": "movies/clean/clean_kublai-khan.wav",  # Gruff and arrogant
-    "default": "ai/keith_nonchalant_male.mp3",
+    "zhangjue": "movies/clean/clean_anton-ego-villainous-food-critic.wav",  # Villainous, commanding
+    "zhangbao": "movies/clean/clean_kublai-khan.wav",  # Aggressive, warrior-like
+    "zhangliang": "movies/clean/clean_mulan-emperor.wav",  # Authoritative, imperial
+    "soldier": "movies/clean/clean_mulans-dad.wav",  # Friendly, common voice (shared with volunteer, zhoujing)
+    "default": "movies/clean/clean_mulan-emperor.wav",  # Authoritative fallback (shared with noticeboard, dengmao, luzhi, zhangliang)
 }
 
 # --- Initialize ---

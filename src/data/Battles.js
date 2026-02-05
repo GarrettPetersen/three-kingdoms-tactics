@@ -1,4 +1,52 @@
 export const BATTLES = {
+    'yellow_turban_rout': {
+        name: "The Yellow Turban Rebellion",
+        map: {
+            biome: 'northern',
+            layout: 'foothills',
+            forestDensity: 0.1,
+            mountainDensity: 0.05,
+            riverDensity: 0.0,
+            houseDensity: 0.0
+        },
+        units: [
+            // Zhang brothers and Yellow Turbans (left side, advancing)
+            { id: 'zhangjue', r: 2, q: 3, type: 'zhang_jue' },
+            { id: 'zhangbao', r: 2, q: 4, type: 'zhang_bao' },
+            { id: 'zhangliang', r: 2, q: 5, type: 'zhang_liang' },
+            { id: 'rebel1', r: 3, q: 2, type: 'enemy_soldier' },
+            { id: 'rebel2', r: 3, q: 3, type: 'enemy_soldier' },
+            { id: 'rebel3', r: 3, q: 4, type: 'enemy_soldier' },
+            { id: 'rebel4', r: 3, q: 5, type: 'enemy_soldier' },
+            { id: 'rebel5', r: 3, q: 6, type: 'enemy_soldier' },
+            { id: 'rebel6', r: 1, q: 3, type: 'enemy_soldier' },
+            { id: 'rebel7', r: 1, q: 4, type: 'enemy_soldier' },
+            { id: 'rebel8', r: 1, q: 5, type: 'enemy_soldier' },
+            // Government soldiers (right side, retreating) - halved for faster combat
+            { id: 'soldier1', r: 8, q: 3, type: 'imperial_soldier' },
+            { id: 'soldier2', r: 8, q: 4, type: 'imperial_soldier' },
+            { id: 'soldier3', r: 9, q: 3, type: 'imperial_soldier' },
+            { id: 'soldier4', r: 9, q: 4, type: 'imperial_soldier' }
+        ],
+        isCutscene: true,
+        cutsceneAutoCombat: true, // Enable automatic combat animations
+        introScript: [], // Combat happens first, then dialogue
+        postCombatScript: [
+            { portraitKey: 'custom-male-10', name: 'Zhang Jue', voiceId: 'intro_zj_01', text: "The good fortune of the Han is exhausted! The Wise and Worthy Man has appeared!" },
+            { portraitKey: 'zhang-bao', name: 'Zhang Bao', voiceId: 'intro_zb_01', text: "Brother, the official troops melt away at a whisper of our coming! Our strength grows by the day!" },
+            { portraitKey: 'custom-male-12', name: 'Zhang Liang', voiceId: 'intro_zl_01', text: "The people bind their heads with yellow scarves and join our cause! Soon, all the empire will be ours!" },
+            { portraitKey: 'custom-male-10', name: 'Zhang Jue', voiceId: 'intro_zj_02', text: "For schemes like ours, the most difficult part is to gain the popular favor. But that is already ours. Such an opportunity must not pass!" },
+            { portraitKey: 'custom-male-10', name: 'Zhang Jue', voiceId: 'intro_zj_03', text: "I am Zhang Jue, the Lord of Heaven! With my brothers Zhang Bao, Lord of Earth, and Zhang Liang, Lord of Human, we shall bring down this corrupt dynasty!" },
+            { portraitKey: 'zhang-bao', name: 'Zhang Bao', voiceId: 'intro_zb_02', text: "The Han has grown weak and decadent! The people cry out for justice, and we shall deliver it with fire and steel!" },
+            { portraitKey: 'custom-male-12', name: 'Zhang Liang', voiceId: 'intro_zl_02', text: "Let the imperial dogs flee! Their cities will burn, their armies will crumble. The Yellow Heavens shall rise!" },
+            { portraitKey: 'custom-male-10', name: 'Zhang Jue', voiceId: 'intro_zj_04', text: "The age of the Han is over. A new era begins today—an era of the people, led by the Wise and Worthy Master!" },
+            { portraitKey: 'custom-male-10', name: 'Zhang Jue', voiceId: 'intro_zj_05', text: "Now we march through Zhuo County! Let all who stand in our way be crushed beneath the banner of the Yellow Turbans!" }
+        ],
+        nextScene: 'narrative',
+        nextParams: { 
+            scriptId: 'noticeboard'
+        }
+    },
     'daxing': {
         name: "Battle of Daxing District",
         map: {
@@ -309,6 +357,7 @@ export const UNIT_TEMPLATES = {
         'rebel': { name: 'Yellow Turban', imgKey: 'yellowturban', hp: 2, moveRange: 3, attacks: ['bash'], faction: 'enemy', level: 1 }
     },
     'imperial_soldier': {
+        'soldier': { name: 'Imperial Soldier', imgKey: 'soldier', hp: 1, moveRange: 3, attacks: ['slash'], faction: 'allied' },
         'escort': { name: 'Imperial Escort', imgKey: 'soldier', hp: 3, moveRange: 3, attacks: ['slash'], faction: 'enemy' }
     },
     'enemy_captain': {
@@ -322,6 +371,15 @@ export const UNIT_TEMPLATES = {
     },
     'warlord': {
         'dongzhuo': { name: 'Dong Zhuo', imgKey: 'dongzhuo', hp: 9, moveRange: 3, attacks: ['tyrant_sweep'], faction: 'allied' }
+    },
+    'zhang_jue': {
+        'zhangjue': { name: 'Zhang Jue', imgKey: 'zhangjiao', hp: 8, moveRange: 4, attacks: ['whirlwind'], faction: 'enemy' }
+    },
+    'zhang_bao': {
+        'zhangbao': { name: 'Zhang Bao', imgKey: 'zhangbao', hp: 7, moveRange: 4, attacks: ['heavy_thrust'], faction: 'enemy' }
+    },
+    'zhang_liang': {
+        'zhangliang': { name: 'Zhang Liang', imgKey: 'zhangliang', hp: 7, moveRange: 4, attacks: ['heavy_thrust'], faction: 'enemy' }
     },
     'prop': {
         'boulder': { name: 'Boulder', imgKey: 'boulder', hp: 2, moveRange: 0, attacks: [], faction: 'neutral' }

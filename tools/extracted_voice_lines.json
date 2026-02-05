@@ -13,6 +13,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "daxing_gy_choice_01",
+    "char": "guanyu",
+    "text": "Brother, your courage is admirable, but even heroes need strategy. Let us work with the magistrate.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "daxing_lb_01",
     "char": "liubei",
     "text": "I am Liu Bei, a descendant of Prince Jing of Zhongshan and great-great-grandson of Emperor Jing. These are my sworn brothers, Guan Yu and Zhang Fei.",
@@ -26,8 +32,26 @@
   },
   {
     "id": "daxing_lb_03",
-    "char": "liubei",
+    "char": "zhoujing",
     "text": "Magistrate Zhou, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_lb_choice_01",
+    "char": "liubei",
+    "text": "The people cry out for justice. We cannot stand idle.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_lb_choice_02",
+    "char": "liubei",
+    "text": "We seek glory in service to the Han.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_lb_choice_03",
+    "char": "liubei",
+    "text": "Fifty thousand rebels? We three alone could handle them!",
     "source": "NarrativeScripts.js"
   },
   {
@@ -45,7 +69,13 @@
   {
     "id": "daxing_zj_02",
     "char": "zhoujing",
-    "text": "An Imperial kinsman! Truly, the Heavens have not abandoned the Han. Your arrival is most timely.",
+    "text": "An Imperial kinsman with a true heart! Truly, the Heavens have not abandoned the Han. Your arrival is most timely.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_zj_02_alt",
+    "char": "zhoujing",
+    "text": "An Imperial kinsman! Your ambition serves the Han well. Your arrival is most timely.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -283,115 +313,244 @@
     "id": "inn_gy_01",
     "char": "guanyu",
     "text": "Quick! Bring me wine! I am in a hurry to get to town and join the volunteers!",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_gy_02",
     "char": "guanyu",
     "text": "I am Guan Yu, courtesy name Yunchang. For years I have been a fugitive, for I slew a local bully who oppressed the weak.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_gy_03",
     "char": "guanyu",
     "text": "Now I hear there is a call for volunteers, and I have come to join the cause.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_gy_04",
     "char": "guanyu",
     "text": "The heavens have surely brought us together. We share one mind and one purpose.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_gy_05",
     "char": "guanyu",
     "text": "I agree... We swear by the peach garden.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_lb_01",
     "char": "liubei",
     "text": "Indeed. Honor and duty call us.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_lb_02a",
     "char": "liubei",
     "text": "That man...",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_lb_02b",
     "char": "liubei",
     "text": "His presence is extraordinary. Look at his majestic beard and phoenix-like eyes.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_lb_03",
     "char": "liubei",
     "text": "A noble heart! I am Liu Bei, and this is Zhang Fei. We have just agreed to raise a volunteer army ourselves.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_lb_04",
     "char": "liubei",
     "text": "To restore the Han and bring peace to the common people. That is our shared destiny.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_lb_05",
     "char": "liubei",
     "text": "An excellent proposal. We shall do it!",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_zf_01",
     "char": "zhangfei",
     "text": "This wine is good! Together, we shall raise an army that will make the rebels tremble.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_zf_02",
     "char": "zhangfei",
     "text": "Hey! You there! You're joining the volunteers too? Come, drink with us!",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_zf_03",
     "char": "zhangfei",
     "text": "Haha! The more the merrier! Drink, Yunchang! Let us toast to our new brotherhood!",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_zf_04",
     "char": "zhangfei",
     "text": "...and that is why the pig escaped! Haha! But seriously, my friends...",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_zf_05",
     "char": "zhangfei",
     "text": "I feel as though I have known you both for a lifetime.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_zf_06",
     "char": "zhangfei",
     "text": "Listen! Behind my farm is a peach garden. The flowers are in full bloom.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_zf_07",
     "char": "zhangfei",
     "text": "Tomorrow, let us offer sacrifices there and swear to be brothers! To live and die as one!",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "intro_narrator_01",
     "char": "narrator",
     "text": "The world under heaven, long divided, must unite; long united, must divide.",
     "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "intro_narrator_02a",
+    "char": "narrator",
+    "text": "Four hundred years ago, the Han dynasty rose from the ashes of the Qin.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "intro_narrator_02b",
+    "char": "narrator",
+    "text": "From Gaozu's founding to Guangwu's restoration, the empire stood strong.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "intro_narrator_02c",
+    "char": "narrator",
+    "text": "But now, in the reign of Emperor Ling, the Han crumbles from within.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "intro_narrator_03a",
+    "char": "narrator",
+    "text": "The Ten Regular Attendants—eunuchs who have wormed their way into the emperor's favor—corrupt the court.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "intro_narrator_03b",
+    "char": "narrator",
+    "text": "They silence honest ministers, plunder the treasury, and rule through fear.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "intro_narrator_03c",
+    "char": "narrator",
+    "text": "The people suffer while the palace grows fat.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "intro_narrator_04a",
+    "char": "narrator",
+    "text": "In this chaos, three brothers from Julu County see their chance.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "intro_narrator_04b",
+    "char": "narrator",
+    "text": "Zhang Jue, a failed scholar, claims to have received divine teachings.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "intro_narrator_04c",
+    "char": "narrator",
+    "text": "He heals the sick, gathers followers, and whispers: 'The Blue Heaven is dead. The Yellow Heaven shall rise.'",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "intro_narrator_05a",
+    "char": "narrator",
+    "text": "With half a million followers bound in yellow scarves, the Zhang brothers prepare to strike.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "intro_narrator_05b",
+    "char": "narrator",
+    "text": "The rebellion begins.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "intro_narrator_05c",
+    "char": "narrator",
+    "text": "The age of the Han draws to its end.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "intro_zb_01",
+    "char": "zhangbao",
+    "text": "Brother, the official troops melt away at a whisper of our coming! Our strength grows by the day!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "intro_zb_02",
+    "char": "zhangbao",
+    "text": "The Han has grown weak and decadent! The people cry out for justice, and we shall deliver it with fire and steel!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "intro_zj_01",
+    "char": "zhangjue",
+    "text": "The good fortune of the Han is exhausted! The Wise and Worthy Man has appeared!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "intro_zj_02",
+    "char": "zhangjue",
+    "text": "For schemes like ours, the most difficult part is to gain the popular favor. But that is already ours. Such an opportunity must not pass!",
+    "source": "Battles.js",
+    "phonetic_text": "For schemes like ours, the most difficult part is to gain the popular favor. But that is already ours. Such an opportunity must not pass!"
+  },
+  {
+    "id": "intro_zj_03",
+    "char": "zhangjue",
+    "text": "I am Zhang Jue, the Lord of Heaven! With my brothers Zhang Bao, Lord of Earth, and Zhang Liang, Lord of Human, we shall bring down this corrupt dynasty!",
+    "source": "Battles.js",
+    "phonetic_text": "I am Jang Jway, the Lord of Heaven! With my brothers Jang Bow, Lord of Earth, and Jang Lee-ang, Lord of Human, we shall bring down this corrupt dynasty!"
+  },
+  {
+    "id": "intro_zj_04",
+    "char": "zhangjue",
+    "text": "The age of the Han is over. A new era begins today—an era of the people, led by the Wise and Worthy Master!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "intro_zj_05",
+    "char": "zhangjue",
+    "text": "Now we march through Zhuo County! Let all who stand in our way be crushed beneath the banner of the Yellow Turbans!",
+    "source": "Battles.js",
+    "phonetic_text": "Now we march through Jwoh County! Let all who stand in our way be crushed beneath the banner of the Yellow Turbans!"
+  },
+  {
+    "id": "intro_zl_01",
+    "char": "zhangliang",
+    "text": "The people bind their heads with yellow scarves and join our cause! Soon, all the empire will be ours!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "intro_zl_02",
+    "char": "zhangliang",
+    "text": "Let the imperial dogs flee! Their cities will burn, their armies will crumble. The Yellow Heavens shall rise!",
+    "source": "Battles.js"
   },
   {
     "id": "map_lb_defeat",
@@ -403,7 +562,8 @@
     "id": "map_lb_rem_01",
     "char": "liubei",
     "text": "Magistrate Zhou Jing's headquarters is to the East. We must report there at once to begin our service.",
-    "source": "MapScene.js"
+    "source": "MapScene.js",
+    "phonetic_text": "Magistrate Joe Jing's headquarters is to the East. We must report there at once to begin our service."
   },
   {
     "id": "map_lb_rem_02",
@@ -421,7 +581,8 @@
     "id": "map_lb_rem_04",
     "char": "liubei",
     "text": "Lu Zhi, my old teacher, is hard-pressed at Guangzong. We must march north to aid him against Zhang Jue's horde!",
-    "source": "MapScene.js"
+    "source": "MapScene.js",
+    "phonetic_text": "Lu Jee, my old teacher, is hard-pressed at Gwang-zong. We must march north to aid him against Jang Jway's horde!"
   },
   {
     "id": "map_lb_rem_05",
@@ -433,163 +594,165 @@
     "id": "pg_gy_01",
     "char": "guanyu",
     "text": "We will rescue each other in difficulty; we will aid each other in danger.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pg_lb_01",
     "char": "liubei",
     "text": "We three, Liu Bei, Guan Yu, and Zhang Fei, though of different lineages, swear brotherhood and promise mutual help to one end.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pg_lb_02",
     "char": "liubei",
     "text": "We ask not the same day of birth, but we seek to die together on the same day.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pg_lb_03",
     "char": "liubei",
     "text": "May the Heaven and the Earth read our hearts. If we turn aside from righteousness, may the Heaven and the Human smite us!",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pg_lb_04",
     "char": "liubei",
     "text": "The path ahead is long and full of peril, but together, we shall restore the Han!",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pg_nar_01",
     "char": "narrator",
     "text": "In the peach garden, among the blooming flowers, a black ox and a white horse are sacrificed.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pg_nar_02",
     "char": "narrator",
     "text": "The ritual complete, Liu Bei is acknowledged as the eldest brother, Guan Yu the second, and Zhang Fei the youngest.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js",
+    "phonetic_text": "The ritual complete, Leeoo Bay is acknowledged as the eldest brother, Guan Yoo the second, and Zhang Fay the youngest."
   },
   {
     "id": "pg_zf_01",
     "char": "zhangfei",
     "text": "We swear to serve the state and save the people.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_lb_01",
     "char": "liubei",
     "text": "The Imperial Clan's blood flows in my veins...",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_lb_02",
     "char": "liubei",
     "text": "...yet I am but a poor straw-shoe seller.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_lb_03",
     "char": "liubei",
     "text": "How can I possibly save the people from this chaos?",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_lb_04",
     "char": "liubei",
     "text": "I am of the Imperial Clan. My name is Liu Bei.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_lb_05",
     "char": "liubei",
     "text": "I wish I could destroy these rebels and restore peace...",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_lb_06",
     "char": "liubei",
     "text": "That would be a great blessing for the people!",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_lb_choice_01",
     "char": "zhangfei",
     "text": "I sigh for the suffering people.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_lb_choice_02",
     "char": "zhangfei",
     "text": "I sigh for my own lost status.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_nb_01",
-    "char": "narrator",
+    "char": "noticeboard",
     "text": "NOTICE: The Yellow Turban rebels under Zhang Jue have risen!",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_nb_02",
-    "char": "narrator",
+    "char": "noticeboard",
     "text": "All able-bodied men are called to defend the Han.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_nb_03",
-    "char": "narrator",
+    "char": "noticeboard",
     "text": "Report to the local Magistrate at once.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_zf_01",
     "char": "zhangfei",
     "text": "Why sigh, O hero, if you do not help your country?",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_zf_02",
     "char": "zhangfei",
     "text": "A true hero's heart! You and I are of one mind.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_zf_03",
     "char": "zhangfei",
     "text": "Status? Bah! In these times of chaos, only courage and wine matter!",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_zf_04",
     "char": "zhangfei",
     "text": "I am Zhang Fei, aka Yide.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js",
+    "phonetic_text": "I am Jang Fay, A-K-A Yee-duh."
   },
   {
     "id": "pro_zf_05",
     "char": "zhangfei",
     "text": "I live in this county, where I have a farm. I sell wine and slaughter hogs.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_zf_06",
     "char": "zhangfei",
     "text": "I have some wealth! I am willing to use it to recruit volunteers.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_zf_07",
     "char": "zhangfei",
     "text": "What say you to that?",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_zf_08",
     "char": "zhangfei",
     "text": "Then come! Let us go to the village inn and discuss our plans over wine.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "qz_bt_lb_03",
@@ -686,36 +849,6 @@
     "char": "zhoujing",
     "text": "I shall reinforce you with five thousand of my best soldiers. March at once!",
     "source": "BattleSummaryScene.js"
-  },
-  {
-    "id": "rec_gy_01",
-    "char": "guanyu",
-    "text": "We offer no riches, only the chance to serve with honor under the banner of Liu Bei.",
-    "source": "MapScene.js"
-  },
-  {
-    "id": "rec_lb_01",
-    "char": "liubei",
-    "text": "Welcome, brothers. Today we are but a few, but tomorrow we shall be an army.",
-    "source": "MapScene.js"
-  },
-  {
-    "id": "rec_lb_02",
-    "char": "liubei",
-    "text": "Let us march! Our first destination: the headquarters of the local Magistrate.",
-    "source": "MapScene.js"
-  },
-  {
-    "id": "rec_vol_01",
-    "char": "soldier",
-    "text": "We have heard of your brotherhood! We are but simple men, but we will follow you to the death!",
-    "source": "MapScene.js"
-  },
-  {
-    "id": "rec_zf_01",
-    "char": "zhangfei",
-    "text": "CITIZENS OF ZHUO! The Yellow Turbans are coming! Who among you is brave enough to fight for your homes?",
-    "source": "MapScene.js"
   },
   {
     "id": "recov_gy_01",

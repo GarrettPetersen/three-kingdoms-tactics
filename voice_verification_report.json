@@ -28,7 +28,7 @@
         "is_bad": false
     },
     "daxing_lb_03": {
-        "character": "liubei",
+        "character": "zhoujing",
         "original_text": "Magistrate Zhou, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion.",
         "stt_output": "",
         "wer": 0,
@@ -50,7 +50,7 @@
     },
     "daxing_zj_02": {
         "character": "zhoujing",
-        "original_text": "An Imperial kinsman! Truly, the Heavens have not abandoned the Han. Your arrival is most timely.",
+        "original_text": "An Imperial kinsman with a true heart! Truly, the Heavens have not abandoned the Han. Your arrival is most timely.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -316,7 +316,7 @@
     },
     "inn_gy_01": {
         "character": "guanyu",
-        "original_text": "Quick! Bring me wine! I am in a hurry to get to town and join the volunteers!",
+        "original_text": "I have heard of your noble purpose. I wish to join you in this great cause.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -351,7 +351,7 @@
     },
     "inn_lb_01": {
         "character": "liubei",
-        "original_text": "Indeed. Honor and duty call us.",
+        "original_text": "Then let us swear an oath of brotherhood! To live and die as one!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -393,14 +393,14 @@
     },
     "inn_zf_01": {
         "character": "zhangfei",
-        "original_text": "This wine is good! Together, we shall raise an army that will make the rebels tremble.",
+        "original_text": "This is Guan Yu, styled Yunchang. He is a man of great strength and courage.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
     },
     "inn_zf_02": {
         "character": "zhangfei",
-        "original_text": "Hey! You there! You're joining the volunteers too? Come, drink with us!",
+        "original_text": "I know the perfect place! Behind my farm is a peach garden. The flowers are in full bloom.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -457,8 +457,8 @@
     "map_lb_rem_01": {
         "character": "liubei",
         "original_text": "Magistrate Zhou Jing's headquarters is to the East. We must report there at once to begin our service.",
-        "stt_output": "Magistrate Joe Jing's headquarters is to the east. We must report there at once to begin our service.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "map_lb_rem_02": {
@@ -478,8 +478,8 @@
     "map_lb_rem_04": {
         "character": "liubei",
         "original_text": "Lu Zhi, my old teacher, is hard-pressed at Guangzong. We must march north to aid him against Zhang Jue's horde!",
-        "stt_output": "Lu Ye, my old teacher, is hard-pressed at Guangdong. We must march north to aid him against Zhang Zhuai's horde.",
-        "wer": 0.2,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "map_lb_rem_05": {
@@ -602,21 +602,21 @@
         "is_bad": false
     },
     "pro_nb_01": {
-        "character": "narrator",
+        "character": "noticeboard",
         "original_text": "NOTICE: The Yellow Turban rebels under Zhang Jue have risen!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
     },
     "pro_nb_02": {
-        "character": "narrator",
+        "character": "noticeboard",
         "original_text": "All able-bodied men are called to defend the Han.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
     },
     "pro_nb_03": {
-        "character": "narrator",
+        "character": "noticeboard",
         "original_text": "Report to the local Magistrate at once.",
         "stt_output": "",
         "wer": 0,
@@ -646,9 +646,9 @@
     "pro_zf_04": {
         "character": "zhangfei",
         "original_text": "I am Zhang Fei, aka Yide.",
-        "stt_output": "I am Jan Faye, a K.A.E.D.",
-        "wer": 0.6666666666666666,
-        "is_bad": true
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
     },
     "pro_zf_05": {
         "character": "zhangfei",
@@ -842,6 +842,230 @@
     "recov_zf_01": {
         "character": "zhangfei",
         "original_text": "Bah! Those rascals got a lucky hit in! Next time, they won't be so fortunate!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_narrator_battle_01": {
+        "character": "narrator",
+        "original_text": "With nearly half a million followers, the Yellow Turban rebellion spreads like wildfire across the land. The Imperial Court calls for volunteers to defend the Han...",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_zb_01": {
+        "character": "zhangbao",
+        "original_text": "Brother, the official troops melt away at a whisper of our coming! Our strength grows by the day!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_zb_02": {
+        "character": "zhangbao",
+        "original_text": "The Han has grown weak and decadent! The people cry out for justice, and we shall deliver it with fire and steel!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_zj_01": {
+        "character": "zhangjue",
+        "original_text": "The good fortune of the Han is exhausted! The Wise and Worthy Man has appeared!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_zj_02": {
+        "character": "zhangjue",
+        "original_text": "For schemes like ours, the most difficult part is to gain the popular favor. But that is already ours. Such an opportunity must not pass!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_zj_03": {
+        "character": "zhangjue",
+        "original_text": "I am Zhang Jue, the Lord of Heaven! With my brothers Zhang Bao, Lord of Earth, and Zhang Liang, Lord of Human, we shall bring down this corrupt dynasty!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_zj_04": {
+        "character": "zhangjue",
+        "original_text": "The age of the Han is over. A new era begins today\u2014an era of the people, led by the Wise and Worthy Master!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_zj_05": {
+        "character": "zhangjue",
+        "original_text": "Now we march through Zhuo County! Let all who stand in our way be crushed beneath the banner of the Yellow Turbans!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_zl_01": {
+        "character": "zhangliang",
+        "original_text": "The people bind their heads with yellow scarves and join our cause! Soon, all the empire will be ours!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_zl_02": {
+        "character": "zhangliang",
+        "original_text": "Let the imperial dogs flee! Their cities will burn, their armies will crumble. The Yellow Heavens shall rise!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "dx_yt_01": {
+        "character": "yellowturban",
+        "original_text": "Our leaders are dead! Run!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_narrator_02": {
+        "character": "narrator",
+        "original_text": "Four hundred years ago, the Han dynasty rose from the ashes of the Qin. From Gaozu's founding to Guangwu's restoration, the empire stood strong. But now, in the reign of Emperor Ling, the Han crumbles from within.",
+        "stt_output": "400 years ago, the Han Dynasty rose from the ashes of the Qin. From Gouju's founding to Guanggu's restoration, the empire stood strong. But now, in the reign of Emperor Ling, the Han crumbles from within.",
+        "wer": 0.10810810810810811,
+        "is_bad": false
+    },
+    "intro_narrator_03": {
+        "character": "narrator",
+        "original_text": "The Ten Regular Attendants\u2014eunuchs who have wormed their way into the emperor's favor\u2014corrupt the court. They silence honest ministers, plunder the treasury, and rule through fear. The people suffer while the palace grows fat.",
+        "stt_output": "The 10 regular attendants, Unaksu have warmed their way into the Emperor's favor, corrupt the court, they silence honest ministers, plunder the treasury, and rule through fear. The people suffer while the palace grows fat.",
+        "wer": 0.17647058823529413,
+        "is_bad": false
+    },
+    "intro_narrator_04": {
+        "character": "narrator",
+        "original_text": "In this chaos, three brothers from Julu County see their chance. Zhang Jue, a failed scholar, claims to have received divine teachings. He heals the sick, gathers followers, and whispers: 'The Blue Heaven is dead. The Yellow Heaven shall rise.'",
+        "stt_output": "In this chaos, three brothers from Jule County see their chance. Chanyu, a failed scholar, claims to have received divine teaching. He heals the sick, gathers followers and whispers. The blue heaven is dead. The yellow heaven shall rise, year-year.",
+        "wer": 0.125,
+        "is_bad": false
+    },
+    "intro_narrator_05": {
+        "character": "narrator",
+        "original_text": "With half a million followers bound in yellow scarves, the Zhang brothers prepare to strike. The rebellion begins. The age of the Han draws to its end.",
+        "stt_output": "With half a million followers bound in yellow scarves, the Zhang brothers prepare to strike. The rebellion begins. The age of the Han draws to its end.",
+        "wer": 0.0,
+        "is_bad": false
+    },
+    "intro_narrator_02a": {
+        "character": "narrator",
+        "original_text": "Four hundred years ago, the Han dynasty rose from the ashes of the Qin.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_narrator_02b": {
+        "character": "narrator",
+        "original_text": "From Gaozu's founding to Guangwu's restoration, the empire stood strong.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_narrator_02c": {
+        "character": "narrator",
+        "original_text": "But now, in the reign of Emperor Ling, the Han crumbles from within.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_narrator_03a": {
+        "character": "narrator",
+        "original_text": "The Ten Regular Attendants\u2014eunuchs who have wormed their way into the emperor's favor\u2014corrupt the court.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_narrator_03b": {
+        "character": "narrator",
+        "original_text": "They silence honest ministers, plunder the treasury, and rule through fear.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_narrator_03c": {
+        "character": "narrator",
+        "original_text": "The people suffer while the palace grows fat.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_narrator_04a": {
+        "character": "narrator",
+        "original_text": "In this chaos, three brothers from Julu County see their chance.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_narrator_04b": {
+        "character": "narrator",
+        "original_text": "Zhang Jue, a failed scholar, claims to have received divine teachings.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_narrator_04c": {
+        "character": "narrator",
+        "original_text": "He heals the sick, gathers followers, and whispers: 'The Blue Heaven is dead. The Yellow Heaven shall rise.'",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_narrator_05a": {
+        "character": "narrator",
+        "original_text": "With half a million followers bound in yellow scarves, the Zhang brothers prepare to strike.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_narrator_05b": {
+        "character": "narrator",
+        "original_text": "The rebellion begins.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "intro_narrator_05c": {
+        "character": "narrator",
+        "original_text": "The age of the Han draws to its end.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "daxing_gy_choice_01": {
+        "character": "guanyu",
+        "original_text": "Brother, your courage is admirable, but even heroes need strategy. Let us work with the magistrate.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "daxing_lb_choice_01": {
+        "character": "liubei",
+        "original_text": "The people cry out for justice. We cannot stand idle.",
+        "stt_output": "the people cry out for justice. We cannot stand idle.",
+        "wer": 0.0,
+        "is_bad": false
+    },
+    "daxing_lb_choice_02": {
+        "character": "liubei",
+        "original_text": "We seek glory in service to the Han.",
+        "stt_output": "We see glory in service to the heart.",
+        "wer": 0.25,
+        "is_bad": false
+    },
+    "daxing_lb_choice_03": {
+        "character": "liubei",
+        "original_text": "Fifty thousand rebels? We three alone could handle them!",
+        "stt_output": "50,000 rebels. We three alone could handle them.",
+        "wer": 0.2222222222222222,
+        "is_bad": false
+    },
+    "daxing_zj_02_alt": {
+        "character": "zhoujing",
+        "original_text": "An Imperial kinsman! Your ambition serves the Han well. Your arrival is most timely.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false

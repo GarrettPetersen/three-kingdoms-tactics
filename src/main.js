@@ -258,8 +258,10 @@ async function init() {
         const portraitNames = [
             'Liu-Bei', 'Guan-Yu', 'Zhang-Fei', 'Zhou-Jing', 'Diaochan', 
             'Deng-Mao', 'Cheng-Yuanzhi', 'The-Noticeboard', 'Yellow-Turban',
-            'Dong-Zhuo', 'Zhang-Jiao',
+            'Dong-Zhuo', 'Zhang-Jiao', 'Zhang-Bao',
             // Custom portraits for NPCs
+            'Custom-Male-10',  // Zhang Jue (Lord of Heaven)
+            'Custom-Male-12',  // Zhang Liang (Lord of Human)
             'Custom-Male-17',  // Gong Jing (Imperial Protector)
             'Custom-Male-22'   // Lu Zhi (Commander)
         ];

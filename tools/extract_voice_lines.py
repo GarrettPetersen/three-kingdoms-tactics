@@ -32,13 +32,16 @@ PORTRAIT_TO_CHAR = {
     'guan-yu': 'guanyu',
     'zhang-fei': 'zhangfei',
     'zhou-jing': 'zhoujing',
+    'custom-male-10': 'zhangjue',
+    'custom-male-12': 'zhangliang',
+    'zhang-bao': 'zhangbao',
     'custom-male-17': 'gongjing',
     'custom-male-22': 'luzhi',
     'bandit1': 'dengmao',
     'bandit2': 'chengyuanzhi',
     'dong-zhuo': 'dongzhuo',
     'peach_garden': 'narrator',
-    'noticeboard': 'narrator',
+    'noticeboard': 'noticeboard',  # Noticeboard has its own voice
     'narrator': 'narrator',
 }
 
@@ -47,6 +50,9 @@ NAME_TO_CHAR = {
     'Liu Bei': 'liubei',
     'Guan Yu': 'guanyu',
     'Zhang Fei': 'zhangfei',
+    'Zhang Jue': 'zhangjue',
+    'Zhang Bao': 'zhangbao',
+    'Zhang Liang': 'zhangliang',
     'Zhou Jing': 'zhoujing',
     'Gong Jing': 'gongjing',
     'Protector Gong Jing': 'gongjing',
@@ -150,8 +156,8 @@ def extract_voice_lines_from_file(filepath):
             char_abbrev_map = {
                 'lb': 'liubei', 'gy': 'guanyu', 'zf': 'zhangfei',
                 'zj': 'zhoujing', 'gj': 'gongjing', 'lz': 'luzhi',
-                'dz': 'dongzhuo', 'nar': 'narrator', 'nb': 'noticeboard',
-                'dm': 'dengmao', 'cyz': 'chengyuanzhi',
+                'dz': 'dongzhuo', 'nar': 'narrator', 'nb': 'noticeboard',  # noticeboard uses its own voice
+                'yt': 'yellowturban', 'dm': 'dengmao', 'cyz': 'chengyuanzhi',
             }
             for part in vid_parts:
                 if part in char_abbrev_map:
