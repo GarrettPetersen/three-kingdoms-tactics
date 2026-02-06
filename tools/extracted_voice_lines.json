@@ -206,6 +206,12 @@
     "source": "TacticsScene.js"
   },
   {
+    "id": "gz_lb_fight_01",
+    "char": "liubei",
+    "text": "Brother, we cannot stand idle while injustice is done. Free him!",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "gz_lb_free_02",
     "char": "liubei",
     "text": "We have made our choice. Now we fight!",
@@ -223,6 +229,12 @@
     "text": "None.",
     "source": "TacticsScene.js",
     "phonetic_text": "None."
+  },
+  {
+    "id": "gz_lb_restrain_01",
+    "char": "liubei",
+    "text": "The court will have its own public judgment. How can you act rashly?",
+    "source": "TacticsScene.js"
   },
   {
     "id": "gz_lz_explain_01",
@@ -336,7 +348,19 @@
   {
     "id": "inn_gy_05",
     "char": "guanyu",
-    "text": "I agree... We swear by the peach garden.",
+    "text": "I agree. We swear by the peach garden.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_gy_choice_01",
+    "char": "guanyu",
+    "text": "Your words ring true. I would be honored to join your cause.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_gy_choice_02",
+    "char": "guanyu",
+    "text": "Spoken like a true leader. The people need men like you.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -346,15 +370,9 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "inn_lb_02a",
+    "id": "inn_lb_02",
     "char": "liubei",
-    "text": "That man...",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "inn_lb_02b",
-    "char": "liubei",
-    "text": "His presence is extraordinary. Look at his majestic beard and phoenix-like eyes.",
+    "text": "That man... his presence is extraordinary. Look at his majestic beard and phoenix-like eyes.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -373,6 +391,18 @@
     "id": "inn_lb_05",
     "char": "liubei",
     "text": "An excellent proposal. We shall do it!",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_lb_choice_01",
+    "char": "liubei",
+    "text": "Your cause is just. Join us, and together we shall serve the Han.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_lb_choice_02",
+    "char": "liubei",
+    "text": "We fight not for glory, but for the people who suffer under this chaos.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -770,7 +800,7 @@
     "id": "qz_lb_01",
     "char": "liubei",
     "text": "I will go. We cannot let the people of Qingzhou suffer.",
-    "source": "BattleSummaryScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "qz_lb_02",
@@ -785,10 +815,16 @@
     "source": "Battles.js"
   },
   {
+    "id": "qz_lb_choice_01",
+    "char": "liubei",
+    "text": "The people cry out for aid. We must answer their call at once.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "qz_ms_01",
     "char": "soldier",
     "text": "URGENT! Imperial Protector Gong Jing of Qingzhou Region is under siege! The city is near falling!",
-    "source": "BattleSummaryScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "qz_ret_gj_01",
@@ -800,6 +836,18 @@
     "id": "qz_ret_gj_02",
     "char": "gongjing",
     "text": "Indeed. I have heard that Commander Lu Zhi is hard-pressed at Guangzong by the chief rebel, Zhang Jue himself.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_ret_gj_choice_01",
+    "char": "gongjing",
+    "text": "Your humility does you credit, but your deeds speak louder than words.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_ret_gy_choice_01",
+    "char": "guanyu",
+    "text": "A noble cause, brother. We stand with you.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -815,6 +863,18 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "qz_ret_lb_choice_01",
+    "char": "liubei",
+    "text": "It was an honor to serve. The people of Qingzhou can rest easy now.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_ret_lb_choice_02",
+    "char": "liubei",
+    "text": "Commander Lu Zhi needs aid. We cannot abandon a loyal servant of the Han.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "qz_vic_gy_01",
     "char": "guanyu",
     "text": "A well-executed trap, Brother. The high ground served us well.",
@@ -824,6 +884,12 @@
     "id": "qz_vic_lb_01",
     "char": "liubei",
     "text": "Let us not tarry. The city is still in peril. We must return to the gates and ensure the Imperial Protector is safe.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_vic_lb_choice_01",
+    "char": "liubei",
+    "text": "A fine victory, but we must remain vigilant. The city gates await us.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -839,16 +905,58 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "qz_vic_zf_choice_01",
+    "char": "zhangfei",
+    "text": "Right you are, eldest brother! Let's make sure the city is truly secure.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "qz_victory_lb_01",
     "char": "liubei",
     "text": "The siege is lifted. We should report back to Magistrate Zhou Jing for our next assignment.",
     "source": "MapScene.js"
   },
   {
+    "id": "qz_zf_choice_01",
+    "char": "zhangfei",
+    "text": "That's the spirit, brother! Let's show those rebels what we're made of!",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "qz_zj_01",
     "char": "zhoujing",
     "text": "I shall reinforce you with five thousand of my best soldiers. March at once!",
-    "source": "BattleSummaryScene.js"
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "rec_gy_01",
+    "char": "guanyu",
+    "text": "We offer no riches, only the chance to serve with honor under the banner of the Imperial Uncle, Liu Bei.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "rec_lb_01",
+    "char": "liubei",
+    "text": "Welcome, brothers. Today we are but a few, but tomorrow we shall be an army.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "rec_lb_02",
+    "char": "liubei",
+    "text": "Let us march! Our first destination: the headquarters of the local Magistrate.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "rec_vol_01",
+    "char": "soldier",
+    "text": "We have heard of your brotherhood! We are but simple men, but we will follow you to the death!",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "rec_zf_01",
+    "char": "zhangfei",
+    "text": "CITIZENS OF ZHUO! The Yellow Turbans are coming! Who among you is brave enough to fight for your homes?",
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "recov_gy_01",

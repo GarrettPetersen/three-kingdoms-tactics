@@ -316,7 +316,7 @@
     },
     "inn_gy_01": {
         "character": "guanyu",
-        "original_text": "I have heard of your noble purpose. I wish to join you in this great cause.",
+        "original_text": "Quick! Bring me wine! I am in a hurry to get to town and join the volunteers!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -344,14 +344,14 @@
     },
     "inn_gy_05": {
         "character": "guanyu",
-        "original_text": "I agree... We swear by the peach garden.",
+        "original_text": "I agree. We swear by the peach garden.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
     },
     "inn_lb_01": {
         "character": "liubei",
-        "original_text": "Then let us swear an oath of brotherhood! To live and die as one!",
+        "original_text": "Indeed. Honor and duty call us.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -393,14 +393,14 @@
     },
     "inn_zf_01": {
         "character": "zhangfei",
-        "original_text": "This is Guan Yu, styled Yunchang. He is a man of great strength and courage.",
+        "original_text": "This wine is good! Together, we shall raise an army that will make the rebels tremble.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
     },
     "inn_zf_02": {
         "character": "zhangfei",
-        "original_text": "I know the perfect place! Behind my farm is a peach garden. The flowers are in full bloom.",
+        "original_text": "Hey! You there! You're joining the volunteers too? Come, drink with us!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -792,7 +792,7 @@
     },
     "rec_gy_01": {
         "character": "guanyu",
-        "original_text": "We offer no riches, only the chance to serve with honor under the banner of Liu Bei.",
+        "original_text": "We offer no riches, only the chance to serve with honor under the banner of the Imperial Uncle, Liu Bei.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false
@@ -1045,27 +1045,132 @@
     "daxing_lb_choice_01": {
         "character": "liubei",
         "original_text": "The people cry out for justice. We cannot stand idle.",
-        "stt_output": "the people cry out for justice. We cannot stand idle.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "daxing_lb_choice_02": {
         "character": "liubei",
         "original_text": "We seek glory in service to the Han.",
-        "stt_output": "We see glory in service to the heart.",
-        "wer": 0.25,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "daxing_lb_choice_03": {
         "character": "liubei",
         "original_text": "Fifty thousand rebels? We three alone could handle them!",
-        "stt_output": "50,000 rebels. We three alone could handle them.",
-        "wer": 0.2222222222222222,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "daxing_zj_02_alt": {
         "character": "zhoujing",
         "original_text": "An Imperial kinsman! Your ambition serves the Han well. Your arrival is most timely.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "gz_lb_fight_01": {
+        "character": "liubei",
+        "original_text": "Brother, we cannot stand idle while injustice is done. Free him!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "gz_lb_restrain_01": {
+        "character": "liubei",
+        "original_text": "The court will have its own public judgment. How can you act rashly?",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_lb_02": {
+        "character": "liubei",
+        "original_text": "That man... his presence is extraordinary. Look at his majestic beard and phoenix-like eyes.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_gy_choice_01": {
+        "character": "guanyu",
+        "original_text": "Your words ring true. I would be honored to join your cause.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_gy_choice_02": {
+        "character": "guanyu",
+        "original_text": "Spoken like a true leader. The people need men like you.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_lb_choice_01": {
+        "character": "liubei",
+        "original_text": "Your cause is just. Join us, and together we shall serve the Han.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_lb_choice_02": {
+        "character": "liubei",
+        "original_text": "We fight not for glory, but for the people who suffer under this chaos.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_lb_choice_01": {
+        "character": "liubei",
+        "original_text": "The people cry out for aid. We must answer their call at once.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_ret_gj_choice_01": {
+        "character": "gongjing",
+        "original_text": "Your humility does you credit, but your deeds speak louder than words.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_ret_gy_choice_01": {
+        "character": "guanyu",
+        "original_text": "A noble cause, brother. We stand with you.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_ret_lb_choice_01": {
+        "character": "liubei",
+        "original_text": "It was an honor to serve. The people of Qingzhou can rest easy now.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_ret_lb_choice_02": {
+        "character": "liubei",
+        "original_text": "Commander Lu Zhi needs aid. We cannot abandon a loyal servant of the Han.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_vic_lb_choice_01": {
+        "character": "liubei",
+        "original_text": "A fine victory, but we must remain vigilant. The city gates await us.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_vic_zf_choice_01": {
+        "character": "zhangfei",
+        "original_text": "Right you are, eldest brother! Let's make sure the city is truly secure.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "qz_zf_choice_01": {
+        "character": "zhangfei",
+        "original_text": "That's the spirit, brother! Let's show those rebels what we're made of!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false

@@ -271,41 +271,7 @@ export class LevelUpScene extends BaseScene {
                 this.manager.switchTo('title');
             } else if (this.manager.gameState.get('currentBattleId') === 'daxing') {
                 this.manager.switchTo('narrative', {
-                    script: [
-                        { bg: 'army_camp', type: 'command', action: 'clearActors' },
-                        { type: 'command', action: 'addActor', id: 'messenger', imgKey: 'soldier', x: 230, y: 180, flip: true, speed: 2 },
-                        { type: 'command', action: 'addActor', id: 'zhoujing', imgKey: 'zhoujing', x: 180, y: 160, flip: true },
-                        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 60, y: 200 },
-                        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 20, y: 210 },
-                        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 100, y: 210 },
-                        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-                        { type: 'command', action: 'move', id: 'messenger', x: 140, y: 180 },
-                        {
-                            type: 'dialogue',
-                            portraitKey: 'soldier',
-                            name: 'Messenger',
-                            position: 'top',
-                            voiceId: 'qz_ms_01',
-                            text: "URGENT! Imperial Protector Gong Jing of Qingzhou Region is under siege! The city is near falling!"
-                        },
-                        {
-                            type: 'dialogue',
-                            portraitKey: 'liu-bei',
-                            name: 'Liu Bei',
-                            position: 'top',
-                            voiceId: 'qz_lb_01',
-                            text: "I will go. We cannot let the people of Qingzhou suffer."
-                        },
-                        {
-                            type: 'dialogue',
-                            portraitKey: 'zhou-jing',
-                            name: 'Zhou Jing',
-                            position: 'top',
-                            voiceId: 'qz_zj_01',
-                            text: "I shall reinforce you with five thousand of my best soldiers. March at once!"
-                        },
-                        { type: 'command', action: 'fade', target: 1, speed: 0.001 }
-                    ],
+                    scriptId: 'daxing_messenger',
                     onComplete: () => {
                         this.manager.switchTo('map', { afterEvent: 'daxing' });
                     }

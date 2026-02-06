@@ -58,22 +58,32 @@ CHAR_TARGETS = {
 }
 
 # --- Initialize ---
-print(f"Loading XTTS v2 model (this may take a long time on first run)...")
-# You must accept the Coqui TTS terms of service
-os.environ["COQUI_TOS_AGREED"] = "1"
+# Models will be loaded lazily only when needed (after checking if there are lines to generate)
+tts = None
+stt_model = None
 
-try:
-    # Use CPU for Intel Mac. If you have a GPU, change to "cuda"
-    tts = TTS(MODEL_NAME).to("cpu")
-except Exception as e:
-    print(f"CRITICAL ERROR: Failed to load TTS model: {e}")
-    sys.exit(1)
-
-print("Loading Whisper model for verification...")
-if whisper:
-    stt_model = whisper.load_model("base")
-else:
-    stt_model = None
+def load_models():
+    """Load TTS and Whisper models. Called only when we actually need to generate voices."""
+    global tts, stt_model
+    if tts is not None:
+        return  # Already loaded
+    
+    print("Loading XTTS v2 model (this may take a long time on first run)...")
+    # You must accept the Coqui TTS terms of service
+    os.environ["COQUI_TOS_AGREED"] = "1"
+    
+    try:
+        # Use CPU for Intel Mac. If you have a GPU, change to "cuda"
+        tts = TTS(MODEL_NAME).to("cpu")
+    except Exception as e:
+        print(f"CRITICAL ERROR: Failed to load TTS model: {e}")
+        sys.exit(1)
+    
+    print("Loading Whisper model for verification...")
+    if whisper:
+        stt_model = whisper.load_model("base")
+    else:
+        stt_model = None
 
 
 def load_voice_lines_from_extracted():
@@ -252,7 +262,7 @@ def generate_voice(
 
     # Use phonetic text for generation if provided, but verify against original text
     gen_text = phonetic_text if phonetic_text else text
-    print(f"Generating (XTTS): {character} -> {line_id}")
+    print(f"\n[{line_id}] Generating (XTTS): {character} -> {line_id}")
     if phonetic_text:
         print(f'  Using phonetic override: "{phonetic_text}"')
 
@@ -315,8 +325,23 @@ game_script = [
     {
         "id": "daxing_zj_02",
         "char": "zhoujing",
-        "text": "An Imperial kinsman! Truly, the Heavens have not abandoned the Han. Your arrival is most timely.",
-        "phonetic_text": "Ahn Imperial kinsman. Truly, the Heavens have not abandoned the Han. Your arrival is most timely.",
+        "text": "An Imperial kinsman with a true heart! Truly, the Heavens have not abandoned the Han. Your arrival is most timely.",
+        "phonetic_text": "Ahn Imperial kinsman with a true heart. Truly, the Heavens have not abandoned the Han. Your arrival is most timely.",
+    },
+    {
+        "id": "daxing_lb_choice_01",
+        "char": "liubei",
+        "text": "The people cry out for justice. We cannot stand idle.",
+    },
+    {
+        "id": "daxing_lb_choice_02",
+        "char": "liubei",
+        "text": "We seek glory in service to the Han.",
+    },
+    {
+        "id": "daxing_zj_02_alt",
+        "char": "zhoujing",
+        "text": "An Imperial kinsman! Your ambition serves the Han well. Your arrival is most timely.",
     },
     {
         "id": "daxing_zj_03",
@@ -337,7 +362,17 @@ game_script = [
     {
         "id": "daxing_lb_03",
         "char": "liubei",
-        "text": "Magistrate Zhou Jing, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion.",
+        "text": "Magistrate Zhou, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion.",
+    },
+    {
+        "id": "daxing_lb_choice_03",
+        "char": "liubei",
+        "text": "Fifty thousand rebels? We three alone could handle them!",
+    },
+    {
+        "id": "daxing_gy_choice_01",
+        "char": "guanyu",
+        "text": "Brother, your courage is admirable, but even heroes need strategy. Let us work with the magistrate.",
     },
     {
         "id": "daxing_zj_04",
@@ -681,6 +716,68 @@ game_script = [
         "phonetic_text": "I will go. We cannot let the people of Qingzhou suffer.",
     },
     {
+        "id": "qz_lb_choice_01",
+        "char": "liubei",
+        "text": "The people cry out for aid. We must answer their call at once.",
+    },
+    {
+        "id": "qz_zf_choice_01",
+        "char": "zhangfei",
+        "text": "That's the spirit, brother! Let's show those rebels what we're made of!",
+        "speed": 0.9,
+    },
+    {
+        "id": "qz_vic_lb_choice_01",
+        "char": "liubei",
+        "text": "A fine victory, but we must remain vigilant. The city gates await us.",
+    },
+    {
+        "id": "qz_vic_zf_choice_01",
+        "char": "zhangfei",
+        "text": "Right you are, eldest brother! Let's make sure the city is truly secure.",
+        "speed": 0.9,
+    },
+    {
+        "id": "qz_ret_lb_choice_01",
+        "char": "liubei",
+        "text": "It was an honor to serve. The people of Qingzhou can rest easy now.",
+    },
+    {
+        "id": "qz_ret_gj_choice_01",
+        "char": "gongjing",
+        "text": "Your humility does you credit, but your deeds speak louder than words.",
+    },
+    {
+        "id": "qz_ret_lb_choice_02",
+        "char": "liubei",
+        "text": "Commander Lu Zhi needs aid. We cannot abandon a loyal servant of the Han.",
+    },
+    {
+        "id": "qz_ret_gy_choice_01",
+        "char": "guanyu",
+        "text": "A noble cause, brother. We stand with you.",
+    },
+    {
+        "id": "inn_lb_choice_01",
+        "char": "liubei",
+        "text": "Your cause is just. Join us, and together we shall serve the Han.",
+    },
+    {
+        "id": "inn_gy_choice_01",
+        "char": "guanyu",
+        "text": "Your words ring true. I would be honored to join your cause.",
+    },
+    {
+        "id": "inn_lb_choice_02",
+        "char": "liubei",
+        "text": "We fight not for glory, but for the people who suffer under this chaos.",
+    },
+    {
+        "id": "inn_gy_choice_02",
+        "char": "guanyu",
+        "text": "Spoken like a true leader. The people need men like you.",
+    },
+    {
         "id": "qz_zj_01",
         "char": "zhoujing",
         "text": "I shall reinforce you with five thousand of my best soldiers. March at once!",
@@ -907,6 +1004,38 @@ game_script = [
         "char": "dongzhuo",
         "text": "Hmph. Common men with no rank. You may go.",
     },
+    # --- Guangzong Choice Dialogue ---
+    {
+        "id": "gz_lb_restrain_01",
+        "char": "liubei",
+        "text": "The court will have its own public judgment. How can you act rashly?",
+    },
+    {
+        "id": "gz_lb_fight_01",
+        "char": "liubei",
+        "text": "Brother, we cannot stand idle while injustice is done. Free him!",
+    },
+    {
+        "id": "gz_gy_restrain_01",
+        "char": "guanyu",
+        "text": "It was wise to stay your hand, brother. The law must take its course. Let us return toward Zhuo.",
+    },
+    {
+        "id": "gz_zf_restrain_01",
+        "char": "zhangfei",
+        "text": "BAH! This stinks of corruption! But... I will follow your lead, eldest brother.",
+        "speed": 0.9,
+    },
+    {
+        "id": "gz_nar_restrain_01",
+        "char": "narrator",
+        "text": "And so the escort and the three brothers went two ways. It was useless to continue on that road to Guangzong.",
+    },
+    {
+        "id": "gz_gy_return_01",
+        "char": "guanyu",
+        "text": "Let us return toward Zhuo County. There is nothing more for us here.",
+    },
     {
         "id": "gz_zf_02",
         "char": "zhangfei",
@@ -1034,17 +1163,27 @@ if __name__ == "__main__":
         print("\nFix these duplicates before generating voices!")
         sys.exit(1)
 
-    # Quick count of files that need generation
-    missing_count = 0
+    # Pre-fill list of lines that need generation
+    lines_to_generate = []
     for line in voice_lines:
         output_ogg = os.path.join(OUTPUT_DIR, f"{line['id']}.ogg")
         if not os.path.exists(output_ogg) or os.path.getsize(output_ogg) == 0:
-            missing_count += 1
+            lines_to_generate.append(line)
 
-    if missing_count == 0:
+    if len(lines_to_generate) == 0:
         print("All voice files already exist. Nothing to generate.")
-    else:
-        print(f"Need to generate {missing_count} voice file(s)...\n")
+        sys.exit(0)
+    
+    # Only load models if we actually need to generate something
+    load_models()
+    
+    print(f"Need to generate {len(lines_to_generate)} voice file(s)...")
+    print("\nLines to generate:")
+    for line in lines_to_generate:
+        print(
+            f"  - {line['id']} ({line['char']}): \"{line['text'][:60]}{'...' if len(line['text']) > 60 else ''}\""
+        )
+    print()
 
     report = {}
     for line in voice_lines:

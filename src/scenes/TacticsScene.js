@@ -1041,70 +1041,100 @@ export class TacticsScene extends BaseScene {
     }
 
     startFight() {
-        // Transition from encounter cutscene to actual battle
-        // Keep the same map, units in same positions
-        
-        // Switch to battle music
-        assets.playMusic('battle', 0.4);
-        
-        // Disable cutscene mode
-        this.isCutscene = false;
-        this.isFightMode = true;
-        
-        // Add the 3 existing campaign soldiers with their XP
-        const gs = this.manager.gameState;
-        const unitXP = gs.getCampaignVar('unitXP') || {};
-        const unitClasses = gs.getCampaignVar('unitClasses') || {};
-        
-        const allyPositions = [
-            { id: 'ally1', r: 5, q: 0 },
-            { id: 'ally2', r: 7, q: 0 },
-            { id: 'ally3', r: 4, q: 2 }
+        // First show Liu Bei's line before starting the fight
+        this.cleanupDialogueScript = [
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'gz_lb_fight_01',
+                text: "Brother, we cannot stand idle while injustice is done. Free him!"
+            }
         ];
         
-        allyPositions.forEach((allyDef) => {
-            // Only add if not already present
-            if (this.units.find(u => u.id === allyDef.id)) return;
+        this.cleanupDialogueStep = 0;
+        this.dialogueElapsed = 0;
+        this.isCleanupDialogueActive = true;
+        
+        // Store the callback to call when dialogue ends
+        this.cleanupDialogueOnComplete = () => {
+            this.isCleanupDialogueActive = false;
+            // Transition from encounter cutscene to actual battle
+            // Keep the same map, units in same positions
+            
+            // Switch to battle music
+            assets.playMusic('battle', 0.4);
+            
+            // Disable cutscene mode
+            this.isCutscene = false;
+            this.isFightMode = true;
+            
+            // Add the 3 existing campaign soldiers with their XP
+            const gs = this.manager.gameState;
+            const unitXP = gs.getCampaignVar('unitXP') || {};
+            const unitClasses = gs.getCampaignVar('unitClasses') || {};
+            
+            const allyPositions = [
+                { id: 'ally1', r: 5, q: 0 },
+                { id: 'ally2', r: 7, q: 0 },
+                { id: 'ally3', r: 4, q: 2 }
+            ];
+            
+            allyPositions.forEach((allyDef) => {
+                // Only add if not already present
+                if (this.units.find(u => u.id === allyDef.id)) return;
 
-            const cell = this.findNearestFreeCell(allyDef.r, allyDef.q, 3);
-            if (cell) {
-                const xp = unitXP[allyDef.id] || 0;
-                const level = this.getLevelFromXP(xp);
-                const unitClass = unitClasses[allyDef.id] || 'soldier';
-                
-                const isArcher = unitClass === 'archer';
-                // Soldiers gain +1 HP at level 2+, archers stay at 2 base HP
-                const baseHp = isArcher ? 2 : (level >= 2 ? 3 : 2);
-                const finalMaxHp = this.getMaxHpForLevel(level, baseHp);
-                
-                const ally = new Unit(allyDef.id, {
-                    name: 'Volunteer',
-                    imgKey: isArcher ? 'archer' : 'soldier',
-                    img: assets.getImage(isArcher ? 'archer' : 'soldier'),
-                    faction: 'allied',
-                    hp: finalMaxHp,
-                    maxHp: finalMaxHp,
-                    moveRange: 3,
-                    attacks: isArcher ? ['arrow_shot'] : ['slash'],
-                    r: cell.r,
-                    q: cell.q,
-                    level: level
-                });
-                this.units.push(ally);
-                cell.unit = ally;
-            }
-        });
+                const cell = this.findNearestFreeCell(allyDef.r, allyDef.q, 3);
+                if (cell) {
+                    const xp = unitXP[allyDef.id] || 0;
+                    const level = this.getLevelFromXP(xp);
+                    const unitClass = unitClasses[allyDef.id] || 'soldier';
+                    
+                    const isArcher = unitClass === 'archer';
+                    // Soldiers gain +1 HP at level 2+, archers stay at 2 base HP
+                    const baseHp = isArcher ? 2 : (level >= 2 ? 3 : 2);
+                    const finalMaxHp = this.getMaxHpForLevel(level, baseHp);
+                    
+                    const ally = new Unit(allyDef.id, {
+                        name: 'Volunteer',
+                        imgKey: isArcher ? 'archer' : 'soldier',
+                        img: assets.getImage(isArcher ? 'archer' : 'soldier'),
+                        faction: 'allied',
+                        hp: finalMaxHp,
+                        maxHp: finalMaxHp,
+                        moveRange: 3,
+                        attacks: isArcher ? ['arrow_shot'] : ['slash'],
+                        r: cell.r,
+                        q: cell.q,
+                        level: level
+                    });
+                    this.units.push(ally);
+                    cell.unit = ally;
+                }
+            });
+            
+            // Show objective
+            this.addDamageNumber(this.manager.canvas.width / 2, 40, "BREAK THE CAGE!", '#ffd700');
+            
+            // Start with NPC phase so enemies get their first turn to move and telegraph
+            this.startNpcPhase();
+        };
         
-        // Show objective
-        this.addDamageNumber(this.manager.canvas.width / 2, 40, "BREAK THE CAGE!", '#ffd700');
-        
-        // Start with NPC phase so enemies get their first turn to move and telegraph
-        this.startNpcPhase();
+        // Play first voice line
+        const firstStep = this.cleanupDialogueScript[0];
+        if (firstStep.voiceId) assets.playVoice(firstStep.voiceId);
     }
 
     startRestrainDialogue() {
         // Show dialogue on the tactics map after choosing to restrain Zhang Fei
         this.cleanupDialogueScript = [
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'gz_lb_restrain_01',
+                text: "The court will have its own public judgment. How can you act rashly?"
+            },
             {
                 speaker: 'guanyu',
                 portraitKey: 'guan-yu',

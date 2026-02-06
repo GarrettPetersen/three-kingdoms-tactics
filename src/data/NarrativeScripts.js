@@ -105,6 +105,10 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'addActor', id: 'guard2', imgKey: 'soldier', x: 200, y: 140, flip: true },
         { type: 'command', action: 'addActor', id: 'soldier3', imgKey: 'soldier', x: 20, y: 150, speed: 0.2 },
         { type: 'command', action: 'addActor', id: 'soldier4', imgKey: 'soldier', x: 230, y: 145, flip: true, speed: 0.1 },
+        { type: 'command', action: 'addActor', id: 'merchant', imgKey: 'merchant', x: 30, y: 160, speed: 0.3 },
+        { type: 'command', action: 'addActor', id: 'blacksmith', imgKey: 'blacksmith', x: 230, y: 180, flip: true, speed: 0.2 },
+        { type: 'command', action: 'addActor', id: 'volunteer1', imgKey: 'soldier', x: 40, y: 190, speed: 0.5 },
+        { type: 'command', action: 'addActor', id: 'volunteer2', imgKey: 'soldier', x: 210, y: 200, flip: true, speed: 0.4 },
         { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: -40, y: 240, speed: 1 },
         { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: -80, y: 250, speed: 1 },
         { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: -120, y: 255, speed: 1 },
@@ -112,6 +116,10 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'move', id: 'liubei', x: 100, y: 190, wait: false },
         { type: 'command', action: 'move', id: 'guanyu', x: 65, y: 190, wait: false },
         { type: 'command', action: 'move', id: 'zhangfei', x: 135, y: 190, wait: false },
+        { type: 'command', action: 'move', id: 'soldier3', x: 10, y: 155, wait: false },
+        { type: 'command', action: 'move', id: 'soldier4', x: 245, y: 140, wait: false },
+        { type: 'command', action: 'move', id: 'merchant', x: 20, y: 165, wait: false },
+        { type: 'command', action: 'move', id: 'blacksmith', x: 240, y: 175 },
         {
             type: 'dialogue',
             portraitKey: 'zhou-jing',
@@ -241,6 +249,61 @@ export const NARRATIVE_SCRIPTS = {
                 }
             ]
         },
+        { type: 'command', action: 'fade', target: 1, speed: 0.001         }
+    ],
+    'daxing_messenger': [
+        { bg: 'army_camp', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'addActor', id: 'messenger', imgKey: 'soldier', x: 230, y: 180, flip: true, speed: 2 },
+        { type: 'command', action: 'addActor', id: 'zhoujing', imgKey: 'zhoujing', x: 180, y: 160, flip: true },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 60, y: 200 },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 20, y: 210 },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 100, y: 210 },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'move', id: 'messenger', x: 140, y: 180 },
+        {
+            type: 'dialogue',
+            portraitKey: 'soldier',
+            name: 'Messenger',
+            position: 'top',
+            voiceId: 'qz_ms_01',
+            text: "URGENT! Imperial Protector Gong Jing of Qingzhou Region is under siege! The city is near falling!"
+        },
+        {
+            type: 'choice',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            options: [
+                { 
+                    text: "I will go. We cannot let the people of Qingzhou suffer.",
+                    voiceId: 'qz_lb_01',
+                    speaker: 'liubei',
+                    result: []
+                },
+                { 
+                    text: "The people cry out for aid. We must answer their call at once.",
+                    voiceId: 'qz_lb_choice_01',
+                    speaker: 'liubei',
+                    result: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhang-fei',
+                            name: 'Zhang Fei',
+                            position: 'top',
+                            voiceId: 'qz_zf_choice_01',
+                            text: "That's the spirit, brother! Let's show those rebels what we're made of!"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhou-jing',
+            name: 'Zhou Jing',
+            position: 'top',
+            voiceId: 'qz_zj_01',
+            text: "I shall reinforce you with five thousand of my best soldiers. March at once!"
+        },
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ],
     'qingzhou_victory': [
@@ -261,12 +324,32 @@ export const NARRATIVE_SCRIPTS = {
             text: "A well-executed trap, Brother. The high ground served us well."
         },
         {
-            type: 'dialogue',
+            type: 'choice',
             portraitKey: 'liu-bei',
             name: 'Liu Bei',
-            voiceId: 'qz_vic_lb_01',
-            position: 'top',
-            text: "Let us not tarry. The city is still in peril. We must return to the gates and ensure the Imperial Protector is safe."
+            options: [
+                { 
+                    text: "Let us not tarry. The city is still in peril. We must return to the gates and ensure the Imperial Protector is safe.",
+                    voiceId: 'qz_vic_lb_01',
+                    speaker: 'liubei',
+                    result: []
+                },
+                { 
+                    text: "A fine victory, but we must remain vigilant. The city gates await us.",
+                    voiceId: 'qz_vic_lb_choice_01',
+                    speaker: 'liubei',
+                    result: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhang-fei',
+                            name: 'Zhang Fei',
+                            position: 'top',
+                            voiceId: 'qz_vic_zf_choice_01',
+                            text: "Right you are, eldest brother! Let's make sure the city is truly secure."
+                        }
+                    ]
+                }
+            ]
         },
         {
             type: 'dialogue',
@@ -285,12 +368,32 @@ export const NARRATIVE_SCRIPTS = {
             text: "Heroic brothers! You have saved Qingzhou! When your signal echoed through the pass, we charged from the gates. The rebels were caught between us and slaughtered."
         },
         {
-            type: 'dialogue',
+            type: 'choice',
             portraitKey: 'liu-bei',
             name: 'Liu Bei',
-            voiceId: 'qz_ret_lb_01',
-            position: 'top',
-            text: "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere."
+            options: [
+                { 
+                    text: "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere.",
+                    voiceId: 'qz_ret_lb_01',
+                    speaker: 'liubei',
+                    result: []
+                },
+                { 
+                    text: "It was an honor to serve. The people of Qingzhou can rest easy now.",
+                    voiceId: 'qz_ret_lb_choice_01',
+                    speaker: 'liubei',
+                    result: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'custom-male-17',
+                            name: 'Protector Gong Jing',
+                            position: 'top',
+                            voiceId: 'qz_ret_gj_choice_01',
+                            text: "Your humility does you credit, but your deeds speak louder than words."
+                        }
+                    ]
+                }
+            ]
         },
         {
             type: 'dialogue',
@@ -301,12 +404,32 @@ export const NARRATIVE_SCRIPTS = {
             text: "Indeed. I have heard that Commander Lu Zhi is hard-pressed at Guangzong by the chief rebel, Zhang Jue himself."
         },
         {
-            type: 'dialogue',
+            type: 'choice',
             portraitKey: 'liu-bei',
             name: 'Liu Bei',
-            voiceId: 'qz_ret_lb_02',
-            position: 'top',
-            text: "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!"
+            options: [
+                { 
+                    text: "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!",
+                    voiceId: 'qz_ret_lb_02',
+                    speaker: 'liubei',
+                    result: []
+                },
+                { 
+                    text: "Commander Lu Zhi needs aid. We cannot abandon a loyal servant of the Han.",
+                    voiceId: 'qz_ret_lb_choice_02',
+                    speaker: 'liubei',
+                    result: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'guan-yu',
+                            name: 'Guan Yu',
+                            position: 'top',
+                            voiceId: 'qz_ret_gy_choice_01',
+                            text: "A noble cause, brother. We stand with you."
+                        }
+                    ]
+                }
+            ]
         }
     ],
     'noticeboard': [
@@ -580,12 +703,32 @@ export const NARRATIVE_SCRIPTS = {
             text: "Now I hear there is a call for volunteers, and I have come to join the cause."
         },
         {
-            type: 'dialogue',
+            type: 'choice',
             portraitKey: 'liu-bei',
-            position: 'top',
             name: 'Liu Bei',
-            voiceId: 'inn_lb_03',
-            text: "A noble heart! I am Liu Bei, and this is Zhang Fei. We have just agreed to raise a volunteer army ourselves."
+            options: [
+                { 
+                    text: "A noble heart! I am Liu Bei, and this is Zhang Fei. We have just agreed to raise a volunteer army ourselves.",
+                    voiceId: 'inn_lb_03',
+                    speaker: 'liubei',
+                    result: []
+                },
+                { 
+                    text: "Your cause is just. Join us, and together we shall serve the Han.",
+                    voiceId: 'inn_lb_choice_01',
+                    speaker: 'liubei',
+                    result: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'guan-yu',
+                            name: 'Guan Yu',
+                            position: 'top',
+                            voiceId: 'inn_gy_choice_01',
+                            text: "Your words ring true. I would be honored to join your cause."
+                        }
+                    ]
+                }
+            ]
         },
         {
             type: 'dialogue',
@@ -631,12 +774,32 @@ export const NARRATIVE_SCRIPTS = {
             text: "The heavens have surely brought us together. We share one mind and one purpose."
         },
         {
-            type: 'dialogue',
+            type: 'choice',
             portraitKey: 'liu-bei',
-            position: 'top',
             name: 'Liu Bei',
-            voiceId: 'inn_lb_04',
-            text: "To restore the Han and bring peace to the common people. That is our shared destiny."
+            options: [
+                { 
+                    text: "To restore the Han and bring peace to the common people. That is our shared destiny.",
+                    voiceId: 'inn_lb_04',
+                    speaker: 'liubei',
+                    result: []
+                },
+                { 
+                    text: "We fight not for glory, but for the people who suffer under this chaos.",
+                    voiceId: 'inn_lb_choice_02',
+                    speaker: 'liubei',
+                    result: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'guan-yu',
+                            name: 'Guan Yu',
+                            position: 'top',
+                            voiceId: 'inn_gy_choice_02',
+                            text: "Spoken like a true leader. The people need men like you."
+                        }
+                    ]
+                }
+            ]
         },
         {
             type: 'dialogue',
