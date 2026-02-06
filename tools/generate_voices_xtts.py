@@ -62,23 +62,24 @@ CHAR_TARGETS = {
 tts = None
 stt_model = None
 
+
 def load_models():
     """Load TTS and Whisper models. Called only when we actually need to generate voices."""
     global tts, stt_model
     if tts is not None:
         return  # Already loaded
-    
+
     print("Loading XTTS v2 model (this may take a long time on first run)...")
     # You must accept the Coqui TTS terms of service
     os.environ["COQUI_TOS_AGREED"] = "1"
-    
+
     try:
         # Use CPU for Intel Mac. If you have a GPU, change to "cuda"
         tts = TTS(MODEL_NAME).to("cpu")
     except Exception as e:
         print(f"CRITICAL ERROR: Failed to load TTS model: {e}")
         sys.exit(1)
-    
+
     print("Loading Whisper model for verification...")
     if whisper:
         stt_model = whisper.load_model("base")
@@ -1173,10 +1174,10 @@ if __name__ == "__main__":
     if len(lines_to_generate) == 0:
         print("All voice files already exist. Nothing to generate.")
         sys.exit(0)
-    
+
     # Only load models if we actually need to generate something
     load_models()
-    
+
     print(f"Need to generate {len(lines_to_generate)} voice file(s)...")
     print("\nLines to generate:")
     for line in lines_to_generate:
