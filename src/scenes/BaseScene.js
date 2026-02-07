@@ -318,10 +318,25 @@ export class BaseScene {
             lineY += 14; // Slightly more spacing for readability
         });
 
-        // Click prompt
+        // Click prompt - show right arrow if there's more text, otherwise show "NEXT"
         const pulse = Math.abs(Math.sin(Date.now() / 500));
         ctx.globalAlpha = pulse;
-        this.drawPixelText(ctx, "NEXT", px + panelWidth - 2, py + panelHeight - 10, { color: '#eee', font: '8px Tiny5', align: 'right' });
+        if (hasNextChunk) {
+            // Draw right arrow (→) when there's more text to read
+            ctx.fillStyle = '#eee';
+            ctx.beginPath();
+            const arrowX = px + panelWidth - 10;
+            const arrowY = py + panelHeight - 9;
+            // Draw a right-pointing triangle
+            ctx.moveTo(arrowX, arrowY);
+            ctx.lineTo(arrowX + 5, arrowY + 3);
+            ctx.lineTo(arrowX, arrowY + 6);
+            ctx.closePath();
+            ctx.fill();
+        } else {
+            // Show "NEXT" when clicking will advance to next dialogue
+            this.drawPixelText(ctx, "NEXT", px + panelWidth - 2, py + panelHeight - 10, { color: '#eee', font: '8px Tiny5', align: 'right' });
+        }
         ctx.globalAlpha = 1.0;
 
         return { hasNextChunk, totalLines: lines.length };

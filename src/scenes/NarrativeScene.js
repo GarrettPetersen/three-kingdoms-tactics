@@ -15,6 +15,7 @@ export class NarrativeScene extends BaseScene {
         this.fadeTarget = 0;
         this.fadeSpeed = 0.002;
         this.elapsedInStep = 0;
+        this.highlightedChoiceIndex = 0; // Track which choice is highlighted for keyboard navigation
     }
 
     enter(params) {
@@ -50,6 +51,11 @@ export class NarrativeScene extends BaseScene {
         if (!step) return;
 
         this.elapsedInStep = 0;
+
+        // Reset highlighted choice index when entering a choice step
+        if (step.type === 'choice') {
+            this.highlightedChoiceIndex = 0;
+        }
 
         // Trigger voice if present
         if (step.voiceId) {
@@ -417,18 +423,20 @@ export class NarrativeScene extends BaseScene {
         const { ctx, canvas } = this.manager;
         const options = step.options || [];
         const padding = 10;
-        const lineSpacing = 10;
-        const optionSpacing = 6;
+        const lineSpacing = 12;
+        const optionSpacing = 8;
         const panelWidth = 200;
         
         // Pre-calculate wrapped lines and total height
         const wrappedOptions = options.map(opt => {
             const lines = [];
-            const words = opt.text.split(' ');
+            // Use buttonText for display, fall back to text if not provided
+            const displayText = opt.buttonText || opt.text;
+            const words = displayText.split(' ');
             let currentLine = '';
             
             ctx.save();
-            ctx.font = '8px Tiny5';
+            ctx.font = '8px Dogica';
             for (let n = 0; n < words.length; n++) {
                 let testLine = currentLine + words[n] + ' ';
                 if (ctx.measureText(testLine).width > (panelWidth - 20) && n > 0) {
@@ -464,8 +472,17 @@ export class NarrativeScene extends BaseScene {
             const optionTopY = currentY;
             const optionHeight = lines.length * lineSpacing;
             
-            const isHovered = this.lastMouseX >= px && this.lastMouseX <= px + panelWidth &&
+            // Check if mouse is over this option
+            const isMouseOver = this.lastMouseX >= px && this.lastMouseX <= px + panelWidth &&
                               this.lastMouseY >= optionTopY && this.lastMouseY <= optionTopY + optionHeight + optionSpacing;
+            
+            // Update highlighted index on mouseover
+            if (isMouseOver && this.highlightedChoiceIndex !== i) {
+                this.highlightedChoiceIndex = i;
+            }
+            
+            // Highlight if it's the currently highlighted option
+            const isHovered = this.highlightedChoiceIndex === i;
 
             if (isHovered) {
                 ctx.fillStyle = 'rgba(255, 215, 0, 0.2)';
@@ -475,7 +492,7 @@ export class NarrativeScene extends BaseScene {
             lines.forEach((line, lineIdx) => {
                 this.drawPixelText(ctx, line, px + 10, optionTopY + lineIdx * lineSpacing, { 
                     color: isHovered ? '#fff' : '#ccc', 
-                    font: '8px Tiny5' 
+                    font: '8px Dogica' 
                 });
             });
 
@@ -533,30 +550,34 @@ export class NarrativeScene extends BaseScene {
 
         if (step && step.type === 'choice' && step._panelMetadata) {
             const m = step._panelMetadata;
-            let currentY = m.py + m.padding;
             
-            step.options.forEach((opt, i) => {
-                const lines = m.wrappedOptions[i];
-                const optionHeight = lines.length * m.lineSpacing;
+            // Handle mouse clicks
+            if (x !== -1000 && y !== -1000) {
+                let currentY = m.py + m.padding;
                 
-                if (x >= m.px && x <= m.px + m.panelWidth && 
-                    y >= currentY - 2 && y <= currentY + optionHeight + 2) {
-                    // Create a dialogue step for the choice so it gets voiced and displayed
-                    const choiceDialogue = {
-                        type: 'dialogue',
-                        portraitKey: step.portraitKey || 'liubei',
-                        name: step.name || 'Liu Bei',
-                        text: opt.text,
-                        voiceId: opt.voiceId
-                    };
-
-                    const resultSteps = opt.result || [];
-                    this.script.splice(this.currentStep + 1, 0, choiceDialogue, ...resultSteps);
+                step.options.forEach((opt, i) => {
+                    const lines = m.wrappedOptions[i];
+                    const optionHeight = lines.length * m.lineSpacing;
                     
-                    this.nextStep();
-                }
-                currentY += optionHeight + m.optionSpacing;
-            });
+                    if (x >= m.px && x <= m.px + m.panelWidth && 
+                        y >= currentY - 2 && y <= currentY + optionHeight + 2) {
+                        // Create a dialogue step for the choice so it gets voiced and displayed
+                        const choiceDialogue = {
+                            type: 'dialogue',
+                            portraitKey: step.portraitKey || 'liubei',
+                            name: step.name || 'Liu Bei',
+                            text: opt.text,
+                            voiceId: opt.voiceId
+                        };
+
+                        const resultSteps = opt.result || [];
+                        this.script.splice(this.currentStep + 1, 0, choiceDialogue, ...resultSteps);
+                        
+                        this.nextStep();
+                    }
+                    currentY += optionHeight + m.optionSpacing;
+                });
+            }
             return;
         }
 
@@ -576,6 +597,46 @@ export class NarrativeScene extends BaseScene {
     }
 
     handleKeyDown(e) {
+        const step = this.script[this.currentStep];
+        
+        // Handle choice navigation
+        if (step && step.type === 'choice' && step._panelMetadata) {
+            const options = step.options || [];
+            
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                this.highlightedChoiceIndex = (this.highlightedChoiceIndex - 1 + options.length) % options.length;
+                assets.playSound('ui_click');
+                return;
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                this.highlightedChoiceIndex = (this.highlightedChoiceIndex + 1) % options.length;
+                assets.playSound('ui_click');
+                return;
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                // Select the currently highlighted choice
+                const opt = options[this.highlightedChoiceIndex];
+                if (opt) {
+                    // Create a dialogue step for the choice so it gets voiced and displayed
+                    const choiceDialogue = {
+                        type: 'dialogue',
+                        portraitKey: step.portraitKey || 'liubei',
+                        name: step.name || 'Liu Bei',
+                        text: opt.text,
+                        voiceId: opt.voiceId
+                    };
+
+                    const resultSteps = opt.result || [];
+                    this.script.splice(this.currentStep + 1, 0, choiceDialogue, ...resultSteps);
+                    
+                    this.nextStep();
+                }
+                return;
+            }
+        }
+        
+        // Default behavior for other steps
         if (e.key === 'Enter' || e.key === ' ') {
             this.handleInput(e);
         }
