@@ -12,6 +12,71 @@ export class BaseScene {
     render(timestamp) {}
     handleInput(e) {}
 
+    // Reusable selection system for menus and choices
+    initSelection(options = {}) {
+        const {
+            defaultIndex = 0,
+            totalOptions = 0
+        } = options;
+        
+        this.selection = {
+            highlightedIndex: defaultIndex,
+            mouseoverEnabled: true,
+            lastMouseX: -1,
+            lastMouseY: -1,
+            totalOptions: totalOptions
+        };
+    }
+
+    updateSelectionMouse(currentMouseX, currentMouseY) {
+        if (!this.selection) return;
+        
+        // Re-enable mouseover if mouse has moved
+        if (currentMouseX !== this.selection.lastMouseX || currentMouseY !== this.selection.lastMouseY) {
+            this.selection.mouseoverEnabled = true;
+            this.selection.lastMouseX = currentMouseX;
+            this.selection.lastMouseY = currentMouseY;
+        }
+    }
+
+    handleSelectionMouseover(optionIndex) {
+        if (!this.selection) return;
+        if (this.selection.mouseoverEnabled && this.selection.highlightedIndex !== optionIndex) {
+            this.selection.highlightedIndex = optionIndex;
+        }
+    }
+
+    handleSelectionMouseClick() {
+        if (!this.selection) return;
+        this.selection.mouseoverEnabled = true;
+    }
+
+    handleSelectionKeyboard(e, onSelect) {
+        if (!this.selection) return false;
+        
+        if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            this.selection.mouseoverEnabled = false;
+            this.selection.highlightedIndex = (this.selection.highlightedIndex - 1 + this.selection.totalOptions) % this.selection.totalOptions;
+            assets.playSound('ui_click');
+            return true;
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            this.selection.mouseoverEnabled = false;
+            this.selection.highlightedIndex = (this.selection.highlightedIndex + 1) % this.selection.totalOptions;
+            assets.playSound('ui_click');
+            return true;
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (onSelect) {
+                onSelect(this.selection.highlightedIndex);
+            }
+            return true;
+        }
+        
+        return false;
+    }
+
     getMousePos(e) {
         const { canvas } = this.manager;
         const rect = canvas.getBoundingClientRect();
@@ -304,18 +369,18 @@ export class BaseScene {
         const textPaddingRight = 15;
         const maxWidth = panelWidth - (textX - px) - textPaddingRight;
         const lines = this.wrapText(ctx, step.text, maxWidth, '8px Dogica');
-        const start = subStep * 2;
-        const displayLines = lines.slice(start, start + 2);
-        const hasNextChunk = (subStep + 1) * 2 < lines.length;
+        const start = subStep * 3;
+        const displayLines = lines.slice(start, start + 3);
+        const hasNextChunk = (subStep + 1) * 3 < lines.length;
         
-        let lineY = py + 22; // Adjusted for taller box
+        let lineY = py + 20; // Moved up a bit to fit 3 lines
         displayLines.forEach((line, i) => {
             let text = line;
             if (i === displayLines.length - 1 && hasNextChunk) {
                 text += "...";
             }
             this.drawPixelText(ctx, text, textX, lineY, { color: '#eee', font: '8px Dogica' });
-            lineY += 14; // Slightly more spacing for readability
+            lineY += 12; // Slightly reduced spacing between lines
         });
 
         // Click prompt - show right arrow if there's more text, otherwise show "NEXT"

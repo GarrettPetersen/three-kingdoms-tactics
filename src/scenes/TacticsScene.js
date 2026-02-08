@@ -18,6 +18,8 @@ export class TacticsScene extends BaseScene {
         
         this.animationFrame = 0;
         this.lastTime = 0;
+        this.lastSaveTime = 0; // Track when we last saved state
+        this.saveInterval = 2000; // Save every 2 seconds
         
         this.turn = 'player'; // 'player', 'enemy'
         this.turnNumber = 1;
@@ -48,8 +50,12 @@ export class TacticsScene extends BaseScene {
     enter(params = {}) {
         const gs = this.manager.gameState;
         
+        // Check if we're resuming a saved battle
+        const isResume = params.isResume && gs.get('battleState');
+        const savedState = isResume ? gs.get('battleState') : null;
+        
         // Scenario-specific initialization
-        this.battleId = params.battleId || gs.get('currentBattleId') || 'daxing'; 
+        this.battleId = params.battleId || (savedState?.battleId) || gs.get('currentBattleId') || 'daxing'; 
         this.isCustom = params.isCustom || this.battleId === 'custom';
         
         const battleDef = BATTLES[this.battleId];
@@ -60,7 +66,7 @@ export class TacticsScene extends BaseScene {
             gs.set('currentBattleId', this.battleId);
         }
 
-        console.log(`Entering battle: ${this.battleId}`);
+        console.log(`Entering battle: ${this.battleId}${isResume ? ' (resuming)' : ''}`);
 
         // Determine music: cutscenes with choices stay on map music, regular battles play battle music
         let musicKey = params.musicKey;
@@ -169,10 +175,10 @@ export class TacticsScene extends BaseScene {
         this.isFightMode = false; // True when player chose to fight in encounter
         
         if (battleDef) {
-            this.mapGenParams = params.mapGen || battleDef.map;
+            this.mapGenParams = params.mapGen || savedState?.mapGen || battleDef.map;
         } else {
             // Original initialization for custom/fallbacks
-            this.mapGenParams = params.mapGen || {
+            this.mapGenParams = params.mapGen || savedState?.mapGen || {
                 biome: 'central',
                 layout: 'river', 
                 forestDensity: 0.15,
@@ -182,7 +188,12 @@ export class TacticsScene extends BaseScene {
             };
         }
             
+        if (!isResume) {
             this.tacticsMap.generate(this.mapGenParams);
+        } else {
+            // For resume, we'll restore the grid from saved state
+            this.tacticsMap.generate(this.mapGenParams);
+        }
 
         // Apply terrain overrides from battle definition
         if (battleDef && battleDef.terrainOverrides) {
@@ -226,17 +237,18 @@ export class TacticsScene extends BaseScene {
                 }
             }
 
+        if (!isResume) {
             this.placeInitialUnits(params.units);
-        
-        // Spawn random boulders on mountain maps
-        if (this.mapGenParams.layout === 'mountain_pass' || this.mapGenParams.mountainDensity > 0.1) {
-            this.spawnRandomBoulders();
-        }
+            
+            // Spawn random boulders on mountain maps
+            if (this.mapGenParams.layout === 'mountain_pass' || this.mapGenParams.mountainDensity > 0.1) {
+                this.spawnRandomBoulders();
+            }
 
-        // Specific boulder placement for Qingzhou Ambush
-        if (this.battleId === 'qingzhou_siege') {
-            this.placeAmbushBoulders();
-        }
+            // Specific boulder placement for Qingzhou Ambush
+            if (this.battleId === 'qingzhou_siege') {
+                this.placeAmbushBoulders();
+            }
             
             // Setup Weather
             this.weatherType = this.mapGenParams.weather || null;
@@ -247,18 +259,28 @@ export class TacticsScene extends BaseScene {
                 else if (this.mapGenParams.biome === 'southern' && Math.random() < 0.3) this.weatherType = 'rain';
             }
             
-        this.isIntroDialogueActive = false; // Set to false initially
+            this.isIntroDialogueActive = false; // Set to false initially
             this.dialogueStep = 0;
             
             // Wait for intro animation then start dialogue
             setTimeout(() => {
                 this.startIntroDialogue();
             }, 1500);
+        } else {
+            // Restore saved battle state
+            this.restoreBattleState(savedState);
+        }
 
         this.particles = [];
         if (!this.isCustom) {
-        this.manager.gameState.set('lastScene', 'tactics');
+            // Don't set lastScene here - SceneManager will handle it when switching away
             this.manager.gameState.set('currentBattleId', this.battleId);
+        }
+        
+        // Initialize history for undo
+        this.history = [];
+        if (!isResume) {
+            this.pushHistory();
         }
 
         if (this.battleId === 'qingzhou_cleanup') {
@@ -941,7 +963,7 @@ export class TacticsScene extends BaseScene {
 
         if (won && !this.isCustom) {
             gs.addMilestone(this.battleId);
-            gs.set('lastScene', 'map'); // Return to map on continue
+            // Don't set lastScene here - SceneManager will handle it
         }
 
         // Calculate final stats
@@ -1686,6 +1708,86 @@ export class TacticsScene extends BaseScene {
         );
     }
 
+    restoreBattleState(state) {
+        if (!state) return;
+        const config = this.manager.config;
+        
+        this.turn = state.turn;
+        this.turnNumber = state.turnNumber;
+        this.weatherType = state.weatherType;
+        
+        // Restore Grid
+        for (let r = 0; r < config.mapHeight; r++) {
+            for (let q = 0; q < config.mapWidth; q++) {
+                const cell = this.tacticsMap.getCell(r, q);
+                const savedCell = state.grid[r][q];
+                if (savedCell) {
+                    cell.terrain = savedCell.terrain;
+                    cell.level = savedCell.level;
+                    cell.elevation = savedCell.elevation;
+                    cell.impassable = savedCell.impassable;
+                }
+                cell.unit = null; // Clear all units first
+            }
+        }
+
+        // First, place all units using the battle definition (they'll be created in default positions)
+        this.placeInitialUnits();
+        
+        // Now restore unit states from saved data (positions, HP, etc.)
+        state.units.forEach(uData => {
+            let u = this.units.find(unit => unit.id === uData.id);
+            if (!u) {
+                // Unit doesn't exist, might need to create it from saved data
+                // For now, skip units that don't exist
+                return; 
+            }
+
+            u.r = uData.r;
+            u.q = uData.q;
+            u.hp = uData.hp;
+            u.maxHp = uData.maxHp;
+            u.imgKey = uData.imgKey;
+            u.img = assets.getImage(uData.imgKey);
+            u.hasMoved = uData.hasMoved;
+            u.hasAttacked = uData.hasAttacked;
+            u.hasActed = uData.hasActed;
+            u.intent = uData.intent ? { ...uData.intent } : null;
+            u.action = uData.action || 'standby';
+            u.isDrowning = uData.isDrowning || false;
+            u.isGone = uData.isGone || false;
+            u.flip = uData.flip || false;
+            u.caged = uData.caged || false;
+            u.cageHp = uData.cageHp;
+            u.cageSprite = uData.cageSprite;
+
+            // Clear animation states
+            u.frame = 0;
+            u.isMoving = false;
+            u.path = [];
+            u.pushData = null;
+            u.shakeTimer = 0;
+            u.visualOffsetX = 0;
+            u.visualOffsetY = 0;
+
+            const cell = this.tacticsMap.getCell(u.r, u.q);
+            if (cell) cell.unit = u;
+        });
+
+        this.selectedUnit = null;
+        this.selectedAttack = null;
+        this.reachableTiles.clear();
+        this.attackTiles.clear();
+        this.attackRects = [];
+        this.activeDialogue = null;
+        this.isIntroDialogueActive = false;
+        this.isIntroAnimating = false;
+        
+        // Initialize history for undo
+        this.history = [];
+        this.pushHistory();
+    }
+
     restoreState(state) {
         if (!state) return;
         const config = this.manager.config;
@@ -1775,6 +1877,13 @@ export class TacticsScene extends BaseScene {
         const prevState = this.history[this.history.length - 1];
         this.restoreState(prevState);
         assets.playSound('ui_click', 0.5);
+    }
+
+    exit() {
+        // Save battle state when leaving (unless it's a custom battle or battle is complete)
+        if (!this.isCustom && !this.isGameOver && !this.isVictoryDialogueActive) {
+            this.saveBattleState();
+        }
     }
 
     clearBattleState() {
@@ -2870,6 +2979,12 @@ export class TacticsScene extends BaseScene {
     update(timestamp) {
         const dt = timestamp - (this.lastTime || timestamp);
             this.lastTime = timestamp;
+
+        // Periodic state saving for crash recovery (only for campaign battles)
+        if (!this.isCustomBattle && timestamp - this.lastSaveTime > this.saveInterval) {
+            this.saveBattleState();
+            this.lastSaveTime = timestamp;
+        }
 
         if (this.isIntroAnimating) {
             this.introTimer += dt;

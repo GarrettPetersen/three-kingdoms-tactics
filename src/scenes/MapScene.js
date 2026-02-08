@@ -132,6 +132,8 @@ export class MapScene extends BaseScene {
             imgKey: 'liubei'
         };
         this.lastClickTime = 0;
+        this.lastSaveTime = 0; // Track when we last saved state
+        this.saveInterval = 2000; // Save every 2 seconds
     }
 
     enter(params) {
@@ -143,63 +145,148 @@ export class MapScene extends BaseScene {
         
         // Load state if it exists
         const gs = this.manager.gameState;
-        this.dialogueElapsed = 0;
-        gs.set('lastScene', 'map'); // Ensure we return here on continue
+        const isResume = params.isResume && gs.get('mapState');
+        const savedState = isResume ? gs.get('mapState') : null;
+        
+        // Don't set lastScene here - SceneManager will handle it when switching away
         this.prologueComplete = gs.hasMilestone('prologue_complete') || gs.hasMilestone('daxing') || gs.hasMilestone('qingzhou_siege');
 
-        if (params && params.afterEvent) {
-            const event = STORY_EVENTS[params.afterEvent];
-            if (event) {
-                this.interactionSelected = 'story_event';
-                this.currentEvent = event;
-                this.subStep = 0;
-                if (event.voiceId) assets.playVoice(event.voiceId);
+        if (!isResume) {
+            this.dialogueElapsed = 0;
+
+            if (params && params.afterEvent) {
+                const event = STORY_EVENTS[params.afterEvent];
+                if (event) {
+                    this.interactionSelected = 'story_event';
+                    this.currentEvent = event;
+                    this.subStep = 0;
+                    if (event.voiceId) assets.playVoice(event.voiceId);
+                }
             }
-        }
 
-        // Handle post-choice continuation from resumed battles
-        if (params && params.afterChoice) {
-            if (params.afterChoice === 'guangzong_restrain') {
-                // Return to map - player will click Zhuo County
-            } else if (params.afterChoice === 'guangzong_fight') {
-                // After fighting to free Lu Zhi
-                setTimeout(() => this.continueAfterEscortBattle(), 100);
+            // Handle post-choice continuation from resumed battles
+            if (params && params.afterChoice) {
+                if (params.afterChoice === 'guangzong_restrain') {
+                    // Return to map - player will click Zhuo County
+                } else if (params.afterChoice === 'guangzong_fight') {
+                    // After fighting to free Lu Zhi
+                    setTimeout(() => this.continueAfterEscortBattle(), 100);
+                }
             }
-        }
 
-        if (params && params.campaignId) {
-            this.currentCampaignId = params.campaignId;
-            gs.set('currentCampaign', params.campaignId);
-            gs.set('lastScene', 'map');
+            if (params && params.campaignId) {
+                this.currentCampaignId = params.campaignId;
+                gs.set('currentCampaign', params.campaignId);
+                // Don't set lastScene here - SceneManager will handle it
 
-            // Initialize party based on campaign
-            if (params.campaignId === 'liubei') {
-                // Prefer explicit params, then saved position, then default
+                // Initialize party based on campaign
+                if (params.campaignId === 'liubei') {
+                    // Prefer explicit params, then saved position, then default
+                    const savedX = gs.getCampaignVar('partyX');
+                    const savedY = gs.getCampaignVar('partyY');
+                    this.party = { 
+                        id: 'liubei', 
+                        name: 'Liu Bei', 
+                        x: params.partyX !== undefined ? params.partyX : (savedX !== undefined ? savedX : 190), 
+                        y: params.partyY !== undefined ? params.partyY : (savedY !== undefined ? savedY : 70),
+                        imgKey: 'liubei'
+                    };
+                }
+            } else {
+                // No params (coming from Continue), restore from save
+                this.currentCampaignId = gs.get('currentCampaign');
                 const savedX = gs.getCampaignVar('partyX');
                 const savedY = gs.getCampaignVar('partyY');
-                this.party = { 
-                    id: 'liubei', 
-                    name: 'Liu Bei', 
-                    x: params.partyX !== undefined ? params.partyX : (savedX !== undefined ? savedX : 190), 
-                    y: params.partyY !== undefined ? params.partyY : (savedY !== undefined ? savedY : 70),
-                    imgKey: 'liubei'
-                };
+                if (this.currentCampaignId === 'liubei') {
+                    this.party = { 
+                        id: 'liubei', 
+                        name: 'Liu Bei', 
+                        x: savedX !== undefined ? savedX : 190, 
+                        y: savedY !== undefined ? savedY : 70,
+                        imgKey: 'liubei'
+                    };
+                }
             }
         } else {
-            // No params (coming from Continue), restore from save
-            this.currentCampaignId = gs.get('currentCampaign');
-            const savedX = gs.getCampaignVar('partyX');
-            const savedY = gs.getCampaignVar('partyY');
-            if (this.currentCampaignId === 'liubei') {
-                this.party = { 
-                    id: 'liubei', 
-                    name: 'Liu Bei', 
-                    x: savedX !== undefined ? savedX : 190, 
-                    y: savedY !== undefined ? savedY : 70,
-                    imgKey: 'liubei'
-                };
+            // Restore saved state
+            this.restoreMapState(savedState);
+        }
+    }
+    
+    restoreMapState(state) {
+        if (!state) return;
+        
+        this.currentCampaignId = state.currentCampaignId;
+        this.party = state.party || { 
+            id: 'liubei', 
+            name: 'Liu Bei', 
+            x: 190, 
+            y: 70,
+            imgKey: 'liubei'
+        };
+        this.interactionSelected = state.interactionSelected || null;
+        
+        // Restore event from key
+        if (state.currentEventKey && STORY_EVENTS[state.currentEventKey]) {
+            this.currentEvent = STORY_EVENTS[state.currentEventKey];
+            this.interactionSelected = 'story_event';
+        } else {
+            this.currentEvent = null;
+        }
+        
+        this.subStep = state.subStep || 0;
+        this.dialogueElapsed = state.dialogueElapsed || 0;
+        this.selectedLocation = state.selectedLocation || null;
+        
+        // Restore move state if party was moving
+        if (state.moveState && state.moveState.isMoving) {
+            this.moveState = state.moveState;
+        }
+        
+        // If there was an active event, restore it
+        if (this.currentEvent && this.currentEvent.voiceId) {
+            assets.playVoice(this.currentEvent.voiceId);
+        }
+    }
+    
+    saveMapState() {
+        // Save map state periodically (for crash recovery)
+        const gs = this.manager.gameState;
+        
+        // Save party position to campaign state
+        if (this.currentCampaignId && this.party) {
+            gs.setCampaignVar('partyX', this.party.x, this.currentCampaignId);
+            gs.setCampaignVar('partyY', this.party.y, this.currentCampaignId);
+        }
+        
+        // Find event key if there's a current event
+        let currentEventKey = null;
+        if (this.currentEvent) {
+            for (const [key, event] of Object.entries(STORY_EVENTS)) {
+                if (event === this.currentEvent) {
+                    currentEventKey = key;
+                    break;
+                }
             }
         }
+        
+        // Save map scene state
+        const state = {
+            currentCampaignId: this.currentCampaignId,
+            party: this.party ? { ...this.party } : null,
+            interactionSelected: this.interactionSelected,
+            currentEventKey: currentEventKey, // Save event key instead of object
+            subStep: this.subStep,
+            dialogueElapsed: this.dialogueElapsed,
+            selectedLocation: this.selectedLocation,
+            moveState: this.moveState.isMoving ? { ...this.moveState } : null
+        };
+        gs.set('mapState', state);
+    }
+    
+    exit() {
+        // Save map state when leaving (also saved periodically)
+        this.saveMapState();
     }
 
     heroMoveTo(targetX, targetY, onComplete) {
@@ -332,6 +419,12 @@ export class MapScene extends BaseScene {
         const dt = timestamp - (this.lastTime || timestamp);
         this.lastTime = timestamp;
 
+        // Periodic state saving for crash recovery
+        if (timestamp - this.lastSaveTime > this.saveInterval) {
+            this.saveMapState();
+            this.lastSaveTime = timestamp;
+        }
+
         if (this.interactionSelected === 'hero_reminder' || this.interactionSelected === 'story_event') {
             this.dialogueElapsed = (this.dialogueElapsed || 0) + dt;
         } else {
@@ -375,7 +468,7 @@ export class MapScene extends BaseScene {
             assets.playSound('ui_click');
             // If the story is complete, ensure we don't prompt "New Game" when returning later
             if (this.manager.gameState.hasMilestone('chapter1_complete')) {
-                this.manager.gameState.set('lastScene', 'campaign_selection');
+                // Don't set lastScene for campaign_selection - it's excluded
             }
             this.manager.switchTo('campaign_selection');
             return;

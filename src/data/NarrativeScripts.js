@@ -150,7 +150,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "For justice. We cannot stand idle.",
+                    buttonText: "For justice.",
                     text: "The people cry out for justice. We cannot stand idle.",
                     voiceId: 'daxing_lb_choice_01',
                     speaker: 'liubei',
@@ -166,7 +166,7 @@ export const NARRATIVE_SCRIPTS = {
                     ]
                 },
                 { 
-                    buttonText: "We seek glory in service to the Han.",
+                    buttonText: "For glory.",
                     text: "We seek glory in service to the Han.",
                     voiceId: 'daxing_lb_choice_02',
                     speaker: 'liubei',
@@ -213,7 +213,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "Lead us to Daxing District.",
+                    buttonText: "To Daxing District.",
                     text: "Magistrate Zhou, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion.",
                     voiceId: 'daxing_lb_03',
                     result: [
@@ -228,7 +228,7 @@ export const NARRATIVE_SCRIPTS = {
                     ]
                 },
                 { 
-                    buttonText: "We three alone could handle them!",
+                    buttonText: "We can handle them!",
                     text: "Fifty thousand rebels? We three alone could handle them!",
                     voiceId: 'daxing_lb_choice_03',
                     speaker: 'liubei',
@@ -278,14 +278,14 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "I will go. We cannot let them suffer.",
+                    buttonText: "I will go.",
                     text: "I will go. We cannot let the people of Qingzhou suffer.",
                     voiceId: 'qz_lb_01',
                     speaker: 'liubei',
                     result: []
                 },
                 { 
-                    buttonText: "We must answer their call at once.",
+                    buttonText: "We'll help.",
                     text: "The people cry out for aid. We must answer their call at once.",
                     voiceId: 'qz_lb_choice_01',
                     speaker: 'liubei',
@@ -335,14 +335,14 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "Return to the gates. The city is still in peril.",
+                    buttonText: "To the gates.",
                     text: "Let us not tarry. The city is still in peril. We must return to the gates and ensure the Imperial Protector is safe.",
                     voiceId: 'qz_vic_lb_01',
                     speaker: 'liubei',
                     result: []
                 },
                 { 
-                    buttonText: "A fine victory, but we must remain vigilant.",
+                    buttonText: "Victory.",
                     text: "A fine victory, but we must remain vigilant. The city gates await us.",
                     voiceId: 'qz_vic_lb_choice_01',
                     speaker: 'liubei',
@@ -381,14 +381,14 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "Peace is restored here, but the rebellion rages elsewhere.",
+                    buttonText: "Peace restored.",
                     text: "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere.",
                     voiceId: 'qz_ret_lb_01',
                     speaker: 'liubei',
                     result: []
                 },
                 { 
-                    buttonText: "It was an honor to serve.",
+                    buttonText: "An honor.",
                     text: "It was an honor to serve. The people of Qingzhou can rest easy now.",
                     voiceId: 'qz_ret_lb_choice_01',
                     speaker: 'liubei',
@@ -419,14 +419,14 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "He was my teacher. We march for Guangzong!",
+                    buttonText: "My teacher.",
                     text: "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!",
                     voiceId: 'qz_ret_lb_02',
                     speaker: 'liubei',
                     result: []
                 },
                 { 
-                    buttonText: "We cannot abandon a loyal servant of the Han.",
+                    buttonText: "We must help.",
                     text: "Commander Lu Zhi needs aid. We cannot abandon a loyal servant of the Han.",
                     voiceId: 'qz_ret_lb_choice_02',
                     speaker: 'liubei',
@@ -530,7 +530,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "For the suffering people.",
+                    buttonText: "For the people.",
                     text: "I sigh for the suffering people.",
                     voiceId: 'pro_lb_choice_01',
                     result: [
@@ -545,7 +545,7 @@ export const NARRATIVE_SCRIPTS = {
                     ]
                 },
                 { 
-                    buttonText: "For my own lost status.",
+                    buttonText: "For my status.",
                     text: "I sigh for my own lost status.",
                     voiceId: 'pro_lb_choice_02',
                     result: [
@@ -722,14 +722,14 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "A noble heart! We have agreed to raise an army ourselves.",
+                    buttonText: "A noble heart!",
                     text: "A noble heart! I am Liu Bei, and this is Zhang Fei. We have just agreed to raise a volunteer army ourselves.",
                     voiceId: 'inn_lb_03',
                     speaker: 'liubei',
                     result: []
                 },
                 { 
-                    buttonText: "Join us, and together we shall serve the Han.",
+                    buttonText: "Join us.",
                     text: "Your cause is just. Join us, and together we shall serve the Han.",
                     voiceId: 'inn_lb_choice_01',
                     speaker: 'liubei',
@@ -795,14 +795,14 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "To restore the Han and bring peace. That is our shared destiny.",
+                    buttonText: "Restore the Han.",
                     text: "To restore the Han and bring peace to the common people. That is our shared destiny.",
                     voiceId: 'inn_lb_04',
                     speaker: 'liubei',
                     result: []
                 },
                 { 
-                    buttonText: "We fight not for glory, but for the people.",
+                    buttonText: "For the people.",
                     text: "We fight not for glory, but for the people who suffer under this chaos.",
                     voiceId: 'inn_lb_choice_02',
                     speaker: 'liubei',
@@ -949,7 +949,7 @@ export const NARRATIVE_SCRIPTS = {
             position: 'top',
             name: 'Guan Yu',
             voiceId: 'rec_gy_01',
-            text: "We offer no riches, only the chance to serve with honor under the banner of the Imperial Uncle, Liu Bei."
+            text: "We offer no riches, only the chance to serve with honor under the banner of Liu Bei."
         },
 
         { type: 'command', action: 'addActor', id: 'volunteer1', imgKey: 'soldier', x: -50, y: 210, speed: 0.8 },

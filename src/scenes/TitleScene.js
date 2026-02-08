@@ -1,5 +1,6 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
+import { NARRATIVE_SCRIPTS } from '../data/NarrativeScripts.js';
 
 export class TitleScene extends BaseScene {
     constructor() {
@@ -29,6 +30,8 @@ export class TitleScene extends BaseScene {
         this.guandaoBreathe = 0;
         this.titleAlpha = 0;
         this.menuAlpha = 0;
+        this.menuOptions = []; // Array of {rect, action} for menu items
+        this.confirmSelection = null; // Selection state for confirm dialog
     }
 
     enter() {
@@ -41,6 +44,8 @@ export class TitleScene extends BaseScene {
         this.guandaoY = -260;
         this.titleAlpha = 0;
         this.menuAlpha = 0;
+        this.menuOptions = [];
+        this.selection = null;
     }
 
     processTitleImage() {
@@ -153,6 +158,22 @@ export class TitleScene extends BaseScene {
         } else if (this.state === 'MENU') {
             this.guandaoBreathe += dt * 0.002;
             this.guandaoOffset = Math.sin(this.guandaoBreathe) * 5 - 5;
+            
+            // Update selection mouse tracking
+            if (this.selection) {
+                const currentMouseX = this.manager.logicalMouseX;
+                const currentMouseY = this.manager.logicalMouseY;
+                this.updateSelectionMouse(currentMouseX, currentMouseY);
+                
+                // Check mouseover for menu items
+                this.menuOptions.forEach((option, i) => {
+                    if (option.rect && 
+                        currentMouseX >= option.rect.x && currentMouseX <= option.rect.x + option.rect.w &&
+                        currentMouseY >= option.rect.y && currentMouseY <= option.rect.y + option.rect.h) {
+                        this.handleSelectionMouseover(i);
+                    }
+                });
+            }
         }
     }
 
@@ -259,6 +280,20 @@ export class TitleScene extends BaseScene {
         ctx.globalAlpha = 1.0;
         }
         
+    updateMenuOptions() {
+        const hasSave = this.manager.gameState.hasSave();
+        this.menuOptions = [];
+        
+        if (hasSave) {
+            this.menuOptions.push({ rect: this.continueRect, action: 'continue' });
+            this.menuOptions.push({ rect: this.newGameRect, action: 'newgame' });
+            this.menuOptions.push({ rect: this.customBattleRect, action: 'custombattle' });
+        } else {
+            this.menuOptions.push({ rect: this.newGameRect, action: 'newgame' });
+            this.menuOptions.push({ rect: this.customBattleRect, action: 'custombattle' });
+        }
+    }
+
     renderMenu(ctx, canvas) {
         const cx = Math.floor(canvas.width / 2);
         const cy = canvas.height - 70;
@@ -275,9 +310,14 @@ export class TitleScene extends BaseScene {
             // CONTINUE Button
             const contText = "CONTINUE";
             const contY = cy - 15;
+            const isHighlighted = this.selection && this.selection.highlightedIndex === 0;
             ctx.save();
             ctx.globalAlpha *= pulse;
-            const contMetrics = this.drawPixelText(ctx, contText, cx, contY, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+            const contMetrics = this.drawPixelText(ctx, contText, cx, contY, { 
+                color: isHighlighted ? '#fff' : '#ffd700', 
+                font: '8px Silkscreen', 
+                align: 'center' 
+            });
             ctx.restore();
             
             this.continueRect = {
@@ -289,7 +329,12 @@ export class TitleScene extends BaseScene {
 
             // NEW GAME
             const ngY = cy + 10;
-            const ngMetrics = this.drawPixelText(ctx, ngText, cx, ngY, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+            const isHighlightedNG = this.selection && this.selection.highlightedIndex === 1;
+            const ngMetrics = this.drawPixelText(ctx, ngText, cx, ngY, { 
+                color: isHighlightedNG ? '#fff' : '#ffd700', 
+                font: '8px Silkscreen', 
+                align: 'center' 
+            });
             this.newGameRect = { 
                 x: Math.floor(cx - ngMetrics.width / 2 - 10), 
                 y: ngY - 10, 
@@ -300,7 +345,12 @@ export class TitleScene extends BaseScene {
             // CUSTOM BATTLE
             const cbText = "CUSTOM BATTLE";
             const cbY = cy + 35;
-            const cbMetrics = this.drawPixelText(ctx, cbText, cx, cbY, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+            const isHighlightedCB = this.selection && this.selection.highlightedIndex === 2;
+            const cbMetrics = this.drawPixelText(ctx, cbText, cx, cbY, { 
+                color: isHighlightedCB ? '#fff' : '#ffd700', 
+                font: '8px Silkscreen', 
+                align: 'center' 
+            });
             this.customBattleRect = {
                 x: Math.floor(cx - cbMetrics.width / 2 - 10),
                 y: cbY - 10,
@@ -309,9 +359,14 @@ export class TitleScene extends BaseScene {
             };
         } else {
             // Original Layout
+            const isHighlightedNG = this.selection && this.selection.highlightedIndex === 0;
             ctx.save();
             ctx.globalAlpha *= pulse;
-            const ngMetrics = this.drawPixelText(ctx, ngText, cx, cy, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+            const ngMetrics = this.drawPixelText(ctx, ngText, cx, cy, { 
+                color: isHighlightedNG ? '#fff' : '#ffd700', 
+                font: '8px Silkscreen', 
+                align: 'center' 
+            });
             ctx.restore();
             
             this.newGameRect = { 
@@ -323,7 +378,12 @@ export class TitleScene extends BaseScene {
 
             const cbText = "CUSTOM BATTLE";
             const cbY = cy + 25;
-            const cbMetrics = this.drawPixelText(ctx, cbText, cx, cbY, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+            const isHighlightedCB = this.selection && this.selection.highlightedIndex === 1;
+            const cbMetrics = this.drawPixelText(ctx, cbText, cx, cbY, { 
+                color: isHighlightedCB ? '#fff' : '#ffd700', 
+                font: '8px Silkscreen', 
+                align: 'center' 
+            });
             this.customBattleRect = {
                 x: Math.floor(cx - cbMetrics.width / 2 - 10),
                 y: cbY - 10,
@@ -331,6 +391,17 @@ export class TitleScene extends BaseScene {
                 h: 20
             };
             this.continueRect = null;
+        }
+        
+        // Update menu options array after rendering
+        this.updateMenuOptions();
+        
+        // Initialize selection system if not already done
+        if (!this.selection && this.menuOptions.length > 0) {
+            this.initSelection({
+                defaultIndex: 0,
+                totalOptions: this.menuOptions.length
+            });
         }
 
         // Confirmation Dialog Overlay
@@ -354,21 +425,51 @@ export class TitleScene extends BaseScene {
             this.drawPixelText(ctx, "EXISTING PROGRESS WILL BE LOST", cx, dy + 35, { color: '#eee', font: '8px Tiny5', align: 'center' });
 
             const btnY = dy + 55;
-            const yesMetrics = this.drawPixelText(ctx, "YES", cx - 40, btnY, { color: '#ff0000', font: '8px Silkscreen', align: 'center' });
+            
+            // Initialize selection if not already done
+            if (!this.confirmSelection) {
+                this.confirmSelection = {
+                    highlightedIndex: 0, // Start with YES (0)
+                    mouseoverEnabled: true,
+                    lastMouseX: -1,
+                    lastMouseY: -1,
+                    totalOptions: 2
+                };
+            }
+            
+            // Draw YES button with highlight if selected
+            const yesColor = this.confirmSelection.highlightedIndex === 0 ? '#ff0000' : '#888';
+            const yesMetrics = this.drawPixelText(ctx, "YES", cx - 40, btnY, { color: yesColor, font: '8px Silkscreen', align: 'center' });
             this.confirmYesRect = {
                 x: Math.floor(cx - 40 - yesMetrics.width / 2 - 10),
                 y: btnY - 10,
                 w: Math.floor(yesMetrics.width + 20),
                 h: 20
             };
+            
+            // Draw highlight box for YES if selected
+            if (this.confirmSelection.highlightedIndex === 0) {
+                ctx.strokeStyle = '#ff0000';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(this.confirmYesRect.x, this.confirmYesRect.y, this.confirmYesRect.w, this.confirmYesRect.h);
+            }
 
-            const noMetrics = this.drawPixelText(ctx, "NO", cx + 40, btnY, { color: '#eee', font: '8px Silkscreen', align: 'center' });
+            // Draw NO button with highlight if selected
+            const noColor = this.confirmSelection.highlightedIndex === 1 ? '#eee' : '#888';
+            const noMetrics = this.drawPixelText(ctx, "NO", cx + 40, btnY, { color: noColor, font: '8px Silkscreen', align: 'center' });
             this.confirmNoRect = {
                 x: Math.floor(cx + 40 - noMetrics.width / 2 - 10),
                 y: btnY - 10,
                 w: Math.floor(noMetrics.width + 20),
                 h: 20
             };
+            
+            // Draw highlight box for NO if selected
+            if (this.confirmSelection.highlightedIndex === 1) {
+                ctx.strokeStyle = '#eee';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(this.confirmNoRect.x, this.confirmNoRect.y, this.confirmNoRect.w, this.confirmNoRect.h);
+            }
         }
     }
 
@@ -381,11 +482,44 @@ export class TitleScene extends BaseScene {
             assets.playMusic('title', 0.5);
             return;
         }
+        
+        // Re-enable mouseover on mouse interaction
+        if (this.selection && x !== undefined && y !== undefined) {
+            this.handleSelectionMouseClick();
+        }
+        
+        // Update confirm dialog mouse tracking
+        if (this.showConfirm && this.confirmSelection && x !== undefined && y !== undefined) {
+            const currentMouseX = this.manager.logicalMouseX;
+            const currentMouseY = this.manager.logicalMouseY;
+            
+            // Re-enable mouseover if mouse has moved
+            if (currentMouseX !== this.confirmSelection.lastMouseX || currentMouseY !== this.confirmSelection.lastMouseY) {
+                this.confirmSelection.mouseoverEnabled = true;
+                this.confirmSelection.lastMouseX = currentMouseX;
+                this.confirmSelection.lastMouseY = currentMouseY;
+            }
+            
+            // Handle mouseover for YES button
+            if (this.confirmYesRect && x >= this.confirmYesRect.x && x <= this.confirmYesRect.x + this.confirmYesRect.w &&
+                y >= this.confirmYesRect.y && y <= this.confirmYesRect.y + this.confirmYesRect.h) {
+                if (this.confirmSelection.mouseoverEnabled && this.confirmSelection.highlightedIndex !== 0) {
+                    this.confirmSelection.highlightedIndex = 0;
+                }
+            }
+            // Handle mouseover for NO button
+            if (this.confirmNoRect && x >= this.confirmNoRect.x && x <= this.confirmNoRect.x + this.confirmNoRect.w &&
+                y >= this.confirmNoRect.y && y <= this.confirmNoRect.y + this.confirmNoRect.h) {
+                if (this.confirmSelection.mouseoverEnabled && this.confirmSelection.highlightedIndex !== 1) {
+                    this.confirmSelection.highlightedIndex = 1;
+                }
+            }
+        }
 
         if (this.menuAlpha < 0.5) return;
 
         if (this.showConfirm) {
-            // Handle Yes
+            // Handle Yes click
             if (this.confirmYesRect && x >= this.confirmYesRect.x && x <= this.confirmYesRect.x + this.confirmYesRect.w &&
                 y >= this.confirmYesRect.y && y <= this.confirmYesRect.y + this.confirmYesRect.h) {
                 assets.playSound('gong', 0.8);
@@ -397,11 +531,12 @@ export class TitleScene extends BaseScene {
                 });
                 return;
             }
-            // Handle No
+            // Handle No click
             if (this.confirmNoRect && x >= this.confirmNoRect.x && x <= this.confirmNoRect.x + this.confirmNoRect.w &&
                 y >= this.confirmNoRect.y && y <= this.confirmNoRect.y + this.confirmNoRect.h) {
                 assets.playSound('ui_click');
                 this.showConfirm = false;
+                this.confirmSelection = null;
                 return;
             }
             return; // Block other inputs while confirm is visible
@@ -409,10 +544,7 @@ export class TitleScene extends BaseScene {
         
         if (this.continueRect && x >= this.continueRect.x && x <= this.continueRect.x + this.continueRect.w &&
             y >= this.continueRect.y && y <= this.continueRect.y + this.continueRect.h) {
-            assets.playSound('gong', 0.8);
-            const lastScene = this.manager.gameState.get('lastScene') || 'campaign_selection';
-            const campaignId = this.manager.gameState.get('currentCampaign');
-            this.manager.switchTo(lastScene, { campaignId, isResume: true });
+            this.executeMenuAction('continue');
             return;
         }
 
@@ -423,6 +555,7 @@ export class TitleScene extends BaseScene {
             if (hasSave) {
                 assets.playSound('ui_click');
                 this.showConfirm = true;
+                this.confirmSelection = null; // Will be initialized in render
                 return;
             }
 
@@ -440,6 +573,122 @@ export class TitleScene extends BaseScene {
             y >= this.customBattleRect.y && y <= this.customBattleRect.y + this.customBattleRect.h) {
             this.manager.switchTo('custom_battle');
             return;
+        }
+    }
+
+    handleKeyDown(e) {
+        // Handle "CLICK TO START" with Enter key
+        if (this.waitingForInteraction && (e.key === 'Enter' || e.key === ' ')) {
+            this.waitingForInteraction = false;
+            this.state = 'PANNING';
+            assets.playMusic('title', 0.5);
+            return;
+        }
+        
+        // Handle confirm dialog navigation (horizontal: left/right arrows)
+        if (this.showConfirm && this.confirmSelection) {
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.confirmSelection.mouseoverEnabled = false;
+                this.confirmSelection.highlightedIndex = (this.confirmSelection.highlightedIndex - 1 + 2) % 2;
+                assets.playSound('ui_click');
+                return;
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                this.confirmSelection.mouseoverEnabled = false;
+                this.confirmSelection.highlightedIndex = (this.confirmSelection.highlightedIndex + 1) % 2;
+                assets.playSound('ui_click');
+                return;
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (this.confirmSelection.highlightedIndex === 0) {
+                    // YES
+                    assets.playSound('gong', 0.8);
+                    this.manager.gameState.reset();
+                    this.manager.switchTo('narrative', {
+                        scriptId: 'intro_poem',
+                        keepMusic: true,
+                        onComplete: () => this.manager.switchTo('campaign_selection')
+                    });
+                } else {
+                    // NO
+                    assets.playSound('ui_click');
+                    this.showConfirm = false;
+                    this.confirmSelection = null;
+                }
+                return;
+            }
+        }
+        
+        // Handle menu navigation
+        if (this.state === 'MENU' && this.selection && !this.showConfirm) {
+            const handled = this.handleSelectionKeyboard(e, (selectedIndex) => {
+                const option = this.menuOptions[selectedIndex];
+                if (option && option.action) {
+                    this.executeMenuAction(option.action);
+                }
+            });
+            if (handled) return;
+        }
+    }
+
+    executeMenuAction(action) {
+        if (action === 'continue') {
+            assets.playSound('gong', 0.8);
+            const gs = this.manager.gameState;
+            const campaignId = gs.get('currentCampaign');
+            
+            // Check for saved states in priority order
+            // If there's a saved narrative state, resume narrative
+            const narrativeState = gs.get('narrativeState');
+            if (narrativeState && narrativeState.scriptId) {
+                // Only resume if we have a valid scriptId and haven't completed the script
+                const script = NARRATIVE_SCRIPTS[narrativeState.scriptId];
+                if (script && narrativeState.currentStep < script.length) {
+                    this.manager.switchTo('narrative', { isResume: true });
+                    return;
+                }
+            }
+            
+            // If there's a saved battle state, resume battle
+            if (gs.get('battleState')) {
+                this.manager.switchTo('tactics', { isResume: true });
+                return;
+            }
+            
+            // If there's a saved map state, resume map
+            if (gs.get('mapState')) {
+                this.manager.switchTo('map', { campaignId, isResume: true });
+                return;
+            }
+            
+            // Fallback to lastScene (with exclusion check)
+            let lastScene = gs.get('lastScene');
+            const excludedScenes = ['title', 'custom_battle', 'campaign_selection'];
+            
+            // If lastScene is excluded or doesn't exist, default to map
+            if (!lastScene || excludedScenes.includes(lastScene)) {
+                lastScene = 'map';
+            }
+            
+            this.manager.switchTo(lastScene, { campaignId, isResume: true });
+        } else if (action === 'newgame') {
+            const hasSave = this.manager.gameState.hasSave();
+            if (hasSave) {
+                assets.playSound('ui_click');
+                this.showConfirm = true;
+                this.confirmSelection = null; // Will be initialized in render
+            } else {
+                assets.playSound('gong', 0.8);
+                this.manager.gameState.reset();
+                this.manager.switchTo('narrative', {
+                    scriptId: 'intro_poem',
+                    keepMusic: true,
+                    onComplete: () => this.manager.switchTo('campaign_selection')
+                });
+            }
+        } else if (action === 'custombattle') {
+            this.manager.switchTo('custom_battle');
         }
     }
 }

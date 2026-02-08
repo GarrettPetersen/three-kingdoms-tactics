@@ -33,6 +33,23 @@ export class SceneManager {
     }
 
     switchTo(name, params = {}) {
+        // Excluded scenes that should never be saved as lastScene
+        const excludedScenes = ['title', 'custom_battle', 'campaign_selection'];
+        
+        // Save lastScene if we're leaving a campaign scene (before switching)
+        // We save the scene we're LEAVING, not the one we're entering
+        if (this.currentSceneKey && !excludedScenes.includes(this.currentSceneKey)) {
+            // Don't save if we're in a custom battle
+            if (this.currentSceneKey === 'tactics') {
+                const tacticsScene = this.scenes['tactics'];
+                if (tacticsScene && !tacticsScene.isCustom) {
+                    this.gameState.set('lastScene', this.currentSceneKey);
+                }
+            } else {
+                this.gameState.set('lastScene', this.currentSceneKey);
+            }
+        }
+        
         if (this.currentScene && this.currentScene.exit) {
             this.currentScene.exit();
         }
