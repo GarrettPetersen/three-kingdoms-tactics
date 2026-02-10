@@ -670,6 +670,18 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "pro_farmer2_01",
+    "char": "farmer2",
+    "text": "I've heard the rebels are already in the next county. They show no mercy to those who resist. We must prepare for the worst.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "pro_farmer_01",
+    "char": "farmer",
+    "text": "The Yellow Turbans... they say they'll burn everything in their path. My family has lived here for generations. What will become of us?",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "pro_lb_01",
     "char": "liubei",
     "text": "The Imperial Clan's blood flows in my veins...",
@@ -932,7 +944,8 @@
     "id": "rec_gy_01",
     "char": "guanyu",
     "text": "We offer no riches, only the chance to serve with honor under the banner of Liu Bei.",
-    "source": "NarrativeScripts.js"
+    "source": "NarrativeScripts.js",
+    "phonetic_text": "We offer no riches, only the chance to serve with honor under the banner of Leeoo Bay."
   },
   {
     "id": "rec_lb_01",

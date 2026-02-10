@@ -1309,10 +1309,16 @@ export class TacticsScene extends BaseScene {
         this.isProcessingTurn = true;
         
         // Clear old intents before starting new phase
-        // But preserve hasActed for NPCs that have already acted (to prevent double-acting on restore)
+        // But preserve intents for NPCs that have already acted (they've already moved and telegraphed)
+        // And preserve hasActed for NPCs that have already acted (to prevent double-acting on restore)
         this.units.forEach(u => {
             if (u.faction !== 'player') {
-                u.intent = null;
+                // Only clear intent if the NPC hasn't acted yet (restoring mid-phase)
+                // If they've already acted, they've already moved and telegraphed, so keep their intent
+                if (!u.hasActed) {
+                    u.intent = null;
+                }
+                // Always clear attackOrder - it will be reassigned by telegraphAllNpcs() if they have an intent
                 u.attackOrder = null;
                 // Don't reset hasActed here - it's used to track which NPCs have acted in this phase
                 // It will be reset at the start of the next turn cycle
@@ -1724,7 +1730,9 @@ export class TacticsScene extends BaseScene {
             // Track if we're in post-combat dialogue (uses introScript but different source)
             isPostCombatDialogue: this.isPostCombatDialogue || false,
             // Save combat state
-            isProcessingTurn: this.isProcessingTurn
+            isProcessingTurn: this.isProcessingTurn,
+            // Save cutscene combat complete flag for yellow_turban_rout
+            cutsceneCombatComplete: this.cutsceneCombatComplete
         };
     }
 
@@ -1829,6 +1837,7 @@ export class TacticsScene extends BaseScene {
         this.isIntroAnimating = state.isIntroAnimating || false;
         this.introTimer = state.introTimer || 0;
         this.isPostCombatDialogue = state.isPostCombatDialogue || false;
+        this.cutsceneCombatComplete = state.cutsceneCombatComplete;
         
         // Restore intro or post-combat script from battle definition if dialogue is active
         if (this.isIntroDialogueActive) {
@@ -1839,6 +1848,13 @@ export class TacticsScene extends BaseScene {
             } else if (battleDef && battleDef.introScript) {
                 // Restore intro script
                 this.introScript = battleDef.introScript;
+            }
+            
+            // Validate dialogueStep is within bounds
+            if (this.introScript && this.dialogueStep >= this.introScript.length) {
+                // dialogueStep is out of bounds - reset to last valid step
+                console.warn(`dialogueStep ${this.dialogueStep} out of bounds for script length ${this.introScript.length}, resetting to last step`);
+                this.dialogueStep = Math.max(0, this.introScript.length - 1);
             }
         }
         
@@ -1852,7 +1868,7 @@ export class TacticsScene extends BaseScene {
         
         // If we're restoring mid-NPC-phase, we can't continue the async operations (setTimeouts are lost)
         // But we can detect where we are and continue from the right point
-        if ((this.turn === 'enemy' || this.turn === 'enemy_moving' || this.turn === 'allied_moving') && this.isProcessingTurn) {
+        if ((this.turn === 'enemy' || this.turn === 'enemy_moving' || this.turn === 'allied_moving')) {
             const npcs = this.units.filter(u => 
                 (u.faction === 'enemy' || u.faction === 'allied') && 
                 u.hp > 0 && 
@@ -1862,26 +1878,113 @@ export class TacticsScene extends BaseScene {
             const hasIntents = npcs.some(npc => npc.intent);
             const allNpcsActed = npcs.length > 0 && npcs.every(npc => npc.hasActed);
             
-            if (hasIntents) {
-                // NPCs have already moved (have intents) - they're ready for execution phase
-                // Don't restart NPC phase - just move to execution
-                this.isProcessingTurn = false;
-                setTimeout(() => {
-                    this.startExecutionPhase();
-                }, 100);
-            } else if (allNpcsActed) {
-                // All NPCs have acted but no intents - phase is complete, move to player turn
-                this.isProcessingTurn = false;
-                setTimeout(() => {
-                    this.startPlayerTurn();
-                }, 100);
+            if (this.isProcessingTurn) {
+                // Mid-NPC-phase: NPCs are still moving
+                // Don't start execution phase yet - wait for ALL NPCs to finish moving first
+                if (allNpcsActed) {
+                    // All NPCs have finished moving - now we can check what to do next
+                    if (hasIntents) {
+                        // All NPCs have moved and some have intents - call telegraphAllNpcs() then go to execution
+                        this.isIntroDialogueActive = false;
+                        this.isPostCombatDialogue = false;
+                        this.isProcessingTurn = false;
+                        this.telegraphAllNpcs();
+                        this.turn = 'execution';
+                        setTimeout(() => {
+                            this.startExecutionPhase();
+                        }, 100);
+                    } else {
+                        // All NPCs have acted but no intents - phase is complete, move to player turn
+                        this.isProcessingTurn = false;
+                        setTimeout(() => {
+                            this.startPlayerTurn();
+                        }, 100);
+                    }
+                } else {
+                    // Some NPCs haven't acted yet - restart the phase
+                    // startNpcPhase() now skips NPCs that have already acted (hasActed = true)
+                    this.isProcessingTurn = false;
+                    setTimeout(() => {
+                        this.startNpcPhase();
+                    }, 100);
+                }
             } else {
-                // Some NPCs haven't acted yet - restart the phase
-                // startNpcPhase() now skips NPCs that have already acted (hasActed = true)
-                this.isProcessingTurn = false;
-                setTimeout(() => {
-                    this.startNpcPhase();
-                }, 100);
+                // NPC phase completed (isProcessingTurn = false) - check if we should go to execution
+                if (hasIntents) {
+                    // NPCs have finished moving and have intents - call telegraphAllNpcs() to assign attack orders, then go to execution
+                    // Ensure intro dialogue is not active (we're in combat, not dialogue)
+                    this.isIntroDialogueActive = false;
+                    this.isPostCombatDialogue = false;
+                    this.telegraphAllNpcs();
+                    this.turn = 'execution';
+                    setTimeout(() => {
+                        this.startExecutionPhase();
+                    }, 100);
+                } else if (allNpcsActed) {
+                    // All NPCs have acted but no intents found in saved state
+                    // This could happen if intents weren't saved properly, or if NPCs moved but couldn't find targets
+                    // Try to recreate intents by calling telegraphAllNpcs() (which assigns orders to existing intents)
+                    // But first, if NPCs have moved, they should have intents - try to recreate them
+                    const npcsThatMoved = npcs.filter(npc => npc.hasMoved);
+                    if (npcsThatMoved.length > 0) {
+                        // NPCs have moved but no intents - try to recreate intents for NPCs that can attack
+                        npcsThatMoved.forEach(npc => {
+                            if (!npc.intent && npc.attacks && npc.attacks.length > 0) {
+                                // Recreate intent for this NPC
+                                this.telegraphSingleNpc(npc);
+                            }
+                        });
+                    }
+                    
+                    // Call telegraphAllNpcs() to assign attack orders
+                    this.telegraphAllNpcs();
+                    
+                    // Check again if intents exist
+                    const npcsAfterTelegraph = this.units.filter(u => 
+                        (u.faction === 'enemy' || u.faction === 'allied') && 
+                        u.hp > 0 && 
+                        !u.caged && 
+                        !u.isGone
+                    );
+                    const hasIntentsAfterTelegraph = npcsAfterTelegraph.some(npc => npc.intent);
+                    
+                    if (hasIntentsAfterTelegraph) {
+                        // NPCs now have intents - go to execution phase
+                        // Ensure intro dialogue is not active (we're in combat, not dialogue)
+                        this.isIntroDialogueActive = false;
+                        this.isPostCombatDialogue = false;
+                        this.turn = 'execution';
+                        setTimeout(() => {
+                            this.startExecutionPhase();
+                        }, 100);
+                    } else {
+                        // Still no intents - NPCs can't attack, so move to next phase
+                        // For yellow_turban_rout cutscene, check if execution already completed
+                        if (this.battleId === 'yellow_turban_rout' && this.cutsceneCombatComplete !== undefined) {
+                            this.turn = 'execution';
+                            setTimeout(() => {
+                                // Check if execution phase should complete or if we need to start it
+                                const attackers = this.units.filter(u => u.hp > 0 && u.intent && u.intent.type === 'attack');
+                                if (attackers.length === 0) {
+                                    // No attackers with intents - execution may have completed, check for post-combat
+                                    this.checkCutsceneCombatComplete();
+                                } else {
+                                    this.startExecutionPhase();
+                                }
+                            }, 100);
+                        } else {
+                            setTimeout(() => {
+                                this.startPlayerTurn();
+                            }, 100);
+                        }
+                    }
+                } else {
+                    // Some NPCs haven't acted yet - restart the phase
+                    this.isProcessingTurn = false;
+                    setTimeout(() => {
+                        this.startNpcPhase();
+                    }, 100);
+                }
             }
         } else if (this.turn === 'execution') {
             if (this.isProcessingTurn) {
@@ -1907,7 +2010,16 @@ export class TacticsScene extends BaseScene {
                     if (this.battleId === 'yellow_turban_rout' && this.cutsceneCombatComplete !== undefined) {
                         // Check if we're already in post-combat dialogue
                         if (this.isPostCombatDialogue && this.isIntroDialogueActive) {
-                            // Already in post-combat dialogue - just ensure it's active
+                            // Already in post-combat dialogue - ensure script is loaded and dialogueStep is valid
+                            const battleDef = BATTLES[this.battleId];
+                            if (battleDef && battleDef.postCombatScript) {
+                                this.introScript = battleDef.postCombatScript;
+                                // Validate dialogueStep is within bounds
+                                if (this.dialogueStep >= this.introScript.length) {
+                                    console.warn(`dialogueStep ${this.dialogueStep} out of bounds for post-combat script length ${this.introScript.length}, resetting to last step`);
+                                    this.dialogueStep = Math.max(0, this.introScript.length - 1);
+                                }
+                            }
                             // The dialogue should continue from where it was saved
                         } else if (!this.isPostCombatDialogue && !this.isIntroDialogueActive) {
                             // Execution completed, but post-combat sequence hasn't started
@@ -2072,7 +2184,10 @@ export class TacticsScene extends BaseScene {
     }
 
     startExecutionPhase() {
-        if (this.isIntroDialogueActive) return; // Wait for intro
+        if (this.isIntroDialogueActive) {
+            console.warn('startExecutionPhase() called but isIntroDialogueActive is true - returning early');
+            return; // Wait for intro
+        }
         this.turn = 'execution';
         this.isProcessingTurn = true;
         this.selectedUnit = null;
@@ -2085,16 +2200,42 @@ export class TacticsScene extends BaseScene {
             .filter(u => u.hp > 0 && u.intent && u.intent.type === 'attack')
             .sort((a, b) => (a.attackOrder || 99) - (b.attackOrder || 99));
         
+        if (attackers.length === 0) {
+            console.warn('startExecutionPhase() called but no attackers found with intents. Units with intents:', 
+                this.units.filter(u => u.intent).map(u => ({ id: u.id, intent: u.intent })));
+            // No attackers - execution phase completes immediately
+            // For yellow_turban_rout, check if we should go to post-combat
+            if (this.battleId === 'yellow_turban_rout' && this.cutsceneCombatComplete !== undefined) {
+                this.isProcessingTurn = false;
+                setTimeout(() => {
+                    this.checkCutsceneCombatComplete();
+                }, 100);
+            } else {
+                this.isProcessingTurn = false;
+                setTimeout(() => {
+                    this.checkWinLoss();
+                    if (!this.isGameOver) {
+                        this.turnNumber++;
+                        this.startNpcPhase();
+                    }
+                }, 100);
+            }
+            return;
+        }
+        
         const executeAll = (index) => {
             if (index >= attackers.length) {
                 // Short pause after the final attack before next phase
                 setTimeout(() => {
                     // Special handling for yellow_turban_rout cutscene
                     if (this.battleId === 'yellow_turban_rout' && this.cutsceneCombatComplete !== undefined) {
+                        // Mark execution as complete
+                        this.isProcessingTurn = false;
                         this.checkCutsceneCombatComplete();
                         return;
                     }
                     
+                    this.isProcessingTurn = false;
                     this.checkWinLoss();
                     
                     if (!this.isGameOver) {
@@ -3845,6 +3986,11 @@ export class TacticsScene extends BaseScene {
 
         if ((this.isIntroDialogueActive && this.introScript) || (this.isVictoryDialogueActive && this.victoryScript)) {
             const script = this.isIntroDialogueActive ? this.introScript : this.victoryScript;
+            // Validate dialogueStep is within bounds
+            if (this.dialogueStep >= script.length) {
+                console.warn(`Render: dialogueStep ${this.dialogueStep} out of bounds for script length ${script.length}`);
+                return; // Don't render invalid dialogue
+            }
             const step = script[this.dialogueStep];
             if (step) {
                 // Play voice if it hasn't been played for this step yet
@@ -4965,7 +5111,25 @@ export class TacticsScene extends BaseScene {
         if (this.isIntroDialogueActive || this.isVictoryDialogueActive) {
             if (this.dialogueElapsed < 250) return;
             const script = this.isIntroDialogueActive ? this.introScript : this.victoryScript;
+            if (!script || this.dialogueStep >= script.length) {
+                // Script is missing or dialogueStep is out of bounds - something went wrong
+                console.error(`Dialogue error: script=${!!script}, dialogueStep=${this.dialogueStep}, scriptLength=${script ? script.length : 0}`);
+                if (this.isIntroDialogueActive && this.isPostCombatDialogue && this.battleId === 'yellow_turban_rout') {
+                    // Try to reload the post-combat script
+                    const battleDef = BATTLES[this.battleId];
+                    if (battleDef && battleDef.postCombatScript) {
+                        this.introScript = battleDef.postCombatScript;
+                        this.dialogueStep = 0; // Reset to start
+                        console.log('Reloaded post-combat script and reset dialogueStep to 0');
+                    }
+                }
+                return;
+            }
             const step = script[this.dialogueStep];
+            if (!step) {
+                console.error(`Dialogue step ${this.dialogueStep} is null or undefined`);
+                return;
+            }
             const status = this.renderDialogueBox(this.manager.ctx, this.manager.canvas, {
                 portraitKey: step.portraitKey,
                 name: step.name,

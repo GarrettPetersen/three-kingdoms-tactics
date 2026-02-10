@@ -9,8 +9,8 @@
     "daxing_gy_01": {
         "character": "guanyu",
         "original_text": "Third brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march.",
-        "stt_output": "Third brother is right. Here we have sworn to destroy these traitors and restore peace. We are ready to march.",
-        "wer": 0.05263157894736842,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "daxing_gy_choice_01": {
@@ -23,8 +23,8 @@
     "daxing_lb_01": {
         "character": "liubei",
         "original_text": "I am Liu Bei, a descendant of Prince Jing of Zhongshan and great-great-grandson of Emperor Jing. These are my sworn brothers, Guan Yu and Zhang Fei.",
-        "stt_output": "I am Liu Bai, a descendant of Prince Jing of Songsun and Great Great Grandson of Emperor Jing. These are my sworn brothers, one you and Zhang Fei.",
-        "wer": 0.2692307692307692,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "daxing_lb_02": {
@@ -79,8 +79,8 @@
     "daxing_zj_02": {
         "character": "zhoujing",
         "original_text": "An Imperial kinsman with a true heart! Truly, the Heavens have not abandoned the Han. Your arrival is most timely.",
-        "stt_output": "An imperial kinsman with a true heart. Truly, the heavens have not abandoned the hun. Your arrival is most timely.",
-        "wer": 0.05,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "daxing_zj_02_alt": {
@@ -212,8 +212,8 @@
     "gz_gy_return_01": {
         "character": "guanyu",
         "original_text": "Let us return toward Zhuo County. There is nothing more for us here.",
-        "stt_output": "Let us return to what Suo County, there is nothing more for us here.",
-        "wer": 0.23076923076923078,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "gz_lb_01": {
@@ -226,8 +226,8 @@
     "gz_lb_attack_01": {
         "character": "liubei",
         "original_text": "That banner reads 'Zhang Jue, Lord of Heaven!' Government soldiers are losing! Brothers, we attack!",
-        "stt_output": "That banner reads, Jankju, Lord of Heaven. Government soldiers are losing. Brothers, we attack.",
-        "wer": 0.13333333333333333,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "gz_lb_defend_01": {
@@ -408,9 +408,9 @@
     "inn_gy_choice_02": {
         "character": "guanyu",
         "original_text": "Spoken like a true leader. The people need men like you.",
-        "stt_output": "Spoken like a true leader, He died in the same day, Toaday. The people need men like you.",
-        "wer": 0.6363636363636364,
-        "is_bad": true
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
     },
     "inn_lb_01": {
         "character": "liubei",
@@ -541,8 +541,8 @@
     "intro_narrator_03a": {
         "character": "narrator",
         "original_text": "The Ten Regular Attendants\u2014eunuchs who have wormed their way into the emperor's favor\u2014corrupt the court.",
-        "stt_output": "The ten regular attendants, Unix who have warmed their way into the Emperor's favor, corrupt the court.",
-        "wer": 0.3333333333333333,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "intro_narrator_03b": {
@@ -863,9 +863,9 @@
     "pro_zf_04": {
         "character": "zhangfei",
         "original_text": "I am Zhang Fei, aka Yide.",
-        "stt_output": "I'm Jang Fei, aka Yee-da.",
-        "wer": 0.6666666666666666,
-        "is_bad": true
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
     },
     "pro_zf_05": {
         "character": "zhangfei",
@@ -940,9 +940,9 @@
     "qz_ms_01": {
         "character": "soldier",
         "original_text": "URGENT! Imperial Protector Gong Jing of Qingzhou Region is under siege! The city is near falling!",
-        "stt_output": "Urant, Imperial Protector Gong Jing of Qing Shou Rikian, is under his siege. Cities near foreign.",
-        "wer": 0.5625,
-        "is_bad": true
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
     },
     "qz_ret_gj_01": {
         "character": "gongjing",
@@ -954,9 +954,9 @@
     "qz_ret_gj_02": {
         "character": "gongjing",
         "original_text": "Indeed. I have heard that Commander Lu Zhi is hard-pressed at Guangzong by the chief rebel, Zhang Jue himself.",
-        "stt_output": "Indeed, I have heard that Commander Lu Ji is hard pressed at Guang Zhong by the Chief Rebellh Zhang Yu Zhu himself.",
-        "wer": 0.42105263157894735,
-        "is_bad": true
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
     },
     "qz_ret_gj_choice_01": {
         "character": "gongjing",
@@ -1117,6 +1117,20 @@
         "original_text": "Bah! Those rascals got a lucky hit in! Next time, they won't be so fortunate!",
         "stt_output": "",
         "wer": 0,
+        "is_bad": false
+    },
+    "pro_farmer2_01": {
+        "character": "farmer2",
+        "original_text": "I've heard the rebels are already in the next county. They show no mercy to those who resist. We must prepare for the worst.",
+        "stt_output": "I've heard the rebels are already in the next county. They show no mercy to those who resist. We must prepare for the worst.",
+        "wer": 0.0,
+        "is_bad": false
+    },
+    "pro_farmer_01": {
+        "character": "farmer",
+        "original_text": "The Yellow Turbans... they say they'll burn everything in their path. My family has lived here for generations. What will become of us?",
+        "stt_output": "The yellow turbans, they say they'll burn everything in their path. My family has lived here for generations. What will become of us?",
+        "wer": 0.0,
         "is_bad": false
     }
 }

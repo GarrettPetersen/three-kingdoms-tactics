@@ -454,37 +454,78 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'addActor', id: 'farmer', imgKey: 'farmer', x: 200, y: 200, speed: 0.5 },
         { type: 'command', action: 'addActor', id: 'farmer2', imgKey: 'farmer2', x: 50, y: 185, flip: true, speed: 0.4 },
         { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: -50, y: 210, speed: 1 },
-        { bg: 'noticeboard', type: 'command', action: 'move', id: 'liubei', x: 160, y: 210 },
+        { bg: 'noticeboard', type: 'command', action: 'move', id: 'liubei', x: 100, y: 210 },
         { type: 'command', action: 'flip', id: 'liubei', flip: true },
         { type: 'command', action: 'move', id: 'farmer', x: 220, y: 195 },
         { type: 'command', action: 'move', id: 'farmer2', x: 20, y: 180 },
         
-        {
-            type: 'dialogue',
-            name: 'The Noticeboard',
-            position: 'top',
-            portraitKey: 'noticeboard',
-            portraitRect: { x: 80, y: 100, w: 90, h: 70 },
-            voiceId: 'pro_nb_01',
-            text: "NOTICE: The Yellow Turban rebels under Zhang Jue have risen!"
-        },
-        {
-            type: 'dialogue',
-            name: 'The Noticeboard',
-            position: 'top',
-            portraitKey: 'noticeboard',
-            portraitRect: { x: 80, y: 100, w: 90, h: 70 },
-            voiceId: 'pro_nb_02',
-            text: "All able-bodied men are called to defend the Han."
-        },
-        {
-            type: 'dialogue',
-            name: 'The Noticeboard',
-            position: 'top',
-            portraitKey: 'noticeboard',
-            portraitRect: { x: 80, y: 100, w: 90, h: 70 },
-            voiceId: 'pro_nb_03',
-            text: "Report to the local Magistrate at once."
+        // Make noticeboard and NPCs clickable and enter interactive mode
+        { type: 'interactive', 
+          clickableRegions: {
+            'noticeboard': {
+                // Actual noticeboard position from image: x: 80, y: 111 to x: 176, y: 177
+                x: 80,
+                y: 111,
+                w: 96,
+                h: 66,
+                advanceOnClick: true, // This click advances the plot
+                onClick: [
+                    {
+                        type: 'dialogue',
+                        name: 'The Noticeboard',
+                        position: 'top',
+                        portraitKey: 'noticeboard',
+                        portraitRect: { x: 80, y: 100, w: 90, h: 70 },
+                        voiceId: 'pro_nb_01',
+                        text: "NOTICE: The Yellow Turban rebels under Zhang Jue have risen!"
+                    },
+                    {
+                        type: 'dialogue',
+                        name: 'The Noticeboard',
+                        position: 'top',
+                        portraitKey: 'noticeboard',
+                        portraitRect: { x: 80, y: 100, w: 90, h: 70 },
+                        voiceId: 'pro_nb_02',
+                        text: "All able-bodied men are called to defend the Han."
+                    },
+                    {
+                        type: 'dialogue',
+                        name: 'The Noticeboard',
+                        position: 'top',
+                        portraitKey: 'noticeboard',
+                        portraitRect: { x: 80, y: 100, w: 90, h: 70 },
+                        voiceId: 'pro_nb_03',
+                        text: "Report to the local Magistrate at once."
+                    },
+                ]
+            }
+          },
+          clickableActors: {
+            'farmer': {
+                onClick: [
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'farmer',
+                        position: 'top',
+                        name: 'Villager',
+                        voiceId: 'pro_farmer_01',
+                        text: "The Yellow Turbans... they say they'll burn everything in their path. My family has lived here for generations. What will become of us?"
+                    }
+                ]
+            },
+            'farmer2': {
+                onClick: [
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'farmer2',
+                        position: 'top',
+                        name: 'Villager',
+                        voiceId: 'pro_farmer2_01',
+                        text: "I've heard the rebels are already in the next county. They show no mercy to those who resist. We must prepare for the worst."
+                    }
+                ]
+            }
+          }
         },
         {
             type: 'dialogue',
@@ -930,19 +971,31 @@ export const NARRATIVE_SCRIPTS = {
 
         // --- RECRUITING AT THE NOTICEBOARD ---
         { bg: 'noticeboard', type: 'command', action: 'clearActors' },
-        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 100, y: 210 },
-        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 60, y: 210 },
-        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 140, y: 210 },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: -40, y: 210 },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-
-        {
-            type: 'dialogue',
-            portraitKey: 'zhang-fei',
-            position: 'top',
-            name: 'Zhang Fei',
-            voiceId: 'rec_zf_01',
-            text: "CITIZENS OF ZHUO! The Yellow Turbans are coming! Who among you is brave enough to fight for your homes?"
-        },
+        // Liu Bei walks into place
+        { type: 'command', action: 'move', id: 'liubei', x: 100, y: 210 },
+        // Make noticeboard clickable and enter interactive mode
+        { type: 'interactive', clickableRegions: {
+            'noticeboard': {
+                x: 70, // Approximate position of noticeboard on the background (centered, upper portion)
+                y: 30,
+                w: 120,
+                h: 140,
+                onClick: [
+                    { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 60, y: 210 },
+                    { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 140, y: 210 },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'zhang-fei',
+                        position: 'top',
+                        name: 'Zhang Fei',
+                        voiceId: 'rec_zf_01',
+                        text: "CITIZENS OF ZHUO! The Yellow Turbans are coming! Who among you is brave enough to fight for your homes?"
+                    },
+                ]
+            }
+        }},
         {
             type: 'dialogue',
             portraitKey: 'guan-yu',

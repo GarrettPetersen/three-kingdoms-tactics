@@ -39,7 +39,7 @@ PHONETIC_OVERRIDES_FILE = "tools/phonetic_overrides.json"
 CHAR_TARGETS = {
     "liubei": "movies/clean/clean_li-shang-captain-from-mulan.wav",
     "zhangfei": "movies/clean/clean_kublai-khan.wav",
-    "guanyu": "movies/clean/clean_angry-mulans-dad.wav",
+    "guanyu": "movies/clean/clean_master_xehanort.wav",
     "zhoujing": "movies/clean/clean_mulans-dad.wav",
     "chengyuanzhi": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
     "dengmao": "movies/clean/clean_mulan-emperor.wav",
@@ -54,6 +54,8 @@ CHAR_TARGETS = {
     "zhangbao": "movies/clean/clean_kublai-khan.wav",  # Aggressive, warrior-like
     "zhangliang": "movies/clean/clean_mulan-emperor.wav",  # Authoritative, imperial
     "soldier": "movies/clean/clean_mulans-dad.wav",  # Friendly, common voice (shared with volunteer, zhoujing)
+    "farmer": "movies/clean/clean_mulans-dad.wav",  # Common male villager voice
+    "farmer2": "movies/clean/clean_anna_frozen_young_adult_woman.wav",  # Female villager voice
     "default": "movies/clean/clean_mulan-emperor.wav",  # Authoritative fallback (shared with noticeboard, dengmao, luzhi, zhangliang)
 }
 
