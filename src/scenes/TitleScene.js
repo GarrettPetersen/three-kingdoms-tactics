@@ -46,6 +46,8 @@ export class TitleScene extends BaseScene {
         this.menuAlpha = 0;
         this.menuOptions = [];
         this.selection = null;
+        this.showConfirm = false; // Reset confirmation dialog state
+        this.confirmSelection = null;
     }
 
     processTitleImage() {
@@ -641,12 +643,29 @@ export class TitleScene extends BaseScene {
             // Check for saved states in priority order
             // If there's a saved narrative state, resume narrative
             const narrativeState = gs.get('narrativeState');
-            if (narrativeState && narrativeState.scriptId) {
-                // Only resume if we have a valid scriptId and haven't completed the script
-                const script = NARRATIVE_SCRIPTS[narrativeState.scriptId];
-                if (script && narrativeState.currentStep < script.length) {
+            if (narrativeState) {
+                // Check if we have a valid script to restore
+                let hasValidScript = false;
+                if (narrativeState.scriptId) {
+                    // Using scriptId - check if script exists and currentStep is valid
+                    const script = NARRATIVE_SCRIPTS[narrativeState.scriptId];
+                    if (script && narrativeState.currentStep < script.length) {
+                        hasValidScript = true;
+                    }
+                } else if (narrativeState.script && Array.isArray(narrativeState.script) && narrativeState.script.length > 0) {
+                    // Using custom script - check if currentStep is valid
+                    if (narrativeState.currentStep < narrativeState.script.length) {
+                        hasValidScript = true;
+                    }
+                }
+                
+                if (hasValidScript) {
                     this.manager.switchTo('narrative', { isResume: true });
                     return;
+                } else {
+                    // Invalid narrative state - clear it
+                    console.warn('Clearing invalid narrative state', narrativeState);
+                    gs.set('narrativeState', null);
                 }
             }
             
@@ -664,13 +683,32 @@ export class TitleScene extends BaseScene {
             
             // Fallback to lastScene (with exclusion check)
             let lastScene = gs.get('lastScene');
-            const excludedScenes = ['title', 'custom_battle', 'campaign_selection'];
+            const excludedScenes = ['title', 'custom_battle']; // campaign_selection is now allowed
             
             // If lastScene is excluded or doesn't exist, default to map
             if (!lastScene || excludedScenes.includes(lastScene)) {
-                lastScene = 'map';
+                // If no lastScene but we have a campaign, go to map
+                // Otherwise, go to campaign_selection
+                if (campaignId) {
+                    lastScene = 'map';
+                } else {
+                    lastScene = 'campaign_selection';
+                }
             }
             
+            // Check for scene-specific saved states (generic approach for future scenes)
+            // Any scene can implement saveState() method that saves to `${sceneName}State`
+            // and restore via enter({ isResume: true })
+            // This allows any scene to opt into save/restore without modifying continue logic
+            const sceneStateKey = `${lastScene}State`;
+            const sceneState = gs.get(sceneStateKey);
+            if (sceneState) {
+                // Scene has saved state - resume it
+                this.manager.switchTo(lastScene, { isResume: true });
+                return;
+            }
+            
+            // No saved state for this scene - just switch to it normally
             this.manager.switchTo(lastScene, { campaignId, isResume: true });
         } else if (action === 'newgame') {
             const hasSave = this.manager.gameState.hasSave();

@@ -34,7 +34,17 @@ export class SceneManager {
 
     switchTo(name, params = {}) {
         // Excluded scenes that should never be saved as lastScene
-        const excludedScenes = ['title', 'custom_battle', 'campaign_selection'];
+        // campaign_selection is now allowed so users can continue from there
+        const excludedScenes = ['title', 'custom_battle'];
+        
+        // Save scene state if the current scene has a saveState method
+        if (this.currentScene && typeof this.currentScene.saveState === 'function') {
+            try {
+                this.currentScene.saveState();
+            } catch (e) {
+                console.error('Error saving scene state:', e);
+            }
+        }
         
         // Save lastScene if we're leaving a campaign scene (before switching)
         // We save the scene we're LEAVING, not the one we're entering

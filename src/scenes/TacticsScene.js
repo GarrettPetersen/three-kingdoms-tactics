@@ -99,6 +99,7 @@ export class TacticsScene extends BaseScene {
         this.hoveredCell = null;
         this.activeDialogue = null;
         this.introScript = null; // Fix dialogue flicker
+        this.isPostCombatDialogue = false; // Track if we're in post-combat dialogue
         this.reachableTiles = new Map();
         this.attackTiles = new Map();
         this.projectiles = [];
@@ -305,6 +306,7 @@ export class TacticsScene extends BaseScene {
     startIntroDialogue() {
         this.subStep = 0;
         this.introScript = null;
+        this.isPostCombatDialogue = false; // Intro dialogue, not post-combat
         const battleDef = BATTLES[this.battleId];
         
         if (battleDef && battleDef.introScript) {
@@ -488,6 +490,7 @@ export class TacticsScene extends BaseScene {
         if (battleDef && battleDef.postCombatScript) {
             this.introScript = battleDef.postCombatScript;
             this.isIntroDialogueActive = true;
+            this.isPostCombatDialogue = true; // Mark as post-combat dialogue
             this.dialogueStep = 0;
             this.dialogueElapsed = 0;
             this.subStep = 0;
@@ -1306,16 +1309,20 @@ export class TacticsScene extends BaseScene {
         this.isProcessingTurn = true;
         
         // Clear old intents before starting new phase
+        // But preserve hasActed for NPCs that have already acted (to prevent double-acting on restore)
         this.units.forEach(u => {
             if (u.faction !== 'player') {
                 u.intent = null;
                 u.attackOrder = null;
+                // Don't reset hasActed here - it's used to track which NPCs have acted in this phase
+                // It will be reset at the start of the next turn cycle
             }
         });
-
+        
         // Caged units cannot act - they're trapped!
-        const allies = this.units.filter(u => u.faction === 'allied' && u.hp > 0 && !u.caged);
-        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.caged);
+        // Filter out NPCs that have already acted in this phase (to prevent double-acting on restore)
+        const allies = this.units.filter(u => u.faction === 'allied' && u.hp > 0 && !u.caged && !u.hasActed);
+        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.caged && !u.hasActed);
         
         const executeMoves = (npcs, index, onComplete) => {
             if (index >= npcs.length) {
@@ -1352,6 +1359,13 @@ export class TacticsScene extends BaseScene {
                         // Final pause to see the last move
                         setTimeout(() => {
                             this.telegraphAllNpcs();
+                            // Reset hasActed for all NPCs now that the phase is complete
+                            // This prepares them for the next turn cycle
+                            this.units.forEach(u => {
+                                if (u.faction !== 'player') {
+                                    u.hasActed = false;
+                                }
+                            });
                             // Special handling for yellow_turban_rout cutscene - skip player turn, go straight to execution
                             if (this.battleId === 'yellow_turban_rout' && this.cutsceneCombatComplete !== undefined) {
                                 this.startExecutionPhase();
@@ -1566,22 +1580,33 @@ export class TacticsScene extends BaseScene {
         }
 
         const path = this.tacticsMap.getPath(unit.r, unit.q, bestTile.r, bestTile.q, unit.moveRange, unit);
-        if (path) {
+        if (path && path.length > 1) {
+            // Unit needs to move
             const oldCell = this.tacticsMap.getCell(unit.r, unit.q);
             if (oldCell) oldCell.unit = null;
             unit.startPath(path);
             this.tacticsMap.getCell(bestTile.r, bestTile.q).unit = unit;
+            
+            const checkDone = () => {
+                if (!unit.isMoving) {
+                    // Mark unit as having acted (moved) to prevent double-acting on restore
+                    unit.hasActed = true;
+                    unit.hasMoved = true;
+                    this.telegraphSingleNpc(unit);
+                    onComplete();
+                } else {
+                    setTimeout(checkDone, 100);
+                }
+            };
+            checkDone();
+        } else {
+            // Unit is already in position or can't move - just telegraph
+            // Mark as having acted to prevent double-acting on restore
+            unit.hasActed = true;
+            unit.hasMoved = true;
+            this.telegraphSingleNpc(unit);
+            onComplete();
         }
-
-        const checkDone = () => {
-            if (!unit.isMoving) {
-                this.telegraphSingleNpc(unit);
-                onComplete();
-            } else {
-                setTimeout(checkDone, 100);
-            }
-        };
-        checkDone();
     }
 
     telegraphSingleNpc(unit) {
@@ -1688,7 +1713,18 @@ export class TacticsScene extends BaseScene {
                 caged: u.caged,
                 cageHp: u.cageHp,
                 cageSprite: u.cageSprite
-            }))
+            })),
+            // Save intro/post-combat dialogue state
+            isIntroDialogueActive: this.isIntroDialogueActive,
+            dialogueStep: this.dialogueStep,
+            subStep: this.subStep,
+            dialogueElapsed: this.dialogueElapsed,
+            isIntroAnimating: this.isIntroAnimating,
+            introTimer: this.introTimer,
+            // Track if we're in post-combat dialogue (uses introScript but different source)
+            isPostCombatDialogue: this.isPostCombatDialogue || false,
+            // Save combat state
+            isProcessingTurn: this.isProcessingTurn
         };
     }
 
@@ -1752,6 +1788,10 @@ export class TacticsScene extends BaseScene {
             u.hasMoved = uData.hasMoved;
             u.hasAttacked = uData.hasAttacked;
             u.hasActed = uData.hasActed;
+            // Defensive: If an NPC has moved, they should have acted
+            if (u.faction !== 'player' && u.hasMoved && !u.hasActed) {
+                u.hasActed = true;
+            }
             u.intent = uData.intent ? { ...uData.intent } : null;
             u.action = uData.action || 'standby';
             u.isDrowning = uData.isDrowning || false;
@@ -1780,8 +1820,133 @@ export class TacticsScene extends BaseScene {
         this.attackTiles.clear();
         this.attackRects = [];
         this.activeDialogue = null;
-        this.isIntroDialogueActive = false;
-        this.isIntroAnimating = false;
+        
+        // Restore intro/post-combat dialogue state
+        this.isIntroDialogueActive = state.isIntroDialogueActive || false;
+        this.dialogueStep = state.dialogueStep || 0;
+        this.subStep = state.subStep || 0;
+        this.dialogueElapsed = state.dialogueElapsed || 0;
+        this.isIntroAnimating = state.isIntroAnimating || false;
+        this.introTimer = state.introTimer || 0;
+        this.isPostCombatDialogue = state.isPostCombatDialogue || false;
+        
+        // Restore intro or post-combat script from battle definition if dialogue is active
+        if (this.isIntroDialogueActive) {
+            const battleDef = BATTLES[this.battleId];
+            if (this.isPostCombatDialogue && battleDef && battleDef.postCombatScript) {
+                // Restore post-combat script
+                this.introScript = battleDef.postCombatScript;
+            } else if (battleDef && battleDef.introScript) {
+                // Restore intro script
+                this.introScript = battleDef.introScript;
+            }
+        }
+        
+        // Restore combat state exactly as it was
+        this.isProcessingTurn = state.isProcessingTurn !== undefined ? state.isProcessingTurn : false;
+        
+        // For player turn, ensure they can act (isProcessingTurn should be false)
+        if (this.turn === 'player') {
+            this.isProcessingTurn = false;
+        }
+        
+        // If we're restoring mid-NPC-phase, we can't continue the async operations (setTimeouts are lost)
+        // But we can detect where we are and continue from the right point
+        if ((this.turn === 'enemy' || this.turn === 'enemy_moving' || this.turn === 'allied_moving') && this.isProcessingTurn) {
+            const npcs = this.units.filter(u => 
+                (u.faction === 'enemy' || u.faction === 'allied') && 
+                u.hp > 0 && 
+                !u.caged && 
+                !u.isGone
+            );
+            const hasIntents = npcs.some(npc => npc.intent);
+            const allNpcsActed = npcs.length > 0 && npcs.every(npc => npc.hasActed);
+            
+            if (hasIntents) {
+                // NPCs have already moved (have intents) - they're ready for execution phase
+                // Don't restart NPC phase - just move to execution
+                this.isProcessingTurn = false;
+                setTimeout(() => {
+                    this.startExecutionPhase();
+                }, 100);
+            } else if (allNpcsActed) {
+                // All NPCs have acted but no intents - phase is complete, move to player turn
+                this.isProcessingTurn = false;
+                setTimeout(() => {
+                    this.startPlayerTurn();
+                }, 100);
+            } else {
+                // Some NPCs haven't acted yet - restart the phase
+                // startNpcPhase() now skips NPCs that have already acted (hasActed = true)
+                this.isProcessingTurn = false;
+                setTimeout(() => {
+                    this.startNpcPhase();
+                }, 100);
+            }
+        } else if (this.turn === 'execution') {
+            if (this.isProcessingTurn) {
+                // Execution phase was interrupted - restart it
+                this.isProcessingTurn = false;
+                setTimeout(() => {
+                    this.startExecutionPhase();
+                }, 100);
+            } else {
+                // Execution phase has completed - check if we need to trigger post-combat dialogue
+                // Check if there are any attackers with intents left (execution not actually complete)
+                const attackers = this.units.filter(u => u.hp > 0 && u.intent && u.intent.type === 'attack');
+                
+                if (attackers.length > 0) {
+                    // There are still attacks to execute - restart execution phase
+                    this.isProcessingTurn = false;
+                    setTimeout(() => {
+                        this.startExecutionPhase();
+                    }, 100);
+                } else {
+                    // All attacks have been executed - trigger post-execution logic
+                    // For yellow_turban_rout, check if we should show post-combat dialogue
+                    if (this.battleId === 'yellow_turban_rout' && this.cutsceneCombatComplete !== undefined) {
+                        // Check if we're already in post-combat dialogue
+                        if (this.isPostCombatDialogue && this.isIntroDialogueActive) {
+                            // Already in post-combat dialogue - just ensure it's active
+                            // The dialogue should continue from where it was saved
+                        } else if (!this.isPostCombatDialogue && !this.isIntroDialogueActive) {
+                            // Execution completed, but post-combat sequence hasn't started
+                            // Check if retreat sequence has already completed (soldiers gone, brothers in center)
+                            const soldiers = this.units.filter(u => u.id.startsWith('soldier') && u.hp > 0 && !u.isGone);
+                            const zhangBrothers = this.units.filter(u => (u.id === 'zhangjue' || u.id === 'zhangbao' || u.id === 'zhangliang') && u.hp > 0);
+                            const centerR = Math.floor(this.manager.config.mapHeight / 2);
+                            const centerQ = Math.floor(this.manager.config.mapWidth / 2);
+                            const brothersInCenter = zhangBrothers.every(brother => {
+                                const dist = Math.abs(brother.r - centerR) + Math.abs(brother.q - centerQ);
+                                return dist <= 1; // Within 1 hex of center
+                            });
+                            
+                            if (soldiers.length === 0 && brothersInCenter && zhangBrothers.length > 0) {
+                                // Retreat sequence has completed - start post-combat dialogue directly
+                                setTimeout(() => {
+                                    this.isProcessingTurn = false;
+                                    this.startPostCombatDialogue();
+                                }, 100);
+                            } else {
+                                // Need to run retreat sequence
+                                setTimeout(() => {
+                                    this.checkCutsceneCombatComplete();
+                                }, 100);
+                            }
+                        }
+                    } else {
+                        // For other battles, check win/loss conditions
+                        setTimeout(() => {
+                            this.checkWinLoss();
+                            if (!this.isGameOver) {
+                                this.turnNumber++;
+                                this.startNpcPhase();
+                            }
+                        }, 100);
+                    }
+                }
+            }
+        }
         
         // Initialize history for undo
         this.history = [];
@@ -4325,6 +4490,17 @@ export class TacticsScene extends BaseScene {
             const { ctx, canvas } = this.manager;
             if (this.isIntroAnimating || this.isProcessingTurn) return;
             
+            // For view-only battles, only show "CLICK TO CONTINUE" when combat is actually complete
+            if (this.battleId === 'qingzhou_prelude') {
+                const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
+                // Only show prompt if combat is complete (no enemies and we're in player turn or post-combat dialogue)
+                // Don't show if we're still in NPC turn phases
+                if (enemies.length > 0 || (this.turn !== 'player' && this.turn !== 'execution' && !this.isPostCombatDialogue)) {
+                    // Still in combat - don't show prompt
+                    return;
+                }
+            }
+            
             // Draw a simple prompt to click to continue
             const pulse = Math.abs(Math.sin(Date.now() * 0.003));
             this.drawPixelText(ctx, "CLICK TO CONTINUE", canvas.width / 2, canvas.height - 20, { 
@@ -4707,7 +4883,33 @@ export class TacticsScene extends BaseScene {
         }
 
         // Don't process cutscene clicks if cleanup dialogue is playing on the map
+        // Also don't allow clicks during active combat - only when combat is truly complete
         if (this.isCutscene && !this.isIntroAnimating && !this.isProcessingTurn && !this.isCleanupDialogueActive && !this.isIntroDialogueActive && !this.isVictoryDialogueActive) {
+            // For view-only battles, check if combat is actually complete before allowing skip
+            if (this.battleId === 'qingzhou_prelude') {
+                // Check if victory condition is met (all enemies defeated or turn limit reached)
+                const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
+                
+                // For prelude battles, combat continues until victory condition is met
+                // Don't allow skipping if:
+                // - There are still enemies alive
+                // - We're not in player turn (still processing NPC turns)
+                // - We haven't reached the post-combat dialogue yet
+                if (enemies.length > 0 || (this.turn !== 'player' && this.turn !== 'execution')) {
+                    // Still in combat - don't allow skipping
+                    return;
+                }
+                
+                // If we're in player turn but combat should be complete, check if we should start post-combat dialogue
+                if (this.turn === 'player' && enemies.length === 0 && !this.isPostCombatDialogue) {
+                    // Combat is complete but post-combat dialogue hasn't started - trigger it
+                    this.checkWinLoss();
+                    // checkWinLoss for prelude will switch to next battle, but we want post-combat dialogue first
+                    // Actually, for prelude, the victory condition switches to the next battle directly
+                    // So if we're here, we should allow the transition
+                }
+            }
+            
             const battleDef = BATTLES[this.battleId];
             if (battleDef && battleDef.nextScene) {
                 if (this.battleId === 'qingzhou_cleanup') {

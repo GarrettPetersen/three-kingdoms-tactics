@@ -44,6 +44,20 @@ export class NarrativeScene extends BaseScene {
                 this.scriptId = null;
             }
 
+            // Don't proceed if script is empty
+            if (!this.script || this.script.length === 0) {
+                console.error('Cannot enter narrative scene: script is empty', {
+                    scriptId: params.scriptId,
+                    hasScriptParam: !!params.script,
+                    scriptParamLength: params.script ? params.script.length : 0
+                });
+                // Switch to map as fallback
+                setTimeout(() => {
+                    this.manager.switchTo('map');
+                }, 100);
+                return;
+            }
+
             this.onComplete = params.onComplete || null;
             this.currentStep = 0;
             this.subStep = 0; // Track 3-line chunks for long dialogue
@@ -108,6 +122,27 @@ export class NarrativeScene extends BaseScene {
                 this.manager.switchTo('map');
             }, 100);
             return; // Don't continue if we can't restore the script
+        }
+        
+        // Validate currentStep after restoring script
+        if (state.currentStep >= this.script.length || state.currentStep < 0) {
+            // Script has completed - transition to next scene instead of trying to render
+            console.warn('Restoring completed script - transitioning to next scene', {
+                scriptId: this.scriptId,
+                currentStep: state.currentStep,
+                scriptLength: this.script.length
+            });
+            // Clear the narrative state
+            this.manager.gameState.set('narrativeState', null);
+            
+            // Try to transition to the next scene if we have that info
+            if (state.nextScene) {
+                this.manager.switchTo(state.nextScene, state.nextParams || {});
+            } else {
+                // Default to map if no next scene info
+                this.manager.switchTo('map');
+            }
+            return;
         }
         
         // First, restore actors from saved state (they contain the result of all previous commands)
@@ -394,6 +429,20 @@ export class NarrativeScene extends BaseScene {
                 scriptId: this.scriptId,
                 currentStep: this.currentStep
             });
+            // Clear any existing invalid state
+            gs.set('narrativeState', null);
+            return;
+        }
+        
+        // Don't save if currentStep is out of bounds (script has completed)
+        if (this.currentStep >= this.script.length) {
+            console.warn('Not saving narrative state: script has completed', {
+                scriptId: this.scriptId,
+                currentStep: this.currentStep,
+                scriptLength: this.script.length
+            });
+            // Clear any existing invalid state
+            gs.set('narrativeState', null);
             return;
         }
         
