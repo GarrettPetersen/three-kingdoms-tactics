@@ -199,9 +199,29 @@ export class NarrativeScene extends BaseScene {
         this.clickableActors = state.clickableActors || {};
         this.clickableRegions = state.clickableRegions || {};
         this.returnStack = state.returnStack ? [...state.returnStack] : [];
+        this.insertedStepsCount = state.insertedStepsCount || 0;
+        this.insertedStepsStartIndex = state.insertedStepsStartIndex !== undefined ? state.insertedStepsStartIndex : -1;
         this.hoveredActor = null; // Reset hover state on restore
         this.hoveredRegion = null; // Reset hover state on restore
         this.onComplete = null; // Don't restore callbacks
+        
+        // Critical: If we're in interactive mode, ensure currentStep is at the interactive step
+        // This prevents accidentally being past the interactive step after restore
+        if (this.isInteractive && this.interactiveStepIndex >= 0) {
+            // If currentStep is past the interactive step, reset to interactive step
+            // This can happen if state was saved incorrectly or if inserted steps weren't cleaned up
+            if (this.currentStep > this.interactiveStepIndex) {
+                console.warn('Restoring interactive state: currentStep was past interactive step, resetting', {
+                    currentStep: this.currentStep,
+                    interactiveStepIndex: this.interactiveStepIndex
+                });
+                this.currentStep = this.interactiveStepIndex;
+                this.isWaiting = true;
+                // Clear any inserted steps tracking since we're resetting
+                this.insertedStepsCount = 0;
+                this.insertedStepsStartIndex = -1;
+            }
+        }
         
         // Rebuild label map for jump/goto functionality
         this.buildLabelMap();
@@ -214,8 +234,14 @@ export class NarrativeScene extends BaseScene {
         // Set up the current step for rendering (but don't replay voice)
         const step = this.script[this.currentStep];
         if (step) {
-            // Initialize selection system if it's a choice
-            if (step.type === 'choice') {
+            // If we're at an interactive step, we need to process it to set up clickable elements
+            // But we don't want to replay voice or re-execute commands
+            if (step.type === 'interactive' && this.isInteractive) {
+                // Just set up the clickable elements without replaying voice
+                this.clickableActors = step.clickableActors || {};
+                this.clickableRegions = step.clickableRegions || {};
+            } else if (step.type === 'choice') {
+                // Initialize selection system if it's a choice
                 this.initSelection({
                     defaultIndex: 0,
                     totalOptions: step.options ? step.options.length : 0
@@ -639,9 +665,12 @@ export class NarrativeScene extends BaseScene {
             elapsedInStep: this.elapsedInStep,
             musicKey: assets.currentMusicKey || null, // Save current music
             isInteractive: this.isInteractive || false,
+            interactiveStepIndex: this.interactiveStepIndex !== undefined ? this.interactiveStepIndex : -1,
             clickableActors: this.clickableActors || {},
             clickableRegions: this.clickableRegions || {},
-            returnStack: this.returnStack ? [...this.returnStack] : []
+            returnStack: this.returnStack ? [...this.returnStack] : [],
+            insertedStepsCount: this.insertedStepsCount || 0,
+            insertedStepsStartIndex: this.insertedStepsStartIndex !== undefined ? this.insertedStepsStartIndex : -1
         };
         gs.set('narrativeState', state);
     }
