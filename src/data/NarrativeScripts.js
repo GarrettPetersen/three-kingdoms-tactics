@@ -246,7 +246,7 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'zhou-jing',
                             name: 'Zhou Jing',
                             position: 'top',
-                            voiceId: 'daxing_zj_04',
+                            voiceId: 'daxing_zj_04_alt',
                             text: "Your confidence is inspiring! I shall lead the main force myself. Together, we shall strike at the heart of Cheng Yuanzhi's army!"
                         }
                     ]
@@ -690,21 +690,77 @@ export const NARRATIVE_SCRIPTS = {
         
         { type: 'command', action: 'fade', target: 0, speed: 0.002 },
         
-        {
-            type: 'dialogue',
-            portraitKey: 'zhang-fei',
-            position: 'top',
-            name: 'Zhang Fei',
-            voiceId: 'inn_zf_01',
-            text: "This wine is good! Together, we shall raise an army that will make the rebels tremble."
-        },
-        {
-            type: 'dialogue',
-            portraitKey: 'liu-bei',
-            position: 'top',
-            name: 'Liu Bei',
-            voiceId: 'inn_lb_01',
-            text: "Indeed. Honor and duty call us."
+        // Interactive step: players can explore the inn before Guan Yu arrives
+        { type: 'interactive',
+          clickableRegions: {
+            'wine_casks': {
+                // Wine casks on left-hand middle of screen (approximate position)
+                x: 0,
+                y: 125,
+                w: 40,
+                h: 40,
+                onClick: [
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'liu-bei',
+                        position: 'top',
+                        name: 'Liu Bei',
+                        voiceId: 'inn_lb_wine_01',
+                        text: "The wine here is of fine quality. A good vintage for such troubled times.",
+                        _isInserted: true
+                    }
+                ]
+            }
+          },
+          clickableActors: {
+            'farmer': {
+                onClick: [
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'farmer',
+                        position: 'top',
+                        name: 'Villager',
+                        voiceId: 'inn_farmer_01',
+                        text: "These Yellow Turban rebels... I try to drink away my worries, but they always return. What will become of us?",
+                        _isInserted: true
+                    }
+                ]
+            },
+            'liubei': {
+                onClick: [
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'liu-bei',
+                        position: 'top',
+                        name: 'Liu Bei',
+                        voiceId: 'inn_lb_click_01',
+                        text: "The people suffer while we sit here. We must act soon.",
+                        _isInserted: true
+                    }
+                ]
+            },
+            'zhangfei': {
+                advanceOnClick: true, // Clicking Zhang Fei triggers the rest of the scene
+                onClick: [
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'zhang-fei',
+                        position: 'top',
+                        name: 'Zhang Fei',
+                        voiceId: 'inn_zf_01',
+                        text: "This wine is good! Together, we shall raise an army that will make the rebels tremble."
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'liu-bei',
+                        position: 'top',
+                        name: 'Liu Bei',
+                        voiceId: 'inn_lb_01',
+                        text: "Indeed. Honor and duty call us."
+                    }
+                ]
+            }
+          }
         },
         
         { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 300, y: 210, flip: true, speed: 1 },
@@ -975,27 +1031,16 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
         // Liu Bei walks into place
         { type: 'command', action: 'move', id: 'liubei', x: 100, y: 210 },
-        // Make noticeboard clickable and enter interactive mode
-        { type: 'interactive', clickableRegions: {
-            'noticeboard': {
-                x: 70, // Approximate position of noticeboard on the background (centered, upper portion)
-                y: 30,
-                w: 120,
-                h: 140,
-                onClick: [
-                    { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 60, y: 210 },
-                    { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 140, y: 210 },
-                    {
-                        type: 'dialogue',
-                        portraitKey: 'zhang-fei',
-                        position: 'top',
-                        name: 'Zhang Fei',
-                        voiceId: 'rec_zf_01',
-                        text: "CITIZENS OF ZHUO! The Yellow Turbans are coming! Who among you is brave enough to fight for your homes?"
-                    },
-                ]
-            }
-        }},
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 60, y: 210 },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 140, y: 210 },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhang-fei',
+            position: 'top',
+            name: 'Zhang Fei',
+            voiceId: 'rec_zf_01',
+            text: "CITIZENS OF ZHUO! The Yellow Turbans are coming! Who among you is brave enough to fight for your homes?"
+        },
         {
             type: 'dialogue',
             portraitKey: 'guan-yu',

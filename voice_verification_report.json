@@ -1122,15 +1122,43 @@
     "pro_farmer2_01": {
         "character": "farmer2",
         "original_text": "I've heard the rebels are already in the next county. They show no mercy to those who resist. We must prepare for the worst.",
-        "stt_output": "I've heard the rebels are already in the next county. They show no mercy to those who resist. We must prepare for the worst.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false
     },
     "pro_farmer_01": {
         "character": "farmer",
         "original_text": "The Yellow Turbans... they say they'll burn everything in their path. My family has lived here for generations. What will become of us?",
-        "stt_output": "The yellow turbans, they say they'll burn everything in their path. My family has lived here for generations. What will become of us?",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_farmer_01": {
+        "character": "farmer",
+        "original_text": "These Yellow Turban rebels... I try to drink away my worries, but they always return. What will become of us?",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_lb_click_01": {
+        "character": "liubei",
+        "original_text": "The people suffer while we sit here. We must act soon.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "inn_lb_wine_01": {
+        "character": "liubei",
+        "original_text": "The wine here is of fine quality. A good vintage for such troubled times.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false
+    },
+    "daxing_zj_04_alt": {
+        "character": "zhoujing",
+        "original_text": "Your confidence is inspiring! I shall lead the main force myself. Together, we shall strike at the heart of Cheng Yuanzhi's army!",
+        "stt_output": "Your confidence is inspiring. I shall lead the main force myself. Together we shall strike at the heart of Chenyu An'si's army.",
+        "wer": 0.09090909090909091,
         "is_bad": false
     }
 }

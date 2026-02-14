@@ -564,25 +564,48 @@ export class NarrativeScene extends BaseScene {
         if (this.isInteractive && this.interactiveStepIndex >= 0 && this.currentStep > this.interactiveStepIndex) {
             const currentStep = this.script[this.currentStep];
             // Check if current step is NOT an inserted step (meaning we've reached original script)
-            // If it's not marked as inserted, we've passed all inserted dialogue and should return
+            // If it's not marked as inserted, we've passed all inserted dialogue
             if (!currentStep || !currentStep._isInserted) {
-                // Remove all inserted steps before returning to interactive step
+                // Check if the last inserted step (the one we just passed) was marked to advance the plot
+                // The last inserted step would be at insertedStepsStartIndex + insertedStepsCount - 1
+                const lastInsertedIndex = this.insertedStepsStartIndex >= 0 && this.insertedStepsCount > 0
+                    ? this.insertedStepsStartIndex + this.insertedStepsCount - 1
+                    : -1;
+                const shouldAdvance = lastInsertedIndex >= 0 && this.script[lastInsertedIndex]?._advanceAfterThis;
+                
+                // Remove all inserted steps
                 if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
                     // Remove inserted steps from the script
                     const startIdx = this.insertedStepsStartIndex;
                     this.script.splice(startIdx, this.insertedStepsCount);
+                    // Adjust currentStep if it was affected by removal
+                    if (this.currentStep >= startIdx) {
+                        this.currentStep -= this.insertedStepsCount;
+                    }
                     // Reset tracking
                     this.insertedStepsCount = 0;
                     this.insertedStepsStartIndex = -1;
                 }
-                // Return to interactive step - don't process it again, just set position
-                this.currentStep = this.interactiveStepIndex;
-                // Don't call processStep() - we're already in interactive mode
-                // Just ensure we're waiting for input
-                this.isWaiting = true;
-                // Save state and return - don't continue to processStep() at the end
-                this.saveNarrativeState();
-                return;
+                
+                if (shouldAdvance) {
+                    // Exit interactive mode and continue with the script
+                    this.isInteractive = false;
+                    this.clickableActors = {};
+                    this.clickableRegions = {};
+                    this.hoveredActor = null;
+                    this.hoveredRegion = null;
+                    // Continue processing the next step (which is now at currentStep after removal)
+                    // Don't return - let it continue to processStep() at the end
+                } else {
+                    // Return to interactive step - don't process it again, just set position
+                    this.currentStep = this.interactiveStepIndex;
+                    // Don't call processStep() - we're already in interactive mode
+                    // Just ensure we're waiting for input
+                    this.isWaiting = true;
+                    // Save state and return - don't continue to processStep() at the end
+                    this.saveNarrativeState();
+                    return;
+                }
             }
         }
 
@@ -1242,12 +1265,15 @@ export class NarrativeScene extends BaseScene {
                     }
                     // Check if this region should advance the plot
                     if (region.advanceOnClick) {
-                        // Exit interactive mode and continue
-                        this.isInteractive = false;
-                        this.clickableActors = {};
-                        this.clickableRegions = {};
-                        this.hoveredActor = null;
-                        this.hoveredRegion = null;
+                        // Mark the inserted steps to advance after they complete
+                        // Don't exit interactive mode yet - wait until inserted steps are done
+                        if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
+                            // Mark the last inserted step to advance after it
+                            const lastInsertedIndex = this.insertedStepsStartIndex + this.insertedStepsCount - 1;
+                            if (this.script[lastInsertedIndex]) {
+                                this.script[lastInsertedIndex]._advanceAfterThis = true;
+                            }
+                        }
                         this.nextStep();
                     } else {
                         // Stay in interactive mode - just show dialogue
@@ -1317,12 +1343,15 @@ export class NarrativeScene extends BaseScene {
                     
                     // Check if this actor should advance the plot
                     if (actor.advanceOnClick) {
-                        // Exit interactive mode and continue
-                        this.isInteractive = false;
-                        this.clickableActors = {};
-                        this.clickableRegions = {};
-                        this.hoveredActor = null;
-                        this.hoveredRegion = null;
+                        // Mark the inserted steps to advance after they complete
+                        // Don't exit interactive mode yet - wait until inserted steps are done
+                        if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
+                            // Mark the last inserted step to advance after it
+                            const lastInsertedIndex = this.insertedStepsStartIndex + this.insertedStepsCount - 1;
+                            if (this.script[lastInsertedIndex]) {
+                                this.script[lastInsertedIndex]._advanceAfterThis = true;
+                            }
+                        }
                         this.nextStep();
                     } else {
                         // Stay in interactive mode - just show dialogue/branch

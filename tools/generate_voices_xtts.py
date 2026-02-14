@@ -46,7 +46,7 @@ CHAR_TARGETS = {
     "yellowturban": "movies/clean/clean_kublai-khan.wav",  # Aggressive warrior voice (shared with zhangfei, dongzhuo, zhangbao)
     "narrator": "movies/clean/clean_uncle-iroh.wav",
     "noticeboard": "movies/clean/clean_mulan-emperor.wav",  # Authoritative voice (shared with dengmao, luzhi, zhangliang)
-    "volunteer": "movies/clean/clean_mulans-dad.wav",  # Friendly, common voice (shared with zhoujing)
+    "volunteer": "movies/clean/clean_hercules_young_adult_hero.wav",  # Heroic, enthusiastic voice for volunteers
     "gongjing": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
     "luzhi": "movies/clean/clean_mulan-emperor.wav",
     "dongzhuo": "movies/clean/clean_kublai-khan.wav",  # Gruff and arrogant

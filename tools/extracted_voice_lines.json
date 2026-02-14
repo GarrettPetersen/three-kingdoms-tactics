@@ -91,6 +91,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "daxing_zj_04_alt",
+    "char": "zhoujing",
+    "text": "Your confidence is inspiring! I shall lead the main force myself. Together, we shall strike at the heart of Cheng Yuanzhi's army!",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "debug_narrative_01",
     "char": "system",
     "text": "Cheat code accepted. Narrative scene is functional.",
@@ -322,6 +328,12 @@
     "source": "TacticsScene.js"
   },
   {
+    "id": "inn_farmer_01",
+    "char": "farmer",
+    "text": "These Yellow Turban rebels... I try to drink away my worries, but they always return. What will become of us?",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "inn_gy_01",
     "char": "guanyu",
     "text": "Quick! Bring me wine! I am in a hurry to get to town and join the volunteers!",
@@ -403,6 +415,18 @@
     "id": "inn_lb_choice_02",
     "char": "liubei",
     "text": "We fight not for glory, but for the people who suffer under this chaos.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_lb_click_01",
+    "char": "liubei",
+    "text": "The people suffer while we sit here. We must act soon.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_lb_wine_01",
+    "char": "liubei",
+    "text": "The wine here is of fine quality. A good vintage for such troubled times.",
     "source": "NarrativeScripts.js"
   },
   {
