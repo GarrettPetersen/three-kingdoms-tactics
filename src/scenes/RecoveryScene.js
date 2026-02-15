@@ -1,17 +1,19 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
+import { getLocalizedText } from '../core/Language.js';
+import { UI_TEXT } from '../data/Translations.js';
 
 const RECOVERY_DIALOGUE = {
     'liubei': {
-        text: "My apologies, brothers. I let my guard down, but my spirit remains unbroken.",
+        text: { en: "My apologies, brothers. I let my guard down, but my spirit remains unbroken.", zh: "抱歉，兄弟们。我一时大意，但我的精神依然不屈。" },
         voiceId: 'recov_lb_01'
     },
     'guanyu': {
-        text: "A momentary lapse in focus. I shall return to the field with renewed vigor.",
+        text: { en: "A momentary lapse in focus. I shall return to the field with renewed vigor.", zh: "一时失神。我将以新的活力重返战场。" },
         voiceId: 'recov_gy_01'
     },
     'zhangfei': {
-        text: "Bah! Those rascals got a lucky hit in! Next time, they won't be so fortunate!",
+        text: { en: "Bah! Those rascals got a lucky hit in! Next time, they won't be so fortunate!", zh: "呸！那些混蛋只是侥幸得手！下次，他们就没这么幸运了！" },
         voiceId: 'recov_zf_01'
     }
 };
@@ -127,7 +129,7 @@ export class RecoveryScene extends BaseScene {
         }
 
         // Dialogue Box
-        const dialogue = RECOVERY_DIALOGUE[current.id] || { text: "I'm back on my feet." };
+        const dialogue = RECOVERY_DIALOGUE[current.id] || { text: { en: "I'm back on my feet.", zh: "我重新站起来了。" } };
         const boxW = 200;
         const boxH = 50;
         const bx = cx - boxW / 2;
@@ -138,7 +140,8 @@ export class RecoveryScene extends BaseScene {
         ctx.strokeStyle = '#8b0000';
         ctx.strokeRect(bx + 0.5, by + 0.5, boxW - 1, boxH - 1);
 
-        const lines = this.wrapText(ctx, dialogue.text, boxW - 20, '8px Dogica');
+        const localizedText = getLocalizedText(dialogue.text);
+        const lines = this.wrapText(ctx, localizedText, boxW - 20, '8px Dogica');
         lines.forEach((line, i) => {
             this.drawPixelText(ctx, line, bx + 10, by + 10 + i * 14, { 
                 color: '#eee', 
@@ -151,7 +154,8 @@ export class RecoveryScene extends BaseScene {
             const pulse = Math.abs(Math.sin(Date.now() / 500));
             ctx.save();
             ctx.globalAlpha = pulse;
-            this.drawPixelText(ctx, "CLICK TO CONTINUE", cx, 235, {
+            const continueText = getLocalizedText(UI_TEXT['CLICK TO CONTINUE']);
+            this.drawPixelText(ctx, continueText, cx, 235, {
                 color: '#aaa',
                 font: '8px Silkscreen',
                 align: 'center'

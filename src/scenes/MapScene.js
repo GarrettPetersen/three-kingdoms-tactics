@@ -2,6 +2,8 @@ import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 import { ANIMATIONS } from '../core/Constants.js';
 import { CHAPTERS } from '../data/Chapters.js';
+import { getLocalizedText, LANGUAGE, getFontForLanguage, getTextContainerSize } from '../core/Language.js';
+import { UI_TEXT } from '../data/Translations.js';
 
 // Locations and reminders will eventually be moved to CHAPTERS data
 const LOCATIONS = {
@@ -62,14 +64,14 @@ const STORY_EVENTS = {
         portraitKey: 'liu-bei',
         name: 'Liu Bei',
         voiceId: 'map_lb_defeat',
-        text: "We were overwhelmed! We must regroup and strike again."
+        text: { en: "We were overwhelmed! We must regroup and strike again.", zh: "我们被击溃了！我们必须重整旗鼓，再次出击。" }
     },
     'qingzhou_siege': {
         type: 'dialogue',
         portraitKey: 'liu-bei',
         name: 'Liu Bei',
         voiceId: 'qz_victory_lb_01',
-        text: "The siege is lifted. We should report back to Magistrate Zhou Jing for our next assignment."
+        text: { en: "The siege is lifted. We should report back to Magistrate Zhou Jing for our next assignment.", zh: "围城已解。我们应该向邹靖县令报告，接受下一个任务。" }
     }
 };
 
@@ -78,31 +80,31 @@ const HERO_REMINDERS = {
         portraitKey: 'liu-bei',
         name: 'Liu Bei',
         voiceId: 'map_lb_rem_01',
-        text: "Magistrate Zhou Jing's headquarters is to the East. We must report there at once to begin our service."
+        text: { en: "Magistrate Zhou Jing's headquarters is to the East. We must report there at once to begin our service.", zh: "邹靖县令的指挥部在东方。我们必须立即前往报到，开始我们的服役。" }
     },
     'daxing': {
         portraitKey: 'liu-bei',
         name: 'Liu Bei',
         voiceId: 'map_lb_rem_02',
-        text: "Qingzhou is under siege. We must march there at once to relieve Imperial Protector Gong Jing!"
+        text: { en: "Qingzhou is under siege. We must march there at once to relieve Imperial Protector Gong Jing!", zh: "青州被围。我们必须立即进军，解救州牧龚景！" }
     },
     'qingzhou_siege': {
         portraitKey: 'liu-bei',
         name: 'Liu Bei',
         voiceId: 'map_lb_rem_03',
-        text: "The siege is lifted. We should return to the Magistrate to see where else we can be of service."
+        text: { en: "The siege is lifted. We should return to the Magistrate to see where else we can be of service.", zh: "围城已解。我们应该返回县令处，看看还能在哪里效力。" }
     },
     'qingzhou_cleanup': {
         portraitKey: 'liu-bei',
         name: 'Liu Bei',
         voiceId: 'map_lb_rem_04',
-        text: "Lu Zhi, my old teacher, is hard-pressed at Guangzong. We must march north to aid him against Zhang Jue's horde!"
+        text: { en: "Lu Zhi, my old teacher, is hard-pressed at Guangzong. We must march north to aid him against Zhang Jue's horde!", zh: "卢植，我的老师，在广宗处境艰难。我们必须北上援助他，对抗张角的大军！" }
     },
     'guangzong_encounter': {
         portraitKey: 'liu-bei',
         name: 'Liu Bei',
         voiceId: 'map_lb_rem_05',
-        text: "There is nothing more for us at Guangzong. Let us return to Zhuo County."
+        text: { en: "There is nothing more for us at Guangzong. Let us return to Zhuo County.", zh: "广宗已无事可做。让我们返回涿郡。" }
     }
 };
 
@@ -332,7 +334,9 @@ export class MapScene extends BaseScene {
                     ctx.restore();
 
                     if (this.interactionSelected === locId) {
-                        this.drawLabel(ctx, loc.name, lx, ly - 10, isDone ? "COMPLETED" : "Click to March");
+                        const locName = getLocalizedText(UI_TEXT[loc.name]) || loc.name;
+                        const promptText = isDone ? getLocalizedText(UI_TEXT['COMPLETED']) : getLocalizedText(UI_TEXT['click to march']);
+                        this.drawLabel(ctx, locName, lx, ly - 10, promptText);
                     }
                 }
             }
@@ -372,7 +376,14 @@ export class MapScene extends BaseScene {
         }
 
         // Draw Back Button (Top Right)
-        const backW = 40;
+        const returnText = getLocalizedText(UI_TEXT['RETURN']);
+        // Measure text to size button properly
+        ctx.save();
+        ctx.font = getFontForLanguage('8px Silkscreen');
+        const textMetrics = ctx.measureText(returnText);
+        ctx.restore();
+        
+        const backW = Math.max(40, Math.ceil(textMetrics.width) + 10);
         const backH = 15;
         const bx = canvas.width - backW - 5;
         const by = 5;
@@ -383,7 +394,7 @@ export class MapScene extends BaseScene {
         ctx.lineWidth = 1;
         ctx.strokeRect(bx + 0.5, by + 0.5, backW - 1, backH - 1);
         
-        this.drawPixelText(ctx, "RETURN", bx + backW/2, by + 4, { 
+        this.drawPixelText(ctx, returnText, bx + backW/2, by + 4, { 
             color: '#ffd700', 
             font: '8px Silkscreen', 
             align: 'center' 
@@ -391,13 +402,25 @@ export class MapScene extends BaseScene {
     }
 
     drawLabel(ctx, name, x, y, prompt) {
-        ctx.save();
-        ctx.font = '8px Silkscreen';
-        const metrics = ctx.measureText(name);
-        ctx.restore();
-
-        const boxW = Math.floor(metrics.width + 10);
-        const boxH = 24;
+        // Name and prompt are already localized when passed in
+        // Calculate container size for both name and prompt
+        const nameSize = getTextContainerSize(ctx, name, '8px Silkscreen', 5, 12);
+        const promptSize = getTextContainerSize(ctx, prompt, '8px Tiny5', 5, 12);
+        
+        // Container needs to fit both lines, so use the wider of the two
+        const boxW = Math.max(nameSize.width, promptSize.width);
+        
+        // Height needs to accommodate:
+        // - Top padding (4px for Chinese, 3px for English)
+        // - Name height
+        // - Spacing between lines (5px for Chinese, 4px for English)
+        // - Prompt height
+        // - Bottom padding (4px for Chinese, 3px for English)
+        const topPadding = LANGUAGE.current === 'zh' ? 4 : 3;
+        const bottomPadding = LANGUAGE.current === 'zh' ? 4 : 3;
+        const lineSpacing = LANGUAGE.current === 'zh' ? 5 : 4;
+        const boxH = topPadding + nameSize.height + lineSpacing + promptSize.height + bottomPadding;
+        
         const bx = Math.floor(x - 20 - boxW);
         const by = Math.floor(y);
 
@@ -407,11 +430,16 @@ export class MapScene extends BaseScene {
         ctx.lineWidth = 1;
         ctx.strokeRect(bx + 0.5, by + 0.5, boxW - 1, boxH - 1);
 
-        this.drawPixelText(ctx, name.toUpperCase(), bx + 5, by + 3, { color: '#ffd700', font: '8px Silkscreen' });
+        const displayName = LANGUAGE.current === 'zh' ? name : name.toUpperCase();
+        // Position name with top padding (Y coordinate is top of text since textBaseline = 'top')
+        const nameY = by + topPadding;
+        this.drawPixelText(ctx, displayName, bx + 5, nameY, { color: '#ffd700', font: '8px Silkscreen' });
         
         const pulse = Math.abs(Math.sin(Date.now() / 500));
         ctx.globalAlpha = pulse;
-        this.drawPixelText(ctx, prompt, bx + 5, by + 13, { color: '#eee', font: '8px Tiny5' });
+        // Position prompt below name with proper spacing (Y coordinate is top of text)
+        const promptY = by + topPadding + nameSize.height + lineSpacing;
+        this.drawPixelText(ctx, prompt, bx + 5, promptY, { color: '#eee', font: '8px Tiny5' });
         ctx.globalAlpha = 1.0;
     }
 
@@ -696,7 +724,7 @@ export class MapScene extends BaseScene {
                     type: 'dialogue',
                     portraitKey: 'narrator',
                     voiceId: 'gz_nar_poem_01',
-                    text: "As it was in olden time so it is today,\nThe simple wight may merit well,\nOfficialdom holds sway;\nZhang Fei, the blunt and hasty,\nWhere can you find his peer?"
+                    text: { en: "As it was in olden time so it is today,\nThe simple wight may merit well,\nOfficialdom holds sway;\nZhang Fei, the blunt and hasty,\nWhere can you find his peer?", zh: "古往今来皆如此，\n布衣虽有功，\n官场仍当道；\n张飞，直率而急躁，\n何处可寻其匹？" }
                 },
                 {
                     type: 'dialogue',
@@ -778,7 +806,7 @@ export class MapScene extends BaseScene {
                     name: 'Commander Lu Zhi',
                     position: 'top',
                     voiceId: 'gz_lz_freed_01',
-                    text: "Xuande! You have saved me, but at great cost. The court will brand you as rebels for attacking imperial soldiers."
+                    text: { en: "Xuande! You have saved me, but at great cost. The court will brand you as rebels for attacking imperial soldiers.", zh: "玄德！你救了我，但代价巨大。朝廷会因你们袭击官军而将你们定为叛贼。" }
                 },
                 {
                     type: 'dialogue',
@@ -787,7 +815,7 @@ export class MapScene extends BaseScene {
                     name: 'Liu Bei',
                     position: 'top',
                     voiceId: 'gz_lb_freed_02',
-                    text: "Master, I could not stand by while a loyal commander was led to unjust execution."
+                    text: { en: "Master, I could not stand by while a loyal commander was led to unjust execution.", zh: "老师，我不能坐视一位忠心的将军被不义地处决。" }
                 },
                 {
                     type: 'dialogue',
@@ -796,7 +824,7 @@ export class MapScene extends BaseScene {
                     name: 'Commander Lu Zhi',
                     position: 'top',
                     voiceId: 'gz_lz_freed_02',
-                    text: "Your loyalty does you credit. I will return to Guangzong in secret. Go now, before more soldiers come."
+                    text: { en: "Your loyalty does you credit. I will return to Guangzong in secret. Go now, before more soldiers come.", zh: "你的忠诚值得称赞。我会秘密返回广宗。现在走吧，在更多士兵到来之前。" }
                 },
                 {
                     type: 'dialogue',
@@ -805,7 +833,7 @@ export class MapScene extends BaseScene {
                     name: 'Guan Yu',
                     position: 'top',
                     voiceId: 'gz_gy_outlaw_01',
-                    text: "Brother, we cannot stay. If Dong Zhuo learns we freed Lu Zhi, he will have us executed on this spot."
+                    text: { en: "Brother, we cannot stay. If Dong Zhuo learns we freed Lu Zhi, he will have us executed on this spot.", zh: "兄长，我们不能停留。如果董卓知道我们救了卢植，他会当场处决我们。" }
                 },
                 
                 { type: 'command', action: 'fade', target: 1, speed: 0.002 }

@@ -28,10 +28,16 @@ except ImportError:
 # Use the Python 3.11 virtual environment we just set up
 VENV_PYTHON = "./tools/venv_xtts/bin/python3.11"
 OUTPUT_DIR = "public/assets/audio/voices"
+# LANGUAGE is set above when determining EXTRACTED_LINES_FILE
 TARGETS_DIR = "public/assets/voice_samples"
 MODEL_NAME = "tts_models/multilingual/multi-dataset/xtts_v2"
-REPORT_FILE = "voice_verification_report.json"
-EXTRACTED_LINES_FILE = "tools/extracted_voice_lines.json"
+REPORT_FILE = "voice_verification_report.json"  # Will be language-specific: voice_verification_report_{lang}.json
+# Language-specific extracted lines file
+LANGUAGE = os.environ.get("VOICE_LANG", "en")  # Current language for voice generation
+if LANGUAGE != "en":
+    EXTRACTED_LINES_FILE = f"tools/extracted_voice_lines_{LANGUAGE}.json"
+else:
+    EXTRACTED_LINES_FILE = "tools/extracted_voice_lines.json"
 VOICE_SETTINGS_FILE = "tools/voice_settings.json"
 PHONETIC_OVERRIDES_FILE = "tools/phonetic_overrides.json"
 
@@ -57,6 +63,39 @@ CHAR_TARGETS = {
     "farmer": "movies/clean/clean_mulans-dad.wav",  # Common male villager voice
     "farmer2": "movies/clean/clean_anna_frozen_young_adult_woman.wav",  # Female villager voice
     "default": "movies/clean/clean_mulan-emperor.wav",  # Authoritative fallback (shared with noticeboard, dengmao, luzhi, zhangliang)
+}
+
+# Map characters to Mandarin voice samples
+# Available Mandarin voices:
+# - deep_male_mandarin (deep, authoritative)
+# - young_adult_female_mandarin (young female)
+# - bipolar_male_mandarin (expressive male)
+# - gruff_mature_male_mandarin (rough, warrior-like)
+# - mature_yet_jovial_male_mandarin (wise, cheerful)
+# - serious_female_mandarin (serious, commanding)
+# - serious_male_mandarin (serious, authoritative)
+# - young_adult_male_mandarin (young male)
+CHAR_TARGETS_MANDARIN = {
+    "liubei": "mandarin/clean/clean_serious_male_mandarin.wav",  # Serious, noble
+    "zhangfei": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Gruff, warrior
+    "guanyu": "mandarin/clean/clean_deep_male_mandarin.wav",  # Deep, authoritative
+    "zhoujing": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",  # Wise, friendly
+    "chengyuanzhi": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Villainous (shared)
+    "dengmao": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
+    "yellowturban": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Aggressive (shared)
+    "narrator": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",  # Wise narrator
+    "noticeboard": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
+    "volunteer": "mandarin/clean/clean_young_adult_male_mandarin.wav",  # Young, enthusiastic
+    "gongjing": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
+    "luzhi": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
+    "dongzhuo": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Gruff, arrogant (shared)
+    "zhangjue": "mandarin/clean/clean_bipolar_male_mandarin.wav",  # Expressive, commanding
+    "zhangbao": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Aggressive (shared)
+    "zhangliang": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
+    "soldier": "mandarin/clean/clean_young_adult_male_mandarin.wav",  # Young male (shared)
+    "farmer": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",  # Common villager
+    "farmer2": "mandarin/clean/clean_young_adult_female_mandarin.wav",  # Female villager
+    "default": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative fallback
 }
 
 # --- Initialize ---
@@ -130,7 +169,9 @@ def load_voice_lines_from_extracted():
         }
 
         # Apply phonetic overrides from external file
-        if line_id in phonetic_overrides:
+        # Only apply phonetic overrides for English (they're English pronunciation guides)
+        # For other languages, use the original text
+        if line_id in phonetic_overrides and LANGUAGE == "en":
             entry["text"] = phonetic_overrides[line_id]
 
         # Apply per-line settings
@@ -148,11 +189,12 @@ def load_voice_lines_from_extracted():
     return result
 
 
-def verify_audio(audio_path, expected_text):
-    print(f"  Verifying audio quality...")
+def verify_audio(audio_path, expected_text, lang_code="en"):
+    print(f"  Verifying audio quality (language: {lang_code})...")
     try:
         # Transcribe (Whisper handles wav/ogg/mp3)
-        result = stt_model.transcribe(audio_path)
+        # Use language parameter for better accuracy
+        result = stt_model.transcribe(audio_path, language=lang_code)
         transcribed_text = result["text"].strip()
         original_text = expected_text.strip()
 
@@ -171,10 +213,11 @@ def verify_audio(audio_path, expected_text):
             "transcribed": transcribed_text,
             "wer": error_rate,
             "is_bad": error_rate > 0.4,
+            "language": lang_code,
         }
     except Exception as e:
         print(f"    Verification error: {e}")
-        return {"error": str(e), "is_bad": True}
+        return {"error": str(e), "is_bad": True, "language": lang_code}
 
 
 def trim_long_pauses(audio_path, max_pause_ms=300):
@@ -240,9 +283,18 @@ def convert_to_ogg(input_wav, output_ogg):
 
 
 def generate_voice(
-    line_id, character, text, speed=1.0, emotion=None, phonetic_text=None
+    line_id,
+    character,
+    text,
+    speed=1.0,
+    emotion=None,
+    phonetic_text=None,
+    lang_code="en",
 ):
-    output_ogg = os.path.join(OUTPUT_DIR, f"{line_id}.ogg")
+    # Create language subdirectory if it doesn't exist
+    lang_dir = os.path.join(OUTPUT_DIR, lang_code)
+    os.makedirs(lang_dir, exist_ok=True)
+    output_ogg = os.path.join(lang_dir, f"{line_id}.ogg")
     temp_wav = f"temp_{line_id}.wav"
 
     verification_result = None
@@ -256,7 +308,16 @@ def generate_voice(
             print(f"Regenerating 0-byte file: {line_id}")
 
     char_key = character.lower().replace(" ", "")
-    target_filename = CHAR_TARGETS.get(char_key, CHAR_TARGETS["default"])
+    # Select appropriate voice targets based on language
+    if lang_code == "zh":
+        target_filename = CHAR_TARGETS_MANDARIN.get(
+            char_key, CHAR_TARGETS_MANDARIN["default"]
+        )
+        tts_language = "zh"
+    else:
+        target_filename = CHAR_TARGETS.get(char_key, CHAR_TARGETS["default"])
+        tts_language = "en"
+
     target_path = os.path.join(TARGETS_DIR, target_filename)
 
     if not os.path.exists(target_path):
@@ -265,7 +326,7 @@ def generate_voice(
 
     # Use phonetic text for generation if provided, but verify against original text
     gen_text = phonetic_text if phonetic_text else text
-    print(f"\n[{line_id}] Generating (XTTS): {character} -> {line_id}")
+    print(f"\n[{line_id}] Generating (XTTS): {character} -> {line_id} [{lang_code}]")
     if phonetic_text:
         print(f'  Using phonetic override: "{phonetic_text}"')
 
@@ -274,7 +335,7 @@ def generate_voice(
         tts.tts_to_file(
             text=gen_text,
             speaker_wav=target_path,
-            language="en",
+            language=tts_language,
             file_path=temp_wav,
             speed=speed,
             emotion=emotion,
@@ -288,7 +349,7 @@ def generate_voice(
         trim_long_pauses(temp_wav)
 
         # Verify quality before converting
-        verification_result = verify_audio(temp_wav, text)
+        verification_result = verify_audio(temp_wav, text, lang_code)
 
         # Convert to OGG using our fixed converter
         if not convert_to_ogg(temp_wav, output_ogg):
@@ -1126,12 +1187,27 @@ if __name__ == "__main__":
 
     if extracted_lines:
         print(f"\nUsing {len(extracted_lines)} voice lines from extracted game data")
+        print(f"Current language: {LANGUAGE}")
+        print(
+            f"Expected source: tools/extracted_voice_lines.json (should be extracted with EXTRACT_LANG={LANGUAGE})"
+        )
         voice_lines = extracted_lines
     else:
-        print(
-            "\nFalling back to hardcoded game_script (run extract_voice_lines.py to update)"
-        )
-        voice_lines = game_script
+        # Fallback to hardcoded game_script only for English
+        if LANGUAGE == "en":
+            print(
+                "\nFalling back to hardcoded game_script (run extract_voice_lines.py to update)"
+            )
+            voice_lines = game_script
+        else:
+            print(f"\nERROR: No extracted voice lines found for language '{LANGUAGE}'!")
+            print(
+                f"Please run: EXTRACT_LANG={LANGUAGE} python3 tools/extract_voice_lines.py"
+            )
+            print(
+                "The hardcoded game_script only contains English lines and cannot be used as a fallback."
+            )
+            sys.exit(1)
 
     # Check for duplicate voice IDs with different text
     seen_ids = {}
@@ -1167,9 +1243,11 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Pre-fill list of lines that need generation
+    # Use language-specific output directory
+    lang_dir = os.path.join(OUTPUT_DIR, LANGUAGE)
     lines_to_generate = []
     for line in voice_lines:
-        output_ogg = os.path.join(OUTPUT_DIR, f"{line['id']}.ogg")
+        output_ogg = os.path.join(lang_dir, f"{line['id']}.ogg")
         if not os.path.exists(output_ogg) or os.path.getsize(output_ogg) == 0:
             lines_to_generate.append(line)
 
@@ -1180,6 +1258,8 @@ if __name__ == "__main__":
     # Only load models if we actually need to generate something
     load_models()
 
+    print(f"=== Generating voices for language: {LANGUAGE} ===")
+    print(f"Output directory: {os.path.join(OUTPUT_DIR, LANGUAGE)}")
     print(f"Need to generate {len(lines_to_generate)} voice file(s)...")
     print("\nLines to generate:")
     for line in lines_to_generate:
@@ -1197,18 +1277,24 @@ if __name__ == "__main__":
             speed=line.get("speed", 1.0),
             emotion=line.get("emotion"),
             phonetic_text=line.get("phonetic_text"),
+            lang_code=LANGUAGE,
         )
-        report[line["id"]] = {
+        # Use language+id as unique key since same ID can exist in multiple languages
+        unique_key = f"{LANGUAGE}:{line['id']}"
+        report[unique_key] = {
+            "id": line["id"],
             "character": line["char"],
             "original_text": line.get("original_text", line["text"]),
             "stt_output": res.get("transcribed", "") if res else "",
             "wer": res.get("wer", 0) if res else 0,
             "is_bad": res.get("is_bad", False) if res else False,
+            "language": LANGUAGE,
         }
 
-    # Save report
-    if os.path.exists(REPORT_FILE):
-        with open(REPORT_FILE, "r") as f:
+    # Save report - use language-specific report file
+    lang_report_file = f"voice_verification_report_{LANGUAGE}.json"
+    if os.path.exists(lang_report_file):
+        with open(lang_report_file, "r") as f:
             try:
                 existing_report = json.load(f)
             except:
@@ -1216,10 +1302,10 @@ if __name__ == "__main__":
     else:
         existing_report = {}
 
-    for line_id, data in report.items():
+    for unique_key, data in report.items():
         if data is not None:
-            existing_report[line_id] = data
+            existing_report[unique_key] = data
 
-    with open(REPORT_FILE, "w") as f:
-        json.dump(existing_report, f, indent=4)
-    print(f"\nVerification report updated in {REPORT_FILE}")
+    with open(lang_report_file, "w") as f:
+        json.dump(existing_report, f, indent=4, ensure_ascii=False)
+    print(f"\nVerification report updated in {lang_report_file}")

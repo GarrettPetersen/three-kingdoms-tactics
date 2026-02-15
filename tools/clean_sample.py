@@ -10,15 +10,31 @@ INPUT_DIR = "assets/voice_samples/movies/raw"
 OUTPUT_DIR = "assets/voice_samples/movies/clean"
 
 
-def clean_sample(filename):
-    input_path = os.path.join(INPUT_DIR, filename)
+def clean_sample(filepath):
+    # Support both relative paths (e.g., "mandarin/raw/file.mp3") and filenames
+    if "/" in filepath:
+        # Full path provided
+        input_path = os.path.join("assets/voice_samples", filepath)
+        # Determine output directory from input path
+        parts = filepath.split("/")
+        if len(parts) >= 2:
+            lang_or_type = parts[0]  # e.g., "mandarin" or "movies"
+            output_dir = f"assets/voice_samples/{lang_or_type}/clean"
+        else:
+            output_dir = OUTPUT_DIR
+    else:
+        # Just filename, use default directories
+        input_path = os.path.join(INPUT_DIR, filepath)
+        output_dir = OUTPUT_DIR
+    
     if not os.path.exists(input_path):
         print(f"Error: File not found: {input_path}")
         return
 
-    if not os.path.exists(OUTPUT_DIR):
-        os.makedirs(OUTPUT_DIR)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
+    filename = os.path.basename(filepath)
     print(f"--- Cleaning: {filename} ---")
     print("Running Demucs AI separation (this may take a minute)...")
 
@@ -42,7 +58,7 @@ def clean_sample(filename):
 
     if os.path.exists(vocal_source):
         output_filename = f"clean_{name_no_ext}.wav"
-        output_path = os.path.join(OUTPUT_DIR, output_filename)
+        output_path = os.path.join(output_dir, output_filename)
         
         print(f"Normalizing volume and saving to: {output_path}")
         # Use ffmpeg to normalize volume (loudnorm) and convert to wav
@@ -68,7 +84,10 @@ def clean_sample(filename):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python tools/clean_sample.py [filename_in_assets_voice_samples]")
+        print("Usage: python tools/clean_sample.py [filename_or_path]")
+        print("  Examples:")
+        print("    python tools/clean_sample.py mandarin/raw/deep_male_mandarin.mp3")
+        print("    python tools/clean_sample.py clean_li-shang-captain-from-mulan.wav")
         sys.exit(1)
 
     clean_sample(sys.argv[1])

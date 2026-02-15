@@ -1,0 +1,1496 @@
+{
+    "zh:ch1_end_01": {
+        "id": "ch1_end_01",
+        "character": "narrator",
+        "original_text": "But slaying the ungrateful would Mean many deaths a year.  Dong Zhuo's fate will be unrolled in later chapters...",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_gy_01": {
+        "id": "daxing_gy_01",
+        "character": "guanyu",
+        "original_text": "三弟说得对。我们已发誓要消灭这些叛徒，恢复和平。我们已准备好出征。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_gy_choice_01": {
+        "id": "daxing_gy_choice_01",
+        "character": "guanyu",
+        "original_text": "兄长，你的勇气可嘉，但英雄也需要策略。让我们与县令合作。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_lb_01": {
+        "id": "daxing_lb_01",
+        "character": "liubei",
+        "original_text": "我是刘备，中山靖王之后，汉景帝玄孙。这两位是我的结义兄弟，关羽和张飞。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_lb_02": {
+        "id": "daxing_lb_02",
+        "character": "liubei",
+        "original_text": "我们已招募了五百名志愿军，为国效力，保护百姓。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_lb_03": {
+        "id": "daxing_lb_03",
+        "character": "zhoujing",
+        "original_text": "邹县令，我们只求为国效力。请带我们到大兴县，让我们结束这场叛乱。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_lb_choice_01": {
+        "id": "daxing_lb_choice_01",
+        "character": "liubei",
+        "original_text": "百姓呼唤正义。我们不能袖手旁观。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_lb_choice_02": {
+        "id": "daxing_lb_choice_02",
+        "character": "liubei",
+        "original_text": "我们为汉朝效力，追求荣耀。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_lb_choice_03": {
+        "id": "daxing_lb_choice_03",
+        "character": "liubei",
+        "original_text": "五万叛军？我们三人足以对付！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_zf_01": {
+        "id": "daxing_zf_01",
+        "character": "zhangfei",
+        "original_text": "五万？哈！不过是一群蚂蚁！县令，给我们命令，我们定将他们打得落花流水！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_zj_01": {
+        "id": "daxing_zj_01",
+        "character": "zhoujing",
+        "original_text": "来者何人？你身后的这些人...有虎将之相。你们不像是普通的新兵。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_zj_02": {
+        "id": "daxing_zj_02",
+        "character": "zhoujing",
+        "original_text": "真正的皇室宗亲！天不弃汉，你们的到来正是时候。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_zj_02_alt": {
+        "id": "daxing_zj_02_alt",
+        "character": "zhoujing",
+        "original_text": "皇室宗亲！你的雄心壮志对汉朝有益。你们的到来正是时候。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_zj_03": {
+        "id": "daxing_zj_03",
+        "character": "zhoujing",
+        "original_text": "探子来报，叛将程远志正率五万黄巾军向我们进发。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_zj_04": {
+        "id": "daxing_zj_04",
+        "character": "zhoujing",
+        "original_text": "很好！我将亲自率领主力。我们一同直捣程远志军的心脏！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_zj_04_alt": {
+        "id": "daxing_zj_04_alt",
+        "character": "zhoujing",
+        "original_text": "你的信心令人鼓舞！我将亲自率领主力。我们一同直捣程远志军的心脏！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:debug_narrative_01": {
+        "id": "debug_narrative_01",
+        "character": "system",
+        "original_text": "Cheat code accepted. Narrative scene is functional.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:dx_cyz_01": {
+        "id": "dx_cyz_01",
+        "character": "chengyuanzhi",
+        "original_text": "杀光他们！汉室已亡，黄天当立！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:dx_dm_01": {
+        "id": "dx_dm_01",
+        "character": "dengmao",
+        "original_text": "朝廷走狗！你们敢阻挡天公将军？",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:dx_gy_01": {
+        "id": "dx_gy_01",
+        "character": "guanyu",
+        "original_text": "他们人数众多，但不过是一群乌合之众。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:dx_lb_01": {
+        "id": "dx_lb_01",
+        "character": "liubei",
+        "original_text": "黄巾先锋已至。他们欲劫掠涿郡！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:dx_lb_02": {
+        "id": "dx_lb_02",
+        "character": "liubei",
+        "original_text": "他们意志薄弱。若我们击败这些头目，其余必溃散！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:dx_zf_01": {
+        "id": "dx_zf_01",
+        "character": "zhangfei",
+        "original_text": "让我来对付他们！我的丈八蛇矛渴饮叛军之血！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_dz_01": {
+        "id": "gz_dz_01",
+        "character": "dongzhuo",
+        "original_text": "你们三人身居何职？",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_dz_02": {
+        "id": "gz_dz_02",
+        "character": "dongzhuo",
+        "original_text": "哼。无官无职的平民。你们可以走了。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_dz_help_01": {
+        "id": "gz_dz_help_01",
+        "character": "dongzhuo",
+        "original_text": "这些叛军该死！他们屠杀了我的部下！难道没有人能战斗了吗？！",
+        "stt_output": "这些判军该死他们屠杀了我的不下难道没有人能占多了吗",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:gz_dz_outlaw_01": {
+        "id": "gz_dz_outlaw_01",
+        "character": "dongzhuo",
+        "original_text": "等等...我认识你们。你们就是袭击朝廷护送队，放走那个叛徒卢植的人！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_dz_outlaw_02": {
+        "id": "gz_dz_outlaw_02",
+        "character": "dongzhuo",
+        "original_text": "哼！你敢教训我？我应该逮捕你们！但是...你们今天确实救了我的命。现在离开，在我改变主意之前。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_gy_free_01": {
+        "id": "gz_gy_free_01",
+        "character": "guanyu",
+        "original_text": "兄长，此举可能带来后果...",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_gy_outlaw_01": {
+        "id": "gz_gy_outlaw_01",
+        "character": "guanyu",
+        "original_text": "兄长，我们不能停留。如果董卓知道我们救了卢植，他会当场处决我们。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_gy_restrain_01": {
+        "id": "gz_gy_restrain_01",
+        "character": "guanyu",
+        "original_text": "兄长，你克制是对的。法律自有其道。让我们返回涿郡。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_gy_return_01": {
+        "id": "gz_gy_return_01",
+        "character": "guanyu",
+        "original_text": "让我们返回涿郡。这里已无事可做。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_lb_01": {
+        "id": "gz_lb_01",
+        "character": "liubei",
+        "original_text": "这是怎么回事？卢植将军...被锁链所缚？",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_lb_attack_01": {
+        "id": "gz_lb_attack_01",
+        "character": "liubei",
+        "original_text": "那旗帜上写着'张角，天公将军'！官军正在败退！兄弟们，我们进攻！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_lb_defend_01": {
+        "id": "gz_lb_defend_01",
+        "character": "liubei",
+        "original_text": "卢植不是叛徒。他是被腐败官员诬告的。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_lb_fight_01": {
+        "id": "gz_lb_fight_01",
+        "character": "liubei",
+        "original_text": "兄长，我们不能坐视不义。救他出来！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_lb_free_02": {
+        "id": "gz_lb_free_02",
+        "character": "liubei",
+        "original_text": "我们已经做出选择。现在，战斗！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_lb_freed_02": {
+        "id": "gz_lb_freed_02",
+        "character": "liubei",
+        "original_text": "老师，我不能坐视一位忠心的将军被不义地处决。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_lb_office_01": {
+        "id": "gz_lb_office_01",
+        "character": "liubei",
+        "original_text": "无。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_lb_restrain_01": {
+        "id": "gz_lb_restrain_01",
+        "character": "liubei",
+        "original_text": "朝廷自有公断。你怎能如此鲁莽？",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_lz_explain_01": {
+        "id": "gz_lz_explain_01",
+        "character": "luzhi",
+        "original_text": "玄德！我已将叛军包围，正要击溃他们，张角却用妖术阻我胜利。",
+        "stt_output": "選得,我已將判軍包圍,正要擊課他們張角卻用藥術組我勝利。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:gz_lz_explain_02": {
+        "id": "gz_lz_explain_02",
+        "character": "luzhi",
+        "original_text": "朝廷派左丰前来查问。他索要贿赂，但此等情况下我何处寻金？他竟报我躲在壁垒后，挫我军心。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_lz_explain_03": {
+        "id": "gz_lz_explain_03",
+        "character": "luzhi",
+        "original_text": "因此我被董卓取代，现在我要去京城回应这些莫须有的指控。",
+        "stt_output": "因此我被董卓取代现在我要去京城回应这些墨续有的指控",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:gz_lz_freed_01": {
+        "id": "gz_lz_freed_01",
+        "character": "luzhi",
+        "original_text": "玄德！你救了我，但代价巨大。朝廷会因你们袭击官军而将你们定为叛贼。",
+        "stt_output": "選得,你就了我,但代價巨大朝廷回憶你們習近官軍而將你們定位判賊",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:gz_lz_freed_02": {
+        "id": "gz_lz_freed_02",
+        "character": "luzhi",
+        "original_text": "你的忠诚值得称赞。我会秘密返回广宗。现在走吧，在更多士兵到来之前。",
+        "stt_output": "你的忠誠值的稱讚,我會秘密返回廣宗現在走吧,再更多是冰到來之前",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:gz_nar_poem_01": {
+        "id": "gz_nar_poem_01",
+        "character": "narrator",
+        "original_text": "古往今来皆如此，\n布衣虽有功，\n官场仍当道；\n张飞，直率而急躁，\n何处可寻其匹？",
+        "stt_output": "古往基来接如此不一碎有功不官场仍当到掌飞直帅儿极造何处可寻其皮",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:gz_nar_restrain_01": {
+        "id": "gz_nar_restrain_01",
+        "character": "narrator",
+        "original_text": "于是，护送队和三兄弟分道扬镳。继续走那条通往广宗的路已无意义。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_zf_01": {
+        "id": "gz_zf_01",
+        "character": "zhangfei",
+        "original_text": "这真是岂有此理！让我杀了这些走狗，救您出来，将军！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_zf_attack_01": {
+        "id": "gz_zf_attack_01",
+        "character": "zhangfei",
+        "original_text": "哈！终于有黄巾贼可以痛打了！我们走！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_zf_free_01": {
+        "id": "gz_zf_free_01",
+        "character": "zhangfei",
+        "original_text": "哈！这才像话，兄长！来吧！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_zf_rage_01": {
+        "id": "gz_zf_rage_01",
+        "character": "zhangfei",
+        "original_text": "我们刚刚在一场血战中救了这个小人物，现在他却对我们无礼！只有他的死才能平息我的怒火。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_zf_rage_outlaw_01": {
+        "id": "gz_zf_rage_outlaw_01",
+        "character": "zhangfei",
+        "original_text": "那个混蛋真是无礼！我们先救了卢植免于不义，现在又救了董卓免于死亡，这就是我们的回报？！只有他的死才能平息我的怒火！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_zf_restrain_01": {
+        "id": "gz_zf_restrain_01",
+        "character": "zhangfei",
+        "original_text": "呸！这真是腐败透顶！但是...我会听从你的，大哥。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_farmer_01": {
+        "id": "inn_farmer_01",
+        "character": "farmer",
+        "original_text": "这些黄巾叛军...我想借酒消愁，但忧虑总是回来。我们该怎么办？",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_gy_01": {
+        "id": "inn_gy_01",
+        "character": "guanyu",
+        "original_text": "快！给我拿酒来！我急着进城加入志愿军！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_gy_02": {
+        "id": "inn_gy_02",
+        "character": "guanyu",
+        "original_text": "我是关羽，字云长。多年来我一直是逃犯，因为我杀死了一个欺压弱者的恶霸。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_gy_03": {
+        "id": "inn_gy_03",
+        "character": "guanyu",
+        "original_text": "现在我听说有招募志愿军的号召，所以我来加入这个事业。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_gy_04": {
+        "id": "inn_gy_04",
+        "character": "guanyu",
+        "original_text": "天意让我们相聚。我们志同道合。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_gy_05": {
+        "id": "inn_gy_05",
+        "character": "guanyu",
+        "original_text": "我同意。我们在桃园结义。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_gy_choice_01": {
+        "id": "inn_gy_choice_01",
+        "character": "guanyu",
+        "original_text": "你的话很真诚。我很荣幸能加入你的事业。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_gy_choice_02": {
+        "id": "inn_gy_choice_02",
+        "character": "guanyu",
+        "original_text": "说得像真正的领袖。百姓需要像你这样的人。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_lb_01": {
+        "id": "inn_lb_01",
+        "character": "liubei",
+        "original_text": "确实。荣誉和责任在召唤我们。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_lb_02": {
+        "id": "inn_lb_02",
+        "character": "liubei",
+        "original_text": "那个人...他的气度非凡。看他那威严的胡须和凤眼。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_lb_03": {
+        "id": "inn_lb_03",
+        "character": "liubei",
+        "original_text": "高尚的心！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_lb_04": {
+        "id": "inn_lb_04",
+        "character": "liubei",
+        "original_text": "恢复汉室，给百姓带来和平。这是我们共同的使命。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_lb_05": {
+        "id": "inn_lb_05",
+        "character": "liubei",
+        "original_text": "好主意。我们这就去做！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_lb_choice_01": {
+        "id": "inn_lb_choice_01",
+        "character": "liubei",
+        "original_text": "加入我们。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_lb_choice_02": {
+        "id": "inn_lb_choice_02",
+        "character": "liubei",
+        "original_text": "我们不为荣耀而战，而是为在这乱世中受苦的百姓。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_lb_click_01": {
+        "id": "inn_lb_click_01",
+        "character": "liubei",
+        "original_text": "百姓受苦，而我们却坐在这里。我们必须尽快行动。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_lb_wine_01": {
+        "id": "inn_lb_wine_01",
+        "character": "liubei",
+        "original_text": "这里的酒品质上乘。在这乱世中，这是好酒。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_zf_01": {
+        "id": "inn_zf_01",
+        "character": "zhangfei",
+        "original_text": "这酒不错！我们一起组建一支让叛军颤抖的军队。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_zf_02": {
+        "id": "inn_zf_02",
+        "character": "zhangfei",
+        "original_text": "喂！你！你也要加入志愿军吗？来，和我们一起喝酒！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_zf_03": {
+        "id": "inn_zf_03",
+        "character": "zhangfei",
+        "original_text": "哈哈！人越多越热闹！云长，喝酒！让我们为新结义的兄弟情干杯！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_zf_04": {
+        "id": "inn_zf_04",
+        "character": "zhangfei",
+        "original_text": "...所以那头猪就跑了！哈哈！但说真的，我的朋友们...",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_zf_05": {
+        "id": "inn_zf_05",
+        "character": "zhangfei",
+        "original_text": "我感觉好像认识你们一辈子了。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_zf_06": {
+        "id": "inn_zf_06",
+        "character": "zhangfei",
+        "original_text": "听我说！我庄后有一桃园，花开正盛。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_zf_07": {
+        "id": "inn_zf_07",
+        "character": "zhangfei",
+        "original_text": "明日当于园中祭告天地，我三人结为兄弟，协力同心，然后可图大事。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_narrator_01": {
+        "id": "intro_narrator_01",
+        "character": "narrator",
+        "original_text": "话说天下大势，分久必合，合久必分。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_narrator_02a": {
+        "id": "intro_narrator_02a",
+        "character": "narrator",
+        "original_text": "周末七国分争，并入于秦。及秦灭之后，楚、汉分争，又并入于汉。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_narrator_02b": {
+        "id": "intro_narrator_02b",
+        "character": "narrator",
+        "original_text": "汉朝自高祖斩白蛇而起义，一统天下。后来光武中兴，传至献帝，遂分为三国。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_narrator_02c": {
+        "id": "intro_narrator_02c",
+        "character": "narrator",
+        "original_text": "推其致乱之由，殆始于桓、灵二帝。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_narrator_03a": {
+        "id": "intro_narrator_03a",
+        "character": "narrator",
+        "original_text": "桓帝禁锢善类，崇信宦官。及桓帝崩，灵帝即位，大将军窦武、太傅陈蕃，共相辅佐。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_narrator_03b": {
+        "id": "intro_narrator_03b",
+        "character": "narrator",
+        "original_text": "时有宦官曹节等弄权，窦武、陈蕃谋诛之，作事不密，反为所害。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_narrator_03c": {
+        "id": "intro_narrator_03c",
+        "character": "narrator",
+        "original_text": "中涓自此愈横。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_narrator_04a": {
+        "id": "intro_narrator_04a",
+        "character": "narrator",
+        "original_text": "在这乱世之中，涿县有三位豪杰，见天下大乱，欲起兵报国。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_narrator_04b": {
+        "id": "intro_narrator_04b",
+        "character": "narrator",
+        "original_text": "时巨鹿郡有兄弟三人：张角，本是个不第秀才，因入山采药，遇一老人，授以天书三卷。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_narrator_04c": {
+        "id": "intro_narrator_04c",
+        "character": "narrator",
+        "original_text": "角得此书，能呼风唤雨，号为太平道人。中平元年正月内，疫气流行，张角散施符水，为人治病，自称大贤良师。角有徒弟五百余人，云游四方，皆能书符念咒。次后徒众日多，角乃立三十六方，大方万余人，小方六七千，各立渠帅，称为将军。讹言：'苍天已死，黄天当立；岁在甲子，天下大吉。'",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_narrator_05a": {
+        "id": "intro_narrator_05a",
+        "character": "narrator",
+        "original_text": "四方百姓，裹黄巾从张角反者四五十万。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_narrator_05b": {
+        "id": "intro_narrator_05b",
+        "character": "narrator",
+        "original_text": "黄巾之乱，由此而起。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_narrator_05c": {
+        "id": "intro_narrator_05c",
+        "character": "narrator",
+        "original_text": "汉室将倾，天下大乱。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_zb_01": {
+        "id": "intro_zb_01",
+        "character": "zhangbao",
+        "original_text": "兄长，官军闻风而逃！我们的力量与日俱增！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_zb_02": {
+        "id": "intro_zb_02",
+        "character": "zhangbao",
+        "original_text": "汉室已衰败腐朽！百姓呼唤正义，我们将以烈火与钢铁来伸张！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_zj_01": {
+        "id": "intro_zj_01",
+        "character": "zhangjue",
+        "original_text": "汉运将终，大贤出矣！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_zj_02": {
+        "id": "intro_zj_02",
+        "character": "zhangjue",
+        "original_text": "成大事者，最难在于得民心。但民心已归我。此等良机，不可错过！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_zj_03": {
+        "id": "intro_zj_03",
+        "character": "zhangjue",
+        "original_text": "我乃张角，天公将军！与吾弟张宝，地公将军，张梁，人公将军，必将推翻这腐朽的王朝！",
+        "stt_output": "我乃张乔 天望强劝与无地章宝 帝共将军 章梁 人宫将军必将推翻 这扶修的王朝",
+        "wer": 6.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:intro_zj_04": {
+        "id": "intro_zj_04",
+        "character": "zhangjue",
+        "original_text": "汉朝的时代已经结束。今天，一个新的时代开始了——一个由大贤领导的人民时代！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_zj_05": {
+        "id": "intro_zj_05",
+        "character": "zhangjue",
+        "original_text": "现在我们进军涿郡！所有阻挡我们的人，都将被黄巾军的旗帜碾碎！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_zl_01": {
+        "id": "intro_zl_01",
+        "character": "zhangliang",
+        "original_text": "百姓头裹黄巾，加入我们的事业！很快，整个天下都将属于我们！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:intro_zl_02": {
+        "id": "intro_zl_02",
+        "character": "zhangliang",
+        "original_text": "让那些朝廷走狗逃吧！他们的城池将燃烧，他们的军队将崩溃。黄天当立！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:map_lb_defeat": {
+        "id": "map_lb_defeat",
+        "character": "liubei",
+        "original_text": "我们被击溃了！我们必须重整旗鼓，再次出击。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:map_lb_rem_01": {
+        "id": "map_lb_rem_01",
+        "character": "liubei",
+        "original_text": "邹靖县令的指挥部在东方。我们必须立即前往报到，开始我们的服役。",
+        "stt_output": "周近限令的指挥不在东方我们必须利己前往报道开始我们的服役",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:map_lb_rem_02": {
+        "id": "map_lb_rem_02",
+        "character": "liubei",
+        "original_text": "青州被围。我们必须立即进军，解救州牧龚景！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:map_lb_rem_03": {
+        "id": "map_lb_rem_03",
+        "character": "liubei",
+        "original_text": "围城已解。我们应该返回县令处，看看还能在哪里效力。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:map_lb_rem_04": {
+        "id": "map_lb_rem_04",
+        "character": "liubei",
+        "original_text": "卢植，我的老师，在广宗处境艰难。我们必须北上援助他，对抗张角的大军！",
+        "stt_output": "如指我的老师在广宗处境艰难我们必须北上援助他对抗张教的大军",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:map_lb_rem_05": {
+        "id": "map_lb_rem_05",
+        "character": "liubei",
+        "original_text": "广宗已无事可做。让我们返回涿郡。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pg_gy_01": {
+        "id": "pg_gy_01",
+        "character": "guanyu",
+        "original_text": "上报国家，下安黎庶。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pg_lb_01": {
+        "id": "pg_lb_01",
+        "character": "liubei",
+        "original_text": "念刘备、关羽、张飞，虽然异姓，既结为兄弟，则同心协力，救困扶危。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pg_lb_02": {
+        "id": "pg_lb_02",
+        "character": "liubei",
+        "original_text": "不求同年同月同日生，只愿同年同月同日死。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pg_lb_03": {
+        "id": "pg_lb_03",
+        "character": "liubei",
+        "original_text": "皇天后土，实鉴此心。背义忘恩，天人共戮！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pg_lb_04": {
+        "id": "pg_lb_04",
+        "character": "liubei",
+        "original_text": "前路漫长且充满危险，但只要我们在一起，定能恢复汉室！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pg_nar_01": {
+        "id": "pg_nar_01",
+        "character": "narrator",
+        "original_text": "在桃园中，盛开的桃花下，宰杀黑牛白马，祭告天地。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pg_nar_02": {
+        "id": "pg_nar_02",
+        "character": "narrator",
+        "original_text": "祭毕，拜刘备为兄，关羽次之，张飞为弟。",
+        "stt_output": "一臂敗流被為兄關與刺植張飛為弟",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:pg_zf_01": {
+        "id": "pg_zf_01",
+        "character": "zhangfei",
+        "original_text": "上报国家，下安黎庶。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_farmer2_01": {
+        "id": "pro_farmer2_01",
+        "character": "farmer2",
+        "original_text": "我听说叛军已经到了邻县。他们对抵抗者毫不留情。我们必须做最坏的打算。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_farmer_01": {
+        "id": "pro_farmer_01",
+        "character": "farmer",
+        "original_text": "黄巾军...听说他们会烧毁一切。我家世代住在这里。我们该怎么办？",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_lb_01": {
+        "id": "pro_lb_01",
+        "character": "liubei",
+        "original_text": "我体内流淌着皇族的血液...",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_lb_02": {
+        "id": "pro_lb_02",
+        "character": "liubei",
+        "original_text": "...但我只是一个卖草鞋的穷人。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_lb_03": {
+        "id": "pro_lb_03",
+        "character": "liubei",
+        "original_text": "我如何才能拯救百姓于这乱世？",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_lb_04": {
+        "id": "pro_lb_04",
+        "character": "liubei",
+        "original_text": "我本汉室宗亲。姓刘名备。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_lb_05": {
+        "id": "pro_lb_05",
+        "character": "liubei",
+        "original_text": "我愿消灭这些叛军，恢复和平...",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_lb_06": {
+        "id": "pro_lb_06",
+        "character": "liubei",
+        "original_text": "那将是百姓的福气！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_lb_choice_01": {
+        "id": "pro_lb_choice_01",
+        "character": "zhangfei",
+        "original_text": "我叹百姓受苦。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_lb_choice_02": {
+        "id": "pro_lb_choice_02",
+        "character": "zhangfei",
+        "original_text": "我叹自己失去的地位。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_nb_01": {
+        "id": "pro_nb_01",
+        "character": "noticeboard",
+        "original_text": "告示：张角领导的黄巾军已起事！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_nb_02": {
+        "id": "pro_nb_02",
+        "character": "noticeboard",
+        "original_text": "所有壮丁都被征召保卫汉朝。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_nb_03": {
+        "id": "pro_nb_03",
+        "character": "noticeboard",
+        "original_text": "立即向当地县令报到。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_zf_01": {
+        "id": "pro_zf_01",
+        "character": "zhangfei",
+        "original_text": "大丈夫不与国家出力，何故长叹？",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_zf_02": {
+        "id": "pro_zf_02",
+        "character": "zhangfei",
+        "original_text": "真英雄之心！你我志同道合。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_zf_03": {
+        "id": "pro_zf_03",
+        "character": "zhangfei",
+        "original_text": "地位？呸！在这乱世，只有勇气和美酒才重要！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_zf_04": {
+        "id": "pro_zf_04",
+        "character": "zhangfei",
+        "original_text": "我姓张名飞，字翼德。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_zf_05": {
+        "id": "pro_zf_05",
+        "character": "zhangfei",
+        "original_text": "世居涿郡，颇有庄田，卖酒屠猪。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_zf_06": {
+        "id": "pro_zf_06",
+        "character": "zhangfei",
+        "original_text": "我颇有资财，当招募乡勇，与公同举大事，如何？",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_zf_07": {
+        "id": "pro_zf_07",
+        "character": "zhangfei",
+        "original_text": "你意下如何？",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:pro_zf_08": {
+        "id": "pro_zf_08",
+        "character": "zhangfei",
+        "original_text": "那好！我们去村中酒店，边喝酒边商议大事。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_bt_lb_03": {
+        "id": "qz_bt_lb_03",
+        "character": "liubei",
+        "original_text": "我必须到达旗帜处，发出伏击信号！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_gy_01": {
+        "id": "qz_gy_01",
+        "character": "guanyu",
+        "original_text": "妙计，兄长。我们即刻出发。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_lb_01": {
+        "id": "qz_lb_01",
+        "character": "liubei",
+        "original_text": "我去。我们不能让青州百姓受苦。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_lb_02": {
+        "id": "qz_lb_02",
+        "character": "liubei",
+        "original_text": "敌众我寡。我们不能正面强攻。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_lb_03": {
+        "id": "qz_lb_03",
+        "character": "liubei",
+        "original_text": "云长、翼德——带一半人马埋伏在山后。锣声一响，从两翼夹击！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_lb_choice_01": {
+        "id": "qz_lb_choice_01",
+        "character": "liubei",
+        "original_text": "百姓呼唤援助。我们必须立即响应他们的呼唤。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_ms_01": {
+        "id": "qz_ms_01",
+        "character": "soldier",
+        "original_text": "紧急！青州太守龚景被围困！城池即将陷落！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_ret_gj_01": {
+        "id": "qz_ret_gj_01",
+        "character": "gongjing",
+        "original_text": "英勇的兄弟们！你们救了青州！当你们的信号在山谷中回响时，我们从城门冲出。叛军被我们夹击，全军覆没。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_ret_gj_02": {
+        "id": "qz_ret_gj_02",
+        "character": "gongjing",
+        "original_text": "确实。我听说卢植中郎将在广宗被叛军首领张角本人围困。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_ret_gj_choice_01": {
+        "id": "qz_ret_gj_choice_01",
+        "character": "gongjing",
+        "original_text": "你的谦逊值得称赞，但你的行为比言语更有力。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_ret_gy_choice_01": {
+        "id": "qz_ret_gy_choice_01",
+        "character": "guanyu",
+        "original_text": "高尚的事业，兄长。我们与你同在。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_ret_lb_01": {
+        "id": "qz_ret_lb_01",
+        "character": "liubei",
+        "original_text": "我们很高兴能为您效力，太守。这里恢复了和平，但叛乱仍在其他地方肆虐。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_ret_lb_02": {
+        "id": "qz_ret_lb_02",
+        "character": "liubei",
+        "original_text": "卢植！他是我多年前的老师。我不能让他独自面对如此大军。兄弟们，我们向广宗进军！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_ret_lb_choice_01": {
+        "id": "qz_ret_lb_choice_01",
+        "character": "liubei",
+        "original_text": "能为您效力是我们的荣幸。青州百姓现在可以安心了。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_ret_lb_choice_02": {
+        "id": "qz_ret_lb_choice_02",
+        "character": "liubei",
+        "original_text": "卢植中郎将需要援助。我们不能抛弃汉朝的忠臣。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_vic_gy_01": {
+        "id": "qz_vic_gy_01",
+        "character": "guanyu",
+        "original_text": "一个精心设计的陷阱，兄长。高地为我们提供了优势。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_vic_lb_01": {
+        "id": "qz_vic_lb_01",
+        "character": "liubei",
+        "original_text": "我们不要耽搁。城池仍在危险中。我们必须返回城门，确保太守安全。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_vic_lb_choice_01": {
+        "id": "qz_vic_lb_choice_01",
+        "character": "liubei",
+        "original_text": "一场漂亮的胜利，但我们必须保持警惕。城门在等待我们。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_vic_nar_01": {
+        "id": "qz_vic_nar_01",
+        "character": "narrator",
+        "original_text": "運籌決算有神功，二虎還須遜一龍。初出便能垂偉績，自應分鼎在孤窮。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_vic_zf_01": {
+        "id": "qz_vic_zf_01",
+        "character": "zhangfei",
+        "original_text": "看他们逃跑！像沉船上的老鼠！我们已经击垮了他们的士气。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_vic_zf_choice_01": {
+        "id": "qz_vic_zf_choice_01",
+        "character": "zhangfei",
+        "original_text": "你说得对，大哥！让我们确保城池真正安全。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_victory_lb_01": {
+        "id": "qz_victory_lb_01",
+        "character": "liubei",
+        "original_text": "围城已解。我们应该向邹靖县令报告，接受下一个任务。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_zf_choice_01": {
+        "id": "qz_zf_choice_01",
+        "character": "zhangfei",
+        "original_text": "好样的，兄长！让我们向那些叛军展示我们的实力！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_zj_01": {
+        "id": "qz_zj_01",
+        "character": "zhoujing",
+        "original_text": "我将派五千精兵增援你们。立即出发！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:rec_gy_01": {
+        "id": "rec_gy_01",
+        "character": "guanyu",
+        "original_text": "我们不提供财富，只提供在刘备旗下光荣效力的机会。",
+        "stt_output": "我们不提供财富,只提供在留备旗下光荣效力的机会",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:rec_lb_01": {
+        "id": "rec_lb_01",
+        "character": "liubei",
+        "original_text": "欢迎，兄弟们。今天我们只是少数，但明天我们将成为一支军队。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:rec_lb_02": {
+        "id": "rec_lb_02",
+        "character": "liubei",
+        "original_text": "让我们出发！我们的第一个目的地：当地县令的总部。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:rec_vol_01": {
+        "id": "rec_vol_01",
+        "character": "soldier",
+        "original_text": "我们听说了你们的结义！我们只是普通人，但我们会跟随你们至死！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:rec_zf_01": {
+        "id": "rec_zf_01",
+        "character": "zhangfei",
+        "original_text": "涿县百姓！黄巾军来了！你们中有谁有勇气为家园而战？",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:recov_gy_01": {
+        "id": "recov_gy_01",
+        "character": "guanyu",
+        "original_text": "一时失神。我将以新的活力重返战场。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:recov_lb_01": {
+        "id": "recov_lb_01",
+        "character": "liubei",
+        "original_text": "抱歉，兄弟们。我一时大意，但我的精神依然不屈。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:recov_zf_01": {
+        "id": "recov_zf_01",
+        "character": "zhangfei",
+        "original_text": "呸！那些混蛋只是侥幸得手！下次，他们就没这么幸运了！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    }
+}

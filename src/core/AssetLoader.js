@@ -1,3 +1,5 @@
+import { getCurrentLanguage } from './Language.js';
+
 export class AssetLoader {
     constructor() {
         this.images = {};
@@ -28,7 +30,8 @@ export class AssetLoader {
             this.currentVoice.currentTime = 0;
         }
 
-        const src = `assets/audio/voices/${voiceId}.ogg`;
+        const lang = getCurrentLanguage();
+        const src = `assets/audio/voices/${lang}/${voiceId}.ogg`;
         
         try {
             const audio = this.voices[voiceId] || new Audio(src);

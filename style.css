@@ -13,6 +13,11 @@
     src: url('./src/fonts/dogicapixel.ttf');
 }
 
+@font-face {
+    font-family: 'zpix';
+    src: url('./src/fonts/zpix.ttf');
+}
+
 body {
     margin: 0;
     padding: 0;

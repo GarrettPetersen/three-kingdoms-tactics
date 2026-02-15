@@ -1,5 +1,7 @@
 import { ANIMATIONS } from '../core/Constants.js';
 import { assets } from '../core/AssetLoader.js';
+import { getLocalizedText, getFontForLanguage, getUIScale, LANGUAGE } from '../core/Language.js';
+import { getLocalizedCharacterName } from '../data/Translations.js';
 
 export class BaseScene {
     constructor() {
@@ -253,23 +255,47 @@ export class BaseScene {
     }
 
     wrapText(ctx, text, maxWidth, font = '8px Tiny5') {
-        const words = (text || "").split(' ');
+        if (!text) return [];
+        
         const lines = [];
-        let currentLine = '';
-
         ctx.save();
-        ctx.font = font;
-        for (let n = 0; n < words.length; n++) {
-            let testLine = currentLine + words[n] + ' ';
-            // Subtract a small buffer (4px) to account for font rendering variations and ellipsis
-            if (ctx.measureText(testLine).width > maxWidth - 4 && n > 0) {
-                lines.push(currentLine.trim());
-                currentLine = words[n] + ' ';
-            } else {
-                currentLine = testLine;
+        ctx.font = getFontForLanguage(font);
+        
+        // Check if text contains Chinese characters (CJK Unified Ideographs)
+        const hasChinese = /[\u4e00-\u9fff]/.test(text);
+        
+        if (hasChinese) {
+            // Chinese: wrap by character (no spaces)
+            let currentLine = '';
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const testLine = currentLine + char;
+                // Subtract buffer for Chinese (characters are wider)
+                if (ctx.measureText(testLine).width > maxWidth - 6 && currentLine.length > 0) {
+                    lines.push(currentLine);
+                    currentLine = char;
+                } else {
+                    currentLine = testLine;
+                }
             }
+            if (currentLine) lines.push(currentLine);
+        } else {
+            // English: wrap by word (spaces)
+            const words = text.split(' ');
+            let currentLine = '';
+            for (let n = 0; n < words.length; n++) {
+                let testLine = currentLine + (currentLine ? ' ' : '') + words[n];
+                // Subtract a small buffer (4px) to account for font rendering variations and ellipsis
+                if (ctx.measureText(testLine).width > maxWidth - 4 && n > 0) {
+                    lines.push(currentLine.trim());
+                    currentLine = words[n];
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            if (currentLine.trim()) lines.push(currentLine.trim());
         }
-        lines.push(currentLine.trim());
+        
         ctx.restore();
         return lines;
     }
@@ -277,7 +303,8 @@ export class BaseScene {
     renderDialogueBox(ctx, canvas, step, options = {}) {
         const { subStep = 0, bgImg = null } = options;
         const margin = 5;
-        const panelHeight = 60; // Increased from 50 to fit 48px height portraits
+        // Keep panel height at original size (60px) - fits 3 lines English, 2 lines Chinese
+        const panelHeight = 60;
         const panelWidth = canvas.width - margin * 2;
         const px = margin;
         
@@ -363,44 +390,99 @@ export class BaseScene {
 
         // Name
         const textX = portraitX + portraitW + 8;
-        this.drawPixelText(ctx, (step.name || "").toUpperCase(), textX, py + 6, { color: '#ffd700', font: '8px Silkscreen' });
+        const localizedName = getLocalizedCharacterName(step.name);
+        const nameText = localizedName ? (LANGUAGE.current === 'zh' ? localizedName : localizedName.toUpperCase()) : '';
+        this.drawPixelText(ctx, nameText, textX, py + 6, { color: '#ffd700', font: '8px Silkscreen' });
 
         // Text
         const textPaddingRight = 15;
         const maxWidth = panelWidth - (textX - px) - textPaddingRight;
-        const lines = this.wrapText(ctx, step.text, maxWidth, '8px Dogica');
-        const start = subStep * 3;
-        const displayLines = lines.slice(start, start + 3);
-        const hasNextChunk = (subStep + 1) * 3 < lines.length;
+        if (!step.text) {
+            console.error('renderDialogueBox: step.text is missing:', step);
+        }
+        const localizedText = getLocalizedText(step.text);
+        if (!localizedText) {
+            console.error('renderDialogueBox: getLocalizedText returned empty string for step:', step, 'Current language:', LANGUAGE.current);
+        }
+        let lines = this.wrapText(ctx, localizedText || '', maxWidth, '8px Dogica');
         
-        let lineY = py + 20; // Moved up a bit to fit 3 lines
+        // Chinese: limit to 2 lines max with ellipsis, English: 3 lines max
+        const maxLines = LANGUAGE.current === 'zh' ? 2 : 3;
+        
+        // For Chinese, if text exceeds 2 lines, truncate and add ellipsis
+        if (LANGUAGE.current === 'zh' && lines.length > 2) {
+            ctx.save();
+            ctx.font = getFontForLanguage('8px Dogica');
+            const truncated = lines.slice(0, 2);
+            // Add ellipsis to the last line if there's more text
+            const lastLine = truncated[truncated.length - 1];
+            const ellipsis = '…'; // Chinese ellipsis character
+            const lastLineWidth = ctx.measureText(lastLine).width;
+            const ellipsisWidth = ctx.measureText(ellipsis).width;
+            
+            if (lastLineWidth + ellipsisWidth <= maxWidth) {
+                truncated[truncated.length - 1] = lastLine + ellipsis;
+            } else {
+                // Replace last few characters with ellipsis
+                let shortened = lastLine;
+                while (ctx.measureText(shortened + ellipsis).width > maxWidth && shortened.length > 0) {
+                    shortened = shortened.slice(0, -1);
+                }
+                truncated[truncated.length - 1] = shortened + ellipsis;
+            }
+            ctx.restore();
+            lines = truncated;
+        }
+        
+        const start = subStep * maxLines;
+        const displayLines = lines.slice(start, start + maxLines);
+        const hasNextChunk = (subStep + 1) * maxLines < lines.length;
+        
+        // Adjust line spacing for Chinese (larger font) - but keep panel same size
+        const lineSpacing = LANGUAGE.current === 'zh' ? 16 : 12;
+        let lineY = py + 20;
         displayLines.forEach((line, i) => {
             let text = line;
-            if (i === displayLines.length - 1 && hasNextChunk) {
+            // Only add "..." for English when there's more text
+            if (LANGUAGE.current !== 'zh' && i === displayLines.length - 1 && hasNextChunk) {
                 text += "...";
             }
             this.drawPixelText(ctx, text, textX, lineY, { color: '#eee', font: '8px Dogica' });
-            lineY += 12; // Slightly reduced spacing between lines
+            lineY += lineSpacing;
         });
 
-        // Click prompt - show right arrow if there's more text, otherwise show "NEXT"
+        // Click prompt - show right arrow if there's more text, otherwise show double arrow for next dialogue
         const pulse = Math.abs(Math.sin(Date.now() / 500));
         ctx.globalAlpha = pulse;
+        ctx.fillStyle = '#eee';
+        const arrowX = px + panelWidth - 10;
+        const arrowY = py + panelHeight - 9;
+        
         if (hasNextChunk) {
-            // Draw right arrow (→) when there's more text to read
-            ctx.fillStyle = '#eee';
+            // Draw single right arrow (→) when there's more text to read in current dialogue
             ctx.beginPath();
-            const arrowX = px + panelWidth - 10;
-            const arrowY = py + panelHeight - 9;
-            // Draw a right-pointing triangle
             ctx.moveTo(arrowX, arrowY);
             ctx.lineTo(arrowX + 5, arrowY + 3);
             ctx.lineTo(arrowX, arrowY + 6);
             ctx.closePath();
             ctx.fill();
         } else {
-            // Show "NEXT" when clicking will advance to next dialogue
-            this.drawPixelText(ctx, "NEXT", px + panelWidth - 2, py + panelHeight - 10, { color: '#eee', font: '8px Tiny5', align: 'right' });
+            // Draw double right arrow (») when clicking will advance to next dialogue
+            // Draw two triangles side by side
+            ctx.beginPath();
+            // First triangle
+            ctx.moveTo(arrowX - 4, arrowY);
+            ctx.lineTo(arrowX - 4 + 5, arrowY + 3);
+            ctx.lineTo(arrowX - 4, arrowY + 6);
+            ctx.closePath();
+            ctx.fill();
+            // Second triangle
+            ctx.beginPath();
+            ctx.moveTo(arrowX, arrowY);
+            ctx.lineTo(arrowX + 5, arrowY + 3);
+            ctx.lineTo(arrowX, arrowY + 6);
+            ctx.closePath();
+            ctx.fill();
         }
         ctx.globalAlpha = 1.0;
 
@@ -418,7 +500,8 @@ export class BaseScene {
         } = options;
         
         ctx.save();
-        ctx.font = font;
+        // Use language-appropriate font
+        ctx.font = getFontForLanguage(font);
         ctx.textAlign = align; 
         ctx.textBaseline = 'top'; 
         

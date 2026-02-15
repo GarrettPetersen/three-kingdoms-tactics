@@ -5,6 +5,8 @@ import { TacticsMap } from '../core/TacticsMap.js';
 import { Unit } from '../entities/Unit.js';
 import { BATTLES, UNIT_TEMPLATES } from '../data/Battles.js';
 import { NARRATIVE_SCRIPTS } from '../data/NarrativeScripts.js';
+import { getLocalizedText } from '../core/Language.js';
+import { UI_TEXT } from '../data/Translations.js';
 
 export class TacticsScene extends BaseScene {
     constructor() {
@@ -704,28 +706,28 @@ export class TacticsScene extends BaseScene {
                 speaker: 'gongjing',
                 name: 'Protector Gong Jing',
                 voiceId: 'qz_ret_gj_01',
-                text: "Heroic brothers! You have saved Qingzhou! When your signal echoed through the pass, we charged from the gates. The rebels were caught between us and slaughtered."
+                text: { en: "Heroic brothers! You have saved Qingzhou! When your signal echoed through the pass, we charged from the gates. The rebels were caught between us and slaughtered.", zh: "英勇的兄弟们！你们救了青州！当你们的信号响彻关隘，我们从城门冲出。叛军被我们夹击，尽数歼灭。" }
             },
             {
                 type: 'dialogue',
                 speaker: 'liubei',
                 name: 'Liu Bei',
                 voiceId: 'qz_ret_lb_01',
-                text: "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere."
+                text: { en: "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere.", zh: "能为州牧效力，我们深感荣幸。此地已恢复和平，但叛乱仍在其他地方肆虐。" }
             },
             {
                 type: 'dialogue',
                 speaker: 'gongjing',
                 name: 'Protector Gong Jing',
                 voiceId: 'qz_ret_gj_02',
-                text: "Indeed. I have heard that Commander Lu Zhi is hard-pressed at Guangzong by the chief rebel, Zhang Jue himself."
+                text: { en: "Indeed. I have heard that Commander Lu Zhi is hard-pressed at Guangzong by the chief rebel, Zhang Jue himself.", zh: "确实。我听说卢植将军在广宗被叛军首领张角本人围攻，处境艰难。" }
             },
             {
                 type: 'dialogue',
                 speaker: 'liubei',
                 name: 'Liu Bei',
                 voiceId: 'qz_ret_lb_02',
-                text: "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!"
+                text: { en: "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!", zh: "卢植！他是我多年前的老师。我不能让他独自面对如此大军。兄弟们，我们向广宗进军！" }
             }
         ];
         this.cleanupDialogueStep = 0;
@@ -1073,7 +1075,7 @@ export class TacticsScene extends BaseScene {
                 portraitKey: 'liu-bei',
                 name: 'Liu Bei',
                 voiceId: 'gz_lb_fight_01',
-                text: "Brother, we cannot stand idle while injustice is done. Free him!"
+                text: { en: "Brother, we cannot stand idle while injustice is done. Free him!", zh: "兄长，我们不能坐视不义。救他出来！" }
             }
         ];
         
@@ -1158,35 +1160,35 @@ export class TacticsScene extends BaseScene {
                 portraitKey: 'liu-bei',
                 name: 'Liu Bei',
                 voiceId: 'gz_lb_restrain_01',
-                text: "The court will have its own public judgment. How can you act rashly?"
+                text: { en: "The court will have its own public judgment. How can you act rashly?", zh: "朝廷自有公断。你怎能如此鲁莽？" }
             },
             {
                 speaker: 'guanyu',
                 portraitKey: 'guan-yu',
                 name: 'Guan Yu',
                 voiceId: 'gz_gy_restrain_01',
-                text: "It was wise to stay your hand, brother. The law must take its course. Let us return toward Zhuo."
+                text: { en: "It was wise to stay your hand, brother. The law must take its course. Let us return toward Zhuo.", zh: "兄长，你克制是对的。法律自有其道。让我们返回涿郡。" }
             },
             {
                 speaker: 'zhangfei',
                 portraitKey: 'zhang-fei',
                 name: 'Zhang Fei',
                 voiceId: 'gz_zf_restrain_01',
-                text: "BAH! This stinks of corruption! But... I will follow your lead, eldest brother."
+                text: { en: "BAH! This stinks of corruption! But... I will follow your lead, eldest brother.", zh: "呸！这真是腐败透顶！但是...我会听从你的，大哥。" }
             },
             {
                 speaker: 'narrator',
                 portraitKey: null,
                 name: 'Narrator',
                 voiceId: 'gz_nar_restrain_01',
-                text: "And so the escort and the three brothers went two ways. It was useless to continue on that road to Guangzong."
+                text: { en: "And so the escort and the three brothers went two ways. It was useless to continue on that road to Guangzong.", zh: "于是，护送队和三兄弟分道扬镳。继续走那条通往广宗的路已无意义。" }
             },
             {
                 speaker: 'guanyu',
                 portraitKey: 'guan-yu',
                 name: 'Guan Yu',
                 voiceId: 'gz_gy_return_01',
-                text: "Let us return toward Zhuo County. There is nothing more for us here."
+                text: { en: "Let us return toward Zhuo County. There is nothing more for us here.", zh: "让我们返回涿郡。这里已无事可做。" }
             }
         ];
         
@@ -1218,28 +1220,28 @@ export class TacticsScene extends BaseScene {
                     portraitKey: 'dong-zhuo',
                     name: 'Dong Zhuo',
                     voiceId: 'gz_dz_outlaw_01',
-                    text: "Wait... I know you. You're the ones who attacked imperial escorts and freed that traitor Lu Zhi!"
+                    text: { en: "Wait... I know you. You're the ones who attacked imperial escorts and freed that traitor Lu Zhi!", zh: "等等...我认识你们。你们就是袭击朝廷护送队，放走那个叛徒卢植的人！" }
                 },
                 {
                     speaker: 'liubei',
                     portraitKey: 'liu-bei',
                     name: 'Liu Bei',
                     voiceId: 'gz_lb_defend_01',
-                    text: "Lu Zhi was no traitor. He was unjustly accused by corrupt officials."
+                    text: { en: "Lu Zhi was no traitor. He was unjustly accused by corrupt officials.", zh: "卢植不是叛徒。他是被腐败官员诬告的。" }
                 },
                 {
                     speaker: 'dongzhuo',
                     portraitKey: 'dong-zhuo',
                     name: 'Dong Zhuo',
                     voiceId: 'gz_dz_outlaw_02',
-                    text: "Hmph! You dare lecture me? I should have you arrested! But... you did save my life today. Leave now, before I change my mind."
+                    text: { en: "Hmph! You dare lecture me? I should have you arrested! But... you did save my life today. Leave now, before I change my mind.", zh: "哼！你敢教训我？我应该逮捕你们！但是...你们今天确实救了我的命。现在离开，在我改变主意之前。" }
                 },
                 {
                     speaker: 'zhangfei',
                     portraitKey: 'zhang-fei',
                     name: 'Zhang Fei',
                     voiceId: 'gz_zf_rage_outlaw_01',
-                    text: "The nerve of that swine! First we save Lu Zhi from injustice, now we save Dong Zhuo from death, and this is our thanks?! Nothing but his death can slake my anger!"
+                    text: { en: "The nerve of that swine! First we save Lu Zhi from injustice, now we save Dong Zhuo from death, and this is our thanks?! Nothing but his death can slake my anger!", zh: "那个混蛋真是无礼！我们先救了卢植免于不义，现在又救了董卓免于死亡，这就是我们的回报？！只有他的死才能平息我的怒火！" }
                 }
             ];
         } else {
@@ -1250,28 +1252,28 @@ export class TacticsScene extends BaseScene {
                     portraitKey: 'dong-zhuo',
                     name: 'Dong Zhuo',
                     voiceId: 'gz_dz_01',
-                    text: "What offices do you three hold?"
+                    text: { en: "What offices do you three hold?", zh: "你们三人身居何职？" }
                 },
                 {
                     speaker: 'liubei',
                     portraitKey: 'liu-bei',
                     name: 'Liu Bei',
                     voiceId: 'gz_lb_office_01',
-                    text: "None."
+                    text: { en: "None.", zh: "无。" }
                 },
                 {
                     speaker: 'dongzhuo',
                     portraitKey: 'dong-zhuo',
                     name: 'Dong Zhuo',
                     voiceId: 'gz_dz_02',
-                    text: "Hmph. Common men with no rank. You may go."
+                    text: { en: "Hmph. Common men with no rank. You may go.", zh: "哼。无官无职的平民。你们可以走了。" }
                 },
                 {
                     speaker: 'zhangfei',
                     portraitKey: 'zhang-fei',
                     name: 'Zhang Fei',
                     voiceId: 'gz_zf_rage_01',
-                    text: "We have just rescued this menial in a bloody fight, and now he is rude to us! Nothing but his death can slake my anger."
+                    text: { en: "We have just rescued this menial in a bloody fight, and now he is rude to us! Nothing but his death can slake my anger.", zh: "我们刚刚在一场血战中救了这个小人物，现在他却对我们无礼！只有他的死才能平息我的怒火。" }
                 }
             ];
             // No Liu Bei restraint line here anymore
@@ -4649,7 +4651,8 @@ export class TacticsScene extends BaseScene {
             
             // Draw a simple prompt to click to continue
             const pulse = Math.abs(Math.sin(Date.now() * 0.003));
-            this.drawPixelText(ctx, "CLICK TO CONTINUE", canvas.width / 2, canvas.height - 20, { 
+            const continueText = getLocalizedText(UI_TEXT['CLICK TO CONTINUE']);
+            this.drawPixelText(ctx, continueText, canvas.width / 2, canvas.height - 20, { 
                 color: `rgba(255, 255, 255, ${0.5 + pulse * 0.5})`,
                 align: 'center',
                 font: '10px Silkscreen'

@@ -9,13 +9,20 @@ import json
 from faster_whisper import WhisperModel
 from jiwer import wer
 
-# Paths
-VOICES_DIR = "public/assets/audio/voices"
-REPORT_FILE = "voice_verification_report.json"
+# Language support
+LANGUAGE = os.environ.get("VOICE_LANG", "en")
+
+# Paths - language-specific
+VOICES_DIR = os.path.join("public/assets/audio/voices", LANGUAGE)
+if LANGUAGE != "en":
+    EXTRACTED_LINES_FILE = f"tools/extracted_voice_lines_{LANGUAGE}.json"
+    REPORT_FILE = f"voice_verification_report_{LANGUAGE}.json"
+else:
+    EXTRACTED_LINES_FILE = "tools/extracted_voice_lines.json"
+    REPORT_FILE = "voice_verification_report.json"
 
 # Load game script from extracted voice lines
-EXTRACTED_LINES_FILE = "tools/extracted_voice_lines.json"
-with open(EXTRACTED_LINES_FILE, 'r') as f:
+with open(EXTRACTED_LINES_FILE, 'r', encoding='utf-8') as f:
     game_script = json.load(f)
 
 # WER threshold for marking as bad
@@ -30,10 +37,10 @@ def load_whisper_model():
     return model
 
 
-def transcribe_audio(model, audio_path):
+def transcribe_audio(model, audio_path, lang_code="en"):
     """Transcribe an audio file using Whisper"""
     try:
-        segments, info = model.transcribe(audio_path, language="en")
+        segments, info = model.transcribe(audio_path, language=lang_code)
         text = " ".join([segment.text for segment in segments])
         return text.strip()
     except Exception as e:
@@ -118,19 +125,22 @@ def verify_all_voices():
         
         if not os.path.exists(audio_path):
             print(f"  WARNING: Audio file not found: {audio_path}")
-            report[line_id] = {
+            unique_key = f"{LANGUAGE}:{line_id}"
+            report[unique_key] = {
+                "id": line_id,
                 "character": character,
                 "original_text": original_text,
                 "stt_output": "",
                 "wer": 1.0,
                 "is_bad": True,
-                "error": "File not found"
+                "error": "File not found",
+                "language": LANGUAGE
             }
             bad_count += 1
             continue
         
-        # Transcribe
-        stt_output = transcribe_audio(model, audio_path)
+        # Transcribe (use language code for better accuracy)
+        stt_output = transcribe_audio(model, audio_path, lang_code=LANGUAGE)
         
         # Calculate WER
         error_rate = calculate_wer(original_text, stt_output)
@@ -142,20 +152,36 @@ def verify_all_voices():
             print(f"    Original: {original_text}")
             print(f"    STT:      {stt_output}")
         
-        report[line_id] = {
+        # Use language+id as unique key for language-specific reports
+        unique_key = f"{LANGUAGE}:{line_id}"
+        report[unique_key] = {
+            "id": line_id,
             "character": character,
             "original_text": original_text,
             "stt_output": stt_output,
             "wer": error_rate,
-            "is_bad": is_bad
+            "is_bad": is_bad,
+            "language": LANGUAGE
         }
     
-    # Save report
-    with open(REPORT_FILE, "w") as f:
-        json.dump(report, f, indent=4)
+    # Save report - merge with existing if it exists
+    existing_report = {}
+    if os.path.exists(REPORT_FILE):
+        try:
+            with open(REPORT_FILE, "r", encoding="utf-8") as f:
+                existing_report = json.load(f)
+        except:
+            existing_report = {}
+    
+    # Merge new results into existing report
+    for key, data in report.items():
+        existing_report[key] = data
+    
+    with open(REPORT_FILE, "w", encoding="utf-8") as f:
+        json.dump(existing_report, f, indent=4, ensure_ascii=False)
     
     print(f"\n{'='*60}")
-    print(f"Verification complete!")
+    print(f"Verification complete! (Language: {LANGUAGE})")
     print(f"Total lines: {total}")
     print(f"Bad lines (WER > {WER_THRESHOLD*100:.0f}%): {bad_count}")
     print(f"Report saved to: {REPORT_FILE}")
@@ -178,7 +204,7 @@ def verify_single(line_id):
         print(f"Audio file not found: {audio_path}")
         return None
     
-    stt_output = transcribe_audio(model, audio_path)
+    stt_output = transcribe_audio(model, audio_path, lang_code=LANGUAGE)
     error_rate = calculate_wer(line["text"], stt_output)
     
     print(f"Line ID: {line_id}")

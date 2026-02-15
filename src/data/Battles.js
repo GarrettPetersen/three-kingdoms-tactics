@@ -32,15 +32,15 @@ export const BATTLES = {
         cutsceneAutoCombat: true, // Enable automatic combat animations
         introScript: [], // Combat happens first, then dialogue
         postCombatScript: [
-            { portraitKey: 'custom-male-10', name: 'Zhang Jue', voiceId: 'intro_zj_01', text: "The good fortune of the Han is exhausted! The Wise and Worthy Man has appeared!" },
-            { portraitKey: 'zhang-bao', name: 'Zhang Bao', voiceId: 'intro_zb_01', text: "Brother, the official troops melt away at a whisper of our coming! Our strength grows by the day!" },
-            { portraitKey: 'custom-male-12', name: 'Zhang Liang', voiceId: 'intro_zl_01', text: "The people bind their heads with yellow scarves and join our cause! Soon, all the empire will be ours!" },
-            { portraitKey: 'custom-male-10', name: 'Zhang Jue', voiceId: 'intro_zj_02', text: "For schemes like ours, the most difficult part is to gain the popular favor. But that is already ours. Such an opportunity must not pass!" },
-            { portraitKey: 'custom-male-10', name: 'Zhang Jue', voiceId: 'intro_zj_03', text: "I am Zhang Jue, the Lord of Heaven! With my brothers Zhang Bao, Lord of Earth, and Zhang Liang, Lord of Human, we shall bring down this corrupt dynasty!" },
-            { portraitKey: 'zhang-bao', name: 'Zhang Bao', voiceId: 'intro_zb_02', text: "The Han has grown weak and decadent! The people cry out for justice, and we shall deliver it with fire and steel!" },
-            { portraitKey: 'custom-male-12', name: 'Zhang Liang', voiceId: 'intro_zl_02', text: "Let the imperial dogs flee! Their cities will burn, their armies will crumble. The Yellow Heavens shall rise!" },
-            { portraitKey: 'custom-male-10', name: 'Zhang Jue', voiceId: 'intro_zj_04', text: "The age of the Han is over. A new era begins today—an era of the people, led by the Wise and Worthy Master!" },
-            { portraitKey: 'custom-male-10', name: 'Zhang Jue', voiceId: 'intro_zj_05', text: "Now we march through Zhuo County! Let all who stand in our way be crushed beneath the banner of the Yellow Turbans!" }
+            { portraitKey: 'custom-male-10', name: 'Zhang Jue', voiceId: 'intro_zj_01', text: { en: "The good fortune of the Han is exhausted! The Wise and Worthy Man has appeared!", zh: "汉运将终，大贤出矣！" } },
+            { portraitKey: 'zhang-bao', name: 'Zhang Bao', voiceId: 'intro_zb_01', text: { en: "Brother, the official troops melt away at a whisper of our coming! Our strength grows by the day!", zh: "兄长，官军闻风而逃！我们的力量与日俱增！" } },
+            { portraitKey: 'custom-male-12', name: 'Zhang Liang', voiceId: 'intro_zl_01', text: { en: "The people bind their heads with yellow scarves and join our cause! Soon, all the empire will be ours!", zh: "百姓头裹黄巾，加入我们的事业！很快，整个天下都将属于我们！" } },
+            { portraitKey: 'custom-male-10', name: 'Zhang Jue', voiceId: 'intro_zj_02', text: { en: "For schemes like ours, the most difficult part is to gain the popular favor. But that is already ours. Such an opportunity must not pass!", zh: "成大事者，最难在于得民心。但民心已归我。此等良机，不可错过！" } },
+            { portraitKey: 'custom-male-10', name: 'Zhang Jue', voiceId: 'intro_zj_03', text: { en: "I am Zhang Jue, the Lord of Heaven! With my brothers Zhang Bao, Lord of Earth, and Zhang Liang, Lord of Human, we shall bring down this corrupt dynasty!", zh: "我乃张角，天公将军！与吾弟张宝，地公将军，张梁，人公将军，必将推翻这腐朽的王朝！" } },
+            { portraitKey: 'zhang-bao', name: 'Zhang Bao', voiceId: 'intro_zb_02', text: { en: "The Han has grown weak and decadent! The people cry out for justice, and we shall deliver it with fire and steel!", zh: "汉室已衰败腐朽！百姓呼唤正义，我们将以烈火与钢铁来伸张！" } },
+            { portraitKey: 'custom-male-12', name: 'Zhang Liang', voiceId: 'intro_zl_02', text: { en: "Let the imperial dogs flee! Their cities will burn, their armies will crumble. The Yellow Heavens shall rise!", zh: "让那些朝廷走狗逃吧！他们的城池将燃烧，他们的军队将崩溃。黄天当立！" } },
+            { portraitKey: 'custom-male-10', name: 'Zhang Jue', voiceId: 'intro_zj_04', text: { en: "The age of the Han is over. A new era begins today—an era of the people, led by the Wise and Worthy Master!", zh: "汉朝的时代已经结束。今天，一个新的时代开始了——一个由大贤领导的人民时代！" } },
+            { portraitKey: 'custom-male-10', name: 'Zhang Jue', voiceId: 'intro_zj_05', text: { en: "Now we march through Zhuo County! Let all who stand in our way be crushed beneath the banner of the Yellow Turbans!", zh: "现在我们进军涿郡！所有阻挡我们的人，都将被黄巾军的旗帜碾碎！" } }
         ],
         nextScene: 'narrative',
         nextParams: { 
@@ -77,12 +77,12 @@ export const BATTLES = {
         },
         reinforcements: 'daxing',
         introScript: [
-            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'dx_lb_01', text: "The Yellow Turban vanguard is here. They seek to plunder Zhuo County!" },
-            { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'dx_gy_01', text: "Their numbers are great, but they are but a rabble without leadership." },
-            { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'dx_zf_01', text: "Let me at them! My Serpent Spear is thirsty for rebel blood!" },
-            { portraitKey: 'bandit1', name: 'Deng Mao', voiceId: 'dx_dm_01', text: "Imperial dogs! You dare stand in the way of the Lord of Heaven?" },
-            { portraitKey: 'bandit2', name: 'Cheng Yuanzhi', voiceId: 'dx_cyz_01', text: "Slay them all! The Han is dead, the Yellow Heavens shall rise!" },
-            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'dx_lb_02', text: "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!" }
+            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'dx_lb_01', text: { en: "The Yellow Turban vanguard is here. They seek to plunder Zhuo County!", zh: "黄巾先锋已至。他们欲劫掠涿郡！" } },
+            { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'dx_gy_01', text: { en: "Their numbers are great, but they are but a rabble without leadership.", zh: "他们人数众多，但不过是一群乌合之众。" } },
+            { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'dx_zf_01', text: { en: "Let me at them! My Serpent Spear is thirsty for rebel blood!", zh: "让我来对付他们！我的丈八蛇矛渴饮叛军之血！" } },
+            { portraitKey: 'bandit1', name: 'Deng Mao', voiceId: 'dx_dm_01', text: { en: "Imperial dogs! You dare stand in the way of the Lord of Heaven?", zh: "朝廷走狗！你们敢阻挡天公将军？" } },
+            { portraitKey: 'bandit2', name: 'Cheng Yuanzhi', voiceId: 'dx_cyz_01', text: { en: "Slay them all! The Han is dead, the Yellow Heavens shall rise!", zh: "杀光他们！汉室已亡，黄天当立！" } },
+            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'dx_lb_02', text: { en: "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!", zh: "他们意志薄弱。若我们击败这些头目，其余必溃散！" } }
         ]
     },
     'qingzhou_prelude': {
@@ -116,9 +116,9 @@ export const BATTLES = {
             type: 'prelude'
         },
         introScript: [
-            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'qz_lb_02', text: "They are many and we but few. We cannot prevail in a direct assault." },
-            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'qz_lb_03', text: "Guan Yu, Zhang Fei—take half our forces and hide behind the hills. When the gongs beat, strike from the flanks!" },
-            { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'qz_gy_01', text: "A superior strategy, brother. We go at once." }
+            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'qz_lb_02', text: { en: "They are many and we but few. We cannot prevail in a direct assault.", zh: "敌众我寡。我们不能正面强攻。" } },
+            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'qz_lb_03', text: { en: "Guan Yu, Zhang Fei—take half our forces and hide behind the hills. When the gongs beat, strike from the flanks!", zh: "云长、翼德——带一半人马埋伏在山后。锣声一响，从两翼夹击！" } },
+            { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'qz_gy_01', text: { en: "A superior strategy, brother. We go at once.", zh: "妙计，兄长。我们即刻出发。" } }
         ]
     },
     'qingzhou_siege': {
@@ -143,7 +143,7 @@ export const BATTLES = {
         },
         reinforcements: 'qingzhou',
         introScript: [
-            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'qz_bt_lb_03', text: "I must reach the flag to signal the ambush!" }
+            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'qz_bt_lb_03', text: { en: "I must reach the flag to signal the ambush!", zh: "我必须到达旗帜处，发出伏击信号！" } }
         ]
     },
     'qingzhou_cleanup': {
@@ -238,11 +238,11 @@ export const BATTLES = {
         isCutscene: true,
         victoryCondition: 'defeat_all_enemies',
         introScript: [
-            { speaker: 'liubei', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_lb_01', text: "What is this? Commander Lu Zhi... in chains?" },
-            { speaker: 'luzhi', portraitKey: 'custom-male-22', name: 'Lu Zhi', voiceId: 'gz_lz_explain_01', text: "Xuande! I had the rebels surrounded and was on the point of smashing them, when Zhang Jue employed sorcery to prevent my victory." },
-            { speaker: 'luzhi', portraitKey: 'custom-male-22', name: 'Lu Zhi', voiceId: 'gz_lz_explain_02', text: "The court sent Eunuch Zuo Feng to inquire. He demanded a bribe, but where could I find gold in such circumstances? He reported that I hid behind ramparts and disheartened my army." },
-            { speaker: 'luzhi', portraitKey: 'custom-male-22', name: 'Lu Zhi', voiceId: 'gz_lz_explain_03', text: "So I was superseded by Dong Zhuo, and now I go to the capital to answer false charges." },
-            { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_01', text: "This is outrage! Let me slay these dogs and free you, Master!" }
+            { speaker: 'liubei', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_lb_01', text: { en: "What is this? Commander Lu Zhi... in chains?", zh: "这是怎么回事？卢植将军...被锁链所缚？" } },
+            { speaker: 'luzhi', portraitKey: 'custom-male-22', name: 'Lu Zhi', voiceId: 'gz_lz_explain_01', text: { en: "Xuande! I had the rebels surrounded and was on the point of smashing them, when Zhang Jue employed sorcery to prevent my victory.", zh: "玄德！我已将叛军包围，正要击溃他们，张角却用妖术阻我胜利。" } },
+            { speaker: 'luzhi', portraitKey: 'custom-male-22', name: 'Lu Zhi', voiceId: 'gz_lz_explain_02', text: { en: "The court sent Eunuch Zuo Feng to inquire. He demanded a bribe, but where could I find gold in such circumstances? He reported that I hid behind ramparts and disheartened my army.", zh: "朝廷派左丰前来查问。他索要贿赂，但此等情况下我何处寻金？他竟报我躲在壁垒后，挫我军心。" } },
+            { speaker: 'luzhi', portraitKey: 'custom-male-22', name: 'Lu Zhi', voiceId: 'gz_lz_explain_03', text: { en: "So I was superseded by Dong Zhuo, and now I go to the capital to answer false charges.", zh: "因此我被董卓取代，现在我要去京城回应这些莫须有的指控。" } },
+            { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_01', text: { en: "This is outrage! Let me slay these dogs and free you, Master!", zh: "这真是岂有此理！让我杀了这些走狗，救您出来，将军！" } }
         ],
         // Choice will be handled by TacticsScene after intro dialogue
         hasChoice: true
@@ -281,9 +281,9 @@ export const BATTLES = {
         ],
         victoryCondition: 'defeat_all_enemies',
         introScript: [
-            { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_free_01', text: "HA! Now you're talking, brother! Come on!" },
-            { speaker: 'guanyu', portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'gz_gy_free_01', text: "Brother, there may be consequences for this..." },
-            { speaker: 'liubei', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_lb_free_02', text: "We have made our choice. Now we fight!" }
+            { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_free_01', text: { en: "HA! Now you're talking, brother! Come on!", zh: "哈！这才像话，兄长！来吧！" } },
+            { speaker: 'guanyu', portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'gz_gy_free_01', text: { en: "Brother, there may be consequences for this...", zh: "兄长，此举可能带来后果..." } },
+            { speaker: 'liubei', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_lb_free_02', text: { en: "We have made our choice. Now we fight!", zh: "我们已经做出选择。现在，战斗！" } }
         ]
     },
     'dongzhuo_battle': {
@@ -331,9 +331,9 @@ export const BATTLES = {
             mustSurvive: ['dongzhuo']
         },
         introScript: [
-            { speaker: 'dongzhuo', portraitKey: 'dong-zhuo', name: 'Dong Zhuo', voiceId: 'gz_dz_help_01', text: "CURSE THESE REBELS! They have slaughtered my men! Is there no one left to fight?!" },
-            { speaker: 'liubei', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_lb_attack_01', text: "That banner reads 'Zhang Jue, Lord of Heaven!' Government soldiers are losing! Brothers, we attack!" },
-            { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_attack_01', text: "HA! Finally some Yellow Turbans to smash! Let's go!" }
+            { speaker: 'dongzhuo', portraitKey: 'dong-zhuo', name: 'Dong Zhuo', voiceId: 'gz_dz_help_01', text: { en: "CURSE THESE REBELS! They have slaughtered my men! Is there no one left to fight?!", zh: "这些叛军该死！他们屠杀了我的部下！难道没有人能战斗了吗？！" } },
+            { speaker: 'liubei', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_lb_attack_01', text: { en: "That banner reads 'Zhang Jue, Lord of Heaven!' Government soldiers are losing! Brothers, we attack!", zh: "那旗帜上写着'张角，天公将军'！官军正在败退！兄弟们，我们进攻！" } },
+            { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_attack_01', text: { en: "HA! Finally some Yellow Turbans to smash! Let's go!", zh: "哈！终于有黄巾贼可以痛打了！我们走！" } }
         ],
         hasVictoryDialogue: true  // Flag to trigger on-map victory dialogue
     }

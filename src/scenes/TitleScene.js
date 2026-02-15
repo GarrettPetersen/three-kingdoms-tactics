@@ -1,6 +1,8 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 import { NARRATIVE_SCRIPTS } from '../data/NarrativeScripts.js';
+import { LANGUAGE, setLanguage, getCurrentLanguage, getFontForLanguage, getLocalizedText } from '../core/Language.js';
+import { UI_TEXT } from '../data/Translations.js';
 
 export class TitleScene extends BaseScene {
     constructor() {
@@ -255,7 +257,8 @@ export class TitleScene extends BaseScene {
             const cy = canvas.height - 70;
             const pulse = Math.abs(Math.sin(Date.now() / 500)) * 0.5 + 0.5;
             ctx.globalAlpha = pulse;
-            this.drawPixelText(ctx, "CLICK TO START", cx, cy + 10, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+            const startText = getLocalizedText(UI_TEXT['CLICK TO START']);
+            this.drawPixelText(ctx, startText, cx, cy + 10, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
             ctx.globalAlpha = 1.0;
             return;
         }
@@ -277,6 +280,9 @@ export class TitleScene extends BaseScene {
             this.renderMenu(ctx, canvas);
             ctx.restore();
         }
+        
+        // Draw language toggle (always visible in bottom-left corner)
+        this.renderLanguageToggle(ctx, canvas);
         
         // Reset alpha just in case
         ctx.globalAlpha = 1.0;
@@ -305,12 +311,12 @@ export class TitleScene extends BaseScene {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
         ctx.fillRect(cx - 80, cy - 30, 160, 80);
 
-        const ngText = "NEW GAME";
+        const ngText = getLocalizedText(UI_TEXT['NEW GAME']);
         const hasSave = this.manager.gameState.hasSave();
         
         if (hasSave) {
             // CONTINUE Button
-            const contText = "CONTINUE";
+            const contText = getLocalizedText(UI_TEXT['CONTINUE']);
             const contY = cy - 15;
             const isHighlighted = this.selection && this.selection.highlightedIndex === 0;
             ctx.save();
@@ -345,7 +351,7 @@ export class TitleScene extends BaseScene {
             };
 
             // CUSTOM BATTLE
-            const cbText = "CUSTOM BATTLE";
+            const cbText = getLocalizedText(UI_TEXT['CUSTOM BATTLE']);
             const cbY = cy + 35;
             const isHighlightedCB = this.selection && this.selection.highlightedIndex === 2;
             const cbMetrics = this.drawPixelText(ctx, cbText, cx, cbY, { 
@@ -423,8 +429,10 @@ export class TitleScene extends BaseScene {
             ctx.lineWidth = 2;
             ctx.strokeRect(dx + 1, dy + 1, dialogW - 2, dialogH - 2);
 
-            this.drawPixelText(ctx, "START A NEW GAME?", cx, dy + 20, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
-            this.drawPixelText(ctx, "EXISTING PROGRESS WILL BE LOST", cx, dy + 35, { color: '#eee', font: '8px Tiny5', align: 'center' });
+            const newGameText = getLocalizedText(UI_TEXT['START A NEW GAME?']);
+            const progressText = getLocalizedText(UI_TEXT['EXISTING PROGRESS WILL BE LOST']);
+            this.drawPixelText(ctx, newGameText, cx, dy + 20, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+            this.drawPixelText(ctx, progressText, cx, dy + 35, { color: '#eee', font: '8px Tiny5', align: 'center' });
 
             const btnY = dy + 55;
             
@@ -441,7 +449,8 @@ export class TitleScene extends BaseScene {
             
             // Draw YES button with highlight if selected
             const yesColor = this.confirmSelection.highlightedIndex === 0 ? '#ff0000' : '#888';
-            const yesMetrics = this.drawPixelText(ctx, "YES", cx - 40, btnY, { color: yesColor, font: '8px Silkscreen', align: 'center' });
+            const yesText = getLocalizedText(UI_TEXT['YES']);
+            const yesMetrics = this.drawPixelText(ctx, yesText, cx - 40, btnY, { color: yesColor, font: '8px Silkscreen', align: 'center' });
             this.confirmYesRect = {
                 x: Math.floor(cx - 40 - yesMetrics.width / 2 - 10),
                 y: btnY - 10,
@@ -458,7 +467,8 @@ export class TitleScene extends BaseScene {
 
             // Draw NO button with highlight if selected
             const noColor = this.confirmSelection.highlightedIndex === 1 ? '#eee' : '#888';
-            const noMetrics = this.drawPixelText(ctx, "NO", cx + 40, btnY, { color: noColor, font: '8px Silkscreen', align: 'center' });
+            const noText = getLocalizedText(UI_TEXT['NO']);
+            const noMetrics = this.drawPixelText(ctx, noText, cx + 40, btnY, { color: noColor, font: '8px Silkscreen', align: 'center' });
             this.confirmNoRect = {
                 x: Math.floor(cx + 40 - noMetrics.width / 2 - 10),
                 y: btnY - 10,
@@ -477,6 +487,15 @@ export class TitleScene extends BaseScene {
 
     handleInput(e) {
         const { x, y } = this.getMousePos(e);
+        
+        // Check language toggle first (always available)
+        if (this.languageToggleRect) {
+            const { x: tx, y: ty, w, h } = this.languageToggleRect;
+            if (x >= tx && x <= tx + w && y >= ty && y <= ty + h) {
+                this.executeMenuAction('toggleLanguage');
+                return;
+            }
+        }
         
         if (this.waitingForInteraction) {
             this.waitingForInteraction = false;
@@ -727,6 +746,52 @@ export class TitleScene extends BaseScene {
             }
         } else if (action === 'custombattle') {
             this.manager.switchTo('custom_battle');
+        } else if (action === 'toggleLanguage') {
+            const currentLang = getCurrentLanguage();
+            const newLang = currentLang === 'en' ? 'zh' : 'en';
+            setLanguage(newLang);
+            assets.playSound('ui_click', 0.5);
         }
+    }
+
+    renderLanguageToggle(ctx, canvas) {
+        // Always use 12px zpix since toggle always shows Chinese text
+        // Adjust rectangle to fit 12px font properly
+        const toggleX = 5;
+        const toggleY = canvas.height - 20;
+        const toggleW = 60;
+        const toggleH = 16;
+        
+        // Background with better visibility
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.fillRect(toggleX, toggleY, toggleW, toggleH);
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(toggleX + 0.5, toggleY + 0.5, toggleW - 1, toggleH - 1);
+        
+        // Language labels
+        const currentLang = getCurrentLanguage();
+        const enText = 'EN';
+        const zhText = '中文';
+        
+        // Draw both languages, highlight current
+        const enColor = currentLang === 'en' ? '#ffd700' : '#888';
+        const zhColor = currentLang === 'zh' ? '#ffd700' : '#888';
+        
+        // Always use 12px zpix - draw directly to bypass getFontForLanguage processing
+        ctx.save();
+        ctx.font = '12px zpix';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        
+        ctx.fillStyle = enColor;
+        ctx.fillText(enText, toggleX + 6, toggleY + 2);
+        
+        ctx.fillStyle = zhColor;
+        ctx.fillText(zhText, toggleX + 32, toggleY + 2);
+        ctx.restore();
+        
+        // Store toggle rect for click detection
+        this.languageToggleRect = { x: toggleX, y: toggleY, w: toggleW, h: toggleH };
     }
 }

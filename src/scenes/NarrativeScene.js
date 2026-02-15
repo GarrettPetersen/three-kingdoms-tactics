@@ -2,6 +2,8 @@ import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 import { ANIMATIONS } from '../core/Constants.js';
 import { NARRATIVE_SCRIPTS } from '../data/NarrativeScripts.js';
+import { getLocalizedText, getUIScale } from '../core/Language.js';
+import { UI_TEXT } from '../data/Translations.js';
 
 export class NarrativeScene extends BaseScene {
     constructor() {
@@ -1064,7 +1066,8 @@ export class NarrativeScene extends BaseScene {
             ctx.fill();
         }
 
-        this.drawPixelText(ctx, step.text, px + Math.floor(w / 2), py + Math.floor(h / 2) - 4, {
+        const localizedText = getLocalizedText(step.text);
+        this.drawPixelText(ctx, localizedText, px + Math.floor(w / 2), py + Math.floor(h / 2) - 4, {
             color: isHovered ? '#fff' : '#ffd700',
             font: '8px Silkscreen',
             align: 'center'
@@ -1077,33 +1080,21 @@ export class NarrativeScene extends BaseScene {
     renderChoice(step) {
         const { ctx, canvas } = this.manager;
         const options = step.options || [];
-        const padding = 10;
-        const lineSpacing = 12;
-        const optionSpacing = 8;
-        const panelWidth = 200;
+        const uiScale = getUIScale();
+        const padding = Math.round(10 * uiScale);
+        const lineSpacing = Math.round(12 * uiScale);
+        const optionSpacing = Math.round(8 * uiScale);
+        const panelWidth = Math.round(200 * uiScale);
         
         // Pre-calculate wrapped lines and total height
         const wrappedOptions = options.map(opt => {
-            const lines = [];
             // ALWAYS use buttonText for display in the choice box (it's the abbreviated version)
             // Only fall back to text if buttonText is not provided
-            const displayText = (opt.buttonText !== undefined && opt.buttonText !== null) ? opt.buttonText : opt.text;
-            const words = displayText.split(' ');
-            let currentLine = '';
-            
-            ctx.save();
-            ctx.font = '8px Dogica';
-            for (let n = 0; n < words.length; n++) {
-                let testLine = currentLine + words[n] + ' ';
-                if (ctx.measureText(testLine).width > (panelWidth - 20) && n > 0) {
-                    lines.push(currentLine.trim());
-                    currentLine = words[n] + ' ';
-                } else {
-                    currentLine = testLine;
-                }
-            }
-            lines.push(currentLine.trim());
-            ctx.restore();
+            const buttonText = (opt.buttonText !== undefined && opt.buttonText !== null) ? getLocalizedText(opt.buttonText) : null;
+            const text = getLocalizedText(opt.text);
+            const displayText = buttonText || text;
+            // Use wrapText which handles Chinese properly
+            const lines = this.wrapText(ctx, displayText, panelWidth - 20, '8px Dogica');
             return lines;
         });
 
@@ -1167,17 +1158,20 @@ export class NarrativeScene extends BaseScene {
         const cx = Math.floor(canvas.width / 2);
         const cy = Math.floor(canvas.height / 2);
         
-        this.drawPixelText(ctx, step.text, cx, cy - 10, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+        const localizedText = getLocalizedText(step.text);
+        this.drawPixelText(ctx, localizedText, cx, cy - 10, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
         
         if (step.subtext) {
-            this.drawPixelText(ctx, step.subtext, cx, cy + 6, { color: '#eee', font: '8px Silkscreen', align: 'center' });
+            const localizedSubtext = getLocalizedText(step.subtext);
+            this.drawPixelText(ctx, localizedSubtext, cx, cy + 6, { color: '#eee', font: '8px Silkscreen', align: 'center' });
         }
 
         // Pulse "CLICK TO CONTINUE" if player is waiting
         if (this.elapsedInStep > 3500) {
             const pulse = Math.abs(Math.sin(Date.now() / 500)) * 0.5 + 0.5;
             ctx.globalAlpha = pulse;
-            this.drawPixelText(ctx, "CLICK TO CONTINUE", cx, canvas.height - 30, { 
+            const continueText = getLocalizedText(UI_TEXT['CLICK TO CONTINUE']);
+            this.drawPixelText(ctx, continueText, cx, canvas.height - 30, { 
                 color: '#ffd700', 
                 font: '8px Silkscreen', 
                 align: 'center' 

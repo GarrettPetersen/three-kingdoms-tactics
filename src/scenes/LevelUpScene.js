@@ -1,6 +1,8 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 import { UPGRADE_PATHS, ATTACKS } from '../core/Constants.js';
+import { getLocalizedText } from '../core/Language.js';
+import { UI_TEXT } from '../data/Translations.js';
 
 export class LevelUpScene extends BaseScene {
     constructor() {
@@ -170,7 +172,8 @@ export class LevelUpScene extends BaseScene {
             const pulse2 = Math.abs(Math.sin(Date.now() / 500));
             ctx.save();
             ctx.globalAlpha = 0.5 + pulse2 * 0.5;
-            this.drawPixelText(ctx, "CLICK TO CONTINUE", cx, 235, {
+            const continueText = getLocalizedText(UI_TEXT['CLICK TO CONTINUE']);
+            this.drawPixelText(ctx, continueText, cx, 235, {
                 color: '#aaa',
                 font: '8px Silkscreen',
                 align: 'center'

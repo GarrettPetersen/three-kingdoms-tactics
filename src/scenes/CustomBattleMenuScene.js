@@ -1,6 +1,8 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 import { UNIT_TEMPLATES } from '../data/Battles.js';
+import { getLocalizedText } from '../core/Language.js';
+import { UI_TEXT } from '../data/Translations.js';
 
 export class CustomBattleMenuScene extends BaseScene {
     constructor() {
@@ -359,7 +361,8 @@ export class CustomBattleMenuScene extends BaseScene {
 
         this.buttonRects = [];
         const backRect = { x: cx - 40, y: 210, w: 80, h: 20, type: 'menu_view' };
-        this.drawButton(ctx, "RETURN", backRect, false, '#444');
+        const returnText = getLocalizedText(UI_TEXT['RETURN']);
+        this.drawButton(ctx, returnText, backRect, false, '#444');
         this.buttonRects.push(backRect);
     }
 

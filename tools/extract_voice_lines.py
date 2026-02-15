@@ -108,17 +108,70 @@ def extract_voice_lines_from_file(filepath):
         
         obj_str = content[obj_start:obj_end]
         
-        # Extract text field
-        text_match = re.search(r'text\s*:\s*[\'"](.+?)[\'"](?:\s*[,}])', obj_str, re.DOTALL)
-        if not text_match:
-            # Try escaped quotes or other formats
-            text_match = re.search(r'text\s*:\s*[\'"](.+?)[\'"]', obj_str, re.DOTALL)
+        # Extract text field - support both string and object formats
+        # Determine which language to extract based on EXTRACT_LANG env var or default to 'en'
+        lang_to_extract = os.environ.get('EXTRACT_LANG', 'en')
         
-        if not text_match:
-            print(f"  Warning: No text found for voiceId '{voice_id}' in {filepath}")
-            continue
+        # First try object format: text: { en: "...", zh: "..." }
+        if re.search(r'text\s*:\s*\{', obj_str, re.DOTALL):
+            # Try to extract the specified language - handle multiline strings with \n
+            lang_key = lang_to_extract
+            # Pattern: look for 'zh': or "zh": followed by the text
+            # Use a more precise pattern that matches the language key and captures the text until the closing quote
+            # Handle both single and double quotes
+            # Pattern to match language key and extract text until closing quote
+            # Try without quotes around lang_key first (actual format in JS files)
+            # Then try with quotes, then single quotes
+            # Use non-greedy match (.+?) to capture everything between quotes
+            # Escape braces in f-string: {{ and }}
+            pattern_no_quotes = rf'{lang_key}\s*:\s*"(.+?)"(?=\s*[,{{}}])'
+            pattern_double = rf'"{lang_key}"\s*:\s*"(.+?)"(?=\s*[,{{}}])'
+            pattern_single = rf"'{lang_key}'\s*:\s*'(.+?)'(?=\s*[,{{}}])"
+            text_obj_match = re.search(pattern_no_quotes, obj_str, re.DOTALL)
+            if not text_obj_match:
+                text_obj_match = re.search(pattern_double, obj_str, re.DOTALL)
+            if not text_obj_match:
+                text_obj_match = re.search(pattern_single, obj_str, re.DOTALL)
             
-        text = text_match.group(1)
+            if text_obj_match:
+                text = text_obj_match.group(1)
+                # Handle escaped newlines - convert \n to actual newlines for multiline text
+                text = text.replace('\\n', '\n')
+                # Handle escaped quotes
+                text = text.replace('\\"', '"').replace("\\'", "'")
+            else:
+                # Fallback: if requested language not found, try 'en'
+                if lang_to_extract != 'en':
+                    pattern_en_no_quotes = r'en\s*:\s*"(.+?)"(?=\s*[,}])'
+                    pattern_en_double = r'"en"\s*:\s*"(.+?)"(?=\s*[,}])'
+                    text_obj_match = re.search(pattern_en_no_quotes, obj_str, re.DOTALL)
+                    if not text_obj_match:
+                        text_obj_match = re.search(pattern_en_double, obj_str, re.DOTALL)
+                    if text_obj_match:
+                        text = text_obj_match.group(1)
+                        text = text.replace('\\n', '\n')
+                        text = text.replace('\\"', '"').replace("\\'", "'")
+                    else:
+                        text = None
+                else:
+                    text = None
+        else:
+            # Fall back to string format: text: "..."
+            text_match = re.search(r'text\s*:\s*[\'"](.+?)[\'"](?:\s*[,}])', obj_str, re.DOTALL)
+            if not text_match:
+                # Try escaped quotes or other formats
+                text_match = re.search(r'text\s*:\s*[\'"](.+?)[\'"]', obj_str, re.DOTALL)
+            if text_match:
+                text = text_match.group(1)
+            else:
+                print(f"  Warning: No text found for voiceId '{voice_id}' in {filepath}")
+                continue
+        
+        # Skip if text is None
+        if text is None:
+            print(f"  Warning: Text is None for voiceId '{voice_id}' in {filepath}")
+            continue
+        
         # Clean up escaped characters
         text = text.replace("\\'", "'").replace('\\"', '"').replace('\\n', ' ')
         
@@ -212,19 +265,32 @@ def main():
     # Sort by voiceId for consistency
     all_lines.sort(key=lambda x: x['id'])
     
-    # Load phonetic overrides
-    overrides_file = project_root / 'tools' / 'phonetic_overrides.json'
-    overrides = load_phonetic_overrides(overrides_file)
-    
-    # Apply overrides
-    for line in all_lines:
-        if line['id'] in overrides:
-            line['phonetic_text'] = overrides[line['id']]
+    # Load phonetic overrides (only apply for English - they're pronunciation guides for English names)
+    # Phonetic overrides are English-specific pronunciation guides (e.g., "Leeoo Bay" for "Liu Bei")
+    # They should not be applied to other languages
+    lang_to_extract = os.environ.get('EXTRACT_LANG', 'en')
+    if lang_to_extract == 'en':
+        overrides_file = project_root / 'tools' / 'phonetic_overrides.json'
+        overrides = load_phonetic_overrides(overrides_file)
+        
+        # Apply overrides only for English
+        for line in all_lines:
+            if line['id'] in overrides:
+                line['phonetic_text'] = overrides[line['id']]
     
     # Output
-    output_file = project_root / 'tools' / 'extracted_voice_lines.json'
+    # Use language-specific filename to avoid overwriting different language extractions
+    lang_to_extract = os.environ.get('EXTRACT_LANG', 'en')
+    if lang_to_extract != 'en':
+        output_file = project_root / 'tools' / f'extracted_voice_lines_{lang_to_extract}.json'
+    else:
+        output_file = project_root / 'tools' / 'extracted_voice_lines.json'
+    
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(all_lines, f, indent=2, ensure_ascii=False)
+    
+    print(f"\nExtracted {len(all_lines)} voice lines for language: {lang_to_extract}")
+    print(f"Saved to: {output_file}")
     
     print(f"\nExtracted {len(all_lines)} voice lines to {output_file}")
     
@@ -238,8 +304,8 @@ def main():
     for char, count in sorted(chars.items(), key=lambda x: -x[1]):
         print(f"  {char}: {count}")
     
-    # Check for missing lines in current voice files
-    voices_dir = project_root / 'public' / 'assets' / 'audio' / 'voices'
+    # Check for missing lines in current voice files (check in 'en' subfolder)
+    voices_dir = project_root / 'public' / 'assets' / 'audio' / 'voices' / 'en'
     if voices_dir.exists():
         existing = set(f.stem for f in voices_dir.glob('*.ogg'))
         extracted = set(line['id'] for line in all_lines)

@@ -280,7 +280,7 @@
   {
     "id": "gz_nar_poem_01",
     "char": "narrator",
-    "text": "As it was in olden time so it is today, The simple wight may merit well, Officialdom holds sway; Zhang Fei, the blunt and hasty, Where can you find his peer?",
+    "text": "As it was in olden time so it is today,\nThe simple wight may merit well,\nOfficialdom holds sway;\nZhang Fei, the blunt and hasty,\nWhere can you find his peer?",
     "source": "MapScene.js",
     "phonetic_text": "As it was in olden time so it is today, The simple white may merit well, Officialdom holds sway; Zhang Fei, the blunt and hasty, Where can you find his pier?"
   },
@@ -390,7 +390,7 @@
   {
     "id": "inn_lb_03",
     "char": "liubei",
-    "text": "A noble heart! I am Liu Bei, and this is Zhang Fei. We have just agreed to raise a volunteer army ourselves.",
+    "text": "A noble heart!",
     "source": "NarrativeScripts.js"
   },
   {
@@ -408,7 +408,7 @@
   {
     "id": "inn_lb_choice_01",
     "char": "liubei",
-    "text": "Your cause is just. Join us, and together we shall serve the Han.",
+    "text": "Join us.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -931,7 +931,7 @@
   {
     "id": "qz_vic_nar_01",
     "char": "narrator",
-    "text": "Though fierce as tigers soldiers be, Battles are won by strategy. A hero comes; he gains renown, Already destined for a crown.",
+    "text": "Though fierce as tigers soldiers be, Battles are won by strategy.\nA hero comes; he gains renown, Already destined for a crown.",
     "source": "NarrativeScripts.js"
   },
   {

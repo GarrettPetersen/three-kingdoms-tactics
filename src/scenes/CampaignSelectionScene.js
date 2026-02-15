@@ -1,15 +1,17 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
+import { getLocalizedText, LANGUAGE } from '../core/Language.js';
+import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
 
 export class CampaignSelectionScene extends BaseScene {
     constructor() {
         super();
         this.chapters = [
-            { id: '1', title: 'Chapter 1', available: true },
-            { id: '2', title: 'Chapter 2', available: false }, 
-            { id: '3', title: 'Chapter 3', available: false },
-            { id: '4', title: 'Chapter 4', available: false },
-            { id: '5', title: 'Chapter 5', available: false }
+            { id: '1', titleKey: 'Chapter 1', available: true },
+            { id: '2', titleKey: 'Chapter 2', available: false }, 
+            { id: '3', titleKey: 'Chapter 3', available: false },
+            { id: '4', titleKey: 'Chapter 4', available: false },
+            { id: '5', titleKey: 'Chapter 5', available: false }
         ];
         this.selectedChapterIndex = 0;
         this.message = null;
@@ -21,9 +23,11 @@ export class CampaignSelectionScene extends BaseScene {
         this.campaigns = [
             { 
                 id: 'liubei', 
-                name: 'THE OATH IN THE PEACH GARDEN', 
+                nameKey: 'THE OATH IN THE PEACH GARDEN',
+                nameCompleteKey: 'THE OATH - STORY COMPLETE',
                 charName: 'LIU BEI',
                 imgKey: 'liubei',
+                descriptionKey: 'campaign_liubei_description',
                 description: 'In the waning days of the Han, three heroes meet to swear an oath that will change history.',
                 x: 190,
                 y: 70,
@@ -54,13 +58,12 @@ export class CampaignSelectionScene extends BaseScene {
             
             if (isComplete) {
                 liubei.isComplete = true;
-                liubei.name = 'THE OATH - STORY COMPLETE';
-                liubei.description = 'You formed a brotherhood to fight the Yellow Turban rebels and rescued general Dong Zhuo from certain death.';
+                liubei.description = getLocalizedText(UI_TEXT['campaign_liubei_complete_base']);
                 
                 if (freedLuZhi) {
-                    liubei.description += ' You chose the path of loyalty, freeing Lu Zhi and becoming an outlaw in the eyes of the corrupt court.';
+                    liubei.description += getLocalizedText(UI_TEXT['campaign_liubei_complete_freed']);
                 } else {
-                    liubei.description += ' You followed the law, allowing Lu Zhi to be taken to the capital despite the injustice of the charges.';
+                    liubei.description += getLocalizedText(UI_TEXT['campaign_liubei_complete_law']);
                 }
 
                 // Ensure lastScene is set to campaign_selection once complete
@@ -68,8 +71,7 @@ export class CampaignSelectionScene extends BaseScene {
             } else {
                 // Reset to default state when not complete
                 liubei.isComplete = false;
-                liubei.name = 'THE OATH IN THE PEACH GARDEN';
-                liubei.description = 'In the waning days of the Han, three heroes meet to swear an oath that will change history.';
+                liubei.description = getLocalizedText(UI_TEXT['campaign_liubei_description']);
             }
         }
 
@@ -142,7 +144,7 @@ export class CampaignSelectionScene extends BaseScene {
             
             // Check if this chapter has an active message
             const hasMessage = this.message && this.message.chapterIndex === i;
-            const displayText = hasMessage ? this.message.text : ch.title;
+            const displayText = hasMessage ? this.message.text : getLocalizedText(UI_TEXT[ch.titleKey]);
             const displayColor = hasMessage ? this.message.color : (isSelected ? '#ffd700' : (ch.available ? '#aaa' : '#444'));
             
             // Node circle
@@ -207,7 +209,13 @@ export class CampaignSelectionScene extends BaseScene {
                 
                 // Name label above head
                 const nameColor = isSelected ? '#ffd700' : (c.locked ? '#444' : '#fff');
-                this.drawPixelText(ctx, c.charName, c.x, c.y - 45, { color: nameColor, font: '8px Silkscreen', align: 'center' });
+                // Translate "LIU BEI" to "Liu Bei" first, then localize
+                const charNameKey = c.charName === 'LIU BEI' ? 'Liu Bei' : c.charName;
+                const charNameText = getLocalizedCharacterName(charNameKey);
+                const displayName = charNameText || c.charName;
+                // Only uppercase for English
+                const finalName = LANGUAGE.current === 'zh' ? displayName : displayName.toUpperCase();
+                this.drawPixelText(ctx, finalName, c.x, c.y - 45, { color: nameColor, font: '8px Silkscreen', align: 'center' });
                 
                 ctx.restore();
             }
@@ -227,7 +235,10 @@ export class CampaignSelectionScene extends BaseScene {
             ctx.lineWidth = 1;
             ctx.strokeRect(bx + 0.5, by + 0.5, boxW - 1, boxH - 1);
 
-            this.drawPixelText(ctx, selected.name, bx + 5, by + 5, { color: '#ffd700', font: '8px Silkscreen' });
+            const nameText = selected.isComplete 
+                ? getLocalizedText(UI_TEXT[selected.nameCompleteKey])
+                : getLocalizedText(UI_TEXT[selected.nameKey]);
+            this.drawPixelText(ctx, nameText, bx + 5, by + 5, { color: '#ffd700', font: '8px Silkscreen' });
             
             const lines = this.wrapText(ctx, selected.description, boxW - 10);
             let lineY = by + 18;
@@ -236,23 +247,28 @@ export class CampaignSelectionScene extends BaseScene {
                 lineY += 10;
             });
 
+            // Adjust Y position for all bottom text to fit in box (Chinese needs more space)
+            const bottomTextY = LANGUAGE.current === 'zh' ? by + boxH - 14 : by + boxH - 10;
+            
             if (selected.locked) {
-                this.drawPixelText(ctx, "CAMPAIGN LOCKED", bx + boxW / 2, by + boxH - 10, { color: '#8b0000', font: '8px Silkscreen', align: 'center' });
+                this.drawPixelText(ctx, getLocalizedText(UI_TEXT['CAMPAIGN LOCKED']), bx + boxW / 2, bottomTextY, { color: '#8b0000', font: '8px Silkscreen', align: 'center' });
             } else if (this.message && this.message.chapterIndex === null) {
-                this.drawPixelText(ctx, this.message.text, bx + boxW / 2, by + boxH - 10, { color: this.message.color, font: '8px Silkscreen', align: 'center' });
+                this.drawPixelText(ctx, this.message.text, bx + boxW / 2, bottomTextY, { color: this.message.color, font: '8px Silkscreen', align: 'center' });
             } else if (selected.isComplete) {
-                this.drawPixelText(ctx, "STORY COMPLETE", bx + boxW / 2, by + boxH - 10, { color: '#ff4444', font: '8px Silkscreen', align: 'center' });
+                this.drawPixelText(ctx, getLocalizedText(UI_TEXT['STORY COMPLETE']), bx + boxW / 2, bottomTextY, { color: '#ff4444', font: '8px Silkscreen', align: 'center' });
             } else {
                 const pulse = Math.abs(Math.sin(Date.now() / 500));
                 ctx.globalAlpha = pulse;
-                const promptText = selected.isInProgress ? "CLICK CHARACTER TO CONTINUE" : "CLICK CHARACTER TO BEGIN";
-                this.drawPixelText(ctx, promptText, bx + boxW / 2, by + boxH - 10, { color: '#eee', font: '8px Tiny5', align: 'center' });
+                const promptText = selected.isInProgress 
+                    ? getLocalizedText(UI_TEXT['CLICK CHARACTER TO CONTINUE'])
+                    : getLocalizedText(UI_TEXT['CLICK CHARACTER TO BEGIN']);
+                this.drawPixelText(ctx, promptText, bx + boxW / 2, bottomTextY, { color: '#eee', font: '8px Tiny5', align: 'center' });
                 ctx.globalAlpha = 1.0;
             }
         }
 
         // Header Title
-        this.drawPixelText(ctx, "STORY SELECTION", canvas.width / 2, 10, { color: '#fff', font: '8px Silkscreen', align: 'center' });
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['STORY SELECTION']), canvas.width / 2, 10, { color: '#fff', font: '8px Silkscreen', align: 'center' });
         
         // Back Button
         const backRect = { x: canvas.width - 55, y: 5, w: 50, h: 14 };
@@ -262,7 +278,8 @@ export class CampaignSelectionScene extends BaseScene {
         ctx.lineWidth = 1;
         ctx.strokeRect(backRect.x + 0.5, backRect.y + 0.5, backRect.w - 1, backRect.h - 1);
         
-        this.drawPixelText(ctx, "RETURN", backRect.x + backRect.w / 2, backRect.y + 3, { color: '#eee', font: '8px Silkscreen', align: 'center' });
+        const returnText = getLocalizedText(UI_TEXT['RETURN']);
+        this.drawPixelText(ctx, returnText, backRect.x + backRect.w / 2, backRect.y + 3, { color: '#eee', font: '8px Silkscreen', align: 'center' });
         this.backRect = backRect;
 
         // Visual helper for ESC
@@ -301,7 +318,7 @@ export class CampaignSelectionScene extends BaseScene {
             if (x >= 0 && x <= 120 && y >= ty - 5 && y <= ty + 20) {
                 // For now, only Chapter 1 is implemented
                 if (i > 0) {
-                    this.addMessage("COMING SOON!", '#ffd700', i);
+                    this.addMessage(getLocalizedText(UI_TEXT['COMING SOON!']), '#ffd700', i);
                     return;
                 }
                 
@@ -320,7 +337,7 @@ export class CampaignSelectionScene extends BaseScene {
                 hitChar = true;
                 if (this.selectedIndex === i && !c.locked) {
                     if (c.isComplete) {
-                        this.addMessage("This story is complete.", '#ff4444');
+                        this.addMessage(getLocalizedText(UI_TEXT['This story is complete.']), '#ff4444');
                     } else {
                     this.manager.switchTo('map', { campaignId: c.id });
                     }
