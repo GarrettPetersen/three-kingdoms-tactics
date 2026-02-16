@@ -272,7 +272,8 @@ async function init() {
                 vinik24: 'assets/palettes/vinik24.txt'
             }),
             assets.loadImages({
-                title: 'assets/misc/three_kingdoms_stratagem_title.png',
+                title_en: 'assets/misc/three_kingdoms_stratagem_title.png',
+                title_zh: 'assets/misc/三国玄机.png',
                 intro_sky: 'assets/intro_animation/00_sky.png',
                 intro_hills: 'assets/intro_animation/01_hills.png',
                 intro_distant_army: 'assets/intro_animation/02_distant_army.png',

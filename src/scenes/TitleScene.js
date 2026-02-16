@@ -53,7 +53,9 @@ export class TitleScene extends BaseScene {
     }
 
     processTitleImage() {
-        const titleImg = assets.getImage('title');
+        const currentLang = getCurrentLanguage();
+        const titleKey = currentLang === 'zh' ? 'title_zh' : 'title_en';
+        const titleImg = assets.getImage(titleKey);
         if (!titleImg) return;
         
         const tempCanvas = document.createElement('canvas');
@@ -751,6 +753,8 @@ export class TitleScene extends BaseScene {
             const newLang = currentLang === 'en' ? 'zh' : 'en';
             setLanguage(newLang);
             assets.playSound('ui_click', 0.5);
+            // Reprocess title image with new language
+            this.processTitleImage();
         }
     }
 
