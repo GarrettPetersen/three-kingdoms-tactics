@@ -13,6 +13,7 @@ export class AssetLoader {
         this.currentIntro = null;
         this.currentLoop = null;
         this.fadeInterval = null;
+        this.duckInterval = null; // For smooth music ducking when voice plays
         this.voices = {}; // Cache for recently played voices
         this.currentVoice = null;
         this.baseMusicVolume = 0.5;
@@ -39,8 +40,8 @@ export class AssetLoader {
             audio.volume = volume;
             this.currentVoice = audio;
 
-            // Duck music volume immediately
-            this.setMusicVolume(this.baseMusicVolume * 0.3);
+            // Duck music volume smoothly
+            this.fadeMusicVolume(this.baseMusicVolume * 0.3, 200);
 
             audio.onended = () => {
                 if (this.currentVoice === audio) {
@@ -62,12 +63,63 @@ export class AssetLoader {
             this.currentVoice.currentTime = 0;
             this.currentVoice = null;
         }
-        this.setMusicVolume(this.baseMusicVolume);
+        // Restore music volume smoothly
+        this.fadeMusicVolume(this.baseMusicVolume, 300);
     }
 
     setMusicVolume(volume) {
         if (this.currentIntro) this.currentIntro.volume = volume;
         if (this.currentLoop) this.currentLoop.volume = volume;
+    }
+
+    fadeMusicVolume(targetVolume, duration = 200) {
+        // Stop any existing ducking fade
+        if (this.duckInterval) {
+            clearInterval(this.duckInterval);
+            this.duckInterval = null;
+        }
+
+        // Get current volumes
+        const currentIntroVolume = this.currentIntro ? this.currentIntro.volume : 0;
+        const currentLoopVolume = this.currentLoop ? this.currentLoop.volume : 0;
+        
+        // If no music is playing, just set the target immediately
+        if (!this.currentIntro && !this.currentLoop) {
+            return;
+        }
+
+        const startIntroVolume = currentIntroVolume;
+        const startLoopVolume = currentLoopVolume;
+        const startTime = Date.now();
+        const fadeStep = 16; // ~60fps
+
+        this.duckInterval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Use ease-in-out curve for smooth transition
+            const eased = progress < 0.5 
+                ? 2 * progress * progress 
+                : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+            if (this.currentIntro) {
+                const newVolume = startIntroVolume + (targetVolume - startIntroVolume) * eased;
+                this.currentIntro.volume = Math.max(0, Math.min(1, newVolume));
+            }
+            
+            if (this.currentLoop) {
+                const newVolume = startLoopVolume + (targetVolume - startLoopVolume) * eased;
+                this.currentLoop.volume = Math.max(0, Math.min(1, newVolume));
+            }
+
+            if (progress >= 1) {
+                // Ensure we hit the exact target
+                if (this.currentIntro) this.currentIntro.volume = targetVolume;
+                if (this.currentLoop) this.currentLoop.volume = targetVolume;
+                clearInterval(this.duckInterval);
+                this.duckInterval = null;
+            }
+        }, fadeStep);
     }
 
     async loadPalettes(paletteAssets) {
