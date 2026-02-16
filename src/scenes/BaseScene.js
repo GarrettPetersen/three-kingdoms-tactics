@@ -406,48 +406,43 @@ export class BaseScene {
         }
         let lines = this.wrapText(ctx, localizedText || '', maxWidth, '8px Dogica');
         
-        // Chinese: limit to 2 lines max with ellipsis, English: 3 lines max
+        // Chinese: limit to 2 lines max, English: 3 lines max
         const maxLines = LANGUAGE.current === 'zh' ? 2 : 3;
         
-        // For Chinese, if text exceeds 2 lines, truncate and add ellipsis
-        if (LANGUAGE.current === 'zh' && lines.length > 2) {
+        // Calculate chunking BEFORE any truncation - keep full lines array for hasNextChunk calculation
+        const start = subStep * maxLines;
+        const hasNextChunk = (subStep + 1) * maxLines < lines.length;
+        
+        // Get the lines to display for this chunk
+        let displayLines = lines.slice(start, start + maxLines);
+        
+        // Add ellipsis to the last displayed line when there's more text to show
+        if (hasNextChunk && displayLines.length > 0) {
             ctx.save();
             ctx.font = getFontForLanguage('8px Dogica');
-            const truncated = lines.slice(0, 2);
-            // Add ellipsis to the last line if there's more text
-            const lastLine = truncated[truncated.length - 1];
-            const ellipsis = '…'; // Chinese ellipsis character
+            const lastLine = displayLines[displayLines.length - 1];
+            const ellipsis = LANGUAGE.current === 'zh' ? '…' : '...';
             const lastLineWidth = ctx.measureText(lastLine).width;
             const ellipsisWidth = ctx.measureText(ellipsis).width;
             
             if (lastLineWidth + ellipsisWidth <= maxWidth) {
-                truncated[truncated.length - 1] = lastLine + ellipsis;
+                displayLines[displayLines.length - 1] = lastLine + ellipsis;
             } else {
-                // Replace last few characters with ellipsis
+                // Replace last few characters with ellipsis if needed
                 let shortened = lastLine;
                 while (ctx.measureText(shortened + ellipsis).width > maxWidth && shortened.length > 0) {
                     shortened = shortened.slice(0, -1);
                 }
-                truncated[truncated.length - 1] = shortened + ellipsis;
+                displayLines[displayLines.length - 1] = shortened + ellipsis;
             }
             ctx.restore();
-            lines = truncated;
         }
-        
-        const start = subStep * maxLines;
-        const displayLines = lines.slice(start, start + maxLines);
-        const hasNextChunk = (subStep + 1) * maxLines < lines.length;
         
         // Adjust line spacing for Chinese (larger font) - but keep panel same size
         const lineSpacing = LANGUAGE.current === 'zh' ? 16 : 12;
         let lineY = py + 20;
         displayLines.forEach((line, i) => {
-            let text = line;
-            // Only add "..." for English when there's more text
-            if (LANGUAGE.current !== 'zh' && i === displayLines.length - 1 && hasNextChunk) {
-                text += "...";
-            }
-            this.drawPixelText(ctx, text, textX, lineY, { color: '#eee', font: '8px Dogica' });
+            this.drawPixelText(ctx, line, textX, lineY, { color: '#eee', font: '8px Dogica' });
             lineY += lineSpacing;
         });
 
