@@ -33,6 +33,7 @@ export class CustomBattleMenuScene extends BaseScene {
         this.setupStep = 0; // 0: Environment, 1: Army
         this.buttonRects = [];
         this.selectedRosterIndex = -1;
+        this.rosterScrollOffset = 0; // For scrolling through roster if it has many units
 
         this.availableUnits = [
             { name: 'Liu Bei', imgKey: 'liubei', type: 'hero', templateId: 'liubei' },
@@ -60,6 +61,7 @@ export class CustomBattleMenuScene extends BaseScene {
         this.view = 'MENU';
         this.setupStep = 0;
         this.selectedRosterIndex = -1;
+        this.rosterScrollOffset = 0;
         // Reset dropdowns
         for (const k in this.dropdowns) this.dropdowns[k].open = false;
 
@@ -246,8 +248,8 @@ export class CustomBattleMenuScene extends BaseScene {
             this.renderAvailableUnitsPanel(ctx, leftX, leftY, leftW);
         }
 
-        // Right side: List of current units in roster
-        this.renderRosterPanel(ctx, 130, 30, 115);
+        // Right side: List of current units in roster (moved down to avoid covering title)
+        this.renderRosterPanel(ctx, 130, 50, 115);
 
         // Bottom Navigation
         const isAddingUnit = this.selectedRosterIndex >= 0;
@@ -508,31 +510,42 @@ export class CustomBattleMenuScene extends BaseScene {
         const counts = { player: 0, allied: 0, enemy: 0 };
         this.options.roster.forEach(u => counts[u.faction]++);
         
-        // Increase spacing for Chinese text
-        const lineSpacing = LANGUAGE.current === 'zh' ? 14 : 10;
-        const headerSpacing = LANGUAGE.current === 'zh' ? 18 : 12;
+        // Header spacing (no longer need lineSpacing since we removed the counts line)
+        const headerSpacing = LANGUAGE.current === 'zh' ? 12 : 10;
         
         const rosterText = getLocalizedText(UI_TEXT['ROSTER']) + ` (${this.options.roster.length}/20)`;
         this.drawPixelText(ctx, rosterText, x, y, { color: '#aaa', font: '8px Tiny5' });
-        const factionLabels = {
-            player: getLocalizedText(UI_TEXT['PLAYER']).charAt(0),
-            allied: getLocalizedText(UI_TEXT['ALLIED']).charAt(0),
-            enemy: getLocalizedText(UI_TEXT['ENEMY']).charAt(0)
-        };
-        const countsText = `${factionLabels.player}:${counts.player} ${factionLabels.allied}:${counts.allied} ${factionLabels.enemy}:${counts.enemy}`;
-        this.drawPixelText(ctx, countsText, x, y + lineSpacing, { color: '#ffd700', font: '8px Tiny5' });
 
         const rowH = LANGUAGE.current === 'zh' ? 18 : 16;
         const startY = y + headerSpacing;
         const factionColors = { player: '#4f4', allied: '#55f', enemy: '#f44' };
 
-        // Two columns if roster > 10
-        this.options.roster.forEach((u, i) => {
-            const col = Math.floor(i / 11);
-            const row = i % 11;
-            const rectW = i >= 11 ? w / 2 : w;
-            const rectX = i >= 11 ? x + w / 2 : x;
-            const rect = { x: rectX, y: startY + row * rowH, w: rectW - 4, h: rowH - 2, type: 'select_roster', index: i };
+        // Calculate available space for roster items (from startY to bottom navigation buttons)
+        // Bottom navigation is around y=200-220, so we have roughly 150-170px of space
+        const { canvas } = this.manager;
+        const bottomNavY = canvas.height - 30; // Approximate position of bottom nav
+        const availableHeight = bottomNavY - startY;
+        const maxVisibleRows = Math.floor(availableHeight / rowH);
+        
+        // Clamp scroll offset
+        const maxScroll = Math.max(0, this.options.roster.length - maxVisibleRows);
+        this.rosterScrollOffset = Math.max(0, Math.min(this.rosterScrollOffset, maxScroll));
+        
+        // Render visible units only
+        const visibleStart = this.rosterScrollOffset;
+        const visibleEnd = Math.min(visibleStart + maxVisibleRows, this.options.roster.length);
+        
+        for (let i = visibleStart; i < visibleEnd; i++) {
+            const u = this.options.roster[i];
+            const displayIndex = i - visibleStart;
+            const rect = { 
+                x: x, 
+                y: startY + displayIndex * rowH, 
+                w: w - 4, 
+                h: rowH - 2, 
+                type: 'select_roster', 
+                index: i 
+            };
             const isSelected = this.selectedRosterIndex === i;
             
             ctx.fillStyle = isSelected ? '#330' : '#111';
@@ -559,7 +572,60 @@ export class CustomBattleMenuScene extends BaseScene {
             const nameTextY = rect.y + (rect.h - 8) / 2;
             this.drawPixelText(ctx, truncatedName, rect.x + 18, nameTextY, { color: nameColor, font: '8px Tiny5' });
             this.buttonRects.push(rect);
-        });
+        }
+
+        // Add scroll arrows if needed
+        if (this.options.roster.length > maxVisibleRows) {
+            const arrowW = 16;
+            const arrowH = 12;
+            const arrowX = x + w - arrowW - 2;
+            
+            // Down arrow (scroll down)
+            if (this.rosterScrollOffset < maxScroll) {
+                const downArrowY = startY + maxVisibleRows * rowH;
+                const downArrowRect = { 
+                    x: arrowX, 
+                    y: downArrowY, 
+                    w: arrowW, 
+                    h: arrowH, 
+                    type: 'roster_scroll_down' 
+                };
+                ctx.fillStyle = '#444';
+                ctx.fillRect(Math.floor(downArrowRect.x), Math.floor(downArrowRect.y), Math.floor(downArrowRect.w), Math.floor(downArrowRect.h));
+                ctx.strokeStyle = '#666';
+                ctx.strokeRect(Math.floor(downArrowRect.x) + 0.5, Math.floor(downArrowRect.y) + 0.5, Math.floor(downArrowRect.w) - 1, Math.floor(downArrowRect.h) - 1);
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath();
+                ctx.moveTo(arrowX + arrowW/2 - 4, downArrowY + 4);
+                ctx.lineTo(arrowX + arrowW/2, downArrowY + 8);
+                ctx.lineTo(arrowX + arrowW/2 + 4, downArrowY + 4);
+                ctx.fill();
+                this.buttonRects.push(downArrowRect);
+            }
+            
+            // Up arrow (scroll up)
+            if (this.rosterScrollOffset > 0) {
+                const upArrowY = startY - arrowH;
+                const upArrowRect = { 
+                    x: arrowX, 
+                    y: upArrowY, 
+                    w: arrowW, 
+                    h: arrowH, 
+                    type: 'roster_scroll_up' 
+                };
+                ctx.fillStyle = '#444';
+                ctx.fillRect(Math.floor(upArrowRect.x), Math.floor(upArrowRect.y), Math.floor(upArrowRect.w), Math.floor(upArrowRect.h));
+                ctx.strokeStyle = '#666';
+                ctx.strokeRect(Math.floor(upArrowRect.x) + 0.5, Math.floor(upArrowRect.y) + 0.5, Math.floor(upArrowRect.w) - 1, Math.floor(upArrowRect.h) - 1);
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath();
+                ctx.moveTo(arrowX + arrowW/2 - 4, upArrowY + 8);
+                ctx.lineTo(arrowX + arrowW/2, upArrowY + 4);
+                ctx.lineTo(arrowX + arrowW/2 + 4, upArrowY + 8);
+                ctx.fill();
+                this.buttonRects.push(upArrowRect);
+            }
+        }
 
         if (this.options.roster.length > 0) {
             // Position CLEAR ALL button with proper spacing from roster text
@@ -709,6 +775,19 @@ export class CustomBattleMenuScene extends BaseScene {
             } else if (btn.type === 'scroll_up') {
                 // Scroll up for biome/layout/weather dropdowns
                 this.dropdowns[btn.key].scrollOffset = Math.max(0, (this.dropdowns[btn.key].scrollOffset || 0) - 1);
+                assets.playSound('ui_click', 0.3);
+            } else if (btn.type === 'roster_scroll_down') {
+                // Scroll down roster
+                const { canvas } = this.manager;
+                const rowH = LANGUAGE.current === 'zh' ? 18 : 16;
+                const availableHeight = (canvas.height - 30) - (50 + (LANGUAGE.current === 'zh' ? 18 : 12));
+                const maxVisibleRows = Math.floor(availableHeight / rowH);
+                const maxScroll = Math.max(0, this.options.roster.length - maxVisibleRows);
+                this.rosterScrollOffset = Math.min(maxScroll, this.rosterScrollOffset + 1);
+                assets.playSound('ui_click', 0.3);
+            } else if (btn.type === 'roster_scroll_up') {
+                // Scroll up roster
+                this.rosterScrollOffset = Math.max(0, this.rosterScrollOffset - 1);
                 assets.playSound('ui_click', 0.3);
             } else if (btn.type === 'density_slider') {
                 const ratio = Math.max(0, Math.min(1, (x - btn.x) / btn.w));
