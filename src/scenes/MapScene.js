@@ -377,14 +377,10 @@ export class MapScene extends BaseScene {
 
         // Draw Back Button (Top Right)
         const returnText = getLocalizedText(UI_TEXT['RETURN']);
-        // Measure text to size button properly
-        ctx.save();
-        ctx.font = getFontForLanguage('8px Silkscreen');
-        const textMetrics = ctx.measureText(returnText);
-        ctx.restore();
-        
-        const backW = Math.max(40, Math.ceil(textMetrics.width) + 10);
-        const backH = 15;
+        // Calculate button size properly for Chinese text
+        const buttonSize = getTextContainerSize(ctx, returnText, '8px Silkscreen', 10, 14);
+        const backW = Math.max(40, buttonSize.width);
+        const backH = Math.max(14, buttonSize.height); // Minimum 14px for Chinese text
         const bx = canvas.width - backW - 5;
         const by = 5;
         
@@ -394,7 +390,9 @@ export class MapScene extends BaseScene {
         ctx.lineWidth = 1;
         ctx.strokeRect(bx + 0.5, by + 0.5, backW - 1, backH - 1);
         
-        this.drawPixelText(ctx, returnText, bx + backW/2, by + 4, { 
+        // Center text vertically (adjust for Chinese font which is taller)
+        const textY = by + backH / 2 + (LANGUAGE.current === 'zh' ? 2 : -4);
+        this.drawPixelText(ctx, returnText, bx + backW/2, textY, { 
             color: '#ffd700', 
             font: '8px Silkscreen', 
             align: 'center' 

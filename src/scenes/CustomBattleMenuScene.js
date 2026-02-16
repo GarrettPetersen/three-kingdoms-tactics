@@ -1,8 +1,8 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 import { UNIT_TEMPLATES } from '../data/Battles.js';
-import { getLocalizedText } from '../core/Language.js';
-import { UI_TEXT } from '../data/Translations.js';
+import { getLocalizedText, LANGUAGE, getFontForLanguage, getTextContainerSize } from '../core/Language.js';
+import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
 
 export class CustomBattleMenuScene extends BaseScene {
     constructor() {
@@ -23,9 +23,10 @@ export class CustomBattleMenuScene extends BaseScene {
         this.weathers = ['none', 'rain', 'snow'];
         
         this.dropdowns = {
-            biome: { open: false, items: this.biomes },
-            layout: { open: false, items: this.layouts },
-            weather: { open: false, items: this.weathers }
+            biome: { open: false, items: this.biomes, scrollOffset: 0 },
+            layout: { open: false, items: this.layouts, scrollOffset: 0 },
+            weather: { open: false, items: this.weathers, scrollOffset: 0 },
+            unit: { open: false, items: [], selectedIndex: undefined, scrollOffset: 0 }
         };
 
         this.view = 'MENU'; // 'MENU' or 'STATS'
@@ -49,6 +50,9 @@ export class CustomBattleMenuScene extends BaseScene {
             { name: 'Imp. Escort', imgKey: 'soldier', type: 'imperial_soldier', templateId: 'escort' },
             { name: 'Archer', imgKey: 'archer', type: 'enemy_soldier', templateId: 'rebel', isArcher: true, hp: 2 },
         ];
+        
+        // Initialize unit dropdown items
+        this.dropdowns.unit.items = this.availableUnits;
     }
 
     enter() {
@@ -89,7 +93,7 @@ export class CustomBattleMenuScene extends BaseScene {
     }
 
     renderMapStep(ctx, canvas) {
-        this.drawPixelText(ctx, "STEP 1: ENVIRONMENT", canvas.width / 2, 15, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['STEP 1: ENVIRONMENT']), canvas.width / 2, 15, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
         
         this.buttonRects = [];
         const startY = 40;
@@ -110,7 +114,9 @@ export class CustomBattleMenuScene extends BaseScene {
             ctx.strokeStyle = this.dropdowns[key].open ? '#ffd700' : '#666';
             ctx.strokeRect(Math.floor(rect.x) + 0.5, Math.floor(rect.y) + 0.5, Math.floor(rect.w) - 1, Math.floor(rect.h) - 1);
             
-            this.drawPixelText(ctx, val.toUpperCase().replace(/_/g, ' '), dx + 5, ly + 3, { color: '#fff', font: '8px Tiny5' });
+            // Localize the value
+            const displayVal = getLocalizedText(UI_TEXT[val]) || (typeof val === 'string' ? val.toUpperCase().replace(/_/g, ' ') : val);
+            this.drawPixelText(ctx, displayVal, dx + 5, ly + 3, { color: '#fff', font: '8px Tiny5' });
             ctx.fillStyle = '#fff';
             ctx.beginPath();
             if (this.dropdowns[key].open) {
@@ -122,9 +128,9 @@ export class CustomBattleMenuScene extends BaseScene {
             this.buttonRects.push(rect);
         };
 
-        drawDropdownAnchor("BIOME:", "biome", this.options.biome, 0);
-        drawDropdownAnchor("LAYOUT:", "layout", this.options.layout, 1);
-        drawDropdownAnchor("WEATHER:", "weather", this.options.weather, 2);
+        drawDropdownAnchor(getLocalizedText(UI_TEXT['BIOME:']), "biome", this.options.biome, 0);
+        drawDropdownAnchor(getLocalizedText(UI_TEXT['LAYOUT:']), "layout", this.options.layout, 1);
+        drawDropdownAnchor(getLocalizedText(UI_TEXT['WEATHER:']), "weather", this.options.weather, 2);
 
         const drawDensitySlider = (label, key, val, index) => {
             const ly = startY + index * spacing;
@@ -141,48 +147,93 @@ export class CustomBattleMenuScene extends BaseScene {
             this.buttonRects.push({ x: sx, y: ly, w: sw, h: 14, type: 'density_slider', key: key });
         };
 
-        drawDensitySlider("FOREST:", "forestDensity", this.options.forestDensity, 3);
-        drawDensitySlider("MOUNTAIN:", "mountainDensity", this.options.mountainDensity, 4);
-        drawDensitySlider("RIVER:", "riverDensity", this.options.riverDensity, 5);
+        drawDensitySlider(getLocalizedText(UI_TEXT['FOREST:']), "forestDensity", this.options.forestDensity, 3);
+        drawDensitySlider(getLocalizedText(UI_TEXT['MOUNTAIN:']), "mountainDensity", this.options.mountainDensity, 4);
+        drawDensitySlider(getLocalizedText(UI_TEXT['RIVER:']), "riverDensity", this.options.riverDensity, 5);
 
         const nextRect = { x: canvas.width / 2 - 50, y: 190, w: 100, h: 18, type: 'next_step' };
-        this.drawButton(ctx, "NEXT: ARMY SETUP", nextRect, false, '#228b22');
+        this.drawButton(ctx, getLocalizedText(UI_TEXT['NEXT: ARMY SETUP']), nextRect, false, '#228b22');
         this.buttonRects.push(nextRect);
 
         const backRect = { x: 20, y: 220, w: 60, h: 18, type: 'back' };
-        this.drawButton(ctx, "CANCEL", backRect, false, '#8b0000');
+        this.drawButton(ctx, getLocalizedText(UI_TEXT['CANCEL']), backRect, false, '#8b0000');
         this.buttonRects.push(backRect);
 
         const statsRect = { x: canvas.width - 80, y: 220, w: 60, h: 18, type: 'view_stats' };
-        this.drawButton(ctx, "STATS", statsRect, false, '#444');
+        this.drawButton(ctx, getLocalizedText(UI_TEXT['STATS']), statsRect, false, '#444');
         this.buttonRects.push(statsRect);
 
         // Dropdowns last for Z-index
         for (const key in this.dropdowns) {
+            if (key === 'unit') continue; // Unit dropdown is rendered in army step
             if (this.dropdowns[key].open) {
                 const items = this.dropdowns[key].items;
                 const index = ['biome', 'layout', 'weather'].indexOf(key);
                 const ly = startY + index * spacing;
                 const dx = 100;
                 const dw = 120;
-                const dh = 14;
-                items.forEach((item, i) => {
-                    const iy = ly + dh + (i * dh);
+                const dh = LANGUAGE.current === 'zh' ? 14 : 14; // Minimum 14px for Chinese text
+                const maxVisible = 6; // Limit to prevent covering buttons
+                const scrollOffset = this.dropdowns[key].scrollOffset || 0;
+                const startIdx = Math.max(0, Math.min(scrollOffset, items.length - maxVisible));
+                const endIdx = Math.min(items.length, startIdx + maxVisible);
+                
+                for (let i = startIdx; i < endIdx; i++) {
+                    const item = items[i];
+                    const iy = ly + dh + (i - startIdx) * dh;
                     const iRect = { x: dx, y: iy, w: dw, h: dh, type: 'item', key: key, value: item };
                     ctx.fillStyle = '#333';
                     ctx.fillRect(Math.floor(iRect.x), Math.floor(iRect.y), Math.floor(iRect.w), Math.floor(iRect.h));
                     ctx.strokeStyle = '#444';
                     ctx.strokeRect(Math.floor(iRect.x) + 0.5, Math.floor(iRect.y) + 0.5, Math.floor(iRect.w) - 1, Math.floor(iRect.h) - 1);
-                    this.drawPixelText(ctx, item.toUpperCase().replace(/_/g, ' '), dx + 10, iy + 3, { color: '#ccc', font: '8px Tiny5' });
+                    
+                    // Localize the item text
+                    const itemText = getLocalizedText(UI_TEXT[item]) || item.toUpperCase().replace(/_/g, ' ');
+                    const textY = iy + (LANGUAGE.current === 'zh' ? 2 : 3);
+                    this.drawPixelText(ctx, itemText, dx + 10, textY, { color: '#ccc', font: '8px Tiny5' });
                     this.buttonRects.push(iRect);
-                });
+                }
+                
+                // Show down arrow if there are more items
+                if (endIdx < items.length) {
+                    const arrowY = ly + dh + (endIdx - startIdx) * dh;
+                    const arrowRect = { x: dx, y: arrowY, w: dw, h: dh, type: 'scroll_down', key: key };
+                    ctx.fillStyle = '#444';
+                    ctx.fillRect(Math.floor(arrowRect.x), Math.floor(arrowRect.y), Math.floor(arrowRect.w), Math.floor(arrowRect.h));
+                    ctx.strokeStyle = '#666';
+                    ctx.strokeRect(Math.floor(arrowRect.x) + 0.5, Math.floor(arrowRect.y) + 0.5, Math.floor(arrowRect.w) - 1, Math.floor(arrowRect.h) - 1);
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath();
+                    ctx.moveTo(dx + dw/2 - 4, arrowY + 4);
+                    ctx.lineTo(dx + dw/2, arrowY + 10);
+                    ctx.lineTo(dx + dw/2 + 4, arrowY + 4);
+                    ctx.fill();
+                    this.buttonRects.push(arrowRect);
+                }
+                
+                // Show up arrow if scrolled
+                if (startIdx > 0) {
+                    const arrowY = ly + dh;
+                    const arrowRect = { x: dx, y: arrowY, w: dw, h: dh, type: 'scroll_up', key: key };
+                    ctx.fillStyle = '#444';
+                    ctx.fillRect(Math.floor(arrowRect.x), Math.floor(arrowRect.y), Math.floor(arrowRect.w), Math.floor(arrowRect.h));
+                    ctx.strokeStyle = '#666';
+                    ctx.strokeRect(Math.floor(arrowRect.x) + 0.5, Math.floor(arrowRect.y) + 0.5, Math.floor(arrowRect.w) - 1, Math.floor(arrowRect.h) - 1);
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath();
+                    ctx.moveTo(dx + dw/2 - 4, arrowY + 10);
+                    ctx.lineTo(dx + dw/2, arrowY + 4);
+                    ctx.lineTo(dx + dw/2 + 4, arrowY + 10);
+                    ctx.fill();
+                    this.buttonRects.push(arrowRect);
+                }
             }
         }
     }
 
     renderArmyStep(ctx, canvas) {
         this.buttonRects = [];
-        this.drawPixelText(ctx, "STEP 2: ARMY SETUP", canvas.width / 2, 10, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['STEP 2: ARMY SETUP']), canvas.width / 2, 10, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
 
         // Left side: Detail View or Available Units
         const leftX = 10;
@@ -199,18 +250,67 @@ export class CustomBattleMenuScene extends BaseScene {
         this.renderRosterPanel(ctx, 130, 30, 115);
 
         // Bottom Navigation
-        const startRect = { x: canvas.width / 2 + 10, y: 220, w: 100, h: 20, type: 'start' };
-        this.drawButton(ctx, "START BATTLE", startRect, false, '#228b22');
-        this.buttonRects.push(startRect);
-
-        const backRect = { x: canvas.width / 2 - 110, y: 220, w: 100, h: 20, type: 'prev_step' };
-        this.drawButton(ctx, "BACK TO MAP", backRect, false, '#444');
-        this.buttonRects.push(backRect);
+        const isAddingUnit = this.selectedRosterIndex >= 0;
+        
+        // Left button: UNDO (when adding unit) or BACK TO MAP (otherwise)
+        let leftButtonText, leftButtonType;
+        if (isAddingUnit) {
+            leftButtonText = getLocalizedText(UI_TEXT['UNDO']);
+            leftButtonType = 'undo_add_unit';
+        } else {
+            leftButtonText = getLocalizedText(UI_TEXT['BACK TO MAP']);
+            leftButtonType = 'prev_step';
+        }
+        
+        // Right button: ADD UNIT (when adding unit) or START BATTLE (when roster has units)
+        let rightButtonText, rightButtonType, rightButtonColor;
+        if (isAddingUnit) {
+            rightButtonText = getLocalizedText(UI_TEXT['ADD UNIT']);
+            rightButtonType = 'confirm_add_unit';
+            rightButtonColor = '#228b22';
+        } else if (this.options.roster.length > 0) {
+            rightButtonText = getLocalizedText(UI_TEXT['START BATTLE']);
+            rightButtonType = 'start';
+            rightButtonColor = '#228b22';
+        } else {
+            rightButtonText = null; // No right button when no units
+        }
+        
+        // Calculate button sizes based on text
+        ctx.save();
+        ctx.font = getFontForLanguage('8px Silkscreen');
+        const leftButtonSize = getTextContainerSize(ctx, leftButtonText, '8px Silkscreen', 10, 20);
+        const leftButtonW = Math.max(80, leftButtonSize.width);
+        const leftButtonH = 20;
+        
+        let rightButtonW = 0, rightButtonH = 20;
+        if (rightButtonText) {
+            const rightButtonSize = getTextContainerSize(ctx, rightButtonText, '8px Silkscreen', 10, 20);
+            rightButtonW = Math.max(80, rightButtonSize.width);
+        }
+        ctx.restore();
+        
+        // Position buttons to prevent overlap
+        const buttonSpacing = 10;
+        const totalWidth = leftButtonW + (rightButtonW > 0 ? rightButtonW + buttonSpacing : 0);
+        const startX = (canvas.width - totalWidth) / 2;
+        
+        // Left button
+        const leftRect = { x: startX, y: 220, w: leftButtonW, h: leftButtonH, type: leftButtonType };
+        this.drawButton(ctx, leftButtonText, leftRect, false, '#444');
+        this.buttonRects.push(leftRect);
+        
+        // Right button (if exists)
+        if (rightButtonText) {
+            const rightRect = { x: startX + leftButtonW + buttonSpacing, y: 220, w: rightButtonW, h: rightButtonH, type: rightButtonType };
+            this.drawButton(ctx, rightButtonText, rightRect, false, rightButtonColor);
+            this.buttonRects.push(rightRect);
+        }
     }
 
     renderUnitTweakPanel(ctx, x, y, w) {
         const sel = this.options.roster[this.selectedRosterIndex];
-        this.drawPixelText(ctx, "EDITING UNIT", x, y, { color: '#ffd700', font: '8px Tiny5' });
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['EDITING UNIT']), x, y, { color: '#ffd700', font: '8px Tiny5' });
         
         // Large preview
         const charImg = assets.getImage(sel.imgKey);
@@ -221,22 +321,26 @@ export class CustomBattleMenuScene extends BaseScene {
             this.drawCharacter(ctx, charImg, 'standby', Math.floor(Date.now()/150)%4, 0, 0);
             ctx.restore();
         }
-        this.drawPixelText(ctx, sel.name.toUpperCase(), x + w/2, y + 65, { color: '#fff', font: '8px Silkscreen', align: 'center' });
+        const unitName = getLocalizedCharacterName(sel.name) || sel.name;
+        const displayName = LANGUAGE.current === 'zh' ? unitName : unitName.toUpperCase();
+        this.drawPixelText(ctx, displayName, x + w/2, y + 65, { color: '#fff', font: '8px Silkscreen', align: 'center' });
 
         // Faction selection
         const fy = y + 80;
-        this.drawPixelText(ctx, "FACTION:", x, fy, { color: '#aaa', font: '8px Tiny5' });
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['FACTION:']), x, fy, { color: '#aaa', font: '8px Tiny5' });
         const factionColors = { player: '#4f4', allied: '#55f', enemy: '#f44' };
-        ['PLAYER', 'ALLIED', 'ENEMY'].forEach((f, i) => {
+        const factions = ['PLAYER', 'ALLIED', 'ENEMY'];
+        factions.forEach((f, i) => {
             const rect = { x: x, y: fy + 12 + i * 16, w: w, h: 14, type: 'set_faction', faction: f.toLowerCase() };
             const isActive = sel.faction === f.toLowerCase();
-            this.drawButton(ctx, f, rect, isActive, isActive ? factionColors[sel.faction] : '#222');
+            const factionText = getLocalizedText(UI_TEXT[f]);
+            this.drawButton(ctx, factionText, rect, isActive, isActive ? factionColors[sel.faction] : '#222');
             this.buttonRects.push(rect);
         });
 
         // Level selection
         const ly = y + 145;
-        this.drawPixelText(ctx, "LEVEL:", x, ly, { color: '#aaa', font: '8px Tiny5' });
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['LEVEL:']), x, ly, { color: '#aaa', font: '8px Tiny5' });
         [1, 2, 3, 4, 5].forEach((l, i) => {
             const rect = { x: x + i * 22, y: ly + 12, w: 18, h: 14, type: 'set_level', level: l };
             const isActive = sel.level === l;
@@ -246,57 +350,180 @@ export class CustomBattleMenuScene extends BaseScene {
 
         // Delete button
         const delRect = { x: x, y: y + 175, w: w, h: 14, type: 'remove_unit', index: this.selectedRosterIndex };
-        this.drawButton(ctx, "REMOVE UNIT", delRect, false, '#800');
+        this.drawButton(ctx, getLocalizedText(UI_TEXT['REMOVE UNIT']), delRect, false, '#800');
         this.buttonRects.push(delRect);
-        
-        // Close detail view
-        const closeRect = { x: x, y: y + 5, w: 20, h: 10, type: 'deselect_unit' };
-        this.drawPixelText(ctx, "< BACK", x, y + 5, { color: '#aaa', font: '8px Tiny5' });
-        this.buttonRects.push(closeRect);
     }
 
     renderAvailableUnitsPanel(ctx, x, y, w) {
-        this.drawPixelText(ctx, "ADD UNITS", x, y, { color: '#aaa', font: '8px Tiny5' });
-        const colW = w / 2 - 5;
-        const rowH = 24;
-        this.availableUnits.forEach((u, i) => {
-            const row = Math.floor(i / 2);
-            const col = i % 2;
-            const rect = { x: x + col * (colW + 10), y: y + 15 + row * rowH, w: colW, h: rowH - 4, type: 'add_unit', unit: u };
-            ctx.fillStyle = '#222';
-            ctx.fillRect(Math.floor(rect.x), Math.floor(rect.y), Math.floor(rect.w), Math.floor(rect.h));
-            ctx.strokeStyle = '#444';
-            ctx.strokeRect(Math.floor(rect.x) + 0.5, Math.floor(rect.y) + 0.5, Math.floor(rect.w) - 1, Math.floor(rect.h) - 1);
-            
-            const charImg = assets.getImage(u.imgKey);
-            if (charImg) {
-                ctx.save();
-                ctx.translate(rect.x + rect.w/2, rect.y + 16);
-                ctx.scale(0.3, 0.3);
-                this.drawCharacter(ctx, charImg, 'standby', 0, 0, 0);
-                ctx.restore();
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['ADD UNITS']), x, y, { color: '#aaa', font: '8px Tiny5' });
+        
+        // Unit dropdown
+        const dropdownY = y + 15;
+        const dropdownH = 14;
+        const dropdownW = w;
+        
+        // Get selected unit name for display
+        let selectedUnitName = getLocalizedText(UI_TEXT['SELECT UNIT']);
+        if (this.dropdowns.unit.selectedIndex !== undefined) {
+            const selectedUnit = this.availableUnits[this.dropdowns.unit.selectedIndex];
+            if (selectedUnit) {
+                selectedUnitName = getLocalizedCharacterName(selectedUnit.name) || selectedUnit.name;
+                if (LANGUAGE.current !== 'zh') {
+                    selectedUnitName = selectedUnitName.toUpperCase();
+                }
             }
-            // Truncate name with ellipsis if too long
-            const maxWidth = rect.w - 4; // Leave some padding
-            const truncatedName = this.truncateText(ctx, u.name.toUpperCase(), maxWidth, '8px Tiny5');
-            this.drawPixelText(ctx, truncatedName, rect.x + rect.w/2, rect.y + 2, { 
-                color: '#fff', 
-                font: '8px Tiny5',
-                align: 'center' 
-            });
-            this.buttonRects.push(rect);
-        });
+        }
+        
+        const unitDropdownRect = { x: x, y: dropdownY, w: dropdownW, h: dropdownH, type: 'dropdown', key: 'unit' };
+        ctx.fillStyle = '#222';
+        ctx.fillRect(Math.floor(unitDropdownRect.x), Math.floor(unitDropdownRect.y), Math.floor(unitDropdownRect.w), Math.floor(unitDropdownRect.h));
+        ctx.strokeStyle = this.dropdowns.unit.open ? '#ffd700' : '#666';
+        ctx.strokeRect(Math.floor(unitDropdownRect.x) + 0.5, Math.floor(unitDropdownRect.y) + 0.5, Math.floor(unitDropdownRect.w) - 1, Math.floor(unitDropdownRect.h) - 1);
+        
+        // Truncate name if too long
+        ctx.save();
+        ctx.font = '8px Tiny5';
+        const maxWidth = dropdownW - 20; // Leave space for arrow
+        let displayName = selectedUnitName;
+        if (ctx.measureText(displayName).width > maxWidth) {
+            const ellipsis = '...';
+            let truncated = '';
+            for (let i = 0; i < displayName.length; i++) {
+                const test = truncated + displayName[i] + ellipsis;
+                if (ctx.measureText(test).width > maxWidth) break;
+                truncated += displayName[i];
+            }
+            displayName = truncated + ellipsis;
+        }
+        ctx.restore();
+        
+        this.drawPixelText(ctx, displayName, x + 5, dropdownY + 3, { color: '#fff', font: '8px Tiny5' });
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        if (this.dropdowns.unit.open) {
+            ctx.moveTo(x + dropdownW - 12, dropdownY + 10); 
+            ctx.lineTo(x + dropdownW - 8, dropdownY + 4); 
+            ctx.lineTo(x + dropdownW - 4, dropdownY + 10);
+        } else {
+            ctx.moveTo(x + dropdownW - 12, dropdownY + 4); 
+            ctx.lineTo(x + dropdownW - 8, dropdownY + 10); 
+            ctx.lineTo(x + dropdownW - 4, dropdownY + 4);
+        }
+        ctx.fill();
+        this.buttonRects.push(unitDropdownRect);
+        
+        
+        // Render dropdown items if open
+        if (this.dropdowns.unit.open) {
+            const maxVisible = 6; // Limit visible items to prevent covering button
+            const itemH = 14;
+            const scrollOffset = this.dropdowns.unit.scrollOffset || 0;
+            const startIndex = Math.max(0, Math.min(scrollOffset, this.availableUnits.length - maxVisible));
+            const endIndex = Math.min(this.availableUnits.length, startIndex + maxVisible);
+            
+            for (let i = startIndex; i < endIndex; i++) {
+                const unit = this.availableUnits[i];
+                const itemY = dropdownY + dropdownH + (i - startIndex) * itemH;
+                const itemRect = { x: x, y: itemY, w: dropdownW, h: itemH, type: 'unit_item', index: i };
+                
+                const isSelected = this.dropdowns.unit.selectedIndex === i;
+                ctx.fillStyle = isSelected ? '#330' : '#333';
+                ctx.fillRect(Math.floor(itemRect.x), Math.floor(itemRect.y), Math.floor(itemRect.w), Math.floor(itemRect.h));
+                ctx.strokeStyle = isSelected ? '#ffd700' : '#444';
+                ctx.strokeRect(Math.floor(itemRect.x) + 0.5, Math.floor(itemRect.y) + 0.5, Math.floor(itemRect.w) - 1, Math.floor(itemRect.h) - 1);
+                
+                // Show unit sprite
+                const charImg = assets.getImage(unit.imgKey);
+                if (charImg) {
+                    ctx.save();
+                    ctx.translate(itemRect.x + 8, itemRect.y + 10);
+                    ctx.scale(0.2, 0.2);
+                    this.drawCharacter(ctx, charImg, 'standby', 0, 0, 0);
+                    ctx.restore();
+                }
+                
+                // Show unit name (localized)
+                const unitName = getLocalizedCharacterName(unit.name) || unit.name;
+                const displayUnitName = LANGUAGE.current === 'zh' ? unitName : unitName.toUpperCase();
+                ctx.save();
+                ctx.font = '8px Tiny5';
+                const nameMaxWidth = dropdownW - 18 - 5; // Leave space for sprite and padding
+                let displayText = displayUnitName;
+                if (ctx.measureText(displayText).width > nameMaxWidth) {
+                    const ellipsis = '...';
+                    let truncated = '';
+                    for (let j = 0; j < displayText.length; j++) {
+                        const test = truncated + displayText[j] + ellipsis;
+                        if (ctx.measureText(test).width > nameMaxWidth) break;
+                        truncated += displayText[j];
+                    }
+                    displayText = truncated + ellipsis;
+                }
+                ctx.restore();
+                
+                this.drawPixelText(ctx, displayText, itemRect.x + 18, itemRect.y + 3, { 
+                    color: isSelected ? '#ffd700' : '#ccc', 
+                    font: '8px Tiny5' 
+                });
+                this.buttonRects.push(itemRect);
+            }
+            
+            // Show down arrow if there are more items
+            if (endIndex < this.availableUnits.length) {
+                const arrowY = dropdownY + dropdownH + (endIndex - startIndex) * itemH;
+                const arrowRect = { x: x, y: arrowY, w: dropdownW, h: itemH, type: 'unit_scroll_down' };
+                ctx.fillStyle = '#444';
+                ctx.fillRect(Math.floor(arrowRect.x), Math.floor(arrowRect.y), Math.floor(arrowRect.w), Math.floor(arrowRect.h));
+                ctx.strokeStyle = '#666';
+                ctx.strokeRect(Math.floor(arrowRect.x) + 0.5, Math.floor(arrowRect.y) + 0.5, Math.floor(arrowRect.w) - 1, Math.floor(arrowRect.h) - 1);
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath();
+                ctx.moveTo(x + dropdownW/2 - 4, arrowY + 4);
+                ctx.lineTo(x + dropdownW/2, arrowY + 10);
+                ctx.lineTo(x + dropdownW/2 + 4, arrowY + 4);
+                ctx.fill();
+                this.buttonRects.push(arrowRect);
+            }
+            
+            // Show up arrow if scrolled
+            if (startIndex > 0) {
+                const arrowY = dropdownY + dropdownH;
+                const arrowRect = { x: x, y: arrowY, w: dropdownW, h: itemH, type: 'unit_scroll_up' };
+                ctx.fillStyle = '#444';
+                ctx.fillRect(Math.floor(arrowRect.x), Math.floor(arrowRect.y), Math.floor(arrowRect.w), Math.floor(arrowRect.h));
+                ctx.strokeStyle = '#666';
+                ctx.strokeRect(Math.floor(arrowRect.x) + 0.5, Math.floor(arrowRect.y) + 0.5, Math.floor(arrowRect.w) - 1, Math.floor(arrowRect.h) - 1);
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath();
+                ctx.moveTo(x + dropdownW/2 - 4, arrowY + 10);
+                ctx.lineTo(x + dropdownW/2, arrowY + 4);
+                ctx.lineTo(x + dropdownW/2 + 4, arrowY + 10);
+                ctx.fill();
+                this.buttonRects.push(arrowRect);
+            }
+        }
     }
 
     renderRosterPanel(ctx, x, y, w) {
         const counts = { player: 0, allied: 0, enemy: 0 };
         this.options.roster.forEach(u => counts[u.faction]++);
         
-        this.drawPixelText(ctx, `ROSTER (${this.options.roster.length}/20)`, x, y, { color: '#aaa', font: '8px Tiny5' });
-        this.drawPixelText(ctx, `P:${counts.player} A:${counts.allied} E:${counts.enemy}`, x, y + 10, { color: '#ffd700', font: '8px Tiny5' });
+        // Increase spacing for Chinese text
+        const lineSpacing = LANGUAGE.current === 'zh' ? 14 : 10;
+        const headerSpacing = LANGUAGE.current === 'zh' ? 18 : 12;
+        
+        const rosterText = getLocalizedText(UI_TEXT['ROSTER']) + ` (${this.options.roster.length}/20)`;
+        this.drawPixelText(ctx, rosterText, x, y, { color: '#aaa', font: '8px Tiny5' });
+        const factionLabels = {
+            player: getLocalizedText(UI_TEXT['PLAYER']).charAt(0),
+            allied: getLocalizedText(UI_TEXT['ALLIED']).charAt(0),
+            enemy: getLocalizedText(UI_TEXT['ENEMY']).charAt(0)
+        };
+        const countsText = `${factionLabels.player}:${counts.player} ${factionLabels.allied}:${counts.allied} ${factionLabels.enemy}:${counts.enemy}`;
+        this.drawPixelText(ctx, countsText, x, y + lineSpacing, { color: '#ffd700', font: '8px Tiny5' });
 
-        const rowH = 16;
-        const startY = y + 22;
+        const rowH = LANGUAGE.current === 'zh' ? 18 : 16;
+        const startY = y + headerSpacing;
         const factionColors = { player: '#4f4', allied: '#55f', enemy: '#f44' };
 
         // Two columns if roster > 10
@@ -323,23 +550,31 @@ export class CustomBattleMenuScene extends BaseScene {
             }
 
             const nameColor = factionColors[u.faction] || '#fff';
+            const unitName = getLocalizedCharacterName(u.name) || u.name;
+            const displayName = LANGUAGE.current === 'zh' ? unitName : unitName.toUpperCase();
             // Truncate name with ellipsis if too long (account for sprite width ~16px)
             const maxWidth = rect.w - 18 - 2; // Leave space for sprite and padding
-            const truncatedName = this.truncateText(ctx, u.name.toUpperCase(), maxWidth, '8px Tiny5');
-            this.drawPixelText(ctx, truncatedName, rect.x + 18, rect.y + 3, { color: nameColor, font: '8px Tiny5' });
+            const truncatedName = this.truncateText(ctx, displayName, maxWidth, '8px Tiny5');
+            // Center text vertically in the row: drawPixelText uses textBaseline='top'
+            const nameTextY = rect.y + (rect.h - 8) / 2;
+            this.drawPixelText(ctx, truncatedName, rect.x + 18, nameTextY, { color: nameColor, font: '8px Tiny5' });
             this.buttonRects.push(rect);
         });
 
         if (this.options.roster.length > 0) {
-            const clearRect = { x: x + w - 40, y: y, w: 40, h: 10, type: 'clear_roster' };
-            this.drawPixelText(ctx, "CLEAR ALL", x + w, y, { color: '#800', font: '8px Tiny5', align: 'right' });
+            // Position CLEAR ALL button with proper spacing from roster text
+            const clearY = LANGUAGE.current === 'zh' ? y + 1 : y;
+            const clearH = LANGUAGE.current === 'zh' ? 12 : 10;
+            const clearRect = { x: x + w - 40, y: clearY, w: 40, h: clearH, type: 'clear_roster' };
+            const clearTextY = clearY + (clearH - 8) / 2;
+            this.drawPixelText(ctx, getLocalizedText(UI_TEXT['CLEAR ALL']), x + w, clearTextY, { color: '#800', font: '8px Tiny5', align: 'right' });
             this.buttonRects.push(clearRect);
         }
     }
 
     renderStats(ctx, canvas) {
         const cx = canvas.width / 2;
-        this.drawPixelText(ctx, "CUSTOM BATTLE RECORD", cx, 30, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['CUSTOM BATTLE RECORD']), cx, 30, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
         
         const stats = this.manager.gameState.get('customStats') || { totalBattles: 0, wins: 0, losses: 0, enemiesDefeated: 0, unitsLost: 0 };
         
@@ -350,14 +585,14 @@ export class CustomBattleMenuScene extends BaseScene {
             y += 18;
         };
 
-        drawStatLine("Total Battles:", stats.totalBattles);
-        drawStatLine("Wins:", stats.wins, '#4f4');
-        drawStatLine("Losses:", stats.losses, '#f44');
-        drawStatLine("Enemies Slain:", stats.enemiesDefeated, '#ffd700');
-        drawStatLine("Heroes Fallen:", stats.unitsLost, '#f44');
+        drawStatLine(getLocalizedText(UI_TEXT['Total Battles:']), stats.totalBattles);
+        drawStatLine(getLocalizedText(UI_TEXT['Wins:']), stats.wins, '#4f4');
+        drawStatLine(getLocalizedText(UI_TEXT['Losses:']), stats.losses, '#f44');
+        drawStatLine(getLocalizedText(UI_TEXT['Enemies Slain:']), stats.enemiesDefeated, '#ffd700');
+        drawStatLine(getLocalizedText(UI_TEXT['Heroes Fallen:']), stats.unitsLost, '#f44');
 
         const winRate = stats.totalBattles > 0 ? Math.round((stats.wins / stats.totalBattles) * 100) : 0;
-        drawStatLine("Win Rate:", `${winRate}%`, '#0af');
+        drawStatLine(getLocalizedText(UI_TEXT['Win Rate:']), `${winRate}%`, '#0af');
 
         this.buttonRects = [];
         const backRect = { x: cx - 40, y: 210, w: 80, h: 20, type: 'menu_view' };
@@ -401,13 +636,21 @@ export class CustomBattleMenuScene extends BaseScene {
     }
 
     drawButton(ctx, text, rect, isSelected, bgColor = '#333') {
+        // Ensure button height is at least 14px for Chinese text
+        const minHeight = LANGUAGE.current === 'zh' ? 14 : rect.h;
+        const actualH = Math.max(minHeight, rect.h);
+        const actualRect = { ...rect, h: actualH };
+        
         ctx.fillStyle = isSelected ? '#ffd700' : bgColor;
-        ctx.fillRect(Math.floor(rect.x), Math.floor(rect.y), Math.floor(rect.w), Math.floor(rect.h));
+        ctx.fillRect(Math.floor(actualRect.x), Math.floor(actualRect.y), Math.floor(actualRect.w), Math.floor(actualRect.h));
         ctx.strokeStyle = '#fff';
         ctx.lineWidth = 1;
-        ctx.strokeRect(Math.floor(rect.x) + 0.5, Math.floor(rect.y) + 0.5, Math.floor(rect.w) - 1, Math.floor(rect.h) - 1);
+        ctx.strokeRect(Math.floor(actualRect.x) + 0.5, Math.floor(actualRect.y) + 0.5, Math.floor(actualRect.w) - 1, Math.floor(actualRect.h) - 1);
         
-        this.drawPixelText(ctx, text, rect.x + rect.w / 2, rect.y + rect.h / 2 - 4, { 
+        // Center text vertically: drawPixelText uses textBaseline='top', so Y is top of text
+        // For 8px font in actualRect.h box: top should be at actualRect.y + (actualRect.h - 8) / 2
+        const textY = actualRect.y + (actualRect.h - 8) / 2;
+        this.drawPixelText(ctx, text, actualRect.x + actualRect.w / 2, textY, { 
             color: isSelected ? '#000' : '#fff', 
             font: '8px Tiny5', 
             align: 'center' 
@@ -429,6 +672,44 @@ export class CustomBattleMenuScene extends BaseScene {
                 this.options[btn.key] = btn.value;
                 this.dropdowns[btn.key].open = false;
                 assets.playSound('ui_click');
+            } else if (btn.type === 'unit_item') {
+                // Clicking a unit directly adds it and opens the editing screen
+                if (this.options.roster.length < 20) {
+                    const u = this.availableUnits[btn.index];
+                    const defaultFaction = u.type.startsWith('enemy') ? 'enemy' : (u.type.startsWith('hero') ? 'player' : 'allied');
+                    this.options.roster.push({
+                        ...u,
+                        faction: defaultFaction,
+                        level: 1
+                    });
+                    this.selectedRosterIndex = this.options.roster.length - 1;
+                    this.dropdowns.unit.selectedIndex = undefined;
+                    this.dropdowns.unit.open = false;
+                    this.dropdowns.unit.scrollOffset = 0;
+                    assets.playSound('ui_click', 0.6);
+                } else {
+                    assets.playSound('ui_error', 0.5);
+                }
+            } else if (btn.type === 'unit_scroll_down') {
+                this.dropdowns.unit.scrollOffset = Math.min(
+                    this.availableUnits.length - 6,
+                    (this.dropdowns.unit.scrollOffset || 0) + 1
+                );
+                assets.playSound('ui_click', 0.3);
+            } else if (btn.type === 'unit_scroll_up') {
+                this.dropdowns.unit.scrollOffset = Math.max(0, (this.dropdowns.unit.scrollOffset || 0) - 1);
+                assets.playSound('ui_click', 0.3);
+            } else if (btn.type === 'scroll_down') {
+                // Scroll down for biome/layout/weather dropdowns
+                this.dropdowns[btn.key].scrollOffset = Math.min(
+                    this.dropdowns[btn.key].items.length - 6,
+                    (this.dropdowns[btn.key].scrollOffset || 0) + 1
+                );
+                assets.playSound('ui_click', 0.3);
+            } else if (btn.type === 'scroll_up') {
+                // Scroll up for biome/layout/weather dropdowns
+                this.dropdowns[btn.key].scrollOffset = Math.max(0, (this.dropdowns[btn.key].scrollOffset || 0) - 1);
+                assets.playSound('ui_click', 0.3);
             } else if (btn.type === 'density_slider') {
                 const ratio = Math.max(0, Math.min(1, (x - btn.x) / btn.w));
                 this.options[btn.key] = ratio * 0.3;
@@ -448,6 +729,17 @@ export class CustomBattleMenuScene extends BaseScene {
             } else if (btn.type === 'back') {
                 this.manager.switchTo('title');
                 assets.playSound('ui_click');
+            } else if (btn.type === 'undo_add_unit') {
+                // Remove the unit being added and return to unit selection
+                if (this.selectedRosterIndex >= 0 && this.selectedRosterIndex < this.options.roster.length) {
+                    this.options.roster.splice(this.selectedRosterIndex, 1);
+                    this.selectedRosterIndex = -1;
+                    assets.playSound('ui_click', 0.4);
+                }
+            } else if (btn.type === 'confirm_add_unit') {
+                // Confirm adding the unit (just deselect it to finish)
+                this.selectedRosterIndex = -1;
+                assets.playSound('ui_click', 0.6);
             } else if (btn.type === 'deselect_unit') {
                 this.selectedRosterIndex = -1;
                 assets.playSound('ui_click', 0.4);
@@ -484,6 +776,7 @@ export class CustomBattleMenuScene extends BaseScene {
                     units: units
                 });
             } else if (btn.type === 'add_unit') {
+                // Legacy support - should not be used with dropdown
                 if (this.options.roster.length < 20) {
                     const u = btn.unit;
                     const defaultFaction = u.type.startsWith('enemy') ? 'enemy' : (u.type.startsWith('hero') ? 'player' : 'allied');

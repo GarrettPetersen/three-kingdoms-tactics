@@ -143,6 +143,366 @@ export const UI_TEXT = {
     'Guangzong Region': {
         en: 'Guangzong Region',
         zh: '广宗'
+    },
+    // Custom Battle Menu
+    'STEP 1: ENVIRONMENT': {
+        en: 'STEP 1: ENVIRONMENT',
+        zh: '第一步：环境'
+    },
+    'STEP 2: ARMY SETUP': {
+        en: 'STEP 2: ARMY SETUP',
+        zh: '第二步：军队设置'
+    },
+    'BIOME:': {
+        en: 'BIOME:',
+        zh: '地形：'
+    },
+    'LAYOUT:': {
+        en: 'LAYOUT:',
+        zh: '布局：'
+    },
+    'WEATHER:': {
+        en: 'WEATHER:',
+        zh: '天气：'
+    },
+    'FOREST:': {
+        en: 'FOREST:',
+        zh: '森林：'
+    },
+    'MOUNTAIN:': {
+        en: 'MOUNTAIN:',
+        zh: '山脉：'
+    },
+    'RIVER:': {
+        en: 'RIVER:',
+        zh: '河流：'
+    },
+    'NEXT: ARMY SETUP': {
+        en: 'NEXT: ARMY SETUP',
+        zh: '下一步：军队设置'
+    },
+    'CANCEL': {
+        en: 'CANCEL',
+        zh: '取消'
+    },
+    'STATS': {
+        en: 'STATS',
+        zh: '统计'
+    },
+    'ADD UNITS': {
+        en: 'ADD UNITS',
+        zh: '添加单位'
+    },
+    'SELECT UNIT': {
+        en: 'SELECT UNIT',
+        zh: '选择单位'
+    },
+    'ROSTER': {
+        en: 'ROSTER',
+        zh: '阵容'
+    },
+    'EDITING UNIT': {
+        en: 'EDITING UNIT',
+        zh: '编辑单位'
+    },
+    'FACTION:': {
+        en: 'FACTION:',
+        zh: '阵营：'
+    },
+    'LEVEL:': {
+        en: 'LEVEL:',
+        zh: '等级：'
+    },
+    'REMOVE UNIT': {
+        en: 'REMOVE UNIT',
+        zh: '移除单位'
+    },
+    'START BATTLE': {
+        en: 'START BATTLE',
+        zh: '开始战斗'
+    },
+    'BACK TO MAP': {
+        en: 'BACK TO MAP',
+        zh: '返回地图'
+    },
+    'CLEAR ALL': {
+        en: 'CLEAR ALL',
+        zh: '清空全部'
+    },
+    'CUSTOM BATTLE RECORD': {
+        en: 'CUSTOM BATTLE RECORD',
+        zh: '自定义战斗记录'
+    },
+    'Total Battles:': {
+        en: 'Total Battles:',
+        zh: '总战斗数：'
+    },
+    'Wins:': {
+        en: 'Wins:',
+        zh: '胜利：'
+    },
+    'Losses:': {
+        en: 'Losses:',
+        zh: '失败：'
+    },
+    'Enemies Slain:': {
+        en: 'Enemies Slain:',
+        zh: '击杀敌人：'
+    },
+    'Heroes Fallen:': {
+        en: 'Heroes Fallen:',
+        zh: '阵亡英雄：'
+    },
+    'Win Rate:': {
+        en: 'Win Rate:',
+        zh: '胜率：'
+    },
+    'PLAYER': {
+        en: 'PLAYER',
+        zh: '玩家'
+    },
+    'ALLIED': {
+        en: 'ALLIED',
+        zh: '盟友'
+    },
+    'ENEMY': {
+        en: 'ENEMY',
+        zh: '敌人'
+    },
+    'Qingzhou Guard': {
+        en: 'Qingzhou Guard',
+        zh: '青州守卫'
+    },
+    'YT Captain': {
+        en: 'YT Captain',
+        zh: '黄巾队长'
+    },
+    'Imp. Escort': {
+        en: 'Imp. Escort',
+        zh: '帝国护卫'
+    },
+    'Archer': {
+        en: 'Archer',
+        zh: '弓箭手'
+    },
+    'Yellow Turban': {
+        en: 'Yellow Turban',
+        zh: '黄巾军'
+    },
+    // Biome options
+    'central': {
+        en: 'Central',
+        zh: '中原'
+    },
+    'northern': {
+        en: 'Northern',
+        zh: '北方'
+    },
+    'northern_snowy': {
+        en: 'Northern Snowy',
+        zh: '北方雪地'
+    },
+    'southern': {
+        en: 'Southern',
+        zh: '南方'
+    },
+    // Layout options
+    'foothills': {
+        en: 'Foothills',
+        zh: '山麓'
+    },
+    'river': {
+        en: 'River',
+        zh: '河流'
+    },
+    'lake_edge': {
+        en: 'Lake Edge',
+        zh: '湖边'
+    },
+    'mountain_pass': {
+        en: 'Mountain Pass',
+        zh: '山口'
+    },
+    'plain': {
+        en: 'Plain',
+        zh: '平原'
+    },
+    'city_gate': {
+        en: 'City Gate',
+        zh: '城门'
+    },
+    // Weather options
+    'none': {
+        en: 'None',
+        zh: '无'
+    },
+    'rain': {
+        en: 'Rain',
+        zh: '雨'
+    },
+    'snow': {
+        en: 'Snow',
+        zh: '雪'
+    },
+    'ADD UNIT': {
+        en: 'ADD UNIT',
+        zh: '添加单位'
+    },
+    // Battle UI
+    'YOUR TURN': {
+        en: 'YOUR TURN',
+        zh: '你的回合'
+    },
+    'ENEMY TURN': {
+        en: 'ENEMY TURN',
+        zh: '敌人回合'
+    },
+    'ALLY TURN': {
+        en: 'ALLY TURN',
+        zh: '盟友回合'
+    },
+    'EXECUTION': {
+        en: 'EXECUTION',
+        zh: '执行阶段'
+    },
+    'END TURN': {
+        en: 'END TURN',
+        zh: '结束回合'
+    },
+    'RESET': {
+        en: 'RESET',
+        zh: '重置'
+    },
+    'ORDER': {
+        en: 'ORDER',
+        zh: '顺序'
+    },
+    'UNDO': {
+        en: 'UNDO',
+        zh: '撤销'
+    },
+    // Battle Summary
+    'VICTORY': {
+        en: 'VICTORY',
+        zh: '胜利'
+    },
+    'DEFEAT': {
+        en: 'DEFEAT',
+        zh: '失败'
+    },
+    'Allied Casualties:': {
+        en: 'Allied Casualties:',
+        zh: '盟友伤亡：'
+    },
+    'Enemy Casualties:': {
+        en: 'Enemy Casualties:',
+        zh: '敌人伤亡：'
+    },
+    'Houses Protected:': {
+        en: 'Houses Protected:',
+        zh: '保护房屋：'
+    },
+    'Turns Taken:': {
+        en: 'Turns Taken:',
+        zh: '回合数：'
+    },
+    'XP Gained:': {
+        en: 'XP Gained:',
+        zh: '获得经验：'
+    },
+    // Battle UI Status
+    'IDLE': {
+        en: 'IDLE',
+        zh: '待命'
+    },
+    'DONE': {
+        en: 'DONE',
+        zh: '完成'
+    },
+    'INTENT:': {
+        en: 'INTENT:',
+        zh: '意图：'
+    },
+    'ORDER:': {
+        en: 'ORDER:',
+        zh: '顺序：'
+    },
+    // Attack Names
+    'Serpent Spear': {
+        en: 'Serpent Spear',
+        zh: '蛇矛'
+    },
+    'Serpent Spear II': {
+        en: 'Serpent Spear II',
+        zh: '蛇矛 II'
+    },
+    'Serpent Spear III': {
+        en: 'Serpent Spear III',
+        zh: '蛇矛 III'
+    },
+    'Serpent Spear IV': {
+        en: 'Serpent Spear IV',
+        zh: '蛇矛 IV'
+    },
+    'Green Dragon': {
+        en: 'Green Dragon',
+        zh: '青龙'
+    },
+    'Green Dragon II': {
+        en: 'Green Dragon II',
+        zh: '青龙 II'
+    },
+    'Green Dragon III': {
+        en: 'Green Dragon III',
+        zh: '青龙 III'
+    },
+    'Green Dragon IV': {
+        en: 'Green Dragon IV',
+        zh: '青龙 IV'
+    },
+    'Double Blades': {
+        en: 'Double Blades',
+        zh: '双刀'
+    },
+    'Bash': {
+        en: 'Bash',
+        zh: '重击'
+    },
+    'Slash': {
+        en: 'Slash',
+        zh: '斩击'
+    },
+    'Slash II': {
+        en: 'Slash II',
+        zh: '斩击 II'
+    },
+    'Slash III': {
+        en: 'Slash III',
+        zh: '斩击 III'
+    },
+    'Arrow Shot': {
+        en: 'Arrow Shot',
+        zh: '箭射'
+    },
+    'Arrow Shot II': {
+        en: 'Arrow Shot II',
+        zh: '箭射 II'
+    },
+    'Arrow Shot III': {
+        en: 'Arrow Shot III',
+        zh: '箭射 III'
+    },
+    'Whirlwind': {
+        en: 'Whirlwind',
+        zh: '旋风'
+    },
+    'Tyrant Sweep': {
+        en: 'Tyrant Sweep',
+        zh: '暴君横扫'
+    },
+    'Heavy Thrust': {
+        en: 'Heavy Thrust',
+        zh: '重刺'
     }
 };
 

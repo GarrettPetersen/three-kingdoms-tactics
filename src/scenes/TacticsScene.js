@@ -5,8 +5,8 @@ import { TacticsMap } from '../core/TacticsMap.js';
 import { Unit } from '../entities/Unit.js';
 import { BATTLES, UNIT_TEMPLATES } from '../data/Battles.js';
 import { NARRATIVE_SCRIPTS } from '../data/NarrativeScripts.js';
-import { getLocalizedText } from '../core/Language.js';
-import { UI_TEXT } from '../data/Translations.js';
+import { getLocalizedText, getFontForLanguage, getTextContainerSize, LANGUAGE } from '../core/Language.js';
+import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
 
 export class TacticsScene extends BaseScene {
     constructor() {
@@ -4690,30 +4690,57 @@ export class TacticsScene extends BaseScene {
             const u = this.selectedUnit;
             const bx = 5;
             const by = barY + 2;
+            const lineSpacing = LANGUAGE.current === 'zh' ? 14 : 8; // More spacing for Chinese
 
             const factionColor = u.faction === 'player' ? '#0f0' : (u.faction === 'allied' ? '#0af' : '#f00');
 
-            // Name (Color-coded)
-            this.drawPixelText(ctx, u.name, bx + 4, by + 4, { color: factionColor, font: '8px Silkscreen' });
+            // Name (Color-coded, localized)
+            const unitName = getLocalizedCharacterName(u.name) || u.name;
+            this.drawPixelText(ctx, unitName, bx + 4, by + 4, { color: factionColor, font: '8px Silkscreen' });
             
-            // HP
-            this.drawPixelText(ctx, `HP: ${u.hp}/${u.maxHp}`, bx + 4, by + 12, { color: '#eee', font: '8px Tiny5' });
+            // HP Bar (language-independent)
+            const hpBarX = bx + 4;
+            const hpBarY = by + 4 + lineSpacing;
+            const hpBarW = 60;
+            const hpBarH = 6;
+            const hpPercent = Math.max(0, Math.min(1, u.hp / u.maxHp));
+            
+            // Background
+            ctx.fillStyle = '#333';
+            ctx.fillRect(hpBarX, hpBarY, hpBarW, hpBarH);
+            ctx.strokeStyle = '#666';
+            ctx.strokeRect(hpBarX + 0.5, hpBarY + 0.5, hpBarW - 1, hpBarH - 1);
+            
+            // Health fill
+            const fillW = Math.floor(hpBarW * hpPercent);
+            if (fillW > 0) {
+                ctx.fillStyle = hpPercent > 0.5 ? '#0f0' : (hpPercent > 0.25 ? '#ff0' : '#f00');
+                ctx.fillRect(hpBarX + 1, hpBarY + 1, fillW - 2, hpBarH - 2);
+            }
 
-            // State/Intent & Order
-            let actionText = "IDLE";
+            // State/Intent & Order (localized)
+            let actionText = getLocalizedText(UI_TEXT['IDLE']);
             let orderText = null;
             if (u.hp > 0 && u.intent && u.intent.type === 'attack') {
                 const attack = ATTACKS[u.intent.attackKey];
-                const actionName = attack ? attack.name.toUpperCase() : '???';
-                actionText = `INTENT: ${actionName}`;
-                if (u.attackOrder) orderText = `ORDER: ${u.attackOrder}`;
+                if (attack) {
+                    const actionName = getLocalizedText(UI_TEXT[attack.name]) || attack.name;
+                    const intentLabel = getLocalizedText(UI_TEXT['INTENT:']);
+                    actionText = `${intentLabel} ${actionName}`;
+                } else {
+                    actionText = `${getLocalizedText(UI_TEXT['INTENT:'])} ???`;
+                }
+                if (u.attackOrder) {
+                    const orderLabel = getLocalizedText(UI_TEXT['ORDER:']);
+                    orderText = `${orderLabel}${u.attackOrder}`;
+                }
             } else if (u.hasActed) {
-                actionText = "DONE";
+                actionText = getLocalizedText(UI_TEXT['DONE']);
             }
             
-            this.drawPixelText(ctx, actionText, bx + 4, by + 20, { color: '#aaa', font: '8px Tiny5' });
+            this.drawPixelText(ctx, actionText, bx + 4, by + 4 + lineSpacing * 2, { color: '#aaa', font: '8px Tiny5' });
             if (orderText) {
-                this.drawPixelText(ctx, orderText, bx + 4, by + 28, { color: '#888', font: '8px Tiny5' });
+                this.drawPixelText(ctx, orderText, bx + 4, by + 4 + lineSpacing * 3, { color: '#888', font: '8px Tiny5' });
             }
         }
 
@@ -4761,20 +4788,21 @@ export class TacticsScene extends BaseScene {
         });
 
         // 3. Turn Indicator (Top Left)
-        let turnText = "YOUR TURN";
+        let turnTextKey = "YOUR TURN";
         let color = '#ffd700';
 
         if (this.turn === 'enemy_moving') {
-            turnText = "ENEMY TURN";
+            turnTextKey = "ENEMY TURN";
             color = '#f00';
         } else if (this.turn === 'allied_moving') {
-            turnText = "ALLY TURN";
+            turnTextKey = "ALLY TURN";
             color = '#0af';
         } else if (this.turn === 'execution') {
-            turnText = "EXECUTION";
+            turnTextKey = "EXECUTION";
             color = '#fff';
         }
 
+        const turnText = getLocalizedText(UI_TEXT[turnTextKey]);
         this.drawPixelText(ctx, turnText, 10, 8, { color, font: '8px Silkscreen' });
 
         // Objective Display
@@ -4805,16 +4833,78 @@ export class TacticsScene extends BaseScene {
         // 4. End Turn / Reset Turn / Order / Undo (Bottom Right)
         if (this.turn === 'player' && !this.isProcessingTurn) {
             const hasActedAll = this.allUnitsActed();
+            const isChinese = LANGUAGE.current === 'zh';
             
             // Pulse effect for END TURN when all have acted
             const pulse = hasActedAll ? Math.abs(Math.sin(Date.now() / 400)) : 0;
-            const btnW = hasActedAll ? 80 : 45;
-            const btnH = hasActedAll ? 24 : 8;
-            const rx = canvas.width - btnW - 5;
-            const spacing = 1;
             
-            // END TURN
-            const ey = hasActedAll ? (canvas.height - btnH - 30) : (barY + 3);
+            // Get localized text for buttons
+            const endTurnText = getLocalizedText(UI_TEXT['END TURN']);
+            // Use symbols for language-independent buttons
+            const resetText = '\u23EE'; // U+23EE: Black Left-Pointing Double Triangle (rewind to start)
+            const orderText = '1,2,3'; // Numbers (universal)
+            const undoText = '◄'; // Left triangle
+            
+            // Calculate button sizes based on text
+            ctx.save();
+            ctx.font = getFontForLanguage(hasActedAll ? '10px Silkscreen' : '8px Silkscreen');
+            const endTurnSize = getTextContainerSize(ctx, endTurnText, hasActedAll ? '10px Silkscreen' : '8px Silkscreen', 8, hasActedAll ? 20 : 8);
+            // Symbols are smaller, use fixed widths
+            ctx.font = '8px Tiny5';
+            const resetSize = { width: 24, height: 8 }; // |<< symbol
+            const orderSize = { width: 24, height: 8 }; // 1,2,3 text
+            const undoSize = { width: 16, height: 8 }; // ◄ symbol
+            ctx.restore();
+            
+            // Language-independent buttons (RESET, ORDER, UNDO) use same layout for both languages
+            // END TURN button is larger in Chinese to fit the text
+            let endTurnW, endTurnH, endTurnX, endTurnY;
+            let otherBtnW, otherBtnH, resetX, resetY, orderX, orderY, undoX, undoY;
+            
+            // Symbol buttons are the same size in both languages
+            otherBtnW = Math.max(24, Math.max(resetSize.width, Math.max(orderSize.width, undoSize.width)));
+            otherBtnH = 8;
+            const orx = canvas.width - otherBtnW - 5;
+            
+            // Other buttons: single column, same layout for both languages
+            resetX = orx;
+            resetY = barY + 12;
+            orderX = orx;
+            orderY = barY + 21;
+            undoX = orx;
+            undoY = barY + 30;
+            
+            if (hasActedAll) {
+                // Big END TURN button at bottom center
+                if (isChinese) {
+                    // Chinese: larger button to fit 12px zpix text
+                    endTurnW = Math.max(100, endTurnSize.width);
+                    endTurnH = 20; // 12px font + padding
+                    endTurnX = (canvas.width - endTurnW) / 2;
+                    // Position so bottom has 1px gap with RESET button (at resetY)
+                    endTurnY = resetY - endTurnH - 1;
+                } else {
+                    endTurnW = 80;
+                    endTurnH = 24;
+                    endTurnX = (canvas.width - endTurnW) / 2;
+                    endTurnY = canvas.height - endTurnH - 30;
+                }
+            } else {
+                // Small END TURN button in top right
+                if (isChinese) {
+                    // Chinese: fit 12px zpix text
+                    endTurnW = Math.max(50, endTurnSize.width);
+                    endTurnH = 16; // 12px font + padding
+                } else {
+                    endTurnW = 45;
+                    endTurnH = 8;
+                }
+                endTurnX = canvas.width - endTurnW - 5;
+                // Position so bottom has 1px gap with RESET button (at resetY)
+                endTurnY = resetY - endTurnH - 1;
+            }
+            
+            // END TURN button
             ctx.save();
             if (hasActedAll) {
                 // Background shadow for the big button
@@ -4825,56 +4915,88 @@ export class TacticsScene extends BaseScene {
                 // Pulsing red glow
                 ctx.fillStyle = `rgba(${120 + pulse * 135}, 20, 20, 0.95)`;
             } else {
-            ctx.fillStyle = 'rgba(40, 20, 20, 0.9)';
+                ctx.fillStyle = 'rgba(40, 20, 20, 0.9)';
             }
             
-            ctx.fillRect(rx, ey, btnW, btnH);
+            ctx.fillRect(endTurnX, endTurnY, endTurnW, endTurnH);
             ctx.strokeStyle = hasActedAll ? `rgba(255, 215, 0, ${0.7 + pulse * 0.3})` : '#ffd700';
             ctx.lineWidth = hasActedAll ? 2 : 1;
-            ctx.strokeRect(rx + 0.5, ey + 0.5, btnW - 1, btnH - 1);
+            ctx.strokeRect(endTurnX + 0.5, endTurnY + 0.5, endTurnW - 1, endTurnH - 1);
             
-            const turnFontSize = hasActedAll ? '10px' : '8px';
-            this.drawPixelText(ctx, "END TURN", rx + btnW / 2, ey + (hasActedAll ? 7 : 1), { 
-                color: '#fff', 
-                font: `${turnFontSize} Silkscreen`, 
-                align: 'center',
-                outline: hasActedAll
-            });
+            // END TURN button: use standard font sizes (12px zpix for Chinese, 8px/10px Silkscreen for English)
+            let turnFont, turnFontSize;
+            if (isChinese) {
+                turnFont = hasActedAll ? '12px zpix' : '12px zpix';
+                turnFontSize = 12;
+            } else {
+                turnFont = hasActedAll ? '10px Silkscreen' : '8px Silkscreen';
+                turnFontSize = hasActedAll ? 10 : 8;
+            }
+            const turnTextY = endTurnY + (endTurnH - turnFontSize) / 2;
+            ctx.save();
+            ctx.font = turnFont;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillStyle = '#fff';
+            if (hasActedAll) {
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.strokeText(endTurnText, endTurnX + endTurnW / 2, turnTextY);
+            }
+            ctx.fillText(endTurnText, endTurnX + endTurnW / 2, turnTextY);
+            ctx.restore();
             ctx.restore();
             
-            this.endTurnRect = { x: rx, y: ey, w: btnW, h: btnH };
+            this.endTurnRect = { x: endTurnX, y: endTurnY, w: endTurnW, h: endTurnH };
 
-            // Other buttons should adjust if END TURN moved/resized
-            const otherBtnW = 45;
-            const orx = canvas.width - otherBtnW - 5;
-
-            // RESET TURN
-            const ry = barY + 12;
+            // RESET button (hardcoded 8px font, no scaling)
             ctx.fillStyle = 'rgba(20, 20, 20, 0.9)';
-            ctx.fillRect(orx, ry, otherBtnW, 8);
+            ctx.fillRect(resetX, resetY, otherBtnW, otherBtnH);
             ctx.strokeStyle = '#fff';
-            ctx.strokeRect(orx + 0.5, ry + 0.5, otherBtnW - 1, 7);
-            this.drawPixelText(ctx, "RESET", orx + otherBtnW / 2, ry + 1, { color: '#eee', font: '8px Tiny5', align: 'center' });
-            this.resetTurnRect = { x: orx, y: ry, w: otherBtnW, h: 8 };
+            ctx.strokeRect(resetX + 0.5, resetY + 0.5, otherBtnW - 1, otherBtnH - 1);
+            // Use hardcoded 8px font directly (bypass getFontForLanguage)
+            const resetTextY = resetY + (otherBtnH - 8) / 2;
+            ctx.save();
+            ctx.font = '8px Tiny5';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillStyle = '#eee';
+            ctx.fillText(resetText, resetX + otherBtnW / 2, resetTextY);
+            ctx.restore();
+            this.resetTurnRect = { x: resetX, y: resetY, w: otherBtnW, h: otherBtnH };
 
-            // ATTACK ORDER TOGGLE
-            const ay = barY + 21;
+            // ORDER button (hardcoded 8px font, no scaling)
             ctx.fillStyle = this.showAttackOrder ? 'rgba(0, 80, 0, 0.9)' : 'rgba(20, 20, 20, 0.9)';
-            ctx.fillRect(orx, ay, otherBtnW, 8);
+            ctx.fillRect(orderX, orderY, otherBtnW, otherBtnH);
             ctx.strokeStyle = this.showAttackOrder ? '#0f0' : '#888';
-            ctx.strokeRect(orx + 0.5, ay + 0.5, otherBtnW - 1, 7);
-            this.drawPixelText(ctx, "ORDER", orx + otherBtnW / 2, ay + 1, { color: '#fff', font: '8px Tiny5', align: 'center' });
-            this.attackOrderRect = { x: orx, y: ay, w: otherBtnW, h: 8 };
+            ctx.strokeRect(orderX + 0.5, orderY + 0.5, otherBtnW - 1, otherBtnH - 1);
+            // Use hardcoded 8px font directly (bypass getFontForLanguage)
+            const orderTextY = orderY + (otherBtnH - 8) / 2;
+            ctx.save();
+            ctx.font = '8px Tiny5';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillStyle = '#fff';
+            ctx.fillText(orderText, orderX + otherBtnW / 2, orderTextY);
+            ctx.restore();
+            this.attackOrderRect = { x: orderX, y: orderY, w: otherBtnW, h: otherBtnH };
 
-            // UNDO
-            const uy = barY + 30;
+            // UNDO button (hardcoded 8px font, no scaling)
             const canUndo = this.history.length > 1;
             ctx.fillStyle = canUndo ? 'rgba(40, 40, 40, 0.9)' : 'rgba(20, 20, 20, 0.6)';
-            ctx.fillRect(orx, uy, otherBtnW, 8);
+            ctx.fillRect(undoX, undoY, otherBtnW, otherBtnH);
             ctx.strokeStyle = canUndo ? '#fff' : '#444';
-            ctx.strokeRect(orx + 0.5, uy + 0.5, otherBtnW - 1, 7);
-            this.drawPixelText(ctx, "UNDO", orx + otherBtnW / 2, uy + 1, { color: canUndo ? '#eee' : '#666', font: '8px Tiny5', align: 'center' });
-            this.undoRect = { x: orx, y: uy, w: otherBtnW, h: 8 };
+            ctx.strokeRect(undoX + 0.5, undoY + 0.5, otherBtnW - 1, otherBtnH - 1);
+            // Use hardcoded 8px font directly (bypass getFontForLanguage)
+            const undoTextY = undoY + (otherBtnH - 8) / 2;
+            ctx.save();
+            ctx.font = '8px Tiny5';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillStyle = canUndo ? '#eee' : '#666';
+            ctx.fillText(undoText, undoX + otherBtnW / 2, undoTextY);
+            ctx.restore();
+            this.undoRect = { x: undoX, y: undoY, w: otherBtnW, h: otherBtnH };
         } else {
             this.endTurnRect = null;
             this.resetTurnRect = null;

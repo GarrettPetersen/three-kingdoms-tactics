@@ -1,5 +1,7 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
+import { getLocalizedText } from '../core/Language.js';
+import { UI_TEXT } from '../data/Translations.js';
 
 export class BattleSummaryScene extends BaseScene {
     constructor() {
@@ -52,7 +54,7 @@ export class BattleSummaryScene extends BaseScene {
         }
 
         // Title
-        const titleText = this.stats.won ? "VICTORY" : "DEFEAT";
+        const titleText = this.stats.won ? getLocalizedText(UI_TEXT['VICTORY']) : getLocalizedText(UI_TEXT['DEFEAT']);
         const titleColor = this.stats.won ? "#ffd700" : "#ff4444";
         this.drawPixelText(ctx, titleText, canvas.width / 2, 30, { 
             color: titleColor, 
@@ -64,38 +66,39 @@ export class BattleSummaryScene extends BaseScene {
         const spacing = 18;
 
         if (this.showLines > 0) {
-            this.drawStatLine(ctx, "Allied Casualties:", this.stats.alliedCasualties, startY, '#0f0');
+            this.drawStatLine(ctx, getLocalizedText(UI_TEXT['Allied Casualties:']), this.stats.alliedCasualties, startY, '#0f0');
         }
         if (this.showLines > 1) {
-            this.drawStatLine(ctx, "Enemy Casualties:", this.stats.enemyCasualties, startY + spacing, '#f00');
+            this.drawStatLine(ctx, getLocalizedText(UI_TEXT['Enemy Casualties:']), this.stats.enemyCasualties, startY + spacing, '#f00');
         }
         if (this.showLines > 2) {
             const housesProtected = this.stats.housesProtected || 0;
             const totalHouses = this.stats.totalHouses || 0;
             if (totalHouses > 0) {
                 const houseText = `${housesProtected} / ${totalHouses}`;
-                this.drawStatLine(ctx, "Houses Protected:", houseText, startY + spacing * 2, '#0af');
+                this.drawStatLine(ctx, getLocalizedText(UI_TEXT['Houses Protected:']), houseText, startY + spacing * 2, '#0af');
             } else {
                 // Skip houses for battles without houses - show next stat instead
-                this.drawStatLine(ctx, "Turns Taken:", this.stats.turnNumber || 1, startY + spacing * 2, '#eee');
+                this.drawStatLine(ctx, getLocalizedText(UI_TEXT['Turns Taken:']), this.stats.turnNumber || 1, startY + spacing * 2, '#eee');
             }
         }
         const hasHouses = (this.stats.totalHouses || 0) > 0;
         if (this.showLines > 3 && hasHouses) {
-            this.drawStatLine(ctx, "Turns Taken:", this.stats.turnNumber || 1, startY + spacing * 3, '#eee');
+            this.drawStatLine(ctx, getLocalizedText(UI_TEXT['Turns Taken:']), this.stats.turnNumber || 1, startY + spacing * 3, '#eee');
         }
 
         // XP line - adjust position based on whether we showed houses
         const xpLineNum = hasHouses ? 4 : 3;
         if (this.showLines > xpLineNum && this.stats.won) {
-            this.drawStatLine(ctx, "XP Gained:", this.stats.xpGained || 0, startY + spacing * xpLineNum, '#ffd700');
+            this.drawStatLine(ctx, getLocalizedText(UI_TEXT['XP Gained:']), this.stats.xpGained || 0, startY + spacing * xpLineNum, '#ffd700');
         }
 
         if (this.showLines > 5) {
             if (this.stats.battleId === 'custom') {
                 const gs = this.manager.gameState;
                 const cs = gs.get('customStats') || { wins: 0, totalBattles: 0 };
-                const text = `CUSTOM RECORD: ${cs.wins} - ${cs.totalBattles - cs.wins}`;
+                const recordText = getLocalizedText(UI_TEXT['CUSTOM BATTLE RECORD']);
+                const text = `${recordText}: ${cs.wins} - ${cs.totalBattles - cs.wins}`;
                 this.drawPixelText(ctx, text, canvas.width / 2, 205, {
                     color: '#0af',
                     font: '8px Silkscreen',
@@ -106,7 +109,7 @@ export class BattleSummaryScene extends BaseScene {
             const pulse = Math.abs(Math.sin(Date.now() / 500));
             ctx.save();
             ctx.globalAlpha = 0.5 + pulse * 0.5;
-            this.drawPixelText(ctx, "PRESS ANYWHERE TO CONTINUE", canvas.width / 2, 230, {
+            this.drawPixelText(ctx, getLocalizedText(UI_TEXT['CLICK TO CONTINUE']), canvas.width / 2, 230, {
                 color: '#fff',
                 font: '8px Silkscreen',
                 align: 'center'
