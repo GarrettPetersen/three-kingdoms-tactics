@@ -75,11 +75,10 @@
   "homepage": "https://github.com/GarrettPetersen/three-kingdoms-tactics#readme",
   "description": "",
   "devDependencies": {
+    "canvas": "^3.2.1",
     "electron": "^40.1.0",
     "electron-builder": "^26.7.0",
     "sharp": "^0.34.5",
     "vite": "^7.3.1"
-  },
-  "dependencies": {
   }
 }

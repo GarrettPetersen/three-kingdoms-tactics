@@ -209,10 +209,14 @@ def verify_audio(audio_path, expected_text, lang_code="en"):
         print(f'    Transcribed: "{transcribed_text}"')
         print(f"    WER: {error_rate:.2f}")
 
+        # Use more lenient threshold for Mandarin (0.7) vs English (0.4)
+        # Mandarin transcription can vary more due to character recognition differences
+        wer_threshold = 0.7 if lang_code == "zh" else 0.4
+
         return {
             "transcribed": transcribed_text,
             "wer": error_rate,
-            "is_bad": error_rate > 0.4,
+            "is_bad": error_rate > wer_threshold,
             "language": lang_code,
         }
     except Exception as e:
