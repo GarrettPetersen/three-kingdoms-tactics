@@ -61,6 +61,99 @@ function setupCanvas() {
     canvas.style.height = `${config.virtualHeight * multiplier}px`;
 }
 
+/**
+ * Take 1920x1080 screenshots from the 256x256 canvas
+ * Creates three 16:9 crops (top, middle, bottom) and one letterboxed version
+ */
+function takeScreenshots(ctx, canvas, config) {
+    const SOURCE_WIDTH = 256;
+    const SOURCE_HEIGHT = 256;
+    const CROP_HEIGHT = 144; // 16:9 aspect ratio: 256 * 9/16 = 144
+    const TARGET_WIDTH = 1920;
+    const TARGET_HEIGHT = 1080;
+    
+    // Create a temporary canvas to capture the current frame
+    const sourceCanvas = document.createElement('canvas');
+    sourceCanvas.width = SOURCE_WIDTH;
+    sourceCanvas.height = SOURCE_HEIGHT;
+    const sourceCtx = sourceCanvas.getContext('2d');
+    sourceCtx.imageSmoothingEnabled = false;
+    
+    // Copy current canvas to source
+    sourceCtx.drawImage(canvas, 0, 0);
+    
+    // Create output canvas for scaling
+    const outputCanvas = document.createElement('canvas');
+    outputCanvas.width = TARGET_WIDTH;
+    outputCanvas.height = TARGET_HEIGHT;
+    const outputCtx = outputCanvas.getContext('2d');
+    outputCtx.imageSmoothingEnabled = false;
+    
+    // Helper to scale and download with delay
+    function scaleAndDownload(cropX, cropY, cropW, cropH, filename, delay) {
+        setTimeout(() => {
+            // Clear output canvas
+            outputCtx.fillStyle = '#000';
+            outputCtx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+            
+            // Draw cropped section scaled up (nearest-neighbor)
+            outputCtx.drawImage(
+                sourceCanvas,
+                cropX, cropY, cropW, cropH,  // Source crop
+                0, 0, TARGET_WIDTH, TARGET_HEIGHT  // Destination (full size)
+            );
+            
+            // Convert to blob and download
+            outputCanvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+            }, 'image/png');
+        }, delay);
+    }
+    
+    // Take three 16:9 screenshots: top, middle, bottom (with staggered delays)
+    const cropYPositions = [
+        { y: 0, name: 'top', delay: 0 },
+        { y: Math.floor((SOURCE_HEIGHT - CROP_HEIGHT) / 2), name: 'middle', delay: 500 },
+        { y: SOURCE_HEIGHT - CROP_HEIGHT, name: 'bottom', delay: 1000 }
+    ];
+    
+    cropYPositions.forEach(({ y, name, delay }) => {
+        scaleAndDownload(0, y, SOURCE_WIDTH, CROP_HEIGHT, `screenshot_${name}_1920x1080.png`, delay);
+    });
+    
+    // Create letterboxed version (256x256 scaled up with black bars on sides)
+    // Scale 256x256 to fit 1080px height, then center horizontally
+    setTimeout(() => {
+        const letterboxScale = TARGET_HEIGHT / SOURCE_HEIGHT; // 1080 / 256 = 4.21875
+        const letterboxWidth = Math.floor(SOURCE_WIDTH * letterboxScale); // 256 * 4.21875 = 1080
+        const letterboxX = Math.floor((TARGET_WIDTH - letterboxWidth) / 2); // Center horizontally
+        
+        outputCtx.fillStyle = '#000';
+        outputCtx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+        outputCtx.drawImage(
+            sourceCanvas,
+            0, 0, SOURCE_WIDTH, SOURCE_HEIGHT,
+            letterboxX, 0, letterboxWidth, TARGET_HEIGHT
+        );
+        
+        outputCanvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'screenshot_letterbox_1920x1080.png';
+            a.click();
+            URL.revokeObjectURL(url);
+        }, 'image/png');
+    }, 1500);
+    
+    console.log('Screenshots will be saved with delays...');
+}
+
 async function init() {
     setupCanvas();
     window.addEventListener('resize', setupCanvas);
@@ -93,6 +186,10 @@ async function init() {
                 inputBuffer = ""; 
                 sceneManager.gameState.addMilestone('prologue_complete');
                 sceneManager.switchTo('tactics', { battleId: 'daxing' }); 
+            }
+            if (inputBuffer.endsWith('screenshot')) {
+                inputBuffer = "";
+                takeScreenshots(ctx, canvas, config);
             }
             if (inputBuffer.endsWith('brief')) {
                 inputBuffer = "";

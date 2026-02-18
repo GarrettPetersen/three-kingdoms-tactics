@@ -54,5 +54,6 @@ Type these words on your keyboard during gameplay to jump to specific scenes:
 | `brief` | Briefing at Magistrate's HQ |
 | `battle` | Tactics Battle Map |
 | `story` | Narrative/Dialogue Test |
+| `screenshot` | Take 1920x1080 screenshots (three 16:9 crops + letterboxed version) |
 
 
