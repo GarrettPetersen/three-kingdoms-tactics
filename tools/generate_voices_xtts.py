@@ -83,13 +83,13 @@ CHAR_TARGETS_MANDARIN = {
     "chengyuanzhi": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Villainous (shared)
     "dengmao": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
     "yellowturban": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Aggressive (shared)
-    "narrator": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",  # Wise narrator
+    "narrator": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",  # Calm, baritone narrator
     "noticeboard": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
     "volunteer": "mandarin/clean/clean_young_adult_male_mandarin.wav",  # Young, enthusiastic
     "gongjing": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
     "luzhi": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
     "dongzhuo": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Gruff, arrogant (shared)
-    "zhangjue": "mandarin/clean/clean_bipolar_male_mandarin.wav",  # Expressive, commanding
+    "zhangjue": "mandarin/clean/clean_fearsome_elder_male_mandarin.wav",  # Fearsome, commanding elder
     "zhangbao": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Aggressive (shared)
     "zhangliang": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
     "soldier": "mandarin/clean/clean_young_adult_male_mandarin.wav",  # Young male (shared)
