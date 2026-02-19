@@ -197,6 +197,15 @@ export class NarrativeScene extends BaseScene {
         this.fadeSpeed = state.fadeSpeed || 0.002;
         this.elapsedInStep = state.elapsedInStep || 0;
         this.isInteractive = state.isInteractive || false;
+        
+        // If we're on a completed wait command, advance past it
+        const currentStepObj = this.script[this.currentStep];
+        if (currentStepObj && currentStepObj.type === 'command' && currentStepObj.action === 'wait') {
+            if (this.timer <= 0 && !this.isWaiting) {
+                // Wait command has completed - advance to next step
+                this.nextStep();
+            }
+        }
         this.interactiveStepIndex = state.interactiveStepIndex !== undefined ? state.interactiveStepIndex : -1;
         this.clickableActors = state.clickableActors || {};
         this.clickableRegions = state.clickableRegions || {};
@@ -248,6 +257,20 @@ export class NarrativeScene extends BaseScene {
                     defaultIndex: 0,
                     totalOptions: step.options ? step.options.length : 0
                 });
+            } else if (step.type === 'dialogue' || step.type === 'narrator') {
+                // For dialogue/narrator steps, ensure they're set up for rendering
+                // The dialogue will be rendered in the render() function
+                // But we need to make sure isWaiting is set correctly if it's a timed dialogue
+                if (step.duration) {
+                    // Timed dialogue - ensure timer is set
+                    if (this.timer === 0) {
+                        this.timer = step.duration;
+                    }
+                    this.isWaiting = true;
+                } else {
+                    // Non-timed dialogue - should wait for user input
+                    this.isWaiting = true;
+                }
             }
             
             // Don't replay voice on resume - user already heard it

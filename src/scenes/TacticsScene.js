@@ -13,6 +13,7 @@ export class TacticsScene extends BaseScene {
         super();
         this.tacticsMap = null;
         this.units = [];
+        this.horses = []; // { id, riderId|null }
         this.selectedUnit = null;
         this.selectedAttack = null;
         this.reachableTiles = new Map();
@@ -96,6 +97,7 @@ export class TacticsScene extends BaseScene {
 
         // HARD RESET all scene state to prevent bleed from previous battles
         this.units = [];
+        this.horses = [];
         this.selectedUnit = null;
         this.selectedAttack = null;
         this.hoveredCell = null;
@@ -1309,6 +1311,9 @@ export class TacticsScene extends BaseScene {
         }
         
         this.isProcessingTurn = true;
+
+        // Riderless horses wander a bit before allies act
+        this.wanderRiderlessHorses();
         
         // Clear old intents before starting new phase
         // But preserve intents for NPCs that have already acted (they've already moved and telegraphed)
@@ -1452,6 +1457,17 @@ export class TacticsScene extends BaseScene {
             }
         });
 
+        // Mounted units must also have a valid head hex at the destination
+        if (unit.onHorse) {
+            const filtered = new Map();
+            validDestinations.forEach((data, key) => {
+                const [r, q] = key.split(',').map(Number);
+                if (this.isValidMountedButtDestination(unit, r, q)) filtered.set(key, data);
+            });
+            validDestinations.clear();
+            filtered.forEach((v, k) => validDestinations.set(k, v));
+        }
+
         // 1. Check if we can reach a unit to attack it
         let unitAttackTiles = [];
         validDestinations.forEach((data, key) => {
@@ -1459,7 +1475,14 @@ export class TacticsScene extends BaseScene {
             
             // Look for targets within range from this tile
             unitTargets.forEach(t => {
-                const dist = this.tacticsMap.getDistance(r, q, t.r, t.q);
+                let dist = this.tacticsMap.getDistance(r, q, t.r, t.q);
+                if (unit.onHorse) {
+                    const headCell = this.getMountedHeadCellFor(unit, r, q);
+                    if (headCell) {
+                        const headDist = this.tacticsMap.getDistance(headCell.r, headCell.q, t.r, t.q);
+                        dist = Math.min(dist, headDist);
+                    }
+                }
                 if (dist >= minRange && dist <= maxRange) {
                     unitAttackTiles.push({ r, q, target: t });
                 }
@@ -1516,6 +1539,25 @@ export class TacticsScene extends BaseScene {
             if (houseAttackTiles.length > 0) {
                 bestTile = houseAttackTiles[0];
                 chosenTargetPos = { r: bestTile.target.r, q: bestTile.target.q };
+            }
+        }
+
+        // If we can't line up an attack, try to mount a reachable riderless horse
+        if (!unit.onHorse && unitAttackTiles.length === 0) {
+            let bestHorse = null;
+            let bestHorseCost = Infinity;
+            validDestinations.forEach((data, key) => {
+                const [r, q] = key.split(',').map(Number);
+                const cell = this.tacticsMap.getCell(r, q);
+                if (cell?.horse && !cell.horse.riderId) {
+                    if (data.cost < bestHorseCost) {
+                        bestHorseCost = data.cost;
+                        bestHorse = { r, q };
+                    }
+                }
+            });
+            if (bestHorse) {
+                bestTile = bestHorse;
             }
         }
 
@@ -1592,11 +1634,49 @@ export class TacticsScene extends BaseScene {
             // Unit needs to move
             const oldCell = this.tacticsMap.getCell(unit.r, unit.q);
             if (oldCell) oldCell.unit = null;
+            if (unit.onHorse) {
+                const oldHead = this.getMountedHeadCellFor(unit, unit.r, unit.q);
+                if (oldHead) oldHead.unit = null;
+                const horse = this.getHorseById(unit.horseId);
+                if (horse) {
+                    this.clearHorseFromCells(horse);
+                }
+            }
             unit.startPath(path);
             this.tacticsMap.getCell(bestTile.r, bestTile.q).unit = unit;
+            if (unit.onHorse) {
+                // Reserve head hex based on the FINAL movement direction (last step)
+                let plannedFlip = unit.flip;
+                if (path.length >= 2) {
+                    const prev = path[path.length - 2];
+                    const last = path[path.length - 1];
+                    const prevPos = this.getPixelPos(prev.r, prev.q);
+                    const lastPos = this.getPixelPos(last.r, last.q);
+                    if (lastPos.x < prevPos.x) plannedFlip = true;
+                    else if (lastPos.x > prevPos.x) plannedFlip = false;
+                }
+                const tmp = { ...unit, flip: plannedFlip };
+                const headCell = this.getMountedHeadCellFor(tmp, bestTile.r, bestTile.q);
+                if (headCell) headCell.unit = unit;
+            }
             
             const checkDone = () => {
                 if (!unit.isMoving) {
+                    // Update horse position + facing based on final movement direction
+                    if (unit.onHorse) {
+                        const horse = this.getHorseById(unit.horseId);
+                        if (horse) {
+                            horse.r = unit.r;
+                            horse.q = unit.q;
+                            horse.flip = !!unit.flip;
+                            this.placeHorseOnCells(horse);
+                        }
+                        // Ensure the unit occupies the correct head hex for its final facing
+                        this.syncMountedOccupancy(unit);
+                    }
+                    if (!unit.onHorse) {
+                        this.tryAutoMount(unit, unit.r, unit.q);
+                    }
                     // Mark unit as having acted (moved) to prevent double-acting on restore
                     unit.hasActed = true;
                     unit.hasMoved = true;
@@ -1640,8 +1720,11 @@ export class TacticsScene extends BaseScene {
         });
         
         const targetUnit = unitTargets.find(t => {
-            const dist = this.tacticsMap.getDistance(unit.r, unit.q, t.r, t.q);
-            return dist >= minRange && dist <= maxRange;
+            const origins = this.getAttackOrigins(unit);
+            return origins.some(o => {
+                const dist = this.tacticsMap.getDistance(o.r, o.q, t.r, t.q);
+                return dist >= minRange && dist <= maxRange;
+            });
         });
         
         let targetPos = null;
@@ -1657,6 +1740,24 @@ export class TacticsScene extends BaseScene {
         }
 
         if (targetPos) {
+            // Facing logic (mounted units must turn-in-place by swapping butt/head anchor)
+            const startA = this.getPixelPos(unit.r, unit.q);
+            let midX = startA.x;
+            if (unit.onHorse) {
+                const head = this.getMountedHeadCellFor(unit, unit.r, unit.q);
+                if (head) {
+                    const startB = this.getPixelPos(head.r, head.q);
+                    midX = (startA.x + startB.x) / 2;
+                }
+            }
+            const endPos = this.getPixelPos(targetPos.r, targetPos.q);
+            let desiredFlip = unit.flip;
+            if (endPos.x < midX) desiredFlip = true;
+            else if (endPos.x > midX) desiredFlip = false;
+
+            if (unit.onHorse) this.turnMountedInPlace(unit, desiredFlip);
+            else unit.flip = desiredFlip;
+
             const fromCube = this.tacticsMap.offsetToCube(unit.r, unit.q);
             const toCube = this.tacticsMap.offsetToCube(targetPos.r, targetPos.q);
             
@@ -1668,11 +1769,6 @@ export class TacticsScene extends BaseScene {
                 relZ: toCube.z - fromCube.z,
                 attackKey 
             };
-            
-                const startPos = this.getPixelPos(unit.r, unit.q);
-            const endPos = this.getPixelPos(targetPos.r, targetPos.q);
-                if (endPos.x < startPos.x) unit.flip = true;
-                if (endPos.x > startPos.x) unit.flip = false;
         } else {
             unit.intent = null;
         }
@@ -1699,6 +1795,15 @@ export class TacticsScene extends BaseScene {
                 elevation: cell.elevation,
                 impassable: cell.impassable
             }))),
+            // Horse entities (mounted + riderless)
+            horses: (this.horses || []).map(h => ({
+                id: h.id,
+                riderId: h.riderId || null,
+                r: h.r,
+                q: h.q,
+                flip: !!h.flip,
+                type: h.type || 'brown'
+            })),
             units: this.units.map(u => ({
                 id: u.id,
                 name: u.name,
@@ -1709,6 +1814,10 @@ export class TacticsScene extends BaseScene {
                 hp: u.hp,
                 maxHp: u.maxHp,
                 moveRange: u.moveRange,
+                baseMoveRange: u.baseMoveRange,
+                onHorse: !!u.onHorse,
+                horseId: u.horseId || null,
+                horseType: u.horseType || 'brown',
                 hasMoved: u.hasMoved,
                 hasAttacked: u.hasAttacked,
                 hasActed: u.hasActed,
@@ -1761,6 +1870,7 @@ export class TacticsScene extends BaseScene {
         this.turn = state.turn;
         this.turnNumber = state.turnNumber;
         this.weatherType = state.weatherType;
+        this.horses = [];
         
         // Restore Grid
         for (let r = 0; r < config.mapHeight; r++) {
@@ -1774,6 +1884,7 @@ export class TacticsScene extends BaseScene {
                     cell.impassable = savedCell.impassable;
                 }
                 cell.unit = null; // Clear all units first
+                cell.horse = null; // Clear all horses first
             }
         }
 
@@ -1793,6 +1904,11 @@ export class TacticsScene extends BaseScene {
             u.q = uData.q;
             u.hp = uData.hp;
             u.maxHp = uData.maxHp;
+            u.moveRange = uData.moveRange !== undefined ? uData.moveRange : u.moveRange;
+            u.baseMoveRange = uData.baseMoveRange !== undefined ? uData.baseMoveRange : (u.baseMoveRange !== undefined ? u.baseMoveRange : u.moveRange);
+            u.onHorse = !!uData.onHorse;
+            u.horseId = uData.horseId || null;
+            u.horseType = uData.horseType || u.horseType || 'brown';
             u.imgKey = uData.imgKey;
             u.img = assets.getImage(uData.imgKey);
             u.hasMoved = uData.hasMoved;
@@ -1821,8 +1937,23 @@ export class TacticsScene extends BaseScene {
             u.visualOffsetY = 0;
 
             const cell = this.tacticsMap.getCell(u.r, u.q);
-            if (cell) cell.unit = u;
+            if (u.onHorse) {
+                this.syncMountedOccupancy(u);
+            } else {
+                if (cell) cell.unit = u;
+            }
         });
+
+        // Restore horses (new saves) or reconstruct them from mounted units (old saves)
+        const savedHorses = state.horses;
+        if (Array.isArray(savedHorses)) {
+            this.horses = savedHorses.map(h => ({ ...h, flip: !!h.flip, riderId: h.riderId || null, type: h.type || 'brown' }));
+        } else {
+            this.horses = this.units
+                .filter(u => u.hp > 0 && u.onHorse)
+                .map(u => ({ id: u.horseId || `horse_${u.id}`, riderId: u.id, r: u.r, q: u.q, flip: !!u.flip, type: u.horseType || 'brown' }));
+        }
+        this.horses.forEach(h => this.placeHorseOnCells(h));
 
         this.selectedUnit = null;
         this.selectedAttack = null;
@@ -2074,6 +2205,7 @@ export class TacticsScene extends BaseScene {
         this.turn = state.turn;
         this.turnNumber = state.turnNumber;
         this.weatherType = state.weatherType;
+        this.horses = [];
         
         // Restore Grid
         for (let r = 0; r < config.mapHeight; r++) {
@@ -2085,7 +2217,14 @@ export class TacticsScene extends BaseScene {
                 cell.elevation = savedCell.elevation;
                 cell.impassable = savedCell.impassable;
                 cell.unit = null; // Clear all units first
+                cell.horse = null; // Clear all horses first
             }
+        }
+
+        // Restore horses (new saves) or reconstruct from mounted units (older history entries)
+        const savedHorses = state.horses;
+        if (Array.isArray(savedHorses)) {
+            this.horses = savedHorses.map(h => ({ ...h, flip: !!h.flip, riderId: h.riderId || null }));
         }
 
         // Restore Units
@@ -2101,6 +2240,11 @@ export class TacticsScene extends BaseScene {
             u.q = uData.q;
             u.hp = uData.hp;
             u.maxHp = uData.maxHp;
+            u.moveRange = uData.moveRange !== undefined ? uData.moveRange : u.moveRange;
+            u.baseMoveRange = uData.baseMoveRange !== undefined ? uData.baseMoveRange : (u.baseMoveRange !== undefined ? u.baseMoveRange : u.moveRange);
+            u.onHorse = !!uData.onHorse;
+            u.horseId = uData.horseId || null;
+            u.horseType = uData.horseType || u.horseType || 'brown';
             u.imgKey = uData.imgKey;
             u.img = assets.getImage(uData.imgKey);
             u.hasMoved = uData.hasMoved;
@@ -2125,8 +2269,20 @@ export class TacticsScene extends BaseScene {
             u.visualOffsetY = 0;
 
             const cell = this.tacticsMap.getCell(u.r, u.q);
-            if (cell) cell.unit = u;
+            if (u.onHorse) {
+                this.syncMountedOccupancy(u);
+            } else {
+                if (cell) cell.unit = u;
+            }
         });
+
+        // If history entry didn't include horses, rebuild from mounted units
+        if (!Array.isArray(savedHorses)) {
+            this.horses = this.units
+                .filter(u => u.hp > 0 && u.onHorse)
+                .map(u => ({ id: u.horseId || `horse_${u.id}`, riderId: u.id, r: u.r, q: u.q, flip: !!u.flip, type: u.horseType || 'brown' }));
+        }
+        this.horses.forEach(h => this.placeHorseOnCells(h));
 
         this.selectedUnit = null;
         this.selectedAttack = null;
@@ -2134,6 +2290,7 @@ export class TacticsScene extends BaseScene {
         this.attackTiles.clear();
         this.attackRects = [];
         this.activeDialogue = null;
+        this.mountedMovePlans = null;
     }
 
     undo() {
@@ -2572,7 +2729,7 @@ export class TacticsScene extends BaseScene {
         const attack = ATTACKS[attackKey];
 
         const targetCell = this.tacticsMap.getCell(targetR, targetQ);
-        const victim = targetCell ? targetCell.unit : null;
+        const victim = targetCell ? this.getRiderUnitFromCell(targetCell) : null;
         const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
 
         // Play attack sound
@@ -2584,12 +2741,31 @@ export class TacticsScene extends BaseScene {
         else if (attackKey.startsWith('slash')) assets.playSound('slash');
         else if (attackKey === 'stab') assets.playSound('stab');
 
-        const startPos = this.getPixelPos(attacker.r, attacker.q);
         const targetPos = this.getPixelPos(targetR, targetQ);
 
-        // Facing logic
-        if (targetPos.x < startPos.x) attacker.flip = true;
-        if (targetPos.x > startPos.x) attacker.flip = false;
+        // Facing logic (mounted units must turn-in-place by swapping butt/head anchor)
+        if (attacker.onHorse) {
+            const a = this.getPixelPos(attacker.r, attacker.q);
+            const head = this.getMountedHeadCellFor(attacker, attacker.r, attacker.q);
+            let midX = a.x;
+            if (head) {
+                const b = this.getPixelPos(head.r, head.q);
+                midX = (a.x + b.x) / 2;
+            }
+            let desiredFlip = attacker.flip;
+            if (targetPos.x < midX) desiredFlip = true;
+            else if (targetPos.x > midX) desiredFlip = false;
+            this.turnMountedInPlace(attacker, desiredFlip);
+        }
+
+        // Compute origin AFTER any mounted turn-in-place (turn swaps butt/head anchor)
+        const origin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
+        const startPos = this.getPixelPos(origin.r, origin.q);
+
+        if (!attacker.onHorse) {
+            if (targetPos.x < startPos.x) attacker.flip = true;
+            if (targetPos.x > startPos.x) attacker.flip = false;
+        }
 
         if (attackKey === 'double_blades') {
             this.executeDoubleBlades(attacker, targetR, targetQ, wrappedOnComplete);
@@ -2608,11 +2784,12 @@ export class TacticsScene extends BaseScene {
         attacker.action = attack.animation;
         attacker.frame = 0;
 
-        const startPos = this.getPixelPos(attacker.r, attacker.q);
+        const origin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
+        const startPos = this.getPixelPos(origin.r, origin.q);
         const endPos = this.getPixelPos(targetR, targetQ);
 
         const targetCell = this.tacticsMap.getCell(targetR, targetQ);
-        const victim = targetCell ? targetCell.unit : null;
+        const victim = targetCell ? this.getRiderUnitFromCell(targetCell) : null;
 
         if (attack.type === 'projectile') {
             // Projectile timing: fires between frame 2 and 3
@@ -2687,18 +2864,22 @@ export class TacticsScene extends BaseScene {
         attacker.action = 'attack_1';
         attacker.frame = 0;
 
-        const startPos = this.getPixelPos(attacker.r, attacker.q);
+        const origin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
+        const startPos = this.getPixelPos(origin.r, origin.q);
         const frontPos = this.getPixelPos(targetR, targetQ);
         
         // Opposite side target
-        const dirIndex = this.tacticsMap.getDirectionIndex(attacker.r, attacker.q, targetR, targetQ);
+        const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, targetR, targetQ);
         const oppositeDir = (dirIndex + 3) % 6;
-        const backCell = this.tacticsMap.getNeighborInDirection(attacker.r, attacker.q, oppositeDir);
+        const backCell = this.tacticsMap.getNeighborInDirection(origin.r, origin.q, oppositeDir);
         const backPos = backCell ? this.getPixelPos(backCell.r, backCell.q) : null;
 
         const targetCell = this.tacticsMap.getCell(targetR, targetQ);
-        const frontVictim = targetCell ? targetCell.unit : null;
-        const backVictim = backCell ? backCell.unit : null;
+        const frontVictimRaw = targetCell ? targetCell.unit : null;
+        const backVictimRaw = backCell ? backCell.unit : null;
+        // Defensive: prevent self-hit on mounted units (head/butt hex)
+        const frontVictim = (frontVictimRaw === attacker) ? null : frontVictimRaw;
+        const backVictim = (backVictimRaw === attacker) ? null : backVictimRaw;
         
         const isFrontDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
         const isBackDestructible = backCell && (backCell.terrain.includes('house') || backCell.terrain.includes('ice')) && !backCell.terrain.includes('destroyed') && !backCell.terrain.includes('broken');
@@ -2714,7 +2895,8 @@ export class TacticsScene extends BaseScene {
 
             // Turn around
             setTimeout(() => {
-                attacker.flip = !attacker.flip;
+                if (attacker.onHorse) this.turnMountedInPlace(attacker, !attacker.flip);
+                else attacker.flip = !attacker.flip;
                 attacker.action = 'attack_1';
                 attacker.frame = 0;
                 assets.playSound('double_blades');
@@ -2723,7 +2905,10 @@ export class TacticsScene extends BaseScene {
                 setTimeout(() => {
                     if (backCell) this.damageCell(backCell.r, backCell.q);
                     if (backVictim && backCell) {
-                        this.applyDamageAndPush(attacker, backVictim, ATTACKS.double_blades, backCell.r, backCell.q, startPos, backPos);
+                        // Recompute origin for this strike (mounted pivot swaps butt/head anchor)
+                        const origin2 = this.getAttackOriginForTarget(attacker, backCell.r, backCell.q);
+                        const startPos2 = this.getPixelPos(origin2.r, origin2.q);
+                        this.applyDamageAndPush(attacker, backVictim, ATTACKS.double_blades, backCell.r, backCell.q, startPos2, backPos);
                     } else if (!isBackDestructible) {
                         assets.playSound('whiff', 0.6);
                     }
@@ -2741,7 +2926,8 @@ export class TacticsScene extends BaseScene {
         attacker.action = attack.animation || 'attack_1';
         attacker.frame = 0;
 
-        const startPos = this.getPixelPos(attacker.r, attacker.q);
+        const origin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
+        const startPos = this.getPixelPos(origin.r, origin.q);
         const affected = this.getAffectedTiles(attacker, attackKey, targetR, targetQ);
 
         setTimeout(() => {
@@ -2753,9 +2939,9 @@ export class TacticsScene extends BaseScene {
                     const isDestructible = (cell.terrain.includes('house') || cell.terrain.includes('ice')) && !cell.terrain.includes('destroyed') && !cell.terrain.includes('broken');
                     if (isDestructible) hitAnything = true;
                     
-                    if (cell.unit) {
-                    const victim = cell.unit;
-                    const victimPos = this.getPixelPos(cell.r, cell.q);
+                    const victim = this.getRiderUnitFromCell(cell);
+                    if (victim) {
+                        const victimPos = this.getPixelPos(cell.r, cell.q);
                         this.applyDamageAndPush(attacker, victim, attack, cell.r, cell.q, startPos, victimPos);
                         hitAnything = true;
                     }
@@ -2778,7 +2964,8 @@ export class TacticsScene extends BaseScene {
         attacker.action = attack.animation || 'attack_2';
         attacker.frame = 0;
 
-        const startPos = this.getPixelPos(attacker.r, attacker.q);
+        const origin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
+        const startPos = this.getPixelPos(origin.r, origin.q);
         const affected = this.getAffectedTiles(attacker, attackKey, targetR, targetQ);
 
         setTimeout(() => {
@@ -2790,9 +2977,9 @@ export class TacticsScene extends BaseScene {
                     const isDestructible = (cell.terrain.includes('house') || cell.terrain.includes('ice')) && !cell.terrain.includes('destroyed') && !cell.terrain.includes('broken');
                     if (isDestructible) hitAnything = true;
 
-                    if (cell.unit) {
-                    const victim = cell.unit;
-                    const victimPos = this.getPixelPos(cell.r, cell.q);
+                    const victim = this.getRiderUnitFromCell(cell);
+                    if (victim) {
+                        const victimPos = this.getPixelPos(cell.r, cell.q);
                         // Pass the original targetR/targetQ so only the furthest hex (clicked) gets pushed
                         this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, victimPos);
                         hitAnything = true;
@@ -2873,6 +3060,10 @@ export class TacticsScene extends BaseScene {
 
         if (victim.hp <= 0) {
             victim.hp = 0;
+            // If a mounted unit dies, it falls off and the horse remains (horse is immortal)
+            if (victim.onHorse) {
+                this.dismountUnitLeaveHorse(victim);
+            }
             if (victim.name !== 'Boulder') {
             victim.action = 'death';
             }
@@ -2893,6 +3084,11 @@ export class TacticsScene extends BaseScene {
     }
 
     applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos) {
+        // Hard safety: nobody can ever hit/push themselves with their own attack.
+        // (Mounted units occupy 2 hexes, and some multi-hex attacks can otherwise reference the other hex.)
+        if (!attacker || !victim) return;
+        if (victim === attacker) return;
+
         let finalDamage = attack.damage;
         let isCrit = false;
         let isResisted = false;
@@ -2940,8 +3136,9 @@ export class TacticsScene extends BaseScene {
             }
         }
 
-        // Apply damage & Shake
-        finalDamage = this.applyUnitDamage(victim, finalDamage, victimCell);
+        // Apply damage & Shake (use the hit cell so mounted head-hex hits clear the right occupancy)
+        const hitCell = this.tacticsMap.getCell(targetR, targetQ);
+        finalDamage = this.applyUnitDamage(victim, finalDamage, hitCell);
         if (finalDamage > 0) {
             victim.triggerShake(startPos.x, startPos.y, endPos.x, endPos.y);
         }
@@ -2965,25 +3162,47 @@ export class TacticsScene extends BaseScene {
             }
 
             // Handle push
-            const dirIndex = this.tacticsMap.getDirectionIndex(attacker.r, attacker.q, targetR, targetQ);
+            const attackerOrigin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
+            const dirIndex = this.tacticsMap.getDirectionIndex(attackerOrigin.r, attackerOrigin.q, targetR, targetQ);
             if (dirIndex === -1) return; // Cannot push if direction is undefined
 
-            const pushCell = this.tacticsMap.getNeighborInDirection(victim.r, victim.q, dirIndex);
+            // If a mounted unit is hit on its head hex, push from that hex (not always from butt).
+            // Also: pushed mounted units are dismounted; the horse stays put.
+            let victimPushR = victim.r;
+            let victimPushQ = victim.q;
+            const wasMounted = !!victim.onHorse;
+            if (wasMounted) {
+                // Always push from the ACTUAL hit hex (targetR/targetQ) if it's one of the 2 occupied horse hexes.
+                // This makes head-hex pushes dismount and push in the expected direction even if facing/anchor changed.
+                const hitIsOnPair =
+                    (victim.r === targetR && victim.q === targetQ) ||
+                    (victim.r === targetR && victim.q + 1 === targetQ) ||
+                    (victim.r === targetR && victim.q - 1 === targetQ);
+                if (hitIsOnPair) {
+                    victimPushR = targetR;
+                    victimPushQ = targetQ;
+                }
+            }
+
+            const victimCellForPush = this.tacticsMap.getCell(victimPushR, victimPushQ);
+            const pushCell = this.tacticsMap.getNeighborInDirection(victimPushR, victimPushQ, dirIndex);
             
-            const victimPos = this.getPixelPos(victim.r, victim.q);
+            const victimPos = this.getPixelPos(victimPushR, victimPushQ);
 
             if (pushCell) {
                 const targetPos = this.getPixelPos(pushCell.r, pushCell.q);
-                const levelDiff = pushCell.level - victimCell.level;
+                const levelDiff = (pushCell.level || 0) - (victimCellForPush?.level || 0);
                 const isDeepWater = pushCell.terrain && pushCell.terrain.includes('water_deep');
 
                 // 1. COLLISION (Pushing into a wall/high cliff or another living unit)
                 const isHighCliff = levelDiff > 1;
                 const isImpassable = pushCell.impassable && !isDeepWater;
                 const isOccupiedByLiving = pushCell.unit && pushCell.unit._aliveAtStartOfAction;
+                const isOccupiedByHorse = !!pushCell.horse; // riderless or ridden horses occupy hexes too
 
-                if (isHighCliff || isImpassable || isOccupiedByLiving) {
-                    victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, true); // true = bounce
+                if (isHighCliff || isImpassable || isOccupiedByLiving || isOccupiedByHorse) {
+                    // Blocked push: bump damage + bounce, but stay mounted (no displacement).
+                    victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, true, 0); // true = bounce
                     this.executePushCollision(victim, pushCell, victimPos, targetPos);
                 } 
                 // 2. FALLING (Pushing off a cliff)
@@ -2991,8 +3210,10 @@ export class TacticsScene extends BaseScene {
                     const fallDamage = Math.max(0, Math.abs(levelDiff) - 1);
                     const occupant = pushCell.unit; // Could be a corpse or a living unit (if not _aliveAtStartOfAction)
 
+                    // Displaced push: if mounted, fall off horse (horse stays) before resolving fall.
+                    if (wasMounted) this.dismountUnitLeaveHorse(victim);
                     victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false, Math.abs(levelDiff));
-                    victimCell.unit = null;
+                    if (victimCellForPush) victimCellForPush.unit = null;
 
                     if (occupant && occupant.hp > 0) {
                         // CRUSH MECHANIC
@@ -3015,10 +3236,13 @@ export class TacticsScene extends BaseScene {
                 }
                 // 3. NORMAL PUSH (Same level or slight elevation change)
                 else {
-                    victimCell.unit = null;
+                    // Displaced push: if mounted, fall off horse (horse stays) and add a small arc.
+                    const dismountFallHeight = wasMounted ? 1 : 0;
+                    if (wasMounted) this.dismountUnitLeaveHorse(victim);
+                    if (victimCellForPush) victimCellForPush.unit = null;
                     victim.setPosition(pushCell.r, pushCell.q);
                     pushCell.unit = victim;
-                    victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false);
+                    victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false, dismountFallHeight);
 
                     // Deep water drowning
                     if (isDeepWater) {
@@ -3041,6 +3265,7 @@ export class TacticsScene extends BaseScene {
                 // Edge of map: The push is blocked by an invisible wall.
                 // No damage, no displacement. The unit just shakes in place.
                 victim.action = 'hit';
+                // If mounted, stay mounted when blocked at the edge.
                 assets.playSound('collision', 0.5); // Quieter collision sound
             }
         } else {
@@ -3269,9 +3494,32 @@ export class TacticsScene extends BaseScene {
                 });
                 
                 if (u.isDead) unit.isGone = false; // We want corpses to stay visible
+
+                // Mount (custom battles): +1 move and occupy 2 adjacent hexes (left/right only)
+                const wantsHorse = !!u.onHorse;
+                if (wantsHorse) {
+                    unit.onHorse = true;
+                    unit.baseMoveRange = unit.moveRange;
+                    unit.horseType = u.horseType || 'brown';
+                    unit.moveRange = unit.baseMoveRange + this.getHorseMoveBonus(unit.horseType);
+                    unit.horseId = `horse_${unit.id}`;
+                }
                 
             this.units.push(unit);
                 cell.unit = unit;
+                if (unit.onHorse) {
+                    if (this.isValidMountedButtDestination(unit, unit.r, unit.q)) {
+                        const headCell = this.getMountedHeadCellFor(unit, unit.r, unit.q);
+                        headCell.unit = unit;
+                        const horse = { id: unit.horseId, riderId: unit.id, r: unit.r, q: unit.q, flip: !!unit.flip, type: unit.horseType || 'brown' };
+                        this.horses.push(horse);
+                        this.placeHorseOnCells(horse);
+                    } else {
+                        unit.onHorse = false;
+                        unit.horseId = null;
+                        unit.moveRange = unit.baseMoveRange;
+                    }
+                }
             });
         }
     }
@@ -3282,6 +3530,357 @@ export class TacticsScene extends BaseScene {
             x: this.startX + q * this.manager.config.horizontalSpacing + xOffset,
             y: this.startY + r * this.manager.config.verticalSpacing - (this.tacticsMap.getCell(r, q)?.elevation || 0)
         };
+    }
+
+    getMountedHeadCellFor(unit, buttR, buttQ) {
+        const dq = unit.flip ? -1 : 1; // Only left/right horses for now
+        return this.tacticsMap.getCell(buttR, buttQ + dq);
+    }
+
+    isValidMountedButtDestination(unit, buttR, buttQ) {
+        const buttCell = this.tacticsMap.getCell(buttR, buttQ);
+        if (!buttCell || buttCell.impassable) return false;
+
+        const headCell = this.getMountedHeadCellFor(unit, buttR, buttQ);
+        if (!headCell || headCell.impassable) return false;
+
+        // Horse can't straddle a cliff: the two occupied hexes must be within 1 level of each other
+        const levelDiff = Math.abs((buttCell.level || 0) - (headCell.level || 0));
+        if (levelDiff > 1) return false;
+
+        // Both hexes must be free (or occupied by the moving unit itself)
+        if (buttCell.unit && buttCell.unit !== unit) return false;
+        if (headCell.unit && headCell.unit !== unit) return false;
+
+        return true;
+    }
+
+    // Mounted move planning (butt + head) for UI highlighting / click handling
+    buildMountedMovePlans(unit, reachableData) {
+        const plans = [];
+        reachableData.forEach((data, key) => {
+            const [r, q] = key.split(',').map(Number);
+            const buttCell = this.tacticsMap.getCell(r, q);
+            if (!buttCell) return;
+
+            // Butt must be free (or this unit)
+            if (buttCell.unit && buttCell.unit !== unit) return;
+
+            // Determine final facing from cheapest-path parent -> node
+            let plannedFlip = unit.flip;
+            if (data.parent) {
+                const [pr, pq] = data.parent.split(',').map(Number);
+                const prevPos = this.getPixelPos(pr, pq);
+                const lastPos = this.getPixelPos(r, q);
+                if (lastPos.x < prevPos.x) plannedFlip = true;
+                else if (lastPos.x > prevPos.x) plannedFlip = false;
+            }
+
+            const tmp = { ...unit, flip: plannedFlip };
+            const headCell = this.getMountedHeadCellFor(tmp, r, q);
+            if (!headCell || headCell.impassable) return;
+            if (headCell.unit && headCell.unit !== unit) return;
+
+            // Can't straddle a cliff at the destination
+            const levelDiff = Math.abs((buttCell.level || 0) - (headCell.level || 0));
+            if (levelDiff > 1) return;
+
+            plans.push({
+                butt: { r, q },
+                head: { r: headCell.r, q: headCell.q },
+                plannedFlip
+            });
+        });
+        return plans;
+    }
+
+    getMountedPlanForClickedCell(clickedR, clickedQ) {
+        if (!this.mountedMovePlans || this.mountedMovePlans.length === 0) return null;
+        // Prefer plans where the clicked cell is the head
+        const headPlan = this.mountedMovePlans.find(p => p.head.r === clickedR && p.head.q === clickedQ);
+        if (headPlan) return headPlan;
+        return this.mountedMovePlans.find(p => p.butt.r === clickedR && p.butt.q === clickedQ) || null;
+    }
+
+    syncMountedOccupancy(unit) {
+        if (!unit?.onHorse) return;
+        // Clear any stale occupancy on both potential head tiles (E and W), then set the correct one.
+        const buttCell = this.tacticsMap.getCell(unit.r, unit.q);
+        const eastCell = this.tacticsMap.getCell(unit.r, unit.q + 1);
+        const westCell = this.tacticsMap.getCell(unit.r, unit.q - 1);
+
+        if (buttCell) buttCell.unit = unit;
+        if (eastCell && eastCell.unit === unit) eastCell.unit = null;
+        if (westCell && westCell.unit === unit) westCell.unit = null;
+
+        const headCell = this.getMountedHeadCellFor(unit, unit.r, unit.q);
+        if (headCell) headCell.unit = unit;
+    }
+
+    getAttackOrigins(attacker) {
+        const origins = [{ r: attacker.r, q: attacker.q, kind: 'butt' }];
+        if (attacker.onHorse) {
+            const head = this.getMountedHeadCellFor(attacker, attacker.r, attacker.q);
+            if (head) origins.push({ r: head.r, q: head.q, kind: 'head' });
+        }
+        return origins;
+    }
+
+    getAttackOriginForTarget(attacker, targetR, targetQ) {
+        const origins = this.getAttackOrigins(attacker);
+        let best = origins[0];
+        let bestDist = Infinity;
+        for (const o of origins) {
+            const d = this.tacticsMap.getDistance(o.r, o.q, targetR, targetQ);
+            if (d < bestDist) {
+                bestDist = d;
+                best = o;
+            } else if (d === bestDist) {
+                // Tie -> prefer head
+                if (o.kind === 'head') best = o;
+            }
+        }
+        return best;
+    }
+
+    getHorseById(horseId) {
+        if (!horseId) return null;
+        return this.horses.find(h => h.id === horseId) || null;
+    }
+
+    getRiderUnitFromCell(cell) {
+        if (!cell) return null;
+        if (cell.unit) return cell.unit;
+        const riderId = cell.horse?.riderId;
+        if (!riderId) return null;
+        return this.units.find(u => u.id === riderId) || null;
+    }
+
+    getHorseMoveBonus(horseType) {
+        if (horseType === 'white') return 2;
+        if (horseType === 'redhare') return 3;
+        // black/brown/default
+        return 1;
+    }
+
+    getHorseSpriteKeys(horseType = 'brown') {
+        const t = horseType || 'brown';
+        return {
+            stand: `horse_stand_${t}`,
+            run: `horse_run_${t}`
+        };
+    }
+
+    getHorseHeadCoords(horse) {
+        const dq = horse.flip ? -1 : 1;
+        return { r: horse.r, q: horse.q + dq };
+    }
+
+    clearHorseFromCells(horse) {
+        if (!horse) return;
+        const butt = this.tacticsMap.getCell(horse.r, horse.q);
+        const headCoords = this.getHorseHeadCoords(horse);
+        const head = this.tacticsMap.getCell(headCoords.r, headCoords.q);
+        if (butt && butt.horse === horse) butt.horse = null;
+        if (head && head.horse === horse) head.horse = null;
+    }
+
+    placeHorseOnCells(horse) {
+        if (!horse) return;
+        const butt = this.tacticsMap.getCell(horse.r, horse.q);
+        const headCoords = this.getHorseHeadCoords(horse);
+        const head = this.tacticsMap.getCell(headCoords.r, headCoords.q);
+        if (butt) butt.horse = horse;
+        if (head) head.horse = horse;
+    }
+
+    // Mounted facing change without movement: keep the footprint on the same two hexes
+    // by swapping which occupied hex is the "butt" anchor.
+    turnMountedInPlace(unit, desiredFlip) {
+        if (!unit?.onHorse) return;
+        if (unit.isMoving) return;
+        if (desiredFlip === undefined || desiredFlip === null) return;
+        if (!!unit.flip === !!desiredFlip) return;
+
+        const oldButtCell = this.tacticsMap.getCell(unit.r, unit.q);
+        const oldHeadCell = this.getMountedHeadCellFor(unit, unit.r, unit.q);
+        if (!oldHeadCell) {
+            unit.flip = !!desiredFlip;
+            this.syncMountedOccupancy(unit);
+            const horse = this.getHorseById(unit.horseId);
+            if (horse) {
+                this.clearHorseFromCells(horse);
+                horse.r = unit.r;
+                horse.q = unit.q;
+                horse.flip = !!unit.flip;
+                this.placeHorseOnCells(horse);
+            }
+            return;
+        }
+
+        // Swap anchor: new butt becomes the previous head (occupied pair stays identical)
+        const newButtR = oldHeadCell.r;
+        const newButtQ = oldHeadCell.q;
+
+        if (oldButtCell && oldButtCell.unit === unit) oldButtCell.unit = null;
+        if (oldHeadCell && oldHeadCell.unit === unit) oldHeadCell.unit = null;
+
+        unit.r = newButtR;
+        unit.q = newButtQ;
+        unit.flip = !!desiredFlip;
+        this.syncMountedOccupancy(unit);
+
+        const horse = this.getHorseById(unit.horseId);
+        if (horse) {
+            this.clearHorseFromCells(horse);
+            horse.r = unit.r;
+            horse.q = unit.q;
+            horse.flip = !!unit.flip;
+            this.placeHorseOnCells(horse);
+        }
+    }
+
+    dismountUnitLeaveHorse(unit) {
+        if (!unit?.onHorse) return;
+        const horse = this.getHorseById(unit.horseId);
+        if (horse) {
+            // Horse stays put where the unit is currently anchored
+            this.clearHorseFromCells(horse);
+            horse.r = unit.r;
+            horse.q = unit.q;
+            horse.flip = !!unit.flip;
+            horse.riderId = null;
+            horse.type = horse.type || unit.horseType || 'brown';
+            this.placeHorseOnCells(horse);
+        }
+
+        // Clear unit occupancy from both horse hexes
+        const buttCell = this.tacticsMap.getCell(unit.r, unit.q);
+        const headCell = this.getMountedHeadCellFor(unit, unit.r, unit.q);
+        if (buttCell && buttCell.unit === unit) buttCell.unit = null;
+        if (headCell && headCell.unit === unit) headCell.unit = null;
+
+        unit.onHorse = false;
+        unit.horseId = null;
+        unit.moveRange = unit.baseMoveRange;
+    }
+
+    tryAutoMount(unit, enteredR, enteredQ) {
+        if (!unit || unit.onHorse || unit.hp <= 0) return false;
+        const cell = this.tacticsMap.getCell(enteredR, enteredQ);
+        const horse = cell?.horse;
+        if (!horse || horse.riderId) return false;
+
+        const head = this.getHorseHeadCoords(horse);
+        const enteredIsButt = (horse.r === enteredR && horse.q === enteredQ);
+        const enteredIsHead = (head.r === enteredR && head.q === enteredQ);
+        if (!enteredIsButt && !enteredIsHead) return false;
+
+        // If we entered the head tile, flip the horse so the entered tile becomes the butt anchor
+        this.clearHorseFromCells(horse);
+        if (enteredIsHead) {
+            horse.flip = !horse.flip;
+            horse.r = enteredR;
+            horse.q = enteredQ;
+        }
+        horse.riderId = unit.id;
+        this.placeHorseOnCells(horse);
+
+        unit.onHorse = true;
+        unit.horseId = horse.id;
+        unit.horseType = horse.type || 'brown';
+        unit.baseMoveRange = unit.baseMoveRange || unit.moveRange;
+        unit.moveRange = unit.baseMoveRange + this.getHorseMoveBonus(unit.horseType);
+        unit.r = horse.r;
+        unit.q = horse.q;
+        unit.flip = !!horse.flip;
+
+        // Occupy both hexes as a mounted unit
+        const buttCell = this.tacticsMap.getCell(unit.r, unit.q);
+        const headCell = this.getMountedHeadCellFor(unit, unit.r, unit.q);
+        if (buttCell) buttCell.unit = unit;
+        if (headCell) headCell.unit = unit;
+        return true;
+    }
+
+    isValidHorseButtDestination(horse, buttR, buttQ) {
+        const buttCell = this.tacticsMap.getCell(buttR, buttQ);
+        if (!buttCell || buttCell.impassable) return false;
+
+        const dq = horse.flip ? -1 : 1;
+        const headCell = this.tacticsMap.getCell(buttR, buttQ + dq);
+        if (!headCell || headCell.impassable) return false;
+
+        // Horse can't straddle a cliff
+        const levelDiff = Math.abs((buttCell.level || 0) - (headCell.level || 0));
+        if (levelDiff > 1) return false;
+
+        // Don't wander onto units
+        if (buttCell.unit) return false;
+        if (headCell.unit) return false;
+
+        return true;
+    }
+
+    wanderRiderlessHorses() {
+        // Move each riderless horse 0-1 steps to a random valid nearby butt tile
+        this.horses.forEach(h => {
+            if (h.riderId) return;
+            const neighbors = this.tacticsMap.getNeighbors(h.r, h.q);
+            const candidates = [{ r: h.r, q: h.q }, ...neighbors.map(n => ({ r: n.r, q: n.q }))];
+            const valid = candidates.filter(c => this.isValidHorseButtDestination(h, c.r, c.q));
+            if (valid.length <= 1) return;
+
+            const choice = valid[Math.floor(Math.random() * valid.length)];
+            if (choice.r === h.r && choice.q === h.q) return; // no move
+
+            const prevPos = this.getPixelPos(h.r, h.q);
+            const nextPos = this.getPixelPos(choice.r, choice.q);
+            // Face opposite the direction you came from:
+            // If we moved right (came from left), face right. If we moved left (came from right), face left.
+            if (nextPos.x > prevPos.x + 0.1) h.flip = false;
+            else if (nextPos.x < prevPos.x - 0.1) h.flip = true;
+
+            // Animate visually instead of teleporting: update gameplay position immediately (so occupancy/pathing is correct),
+            // but render at an interpolated visual position for a short duration.
+            h.moveData = {
+                startX: prevPos.x,
+                startY: prevPos.y,
+                endX: nextPos.x,
+                endY: nextPos.y,
+                t: 0,
+                duration: 250
+            };
+            h.visualX = prevPos.x;
+            h.visualY = prevPos.y;
+            h.isMoving = true;
+
+            this.clearHorseFromCells(h);
+            h.r = choice.r;
+            h.q = choice.q;
+            this.placeHorseOnCells(h);
+        });
+    }
+
+    updateRiderlessHorseAnimations(dt) {
+        this.horses.forEach(h => {
+            if (h.riderId) return;
+            if (!h.moveData) {
+                h.isMoving = false;
+                return;
+            }
+            h.moveData.t += dt;
+            const p = Math.min(1, h.moveData.t / h.moveData.duration);
+            h.visualX = h.moveData.startX + (h.moveData.endX - h.moveData.startX) * p;
+            h.visualY = h.moveData.startY + (h.moveData.endY - h.moveData.startY) * p;
+            if (p >= 1) {
+                const finalPos = this.getPixelPos(h.r, h.q);
+                h.visualX = finalPos.x;
+                h.visualY = finalPos.y;
+                h.moveData = null;
+                h.isMoving = false;
+            }
+        });
     }
 
     update(timestamp) {
@@ -3320,6 +3919,7 @@ export class TacticsScene extends BaseScene {
         }
 
         this.animationFrame = Math.floor(timestamp / 150) % 4;
+        this.updateRiderlessHorseAnimations(dt);
         
         if (this.isIntroDialogueActive || this.activeDialogue || this.isVictoryDialogueActive || this.isCleanupDialogueActive || this.isCutscene) {
             this.dialogueElapsed = (this.dialogueElapsed || 0) + dt;
@@ -3555,7 +4155,8 @@ export class TacticsScene extends BaseScene {
 
     getAffectedTiles(attacker, attackKey, targetR, targetQ) {
         const affected = [];
-        const dist = this.tacticsMap.getDistance(attacker.r, attacker.q, targetR, targetQ);
+        const origin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
+        const dist = this.tacticsMap.getDistance(origin.r, origin.q, targetR, targetQ);
         const attack = ATTACKS[attackKey];
 
         if (attackKey.startsWith('serpent_spear')) {
@@ -3564,34 +4165,107 @@ export class TacticsScene extends BaseScene {
             
             // Check for intermediate hexes
             for (let d = 1; d < dist; d++) {
-                const intermediate = this.getIntermediateHex(attacker.r, attacker.q, targetR, targetQ, d);
+                const intermediate = this.getIntermediateHex(origin.r, origin.q, targetR, targetQ, d);
                 if (intermediate) {
                     affected.push(intermediate);
                 }
             }
         } else if (attackKey.startsWith('green_dragon_slash') || attackKey === 'tyrant_sweep') {
-            // Hits target and its neighbors that are at the same distance from attacker
-            // This creates a consistent 3-tile arc at any range (1 or 2).
-            affected.push({ r: targetR, q: targetQ });
-            const neighbors = this.tacticsMap.getNeighbors(targetR, targetQ);
-            neighbors.forEach(n => {
-                const d = this.tacticsMap.getDistance(attacker.r, attacker.q, n.r, n.q);
-                if (d === dist) {
-                    affected.push({ r: n.r, q: n.q });
+            // 3-hex arc.
+            // For mounted units: never allow the arc to include the attacker's own head/butt.
+            // Special case: if targeting "above/below" the horse at melee range, slice 3-in-a-row horizontally.
+            const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, targetR, targetQ);
+
+            const isMounted = !!attacker.onHorse;
+            const isEastWest = (dirIndex === 1 || dirIndex === 4);
+            const isMelee = dist === 1;
+
+            if (isMounted && isMelee && !isEastWest) {
+                // "Above/below" horse: hit a horizontal 3-hex line centered on the target.
+                affected.push({ r: targetR, q: targetQ });
+                const east = this.tacticsMap.getNeighborInDirection(targetR, targetQ, 1);
+                const west = this.tacticsMap.getNeighborInDirection(targetR, targetQ, 4);
+                if (east) affected.push({ r: east.r, q: east.q });
+                if (west) affected.push({ r: west.r, q: west.q });
+            } else {
+                // Default: fan around target, perpendicular to attack direction.
+                affected.push({ r: targetR, q: targetQ });
+                if (dirIndex !== -1) {
+                    const sideA = this.tacticsMap.getNeighborInDirection(targetR, targetQ, (dirIndex + 2) % 6);
+                    const sideB = this.tacticsMap.getNeighborInDirection(targetR, targetQ, (dirIndex + 4) % 6);
+                    if (sideA) affected.push({ r: sideA.r, q: sideA.q });
+                    if (sideB) affected.push({ r: sideB.r, q: sideB.q });
                 }
-            });
+            }
         } else if (attackKey === 'double_blades') {
-            affected.push({ r: targetR, q: targetQ });
-            const dirIndex = this.tacticsMap.getDirectionIndex(attacker.r, attacker.q, targetR, targetQ);
-            if (dirIndex !== -1) {
-                const oppositeDir = (dirIndex + 3) % 6;
-                const backCell = this.tacticsMap.getNeighborInDirection(attacker.r, attacker.q, oppositeDir);
-                if (backCell) affected.push({ r: backCell.r, q: backCell.q });
+            // Special case for mounted units when targeting left/right:
+            // hit in front of head AND behind butt (with a gap between), per design.
+            if (attacker.onHorse) {
+                const butt = { r: attacker.r, q: attacker.q };
+                const head = this.getMountedHeadCellFor(attacker, butt.r, butt.q);
+                if (head) {
+                    const forwardDir = attacker.flip ? 4 : 1; // W if facing west, E if facing east
+                    const backDir = attacker.flip ? 1 : 4;
+                    const inFrontOfHead = this.tacticsMap.getNeighborInDirection(head.r, head.q, forwardDir);
+                    const behindButt = this.tacticsMap.getNeighborInDirection(butt.r, butt.q, backDir);
+
+                    const isFrontTarget = (inFrontOfHead && inFrontOfHead.r === targetR && inFrontOfHead.q === targetQ);
+                    const isBackTarget = (behindButt && behindButt.r === targetR && behindButt.q === targetQ);
+
+                    if (isFrontTarget && behindButt) {
+                        affected.push({ r: targetR, q: targetQ });
+                        affected.push({ r: behindButt.r, q: behindButt.q });
+                    } else if (isBackTarget && inFrontOfHead) {
+                        affected.push({ r: targetR, q: targetQ });
+                        affected.push({ r: inFrontOfHead.r, q: inFrontOfHead.q });
+                    } else {
+                        // Fallback to normal behavior for non-E/W targets
+                        affected.push({ r: targetR, q: targetQ });
+                        const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, targetR, targetQ);
+                        if (dirIndex !== -1) {
+                            const oppositeDir = (dirIndex + 3) % 6;
+                            const backCell = this.tacticsMap.getNeighborInDirection(origin.r, origin.q, oppositeDir);
+                            if (backCell) affected.push({ r: backCell.r, q: backCell.q });
+                        }
+                    }
+                } else {
+                    affected.push({ r: targetR, q: targetQ });
+                }
+            } else {
+                affected.push({ r: targetR, q: targetQ });
+                const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, targetR, targetQ);
+                if (dirIndex !== -1) {
+                    const oppositeDir = (dirIndex + 3) % 6;
+                    const backCell = this.tacticsMap.getNeighborInDirection(origin.r, origin.q, oppositeDir);
+                    if (backCell) affected.push({ r: backCell.r, q: backCell.q });
+                }
             }
         } else {
             affected.push({ r: targetR, q: targetQ });
         }
-        return affected;
+
+        // Never allow an attack to "hit" the attacker itself (important for 2-hex mounted footprint).
+        const forbidden = new Set([`${attacker.r},${attacker.q}`]);
+        if (attacker.onHorse) {
+            const head = this.getMountedHeadCellFor(attacker, attacker.r, attacker.q);
+            if (head) forbidden.add(`${head.r},${head.q}`);
+        }
+
+        // De-dupe + filter out forbidden tiles + filter out off-map
+        const uniq = [];
+        const seen = new Set();
+        for (const t of affected) {
+            if (!t) continue;
+            const cell = this.tacticsMap.getCell(t.r, t.q);
+            if (!cell) continue;
+            const k = `${t.r},${t.q}`;
+            if (forbidden.has(k)) continue;
+            if (seen.has(k)) continue;
+            seen.add(k);
+            uniq.push({ r: t.r, q: t.q });
+        }
+
+        return uniq;
     }
 
     getIntermediateHex(r1, q1, r2, q2, step) {
@@ -3688,6 +4362,26 @@ export class TacticsScene extends BaseScene {
             tiles.forEach(t => affectedTiles.set(`${t.r},${t.q}`, true));
         }
 
+        // Determine which tiles are being previewed for a mounted move destination (hover)
+        const movePreviewTiles = new Set();
+        if (
+            this.selectedUnit &&
+            this.selectedUnit.faction === 'player' &&
+            !this.selectedUnit.hasMoved &&
+            this.selectedUnit.onHorse &&
+            !this.selectedAttack &&
+            this.hoveredCell
+        ) {
+            const hk = `${this.hoveredCell.r},${this.hoveredCell.q}`;
+            if (this.reachableTiles.has(hk)) {
+                const plan = this.getMountedPlanForClickedCell(this.hoveredCell.r, this.hoveredCell.q);
+                if (plan) {
+                    movePreviewTiles.add(`${plan.butt.r},${plan.butt.q}`);
+                    movePreviewTiles.add(`${plan.head.r},${plan.head.q}`);
+                }
+            }
+        }
+
         // 1. Collect hexes
         for (let r = 0; r < config.mapHeight; r++) {
             const xOffset = (Math.abs(r) % 2 === 1) ? config.horizontalSpacing / 2 : 0;
@@ -3706,13 +4400,31 @@ export class TacticsScene extends BaseScene {
                     isAttackRange: this.attackTiles.has(`${r},${q}`),
                     isAffected: affectedTiles.has(`${r},${q}`),
                     isTelegraphed: telegraphedTiles.has(`${r},${q}`),
-                    isHovered: this.hoveredCell === cell
+                    isHovered: this.hoveredCell === cell,
+                    isMovePreview: movePreviewTiles.has(`${r},${q}`)
                 });
             }
         }
 
         // 2. Collect units (using their fractional sort row for depth)
         // Include dead units so their death animation/corpse is visible
+        // 2a. Riderless horses (rendered as props between two adjacent hexes)
+        this.horses.forEach(h => {
+            if (h.riderId) return; // ridden horses are rendered with their rider
+            const pos = (h.moveData && h.visualX !== undefined && h.visualY !== undefined)
+                ? { x: h.visualX, y: h.visualY }
+                : this.getPixelPos(h.r, h.q);
+            drawCalls.push({
+                type: 'horse',
+                r: h.r,
+                q: h.q,
+                priority: 0.9,
+                horse: h,
+                x: pos.x,
+                y: pos.y
+            });
+        });
+
         this.units.forEach(u => {
             if (u.isGone) return;
             const pos = this.getPixelPos(u.r, u.q); // for stationary reference
@@ -3796,6 +4508,11 @@ export class TacticsScene extends BaseScene {
                 if (call.isReachable) {
                     this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 215, 0, 0.3)');
                 }
+
+                // Mounted move hover preview (show the planned head+butt destination pair)
+                if (call.isMovePreview) {
+                    this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 255, 255, 0.28)');
+                }
                 
                 if (call.isAffected) {
                     // Impact preview (Red)
@@ -3855,7 +4572,96 @@ export class TacticsScene extends BaseScene {
                     this.drawHighlight(ctx, u.visualX, surfaceY, 'rgba(255, 255, 255, 0.4)');
                 }
 
-                this.drawCharacter(ctx, u.img, u.currentAnimAction || u.action, u.frame, u.visualX + u.visualOffsetX, surfaceY + u.visualOffsetY, drawOptions);
+                // Mounted rendering: draw rider split around the horse so legs "straddle"
+                if (u.onHorse) {
+                    const riderAction = (u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action);
+                    const buttX = u.visualX + u.visualOffsetX;
+                    // Apply terrain sink ONCE for mounted rendering (we'll pass sinkOffset=0 to drawCharacter)
+                    const headForSink = this.getMountedHeadCellFor(u, u.r, u.q);
+                    const isHorseInShallow =
+                        (!!cell && cell.terrain?.includes('water_shallow')) ||
+                        (!!headForSink && headForSink.terrain?.includes('water_shallow'));
+                    const terrainSink = Math.max(drawOptions.sinkOffset || 0, isHorseInShallow ? 4 : 0);
+                    const buttY = surfaceY + u.visualOffsetY + terrainSink;
+                    const riderDrawOptions = { ...drawOptions, sinkOffset: 0, isSubmerged: false };
+
+                    const spacing = this.manager.config.horizontalSpacing;
+                    const headX = buttX + (u.flip ? -spacing : spacing);
+                    const headY = buttY;
+                    const midX = Math.floor((buttX + headX) / 2);
+                    const midY = Math.floor((buttY + headY) / 2);
+
+                    // Tuning: horse feet were too low; lift the sprite a bit.
+                    // Also center/raise the rider so he's seated on the horse back.
+                    const horseFeetY = 15; // lower number lifts the horse (feet higher)
+                    const riderX = midX;
+                    // Requested: rider down 3px, but horse+rider up 5px overall => net rider up 2px from previous
+                    const riderY = midY - 22;
+
+                    const nearSide = u.flip ? 'right' : 'left';
+                    const farSide = nearSide === 'left' ? 'right' : 'left';
+
+                    const drawHalf = (side) => {
+                        ctx.save();
+                        const clipX = side === 'left' ? Math.floor(riderX - 36) : Math.floor(riderX);
+                        ctx.beginPath();
+                        ctx.rect(clipX, Math.floor(riderY - 100), 36, 140);
+                        ctx.clip();
+                        this.drawCharacter(ctx, u.img, riderAction, u.frame, riderX, riderY, riderDrawOptions);
+                        ctx.restore();
+                    };
+
+                    // Far leg behind the horse
+                    drawHalf(farSide);
+
+                    // Horse (between two adjacent hexes)
+                    const keys = this.getHorseSpriteKeys(u.horseType || 'brown');
+                    const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
+                    const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
+                    const isRunning = (u.isMoving || u.action === 'walk') && horseRun;
+                    const horseImg = isRunning ? horseRun : horseStand;
+                    if (horseImg) {
+                        const frameW = 64;
+                        const frameH = 64;
+                        const frameCount = isRunning ? Math.max(1, Math.floor(horseImg.width / frameW)) : 1;
+                        const f = isRunning ? (Math.floor(timestamp / 80) % frameCount) : 0;
+                        const sx = f * frameW;
+
+                        const dx = -frameW / 2;
+                        const dy = horseFeetY - frameH;
+
+                        const drawHorsePass = (alpha = 1.0, clipRect = null) => {
+                            ctx.save();
+                            if (clipRect) {
+                                ctx.beginPath();
+                                ctx.rect(clipRect.x, clipRect.y, clipRect.w, clipRect.h);
+                                ctx.clip();
+                            }
+                            ctx.globalAlpha *= alpha;
+                            ctx.translate(midX, midY);
+                            if (u.flip) ctx.scale(-1, 1);
+                            ctx.drawImage(horseImg, sx, 0, frameW, frameH, dx, dy, frameW, frameH);
+                            ctx.restore();
+                        };
+
+                        // Submerge horse legs in shallow water (similar to drawCharacter isSubmerged)
+                        if (isHorseInShallow) {
+                            const topY = midY + dy;
+                            const feetY = midY + horseFeetY;
+                            // Waterline is slightly above feet due to sink
+                            const waterlineY = feetY - terrainSink;
+                            drawHorsePass(1.0, { x: midX - 40, y: topY - 10, w: 80, h: Math.max(0, waterlineY - (topY - 10)) });
+                            drawHorsePass(0.4, { x: midX - 40, y: waterlineY, w: 80, h: Math.max(0, (feetY + 10) - waterlineY) });
+                        } else {
+                            drawHorsePass(1.0);
+                        }
+                    }
+
+                    // Near leg in front of the horse
+                    drawHalf(nearSide);
+                } else {
+                    this.drawCharacter(ctx, u.img, u.currentAnimAction || u.action, u.frame, u.visualX + u.visualOffsetX, surfaceY + u.visualOffsetY, drawOptions);
+                }
                 
                 // Draw cage overlay if unit is caged
                 if (u.caged) {
@@ -3869,6 +4675,62 @@ export class TacticsScene extends BaseScene {
                         // Cage is 72 tall, so top should be at (surfaceY + 18) - 72 = surfaceY - 54
                         const cageY = Math.floor(surfaceY - 54);
                         ctx.drawImage(cageImg, cageX, cageY);
+                    }
+                }
+            } else if (call.type === 'horse') {
+                const h = call.horse;
+                const keys = this.getHorseSpriteKeys(h.type || 'brown');
+                const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
+                const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
+                const isRunning = !!h.isMoving && !!horseRun;
+                const horseImg = isRunning ? horseRun : horseStand;
+
+                if (horseImg) {
+                    const spacing = this.manager.config.horizontalSpacing;
+                    const buttPos = { x: call.x, y: call.y };
+                    const headPos = { x: buttPos.x + (h.flip ? -spacing : spacing), y: buttPos.y };
+                    const midX = Math.floor((buttPos.x + headPos.x) / 2);
+                    const head = this.getHorseHeadCoords(h);
+                    const buttCell = this.tacticsMap.getCell(h.r, h.q);
+                    const headCell = this.tacticsMap.getCell(head.r, head.q);
+                    const isShallow =
+                        (!!buttCell && buttCell.terrain?.includes('water_shallow')) ||
+                        (!!headCell && headCell.terrain?.includes('water_shallow'));
+                    const sink = isShallow ? 4 : 0;
+                    const midY = Math.floor((buttPos.y + headPos.y) / 2) + effect.yOffset + sink;
+
+                    const frameW = 64;
+                    const frameH = 64;
+                    const horseFeetY = 15;
+                    const dx = -frameW / 2;
+                    const dy = horseFeetY - frameH; // tuned: lift horse so feet aren't underground
+                    const frameCount = isRunning ? Math.max(1, Math.floor(horseImg.width / frameW)) : 1;
+                    const f = isRunning ? (Math.floor(timestamp / 80) % frameCount) : 0;
+                    const sx = f * frameW;
+
+                    const drawHorsePass = (alpha = 1.0, clipRect = null) => {
+                        ctx.save();
+                        if (clipRect) {
+                            ctx.beginPath();
+                            ctx.rect(clipRect.x, clipRect.y, clipRect.w, clipRect.h);
+                            ctx.clip();
+                        }
+                        ctx.globalAlpha *= alpha;
+                        ctx.translate(midX, midY);
+                        if (h.flip) ctx.scale(-1, 1);
+                        if (isRunning) ctx.drawImage(horseImg, sx, 0, frameW, frameH, dx, dy, frameW, frameH);
+                        else ctx.drawImage(horseImg, dx, dy);
+                        ctx.restore();
+                    };
+
+                    if (isShallow) {
+                        const topY = midY + dy;
+                        const feetY = midY + horseFeetY;
+                        const waterlineY = feetY - sink;
+                        drawHorsePass(1.0, { x: midX - 40, y: topY - 10, w: 80, h: Math.max(0, waterlineY - (topY - 10)) });
+                        drawHorsePass(0.4, { x: midX - 40, y: waterlineY, w: 80, h: Math.max(0, (feetY + 10) - waterlineY) });
+                    } else {
+                        drawHorsePass(1.0);
                     }
                 }
             } else if (call.type === 'flag') {
@@ -3915,15 +4777,21 @@ export class TacticsScene extends BaseScene {
                 if (u.hp <= 0) return;
                 
                 const surfaceY = u.visualY; 
+                let uiX = u.visualX;
+                if (u.onHorse) {
+                    const spacing = this.manager.config.horizontalSpacing;
+                    const headX = u.visualX + (u.flip ? -spacing : spacing);
+                    uiX = Math.floor((u.visualX + headX) / 2);
+                }
                 
                 // Draw intent if enemy or ally
                 if (u.intent) {
-                    this.drawIntent(ctx, u, u.visualX, surfaceY);
+                    this.drawIntent(ctx, u, uiX, surfaceY);
                 }
 
                 // Draw HP bar (not for dead units, boulders, or drowning units)
                 if (u.hp > 0 && u.name !== 'Boulder' && (!u.isDrowning || u.drownTimer < 500)) {
-                    this.drawHpBar(ctx, u, u.visualX, surfaceY);
+                    this.drawHpBar(ctx, u, uiX, surfaceY);
                 }
             });
         }
@@ -3953,9 +4821,10 @@ export class TacticsScene extends BaseScene {
         if (this.selectedAttack && this.hoveredCell && this.attackTiles.has(`${this.hoveredCell.r},${this.hoveredCell.q}`)) {
             const attack = ATTACKS[this.selectedAttack];
             if (attack && attack.push && this.selectedUnit) {
+                const origin = this.getAttackOriginForTarget(this.selectedUnit, this.hoveredCell.r, this.hoveredCell.q);
                 if (this.selectedAttack === 'double_blades') {
                     // Double Blades: Show both push arrows
-                    const dirIndex = this.tacticsMap.getDirectionIndex(this.selectedUnit.r, this.selectedUnit.q, this.hoveredCell.r, this.hoveredCell.q);
+                    const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, this.hoveredCell.r, this.hoveredCell.q);
                     if (dirIndex !== -1) {
                         // Front target
                         if (this.hoveredCell.unit) {
@@ -3963,14 +4832,14 @@ export class TacticsScene extends BaseScene {
                         }
                         // Back target
                         const oppositeDir = (dirIndex + 3) % 6;
-                        const backCell = this.tacticsMap.getNeighborInDirection(this.selectedUnit.r, this.selectedUnit.q, oppositeDir);
+                        const backCell = this.tacticsMap.getNeighborInDirection(origin.r, origin.q, oppositeDir);
                         if (backCell && backCell.unit) {
                             this.drawPushArrow(ctx, backCell.r, backCell.q, oppositeDir);
                         }
                     }
                 } else if (this.selectedAttack === 'serpent_spear') {
                     // Serpent Spear: Push the further target
-                    const dirIndex = this.tacticsMap.getDirectionIndex(this.selectedUnit.r, this.selectedUnit.q, this.hoveredCell.r, this.hoveredCell.q);
+                    const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, this.hoveredCell.r, this.hoveredCell.q);
                     if (dirIndex !== -1) {
                         // Only show arrow if the hovered cell actually contains a unit
                         if (this.hoveredCell.unit) {
@@ -3978,7 +4847,7 @@ export class TacticsScene extends BaseScene {
                         }
                     }
                 } else {
-                    const dirIndex = this.tacticsMap.getDirectionIndex(this.selectedUnit.r, this.selectedUnit.q, this.hoveredCell.r, this.hoveredCell.q);
+                    const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, this.hoveredCell.r, this.hoveredCell.q);
                     if (dirIndex !== -1 && this.hoveredCell.unit) {
                         this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
                     }
@@ -4690,7 +5559,8 @@ export class TacticsScene extends BaseScene {
             const u = this.selectedUnit;
             const bx = 5;
             const by = barY + 2;
-            const lineSpacing = LANGUAGE.current === 'zh' ? 14 : 8; // More spacing for Chinese
+            const lineSpacing = LANGUAGE.current === 'zh' ? 12 : 8; // Keep within 40px bar
+            const maxTextTop = barY + barH - 10; // 8px font + small padding
 
             const factionColor = u.faction === 'player' ? '#0f0' : (u.faction === 'allied' ? '#0af' : '#f00');
 
@@ -4738,9 +5608,11 @@ export class TacticsScene extends BaseScene {
                 actionText = getLocalizedText(UI_TEXT['DONE']);
             }
             
-            this.drawPixelText(ctx, actionText, bx + 4, by + 4 + lineSpacing * 2, { color: '#aaa', font: '8px Tiny5' });
-            if (orderText) {
-                this.drawPixelText(ctx, orderText, bx + 4, by + 4 + lineSpacing * 3, { color: '#888', font: '8px Tiny5' });
+            const actionY = Math.min(by + 4 + lineSpacing * 2, maxTextTop);
+            this.drawPixelText(ctx, actionText, bx + 4, actionY, { color: '#aaa', font: '8px Tiny5' });
+            const orderY = by + 4 + lineSpacing * 3;
+            if (orderText && orderY <= maxTextTop) {
+                this.drawPixelText(ctx, orderText, bx + 4, orderY, { color: '#888', font: '8px Tiny5' });
             }
         }
 
@@ -5088,7 +5960,8 @@ export class TacticsScene extends BaseScene {
             ctx.strokeStyle = isSelected ? '#ffd700' : (isDisabled ? '#333' : '#888');
             ctx.strokeRect(ax + 0.5, ay + 0.5, aw - 1, ah - 1);
 
-            this.drawPixelText(ctx, attack.name, ax + aw / 2, ay + 3, { 
+            const attackName = getLocalizedText(UI_TEXT[attack.name]) || attack.name;
+            this.drawPixelText(ctx, attackName, ax + aw / 2, ay + 3, { 
                 color: isDisabled ? '#555' : '#eee', 
                 font: '8px Tiny5',
                 align: 'center' 
@@ -5109,18 +5982,31 @@ export class TacticsScene extends BaseScene {
         const attack = ATTACKS[this.selectedAttack];
         const range = attack.range || 1;
         const minRange = attack.minRange || 0;
+        const origins = this.getAttackOrigins(this.selectedUnit);
+        const originKeys = new Set(origins.map(o => `${o.r},${o.q}`));
         
         if (range === 1 && minRange === 0) {
-            const neighbors = this.tacticsMap.getNeighbors(this.selectedUnit.r, this.selectedUnit.q);
-            neighbors.forEach(n => this.attackTiles.set(`${n.r},${n.q}`, true));
+            origins.forEach(o => {
+                const neighbors = this.tacticsMap.getNeighbors(o.r, o.q);
+                neighbors.forEach(n => {
+                    const k = `${n.r},${n.q}`;
+                    // Don't allow targeting your own occupied hexes (mounted head/butt)
+                    if (originKeys.has(k)) return;
+                    if (n.unit === this.selectedUnit) return;
+                    this.attackTiles.set(k, true);
+                });
+            });
         } else {
             // Find all hexes within distance range and >= minRange
             for (let r = 0; r < this.manager.config.mapHeight; r++) {
                 for (let q = 0; q < this.manager.config.mapWidth; q++) {
-                    const dist = this.tacticsMap.getDistance(this.selectedUnit.r, this.selectedUnit.q, r, q);
-                    if (dist >= minRange && dist <= range && dist > 0) {
-                        this.attackTiles.set(`${r},${q}`, true);
-                    }
+                    const k = `${r},${q}`;
+                    if (originKeys.has(k)) continue;
+                    const inRange = origins.some(o => {
+                        const dist = this.tacticsMap.getDistance(o.r, o.q, r, q);
+                        return dist >= minRange && dist <= range && dist > 0;
+                    });
+                    if (inRange) this.attackTiles.set(k, true);
                 }
             }
         }
@@ -5452,6 +6338,37 @@ export class TacticsScene extends BaseScene {
                     if (hasCorpse) sinkOffset -= 4;
                 }
             }
+
+            // Mounted selection: clicking rider OR horse should select
+            if (u.onHorse) {
+                const spacing = this.manager.config.horizontalSpacing;
+                const buttX = ux;
+                const buttY = uy + sinkOffset;
+                const headX = buttX + (u.flip ? -spacing : spacing);
+                const midX = Math.floor((buttX + headX) / 2);
+                const midY = buttY;
+
+                // Rider anchor must match render()
+                const riderX = midX;
+                const riderY = midY - 22;
+
+                const riderHit = this.checkCharacterHit(u.img, (u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action), u.frame, riderX, riderY, x, y, {
+                    flip: u.flip,
+                    sinkOffset: 0,
+                    isProp: false
+                });
+
+                // Horse bounding-box hit (good enough for selection)
+                const horseTop = (midY + (15 - 64));
+                const horseLeft = midX - 32;
+                const horseHit = (x >= horseLeft && x <= horseLeft + 64 && y >= horseTop && y <= horseTop + 64);
+
+                if (riderHit || horseHit) {
+                    spriteUnit = u;
+                    break;
+                }
+            }
+
             if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, x, y, { 
                 flip: u.flip, 
                 sinkOffset,
@@ -5494,13 +6411,49 @@ export class TacticsScene extends BaseScene {
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && clickedCell && this.reachableTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
             // Check landing spot (cannot land on another unit)
             if (!clickedCell.unit || clickedCell.unit === this.selectedUnit) {
-                const path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, clickedCell.r, clickedCell.q, this.selectedUnit.moveRange, this.selectedUnit);
-                if (path) {
+                let destR = clickedCell.r;
+                let destQ = clickedCell.q;
+                let plannedFlip = this.selectedUnit.flip;
+                let headCellForReserve = null;
+
+                if (this.selectedUnit.onHorse) {
+                    // For mounted units, interpret the clicked hex as HEAD if possible; otherwise use BUTT.
+                    const plan = this.getMountedPlanForClickedCell(clickedCell.r, clickedCell.q);
+                    if (!plan) {
+                        assets.playSound('ui_error', 0.4);
+                        return;
+                    }
+                    destR = plan.butt.r;
+                    destQ = plan.butt.q;
+                    plannedFlip = plan.plannedFlip;
+                    headCellForReserve = this.tacticsMap.getCell(plan.head.r, plan.head.q);
+                }
+
+                const path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, destR, destQ, this.selectedUnit.moveRange, this.selectedUnit);
+
+                // For mounted units, only the END destination must have valid head+butt space (chokepoints are allowed).
+                if (path && (!this.selectedUnit.onHorse || headCellForReserve)) {
                     this.isProcessingTurn = true; // Lock turn during move
                     const oldCell = this.tacticsMap.getCell(this.selectedUnit.r, this.selectedUnit.q);
                     if (oldCell) oldCell.unit = null;
+                    if (this.selectedUnit.onHorse) {
+                        const oldHead = this.getMountedHeadCellFor(this.selectedUnit, this.selectedUnit.r, this.selectedUnit.q);
+                        if (oldHead) oldHead.unit = null;
+                        const horse = this.getHorseById(this.selectedUnit.horseId);
+                        if (horse) this.clearHorseFromCells(horse);
+                    }
+
+                    if (this.selectedUnit.onHorse) {
+                        // Lock facing for destination/head reservation (will update naturally during movement)
+                        this.selectedUnit.flip = plannedFlip;
+                    }
+
                     this.selectedUnit.startPath(path);
-                    clickedCell.unit = this.selectedUnit;
+                    const destCell = this.tacticsMap.getCell(destR, destQ);
+                    if (destCell) destCell.unit = this.selectedUnit;
+                    if (this.selectedUnit.onHorse) {
+                        if (headCellForReserve) headCellForReserve.unit = this.selectedUnit;
+                    }
                     this.selectedUnit.hasMoved = true;
                     const movingUnit = this.selectedUnit;
                     const checkArrival = () => {
@@ -5511,6 +6464,22 @@ export class TacticsScene extends BaseScene {
                         }
 
                         if (!movingUnit.isMoving) {
+                            // Update horse position + facing based on final movement direction
+                            if (movingUnit.onHorse) {
+                                const horse = this.getHorseById(movingUnit.horseId);
+                                if (horse) {
+                                    horse.r = movingUnit.r;
+                                    horse.q = movingUnit.q;
+                                    horse.flip = !!movingUnit.flip;
+                                    this.placeHorseOnCells(horse);
+                                }
+                                // Ensure the unit occupies the correct head hex for its final facing
+                                this.syncMountedOccupancy(movingUnit);
+                            }
+                            // Auto-mount any riderless horse you stepped onto
+                            if (!movingUnit.onHorse) {
+                                this.tryAutoMount(movingUnit, movingUnit.r, movingUnit.q);
+                            }
                             if (this.selectedUnit === movingUnit) {
                                 if (movingUnit.attacks.length > 0) this.selectAttack(movingUnit.attacks[0]);
                             }
@@ -5526,7 +6495,7 @@ export class TacticsScene extends BaseScene {
         }
 
         // C. SELECT UNIT (HoveredCell has priority if it contains a unit)
-        const targetUnit = this.hoveredCell ? this.hoveredCell.unit : null;
+        const targetUnit = spriteUnit || (this.hoveredCell ? this.hoveredCell.unit : null);
         if (targetUnit) {
             this.selectedUnit = targetUnit;
             this.selectedAttack = null;
@@ -5539,8 +6508,26 @@ export class TacticsScene extends BaseScene {
                     rawReachable.forEach((data, key) => {
                         const [r, q] = key.split(',').map(Number);
                         const cell = this.tacticsMap.getCell(r, q);
-                        if (!cell.unit || cell.unit === this.selectedUnit) this.reachableTiles.set(key, data);
+                        if (this.selectedUnit.onHorse) {
+                            // Allow moving the butt through 1-hex corridors; only the END destination needs head+butt space.
+                            if (!cell.unit || cell.unit === this.selectedUnit) this.reachableTiles.set(key, data);
+                        } else {
+                            if (!cell.unit || cell.unit === this.selectedUnit) this.reachableTiles.set(key, data);
+                        }
                     });
+
+                    if (this.selectedUnit.onHorse) {
+                        // Build mounted destination plans and highlight both butt+head tiles for each plan
+                        this.mountedMovePlans = this.buildMountedMovePlans(this.selectedUnit, rawReachable);
+                        const highlight = new Map();
+                        this.mountedMovePlans.forEach(p => {
+                            highlight.set(`${p.butt.r},${p.butt.q}`, true);
+                            highlight.set(`${p.head.r},${p.head.q}`, true);
+                        });
+                        this.reachableTiles = highlight;
+                    } else {
+                        this.mountedMovePlans = null;
+                    }
                 } else {
                     this.reachableTiles.clear();
                     if (this.selectedUnit.attacks.length > 0) this.selectAttack(this.selectedUnit.attacks[0]);

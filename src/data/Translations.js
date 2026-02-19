@@ -28,6 +28,34 @@ export const UI_TEXT = {
         en: 'NO',
         zh: '否'
     },
+    'ON HORSE': {
+        en: 'ON HORSE',
+        zh: '骑马'
+    },
+    'ON FOOT': {
+        en: 'ON FOOT',
+        zh: '步行'
+    },
+    'HORSE:': {
+        en: 'HORSE:',
+        zh: '马匹:'
+    },
+    'BROWN HORSE': {
+        en: 'BROWN',
+        zh: '棕马'
+    },
+    'BLACK HORSE': {
+        en: 'BLACK',
+        zh: '黑马'
+    },
+    'WHITE HORSE': {
+        en: 'WHITE',
+        zh: '白马'
+    },
+    'RED HARE': {
+        en: 'RED HARE',
+        zh: '赤兔'
+    },
     'NEXT': {
         en: 'NEXT',
         zh: '下一步'

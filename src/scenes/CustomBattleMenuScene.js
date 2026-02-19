@@ -327,31 +327,50 @@ export class CustomBattleMenuScene extends BaseScene {
         const displayName = LANGUAGE.current === 'zh' ? unitName : unitName.toUpperCase();
         this.drawPixelText(ctx, displayName, x + w/2, y + 65, { color: '#fff', font: '8px Silkscreen', align: 'center' });
 
-        // Faction selection
-        const fy = y + 80;
-        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['FACTION:']), x, fy, { color: '#aaa', font: '8px Tiny5' });
+        // Controls (use a y-cursor so buttons never overlap)
+        const buttonH = 14;
+        const blockGap = 4;
+        let cy = y + 80;
+
+        // Faction: one cycling button (PLAYER -> ALLIED -> ENEMY)
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['FACTION:']), x, cy, { color: '#aaa', font: '8px Tiny5' });
+        cy += 12;
         const factionColors = { player: '#4f4', allied: '#55f', enemy: '#f44' };
-        const factions = ['PLAYER', 'ALLIED', 'ENEMY'];
-        factions.forEach((f, i) => {
-            const rect = { x: x, y: fy + 12 + i * 16, w: w, h: 14, type: 'set_faction', faction: f.toLowerCase() };
-            const isActive = sel.faction === f.toLowerCase();
-            const factionText = getLocalizedText(UI_TEXT[f]);
-            this.drawButton(ctx, factionText, rect, isActive, isActive ? factionColors[sel.faction] : '#222');
-            this.buttonRects.push(rect);
-        });
+        const factionKey = (sel.faction || 'player').toUpperCase();
+        const factionText = getLocalizedText(UI_TEXT[factionKey]) || factionKey;
+        const factionRect = { x: x, y: cy, w: w, h: buttonH, type: 'cycle_faction' };
+        this.drawButton(ctx, factionText, factionRect, false, factionColors[sel.faction] || '#222');
+        this.buttonRects.push(factionRect);
+        cy += buttonH + blockGap;
 
         // Level selection
-        const ly = y + 145;
-        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['LEVEL:']), x, ly, { color: '#aaa', font: '8px Tiny5' });
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['LEVEL:']), x, cy, { color: '#aaa', font: '8px Tiny5' });
+        cy += 12;
         [1, 2, 3, 4, 5].forEach((l, i) => {
-            const rect = { x: x + i * 22, y: ly + 12, w: 18, h: 14, type: 'set_level', level: l };
+            const rect = { x: x + i * 22, y: cy, w: 18, h: buttonH, type: 'set_level', level: l };
             const isActive = sel.level === l;
             this.drawButton(ctx, l.toString(), rect, isActive, isActive ? '#ffd700' : '#222');
             this.buttonRects.push(rect);
         });
+        cy += buttonH + blockGap;
 
-        // Delete button
-        const delRect = { x: x, y: y + 175, w: w, h: 14, type: 'remove_unit', index: this.selectedRosterIndex };
+        // Horse toggle (single button cycles: foot -> brown -> black -> white -> redhare -> foot)
+        const isMounted = !!sel.onHorse;
+        const horseType = sel.horseType || 'brown';
+        const labelKey = !isMounted
+            ? 'ON FOOT'
+            : (horseType === 'black' ? 'BLACK HORSE' :
+                horseType === 'white' ? 'WHITE HORSE' :
+                horseType === 'redhare' ? 'RED HARE' :
+                'BROWN HORSE');
+        const horseText = getLocalizedText(UI_TEXT[labelKey]);
+        const horseRect = { x: x, y: cy, w: w, h: buttonH, type: 'toggle_horse' };
+        this.drawButton(ctx, horseText, horseRect, isMounted, isMounted ? '#5a3' : '#222');
+        this.buttonRects.push(horseRect);
+        cy += buttonH + blockGap;
+
+        // Delete button (kept above bottom nav so it can't overlap UNDO)
+        const delRect = { x: x, y: cy, w: w, h: buttonH, type: 'remove_unit', index: this.selectedRosterIndex };
         this.drawButton(ctx, getLocalizedText(UI_TEXT['REMOVE UNIT']), delRect, false, '#800');
         this.buttonRects.push(delRect);
     }
@@ -746,7 +765,9 @@ export class CustomBattleMenuScene extends BaseScene {
                     this.options.roster.push({
                         ...u,
                         faction: defaultFaction,
-                        level: 1
+                        level: 1,
+                        onHorse: false,
+                        horseType: 'brown'
                     });
                     this.selectedRosterIndex = this.options.roster.length - 1;
                     this.dropdowns.unit.selectedIndex = undefined;
@@ -844,6 +865,8 @@ export class CustomBattleMenuScene extends BaseScene {
                         faction: u.faction,
                         level: u.level,
                         isArcher: u.isArcher || false,
+                        onHorse: !!u.onHorse,
+                        horseType: u.horseType || 'brown',
                         r, q
                     };
                 });
@@ -862,7 +885,9 @@ export class CustomBattleMenuScene extends BaseScene {
                     this.options.roster.push({
                         ...u,
                         faction: defaultFaction,
-                        level: 1
+                        level: 1,
+                        onHorse: false,
+                        horseType: 'brown'
                     });
                     this.selectedRosterIndex = this.options.roster.length - 1;
                     assets.playSound('ui_click', 0.6);
@@ -876,15 +901,35 @@ export class CustomBattleMenuScene extends BaseScene {
             } else if (btn.type === 'select_roster') {
                 this.selectedRosterIndex = btn.index;
                 assets.playSound('ui_click', 0.6);
-            } else if (btn.type === 'set_faction') {
+            } else if (btn.type === 'cycle_faction') {
                 if (this.selectedRosterIndex >= 0) {
-                    this.options.roster[this.selectedRosterIndex].faction = btn.faction;
+                    const cur = this.options.roster[this.selectedRosterIndex];
+                    const order = ['player', 'allied', 'enemy'];
+                    const idx = Math.max(0, order.indexOf(cur.faction));
+                    cur.faction = order[(idx + 1) % order.length];
                     assets.playSound('ui_click', 0.7);
                 }
             } else if (btn.type === 'set_level') {
                 if (this.selectedRosterIndex >= 0) {
                     this.options.roster[this.selectedRosterIndex].level = btn.level;
                     assets.playSound('ui_click', 0.7);
+                }
+            } else if (btn.type === 'toggle_horse') {
+                if (this.selectedRosterIndex >= 0) {
+                    const cur = this.options.roster[this.selectedRosterIndex];
+                    const order = [
+                        { onHorse: false, horseType: 'brown' },
+                        { onHorse: true, horseType: 'brown' },
+                        { onHorse: true, horseType: 'black' },
+                        { onHorse: true, horseType: 'white' },
+                        { onHorse: true, horseType: 'redhare' }
+                    ];
+                    const curKey = `${!!cur.onHorse}:${cur.horseType || 'brown'}`;
+                    const idx = Math.max(0, order.findIndex(s => `${!!s.onHorse}:${s.horseType}` === curKey));
+                    const next = order[(idx + 1) % order.length];
+                    cur.onHorse = next.onHorse;
+                    cur.horseType = next.horseType;
+                    assets.playSound('ui_click', 0.6);
                 }
             } else if (btn.type === 'clear_roster') {
                 this.options.roster = [];

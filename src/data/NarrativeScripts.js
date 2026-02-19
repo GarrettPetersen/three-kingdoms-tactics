@@ -1346,11 +1346,15 @@ export const NARRATIVE_SCRIPTS = {
         // --- RECRUITING AT THE NOTICEBOARD ---
         { bg: 'noticeboard', type: 'command', action: 'clearActors' },
         { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: -40, y: 210 },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: -70, y: 210 },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: -100, y: 210 },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-        // Liu Bei walks into place
-        { type: 'command', action: 'move', id: 'liubei', x: 100, y: 210 },
-        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 60, y: 210 },
-        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 140, y: 210 },
+        // All three walk into place together
+        { type: 'command', action: 'move', id: 'liubei', x: 100, y: 210, wait: false },
+        { type: 'command', action: 'move', id: 'guanyu', x: 60, y: 210, wait: false },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 140, y: 210, wait: false },
+        // Wait for all movements to complete before showing dialogue
+        { type: 'command', action: 'wait', duration: 1000 },
         {
             type: 'dialogue',
             portraitKey: 'zhang-fei',

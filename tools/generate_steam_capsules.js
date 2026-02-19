@@ -360,12 +360,14 @@ async function generateCapsules() {
         const scale = Math.max(scaleX, scaleY); // Use larger scale to ensure coverage
         
         // Calculate title scale - use same base scale as background for pixel consistency
-        // Then multiply for visibility (double for small, larger for vertical)
+        // Then multiply for visibility (double for small and header, smaller for vertical to fit)
         let titleScale = scale; // Use same scale as background
         if (size.name === 'small') {
             titleScale *= 2; // Double size for small capsule
+        } else if (size.name === 'header') {
+            titleScale *= 2; // Double size for header capsule for better readability
         } else if (size.name === 'vertical') {
-            titleScale *= 1.5; // 50% larger for vertical
+            titleScale *= 0.8; // Scale down for vertical to ensure it fits
         }
         
         const titleWidth = Math.floor(processedTitleEn.width * titleScale);
@@ -549,7 +551,7 @@ async function generateCapsules() {
     const headerScaleX = headerSize.width / ORIGINAL_WIDTH;
     const headerScaleY = headerSize.height / ORIGINAL_HEIGHT;
     const headerScale = Math.max(headerScaleX, headerScaleY);
-    const headerTitleScale = headerScale; // Use same scale as background for pixel consistency
+    const headerTitleScale = headerScale * 2; // Double the size for better readability
     
     const headerTitleWidth = Math.floor(processedTitleEn.width * headerTitleScale);
     const headerTitleHeight = Math.floor(processedTitleEn.height * headerTitleScale);

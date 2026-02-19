@@ -64,13 +64,29 @@ function setupCanvas() {
 /**
  * Take 1920x1080 screenshots from the 256x256 canvas
  * Creates three 16:9 crops (top, middle, bottom) and one letterboxed version
+ * Saves all screenshots in a single zip file
  */
-function takeScreenshots(ctx, canvas, config) {
+async function takeScreenshots(ctx, canvas, config) {
     const SOURCE_WIDTH = 256;
     const SOURCE_HEIGHT = 256;
     const CROP_HEIGHT = 144; // 16:9 aspect ratio: 256 * 9/16 = 144
     const TARGET_WIDTH = 1920;
     const TARGET_HEIGHT = 1080;
+    
+    // Generate timestamp for unique filename
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5); // Format: 2026-02-17T19-30-45
+    
+    // Load JSZip from CDN if not already loaded
+    if (typeof JSZip === 'undefined') {
+        console.log('Loading JSZip library...');
+        await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+    }
     
     // Create a temporary canvas to capture the current frame
     const sourceCanvas = document.createElement('canvas');
@@ -89,9 +105,9 @@ function takeScreenshots(ctx, canvas, config) {
     const outputCtx = outputCanvas.getContext('2d');
     outputCtx.imageSmoothingEnabled = false;
     
-    // Helper to scale and download with delay
-    function scaleAndDownload(cropX, cropY, cropW, cropH, filename, delay) {
-        setTimeout(() => {
+    // Helper to generate a screenshot blob
+    function generateScreenshot(cropX, cropY, cropW, cropH) {
+        return new Promise((resolve) => {
             // Clear output canvas
             outputCtx.fillStyle = '#000';
             outputCtx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
@@ -103,55 +119,69 @@ function takeScreenshots(ctx, canvas, config) {
                 0, 0, TARGET_WIDTH, TARGET_HEIGHT  // Destination (full size)
             );
             
-            // Convert to blob and download
+            // Convert to blob
             outputCanvas.toBlob((blob) => {
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                a.click();
-                URL.revokeObjectURL(url);
+                resolve(blob);
             }, 'image/png');
-        }, delay);
+        });
     }
     
-    // Take three 16:9 screenshots: top, middle, bottom (with staggered delays)
+    console.log('Generating screenshots...');
+    
+    // Generate all 4 screenshots
+    const screenshots = [];
+    
+    // Three 16:9 crops: top, middle, bottom
     const cropYPositions = [
-        { y: 0, name: 'top', delay: 0 },
-        { y: Math.floor((SOURCE_HEIGHT - CROP_HEIGHT) / 2), name: 'middle', delay: 500 },
-        { y: SOURCE_HEIGHT - CROP_HEIGHT, name: 'bottom', delay: 1000 }
+        { y: 0, name: 'top' },
+        { y: Math.floor((SOURCE_HEIGHT - CROP_HEIGHT) / 2), name: 'middle' },
+        { y: SOURCE_HEIGHT - CROP_HEIGHT, name: 'bottom' }
     ];
     
-    cropYPositions.forEach(({ y, name, delay }) => {
-        scaleAndDownload(0, y, SOURCE_WIDTH, CROP_HEIGHT, `screenshot_${name}_1920x1080.png`, delay);
-    });
+    for (const { y, name } of cropYPositions) {
+        const blob = await generateScreenshot(0, y, SOURCE_WIDTH, CROP_HEIGHT);
+        screenshots.push({ blob, filename: `screenshot_${name}_1920x1080.png` });
+    }
     
     // Create letterboxed version (256x256 scaled up with black bars on sides)
-    // Scale 256x256 to fit 1080px height, then center horizontally
-    setTimeout(() => {
-        const letterboxScale = TARGET_HEIGHT / SOURCE_HEIGHT; // 1080 / 256 = 4.21875
-        const letterboxWidth = Math.floor(SOURCE_WIDTH * letterboxScale); // 256 * 4.21875 = 1080
-        const letterboxX = Math.floor((TARGET_WIDTH - letterboxWidth) / 2); // Center horizontally
-        
-        outputCtx.fillStyle = '#000';
-        outputCtx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
-        outputCtx.drawImage(
-            sourceCanvas,
-            0, 0, SOURCE_WIDTH, SOURCE_HEIGHT,
-            letterboxX, 0, letterboxWidth, TARGET_HEIGHT
-        );
-        
-        outputCanvas.toBlob((blob) => {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'screenshot_letterbox_1920x1080.png';
-            a.click();
-            URL.revokeObjectURL(url);
-        }, 'image/png');
-    }, 1500);
+    const letterboxScale = TARGET_HEIGHT / SOURCE_HEIGHT; // 1080 / 256 = 4.21875
+    const letterboxWidth = Math.floor(SOURCE_WIDTH * letterboxScale); // 256 * 4.21875 = 1080
+    const letterboxX = Math.floor((TARGET_WIDTH - letterboxWidth) / 2); // Center horizontally
     
-    console.log('Screenshots will be saved with delays...');
+    outputCtx.fillStyle = '#000';
+    outputCtx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+    outputCtx.drawImage(
+        sourceCanvas,
+        0, 0, SOURCE_WIDTH, SOURCE_HEIGHT,
+        letterboxX, 0, letterboxWidth, TARGET_HEIGHT
+    );
+    
+    const letterboxBlob = await new Promise((resolve) => {
+        outputCanvas.toBlob((blob) => resolve(blob), 'image/png');
+    });
+    screenshots.push({ blob: letterboxBlob, filename: 'screenshot_letterbox_1920x1080.png' });
+    
+    // Create zip file
+    console.log('Creating zip file...');
+    const zip = new JSZip();
+    for (const { blob, filename } of screenshots) {
+        zip.file(filename, blob);
+    }
+    
+    // Generate zip blob
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    const zipFilename = `screenshots_${timestamp}.zip`;
+    
+    // Download the zip file (single dialog)
+    const url = URL.createObjectURL(zipBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = zipFilename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    console.log(`Screenshots saved to: ${zipFilename}`);
 }
 
 async function init() {
@@ -189,7 +219,9 @@ async function init() {
             }
             if (inputBuffer.endsWith('screenshot')) {
                 inputBuffer = "";
-                takeScreenshots(ctx, canvas, config);
+                takeScreenshots(ctx, canvas, config).catch(err => {
+                    console.error('Screenshot error:', err);
+                });
             }
             if (inputBuffer.endsWith('brief')) {
                 inputBuffer = "";
@@ -382,6 +414,8 @@ async function init() {
                 intro_blades: 'assets/intro_animation/05_blades.png',
                 intro_horse: 'assets/intro_animation/06_horse.png',
                 intro_guandao: 'assets/intro_animation/07_guandao.png',
+                horse_stand: 'assets/horse/horse_stand.png',
+                horse_run: 'assets/horse/horse_run.png',
                 noticeboard: 'assets/settings/village_noticeboard.png',
                 inn: 'assets/settings/village_inn.png',
                 inn_evening: 'assets/settings/village_inn_evening.png',
@@ -489,6 +523,109 @@ async function init() {
             flippedImg.src = canvas.toDataURL();
             assets.images['army_camp_flipped'] = flippedImg;
         }
+
+        // Horse variants ("shaders"): generate recolored canvases for stand+run.
+        // Note: the base horse art is very dark, so we recolor *all non-transparent pixels*
+        // instead of relying on multiplicative tinting (which won't change pure-black pixels).
+        const makeHorseVariant = (baseKey, outKey, transformFn) => {
+            const img = assets.getImage(baseKey);
+            if (!img) return;
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(img, 0, 0);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                const a = data[i + 3];
+                if (a < 10) continue;
+                const [r, g, b] = transformFn(data[i], data[i + 1], data[i + 2]);
+                data[i] = Math.max(0, Math.min(255, r));
+                data[i + 1] = Math.max(0, Math.min(255, g));
+                data[i + 2] = Math.max(0, Math.min(255, b));
+            }
+            ctx.putImageData(imageData, 0, 0);
+            assets.images[outKey] = canvas;
+        };
+
+        const lum = (r, g, b) => (r + g + b) / 3;
+        const shade = (v, minV, maxV) => Math.max(minV, Math.min(maxV, v));
+        const preserveDark = (r, g, b, v, fn) => {
+            // Preserve very dark outline pixels from the original art so horses don't look washed out.
+            // (These are typically #000000 / near-black pixels used for linework.)
+            if (v <= 18) return [r, g, b];
+            return fn(v);
+        };
+
+        // Brown: warm recolor
+        makeHorseVariant('horse_stand', 'horse_stand_brown', (r, g, b) => {
+            const v = lum(r, g, b);
+            return preserveDark(r, g, b, v, (vv) => [
+                shade(110 + vv * 0.55, 90, 210),
+                shade(55 + vv * 0.35, 40, 150),
+                shade(30 + vv * 0.25, 20, 120)
+            ]);
+        });
+        makeHorseVariant('horse_run', 'horse_run_brown', (r, g, b) => {
+            const v = lum(r, g, b);
+            return preserveDark(r, g, b, v, (vv) => [
+                shade(110 + vv * 0.55, 90, 210),
+                shade(55 + vv * 0.35, 40, 150),
+                shade(30 + vv * 0.25, 20, 120)
+            ]);
+        });
+
+        // Black: keep dark but not pure-black everywhere
+        makeHorseVariant('horse_stand', 'horse_stand_black', (r, g, b) => {
+            const v = lum(r, g, b);
+            return preserveDark(r, g, b, v, (vv) => {
+                const v2 = shade(25 + vv * 0.25, 18, 80);
+                return [v2, v2, v2];
+            });
+        });
+        makeHorseVariant('horse_run', 'horse_run_black', (r, g, b) => {
+            const v = lum(r, g, b);
+            return preserveDark(r, g, b, v, (vv) => {
+                const v2 = shade(25 + vv * 0.25, 18, 80);
+                return [v2, v2, v2];
+            });
+        });
+
+        // White: light grey/white with preserved shading
+        makeHorseVariant('horse_stand', 'horse_stand_white', (r, g, b) => {
+            const v = lum(r, g, b);
+            return preserveDark(r, g, b, v, (vv) => {
+                const v2 = shade(185 + vv * 0.28, 170, 245);
+                return [v2, v2, v2];
+            });
+        });
+        makeHorseVariant('horse_run', 'horse_run_white', (r, g, b) => {
+            const v = lum(r, g, b);
+            return preserveDark(r, g, b, v, (vv) => {
+                const v2 = shade(185 + vv * 0.28, 170, 245);
+                return [v2, v2, v2];
+            });
+        });
+
+        // Red Hare: saturated warm red
+        makeHorseVariant('horse_stand', 'horse_stand_redhare', (r, g, b) => {
+            const v = lum(r, g, b);
+            return preserveDark(r, g, b, v, (vv) => [
+                shade(165 + vv * 0.35, 140, 255),
+                shade(40 + vv * 0.18, 30, 160),
+                shade(25 + vv * 0.12, 18, 120)
+            ]);
+        });
+        makeHorseVariant('horse_run', 'horse_run_redhare', (r, g, b) => {
+            const v = lum(r, g, b);
+            return preserveDark(r, g, b, v, (vv) => [
+                shade(165 + vv * 0.35, 140, 255),
+                shade(40 + vv * 0.18, 30, 160),
+                shade(25 + vv * 0.12, 18, 120)
+            ]);
+        });
 
         // Apply palette to terrain assets
         assets.palettizeKeys(TERRAIN_TYPES, 'vinik24');

@@ -16,6 +16,13 @@ export class Unit {
         this.hp = (config.hp !== undefined) ? config.hp : 10;
         this.maxHp = (config.maxHp !== undefined) ? config.maxHp : (config.hp || 10);
         this.moveRange = config.moveRange || 3;
+        // Preserve the unmodified base for effects like mounts
+        this.baseMoveRange = (config.baseMoveRange !== undefined) ? config.baseMoveRange : this.moveRange;
+
+        // Mount state
+        this.onHorse = !!config.onHorse;
+        this.horseId = config.horseId || null;
+        this.horseType = config.horseType || 'brown'; // brown|black|white|redhare
         
         // State
         this.action = config.action || (this.hp <= 0 ? 'death' : 'standby');
