@@ -350,5 +350,69 @@ export class CampaignSelectionScene extends BaseScene {
         // Return to title on ESC (managed in main.js, but good to have a click fallback if needed)
         // For now, only mouse hits are processed here.
     }
+
+    handleKeyDown(e) {
+        if (e.key === 'Escape') {
+            this.manager.switchTo('title');
+            return;
+        }
+
+        if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const next = (this.selectedChapterIndex - 1 + this.chapters.length) % this.chapters.length;
+            if (!this.chapters[next].available) {
+                this.addMessage(getLocalizedText(UI_TEXT['COMING SOON!']), '#ffd700', next);
+            } else {
+                this.selectedChapterIndex = next;
+                assets.playSound('ui_click');
+            }
+            return;
+        }
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const next = (this.selectedChapterIndex + 1) % this.chapters.length;
+            if (!this.chapters[next].available) {
+                this.addMessage(getLocalizedText(UI_TEXT['COMING SOON!']), '#ffd700', next);
+            } else {
+                this.selectedChapterIndex = next;
+                assets.playSound('ui_click');
+            }
+            return;
+        }
+
+        if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            if (this.campaigns.length > 0) {
+                this.selectedIndex = (this.selectedIndex - 1 + this.campaigns.length) % this.campaigns.length;
+                assets.playSound('ui_click');
+            }
+            return;
+        }
+
+        if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            if (this.campaigns.length > 0) {
+                this.selectedIndex = (this.selectedIndex + 1) % this.campaigns.length;
+                assets.playSound('ui_click');
+            }
+            return;
+        }
+
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            const selected = this.campaigns[this.selectedIndex];
+            if (!selected) return;
+            if (selected.locked) {
+                this.addMessage(getLocalizedText(UI_TEXT['CAMPAIGN LOCKED']), '#8b0000');
+                return;
+            }
+            if (selected.isComplete) {
+                this.addMessage(getLocalizedText(UI_TEXT['This story is complete.']), '#ff4444');
+                return;
+            }
+            this.manager.switchTo('map', { campaignId: selected.id });
+        }
+    }
 }
 

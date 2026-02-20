@@ -14,6 +14,7 @@ export class SceneManager {
         this.lastPointerY = 0;
         this.logicalMouseX = 0;
         this.logicalMouseY = 0;
+        this._padRepeatState = new Map();
 
         window.addEventListener('pointermove', (e) => {
             this.lastPointerX = e.clientX;
@@ -24,6 +25,9 @@ export class SceneManager {
             const scaleY = this.canvas.height / rect.height;
             this.logicalMouseX = (e.clientX - rect.left) * scaleX;
             this.logicalMouseY = (e.clientY - rect.top) * scaleY;
+            if (this.currentScene && this.currentScene.onMouseInput) {
+                this.currentScene.onMouseInput(this.logicalMouseX, this.logicalMouseY);
+            }
         });
     }
 
@@ -73,6 +77,7 @@ export class SceneManager {
     }
 
     update(timestamp) {
+        this.pollGamepad(timestamp);
         if (this.currentScene && this.currentScene.update) {
             this.currentScene.update(timestamp);
         }
@@ -94,6 +99,60 @@ export class SceneManager {
         if (this.currentScene && this.currentScene.handleKeyDown) {
             this.currentScene.handleKeyDown(e);
         }
+    }
+
+    pollGamepad(timestamp) {
+        if (!navigator.getGamepads) return;
+        const pads = navigator.getGamepads();
+        if (!pads) return;
+        const gp = Array.from(pads).find(Boolean);
+        if (!gp) {
+            this._padRepeatState.clear();
+            return;
+        }
+
+        const axisDeadzone = 0.5;
+        const up = (gp.buttons[12] && gp.buttons[12].pressed) || gp.axes[1] < -axisDeadzone;
+        const down = (gp.buttons[13] && gp.buttons[13].pressed) || gp.axes[1] > axisDeadzone;
+        const left = (gp.buttons[14] && gp.buttons[14].pressed) || gp.axes[0] < -axisDeadzone;
+        const right = (gp.buttons[15] && gp.buttons[15].pressed) || gp.axes[0] > axisDeadzone;
+        const confirm = (gp.buttons[0] && gp.buttons[0].pressed) || (gp.buttons[9] && gp.buttons[9].pressed); // A / Start
+        const cancel = gp.buttons[1] && gp.buttons[1].pressed; // B
+
+        this._emitGamepadKey('up', up, 'ArrowUp', timestamp, true);
+        this._emitGamepadKey('down', down, 'ArrowDown', timestamp, true);
+        this._emitGamepadKey('left', left, 'ArrowLeft', timestamp, true);
+        this._emitGamepadKey('right', right, 'ArrowRight', timestamp, true);
+        this._emitGamepadKey('confirm', !!confirm, 'Enter', timestamp, false);
+        this._emitGamepadKey('cancel', !!cancel, 'Escape', timestamp, false);
+    }
+
+    _emitGamepadKey(id, pressed, key, timestamp, allowRepeat) {
+        const initialDelay = 260;
+        const repeatDelay = 120;
+        const state = this._padRepeatState.get(id) || { down: false, nextRepeatAt: 0 };
+
+        if (!pressed) {
+            state.down = false;
+            this._padRepeatState.set(id, state);
+            return;
+        }
+
+        const shouldFire = !state.down || (allowRepeat && timestamp >= state.nextRepeatAt);
+        if (!shouldFire) return;
+
+        state.down = true;
+        state.nextRepeatAt = timestamp + (allowRepeat ? (state.nextRepeatAt ? repeatDelay : initialDelay) : Number.POSITIVE_INFINITY);
+        this._padRepeatState.set(id, state);
+
+        if (this.currentScene && this.currentScene.onNonMouseInput) {
+            this.currentScene.onNonMouseInput();
+        }
+        this.handleKeyDown({
+            key,
+            fromGamepad: true,
+            preventDefault: () => {}
+        });
     }
 }
 

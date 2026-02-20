@@ -79,6 +79,24 @@ export class BaseScene {
         return false;
     }
 
+    onNonMouseInput() {
+        if (this.selection) this.selection.mouseoverEnabled = false;
+        if (this.confirmSelection) this.confirmSelection.mouseoverEnabled = false;
+    }
+
+    onMouseInput(mouseX, mouseY) {
+        if (this.selection) {
+            this.selection.mouseoverEnabled = true;
+            this.selection.lastMouseX = mouseX;
+            this.selection.lastMouseY = mouseY;
+        }
+        if (this.confirmSelection) {
+            this.confirmSelection.mouseoverEnabled = true;
+            this.confirmSelection.lastMouseX = mouseX;
+            this.confirmSelection.lastMouseY = mouseY;
+        }
+    }
+
     getMousePos(e) {
         const { canvas } = this.manager;
         const rect = canvas.getBoundingClientRect();

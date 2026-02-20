@@ -136,6 +136,7 @@ export class MapScene extends BaseScene {
         this.lastClickTime = 0;
         this.lastSaveTime = 0; // Track when we last saved state
         this.saveInterval = 2000; // Save every 2 seconds
+        this.navTargets = [];
     }
 
     enter(params) {
@@ -213,6 +214,9 @@ export class MapScene extends BaseScene {
             // Restore saved state
             this.restoreMapState(savedState);
         }
+
+        this.initSelection({ defaultIndex: 0, totalOptions: 0 });
+        this.navTargets = [];
     }
     
     restoreMapState(state) {
@@ -317,12 +321,14 @@ export class MapScene extends BaseScene {
 
         // Draw dynamic locations
         const gs = this.manager.gameState;
+        const navTargets = [];
         for (const locId in LOCATIONS) {
             const loc = LOCATIONS[locId];
             if (loc.unlockCondition(gs)) {
                 const lx = mx + loc.x;
                 const ly = my + loc.y;
                 const isDone = loc.isCompleted ? loc.isCompleted(gs) : false;
+                navTargets.push({ type: 'location', id: locId, x: lx, y: ly });
                 
                 const img = assets.getImage(loc.imgKey);
                 if (img) {
@@ -365,6 +371,7 @@ export class MapScene extends BaseScene {
             }
 
             this.drawCharacter(ctx, charImg, action, frameIdx, cx, cy, { flip });
+            navTargets.push({ type: 'party', id: 'party', x: cx, y: cy });
         }
 
         if (this.interactionSelected === 'hero_reminder' && this.currentReminder) {
@@ -397,6 +404,19 @@ export class MapScene extends BaseScene {
             font: '8px Silkscreen', 
             align: 'center' 
         });
+
+        this.backRect = { x: bx, y: by, w: backW, h: backH };
+        navTargets.push({ type: 'back', id: 'back', x: bx + backW / 2, y: by + backH / 2, rect: this.backRect });
+
+        this.navTargets = navTargets;
+        if (this.selection) {
+            this.selection.totalOptions = this.navTargets.length;
+            if (this.selection.highlightedIndex >= this.navTargets.length) {
+                this.selection.highlightedIndex = Math.max(0, this.navTargets.length - 1);
+            }
+        }
+
+        this.renderNavHighlight(ctx);
     }
 
     drawLabel(ctx, name, x, y, prompt) {
@@ -476,6 +496,59 @@ export class MapScene extends BaseScene {
                 }
             }
         }
+
+        if (this.selection) {
+            const currentMouseX = this.manager.logicalMouseX;
+            const currentMouseY = this.manager.logicalMouseY;
+            this.updateSelectionMouse(currentMouseX, currentMouseY);
+            if (this.selection.mouseoverEnabled && this.navTargets.length > 0) {
+                let nearestIdx = -1;
+                let bestDist = Number.POSITIVE_INFINITY;
+                this.navTargets.forEach((t, i) => {
+                    const dx = t.x - currentMouseX;
+                    const dy = t.y - currentMouseY;
+                    const d2 = dx * dx + dy * dy;
+                    if (d2 < bestDist) {
+                        bestDist = d2;
+                        nearestIdx = i;
+                    }
+                });
+                if (nearestIdx >= 0) this.selection.highlightedIndex = nearestIdx;
+            }
+        }
+    }
+
+    renderNavHighlight(ctx) {
+        if (!this.selection || this.navTargets.length === 0) return;
+        const idx = this.selection.highlightedIndex;
+        if (idx < 0 || idx >= this.navTargets.length) return;
+        const t = this.navTargets[idx];
+
+        ctx.save();
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 1;
+        if (t.rect) {
+            ctx.strokeRect(Math.floor(t.rect.x) - 1.5, Math.floor(t.rect.y) - 1.5, Math.floor(t.rect.w) + 2, Math.floor(t.rect.h) + 2);
+        } else {
+            const size = (t.type === 'party') ? 14 : 18;
+            ctx.strokeRect(Math.floor(t.x - size / 2) - 0.5, Math.floor(t.y - size / 2) - 0.5, size, size);
+        }
+        ctx.restore();
+    }
+
+    activateNavTarget(index) {
+        if (index < 0 || index >= this.navTargets.length) return;
+        const target = this.navTargets[index];
+        const logicalX = target.x;
+        const logicalY = target.y;
+
+        const { canvas } = this.manager;
+        const canvasRect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / canvasRect.width;
+        const scaleY = canvas.height / canvasRect.height;
+        const clientX = canvasRect.left + logicalX / scaleX;
+        const clientY = canvasRect.top + logicalY / scaleY;
+        this.handleInput({ clientX, clientY });
     }
 
     handleInput(e) {
@@ -637,6 +710,52 @@ export class MapScene extends BaseScene {
             if (this.interactionSelected !== 'hero_reminder' && this.interactionSelected !== 'story_event') {
                 this.interactionSelected = null;
             }
+        }
+    }
+
+    handleKeyDown(e) {
+        if (!this.selection) return;
+
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            assets.playSound('ui_click');
+            this.manager.switchTo('campaign_selection');
+            return;
+        }
+
+        if (this.interactionSelected === 'hero_reminder' || this.interactionSelected === 'story_event') {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.onNonMouseInput();
+                this.handleInput({
+                    clientX: this.manager.lastPointerX,
+                    clientY: this.manager.lastPointerY
+                });
+            }
+            return;
+        }
+
+        if (this.navTargets.length === 0) return;
+        this.selection.totalOptions = this.navTargets.length;
+
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.selection.highlightedIndex = (this.selection.highlightedIndex - 1 + this.navTargets.length) % this.navTargets.length;
+            assets.playSound('ui_click', 0.5);
+            return;
+        }
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.selection.highlightedIndex = (this.selection.highlightedIndex + 1) % this.navTargets.length;
+            assets.playSound('ui_click', 0.5);
+            return;
+        }
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.activateNavTarget(this.selection.highlightedIndex);
         }
     }
 

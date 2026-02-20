@@ -73,6 +73,31 @@ export class CustomBattleMenuScene extends BaseScene {
                 { type: 'hero', templateId: 'zhangfei', faction: 'player', level: 1, name: 'Zhang Fei', imgKey: 'zhangfei' }
             ];
         }
+
+        this.initSelection({ defaultIndex: 0, totalOptions: 0 });
+    }
+
+    update() {
+        if (!this.selection) return;
+        this.selection.totalOptions = this.buttonRects.length;
+        if (this.selection.totalOptions <= 0) return;
+        if (this.selection.highlightedIndex >= this.selection.totalOptions) {
+            this.selection.highlightedIndex = this.selection.totalOptions - 1;
+        }
+
+        const mouseX = this.manager.logicalMouseX;
+        const mouseY = this.manager.logicalMouseY;
+        this.updateSelectionMouse(mouseX, mouseY);
+
+        if (!this.selection.mouseoverEnabled) return;
+        // Pick topmost hovered button
+        for (let i = this.buttonRects.length - 1; i >= 0; i--) {
+            const r = this.buttonRects[i];
+            if (mouseX >= r.x && mouseX <= r.x + r.w && mouseY >= r.y && mouseY <= r.y + r.h) {
+                this.selection.highlightedIndex = i;
+                break;
+            }
+        }
     }
 
     render(timestamp) {
@@ -231,6 +256,8 @@ export class CustomBattleMenuScene extends BaseScene {
                 }
             }
         }
+
+        this.renderSelectionOutline(ctx);
     }
 
     renderArmyStep(ctx, canvas) {
@@ -308,6 +335,8 @@ export class CustomBattleMenuScene extends BaseScene {
             this.drawButton(ctx, rightButtonText, rightRect, false, rightButtonColor);
             this.buttonRects.push(rightRect);
         }
+
+        this.renderSelectionOutline(ctx);
     }
 
     renderUnitTweakPanel(ctx, x, y, w) {
@@ -684,6 +713,20 @@ export class CustomBattleMenuScene extends BaseScene {
         const returnText = getLocalizedText(UI_TEXT['RETURN']);
         this.drawButton(ctx, returnText, backRect, false, '#444');
         this.buttonRects.push(backRect);
+
+        this.renderSelectionOutline(ctx);
+    }
+
+    renderSelectionOutline(ctx) {
+        if (!this.selection || this.buttonRects.length === 0) return;
+        const idx = this.selection.highlightedIndex;
+        if (idx < 0 || idx >= this.buttonRects.length) return;
+        const r = this.buttonRects[idx];
+        ctx.save();
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(Math.floor(r.x) - 1.5, Math.floor(r.y) - 1.5, Math.floor(r.w) + 2, Math.floor(r.h) + 2);
+        ctx.restore();
     }
 
     truncateText(ctx, text, maxWidth, font = '8px Tiny5') {
@@ -748,6 +791,11 @@ export class CustomBattleMenuScene extends BaseScene {
         // Search backwards so we pick the "top-most" (last rendered) button first
         const btn = [...this.buttonRects].reverse().find(r => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h);
         if (btn) {
+            if (this.selection) {
+                this.handleSelectionMouseClick();
+                const idx = this.buttonRects.indexOf(btn);
+                if (idx >= 0) this.selection.highlightedIndex = idx;
+            }
             if (btn.type === 'dropdown') {
                 const wasOpen = this.dropdowns[btn.key].open;
                 for (const k in this.dropdowns) this.dropdowns[k].open = false;
@@ -938,6 +986,109 @@ export class CustomBattleMenuScene extends BaseScene {
             }
         } else {
             for (const k in this.dropdowns) this.dropdowns[k].open = false;
+        }
+    }
+
+    activateSelectionIndex(index) {
+        if (index < 0 || index >= this.buttonRects.length) return;
+        const r = this.buttonRects[index];
+        const logicalX = r.x + r.w / 2;
+        const logicalY = r.y + r.h / 2;
+        const { canvas } = this.manager;
+        const canvasRect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / canvasRect.width;
+        const scaleY = canvas.height / canvasRect.height;
+        const clientX = canvasRect.left + logicalX / scaleX;
+        const clientY = canvasRect.top + logicalY / scaleY;
+        this.handleInput({ clientX, clientY });
+    }
+
+    moveSelectionDirectional(dirX, dirY) {
+        if (!this.selection || this.buttonRects.length === 0) return;
+        const count = this.buttonRects.length;
+        if (this.selection.highlightedIndex < 0 || this.selection.highlightedIndex >= count) {
+            this.selection.highlightedIndex = 0;
+        }
+        const curIdx = this.selection.highlightedIndex;
+        const cur = this.buttonRects[curIdx];
+        const curX = cur.x + cur.w / 2;
+        const curY = cur.y + cur.h / 2;
+
+        let bestIdx = -1;
+        let bestScore = -Infinity;
+        for (let i = 0; i < count; i++) {
+            if (i === curIdx) continue;
+            const r = this.buttonRects[i];
+            const x = r.x + r.w / 2;
+            const y = r.y + r.h / 2;
+            const vx = x - curX;
+            const vy = y - curY;
+            const dist = Math.sqrt(vx * vx + vy * vy) || 1;
+            const nx = vx / dist;
+            const ny = vy / dist;
+            const dot = nx * dirX + ny * dirY;
+            if (dot <= 0.2) continue;
+            const score = (dot * 3) - (dist / 300);
+            if (score > bestScore) {
+                bestScore = score;
+                bestIdx = i;
+            }
+        }
+
+        if (bestIdx !== -1) {
+            this.selection.highlightedIndex = bestIdx;
+            assets.playSound('ui_click', 0.5);
+        }
+    }
+
+    handleKeyDown(e) {
+        if (!this.selection || this.buttonRects.length === 0) return;
+        this.selection.totalOptions = this.buttonRects.length;
+        
+        if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.moveSelectionDirectional(0, -1);
+            return;
+        }
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.moveSelectionDirectional(0, 1);
+            return;
+        }
+        if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.moveSelectionDirectional(-1, 0);
+            return;
+        }
+        if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.moveSelectionDirectional(1, 0);
+            return;
+        }
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.activateSelectionIndex(this.selection.highlightedIndex);
+            return;
+        }
+
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            if (this.view === 'STATS') {
+                this.view = 'MENU';
+                this.setupStep = 0;
+                assets.playSound('ui_click');
+            } else if (this.setupStep === 1) {
+                this.setupStep = 0;
+                assets.playSound('ui_click');
+            } else {
+                this.manager.switchTo('title');
+                assets.playSound('ui_click');
+            }
         }
     }
 }

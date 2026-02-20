@@ -29,6 +29,9 @@ export class NarrativeScene extends BaseScene {
         this.returnStack = []; // Stack of return positions for branching
         this.insertedStepsCount = 0; // Track how many steps were inserted after interactive step
         this.insertedStepsStartIndex = -1; // Track where inserted steps start (for cleanup)
+        this.interactiveNavTargets = []; // [{ id, type, x, y, actorId?/regionId? }]
+        this.interactiveNavIndex = -1;
+        this.interactiveNavMouseEnabled = true;
     }
 
     enter(params) {
@@ -214,6 +217,9 @@ export class NarrativeScene extends BaseScene {
         this.insertedStepsStartIndex = state.insertedStepsStartIndex !== undefined ? state.insertedStepsStartIndex : -1;
         this.hoveredActor = null; // Reset hover state on restore
         this.hoveredRegion = null; // Reset hover state on restore
+            this.interactiveNavTargets = [];
+            this.interactiveNavIndex = -1;
+            this.interactiveNavMouseEnabled = true;
         this.onComplete = null; // Don't restore callbacks
         
         // Critical: If we're in interactive mode, ensure currentStep is at the interactive step
@@ -386,6 +392,9 @@ export class NarrativeScene extends BaseScene {
             // Clear hover state
             this.hoveredActor = null;
             this.hoveredRegion = null;
+            this.interactiveNavTargets = [];
+            this.interactiveNavIndex = -1;
+            this.interactiveNavMouseEnabled = true;
         } else if ((step.type === 'title' || step.type === 'dialogue' || step.type === 'narrator') && step.duration) {
             this.timer = step.duration;
             this.isWaiting = true;
@@ -619,6 +628,9 @@ export class NarrativeScene extends BaseScene {
                     this.clickableRegions = {};
                     this.hoveredActor = null;
                     this.hoveredRegion = null;
+                    this.interactiveNavTargets = [];
+                    this.interactiveNavIndex = -1;
+                    this.interactiveNavMouseEnabled = true;
                     // Continue processing the next step (which is now at currentStep after removal)
                     // Don't return - let it continue to processStep() at the end
                 } else {
@@ -747,7 +759,27 @@ export class NarrativeScene extends BaseScene {
         
         // Update hover state for interactive mode
         if (this.isInteractive && this.isWaiting) {
-            this.updateHoverState(currentMouseX, currentMouseY);
+            this.rebuildInteractiveNavTargets();
+
+            // Re-enable mouseover mode only after actual mouse movement.
+            if (currentMouseX !== this.lastMouseX || currentMouseY !== this.lastMouseY) {
+                this.interactiveNavMouseEnabled = true;
+            }
+
+            if (this.interactiveNavMouseEnabled) {
+                this.updateHoverState(currentMouseX, currentMouseY);
+                // Snap nav focus to whatever mouse is currently over.
+                if (this.hoveredRegion) {
+                    const idx = this.interactiveNavTargets.findIndex(t => t.type === 'region' && t.regionId === this.hoveredRegion);
+                    if (idx >= 0) this.interactiveNavIndex = idx;
+                } else if (this.hoveredActor) {
+                    const idx = this.interactiveNavTargets.findIndex(t => t.type === 'actor' && t.actorId === this.hoveredActor);
+                    if (idx >= 0) this.interactiveNavIndex = idx;
+                }
+            } else {
+                // Controller/keyboard mode drives hover highlight.
+                this.syncInteractiveHoverFromNav();
+            }
         }
         
         this.lastMouseX = currentMouseX;
@@ -952,7 +984,15 @@ export class NarrativeScene extends BaseScene {
             // Draw actor
             this.drawCharacter(ctx, a.img, a.action, a.frame, actorScreenX, actorScreenY, { flip: a.flip });
             
-            // No visual indicators for clickable actors - they're just clickable sprites
+            if (isHovered) {
+                // Subtle focus box so controller navigation has clear visual feedback.
+                ctx.save();
+                ctx.strokeStyle = '#ffd700';
+                ctx.lineWidth = 1;
+                ctx.globalAlpha = 0.65;
+                ctx.strokeRect(Math.floor(actorScreenX - 12) + 0.5, Math.floor(actorScreenY - 36) + 0.5, 24, 36);
+                ctx.restore();
+            }
         });
         ctx.restore();
 
@@ -1541,6 +1581,132 @@ export class NarrativeScene extends BaseScene {
         return null;
     }
 
+    getCurrentBackgroundOffset() {
+        const step = this.script[this.currentStep];
+        if (!step) return { bgX: 0, bgY: 0 };
+
+        let bgKey = step?.bg;
+        if (!bgKey) {
+            for (let i = this.currentStep; i >= 0; i--) {
+                if (this.script[i].bg) {
+                    bgKey = this.script[i].bg;
+                    break;
+                }
+            }
+        }
+
+        const { canvas } = this.manager;
+        let bgX = 0, bgY = 0;
+        if (bgKey) {
+            const bg = assets.getImage(bgKey);
+            if (bg) {
+                bgX = Math.floor((canvas.width - bg.width) / 2);
+                bgY = Math.floor((canvas.height - bg.height) / 2);
+            }
+        }
+        return { bgX, bgY };
+    }
+
+    rebuildInteractiveNavTargets() {
+        const { bgX, bgY } = this.getCurrentBackgroundOffset();
+        const targets = [];
+
+        // Regions first (often important scene hotspots like noticeboards, doors, etc.)
+        for (const [regionId, region] of Object.entries(this.clickableRegions || {})) {
+            targets.push({
+                id: `region:${regionId}`,
+                type: 'region',
+                regionId,
+                x: bgX + region.x + region.w / 2,
+                y: bgY + region.y + region.h / 2
+            });
+        }
+
+        for (const [actorId, actor] of Object.entries(this.actors || {})) {
+            if (!this.clickableActors || !this.clickableActors[actorId]) continue;
+            targets.push({
+                id: `actor:${actorId}`,
+                type: 'actor',
+                actorId,
+                x: bgX + actor.x,
+                y: bgY + actor.y
+            });
+        }
+
+        // Preserve focus when possible
+        let selectedId = null;
+        if (this.interactiveNavIndex >= 0 && this.interactiveNavIndex < this.interactiveNavTargets.length) {
+            selectedId = this.interactiveNavTargets[this.interactiveNavIndex].id;
+        }
+        this.interactiveNavTargets = targets;
+
+        if (targets.length === 0) {
+            this.interactiveNavIndex = -1;
+            this.hoveredActor = null;
+            this.hoveredRegion = null;
+            return;
+        }
+
+        const preserved = selectedId ? targets.findIndex(t => t.id === selectedId) : -1;
+        this.interactiveNavIndex = preserved >= 0 ? preserved : Math.min(Math.max(this.interactiveNavIndex, 0), targets.length - 1);
+        this.syncInteractiveHoverFromNav();
+    }
+
+    syncInteractiveHoverFromNav() {
+        this.hoveredActor = null;
+        this.hoveredRegion = null;
+        if (this.interactiveNavIndex < 0 || this.interactiveNavIndex >= this.interactiveNavTargets.length) return;
+        const target = this.interactiveNavTargets[this.interactiveNavIndex];
+        if (target.type === 'actor') this.hoveredActor = target.actorId;
+        if (target.type === 'region') this.hoveredRegion = target.regionId;
+    }
+
+    moveInteractiveSelection(dirX, dirY) {
+        if (this.interactiveNavTargets.length <= 1) return;
+        if (this.interactiveNavIndex < 0 || this.interactiveNavIndex >= this.interactiveNavTargets.length) {
+            this.interactiveNavIndex = 0;
+            this.syncInteractiveHoverFromNav();
+            return;
+        }
+
+        const cur = this.interactiveNavTargets[this.interactiveNavIndex];
+        let bestIdx = -1;
+        let bestScore = -Infinity;
+        for (let i = 0; i < this.interactiveNavTargets.length; i++) {
+            if (i === this.interactiveNavIndex) continue;
+            const t = this.interactiveNavTargets[i];
+            const vx = t.x - cur.x;
+            const vy = t.y - cur.y;
+            const dist = Math.sqrt(vx * vx + vy * vy) || 1;
+            const nx = vx / dist;
+            const ny = vy / dist;
+            const dot = nx * dirX + ny * dirY;
+            if (dot <= 0.2) continue; // must be meaningfully in the chosen direction
+            const score = (dot * 3) - (dist / 300);
+            if (score > bestScore) {
+                bestScore = score;
+                bestIdx = i;
+            }
+        }
+        if (bestIdx === -1) {
+            // Fallback: cycle in deterministic order if no directional candidate.
+            bestIdx = (this.interactiveNavIndex + 1) % this.interactiveNavTargets.length;
+        }
+        this.interactiveNavIndex = bestIdx;
+        this.syncInteractiveHoverFromNav();
+    }
+
+    activateInteractiveTarget(target) {
+        if (!target) return;
+        const { canvas } = this.manager;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const clientX = rect.left + target.x / scaleX;
+        const clientY = rect.top + target.y / scaleY;
+        this.handleInput({ clientX, clientY });
+    }
+
     updateHoverState(mouseX, mouseY) {
         // Update which actor or region is being hovered
         const hoveredActor = this.checkActorClick(mouseX, mouseY);
@@ -1581,10 +1747,71 @@ export class NarrativeScene extends BaseScene {
             });
             if (handled) return;
         }
+
+        // Interactive narrative navigation (clickable actors/regions):
+        // Arrow keys / d-pad move between clickable centroids, Enter activates.
+        if (this.isInteractive && this.isWaiting) {
+            if (this.interactiveNavTargets.length === 0) {
+                this.rebuildInteractiveNavTargets();
+            }
+
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                this.onNonMouseInput();
+                this.moveInteractiveSelection(0, -1);
+                assets.playSound('ui_click', 0.4);
+                return;
+            }
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                this.onNonMouseInput();
+                this.moveInteractiveSelection(0, 1);
+                assets.playSound('ui_click', 0.4);
+                return;
+            }
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.onNonMouseInput();
+                this.moveInteractiveSelection(-1, 0);
+                assets.playSound('ui_click', 0.4);
+                return;
+            }
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                this.onNonMouseInput();
+                this.moveInteractiveSelection(1, 0);
+                assets.playSound('ui_click', 0.4);
+                return;
+            }
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.onNonMouseInput();
+                if (this.interactiveNavIndex < 0 && this.interactiveNavTargets.length > 0) {
+                    this.interactiveNavIndex = 0;
+                    this.syncInteractiveHoverFromNav();
+                }
+                const t = this.interactiveNavTargets[this.interactiveNavIndex];
+                if (t) this.activateInteractiveTarget(t);
+                return;
+            }
+        }
         
         // Default behavior for other steps
         if (e.key === 'Enter' || e.key === ' ') {
             this.handleInput(e);
+        }
+    }
+
+    onNonMouseInput() {
+        super.onNonMouseInput();
+        this.interactiveNavMouseEnabled = false;
+    }
+
+    onMouseInput(mouseX, mouseY) {
+        super.onMouseInput(mouseX, mouseY);
+        this.interactiveNavMouseEnabled = true;
+        if (this.isInteractive && this.isWaiting) {
+            this.updateHoverState(mouseX, mouseY);
         }
     }
     

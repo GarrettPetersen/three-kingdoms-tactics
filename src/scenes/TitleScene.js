@@ -180,6 +180,28 @@ export class TitleScene extends BaseScene {
                     }
                 });
             }
+
+            // Confirm dialog mouseover should only come back after actual mouse movement.
+            if (this.showConfirm && this.confirmSelection) {
+                const currentMouseX = this.manager.logicalMouseX;
+                const currentMouseY = this.manager.logicalMouseY;
+                if (currentMouseX !== this.confirmSelection.lastMouseX || currentMouseY !== this.confirmSelection.lastMouseY) {
+                    this.confirmSelection.mouseoverEnabled = true;
+                    this.confirmSelection.lastMouseX = currentMouseX;
+                    this.confirmSelection.lastMouseY = currentMouseY;
+                }
+                if (this.confirmSelection.mouseoverEnabled) {
+                    if (this.confirmYesRect &&
+                        currentMouseX >= this.confirmYesRect.x && currentMouseX <= this.confirmYesRect.x + this.confirmYesRect.w &&
+                        currentMouseY >= this.confirmYesRect.y && currentMouseY <= this.confirmYesRect.y + this.confirmYesRect.h) {
+                        this.confirmSelection.highlightedIndex = 0;
+                    } else if (this.confirmNoRect &&
+                        currentMouseX >= this.confirmNoRect.x && currentMouseX <= this.confirmNoRect.x + this.confirmNoRect.w &&
+                        currentMouseY >= this.confirmNoRect.y && currentMouseY <= this.confirmNoRect.y + this.confirmNoRect.h) {
+                        this.confirmSelection.highlightedIndex = 1;
+                    }
+                }
+            }
         }
     }
 
@@ -301,6 +323,11 @@ export class TitleScene extends BaseScene {
         } else {
             this.menuOptions.push({ rect: this.newGameRect, action: 'newgame' });
             this.menuOptions.push({ rect: this.customBattleRect, action: 'custombattle' });
+        }
+
+        // Keyboard/controller nav should also be able to select language toggle.
+        if (this.languageToggleRect) {
+            this.menuOptions.push({ rect: this.languageToggleRect, action: 'toggleLanguage' });
         }
     }
 
@@ -600,6 +627,13 @@ export class TitleScene extends BaseScene {
     }
 
     handleKeyDown(e) {
+        if (
+            e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' ||
+            e.key === 'Enter' || e.key === ' ' || e.key === 'Escape'
+        ) {
+            this.onNonMouseInput();
+        }
+
         // Handle "CLICK TO START" with Enter key
         if (this.waitingForInteraction && (e.key === 'Enter' || e.key === ' ')) {
             this.waitingForInteraction = false;
@@ -797,5 +831,18 @@ export class TitleScene extends BaseScene {
         
         // Store toggle rect for click detection
         this.languageToggleRect = { x: toggleX, y: toggleY, w: toggleW, h: toggleH };
+
+        // If selected via keyboard/controller, draw a stronger outer highlight.
+        if (this.selection && this.menuOptions && this.menuOptions.length > 0) {
+            const idx = this.selection.highlightedIndex;
+            const option = this.menuOptions[idx];
+            if (option && option.action === 'toggleLanguage') {
+                ctx.save();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(toggleX - 1.5, toggleY - 1.5, toggleW + 2, toggleH + 2);
+                ctx.restore();
+            }
+        }
     }
 }
