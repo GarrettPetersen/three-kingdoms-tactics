@@ -1457,12 +1457,24 @@ export class TacticsScene extends BaseScene {
             }
         });
 
-        // Mounted units must also have a valid head hex at the destination
+        // Mounted units must also have a valid head hex at the destination.
+        // Use the PLANNED flip for each tile (determined by the final approach direction),
+        // otherwise a destination that requires turning would incorrectly check the head
+        // on the wrong side and be rejected even when no collision would occur.
         if (unit.onHorse) {
             const filtered = new Map();
             validDestinations.forEach((data, key) => {
                 const [r, q] = key.split(',').map(Number);
-                if (this.isValidMountedButtDestination(unit, r, q)) filtered.set(key, data);
+                // Determine which way the horse will face when arriving at (r, q)
+                let plannedFlip = unit.flip;
+                if (data.parent) {
+                    const [prevR, prevQ] = data.parent.split(',').map(Number);
+                    const arrivePos = this.getPixelPos(r, q);
+                    const fromPos   = this.getPixelPos(prevR, prevQ);
+                    if (arrivePos.x < fromPos.x) plannedFlip = true;
+                    else if (arrivePos.x > fromPos.x) plannedFlip = false;
+                }
+                if (this.isValidMountedButtDestination(unit, r, q, plannedFlip)) filtered.set(key, data);
             });
             validDestinations.clear();
             filtered.forEach((v, k) => validDestinations.set(k, v));
@@ -2885,16 +2897,35 @@ export class TacticsScene extends BaseScene {
             }, 1000);
         } else {
             setTimeout(() => {
-                // Flash swipe indicator at the strike moment (no travel)
+                // Flash swish indicator at the strike moment
                 if (attackKey.startsWith('slash')) {
-                    this.projectiles.push({
-                        startPos: startPos,
-                        affectedHexes: [{ r: targetR, q: targetQ }],
-                        progress: 0,
-                        type: 'swipe_arc',
-                        arcWidth: 1, // Single hex for slash
-                        duration: 120
-                    });
+                    // Standard sword slash — medium perpendicular stroke
+                    this.spawnSwish(
+                        [{ r: targetR, q: targetQ }],
+                        startPos, 'slash',
+                        { maxWidth: 7, duration: 130 }
+                    );
+                } else if (attackKey === 'bash') {
+                    // Heavy blunt bash — shorter, chunkier slash stroke
+                    this.spawnSwish(
+                        [{ r: targetR, q: targetQ }],
+                        startPos, 'slash',
+                        { maxWidth: 6, duration: 120 }
+                    );
+                } else if (attackKey === 'whirlwind') {
+                    // Spinning strike — wide sweeping slash
+                    this.spawnSwish(
+                        [{ r: targetR, q: targetQ }],
+                        startPos, 'slash',
+                        { maxWidth: 10, duration: 150 }
+                    );
+                } else if (attackKey === 'heavy_thrust') {
+                    // Thrust with a polearm — thin needle stab
+                    this.spawnSwish(
+                        [{ r: targetR, q: targetQ }],
+                        startPos, 'stab',
+                        { maxWidth: 3, duration: 140 }
+                    );
                 }
 
                 const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
@@ -2938,41 +2969,80 @@ export class TacticsScene extends BaseScene {
         const isFrontDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
         const isBackDestructible = backCell && (backCell.terrain.includes('house') || backCell.terrain.includes('ice')) && !backCell.terrain.includes('destroyed') && !backCell.terrain.includes('broken');
 
-        // First strike (Front)
-        setTimeout(() => {
-            this.damageCell(targetR, targetQ);
-            if (frontVictim) {
-                this.applyDamageAndPush(attacker, frontVictim, ATTACKS.double_blades, targetR, targetQ, startPos, frontPos);
-            } else if (!isFrontDestructible) {
-                assets.playSound('whiff', 0.6);
-            }
+        // First strike: poll for the swing frame (frame >= 1), same pattern as green dragon / serpent spear.
+        let struck1 = false;
+        const checkFirst = () => {
+            if (struck1) return;
+            if (attacker.action !== 'attack_1') return;
 
-            // Turn around
-            setTimeout(() => {
-                if (attacker.onHorse) this.turnMountedInPlace(attacker, !attacker.flip);
-                else attacker.flip = !attacker.flip;
-                attacker.action = 'attack_1';
-                attacker.frame = 0;
-                assets.playSound('double_blades');
+            if (attacker.frame >= 1) {
+                struck1 = true;
 
-                // Second strike (Back)
+                // Swish + damage for the front blade
+                this.spawnSwish(
+                    [{ r: targetR, q: targetQ }],
+                    startPos, 'slash',
+                    { maxWidth: 7, duration: 130 }
+                );
+                this.damageCell(targetR, targetQ);
+                if (frontVictim) {
+                    this.applyDamageAndPush(attacker, frontVictim, ATTACKS.double_blades, targetR, targetQ, startPos, frontPos);
+                } else if (!isFrontDestructible) {
+                    assets.playSound('whiff', 0.6);
+                }
+
+                // Turn around after a brief pause (let the first swing play through)
                 setTimeout(() => {
-                    if (backCell) this.damageCell(backCell.r, backCell.q);
-                    if (backVictim && backCell) {
-                        // Recompute origin for this strike (mounted pivot swaps butt/head anchor)
-                        const origin2 = this.getAttackOriginForTarget(attacker, backCell.r, backCell.q);
-                        const startPos2 = this.getPixelPos(origin2.r, origin2.q);
-                        this.applyDamageAndPush(attacker, backVictim, ATTACKS.double_blades, backCell.r, backCell.q, startPos2, backPos);
-                    } else if (!isBackDestructible) {
-                        assets.playSound('whiff', 0.6);
-                    }
-                    setTimeout(() => {
-                        attacker.action = 'standby';
-                        if (onComplete) onComplete();
-                    }, 400);
-                }, 400);
-            }, 300);
-        }, 400);
+                    if (attacker.onHorse) this.turnMountedInPlace(attacker, !attacker.flip);
+                    else attacker.flip = !attacker.flip;
+                    attacker.action = 'attack_1';
+                    attacker.frame = 0;
+                    assets.playSound('double_blades');
+
+                    // Second strike: poll for the swing frame again on the new animation
+                    let struck2 = false;
+                    const checkSecond = () => {
+                        if (struck2) return;
+                        if (attacker.action !== 'attack_1') return;
+
+                        if (attacker.frame >= 1) {
+                            struck2 = true;
+
+                            if (backCell) {
+                                // Recompute origin after pivot (mounted units swap butt/head)
+                                const origin2 = this.getAttackOriginForTarget(attacker, backCell.r, backCell.q);
+                                const startPos2 = this.getPixelPos(origin2.r, origin2.q);
+                                // Swish + damage for the back blade
+                                this.spawnSwish(
+                                    [{ r: backCell.r, q: backCell.q }],
+                                    startPos2, 'slash',
+                                    { maxWidth: 7, duration: 130 }
+                                );
+                                this.damageCell(backCell.r, backCell.q);
+                                if (backVictim) {
+                                    this.applyDamageAndPush(attacker, backVictim, ATTACKS.double_blades, backCell.r, backCell.q, startPos2, backPos);
+                                } else if (!isBackDestructible) {
+                                    assets.playSound('whiff', 0.6);
+                                }
+                            } else if (!isBackDestructible) {
+                                assets.playSound('whiff', 0.6);
+                            }
+
+                            setTimeout(() => {
+                                attacker.action = 'standby';
+                                if (onComplete) onComplete();
+                            }, 400);
+                            return;
+                        }
+                        setTimeout(checkSecond, 16);
+                    };
+                    setTimeout(checkSecond, 16);
+                }, 300);
+                return;
+            }
+            setTimeout(checkFirst, 16);
+        };
+        setTimeout(checkFirst, 16);
     }
 
     executeGreenDragonSlash(attacker, attackKey, targetR, targetQ, onComplete) {
@@ -2984,43 +3054,54 @@ export class TacticsScene extends BaseScene {
         const startPos = this.getPixelPos(origin.r, origin.q);
         const affected = this.getAffectedTiles(attacker, attackKey, targetR, targetQ);
 
-        setTimeout(() => {
-            // Flash swipe indicator at the strike moment (no travel)
-            this.projectiles.push({
-                startPos: startPos,
-                affectedHexes: affected,
-                progress: 0,
-                type: 'swipe_arc',
-                arcWidth: 3,
-                duration: 140
-            });
+        // Swipe fires on frame 1 (the swing frame), same pattern as serpent spear.
+        let struck = false;
+        const checkSwing = () => {
+            if (struck) return;
+            if (attacker.action !== (attack.animation || 'attack_1')) return;
 
-            let hitAnything = false;
-            affected.forEach(pos => {
-                this.damageCell(pos.r, pos.q);
-                const cell = this.tacticsMap.getCell(pos.r, pos.q);
-                if (cell) {
-                    const isDestructible = (cell.terrain.includes('house') || cell.terrain.includes('ice')) && !cell.terrain.includes('destroyed') && !cell.terrain.includes('broken');
-                    if (isDestructible) hitAnything = true;
-                    
-                    const victim = this.getRiderUnitFromCell(cell);
-                    if (victim) {
-                        const victimPos = this.getPixelPos(cell.r, cell.q);
-                        this.applyDamageAndPush(attacker, victim, attack, cell.r, cell.q, startPos, victimPos);
-                        hitAnything = true;
+            if (attacker.frame >= 1) {
+                struck = true;
+
+                // Flash swipe indicator at the strike moment
+                this.spawnSwish(affected, startPos, 'arc', { maxWidth: 10, duration: 180 });
+
+                // Deduplicate victims: a mounted unit occupies two hexes, so the arc
+                // could hit it twice. Only apply damage once per unit per attack.
+                const hitVictims = new Set();
+                let hitAnything = false;
+                affected.forEach(pos => {
+                    this.damageCell(pos.r, pos.q);
+                    const cell = this.tacticsMap.getCell(pos.r, pos.q);
+                    if (cell) {
+                        const isDestructible = (cell.terrain.includes('house') || cell.terrain.includes('ice')) && !cell.terrain.includes('destroyed') && !cell.terrain.includes('broken');
+                        if (isDestructible) hitAnything = true;
+
+                        const victim = this.getRiderUnitFromCell(cell);
+                        if (victim && !hitVictims.has(victim)) {
+                            hitVictims.add(victim);
+                            const victimPos = this.getPixelPos(cell.r, cell.q);
+                            this.applyDamageAndPush(attacker, victim, attack, cell.r, cell.q, startPos, victimPos);
+                            hitAnything = true;
+                        }
                     }
-                }
-            });
+                });
 
-            if (!hitAnything) {
-                assets.playSound('whiff', 0.8);
+                if (!hitAnything) {
+                    assets.playSound('whiff', 0.8);
+                }
+
+                setTimeout(() => {
+                    attacker.action = 'standby';
+                    if (onComplete) onComplete();
+                }, 400);
+                return;
             }
 
-            setTimeout(() => {
-                attacker.action = 'standby';
-                if (onComplete) onComplete();
-            }, 400);
-        }, 400);
+            // Keep polling while the attack animation is active
+            setTimeout(checkSwing, 16);
+        };
+        setTimeout(checkSwing, 16);
     }
 
     executeSerpentSpear(attacker, attackKey, targetR, targetQ, onComplete) {
@@ -3045,17 +3126,10 @@ export class TacticsScene extends BaseScene {
                 struck = true;
 
             // Flash stab indicator at the strike moment (no travel)
-            this.projectiles.push({
-                startX: startPos.x,
-                startY: startPos.y,
-                endX: endPos.x,
-                endY: endPos.y,
-                progress: 0,
-                type: 'swipe_straight',
-                // roughly one animation frame (~125ms at current anim rate)
-                duration: 140
-            });
+            this.spawnSwish(affected, startPos, 'stab', { maxWidth: 2.5, duration: 140 });
 
+            // Deduplicate victims so a mounted unit straddling two hit hexes only takes damage once.
+            const hitVictimsSS = new Set();
             let hitAnything = false;
             affected.forEach(pos => {
                 this.damageCell(pos.r, pos.q);
@@ -3065,7 +3139,8 @@ export class TacticsScene extends BaseScene {
                     if (isDestructible) hitAnything = true;
 
                     const victim = this.getRiderUnitFromCell(cell);
-                    if (victim) {
+                    if (victim && !hitVictimsSS.has(victim)) {
+                        hitVictimsSS.add(victim);
                         const victimPos = this.getPixelPos(cell.r, cell.q);
                         // Pass the original targetR/targetQ so only the furthest hex (clicked) gets pushed
                         this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, victimPos);
@@ -3654,11 +3729,16 @@ export class TacticsScene extends BaseScene {
         return this.tacticsMap.getCell(buttR, buttQ + dq);
     }
 
-    isValidMountedButtDestination(unit, buttR, buttQ) {
+    isValidMountedButtDestination(unit, buttR, buttQ, plannedFlip = null) {
         const buttCell = this.tacticsMap.getCell(buttR, buttQ);
         if (!buttCell || buttCell.impassable) return false;
 
-        const headCell = this.getMountedHeadCellFor(unit, buttR, buttQ);
+        // Use plannedFlip if provided, otherwise fall back to the unit's current facing.
+        // This is important when validating destinations where the horse will turn: without
+        // plannedFlip the head cell would be on the wrong side and good tiles get rejected.
+        const flip = (plannedFlip !== null) ? plannedFlip : unit.flip;
+        const dq = flip ? -1 : 1;
+        const headCell = this.tacticsMap.getCell(buttR, buttQ + dq);
         if (!headCell || headCell.impassable) return false;
 
         // Horse can't straddle a cliff: the two occupied hexes must be within 1 level of each other
@@ -5319,7 +5399,7 @@ export class TacticsScene extends BaseScene {
         // Build a filled lens polygon around a straight centerline.
         // Width tapers to 0 at ends, peaks in middle -> pointy ends.
         const numPoints = 18;
-        const maxHalfWidth = 6.0; // thicker, clearly "filled" lemon
+        const maxHalfWidth = 2.5; // thin thrust — max 5px total width
         const maxBow = 0.0;       // straight (no centerline bow)
 
         const left = [];
@@ -5344,7 +5424,7 @@ export class TacticsScene extends BaseScene {
         }
 
         ctx.save();
-        ctx.globalAlpha = alpha * alpha; // ease-out fade
+        ctx.globalAlpha = alpha;
         ctx.fillStyle = '#fff';
 
         ctx.beginPath();
@@ -5370,7 +5450,7 @@ export class TacticsScene extends BaseScene {
         
         // Flash + fade (no travel)
         const alpha = Math.max(0, 1 - p.progress);
-        ctx.globalAlpha = alpha * alpha;
+        ctx.globalAlpha = alpha;
 
         const hexPositions = p.affectedHexes.map(hex => this.getPixelPos(hex.r, hex.q));
         const center = hexPositions.reduce((acc, pos) => ({ x: acc.x + pos.x, y: acc.y + pos.y }), { x: 0, y: 0 });
@@ -5398,6 +5478,77 @@ export class TacticsScene extends BaseScene {
         }
 
         const arcWidth = p.arcWidth || Math.max(1, p.affectedHexes.length);
+
+        // Wide arc (Guan Yu / Tyrant Sweep): sabre-swing silhouette with 3 key points:
+        //   tail   – tapered tip at the "top" extreme hex (left)
+        //   bladeA – top corner of blade edge, in the "bottom" extreme hex (right)
+        //   bladeB – bottom corner of blade edge, in the "bottom" extreme hex (right)
+        // All three edges are quadratic curves so the shape reads as a curved sabre blade.
+        if (arcWidth >= 3) {
+            const halfThick  = 8;   // half the blade-edge span (perpendicular)
+            const edgePush   = 8;   // push blade edge forward (dir) from right-hex centre
+            const outwardBow = 14;  // blade-edge control bow (forward) → sabre curve
+            const spineForward = 10; // spine-arc control forward offset from centre
+            const bellyForward = 20; // belly-arc control forward offset from centre
+
+            // ── 3 anchor points ──────────────────────────────────────────────
+            // Tail: tapered tip at the "top" extreme hex
+            const tail = { x: left.x, y: left.y };
+
+            // bladeA: "top" corner of blade edge (toward tail side), pushed forward
+            const bladeA = {
+                x: right.x + dirX * edgePush - perpX * halfThick,
+                y: right.y + dirY * edgePush - perpY * halfThick
+            };
+
+            // bladeB: "bottom" corner of blade edge (away from tail), pushed forward
+            const bladeB = {
+                x: right.x + dirX * edgePush + perpX * halfThick,
+                y: right.y + dirY * edgePush + perpY * halfThick
+            };
+
+            // ── Quadratic control points (all bow in the forward / dir direction) ──
+            // Spine arc (tail → bladeA): subtle forward bow
+            const spineCtrl = {
+                x: center.x + dirX * spineForward,
+                y: center.y + dirY * spineForward
+            };
+            // Blade edge (bladeA → bladeB): cutting edge bows outward like a sabre
+            const bladeCtrl = {
+                x: right.x + dirX * (edgePush + outwardBow),
+                y: right.y + dirY * (edgePush + outwardBow)
+            };
+            // Belly / swing arc (bladeB → tail): main sweeping arc through middle hex
+            const bellyCtrl = {
+                x: center.x + dirX * bellyForward,
+                y: center.y + dirY * bellyForward
+            };
+
+            ctx.beginPath();
+            ctx.moveTo(Math.floor(tail.x), Math.floor(tail.y));
+
+            // Spine edge: tail → bladeA  (slightly curved, forward-bowing)
+            ctx.quadraticCurveTo(
+                Math.floor(spineCtrl.x), Math.floor(spineCtrl.y),
+                Math.floor(bladeA.x),    Math.floor(bladeA.y)
+            );
+            // Blade edge: bladeA → bladeB  (bowed outward = sabre curvature)
+            ctx.quadraticCurveTo(
+                Math.floor(bladeCtrl.x), Math.floor(bladeCtrl.y),
+                Math.floor(bladeB.x),    Math.floor(bladeB.y)
+            );
+            // Belly / swing arc: bladeB → tail  (main sweeping arc)
+            ctx.quadraticCurveTo(
+                Math.floor(bellyCtrl.x), Math.floor(bellyCtrl.y),
+                Math.floor(tail.x),      Math.floor(tail.y)
+            );
+
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+            return;
+        }
+
         const thickness = arcWidth === 1 ? 6 : 10;
         const frontPush = arcWidth === 1 ? 6 : 10;
         const trailLen = arcWidth === 1 ? 14 : 18;
@@ -5439,6 +5590,169 @@ export class TacticsScene extends BaseScene {
         ctx.fill();
         
         ctx.restore();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Unified Swish System
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Spawn a swish indicator for any attack.
+     *
+     * @param {Array<{r,q}>} hexes      Affected hex grid coords (unordered OK for 'arc')
+     * @param {{x,y}}        originPos  Attacker pixel position (used for direction)
+     * @param {string}       style      'arc' | 'slash' | 'stab'
+     *   'arc'   – ribbon flows through hexes sorted perp to attack dir (sweeping arc)
+     *   'slash' – perpendicular lens stroke through the first (only) hex
+     *   'stab'  – thin needle from origin along the attack direction through hexes
+     * @param {Object}       [opts]
+     * @param {number}       [opts.maxWidth=8]   Peak half-width in px
+     * @param {string}       [opts.color='#fff']
+     * @param {number}       [opts.duration=160]
+     */
+    spawnSwish(hexes, originPos, style = 'arc', opts = {}) {
+        const { maxWidth = 8, color = '#fff', duration = 160, swingDir = 1 } = opts;
+
+        if (!hexes || hexes.length === 0) return;
+
+        const hexPixels = hexes.map(h => this.getPixelPos(h.r, h.q));
+
+        // Direction from origin toward the centroid of affected hexes
+        const cX = hexPixels.reduce((s, p) => s + p.x, 0) / hexPixels.length;
+        const cY = hexPixels.reduce((s, p) => s + p.y, 0) / hexPixels.length;
+        const dxC = cX - originPos.x, dyC = cY - originPos.y;
+        const dC  = Math.sqrt(dxC * dxC + dyC * dyC) || 1;
+        const dirX = dxC / dC, dirY = dyC / dC;
+        const perpX = -dirY, perpY = dirX;
+
+        let points;
+
+        if (style === 'stab') {
+            // Thin ribbon from origin through hexes in attack-direction order
+            const sorted = hexPixels.slice().sort(
+                (a, b) => (a.x * dirX + a.y * dirY) - (b.x * dirX + b.y * dirY)
+            );
+            points = [originPos, ...sorted];
+
+        } else if (style === 'slash') {
+            // Perpendicular lens stroke through the target hex
+            const tgt = hexPixels[0];
+            const halfLen = Math.max(14, maxWidth * 1.8);
+            points = [
+                { x: tgt.x - perpX * halfLen, y: tgt.y - perpY * halfLen },
+                tgt,
+                { x: tgt.x + perpX * halfLen, y: tgt.y + perpY * halfLen }
+            ];
+
+        } else { // 'arc'
+            // Sort by screen-Y so the topmost hex is always the tail for a downward swing.
+            // This is correct for both east- and west-facing characters (the perp-direction
+            // sort would flip for west attacks, wrongly putting the tail at the bottom).
+            // swingDir = 1 → top-to-bottom (default, downward slash, clockwise for right / ccw for left)
+            // swingDir = -1 → bottom-to-top (upward swing, rare)
+            const sorted = hexPixels.slice().sort((a, b) => (a.y - b.y) * swingDir);
+            points = sorted;
+        }
+
+        this.projectiles.push({
+            type: 'swish',
+            points,
+            style,
+            maxWidth,
+            color,
+            progress: 0,
+            duration,
+        });
+    }
+
+    /**
+     * Draw a smooth tapered ribbon swish along a pre-computed point sequence.
+     * Width taper:
+     *   'slash' / 'stab' → symmetric lens (sin curve, thin at both ends)
+     *   'arc'            → sabre: zero at tail, grows to peak, quick taper at tip
+     */
+    drawSwish(ctx, p) {
+        if (!p.points || p.points.length < 2) return;
+        // Slow fade: stays near full opacity for most of the duration, drops at the end
+        const alpha = Math.max(0, 1 - p.progress * p.progress);
+        if (alpha <= 0) return;
+
+        const maxW  = p.maxWidth || 8;
+        const style = p.style   || 'arc';
+
+        const widthAt = (t) => {
+            if (style === 'slash' || style === 'stab') {
+                // Symmetric lens: zero at ends, peak in middle
+                return maxW * Math.sin(t * Math.PI);
+            }
+            // Sabre: zero at tail, ramps up, sharp taper at very tip
+            const grow  = Math.min(1, t / 0.65);
+            const taper = t > 0.82 ? Math.max(0, 1 - (t - 0.82) / 0.18) : 1;
+            return maxW * grow * taper;
+        };
+
+        const totalSamples = Math.max(24, p.points.length * 14);
+        const samples = this._catmullRomSample(p.points, totalSamples);
+
+        const left = [], right = [];
+        for (let i = 0; i < samples.length; i++) {
+            const t  = i / (samples.length - 1);
+            const s  = samples[i];
+            const nx = i < samples.length - 1 ? samples[i + 1].x - s.x : s.x - samples[i - 1].x;
+            const ny = i < samples.length - 1 ? samples[i + 1].y - s.y : s.y - samples[i - 1].y;
+            const nLen = Math.sqrt(nx * nx + ny * ny) || 1;
+            const px = -ny / nLen, py = nx / nLen;
+            const w  = widthAt(t);
+            left.push({ x: s.x + px * w, y: s.y + py * w });
+            right.push({ x: s.x - px * w, y: s.y - py * w });
+        }
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle   = p.color || '#fff';
+        ctx.beginPath();
+        ctx.moveTo(left[0].x, left[0].y);
+        for (let i = 1; i < left.length; i++)          ctx.lineTo(left[i].x,  left[i].y);
+        for (let i = right.length - 1; i >= 0; i--)    ctx.lineTo(right[i].x, right[i].y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    }
+
+    /**
+     * Sample a Catmull-Rom spline through the given control points.
+     * Ghost points are added at each end so the curve enters/exits cleanly.
+     */
+    _catmullRomSample(points, totalSamples) {
+        if (points.length === 1) return [{ ...points[0] }];
+
+        // Ghost points that mirror the first and last segments
+        const first = points[0], second = points[1];
+        const last  = points[points.length - 1], prev = points[points.length - 2];
+        const pts = [
+            { x: 2 * first.x - second.x, y: 2 * first.y - second.y },
+            ...points,
+            { x: 2 * last.x - prev.x,    y: 2 * last.y  - prev.y  }
+        ];
+
+        const segments   = points.length - 1;
+        const sps        = Math.max(2, Math.ceil(totalSamples / segments));
+        const result     = [];
+
+        for (let seg = 0; seg < segments; seg++) {
+            const p0 = pts[seg], p1 = pts[seg + 1], p2 = pts[seg + 2], p3 = pts[seg + 3];
+            // Include the final endpoint only on the last segment to avoid duplicates
+            const count = seg === segments - 1 ? sps + 1 : sps;
+            for (let i = 0; i < count; i++) {
+                const t  = i / sps;
+                const t2 = t * t, t3 = t2 * t;
+                result.push({
+                    x: 0.5 * ((2 * p1.x) + (-p0.x + p2.x) * t + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 + (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
+                    y: 0.5 * ((2 * p1.y) + (-p0.y + p2.y) * t + (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 + (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3)
+                });
+            }
+        }
+        return result;
     }
 
     getAnimatedTerrain(terrainType, r = 0, q = 0) {
@@ -5968,6 +6282,8 @@ export class TacticsScene extends BaseScene {
                 this.drawStraightSwipe(ctx, p);
             } else if (p.type === 'swipe_arc') {
                 this.drawArcSwipe(ctx, p);
+            } else if (p.type === 'swish') {
+                this.drawSwish(ctx, p);
             }
         });
 
