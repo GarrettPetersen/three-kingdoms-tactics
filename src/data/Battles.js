@@ -336,6 +336,42 @@ export const BATTLES = {
             { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_attack_01', text: { en: "HA! Finally some Yellow Turbans to smash! Let's go!", zh: "哈！终于有黄巾贼可以痛打了！我们走！" } }
         ],
         hasVictoryDialogue: true  // Flag to trigger on-map victory dialogue
+    },
+    'chapter2_oath_dongzhuo_choice': {
+        name: 'Chapter 2 Opening - Brothers and Dong Zhuo',
+        map: {
+            biome: 'northern',
+            layout: 'river',
+            seed: 'dongzhuo_rescue',
+            forestDensity: 0.1,
+            mountainDensity: 0.05,
+            riverDensity: 0.0,
+            houseDensity: 0.04
+        },
+        units: [
+            { id: 'liubei', r: 6, q: 1, type: 'hero' },
+            { id: 'guanyu', r: 5, q: 0, type: 'hero' },
+            { id: 'zhangfei', r: 7, q: 0, type: 'hero' },
+            { id: 'ally1', r: 5, q: 1, type: 'allied_soldier' },
+            { id: 'ally2', r: 7, q: 1, type: 'allied_soldier' },
+            { id: 'ally3', r: 6, q: 0, type: 'allied_soldier' },
+            { id: 'dongzhuo', r: 6, q: 8, type: 'warlord' },
+            { id: 'dead_guard1', r: 5, q: 8, type: 'allied_soldier', isDead: true, frame: 2 },
+            { id: 'dead_guard2', r: 7, q: 8, type: 'allied_soldier', isDead: true, frame: 2 }
+        ],
+        isCutscene: true,
+        hasChoice: true,
+        choiceOptions: [
+            { lines: ['Restrain', 'Zhang Fei'], color: '#88ff88', hoverColor: '#aaffaa' },
+            { lines: ['Let him', 'strike'], color: '#ff8888', hoverColor: '#ffaaaa' }
+        ],
+        introScript: [
+            // Reuse existing recorded Chapter 1 voice lines (same text, same voice IDs)
+            { speaker: 'dongzhuo', portraitKey: 'dong-zhuo', name: 'Dong Zhuo', voiceId: 'gz_dz_01', text: { en: "What offices do you three hold?", zh: "你们三人身居何职？" } },
+            { speaker: 'liubei', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_lb_office_01', text: { en: "None.", zh: "无。" } },
+            { speaker: 'dongzhuo', portraitKey: 'dong-zhuo', name: 'Dong Zhuo', voiceId: 'gz_dz_02', text: { en: "Hmph. Common men with no rank. You may go.", zh: "哼。无官无职的平民。你们可以走了。" } },
+            { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_rage_01', text: { en: "We have just rescued this menial in a bloody fight, and now he is rude to us! Nothing but his death can slake my anger.", zh: "我们刚刚在一场血战中救了这个小人物，现在他却对我们无礼！只有他的死才能平息我的怒火。" } }
+        ]
     }
 };
 

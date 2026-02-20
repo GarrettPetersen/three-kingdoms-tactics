@@ -732,6 +732,7 @@ export class NarrativeScene extends BaseScene {
                 if (this.scriptId === 'inn') {
                     // Add milestone when inn scene completes (normally done in onComplete)
                     this.manager.gameState.addMilestone('prologue_complete');
+                    this.manager.gameState.setStoryCursor('prologue_complete', 'liubei');
                 }
                 this.manager.switchTo(savedState.nextScene, savedState.nextParams || {});
                 return;

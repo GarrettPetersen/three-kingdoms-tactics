@@ -1,3 +1,5 @@
+import { STORY_ROUTES, buildParentMap } from '../data/StoryGraph.js';
+
 export class GameState {
     constructor() {
         this.saveKey = 'three_kingdoms_tactics_save';
@@ -15,6 +17,11 @@ export class GameState {
                 lastScene: 'title',
                 currentCampaign: null,
                 currentBattleId: null,
+                story: {
+                    activeRoute: null,
+                    cursorNode: null,
+                    choices: {}
+                },
                 sceneStates: {
                     map: null,
                     tactics: null,
@@ -86,6 +93,80 @@ export class GameState {
         if (!this.data.session) this.data.session = {};
         this.data.session.currentBattleId = battleId;
         this.save();
+    }
+
+    getStoryState() {
+        const storyDefaults = this.getDefaults().session.story;
+        const story = this.data.session?.story || {};
+        return {
+            ...storyDefaults,
+            ...story,
+            choices: { ...(storyDefaults.choices || {}), ...(story.choices || {}) }
+        };
+    }
+
+    setStoryState(storyState) {
+        if (!this.data.session) this.data.session = {};
+        this.data.session.story = {
+            ...this.getDefaults().session.story,
+            ...(storyState || {}),
+            choices: { ...(storyState?.choices || {}) }
+        };
+        this.save();
+    }
+
+    startStoryRoute(routeId, startNode = null) {
+        const route = STORY_ROUTES[routeId];
+        if (!route) return;
+        const node = startNode || route.startNode;
+        this.setStoryState({
+            ...this.getStoryState(),
+            activeRoute: routeId,
+            cursorNode: node
+        });
+    }
+
+    setStoryCursor(nodeId, routeId = null) {
+        const story = this.getStoryState();
+        const resolvedRouteId = routeId || story.activeRoute || this.getCurrentCampaign();
+        const route = STORY_ROUTES[resolvedRouteId];
+        if (!route || !route.nodes[nodeId]) return;
+        this.setStoryState({
+            ...story,
+            activeRoute: resolvedRouteId,
+            cursorNode: nodeId
+        });
+    }
+
+    getStoryCursor() {
+        const story = this.getStoryState();
+        return { routeId: story.activeRoute, nodeId: story.cursorNode };
+    }
+
+    hasReachedStoryNode(nodeId, routeId = null) {
+        const story = this.getStoryState();
+        const resolvedRouteId = routeId || story.activeRoute;
+        if (!resolvedRouteId) return false;
+        const route = STORY_ROUTES[resolvedRouteId];
+        if (!route || !route.nodes[nodeId]) return false;
+        let cur = story.cursorNode;
+        const parents = buildParentMap(resolvedRouteId);
+        while (cur) {
+            if (cur === nodeId) return true;
+            cur = parents[cur] || null;
+        }
+        return false;
+    }
+
+    setStoryChoice(key, value) {
+        const story = this.getStoryState();
+        story.choices[key] = value;
+        this.setStoryState(story);
+    }
+
+    getStoryChoice(key, fallback = null) {
+        const story = this.getStoryState();
+        return story.choices[key] ?? fallback;
     }
 
     getSceneState(sceneName) {
@@ -230,6 +311,10 @@ export class GameState {
             this.data.session = { ...this.getDefaults().session };
             changed = true;
         } else {
+            if (!this.data.session.story) {
+                this.data.session.story = { ...this.getDefaults().session.story };
+                changed = true;
+            }
             if (!this.data.session.sceneStates) {
                 this.data.session.sceneStates = { ...this.getDefaults().session.sceneStates };
                 changed = true;
@@ -293,6 +378,14 @@ export class GameState {
                         lastScene: parsedSession.lastScene || parsed.lastScene || defaults.session.lastScene,
                         currentCampaign: parsedSession.currentCampaign || parsed.currentCampaign || defaults.session.currentCampaign,
                         currentBattleId: parsedSession.currentBattleId || parsed.currentBattleId || defaults.session.currentBattleId,
+                        story: {
+                            ...defaults.session.story,
+                            ...(parsedSession.story || {}),
+                            choices: {
+                                ...defaults.session.story.choices,
+                                ...((parsedSession.story && parsedSession.story.choices) || {})
+                            }
+                        },
                         sceneStates: {
                             ...defaults.session.sceneStates,
                             ...parsedSceneStates,
@@ -323,6 +416,15 @@ export class GameState {
         }
     }
 
+    removeMilestone(id) {
+        const milestones = this.data.progress?.milestones || [];
+        const next = milestones.filter(m => m !== id);
+        if (next.length !== milestones.length) {
+            this.data.progress.milestones = next;
+            this.save();
+        }
+    }
+
     hasMilestone(id) {
         return (this.data.progress?.milestones || []).includes(id);
     }
@@ -330,6 +432,11 @@ export class GameState {
     isCampaignComplete(campaignId = null) {
         const id = campaignId || this.getCurrentCampaign();
         if (!id) return false;
+
+        const route = STORY_ROUTES[id];
+        if (route && route.terminalNode) {
+            if (this.hasReachedStoryNode(route.terminalNode, id)) return true;
+        }
 
         // Generic naming convention for future campaigns.
         if (this.hasMilestone(`${id}_complete`)) return true;

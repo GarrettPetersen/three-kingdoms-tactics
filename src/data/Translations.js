@@ -108,6 +108,14 @@ export const UI_TEXT = {
         en: 'THE OATH - STORY COMPLETE',
         zh: '桃园结义 - 故事完成'
     },
+    'CH2 OATH ARC': {
+        en: 'CHAPTER 2: BROTHERS AGAINST THE TIDE',
+        zh: '第二章：兄弟逆流而行'
+    },
+    'CH2 OATH ARC COMPLETE': {
+        en: 'CH2 OATH ARC COMPLETE',
+        zh: '第二章义兄弟线完成'
+    },
     'CAMPAIGN LOCKED': {
         en: 'CAMPAIGN LOCKED',
         zh: '战役已锁定'
@@ -147,6 +155,14 @@ export const UI_TEXT = {
     'campaign_liubei_complete_law': {
         en: ' You followed the law, allowing Lu Zhi to be taken to the capital despite the injustice of the charges.',
         zh: '你遵循了法律，尽管指控不公，仍允许卢植被带到首都。'
+    },
+    'campaign_ch2_oath_description': {
+        en: 'The brothers ride on from Dong Zhuo\'s battlefield. Will restraint preserve honor, or will wrath carve a harsher road?',
+        zh: '兄弟三人离开董卓战场后继续前行。是克制守义，还是怒火开路？'
+    },
+    'campaign_ch2_oath_complete': {
+        en: 'You have begun the Oath Brothers route of Chapter 2 and faced the first choice of honor and fury.',
+        zh: '你已开启第二章义兄弟线，并面对第一道在义与怒之间的抉择。'
     },
     'Zhuo County': {
         en: 'Zhuo County',

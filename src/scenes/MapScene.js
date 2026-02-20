@@ -15,8 +15,8 @@ const LOCATIONS = {
         imgKey: 'tent',
         battleId: 'daxing',
         // With the legacy Zhuo-start scene removed, magistrate is the first actionable map objective.
-        unlockCondition: (gs) => !gs.hasMilestone('daxing'),
-        isCompleted: (gs) => gs.hasMilestone('daxing')
+        unlockCondition: (gs) => !(gs.hasReachedStoryNode('daxing', 'liubei') || gs.hasMilestone('daxing')),
+        isCompleted: (gs) => gs.hasReachedStoryNode('daxing', 'liubei') || gs.hasMilestone('daxing')
     },
     qingzhou: {
         id: 'qingzhou',
@@ -25,8 +25,8 @@ const LOCATIONS = {
         name: 'Qingzhou Region',
         imgKey: 'city',
         battleId: 'qingzhou_siege',
-        unlockCondition: (gs) => gs.hasMilestone('daxing') && !gs.hasMilestone('qingzhou_siege'),
-        isCompleted: (gs) => gs.hasMilestone('qingzhou_siege')
+        unlockCondition: (gs) => (gs.hasReachedStoryNode('daxing', 'liubei') || gs.hasMilestone('daxing')) && !(gs.hasReachedStoryNode('qingzhou_siege', 'liubei') || gs.hasMilestone('qingzhou_siege')),
+        isCompleted: (gs) => gs.hasReachedStoryNode('qingzhou_siege', 'liubei') || gs.hasMilestone('qingzhou_siege')
     },
     guangzong: {
         id: 'guangzong',
@@ -35,8 +35,8 @@ const LOCATIONS = {
         name: 'Guangzong Region',
         imgKey: 'tent',
         battleId: 'guangzong_encounter',
-        unlockCondition: (gs) => gs.hasMilestone('qingzhou_cleanup') && !gs.hasMilestone('guangzong_encounter'),
-        isCompleted: (gs) => gs.hasMilestone('guangzong_encounter')
+        unlockCondition: (gs) => (gs.hasReachedStoryNode('qingzhou_cleanup', 'liubei') || gs.hasMilestone('qingzhou_cleanup')) && !(gs.hasReachedStoryNode('guangzong_encounter', 'liubei') || gs.hasMilestone('guangzong_encounter')),
+        isCompleted: (gs) => gs.hasReachedStoryNode('guangzong_encounter', 'liubei') || gs.hasMilestone('guangzong_encounter')
     },
     zhuo_county: {
         id: 'zhuo_county',
@@ -45,8 +45,8 @@ const LOCATIONS = {
         name: 'Zhuo County',
         imgKey: 'hut',
         battleId: 'zhuo_return',
-        unlockCondition: (gs) => gs.hasMilestone('guangzong_encounter') && !gs.hasMilestone('dongzhuo_battle') && !gs.hasMilestone('chapter1_complete'),
-        isCompleted: (gs) => gs.hasMilestone('chapter1_complete') || gs.hasMilestone('dongzhuo_battle')
+        unlockCondition: (gs) => (gs.hasReachedStoryNode('guangzong_encounter', 'liubei') || gs.hasMilestone('guangzong_encounter')) && !(gs.hasReachedStoryNode('chapter1_complete', 'liubei') || gs.hasMilestone('chapter1_complete')),
+        isCompleted: (gs) => gs.hasReachedStoryNode('dongzhuo_battle', 'liubei') || gs.hasReachedStoryNode('chapter1_complete', 'liubei') || gs.hasMilestone('dongzhuo_battle') || gs.hasMilestone('chapter1_complete')
     }
 };
 
@@ -170,6 +170,9 @@ export class MapScene extends BaseScene {
             if (params && params.campaignId) {
                 this.currentCampaignId = params.campaignId;
                 gs.setCurrentCampaign(params.campaignId);
+                if (params.campaignId === 'liubei' && gs.getStoryCursor().routeId !== 'liubei') {
+                    gs.startStoryRoute('liubei', 'prologue_complete');
+                }
                 // Don't set lastScene here - SceneManager will handle it
 
                 // Initialize party based on campaign
@@ -318,6 +321,11 @@ export class MapScene extends BaseScene {
         // Draw dynamic locations
         const gs = this.manager.gameState;
         const navTargets = [];
+        const depthDrawables = [];
+        const pendingLabels = [];
+        const pushDepthDrawable = (draw, sortY, priority = 0) => {
+            depthDrawables.push({ draw, sortY, priority });
+        };
         for (const locId in LOCATIONS) {
             const loc = LOCATIONS[locId];
             if (loc.unlockCondition(gs)) {
@@ -340,17 +348,24 @@ export class MapScene extends BaseScene {
                         w: img.width,
                         h: img.height
                     });
-                    ctx.save();
-                    if (isDone) ctx.globalAlpha = 0.5;
-                    
-                    // Draw centered at the location coordinates
-                    ctx.drawImage(img, drawX, drawY, img.width, img.height);
-                    ctx.restore();
+                    // Depth sort by sprite "foot" (bottom pixel row), not center Y.
+                    const footY = drawY + img.height;
+                    pushDepthDrawable(
+                        () => {
+                            ctx.save();
+                            if (isDone) ctx.globalAlpha = 0.5;
+                            // Draw centered at the location coordinates
+                            ctx.drawImage(img, drawX, drawY, img.width, img.height);
+                            ctx.restore();
+                        },
+                        footY,
+                        0
+                    );
 
                     if (this.interactionSelected === locId) {
                         const locName = getLocalizedText(UI_TEXT[loc.name]) || loc.name;
                         const promptText = isDone ? getLocalizedText(UI_TEXT['COMPLETED']) : getLocalizedText(UI_TEXT['click to march']);
-                        this.drawLabel(ctx, locName, lx, ly - 10, promptText);
+                        pendingLabels.push({ name: locName, x: lx, y: ly - 10, prompt: promptText });
                     }
                 }
             }
@@ -378,12 +393,27 @@ export class MapScene extends BaseScene {
                 if (this.moveState.targetX < this.moveState.startX) flip = true;
             }
 
-            this.drawCharacter(ctx, charImg, action, frameIdx, cx, cy, { flip });
+            // Character y is already the feet anchor in drawCharacter().
+            pushDepthDrawable(
+                () => {
+                    this.drawCharacter(ctx, charImg, action, frameIdx, cx, cy, { flip });
+                },
+                cy,
+                1
+            );
             this.partyRenderPose = { img: charImg, action, frame: frameIdx, x: cx, y: cy, flip };
             navTargets.push({ type: 'party', id: 'party', x: cx, y: cy });
         } else {
             this.partyRenderPose = null;
         }
+
+        // Draw all map actors/sprites in depth order by foot Y.
+        depthDrawables.sort((a, b) => {
+            if (a.sortY !== b.sortY) return a.sortY - b.sortY;
+            return a.priority - b.priority;
+        });
+        depthDrawables.forEach(d => d.draw());
+        pendingLabels.forEach(label => this.drawLabel(ctx, label.name, label.x, label.y, label.prompt));
 
         if (this.interactionSelected === 'hero_reminder' && this.currentReminder) {
             const status = this.renderDialogueBox(ctx, canvas, this.currentReminder, { subStep: this.subStep });
@@ -703,7 +733,7 @@ export class MapScene extends BaseScene {
         if (isBackHovered) {
             assets.playSound('ui_click');
             // If the story is complete, ensure we don't prompt "New Game" when returning later
-            if (this.manager.gameState.hasMilestone('chapter1_complete')) {
+            if (this.manager.gameState.hasReachedStoryNode('chapter1_complete', 'liubei')) {
                 // Don't set lastScene for campaign_selection - it's excluded
             }
             this.manager.switchTo('campaign_selection');
@@ -866,12 +896,12 @@ export class MapScene extends BaseScene {
 
     getCurrentPartyReminderKey(gs) {
         // Highest-priority progression first.
-        if (gs.hasMilestone('chapter1_complete')) return null;
-        if (gs.hasMilestone('guangzong_encounter')) return 'guangzong_encounter';
-        if (gs.hasMilestone('qingzhou_cleanup')) return 'qingzhou_cleanup';
-        if (gs.hasMilestone('qingzhou_siege')) return 'qingzhou_siege';
-        if (gs.hasMilestone('daxing')) return 'daxing';
-        if (gs.hasMilestone('prologue_complete')) return 'prologue_complete';
+        if (gs.hasReachedStoryNode('chapter1_complete', 'liubei') || gs.hasMilestone('chapter1_complete')) return null;
+        if (gs.hasReachedStoryNode('guangzong_encounter', 'liubei') || gs.hasMilestone('guangzong_encounter')) return 'guangzong_encounter';
+        if (gs.hasReachedStoryNode('qingzhou_cleanup', 'liubei') || gs.hasMilestone('qingzhou_cleanup')) return 'qingzhou_cleanup';
+        if (gs.hasReachedStoryNode('qingzhou_siege', 'liubei') || gs.hasMilestone('qingzhou_siege')) return 'qingzhou_siege';
+        if (gs.hasReachedStoryNode('daxing', 'liubei') || gs.hasMilestone('daxing')) return 'daxing';
+        if (gs.hasReachedStoryNode('prologue_complete', 'liubei') || gs.hasMilestone('prologue_complete')) return 'prologue_complete';
         // Fallback for any pre-Daxing map state: still guide player to the magistrate.
         return 'prologue_complete';
     }
@@ -898,7 +928,7 @@ export class MapScene extends BaseScene {
             battleId: 'guangzong_encounter',
             onChoiceRestrain: () => {
                 // Peaceful path - go to map, player clicks Zhuo County
-                this.manager.gameState.addMilestone('guangzong_encounter');
+                this.manager.gameState.setStoryCursor('guangzong_encounter', 'liubei');
                 this.manager.switchTo('map', { 
                     campaignId: 'liubei',
                     partyX: 205,  // Near Guangzong
@@ -911,11 +941,13 @@ export class MapScene extends BaseScene {
             },
             onFightVictory: () => {
                 // Called when cage is broken and Lu Zhi is freed
+                this.manager.gameState.setStoryChoice('luzhi_outcome', 'freed');
                 this.manager.gameState.addMilestone('freed_luzhi');
                 this.continueAfterEscortBattle();
             },
             onVictory: () => {
                 // Fallback for if they kill all enemies without breaking the cage
+                this.manager.gameState.setStoryChoice('luzhi_outcome', 'freed');
                 this.manager.gameState.addMilestone('freed_luzhi');
                 this.continueAfterEscortBattle();
             }
@@ -925,7 +957,7 @@ export class MapScene extends BaseScene {
     startZhuoReturn() {
         // Go directly to the Dong Zhuo battle - dialogue happens on the battle screen
         const gs = this.manager.gameState;
-        const freedLuZhi = gs.hasMilestone('freed_luzhi');
+        const freedLuZhi = gs.getStoryChoice('luzhi_outcome') === 'freed' || gs.hasMilestone('freed_luzhi');
         
         this.manager.switchTo('tactics', {
             battleId: 'dongzhuo_battle',
@@ -944,6 +976,7 @@ export class MapScene extends BaseScene {
         this.manager.switchTo('narrative', {
             musicKey: 'oath',
             onComplete: () => {
+                this.manager.gameState.setStoryCursor('chapter1_complete', 'liubei');
                 this.manager.gameState.addMilestone('chapter1_complete');
                 this.manager.switchTo('campaign_selection'); // Back to story selection
             },
@@ -1009,7 +1042,7 @@ export class MapScene extends BaseScene {
             musicKey: 'forest',
             onComplete: () => {
                 // Go to map - player will march to Zhuo County
-                this.manager.gameState.addMilestone('guangzong_encounter');
+                this.manager.gameState.setStoryCursor('guangzong_encounter', 'liubei');
                 this.manager.switchTo('map', { 
                     campaignId: 'liubei',
                     partyX: 205,  // Near where they were (Guangzong area)

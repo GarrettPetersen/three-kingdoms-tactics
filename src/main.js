@@ -205,6 +205,42 @@ async function init() {
 
         if (e.key.length === 1) {
             inputBuffer += e.key.toLowerCase();
+            const markChapterComplete = (chapterNum) => {
+                const n = Number(chapterNum);
+                if (!Number.isFinite(n) || n < 1) return false;
+                const milestone = `chapter${n}_complete`;
+                sceneManager.gameState.addMilestone(milestone);
+                // Canon defaults when skipping content:
+                // - Lu Zhi is NOT freed (lawful/canonical branch)
+                // - Liu Bei restrains Zhang Fei in Dong Zhuo confrontation
+                if (n >= 1) {
+                    sceneManager.gameState.setStoryChoice('luzhi_outcome', 'restrained');
+                    sceneManager.gameState.setStoryChoice('chapter2_oath_dongzhuo_choice', 'restrain');
+                    sceneManager.gameState.removeMilestone('freed_luzhi');
+                    sceneManager.gameState.removeMilestone('chapter2_oath_dongzhuo_fought');
+                }
+                // Chapter 1 uses this explicit key in existing unlock checks.
+                if (n === 1) sceneManager.gameState.addMilestone('chapter1_complete');
+                if (n === 1) {
+                    sceneManager.gameState.setCurrentCampaign('liubei');
+                    sceneManager.gameState.setStoryCursor('chapter1_complete', 'liubei');
+                }
+                if (n === 2) {
+                    sceneManager.gameState.setCurrentCampaign('chapter2_oath');
+                    sceneManager.gameState.setStoryCursor('chapter2_oath_complete', 'chapter2_oath');
+                }
+                sceneManager.gameState.setLastScene('campaign_selection');
+                sceneManager.switchTo('campaign_selection');
+                console.log(`[CHEAT] Marked Chapter ${n} complete.`);
+                return true;
+            };
+
+            // Cheat: type ch1done, ch2done, ch3done... to mark that chapter complete.
+            const chapterDoneMatch = inputBuffer.match(/ch(\d+)done$/);
+            if (chapterDoneMatch && markChapterComplete(chapterDoneMatch[1])) {
+                inputBuffer = "";
+                return;
+            }
             if (inputBuffer.endsWith('title')) { sceneManager.switchTo('title'); inputBuffer = ""; }
             if (inputBuffer.endsWith('camp')) { sceneManager.switchTo('campaign_selection'); inputBuffer = ""; }
             if (inputBuffer.endsWith('map')) { sceneManager.switchTo('map'); inputBuffer = ""; }
@@ -356,6 +392,8 @@ async function init() {
                 inputBuffer = "";
                 sceneManager.gameState.addMilestone('prologue_complete');
                 sceneManager.gameState.addMilestone('daxing');
+                sceneManager.gameState.setCurrentCampaign('liubei');
+                sceneManager.gameState.startStoryRoute('liubei', 'daxing');
                 sceneManager.switchTo('map', { campaignId: 'liubei', partyX: 182, partyY: 85 });
             }
             if (inputBuffer.endsWith('guangzong')) {
@@ -364,6 +402,8 @@ async function init() {
                 sceneManager.gameState.addMilestone('daxing');
                 sceneManager.gameState.addMilestone('qingzhou_siege');
                 sceneManager.gameState.addMilestone('qingzhou_cleanup');
+                sceneManager.gameState.setCurrentCampaign('liubei');
+                sceneManager.gameState.startStoryRoute('liubei', 'qingzhou_cleanup');
                 // Place Liu Bei at Qingzhou (220, 95) - he needs to march to Guangzong
                 sceneManager.switchTo('map', { campaignId: 'liubei', partyX: 220, partyY: 95 });
             }

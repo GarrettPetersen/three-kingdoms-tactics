@@ -51,6 +51,9 @@ export class TacticsScene extends BaseScene {
         this.controllerNavTargets = [];
         this.controllerNavIndex = -1;
         this.controllerNavMouseEnabled = true;
+        this.chapter2DongZhuoFightActive = false;
+        this.chapter2DongZhuoEscapeTriggered = false;
+        this.chapter2DongZhuoEscapedFromDrowning = false;
     }
 
     cloneScriptSteps(steps) {
@@ -80,10 +83,11 @@ export class TacticsScene extends BaseScene {
                 options: activeStep.options
             };
         }
-        if (this.hasChoice && (this.onChoiceRestrain || this.onChoiceFight)) {
+        if (this.hasChoice && (this.onChoiceRestrain || this.onChoiceFight || this.battleId === 'guangzong_encounter')) {
+            const customBattleOptions = Array.isArray(this.battleDef?.choiceOptions) ? this.battleDef.choiceOptions : null;
             return {
                 kind: 'battle',
-                options: [
+                options: customBattleOptions || [
                     { lines: ["Stay your hand,", "brother!"], color: '#88ff88', hoverColor: '#aaffaa' },
                     { lines: ["Free him,", "brothers!"], color: '#ff8888', hoverColor: '#ffaaaa' }
                 ]
@@ -104,6 +108,7 @@ export class TacticsScene extends BaseScene {
         this.isCustom = params.isCustom || this.battleId === 'custom';
         
         const battleDef = BATTLES[this.battleId];
+        this.battleDef = battleDef || null;
         this.isCutscene = battleDef?.isCutscene || false;
         this.hasChoice = battleDef?.hasChoice || false;
 
@@ -181,20 +186,24 @@ export class TacticsScene extends BaseScene {
         this.controllerNavTargets = [];
         this.controllerNavIndex = -1;
         this.controllerNavMouseEnabled = true;
+        this.chapter2DongZhuoFightActive = false;
+        this.chapter2DongZhuoEscapeTriggered = false;
+        this.chapter2DongZhuoEscapedFromDrowning = false;
         
         // If resuming a battle with choices but no callbacks provided, set them up dynamically
         if (this.battleId === 'guangzong_encounter' && !this.onChoiceRestrain) {
             this.onChoiceRestrain = () => {
                 // Peaceful path - switch to map and continue to Dong Zhuo
-                this.manager.gameState.addMilestone('guangzong_encounter');
+                this.manager.gameState.setStoryCursor('guangzong_encounter', 'liubei');
                 this.manager.switchTo('map', { 
                     campaignId: 'liubei',
                     partyX: 205,
                     partyY: 55
                 });
             };
-            this.onChoiceFight = () => {}; // Empty - startFight() handles this
+            this.onChoiceFight = null; // Fallback to startFight()
             this.onFightVictory = () => {
+                this.manager.gameState.setStoryChoice('luzhi_outcome', 'freed');
                 this.manager.gameState.addMilestone('freed_luzhi');
                 // Use MapScene logic to show story
                 const mapScene = this.manager.scenes['map'];
@@ -216,6 +225,15 @@ export class TacticsScene extends BaseScene {
                 } else {
                     this.manager.switchTo('map', { afterEvent: 'dongzhuo_battle' });
                 }
+            };
+        }
+
+        if (this.battleId === 'chapter2_oath_dongzhuo_choice') {
+            this.onChoiceRestrain = () => {
+                this.startChapter2DongZhuoChoiceDialogue(false);
+            };
+            this.onChoiceFight = () => {
+                this.startChapter2DongZhuoFight();
             };
         }
         
@@ -571,6 +589,20 @@ export class TacticsScene extends BaseScene {
         const playerUnits = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp > 0);
         const enemyUnits = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
 
+        // Chapter 2 opener: never resolve standard victory/defeat while Dong Zhuo
+        // escape sequence is pending/playing. He must flee via scripted sequence.
+        if (this.battleId === 'chapter2_oath_dongzhuo_choice' && this.chapter2DongZhuoFightActive) {
+            const dongzhuo = this.units.find(u => u.id === 'dongzhuo');
+            if (dongzhuo && !this.chapter2DongZhuoEscapeTriggered) {
+                if (dongzhuo.isDrowning && (dongzhuo.drownTimer >= 1900 || dongzhuo.hp <= 0 || dongzhuo.isGone)) {
+                    this.triggerChapter2DongZhuoEscape(true);
+                } else if (!dongzhuo.isDrowning && dongzhuo.hp <= 2) {
+                    this.triggerChapter2DongZhuoEscape(false);
+                }
+            }
+            return;
+        }
+
         // Special handling for victory in the ambush battle
         if (this.battleId === 'qingzhou_siege' && this.ambushTriggered && enemyUnits.length === 0) {
             this.manager.gameState.addMilestone('qingzhou_siege');
@@ -648,7 +680,6 @@ export class TacticsScene extends BaseScene {
                 if (enemyUnits.length === 0) {
                     // Check for on-map victory dialogue (used by Dong Zhuo battle)
                     if (battleDef && battleDef.hasVictoryDialogue && this.battleId === 'dongzhuo_battle') {
-                        this.manager.gameState.addMilestone('guangzong_encounter');
                         this.startDongZhuoVictoryDialogue();
         } else {
                         this.endBattle(true);
@@ -1015,11 +1046,14 @@ export class TacticsScene extends BaseScene {
             const gs = this.manager.gameState;
         
         const unitXP = gs.getCampaignVar('unitXP') || {};
+        const unitLevelsSeen = gs.getCampaignVar('unitLevelsSeen') || {};
         const recoveryInfo = [];
         const levelUps = [];
 
         if (won && !this.isCustom) {
             gs.addMilestone(this.battleId);
+            // Keep progression deterministic: battle wins advance story cursor when node exists.
+            gs.setStoryCursor(this.battleId);
             // Don't set lastScene here - SceneManager will handle it
         }
 
@@ -1261,6 +1295,361 @@ export class TacticsScene extends BaseScene {
         };
         
         // Play first voice line
+        const firstStep = this.cleanupDialogueScript[0];
+        if (firstStep.voiceId) assets.playVoice(firstStep.voiceId);
+    }
+
+    startChapter2DongZhuoChoiceDialogue(letHimStrike) {
+        if (letHimStrike) {
+            this.startChapter2DongZhuoFight();
+            return;
+        }
+        this.manager.gameState.setStoryChoice('chapter2_oath_dongzhuo_choice', 'restrain');
+        this.manager.gameState.addMilestone('chapter2_oath_dongzhuo_restrained');
+
+        this.cleanupDialogueScript = [
+                {
+                    speaker: 'liubei',
+                    portraitKey: 'liu-bei',
+                    name: 'Liu Bei',
+                    voiceId: 'ch2_oath_lb_restrain_01',
+                    text: { en: "Brother, hold! Fury may win a breath, but righteousness must win the age.", zh: "三弟且住！一时之怒可胜一口气，正道却要胜一世。" }
+                },
+                {
+                    speaker: 'zhangfei',
+                    portraitKey: 'zhang-fei',
+                    name: 'Zhang Fei',
+                    voiceId: 'ch2_oath_zf_restrain_01',
+                    text: { en: "Hmph... I obey, eldest brother. But I will remember this insult.", zh: "哼……我听大哥的。只是这口气，我记下了。" }
+                },
+                {
+                    speaker: 'dongzhuo',
+                    portraitKey: 'dong-zhuo',
+                    name: 'Dong Zhuo',
+                    voiceId: 'ch2_oath_dz_restrain_01',
+                    text: { en: "Know your place, commoners. Be grateful I even speak to you.", zh: "认清自己的身份，草民。能让本官同你们说话，已是恩典。" }
+                },
+                {
+                    speaker: 'guanyu',
+                    portraitKey: 'guan-yu',
+                    name: 'Guan Yu',
+                    voiceId: 'ch2_oath_gy_restrain_01',
+                    text: { en: "Let us depart. The realm has larger fires ahead.", zh: "我等走吧。天下尚有更大的火要灭。" }
+                }
+            ];
+
+        this.cleanupDialogueStep = 0;
+        this.dialogueElapsed = 0;
+        this.isCleanupDialogueActive = true;
+        this.cleanupDialogueOnComplete = () => {
+            this.manager.gameState.setLastScene('campaign_selection');
+            this.manager.switchTo('campaign_selection');
+        };
+
+        const firstStep = this.cleanupDialogueScript[0];
+        if (firstStep.voiceId) assets.playVoice(firstStep.voiceId);
+    }
+
+    startChapter2DongZhuoFight() {
+        const gs = this.manager.gameState;
+        gs.setStoryChoice('chapter2_oath_dongzhuo_choice', 'strike');
+        gs.addMilestone('chapter2_oath_dongzhuo_fought');
+
+        this.cleanupDialogueScript = [
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'ch2_oath_lb_strike_01',
+                text: { en: "If words fail, then let steel answer steel.", zh: "既然言语无用，便以刀兵明是非。" }
+            },
+            {
+                speaker: 'zhangfei',
+                portraitKey: 'zhang-fei',
+                name: 'Zhang Fei',
+                voiceId: 'ch2_oath_zf_strike_01',
+                text: { en: "HA! At last!", zh: "哈！这才痛快！" }
+            },
+            {
+                speaker: 'dongzhuo',
+                portraitKey: 'dong-zhuo',
+                name: 'Dong Zhuo',
+                voiceId: 'ch2_oath_dz_strike_01',
+                text: { en: "You dare raise steel against me? I'll have your heads on pikes!", zh: "你们竟敢对我动兵？我定要把你们的脑袋插在枪上！" }
+            }
+        ];
+
+        this.cleanupDialogueStep = 0;
+        this.dialogueElapsed = 0;
+        this.isCleanupDialogueActive = true;
+        this.cleanupDialogueOnComplete = () => {
+            this.isCleanupDialogueActive = false;
+            this.isChoiceActive = false;
+            this.chapter2DongZhuoFightActive = true;
+            this.chapter2DongZhuoEscapeTriggered = false;
+            this.chapter2DongZhuoEscapedFromDrowning = false;
+            this.isFightMode = true;
+            this.isCutscene = false;
+
+            // Promote this branch into a real combat phase against Dong Zhuo.
+            const dongzhuo = this.units.find(u => u.id === 'dongzhuo');
+            if (dongzhuo) {
+                dongzhuo.faction = 'enemy';
+                dongzhuo.hasMoved = false;
+                dongzhuo.hasAttacked = false;
+                dongzhuo.hasActed = false;
+                if (dongzhuo.hp <= 0) dongzhuo.hp = 1;
+                if (dongzhuo.action === 'death') {
+                    dongzhuo.action = 'standby';
+                    dongzhuo.currentAnimAction = 'standby';
+                    dongzhuo.frame = 0;
+                }
+            }
+
+            assets.playMusic('battle', 0.4);
+            this.addDamageNumber(this.manager.canvas.width / 2, 40, "FORCE DONG ZHUO TO FLEE!", '#ffd700');
+            this.startPlayerTurn();
+        };
+
+        const firstStep = this.cleanupDialogueScript[0];
+        if (firstStep.voiceId) assets.playVoice(firstStep.voiceId);
+    }
+
+    triggerChapter2DongZhuoEscape(fromDrowning = false) {
+        if (!this.chapter2DongZhuoFightActive || this.chapter2DongZhuoEscapeTriggered || this.battleId !== 'chapter2_oath_dongzhuo_choice') {
+            return;
+        }
+        this.chapter2DongZhuoEscapeTriggered = true;
+        this.chapter2DongZhuoEscapedFromDrowning = !!fromDrowning;
+
+        const dongzhuo = this.units.find(u => u.id === 'dongzhuo');
+        if (!dongzhuo) {
+            this.chapter2DongZhuoFightActive = false;
+            this.manager.gameState.setLastScene('campaign_selection');
+            this.manager.switchTo('campaign_selection');
+            return;
+        }
+
+        this.isProcessingTurn = true;
+        this.selectedUnit = null;
+        this.selectedAttack = null;
+        this.reachableTiles.clear();
+        this.attackTiles.clear();
+
+        let currentCell = this.tacticsMap.getCell(dongzhuo.r, dongzhuo.q);
+        const beginRunAway = () => {
+            dongzhuo.dialogue = getLocalizedText(fromDrowning
+                ? { en: "I refuse to die in this mud! Out of my way!", zh: "我岂能死在这泥水里！都给我滚开！" }
+                : { en: "You dogs got lucky today! I will not waste my life on peasants!", zh: "你们这些狗东西今日走运！我才不会把命丢在一群草民手里！" });
+            dongzhuo.voiceId = fromDrowning ? 'ch2_oath_dz_flee_water_01' : 'ch2_oath_dz_flee_01';
+            this.activeDialogue = { unit: dongzhuo, timer: 2400, lockSkips: true };
+            assets.playVoice(dongzhuo.voiceId);
+
+            // Give him time to say the line BEFORE he runs.
+            setTimeout(() => {
+                const mapHeight = this.manager.config.mapHeight;
+                const edgeQ = this.manager.config.mapWidth - 1;
+
+                // Pick a passable right-edge hex and pathfind to it, closest rows first.
+                const rows = Array.from({ length: mapHeight }, (_, i) => i)
+                    .sort((a, b) => Math.abs(a - dongzhuo.r) - Math.abs(b - dongzhuo.r));
+
+                let bestPath = null;
+                let bestTarget = null;
+                for (const row of rows) {
+                    const edgeCell = this.tacticsMap.getCell(row, edgeQ);
+                    if (!edgeCell || edgeCell.impassable) continue;
+                    if (edgeCell.unit && edgeCell.unit !== dongzhuo) continue;
+                    const path = this.tacticsMap.getPath(dongzhuo.r, dongzhuo.q, row, edgeQ, 30, dongzhuo);
+                    if (path && path.length > 1) {
+                        bestPath = path;
+                        bestTarget = { r: row, q: edgeQ };
+                        break;
+                    }
+                }
+
+                const finishOffscreen = () => {
+                    const startPos = {
+                        x: (typeof dongzhuo.visualX === 'number') ? dongzhuo.visualX : this.getPixelPos(dongzhuo.r, dongzhuo.q).x,
+                        y: (typeof dongzhuo.visualY === 'number') ? dongzhuo.visualY : this.getPixelPos(dongzhuo.r, dongzhuo.q).y
+                    };
+                    const offscreenPos = this.getPixelPos(
+                        Math.max(0, Math.min(this.manager.config.mapHeight - 1, dongzhuo.r)),
+                        this.manager.config.mapWidth + 3
+                    );
+                    dongzhuo.action = 'walk';
+                    dongzhuo.currentAnimAction = 'walk';
+                    dongzhuo.flip = false;
+
+                    const duration = 650;
+                    const startTime = Date.now();
+                    const animateOffscreen = () => {
+                        const elapsed = Date.now() - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        dongzhuo.visualX = startPos.x + (offscreenPos.x - startPos.x) * progress;
+                        dongzhuo.visualY = startPos.y + (offscreenPos.y - startPos.y) * progress;
+                        if (progress < 1) {
+                            requestAnimationFrame(animateOffscreen);
+                            return;
+                        }
+                        const oldCell = this.tacticsMap.getCell(dongzhuo.r, dongzhuo.q);
+                        if (oldCell && oldCell.unit === dongzhuo) oldCell.unit = null;
+                        dongzhuo.isGone = true;
+                        this.activeDialogue = null;
+                        this.chapter2DongZhuoFightActive = false;
+                        this.startChapter2DongZhuoPostFightDialogue();
+                    };
+                    animateOffscreen();
+                };
+
+                if (!bestPath || !bestTarget) {
+                    // Safety fallback if map edge is fully blocked.
+                    finishOffscreen();
+                    return;
+                }
+
+                const oldCell = this.tacticsMap.getCell(dongzhuo.r, dongzhuo.q);
+                if (oldCell && oldCell.unit === dongzhuo) oldCell.unit = null;
+                dongzhuo.startPath(bestPath);
+                dongzhuo.action = 'walk';
+                dongzhuo.currentAnimAction = 'walk';
+                dongzhuo.flip = false;
+
+                const waitForPath = () => {
+                    if (dongzhuo.isMoving) {
+                        setTimeout(waitForPath, 80);
+                        return;
+                    }
+                    dongzhuo.setPosition(bestTarget.r, bestTarget.q);
+                    const edgeCell = this.tacticsMap.getCell(bestTarget.r, bestTarget.q);
+                    if (edgeCell) edgeCell.unit = dongzhuo;
+                    finishOffscreen();
+                };
+                setTimeout(waitForPath, 80);
+            }, 2100);
+        };
+
+        if (fromDrowning) {
+            // Let the full drowning animation almost complete, then jump from the current
+            // rendered sink position so it reads as a continuous water-to-land leap.
+            const originPos = {
+                x: (typeof dongzhuo.visualX === 'number') ? dongzhuo.visualX : this.getPixelPos(dongzhuo.r, dongzhuo.q).x,
+                y: (typeof dongzhuo.visualY === 'number') ? dongzhuo.visualY : this.getPixelPos(dongzhuo.r, dongzhuo.q).y
+            };
+            const safeCell = this.findNearestFreeCell(dongzhuo.r, dongzhuo.q, 8);
+            if (!safeCell) {
+                // Fallback: if no safe landing, still force a spoken retreat.
+                dongzhuo.isDrowning = false;
+                dongzhuo.drownTimer = 0;
+                dongzhuo.isGone = false;
+                dongzhuo.hp = 1;
+                if (currentCell && currentCell.unit !== dongzhuo) currentCell.unit = dongzhuo;
+                beginRunAway();
+                return;
+            }
+
+            if (currentCell && currentCell.unit === dongzhuo) currentCell.unit = null;
+            dongzhuo.isGone = false;
+            dongzhuo.isDrowning = false;
+            dongzhuo.drownTimer = 0;
+            dongzhuo.hp = 1;
+            dongzhuo.action = 'standby';
+            dongzhuo.currentAnimAction = 'standby';
+            dongzhuo.frame = 0;
+            dongzhuo.setPosition(safeCell.r, safeCell.q);
+            safeCell.unit = dongzhuo;
+            const landPos = this.getPixelPos(safeCell.r, safeCell.q);
+            dongzhuo.startPush(originPos.x, originPos.y, landPos.x, landPos.y, false, 2);
+            if (dongzhuo.pushData) {
+                dongzhuo.pushData.arcHeight = 56; // Make the jump visibly read as a leap.
+            }
+            assets.playSound('splash', 0.7);
+
+            const waitForJump = () => {
+                if (dongzhuo.pushData) {
+                    setTimeout(waitForJump, 60);
+                    return;
+                }
+                beginRunAway();
+            };
+            setTimeout(waitForJump, 60);
+            return;
+        }
+
+        if (dongzhuo.hp <= 0) dongzhuo.hp = 1;
+        if (dongzhuo.isDrowning) {
+            dongzhuo.isDrowning = false;
+            dongzhuo.drownTimer = 0;
+        }
+        dongzhuo.isGone = false;
+        if (dongzhuo.action === 'death') {
+            dongzhuo.action = 'standby';
+            dongzhuo.currentAnimAction = 'standby';
+            dongzhuo.frame = 0;
+        }
+        if (!currentCell || currentCell.impassable) {
+            const safeCell = this.findNearestFreeCell(dongzhuo.r, dongzhuo.q, 8);
+            if (safeCell) {
+                dongzhuo.setPosition(safeCell.r, safeCell.q);
+                safeCell.unit = dongzhuo;
+            }
+        } else if (currentCell.unit !== dongzhuo) {
+            currentCell.unit = dongzhuo;
+        }
+
+        beginRunAway();
+    }
+
+    isLockedActiveDialogue() {
+        return !!(this.activeDialogue && this.activeDialogue.timer !== undefined && this.activeDialogue.lockSkips);
+    }
+
+    startChapter2DongZhuoPostFightDialogue() {
+        this.cleanupDialogueScript = this.chapter2DongZhuoEscapedFromDrowning
+            ? [
+            {
+                speaker: 'guanyu',
+                portraitKey: 'guan-yu',
+                name: 'Guan Yu',
+                voiceId: 'ch2_oath_gy_strike_after_01',
+                text: { en: "Even the river spat him back out. Heaven has postponed his punishment.", zh: "连江水都把他吐了回来。天罚只是暂缓。" }
+            },
+            {
+                speaker: 'zhangfei',
+                portraitKey: 'zhang-fei',
+                name: 'Zhang Fei',
+                voiceId: 'ch2_oath_zf_strike_water_after_01',
+                text: { en: "Bah! Not even drowning would keep that coward down. Next time, I'll tie a stone to him myself.", zh: "呸！连淹都淹不死这胆小鬼。下次俺也去亲手给他绑块石头！" }
+            }
+        ]
+            : [
+            {
+                speaker: 'guanyu',
+                portraitKey: 'guan-yu',
+                name: 'Guan Yu',
+                voiceId: 'ch2_oath_gy_strike_after_01',
+                text: { en: "He flees with his life and his shame intact. Brother, we have no cause to chase him farther.", zh: "他性命得保，颜面尽失。兄长，我等不必再追。" }
+            },
+            {
+                speaker: 'zhangfei',
+                portraitKey: 'zhang-fei',
+                name: 'Zhang Fei',
+                voiceId: 'ch2_oath_zf_strike_after_01',
+                text: { en: "Hmph! Next time, that butcher will not run so fast.", zh: "哼！下回那屠夫可跑不了这么快。" }
+            }
+        ];
+
+        this.cleanupDialogueStep = 0;
+        this.dialogueElapsed = 0;
+        this.isCleanupDialogueActive = true;
+        this.cleanupDialogueOnComplete = () => {
+            this.isCleanupDialogueActive = false;
+            this.isProcessingTurn = false;
+            this.chapter2DongZhuoEscapedFromDrowning = false;
+            this.manager.gameState.setLastScene('campaign_selection');
+            this.manager.switchTo('campaign_selection');
+        };
+
         const firstStep = this.cleanupDialogueScript[0];
         if (firstStep.voiceId) assets.playVoice(firstStep.voiceId);
     }
@@ -3329,8 +3718,8 @@ export class TacticsScene extends BaseScene {
                     if (victim && !hitVictimsSS.has(victim)) {
                         hitVictimsSS.add(victim);
                         const victimPos = this.getPixelPos(cell.r, cell.q);
-                        // Pass the original targetR/targetQ so only the furthest hex (clicked) gets pushed
-                        this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, victimPos);
+                        // Apply damage on the actual struck hex; keep push decision anchored to clicked hex.
+                        this.applyDamageAndPush(attacker, victim, attack, pos.r, pos.q, startPos, victimPos, targetR, targetQ);
                         hitAnything = true;
                     }
                 }
@@ -3399,6 +3788,22 @@ export class TacticsScene extends BaseScene {
         }
         
         let finalDamage = damage;
+
+        // Chapter 2 opener special-case:
+        // Dong Zhuo can be forced to flee but cannot die in this encounter.
+        if (
+            this.battleId === 'chapter2_oath_dongzhuo_choice' &&
+            this.chapter2DongZhuoFightActive &&
+            victim.id === 'dongzhuo'
+        ) {
+            finalDamage = Math.max(0, finalDamage);
+            victim.hp = Math.max(1, victim.hp - finalDamage);
+            if (victim.name !== 'Boulder') {
+                victim.action = 'hit';
+                victim.currentAnimAction = 'hit';
+            }
+            return finalDamage;
+        }
         
         // Boulder Special Logic: Cracked on first damage, destroyed on second
         if (victim.name === 'Boulder') {
@@ -3438,7 +3843,7 @@ export class TacticsScene extends BaseScene {
         return finalDamage;
     }
 
-    applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos) {
+    applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos, pushRefR = targetR, pushRefQ = targetQ) {
         // Hard safety: nobody can ever hit/push themselves with their own attack.
         // (Mounted units occupy 2 hexes, and some multi-hex attacks can otherwise reference the other hex.)
         if (!attacker || !victim) return;
@@ -3511,7 +3916,7 @@ export class TacticsScene extends BaseScene {
         if (attack.push) {
             // Special Case: Zhang Fei only pushes the furthest hex initially (the one targeted)
             if (attack.push === 'furthest') {
-                if (victim.r !== targetR || victim.q !== targetQ) {
+                if (victim.r !== pushRefR || victim.q !== pushRefQ) {
                     return; // Don't push intermediate targets
                 }
             }
@@ -4525,6 +4930,19 @@ export class TacticsScene extends BaseScene {
         }
 
         this.updateWeather(dt);
+        if (this.battleId === 'chapter2_oath_dongzhuo_choice' && this.chapter2DongZhuoFightActive && !this.chapter2DongZhuoEscapeTriggered) {
+            const dongzhuo = this.units.find(u => u.id === 'dongzhuo');
+            if (dongzhuo) {
+                if (dongzhuo.isDrowning) {
+                    // Easter egg path: allow the full sink cycle before he vaults out and flees.
+                    if (dongzhuo.drownTimer >= 1900 || dongzhuo.hp <= 0 || dongzhuo.isGone) {
+                        this.triggerChapter2DongZhuoEscape(true);
+                    }
+                } else if (dongzhuo.hp <= 2) {
+                    this.triggerChapter2DongZhuoEscape(false);
+                }
+            }
+        }
         this.checkWinLoss();
     }
 
@@ -5708,8 +6126,16 @@ export class TacticsScene extends BaseScene {
         }
 
         this.isChoiceActive = false;
-        if (choiceIndex === 0) this.startRestrainDialogue();
-        else if (choiceIndex === 1) this.startFight();
+        const isCustomBattleChoice = !!(this.battleDef && Array.isArray(this.battleDef.choiceOptions) && this.battleDef.choiceOptions.length > 0);
+        if (choiceIndex === 0) {
+            // Canonical Lu Zhi flow: always play restrain dialogue first, then callback inside that flow.
+            if (isCustomBattleChoice && this.onChoiceRestrain) this.onChoiceRestrain();
+            else this.startRestrainDialogue();
+        } else if (choiceIndex === 1) {
+            if (isCustomBattleChoice && this.onChoiceFight) this.onChoiceFight();
+            else if (this.onChoiceFight) this.onChoiceFight();
+            else this.startFight();
+        }
     }
 
     activateUiTarget(uiId) {
@@ -7569,6 +7995,7 @@ export class TacticsScene extends BaseScene {
                     } else {
                         // Default: Go to the map after Qingzhou cleanup
                         this.manager.gameState.addMilestone('qingzhou_cleanup');
+                        this.manager.gameState.setStoryCursor('qingzhou_cleanup', 'liubei');
                         this.manager.switchTo('map', { campaignId: 'liubei' });
                     }
                 } else {
@@ -7588,6 +8015,9 @@ export class TacticsScene extends BaseScene {
             
             // If the dialogue has a timer (auto-clearing), clicking it should clear it immediately
             if (this.activeDialogue.timer !== undefined) {
+                if (this.isLockedActiveDialogue()) {
+                    return;
+                }
                 if (this.activeDialogue.unit) {
                     this.activeDialogue.unit.dialogue = "";
                     this.activeDialogue.unit.voiceId = null;
@@ -7946,6 +8376,9 @@ export class TacticsScene extends BaseScene {
             e.preventDefault();
             this.onNonMouseInput();
             this.controllerNavMouseEnabled = false;
+            if (this.isLockedActiveDialogue()) {
+                return;
+            }
             if (this.showEndTurnConfirm) {
                 this.showEndTurnConfirm = false;
                 assets.playSound('ui_click', 0.5);

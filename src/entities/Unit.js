@@ -173,7 +173,9 @@ export class Unit {
             if (this.pushData.fallHeight > 0) {
                 // Parabola: y = -4 * h * p * (p - 1)
                 // This adds a peak in the middle of the fall
-                const arcHeight = 20; // Max height of the jump/fall arc
+                const arcHeight = (typeof this.pushData.arcHeight === 'number')
+                    ? this.pushData.arcHeight
+                    : 20; // Max height of the jump/fall arc
                 const parabola = -4 * arcHeight * p * (p - 1);
                 this.visualY -= parabola;
             }
