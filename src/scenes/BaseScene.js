@@ -254,6 +254,51 @@ export class BaseScene {
         return alpha > 10; // Threshold for hit
     }
 
+    /**
+     * Pixel-perfect hit test for a generic image frame rendered at a given top-left.
+     * Useful for non-spritesheet assets like horses (64x64 frames) where bounding-box hits block clicks.
+     *
+     * @param {HTMLImageElement|HTMLCanvasElement} img
+     * @param {number} srcX - Source X within img (frame start)
+     * @param {number} srcY - Source Y within img (frame start)
+     * @param {number} srcW - Frame width
+     * @param {number} srcH - Frame height
+     * @param {number} destX - Destination top-left X on canvas
+     * @param {number} destY - Destination top-left Y on canvas
+     * @param {number} clickX - Click X
+     * @param {number} clickY - Click Y
+     * @param {{flip?: boolean, alphaThreshold?: number}} options
+     */
+    checkImageFrameHit(img, srcX, srcY, srcW, srcH, destX, destY, clickX, clickY, options = {}) {
+        if (!img) return false;
+        const { flip = false, alphaThreshold = 10 } = options;
+
+        if (clickX < destX || clickX > destX + srcW || clickY < destY || clickY > destY + srcH) {
+            return false;
+        }
+
+        // Pixel-perfect check using a tiny offscreen canvas (reuses the same 1x1 buffer)
+        if (!this._hitCanvas) {
+            this._hitCanvas = document.createElement('canvas');
+            this._hitCanvas.width = 1;
+            this._hitCanvas.height = 1;
+            this._hitCtx = this._hitCanvas.getContext('2d', { willReadFrequently: true });
+        }
+
+        const localXRaw = Math.floor(clickX - destX);
+        const localX = flip ? (srcW - 1 - localXRaw) : localXRaw;
+        const localY = Math.floor(clickY - destY);
+
+        if (localX < 0 || localX >= srcW || localY < 0 || localY >= srcH) return false;
+
+        const hctx = this._hitCtx;
+        hctx.clearRect(0, 0, 1, 1);
+        // Copy a single pixel from the source frame to (0,0)
+        hctx.drawImage(img, srcX + localX, srcY + localY, 1, 1, 0, 0, 1, 1);
+        const alpha = hctx.getImageData(0, 0, 1, 1).data[3];
+        return alpha > alphaThreshold;
+    }
+
     wrapText(ctx, text, maxWidth, font = '8px Tiny5') {
         if (!text) return [];
         

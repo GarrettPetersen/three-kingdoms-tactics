@@ -1856,11 +1856,53 @@ export class TacticsScene extends BaseScene {
         if (unit.intent.relX === undefined) return null;
 
         const currentCube = this.tacticsMap.offsetToCube(unit.r, unit.q);
-        return this.tacticsMap.getCellByCube(
-            currentCube.x + unit.intent.relX,
-            currentCube.y + unit.intent.relY,
-            currentCube.z + unit.intent.relZ
-        );
+        const targetCube = {
+            x: currentCube.x + unit.intent.relX,
+            y: currentCube.y + unit.intent.relY,
+            z: currentCube.z + unit.intent.relZ
+        };
+
+        // Normal: exact relative target
+        const exact = this.tacticsMap.getCellByCube(targetCube.x, targetCube.y, targetCube.z);
+        if (exact) return exact;
+
+        // Fallback: if the relative target is off-map (common after pushes/dismounts near edges),
+        // pick the nearest in-bounds cell along that same direction.
+        const dx = unit.intent.relX;
+        const dy = unit.intent.relY;
+        const dz = unit.intent.relZ;
+        const dist = Math.max(0, (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) / 2);
+        if (dist <= 0) return null;
+
+        for (let i = dist - 1; i >= 1; i--) {
+            const t = i / dist;
+
+            // Cube lerp + round (same approach as TacticsMap.getLine)
+            const q = currentCube.x + (targetCube.x - currentCube.x) * t;
+            const r = currentCube.z + (targetCube.z - currentCube.z) * t;
+            const s = -q - r;
+
+            let rq = Math.round(q);
+            let rr = Math.round(r);
+            let rs = Math.round(s);
+
+            const qDiff = Math.abs(rq - q);
+            const rDiff = Math.abs(rr - r);
+            const sDiff = Math.abs(rs - s);
+
+            if (qDiff > rDiff && qDiff > sDiff) {
+                rq = -rr - rs;
+            } else if (rDiff > sDiff) {
+                rr = -rq - rs;
+            } else {
+                rs = -rq - rr;
+            }
+
+            const cell = this.tacticsMap.getCellByCube(rq, rs, rr);
+            if (cell) return cell;
+        }
+
+        return null;
     }
 
     restoreBattleState(state) {
@@ -2842,21 +2884,33 @@ export class TacticsScene extends BaseScene {
                 if (onComplete) onComplete();
             }, 1000);
         } else {
-        setTimeout(() => {
-            const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
-
-            this.damageCell(targetR, targetQ);
-            if (victim) {
-                this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos);
-            } else if (!isDestructible) {
-                assets.playSound('whiff');
-            }
-            
             setTimeout(() => {
-                attacker.action = 'standby';
-                if (onComplete) onComplete();
+                // Flash swipe indicator at the strike moment (no travel)
+                if (attackKey.startsWith('slash')) {
+                    this.projectiles.push({
+                        startPos: startPos,
+                        affectedHexes: [{ r: targetR, q: targetQ }],
+                        progress: 0,
+                        type: 'swipe_arc',
+                        arcWidth: 1, // Single hex for slash
+                        duration: 120
+                    });
+                }
+
+                const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
+
+                this.damageCell(targetR, targetQ);
+                if (victim) {
+                    this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos);
+                } else if (!isDestructible) {
+                    assets.playSound('whiff');
+                }
+                
+                setTimeout(() => {
+                    attacker.action = 'standby';
+                    if (onComplete) onComplete();
+                }, 400);
             }, 400);
-        }, 400);
         }
     }
 
@@ -2931,6 +2985,16 @@ export class TacticsScene extends BaseScene {
         const affected = this.getAffectedTiles(attacker, attackKey, targetR, targetQ);
 
         setTimeout(() => {
+            // Flash swipe indicator at the strike moment (no travel)
+            this.projectiles.push({
+                startPos: startPos,
+                affectedHexes: affected,
+                progress: 0,
+                type: 'swipe_arc',
+                arcWidth: 3,
+                duration: 140
+            });
+
             let hitAnything = false;
             affected.forEach(pos => {
                 this.damageCell(pos.r, pos.q);
@@ -2966,9 +3030,32 @@ export class TacticsScene extends BaseScene {
 
         const origin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
         const startPos = this.getPixelPos(origin.r, origin.q);
+        const endPos = this.getPixelPos(targetR, targetQ);
         const affected = this.getAffectedTiles(attacker, attackKey, targetR, targetQ);
 
-        setTimeout(() => {
+        // Serpent Spear has a clear "wind-up" then "swing" on the next frame.
+        // Spawn the swipe and apply damage exactly when the swing frame begins.
+        let struck = false;
+        const checkSwing = () => {
+            if (struck) return;
+            if (attacker.action !== (attack.animation || 'attack_2')) return;
+
+            // Swing happens on the next animation frame after wind-up (frame 0 -> frame 1)
+            if (attacker.frame >= 1) {
+                struck = true;
+
+            // Flash stab indicator at the strike moment (no travel)
+            this.projectiles.push({
+                startX: startPos.x,
+                startY: startPos.y,
+                endX: endPos.x,
+                endY: endPos.y,
+                progress: 0,
+                type: 'swipe_straight',
+                // roughly one animation frame (~125ms at current anim rate)
+                duration: 140
+            });
+
             let hitAnything = false;
             affected.forEach(pos => {
                 this.damageCell(pos.r, pos.q);
@@ -2995,7 +3082,13 @@ export class TacticsScene extends BaseScene {
                 attacker.action = 'standby';
                 if (onComplete) onComplete();
             }, 400);
-        }, 400);
+                return;
+            }
+
+            // keep polling while the attack animation is active
+            setTimeout(checkSwing, 16);
+        };
+        checkSwing();
     }
 
     applyUnitDamage(victim, damage, sourceCell = null) {
@@ -3201,6 +3294,30 @@ export class TacticsScene extends BaseScene {
                 const isOccupiedByHorse = !!pushCell.horse; // riderless or ridden horses occupy hexes too
 
                 if (isHighCliff || isImpassable || isOccupiedByLiving || isOccupiedByHorse) {
+                    // Special case: pushing a mounted unit "into itself" (head -> butt or butt -> head)
+                    // should dismount and fall off the back rather than taking collision damage.
+                    if (wasMounted && pushCell && pushCell.unit === victim) {
+                        // Dismount at current anchor (butt), then try to push one hex further "back"
+                        const fromCell = this.tacticsMap.getCell(victim.r, victim.q);
+                        const fromPos = this.getPixelPos(victim.r, victim.q);
+                        this.dismountUnitLeaveHorse(victim);
+
+                        const behindCell = this.tacticsMap.getNeighborInDirection(pushCell.r, pushCell.q, dirIndex);
+                        if (behindCell && !behindCell.impassable && !behindCell.unit && !behindCell.horse) {
+                            if (fromCell && fromCell.unit === victim) fromCell.unit = null;
+                            const behindPos = this.getPixelPos(behindCell.r, behindCell.q);
+                            victim.setPosition(behindCell.r, behindCell.q);
+                            behindCell.unit = victim;
+                            victim.startPush(fromPos.x, fromPos.y, behindPos.x, behindPos.y, false, 1);
+                            assets.playSound('bash', 0.5);
+                        } else {
+                            // Can't fall back; just dismount in place without collision damage
+                            if (fromCell) fromCell.unit = victim;
+                            assets.playSound('collision', 0.3);
+                        }
+                        return;
+                    }
+
                     // Blocked push: bump damage + bounce, but stay mounted (no displacement).
                     victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, true, 0); // true = bounce
                     this.executePushCollision(victim, pushCell, victimPos, targetPos);
@@ -4030,11 +4147,55 @@ export class TacticsScene extends BaseScene {
                     if (hasCorpse) sinkOffset -= 4;
                 }
             }
-            if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, hx, hy, { 
-                flip: u.flip, 
-                sinkOffset,
-                isProp: u.name === 'Boulder'
-            })) {
+            // Mounted hover: match the mounted click logic (rider OR horse), but allow click-through on transparent pixels
+            if (u.onHorse) {
+                const spacing = this.manager.config.horizontalSpacing;
+                const buttX = ux;
+                const buttY = uy + sinkOffset;
+                const headX = buttX + (u.flip ? -spacing : spacing);
+                const midX = Math.floor((buttX + headX) / 2);
+                const midY = buttY;
+
+                const riderX = midX;
+                const riderY = midY - 22;
+
+                const riderHit = this.checkCharacterHit(u.img, (u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action), u.frame, riderX, riderY, hx, hy, {
+                    flip: u.flip,
+                    sinkOffset: 0,
+                    isProp: false
+                });
+
+                // Pixel-perfect horse hit (64x64 frame), so transparent pixels don't block what’s behind
+                const keys = this.getHorseSpriteKeys(u.horseType || 'brown');
+                const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
+                const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
+                const isRunning = (u.isMoving || u.action === 'walk') && horseRun;
+                const horseImg = isRunning ? horseRun : horseStand;
+
+                let horseHit = false;
+                if (horseImg) {
+                    const frameW = 64;
+                    const frameH = 64;
+                    const frameCount = Math.max(1, Math.floor((horseImg.width || frameW) / frameW));
+                    const f = isRunning ? (Math.floor(Date.now() / 80) % frameCount) : 0;
+                    const srcX = f * frameW;
+                    const srcY = 0;
+
+                    const horseFeetY = 15;
+                    const destX = midX - frameW / 2;
+                    const destY = midY + (horseFeetY - frameH);
+                    horseHit = this.checkImageFrameHit(horseImg, srcX, srcY, frameW, frameH, destX, destY, hx, hy, { flip: u.flip });
+                }
+
+                if (riderHit || horseHit) {
+                    hoveredUnit = u;
+                    break;
+                }
+            } else if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, hx, hy, { 
+                    flip: u.flip, 
+                    sinkOffset,
+                    isProp: u.name === 'Boulder'
+                })) {
                 hoveredUnit = u;
                 break;
             }
@@ -4188,13 +4349,18 @@ export class TacticsScene extends BaseScene {
                 if (east) affected.push({ r: east.r, q: east.q });
                 if (west) affected.push({ r: west.r, q: west.q });
             } else {
-                // Default: fan around target, perpendicular to attack direction.
+                // Default: fan on the SAME distance ring from the attacker.
+                // This guarantees all 3 hexes are the same distance from `origin` AND form a contiguous arc.
+                // Always include the targeted hex, then add the two neighboring hexes that are also at the same distance.
                 affected.push({ r: targetR, q: targetQ });
-                if (dirIndex !== -1) {
-                    const sideA = this.tacticsMap.getNeighborInDirection(targetR, targetQ, (dirIndex + 2) % 6);
-                    const sideB = this.tacticsMap.getNeighborInDirection(targetR, targetQ, (dirIndex + 4) % 6);
-                    if (sideA) affected.push({ r: sideA.r, q: sideA.q });
-                    if (sideB) affected.push({ r: sideB.r, q: sideB.q });
+                if (dirIndex !== -1 && dist > 0) {
+                    const neighbors = this.tacticsMap.getNeighbors(targetR, targetQ) || [];
+                    const sameRing = neighbors.filter(n => this.tacticsMap.getDistance(origin.r, origin.q, n.r, n.q) === dist);
+                    // Usually exactly 2 neighbors sit on the same distance ring; include them to form the 3-hex arc.
+                    if (sameRing.length >= 2) {
+                        affected.push({ r: sameRing[0].r, q: sameRing[0].q });
+                        affected.push({ r: sameRing[1].r, q: sameRing[1].q });
+                    }
                 }
             }
         } else if (attackKey === 'double_blades') {
@@ -5133,6 +5299,148 @@ export class TacticsScene extends BaseScene {
         ctx.restore();
     }
 
+    drawStraightSwipe(ctx, p) {
+        // Draw a fast "thrust" indicator: a thin lens ("elongated lemon") with pointy ends,
+        // straight centerline, curved edges, fully filled.
+        const dx = p.endX - p.startX;
+        const dy = p.endY - p.startY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        
+        if (dist === 0) return;
+
+        // Flash + fade (no travel)
+        const alpha = Math.max(0, 1 - p.progress);
+
+        const dirX = dx / dist;
+        const dirY = dy / dist;
+        const perpX = -dirY;
+        const perpY = dirX;
+
+        // Build a filled lens polygon around a straight centerline.
+        // Width tapers to 0 at ends, peaks in middle -> pointy ends.
+        const numPoints = 18;
+        const maxHalfWidth = 6.0; // thicker, clearly "filled" lemon
+        const maxBow = 0.0;       // straight (no centerline bow)
+
+        const left = [];
+        const right = [];
+        for (let i = 0; i <= numPoints; i++) {
+            const t = i / numPoints;
+
+            // Center point on straight line
+            let cx = p.startX + t * dx;
+            let cy = p.startY + t * dy;
+
+            // Bow the centerline outward in the middle, but keep ends on the true line
+            const bow = Math.sin(t * Math.PI) * maxBow;
+            cx += perpX * bow;
+            cy += perpY * bow;
+
+            // Lens half-width: sin(pi*t) gives pointy ends + curved edges
+            const w = maxHalfWidth * Math.sin(t * Math.PI);
+
+            left.push({ x: cx + perpX * w, y: cy + perpY * w });
+            right.push({ x: cx - perpX * w, y: cy - perpY * w });
+        }
+
+        ctx.save();
+        ctx.globalAlpha = alpha * alpha; // ease-out fade
+        ctx.fillStyle = '#fff';
+
+        ctx.beginPath();
+        ctx.moveTo(Math.floor(left[0].x), Math.floor(left[0].y));
+        for (let i = 1; i < left.length; i++) ctx.lineTo(Math.floor(left[i].x), Math.floor(left[i].y));
+        for (let i = right.length - 1; i >= 0; i--) ctx.lineTo(Math.floor(right[i].x), Math.floor(right[i].y));
+        ctx.closePath();
+
+        ctx.fill();
+        ctx.restore();
+    }
+
+    drawArcSwipe(ctx, p) {
+        // Draw a curved "swoosh" arc (solid white).
+        // p.affectedHexes: array of {r, q}
+        // p.startPos: attacker position (used to orient the arc)
+        // p.arcWidth: 1 (single) or 3 (wide arc)
+        if (!p.affectedHexes || p.affectedHexes.length === 0) return;
+        
+        ctx.save();
+        ctx.fillStyle = '#fff';
+        ctx.lineWidth = 1;
+        
+        // Flash + fade (no travel)
+        const alpha = Math.max(0, 1 - p.progress);
+        ctx.globalAlpha = alpha * alpha;
+
+        const hexPositions = p.affectedHexes.map(hex => this.getPixelPos(hex.r, hex.q));
+        const center = hexPositions.reduce((acc, pos) => ({ x: acc.x + pos.x, y: acc.y + pos.y }), { x: 0, y: 0 });
+        center.x /= hexPositions.length;
+        center.y /= hexPositions.length;
+
+        const startPos = p.startPos || center;
+        const dx = center.x - startPos.x;
+        const dy = center.y - startPos.y;
+        const d = Math.sqrt(dx * dx + dy * dy) || 1;
+        const dirX = dx / d;
+        const dirY = dy / d;
+        const perpX = -dirY;
+        const perpY = dirX;
+
+        // Find left/right extremes among affected hexes
+        let left = hexPositions[0];
+        let right = hexPositions[0];
+        for (const pt of hexPositions) {
+            const s = (pt.x - center.x) * perpX + (pt.y - center.y) * perpY;
+            const sl = (left.x - center.x) * perpX + (left.y - center.y) * perpY;
+            const sr = (right.x - center.x) * perpX + (right.y - center.y) * perpY;
+            if (s < sl) left = pt;
+            if (s > sr) right = pt;
+        }
+
+        const arcWidth = p.arcWidth || Math.max(1, p.affectedHexes.length);
+        const thickness = arcWidth === 1 ? 6 : 10;
+        const frontPush = arcWidth === 1 ? 6 : 10;
+        const trailLen = arcWidth === 1 ? 14 : 18;
+        const outwardBulge = arcWidth === 1 ? 10 : 14;
+
+        // Outer/front edge endpoints (curved like a blade)
+        const outerL = { x: left.x + dirX * frontPush, y: left.y + dirY * frontPush };
+        const outerR = { x: right.x + dirX * frontPush, y: right.y + dirY * frontPush };
+        const outerCtrl = { x: center.x + dirX * (frontPush + 4) + perpX * outwardBulge, y: center.y + dirY * (frontPush + 4) + perpY * outwardBulge };
+
+        // Inner/trailing edge endpoints (tapering arc behind)
+        const innerR = { x: right.x - dirX * trailLen, y: right.y - dirY * trailLen };
+        const innerL = { x: left.x - dirX * trailLen, y: left.y - dirY * trailLen };
+        const innerCtrl = { x: center.x - dirX * (trailLen + 2) + perpX * (outwardBulge * 0.55), y: center.y - dirY * (trailLen + 2) + perpY * (outwardBulge * 0.55) };
+
+        // Offset outer/inner edges by thickness so the swoosh is filled, not hollow
+        const outerL2 = { x: outerL.x + perpX * (thickness * 0.5), y: outerL.y + perpY * (thickness * 0.5) };
+        const outerR2 = { x: outerR.x - perpX * (thickness * 0.5), y: outerR.y - perpY * (thickness * 0.5) };
+        const innerR2 = { x: innerR.x - perpX * (thickness * 0.25), y: innerR.y - perpY * (thickness * 0.25) };
+        const innerL2 = { x: innerL.x + perpX * (thickness * 0.25), y: innerL.y + perpY * (thickness * 0.25) };
+
+        // Curved end caps so there are no straight segments
+        const capCtrlR = { x: right.x + dirX * (frontPush - trailLen * 0.4), y: right.y + dirY * (frontPush - trailLen * 0.4) };
+        const capCtrlL = { x: left.x + dirX * (frontPush - trailLen * 0.4), y: left.y + dirY * (frontPush - trailLen * 0.4) };
+
+        ctx.beginPath();
+        // Outer/front edge curve
+        ctx.moveTo(Math.floor(outerL2.x), Math.floor(outerL2.y));
+        ctx.quadraticCurveTo(Math.floor(outerCtrl.x), Math.floor(outerCtrl.y), Math.floor(outerR2.x), Math.floor(outerR2.y));
+        // Right cap (outer -> inner)
+        ctx.quadraticCurveTo(Math.floor(capCtrlR.x), Math.floor(capCtrlR.y), Math.floor(innerR2.x), Math.floor(innerR2.y));
+        // Inner/trailing edge curve back
+        ctx.quadraticCurveTo(Math.floor(innerCtrl.x), Math.floor(innerCtrl.y), Math.floor(innerL2.x), Math.floor(innerL2.y));
+        // Left cap (inner -> outer)
+        ctx.quadraticCurveTo(Math.floor(capCtrlL.x), Math.floor(capCtrlL.y), Math.floor(outerL2.x), Math.floor(outerL2.y));
+        ctx.closePath();
+
+        // Solid white fill (the fade is handled by ctx.globalAlpha)
+        ctx.fill();
+        
+        ctx.restore();
+    }
+
     getAnimatedTerrain(terrainType, r = 0, q = 0) {
         // Slow 2-frame animation, staggered by hex position
         const stagger = (r * 123 + q * 456) % 2000;
@@ -5656,6 +5964,10 @@ export class TacticsScene extends BaseScene {
                 ctx.lineTo(x + Math.cos(angle) * 4, y + Math.sin(angle) * 4);
                 ctx.stroke();
                 ctx.restore();
+            } else if (p.type === 'swipe_straight') {
+                this.drawStraightSwipe(ctx, p);
+            } else if (p.type === 'swipe_arc') {
+                this.drawArcSwipe(ctx, p);
             }
         });
 
@@ -6358,10 +6670,27 @@ export class TacticsScene extends BaseScene {
                     isProp: false
                 });
 
-                // Horse bounding-box hit (good enough for selection)
-                const horseTop = (midY + (15 - 64));
-                const horseLeft = midX - 32;
-                const horseHit = (x >= horseLeft && x <= horseLeft + 64 && y >= horseTop && y <= horseTop + 64);
+                // Pixel-perfect horse hit (64x64 frame), so transparent pixels don't block what’s behind
+                const keys = this.getHorseSpriteKeys(u.horseType || 'brown');
+                const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
+                const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
+                const isRunning = (u.isMoving || u.action === 'walk') && horseRun;
+                const horseImg = isRunning ? horseRun : horseStand;
+
+                let horseHit = false;
+                if (horseImg) {
+                    const frameW = 64;
+                    const frameH = 64;
+                    const frameCount = Math.max(1, Math.floor((horseImg.width || frameW) / frameW));
+                    const f = isRunning ? (Math.floor(Date.now() / 80) % frameCount) : 0;
+                    const srcX = f * frameW;
+                    const srcY = 0;
+
+                    const horseFeetY = 15;
+                    const destX = midX - frameW / 2;
+                    const destY = midY + (horseFeetY - frameH);
+                    horseHit = this.checkImageFrameHit(horseImg, srcX, srcY, frameW, frameH, destX, destY, x, y, { flip: u.flip });
+                }
 
                 if (riderHit || horseHit) {
                     spriteUnit = u;
@@ -6559,7 +6888,8 @@ export class TacticsScene extends BaseScene {
             this.addDamageNumber(victimPos.x, victimPos.y - 30, 1);
             
             const bumpVictim = pushCell.unit;
-            if (bumpVictim && bumpVictim.hp > 0) { // Only damage if the unit is still alive
+            // Don't double-damage if we "collided" with ourselves (mounted 2-hex footprint)
+            if (bumpVictim && bumpVictim !== victim && bumpVictim.hp > 0) { // Only damage if the unit is still alive
                 this.applyUnitDamage(bumpVictim, 1);
                 this.addDamageNumber(targetPos.x, targetPos.y - 30, 1);
                 if (bumpVictim) bumpVictim.triggerShake(victimPos.x, victimPos.y, targetPos.x, targetPos.y);
@@ -6581,6 +6911,11 @@ export class TacticsScene extends BaseScene {
             this.applyUnitDamage(occupant, crushDamage);
             this.addDamageNumber(targetPos.x, targetPos.y - 20, crushDamage);
             occupant.triggerShake(targetPos.x, targetPos.y - 10, targetPos.x, targetPos.y);
+
+            // IMPORTANT: The faller has landed on `targetCell`. Ensure their logical position matches
+            // so future telegraphs/attacks are anchored to the unit (not their old horse anchor).
+            faller.setPosition(targetCell.r, targetCell.q);
+            faller.currentSortR = targetCell.r;
 
             // Resolve Occupancy
             if (occupant.hp <= 0) {
