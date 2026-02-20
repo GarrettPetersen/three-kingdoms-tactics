@@ -750,6 +750,11 @@ export class TitleScene extends BaseScene {
                     lastScene = 'campaign_selection';
                 }
             }
+
+            // Never resume bare narrative without a valid narrative state payload.
+            if (lastScene === 'narrative' && !gs.get('narrativeState')) {
+                lastScene = campaignId ? 'map' : 'campaign_selection';
+            }
             
             // Check for scene-specific saved states (generic approach for future scenes)
             // Any scene can implement saveState() method that saves to `${sceneName}State`

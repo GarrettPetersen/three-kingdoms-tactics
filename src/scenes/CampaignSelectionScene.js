@@ -35,6 +35,8 @@ export class CampaignSelectionScene extends BaseScene {
             }
         ];
         this.selectedIndex = 0;
+        this.navTargets = [];
+        this.navIndex = -1;
     }
 
     enter() {
@@ -113,6 +115,7 @@ export class CampaignSelectionScene extends BaseScene {
 
     render(timestamp) {
         const { ctx, canvas } = this.manager;
+        this.rebuildNavTargets(canvas);
         
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -272,9 +275,11 @@ export class CampaignSelectionScene extends BaseScene {
         
         // Back Button
         const backRect = { x: canvas.width - 55, y: 5, w: 50, h: 14 };
+        const navTarget = this.getCurrentNavTarget();
+        const isBackFocused = navTarget && navTarget.type === 'back';
         ctx.fillStyle = 'rgba(60, 0, 0, 0.8)';
         ctx.fillRect(backRect.x, backRect.y, backRect.w, backRect.h);
-        ctx.strokeStyle = '#8b0000';
+        ctx.strokeStyle = isBackFocused ? '#ffd700' : '#8b0000';
         ctx.lineWidth = 1;
         ctx.strokeRect(backRect.x + 0.5, backRect.y + 0.5, backRect.w - 1, backRect.h - 1);
         
@@ -292,6 +297,137 @@ export class CampaignSelectionScene extends BaseScene {
         }
     }
 
+    getCurrentNavTarget() {
+        if (this.navIndex < 0 || this.navIndex >= this.navTargets.length) return null;
+        return this.navTargets[this.navIndex];
+    }
+
+    rebuildNavTargets(canvas) {
+        const timelineX = 10;
+        const timelineY = 40;
+        const timelineSpacing = 25;
+        let selectedId = null;
+        const cur = this.getCurrentNavTarget();
+        if (cur) selectedId = cur.id;
+
+        const targets = [];
+        this.chapters.forEach((_, i) => {
+            const ty = timelineY + i * timelineSpacing;
+            targets.push({
+                id: `chapter:${i}`,
+                type: 'chapter',
+                index: i,
+                x: timelineX + 60,
+                y: ty + 6
+            });
+        });
+        this.campaigns.forEach((c, i) => {
+            targets.push({
+                id: `campaign:${i}`,
+                type: 'campaign',
+                index: i,
+                x: c.x,
+                y: c.y
+            });
+        });
+        targets.push({
+            id: 'back',
+            type: 'back',
+            x: canvas.width - 30,
+            y: 12
+        });
+
+        this.navTargets = targets;
+        if (targets.length === 0) {
+            this.navIndex = -1;
+            return;
+        }
+
+        const preserved = selectedId ? targets.findIndex(t => t.id === selectedId) : -1;
+        if (preserved >= 0) {
+            this.navIndex = preserved;
+        } else {
+            const campaignDefault = targets.findIndex(t => t.type === 'campaign' && t.index === this.selectedIndex);
+            if (campaignDefault >= 0) {
+                this.navIndex = campaignDefault;
+            } else {
+                this.navIndex = 0;
+            }
+        }
+    }
+
+    syncSelectionFromNav() {
+        const t = this.getCurrentNavTarget();
+        if (!t) return;
+        if (t.type === 'chapter') {
+            this.selectedChapterIndex = t.index;
+        } else if (t.type === 'campaign') {
+            this.selectedIndex = t.index;
+        }
+    }
+
+    moveNavDirectional(dirX, dirY) {
+        if (this.navTargets.length <= 1) return;
+        if (this.navIndex < 0 || this.navIndex >= this.navTargets.length) this.navIndex = 0;
+        const cur = this.navTargets[this.navIndex];
+        let bestIdx = -1;
+        let bestScore = -Infinity;
+        for (let i = 0; i < this.navTargets.length; i++) {
+            if (i === this.navIndex) continue;
+            const t = this.navTargets[i];
+            const vx = t.x - cur.x;
+            const vy = t.y - cur.y;
+            const dist = Math.sqrt(vx * vx + vy * vy) || 1;
+            const nx = vx / dist;
+            const ny = vy / dist;
+            const dot = nx * dirX + ny * dirY;
+            if (dot <= 0.2) continue;
+            const score = (dot * 3) - (dist / 300);
+            if (score > bestScore) {
+                bestScore = score;
+                bestIdx = i;
+            }
+        }
+        if (bestIdx !== -1) {
+            this.navIndex = bestIdx;
+            this.syncSelectionFromNav();
+            assets.playSound('ui_click');
+        }
+    }
+
+    activateCurrentNavTarget() {
+        const t = this.getCurrentNavTarget();
+        if (!t) return;
+        if (t.type === 'back') {
+            this.manager.switchTo('title');
+            return;
+        }
+        if (t.type === 'chapter') {
+            const ch = this.chapters[t.index];
+            if (!ch) return;
+            if (!ch.available) {
+                this.addMessage(getLocalizedText(UI_TEXT['COMING SOON!']), '#ffd700', t.index);
+                return;
+            }
+            this.selectedChapterIndex = t.index;
+            assets.playSound('ui_click');
+            return;
+        }
+        if (t.type === 'campaign') {
+            const selected = this.campaigns[t.index];
+            if (!selected) return;
+            if (selected.locked) {
+                this.addMessage(getLocalizedText(UI_TEXT['CAMPAIGN LOCKED']), '#8b0000');
+                return;
+            }
+            if (selected.isComplete) {
+                this.addMessage(getLocalizedText(UI_TEXT['This story is complete.']), '#ff4444');
+                return;
+            }
+            this.manager.switchTo('map', { campaignId: selected.id });
+        }
+    }
+
     addMessage(text, color = '#eee', chapterIndex = null) {
         this.message = { text, color, chapterIndex };
         this.messageTimer = 2000;
@@ -300,10 +436,13 @@ export class CampaignSelectionScene extends BaseScene {
 
     handleInput(e) {
         const { x, y } = this.getMousePos(e);
+        this.rebuildNavTargets(this.manager.canvas);
 
         // 0. Back button check
         if (this.backRect && x >= this.backRect.x && x <= this.backRect.x + this.backRect.w &&
             y >= this.backRect.y && y <= this.backRect.y + this.backRect.h) {
+            const backIdx = this.navTargets.findIndex(t => t.type === 'back');
+            if (backIdx >= 0) this.navIndex = backIdx;
             this.manager.switchTo('title');
             return;
         }
@@ -325,6 +464,8 @@ export class CampaignSelectionScene extends BaseScene {
                 if (ch.available) {
                     this.selectedChapterIndex = i;
                 }
+                const chapterIdx = this.navTargets.findIndex(t => t.type === 'chapter' && t.index === i);
+                if (chapterIdx >= 0) this.navIndex = chapterIdx;
             }
         });
 
@@ -343,6 +484,8 @@ export class CampaignSelectionScene extends BaseScene {
                     }
                 } else {
                     this.selectedIndex = i;
+                    const campaignIdx = this.navTargets.findIndex(t => t.type === 'campaign' && t.index === i);
+                    if (campaignIdx >= 0) this.navIndex = campaignIdx;
                 }
             }
         });
@@ -352,6 +495,7 @@ export class CampaignSelectionScene extends BaseScene {
     }
 
     handleKeyDown(e) {
+        this.rebuildNavTargets(this.manager.canvas);
         if (e.key === 'Escape') {
             this.manager.switchTo('title');
             return;
@@ -359,59 +503,31 @@ export class CampaignSelectionScene extends BaseScene {
 
         if (e.key === 'ArrowUp') {
             e.preventDefault();
-            const next = (this.selectedChapterIndex - 1 + this.chapters.length) % this.chapters.length;
-            if (!this.chapters[next].available) {
-                this.addMessage(getLocalizedText(UI_TEXT['COMING SOON!']), '#ffd700', next);
-            } else {
-                this.selectedChapterIndex = next;
-                assets.playSound('ui_click');
-            }
+            this.moveNavDirectional(0, -1);
             return;
         }
 
         if (e.key === 'ArrowDown') {
             e.preventDefault();
-            const next = (this.selectedChapterIndex + 1) % this.chapters.length;
-            if (!this.chapters[next].available) {
-                this.addMessage(getLocalizedText(UI_TEXT['COMING SOON!']), '#ffd700', next);
-            } else {
-                this.selectedChapterIndex = next;
-                assets.playSound('ui_click');
-            }
+            this.moveNavDirectional(0, 1);
             return;
         }
 
         if (e.key === 'ArrowLeft') {
             e.preventDefault();
-            if (this.campaigns.length > 0) {
-                this.selectedIndex = (this.selectedIndex - 1 + this.campaigns.length) % this.campaigns.length;
-                assets.playSound('ui_click');
-            }
+            this.moveNavDirectional(-1, 0);
             return;
         }
 
         if (e.key === 'ArrowRight') {
             e.preventDefault();
-            if (this.campaigns.length > 0) {
-                this.selectedIndex = (this.selectedIndex + 1) % this.campaigns.length;
-                assets.playSound('ui_click');
-            }
+            this.moveNavDirectional(1, 0);
             return;
         }
 
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            const selected = this.campaigns[this.selectedIndex];
-            if (!selected) return;
-            if (selected.locked) {
-                this.addMessage(getLocalizedText(UI_TEXT['CAMPAIGN LOCKED']), '#8b0000');
-                return;
-            }
-            if (selected.isComplete) {
-                this.addMessage(getLocalizedText(UI_TEXT['This story is complete.']), '#ff4444');
-                return;
-            }
-            this.manager.switchTo('map', { campaignId: selected.id });
+            this.activateCurrentNavTarget();
         }
     }
 }

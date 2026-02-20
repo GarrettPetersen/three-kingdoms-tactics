@@ -3365,13 +3365,14 @@ export class TacticsScene extends BaseScene {
                 // 1. COLLISION (Pushing into a wall/high cliff or another living unit)
                 const isHighCliff = levelDiff > 1;
                 const isImpassable = pushCell.impassable && !isDeepWater;
-                const isOccupiedByLiving = pushCell.unit && pushCell.unit._aliveAtStartOfAction;
+                const liveOccupant = this.getLivingUnitOccupyingCell(pushCell.r, pushCell.q, victim);
+                const isOccupiedByLiving = !!liveOccupant;
                 const isOccupiedByHorse = !!pushCell.horse; // riderless or ridden horses occupy hexes too
 
                 if (isHighCliff || isImpassable || isOccupiedByLiving || isOccupiedByHorse) {
                     // Special case: pushing a mounted unit "into itself" (head -> butt or butt -> head)
                     // should dismount and fall off the back rather than taking collision damage.
-                    if (wasMounted && pushCell && pushCell.unit === victim) {
+                    if (wasMounted && pushCell && this.unitOccupiesCell(victim, pushCell.r, pushCell.q)) {
                         // Dismount at current anchor (butt), then try to push one hex further "back"
                         const fromCell = this.tacticsMap.getCell(victim.r, victim.q);
                         const fromPos = this.getPixelPos(victim.r, victim.q);
@@ -3851,6 +3852,24 @@ export class TacticsScene extends BaseScene {
         const riderId = cell.horse?.riderId;
         if (!riderId) return null;
         return this.units.find(u => u.id === riderId) || null;
+    }
+
+    unitOccupiesCell(unit, r, q) {
+        if (!unit) return false;
+        if (unit.r === r && unit.q === q) return true;
+        if (unit.onHorse) {
+            const head = this.getMountedHeadCellFor(unit, unit.r, unit.q);
+            if (head && head.r === r && head.q === q) return true;
+        }
+        return false;
+    }
+
+    getLivingUnitOccupyingCell(r, q, excludeUnit = null) {
+        for (const u of this.units) {
+            if (!u || u === excludeUnit || u.isGone || u.hp <= 0) continue;
+            if (this.unitOccupiesCell(u, r, q)) return u;
+        }
+        return null;
     }
 
     getHorseMoveBonus(horseType) {
@@ -7203,7 +7222,7 @@ export class TacticsScene extends BaseScene {
             this.applyUnitDamage(victim, 1);
             this.addDamageNumber(victimPos.x, victimPos.y - 30, 1);
             
-            const bumpVictim = pushCell.unit;
+            const bumpVictim = this.getLivingUnitOccupyingCell(pushCell.r, pushCell.q, victim);
             // Don't double-damage if we "collided" with ourselves (mounted 2-hex footprint)
             if (bumpVictim && bumpVictim !== victim && bumpVictim.hp > 0) { // Only damage if the unit is still alive
                 this.applyUnitDamage(bumpVictim, 1);

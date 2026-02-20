@@ -32,9 +32,12 @@ export class NarrativeScene extends BaseScene {
         this.interactiveNavTargets = []; // [{ id, type, x, y, actorId?/regionId? }]
         this.interactiveNavIndex = -1;
         this.interactiveNavMouseEnabled = true;
+        this.pendingInteractiveAdvance = false;
+        this.invalidScriptRecoveryScheduled = false;
     }
 
     enter(params) {
+        this.invalidScriptRecoveryScheduled = false;
         const gs = this.manager.gameState;
         const isResume = params.isResume && gs.get('narrativeState');
         const savedState = isResume ? gs.get('narrativeState') : null;
@@ -66,9 +69,15 @@ export class NarrativeScene extends BaseScene {
                     hasScriptParam: !!params.script,
                     scriptParamLength: params.script ? params.script.length : 0
                 });
-                // Switch to map as fallback
+                // Clear stale narrative state and recover to a safe scene.
+                gs.set('narrativeState', null);
                 setTimeout(() => {
-                    this.manager.switchTo('map');
+                    const campaignId = gs.get('currentCampaign');
+                    if (campaignId) {
+                        this.manager.switchTo('map', { campaignId });
+                    } else {
+                        this.manager.switchTo('campaign_selection');
+                    }
                 }, 100);
                 return;
             }
@@ -220,6 +229,7 @@ export class NarrativeScene extends BaseScene {
             this.interactiveNavTargets = [];
             this.interactiveNavIndex = -1;
             this.interactiveNavMouseEnabled = true;
+        this.pendingInteractiveAdvance = false;
         this.onComplete = null; // Don't restore callbacks
         
         // Critical: If we're in interactive mode, ensure currentStep is at the interactive step
@@ -251,12 +261,26 @@ export class NarrativeScene extends BaseScene {
         // Set up the current step for rendering (but don't replay voice)
         const step = this.script[this.currentStep];
         if (step) {
+            // Recovery guard: if saved flags are stale, restore interactive mode for interactive/prompt steps.
+            if (step.type === 'interactive' || step.type === 'prompt') {
+                if (!this.isInteractive) {
+                    this.isInteractive = true;
+                }
+                // Interactive steps always require waiting for input.
+                this.isWaiting = true;
+                if (this.interactiveStepIndex < 0) {
+                    this.interactiveStepIndex = this.currentStep;
+                }
+            }
             // If we're at an interactive step, we need to process it to set up clickable elements
             // But we don't want to replay voice or re-execute commands
-            if (step.type === 'interactive' && this.isInteractive) {
+            if ((step.type === 'interactive' || step.type === 'prompt') && this.isInteractive) {
                 // Just set up the clickable elements without replaying voice
                 this.clickableActors = step.clickableActors || {};
-                this.clickableRegions = step.clickableRegions || {};
+                this.clickableRegions = { ...(step.clickableRegions || {}) };
+                if (step.type === 'prompt' || Array.isArray(step.promptOptions)) {
+                    Object.assign(this.clickableRegions, this.buildPromptClickableRegions(step));
+                }
             } else if (step.type === 'choice') {
                 // Initialize selection system if it's a choice
                 this.initSelection({
@@ -380,7 +404,7 @@ export class NarrativeScene extends BaseScene {
         } else if (step.type === 'label') {
             // Label step - just a marker, advance immediately
             this.nextStep();
-        } else if (step.type === 'interactive') {
+        } else if (step.type === 'interactive' || step.type === 'prompt') {
             // Enter interactive mode - pause script and enable click detection
             this.isInteractive = true;
             this.interactiveStepIndex = this.currentStep; // Remember which step is interactive
@@ -388,7 +412,10 @@ export class NarrativeScene extends BaseScene {
             // Set up clickable actors from step definition
             this.clickableActors = step.clickableActors || {};
             // Set up clickable regions from step definition
-            this.clickableRegions = step.clickableRegions || {};
+            this.clickableRegions = { ...(step.clickableRegions || {}) };
+            if (step.type === 'prompt' || Array.isArray(step.promptOptions)) {
+                Object.assign(this.clickableRegions, this.buildPromptClickableRegions(step));
+            }
             // Clear hover state
             this.hoveredActor = null;
             this.hoveredRegion = null;
@@ -555,11 +582,13 @@ export class NarrativeScene extends BaseScene {
 
     nextStep() {
         const step = this.script[this.currentStep];
+        const allowImmediateInteractiveAdvance = this.pendingInteractiveAdvance;
+        this.pendingInteractiveAdvance = false;
         
         // Don't advance past an interactive step - wait for user click
         // EXCEPT: if we've inserted dialogue steps after the interactive step (for NPC clicks),
         // we need to allow advancing to show that dialogue
-        if (step && step.type === 'interactive' && this.isInteractive) {
+        if (step && (step.type === 'interactive' || step.type === 'prompt') && this.isInteractive) {
             // Check if there are inserted steps after this interactive step
             // (NPC dialogue that was inserted via onClick)
             if (this.currentStep + 1 < this.script.length) {
@@ -568,14 +597,34 @@ export class NarrativeScene extends BaseScene {
                 if (nextStep && (nextStep.type === 'dialogue' || nextStep.type === 'narrator')) {
                     // Allow advancing - we'll return to interactive step after dialogue
                 } else {
-                    // No inserted dialogue - this shouldn't happen
-                    console.warn('nextStep() called while on interactive step with no inserted dialogue - this should not happen');
-                    return;
+                    if (allowImmediateInteractiveAdvance) {
+                        // Some interactive options are pure transitions and should advance directly.
+                        this.isInteractive = false;
+                        this.clickableActors = {};
+                        this.clickableRegions = {};
+                        this.hoveredActor = null;
+                        this.hoveredRegion = null;
+                        this.interactiveNavTargets = [];
+                        this.interactiveNavIndex = -1;
+                        this.interactiveNavMouseEnabled = true;
+                    } else {
+                        // No inserted dialogue and no explicit transition request.
+                        return;
+                    }
                 }
             } else {
-                // No next step - this shouldn't happen
-                console.warn('nextStep() called while on interactive step with no next step - this should not happen');
-                return;
+                if (allowImmediateInteractiveAdvance) {
+                    this.isInteractive = false;
+                    this.clickableActors = {};
+                    this.clickableRegions = {};
+                    this.hoveredActor = null;
+                    this.hoveredRegion = null;
+                    this.interactiveNavTargets = [];
+                    this.interactiveNavIndex = -1;
+                    this.interactiveNavMouseEnabled = true;
+                } else {
+                    return;
+                }
             }
         }
         
@@ -736,6 +785,8 @@ export class NarrativeScene extends BaseScene {
     }
 
     update(timestamp) {
+        // Invalid state guard: avoid running update logic or periodic save loops with no script loaded.
+        if (!this.script || this.script.length === 0) return;
         const dt = timestamp - (this.lastTime || timestamp);
         this.lastTime = timestamp;
 
@@ -753,6 +804,10 @@ export class NarrativeScene extends BaseScene {
         
         // Update selection mouse tracking
         const step = this.script[this.currentStep];
+        if (step && (step.type === 'interactive' || step.type === 'prompt') && this.isInteractive && !this.isWaiting) {
+            // Self-heal stale restored flags that can block Enter/click interaction.
+            this.isWaiting = true;
+        }
         if (step && step.type === 'choice' && this.selection) {
             this.updateSelectionMouse(currentMouseX, currentMouseY);
         }
@@ -911,12 +966,19 @@ export class NarrativeScene extends BaseScene {
             });
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            // Try to recover by going to map
-            if (this.scriptId) {
-                console.warn('Attempting recovery: switching to map');
+            // Try to recover exactly once to avoid log/transition spam.
+            if (!this.invalidScriptRecoveryScheduled) {
+                this.invalidScriptRecoveryScheduled = true;
+                const gs = this.manager.gameState;
+                gs.set('narrativeState', null);
                 setTimeout(() => {
-                    this.manager.switchTo('map');
-                }, 1000);
+                    const campaignId = gs.get('currentCampaign');
+                    if (campaignId) {
+                        this.manager.switchTo('map', { campaignId });
+                    } else {
+                        this.manager.switchTo('campaign_selection');
+                    }
+                }, 50);
             }
             return;
         }
@@ -1022,8 +1084,6 @@ export class NarrativeScene extends BaseScene {
             this.hasNextChunk = status.hasNextChunk;
         } else if (step && step.type === 'choice') {
             this.renderChoice(step);
-        } else if (step && step.type === 'prompt') {
-            this.renderPrompt(step);
         }
         
         // Render clickable region boxes in interactive mode
@@ -1055,9 +1115,14 @@ export class NarrativeScene extends BaseScene {
         
         // Draw clickable region boxes - very subtle, only on hover
         for (const [regionId, region] of Object.entries(this.clickableRegions)) {
-            const regionScreenX = bgX + region.x;
-            const regionScreenY = bgY + region.y;
+            const regionScreenX = region.screenSpace ? region.x : (bgX + region.x);
+            const regionScreenY = region.screenSpace ? region.y : (bgY + region.y);
             const isHovered = this.hoveredRegion === regionId;
+
+            if (region.promptStyle) {
+                this.renderPromptRegion(ctx, region, isHovered);
+                continue;
+            }
             
             // Always show outline for debugging (can make it hover-only later)
             ctx.save();
@@ -1084,35 +1149,72 @@ export class NarrativeScene extends BaseScene {
         }
     }
 
-    renderPrompt(step) {
-        const { ctx, canvas } = this.manager;
-        const cx = Math.floor(canvas.width / 2);
-        
-        // Settings for the "To Inn" style prompt
-        const w = 60;
-        const h = 25;
-        const margin = 10;
-        
-        let px = margin;
-        let py = Math.floor(canvas.height / 2) - Math.floor(h / 2);
-        
-        if (step.position === 'right') {
-            px = canvas.width - w - margin;
+    buildPromptClickableRegions(step) {
+        const { canvas } = this.manager;
+        const options = Array.isArray(step.promptOptions) && step.promptOptions.length > 0
+            ? step.promptOptions
+            : [{
+                id: step.id || 'prompt_0',
+                text: step.text,
+                position: step.position || 'left',
+                onClick: step.onClick || null,
+                advanceOnClick: step.advanceOnClick !== false
+            }];
+        const defaultW = 60;
+        const defaultH = 25;
+        const gap = 8;
+        const totalH = options.reduce((sum, opt) => sum + (opt.h || defaultH), 0) + Math.max(0, options.length - 1) * gap;
+        let currentY = Math.floor(canvas.height / 2 - totalH / 2);
+        const regions = {};
+        for (let i = 0; i < options.length; i++) {
+            const opt = options[i] || {};
+            const w = opt.w || defaultW;
+            const h = opt.h || defaultH;
+            const margin = opt.margin !== undefined ? opt.margin : 10;
+            let x = 0;
+            if (typeof opt.x === 'number') {
+                x = opt.x;
+            } else if ((opt.position || 'left') === 'right') {
+                x = canvas.width - w - margin;
+            } else if ((opt.position || 'left') === 'center') {
+                x = Math.floor(canvas.width / 2 - w / 2);
+            } else {
+                x = margin;
+            }
+            const y = typeof opt.y === 'number' ? opt.y : currentY;
+            const id = opt.id || `prompt_${i}`;
+            regions[id] = {
+                x,
+                y,
+                w,
+                h,
+                screenSpace: true,
+                promptStyle: true,
+                text: opt.text || '',
+                position: opt.position || 'left',
+                onClick: opt.onClick || null,
+                advanceOnClick: opt.advanceOnClick !== false
+            };
+            currentY += h + gap;
         }
+        return regions;
+    }
 
-        const isHovered = this.lastMouseX >= px && this.lastMouseX <= px + w &&
-                          this.lastMouseY >= py && this.lastMouseY <= py + h;
+    renderPromptRegion(ctx, region, isHovered) {
+        const px = region.x;
+        const py = region.y;
+        const w = region.w;
+        const h = region.h;
 
-        // Draw Box
+        ctx.save();
         ctx.fillStyle = isHovered ? 'rgba(40, 40, 40, 0.95)' : 'rgba(20, 20, 20, 0.95)';
         ctx.fillRect(px, py, w, h);
         ctx.strokeStyle = isHovered ? '#fff' : '#ffd700';
         ctx.lineWidth = 1;
         ctx.strokeRect(px + 0.5, py + 0.5, w - 1, h - 1);
 
-        // Draw Arrow pointing left
         const pulse = Math.abs(Math.sin(Date.now() / 400)) * 5;
-        if (step.position !== 'right') {
+        if ((region.position || 'left') !== 'right') {
             ctx.fillStyle = isHovered ? '#fff' : '#ffd700';
             ctx.beginPath();
             ctx.moveTo(px - 5 - pulse, py + h / 2);
@@ -1120,7 +1222,6 @@ export class NarrativeScene extends BaseScene {
             ctx.lineTo(px + 2 - pulse, py + h / 2 + 5);
             ctx.fill();
         } else {
-            // Arrow pointing right
             ctx.fillStyle = isHovered ? '#fff' : '#ffd700';
             ctx.beginPath();
             ctx.moveTo(px + w + 5 + pulse, py + h / 2);
@@ -1129,15 +1230,13 @@ export class NarrativeScene extends BaseScene {
             ctx.fill();
         }
 
-        const localizedText = getLocalizedText(step.text);
+        const localizedText = getLocalizedText(region.text || '');
         this.drawPixelText(ctx, localizedText, px + Math.floor(w / 2), py + Math.floor(h / 2) - 4, {
             color: isHovered ? '#fff' : '#ffd700',
             font: '8px Silkscreen',
             align: 'center'
         });
-
-        // Store metadata for hit detection
-        step._rect = { x: px, y: py, w, h };
+        ctx.restore();
     }
 
     renderChoice(step) {
@@ -1321,7 +1420,8 @@ export class NarrativeScene extends BaseScene {
                         }
                     }
                     // Check if this region should advance the plot
-                    if (region.advanceOnClick) {
+                    const shouldAdvanceRegion = !!region.advanceOnClick || (!!region.promptStyle && !clickHandler);
+                    if (shouldAdvanceRegion) {
                         // Mark the inserted steps to advance after they complete
                         // Don't exit interactive mode yet - wait until inserted steps are done
                         if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
@@ -1330,6 +1430,9 @@ export class NarrativeScene extends BaseScene {
                             if (this.script[lastInsertedIndex]) {
                                 this.script[lastInsertedIndex]._advanceAfterThis = true;
                             }
+                        } else {
+                            // Allow transitions that do not insert dialogue/branch steps.
+                            this.pendingInteractiveAdvance = true;
                         }
                         this.nextStep();
                     } else {
@@ -1408,6 +1511,9 @@ export class NarrativeScene extends BaseScene {
                             if (this.script[lastInsertedIndex]) {
                                 this.script[lastInsertedIndex]._advanceAfterThis = true;
                             }
+                        } else {
+                            // Allow transitions that do not insert dialogue/branch steps.
+                            this.pendingInteractiveAdvance = true;
                         }
                         this.nextStep();
                     } else {
@@ -1473,15 +1579,6 @@ export class NarrativeScene extends BaseScene {
             return;
         }
 
-        if (step && step.type === 'prompt' && step._rect) {
-            const r = step._rect;
-            if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) {
-                assets.playSound('ui_click');
-                this.nextStep();
-            }
-            return;
-        }
-        
         // Advance script on any pointerdown (if not waiting for command)
         // Allow advancing dialogue even in interactive mode (for NPC dialogue that was inserted)
         // But only if we're currently on a dialogue step, not on the interactive step itself
@@ -1569,8 +1666,8 @@ export class NarrativeScene extends BaseScene {
         
         // Check each clickable region
         for (const [regionId, region] of Object.entries(this.clickableRegions)) {
-            const regionScreenX = bgX + region.x;
-            const regionScreenY = bgY + region.y;
+            const regionScreenX = region.screenSpace ? region.x : (bgX + region.x);
+            const regionScreenY = region.screenSpace ? region.y : (bgY + region.y);
             
             if (clickX >= regionScreenX && clickX <= regionScreenX + region.w &&
                 clickY >= regionScreenY && clickY <= regionScreenY + region.h) {
@@ -1617,8 +1714,8 @@ export class NarrativeScene extends BaseScene {
                 id: `region:${regionId}`,
                 type: 'region',
                 regionId,
-                x: bgX + region.x + region.w / 2,
-                y: bgY + region.y + region.h / 2
+                x: (region.screenSpace ? region.x : bgX + region.x) + region.w / 2,
+                y: (region.screenSpace ? region.y : bgY + region.y) + region.h / 2
             });
         }
 
@@ -1722,7 +1819,7 @@ export class NarrativeScene extends BaseScene {
 
     handleKeyDown(e) {
         const step = this.script[this.currentStep];
-        
+
         // Handle choice navigation using reusable selection system
         if (step && step.type === 'choice' && step._panelMetadata && this.selection) {
             const options = step.options || [];
@@ -1822,6 +1919,7 @@ export class NarrativeScene extends BaseScene {
         
         const nextSceneMap = {
             'intro_poem': 'campaign_selection',
+            'magistrate_briefing': 'tactics',
             'daxing_messenger': 'map',
             'guangzong_arrival': 'map',
             'noticeboard': 'narrative', // Goes to inn scene next
@@ -1839,6 +1937,17 @@ export class NarrativeScene extends BaseScene {
         if (!scriptId) return null;
         
         const paramsMap = {
+            'magistrate_briefing': {
+                battleId: 'daxing',
+                mapGen: {
+                    biome: 'northern',
+                    layout: 'foothills',
+                    forestDensity: 0.15,
+                    mountainDensity: 0.1,
+                    riverDensity: 0.05,
+                    houseDensity: 0.04
+                }
+            },
             'daxing_messenger': { afterEvent: 'daxing' },
             'guangzong_arrival': { campaignId: 'liubei' },
             'noticeboard': { scriptId: 'inn' }, // Chain to inn scene

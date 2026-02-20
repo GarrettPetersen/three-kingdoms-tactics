@@ -883,7 +883,12 @@ export const NARRATIVE_SCRIPTS = {
                 zh: "那好！我们去村中酒店，边喝酒边商议大事。"
             }
         },
-        { type: 'prompt', text: 'TO INN', position: 'left' },
+        {
+            type: 'interactive',
+            promptOptions: [
+                { id: 'to_inn', text: 'TO INN', position: 'left', advanceOnClick: true }
+            ]
+        },
         { type: 'command', action: 'flip', id: 'liubei', flip: true },
         { type: 'command', action: 'move', id: 'liubei', x: -50, y: 240, wait: false },
         { type: 'command', action: 'move', id: 'zhangfei', x: -50, y: 240 },

@@ -539,6 +539,19 @@ export class MapScene extends BaseScene {
     activateNavTarget(index) {
         if (index < 0 || index >= this.navTargets.length) return;
         const target = this.navTargets[index];
+        if (target.type === 'back') {
+            assets.playSound('ui_click');
+            this.manager.switchTo('campaign_selection');
+            return;
+        }
+        if (target.type === 'location') {
+            this.activateLocationTarget(target.id);
+            return;
+        }
+        if (target.type === 'party') {
+            this.activatePartyTarget();
+            return;
+        }
         const logicalX = target.x;
         const logicalY = target.y;
 
@@ -549,6 +562,62 @@ export class MapScene extends BaseScene {
         const clientX = canvasRect.left + logicalX / scaleX;
         const clientY = canvasRect.top + logicalY / scaleY;
         this.handleInput({ clientX, clientY });
+    }
+
+    activateLocationTarget(locId) {
+        const gs = this.manager.gameState;
+        const loc = LOCATIONS[locId];
+        if (!loc || !loc.unlockCondition(gs)) return;
+
+        if (this.interactionSelected === locId) {
+            const isDone = loc.isCompleted ? loc.isCompleted(gs) : false;
+            if (!isDone) {
+                this.heroMoveTo(loc.x, loc.y, () => {
+                    if (loc.campaignId) this.startCampaign(loc.campaignId);
+                    else if (loc.battleId === 'daxing') this.startBriefing();
+                    else if (loc.battleId === 'qingzhou_siege') this.startQingzhouBriefing();
+                    else if (loc.battleId === 'guangzong_encounter') this.startGuangzongBriefing();
+                    else if (loc.battleId === 'zhuo_return') this.startZhuoReturn();
+                });
+            }
+        } else {
+            this.interactionSelected = locId;
+            this.selectedLocation = locId;
+        }
+    }
+
+    activatePartyTarget() {
+        const gs = this.manager.gameState;
+        const isZhuoAvailable = !gs.hasMilestone('prologue_complete') &&
+            !gs.hasMilestone('daxing') &&
+            !gs.hasMilestone('qingzhou_siege') &&
+            !gs.hasMilestone('qingzhou_cleanup');
+
+        if (isZhuoAvailable || this.selectedLocation === 'zhuo') {
+            if (gs.hasMilestone('prologue_complete') ||
+                gs.hasMilestone('daxing') ||
+                gs.hasMilestone('qingzhou_siege') ||
+                gs.hasMilestone('qingzhou_cleanup') ||
+                gs.hasMilestone('guangzong_encounter')) {
+                let reminderKey = 'prologue_complete';
+                if (gs.hasMilestone('guangzong_encounter')) reminderKey = 'guangzong_encounter';
+                else if (gs.hasMilestone('qingzhou_cleanup')) reminderKey = 'qingzhou_cleanup';
+                else if (gs.hasMilestone('qingzhou_siege')) reminderKey = 'qingzhou_siege';
+                else if (gs.hasMilestone('daxing')) reminderKey = 'daxing';
+                this.interactionSelected = 'hero_reminder';
+                this.currentReminder = HERO_REMINDERS[reminderKey];
+                this.subStep = 0;
+                if (this.currentReminder && this.currentReminder.voiceId) assets.playVoice(this.currentReminder.voiceId);
+            } else {
+                this.startCampaign('liubei');
+            }
+        } else {
+            if (isZhuoAvailable) {
+                this.selectedLocation = 'zhuo';
+            }
+            this.interactionSelected = null;
+            this.subStep = 0;
+        }
     }
 
     handleInput(e) {
