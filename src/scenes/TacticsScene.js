@@ -5448,31 +5448,17 @@ export class TacticsScene extends BaseScene {
             }
         }
 
-        let bestIdx = -1;
-        let bestScore = -Infinity;
-        for (let i = 0; i < this.controllerNavTargets.length; i++) {
-            if (i === this.controllerNavIndex) continue;
-            const t = this.controllerNavTargets[i];
-            const vx = t.x - cur.x;
-            const vy = t.y - cur.y;
-            const dist = Math.sqrt(vx * vx + vy * vy) || 1;
-            const nx = vx / dist;
-            const ny = vy / dist;
-            const dot = nx * dirX + ny * dirY;
-            if (dot <= 0.2) continue;
-            const score = (dot * 3) - (dist / 300);
-            if (score > bestScore) {
-                bestScore = score;
-                bestIdx = i;
-            }
+        let bestIdx = this.findDirectionalTargetIndex(this.controllerNavIndex, this.controllerNavTargets, dirX, dirY, { coneSlope: 2.2 });
+        if (bestIdx === -1) {
+            // Never strand focus: if no directional candidate exists, step deterministically.
+            bestIdx = (this.controllerNavIndex + 1) % this.controllerNavTargets.length;
         }
-        if (bestIdx !== -1) {
-            this.controllerNavIndex = bestIdx;
-            const t = this.controllerNavTargets[bestIdx];
-            if (t.type === 'unit' && t.unit) this.hoveredCell = this.tacticsMap.getCell(t.unit.r, t.unit.q);
-            if ((t.type === 'move_cell' || t.type === 'attack_cell') && t.r !== undefined) this.hoveredCell = this.tacticsMap.getCell(t.r, t.q);
-            assets.playSound('ui_click', 0.5);
-        }
+
+        this.controllerNavIndex = bestIdx;
+        const t = this.controllerNavTargets[bestIdx];
+        if (t.type === 'unit' && t.unit) this.hoveredCell = this.tacticsMap.getCell(t.unit.r, t.unit.q);
+        if ((t.type === 'move_cell' || t.type === 'attack_cell') && t.r !== undefined) this.hoveredCell = this.tacticsMap.getCell(t.r, t.q);
+        assets.playSound('ui_click', 0.5);
     }
 
     activateControllerTarget() {

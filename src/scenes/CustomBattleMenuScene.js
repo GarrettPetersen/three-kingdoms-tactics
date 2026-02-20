@@ -1014,27 +1014,9 @@ export class CustomBattleMenuScene extends BaseScene {
         const curX = cur.x + cur.w / 2;
         const curY = cur.y + cur.h / 2;
 
-        let bestIdx = -1;
-        let bestScore = -Infinity;
-        for (let i = 0; i < count; i++) {
-            if (i === curIdx) continue;
-            const r = this.buttonRects[i];
-            const x = r.x + r.w / 2;
-            const y = r.y + r.h / 2;
-            const vx = x - curX;
-            const vy = y - curY;
-            const dist = Math.sqrt(vx * vx + vy * vy) || 1;
-            const nx = vx / dist;
-            const ny = vy / dist;
-            const dot = nx * dirX + ny * dirY;
-            if (dot <= 0.2) continue;
-            const score = (dot * 3) - (dist / 300);
-            if (score > bestScore) {
-                bestScore = score;
-                bestIdx = i;
-            }
-        }
-
+        const targets = this.buttonRects.map(r => ({ x: r.x + r.w / 2, y: r.y + r.h / 2 }));
+        let bestIdx = this.findDirectionalTargetIndex(curIdx, targets, dirX, dirY, { coneSlope: 2.2 });
+        if (bestIdx === -1) bestIdx = (curIdx + 1) % count;
         if (bestIdx !== -1) {
             this.selection.highlightedIndex = bestIdx;
             assets.playSound('ui_click', 0.5);

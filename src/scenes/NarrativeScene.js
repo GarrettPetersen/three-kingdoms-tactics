@@ -1766,25 +1766,7 @@ export class NarrativeScene extends BaseScene {
             return;
         }
 
-        const cur = this.interactiveNavTargets[this.interactiveNavIndex];
-        let bestIdx = -1;
-        let bestScore = -Infinity;
-        for (let i = 0; i < this.interactiveNavTargets.length; i++) {
-            if (i === this.interactiveNavIndex) continue;
-            const t = this.interactiveNavTargets[i];
-            const vx = t.x - cur.x;
-            const vy = t.y - cur.y;
-            const dist = Math.sqrt(vx * vx + vy * vy) || 1;
-            const nx = vx / dist;
-            const ny = vy / dist;
-            const dot = nx * dirX + ny * dirY;
-            if (dot <= 0.2) continue; // must be meaningfully in the chosen direction
-            const score = (dot * 3) - (dist / 300);
-            if (score > bestScore) {
-                bestScore = score;
-                bestIdx = i;
-            }
-        }
+        let bestIdx = this.findDirectionalTargetIndex(this.interactiveNavIndex, this.interactiveNavTargets, dirX, dirY, { coneSlope: 2.2 });
         if (bestIdx === -1) {
             // Fallback: cycle in deterministic order if no directional candidate.
             bestIdx = (this.interactiveNavIndex + 1) % this.interactiveNavTargets.length;

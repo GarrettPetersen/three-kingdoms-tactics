@@ -564,6 +564,17 @@ export class MapScene extends BaseScene {
         this.handleInput({ clientX, clientY });
     }
 
+    moveNavDirectional(dirX, dirY) {
+        if (!this.selection || !this.navTargets || this.navTargets.length <= 1) return;
+        if (this.selection.highlightedIndex < 0 || this.selection.highlightedIndex >= this.navTargets.length) {
+            this.selection.highlightedIndex = 0;
+        }
+        let bestIdx = this.findDirectionalTargetIndex(this.selection.highlightedIndex, this.navTargets, dirX, dirY, { coneSlope: 2.2 });
+        if (bestIdx === -1) bestIdx = (this.selection.highlightedIndex + 1) % this.navTargets.length;
+        this.selection.highlightedIndex = bestIdx;
+        assets.playSound('ui_click', 0.5);
+    }
+
     activateLocationTarget(locId) {
         const gs = this.manager.gameState;
         const loc = LOCATIONS[locId];
@@ -807,18 +818,28 @@ export class MapScene extends BaseScene {
         if (this.navTargets.length === 0) return;
         this.selection.totalOptions = this.navTargets.length;
 
-        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        if (e.key === 'ArrowUp') {
             e.preventDefault();
             this.onNonMouseInput();
-            this.selection.highlightedIndex = (this.selection.highlightedIndex - 1 + this.navTargets.length) % this.navTargets.length;
-            assets.playSound('ui_click', 0.5);
+            this.moveNavDirectional(0, -1);
             return;
         }
-        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+        if (e.key === 'ArrowDown') {
             e.preventDefault();
             this.onNonMouseInput();
-            this.selection.highlightedIndex = (this.selection.highlightedIndex + 1) % this.navTargets.length;
-            assets.playSound('ui_click', 0.5);
+            this.moveNavDirectional(0, 1);
+            return;
+        }
+        if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.moveNavDirectional(-1, 0);
+            return;
+        }
+        if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.moveNavDirectional(1, 0);
             return;
         }
         if (e.key === 'Enter' || e.key === ' ') {

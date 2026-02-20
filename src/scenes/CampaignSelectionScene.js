@@ -369,30 +369,11 @@ export class CampaignSelectionScene extends BaseScene {
     moveNavDirectional(dirX, dirY) {
         if (this.navTargets.length <= 1) return;
         if (this.navIndex < 0 || this.navIndex >= this.navTargets.length) this.navIndex = 0;
-        const cur = this.navTargets[this.navIndex];
-        let bestIdx = -1;
-        let bestScore = -Infinity;
-        for (let i = 0; i < this.navTargets.length; i++) {
-            if (i === this.navIndex) continue;
-            const t = this.navTargets[i];
-            const vx = t.x - cur.x;
-            const vy = t.y - cur.y;
-            const dist = Math.sqrt(vx * vx + vy * vy) || 1;
-            const nx = vx / dist;
-            const ny = vy / dist;
-            const dot = nx * dirX + ny * dirY;
-            if (dot <= 0.2) continue;
-            const score = (dot * 3) - (dist / 300);
-            if (score > bestScore) {
-                bestScore = score;
-                bestIdx = i;
-            }
-        }
-        if (bestIdx !== -1) {
-            this.navIndex = bestIdx;
-            this.syncSelectionFromNav();
-            assets.playSound('ui_click');
-        }
+        let bestIdx = this.findDirectionalTargetIndex(this.navIndex, this.navTargets, dirX, dirY, { coneSlope: 2.2 });
+        if (bestIdx === -1) bestIdx = (this.navIndex + 1) % this.navTargets.length;
+        this.navIndex = bestIdx;
+        this.syncSelectionFromNav();
+        assets.playSound('ui_click');
     }
 
     activateCurrentNavTarget() {

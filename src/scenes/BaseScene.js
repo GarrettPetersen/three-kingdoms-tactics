@@ -108,6 +108,96 @@ export class BaseScene {
         };
     }
 
+    buildDirectionalNavGraph(targets, options = {}) {
+        const graph = [];
+        if (!targets || targets.length === 0) return graph;
+        const dirs = [
+            { key: 'up', x: 0, y: -1 },
+            { key: 'down', x: 0, y: 1 },
+            { key: 'left', x: -1, y: 0 },
+            { key: 'right', x: 1, y: 0 }
+        ];
+        const minForward = options.minForward !== undefined ? options.minForward : 4;
+        const coneSlope = options.coneSlope !== undefined ? options.coneSlope : 2.0;
+        const forwardWeight = options.forwardWeight !== undefined ? options.forwardWeight : 0.9;
+        const lateralWeight = options.lateralWeight !== undefined ? options.lateralWeight : 1.35;
+        const distanceWeight = options.distanceWeight !== undefined ? options.distanceWeight : 0.4;
+        const wrap = options.wrap !== undefined ? options.wrap : true;
+
+        for (let i = 0; i < targets.length; i++) {
+            const cur = targets[i];
+            const node = { up: -1, down: -1, left: -1, right: -1 };
+            if (!cur) {
+                graph.push(node);
+                continue;
+            }
+
+            dirs.forEach(d => {
+                let bestIdx = -1;
+                let bestScore = Number.POSITIVE_INFINITY;
+                for (let j = 0; j < targets.length; j++) {
+                    if (j === i) continue;
+                    const t = targets[j];
+                    if (!t) continue;
+                    const vx = t.x - cur.x;
+                    const vy = t.y - cur.y;
+                    const forward = vx * d.x + vy * d.y;
+                    if (forward <= minForward) continue;
+                    const lateral = Math.abs(vx * d.y - vy * d.x);
+                    if (lateral > forward * coneSlope) continue;
+                    const dist = Math.sqrt(vx * vx + vy * vy);
+                    const score = forward * forwardWeight + lateral * lateralWeight + dist * distanceWeight;
+                    if (score < bestScore) {
+                        bestScore = score;
+                        bestIdx = j;
+                    }
+                }
+
+                if (bestIdx === -1 && wrap) {
+                    // Wrap-around: choose the farthest target in the opposite direction, keeping lateral error low.
+                    let wrapIdx = -1;
+                    let wrapScore = Number.POSITIVE_INFINITY;
+                    for (let j = 0; j < targets.length; j++) {
+                        if (j === i) continue;
+                        const t = targets[j];
+                        if (!t) continue;
+                        const vx = t.x - cur.x;
+                        const vy = t.y - cur.y;
+                        const forward = vx * d.x + vy * d.y;
+                        const opposite = -forward; // larger means further "behind" us
+                        if (opposite <= 0) continue;
+                        const lateral = Math.abs(vx * d.y - vy * d.x);
+                        const dist = Math.sqrt(vx * vx + vy * vy);
+                        const score = lateral * 1.5 + dist * 0.1 - opposite * 0.5;
+                        if (score < wrapScore) {
+                            wrapScore = score;
+                            wrapIdx = j;
+                        }
+                    }
+                    bestIdx = wrapIdx;
+                }
+
+                node[d.key] = bestIdx;
+            });
+            graph.push(node);
+        }
+        return graph;
+    }
+
+    findDirectionalTargetIndex(currentIndex, targets, dirX, dirY, options = {}) {
+        if (!targets || targets.length <= 1) return -1;
+        if (currentIndex < 0 || currentIndex >= targets.length) return -1;
+        let dirKey = null;
+        if (dirY < 0) dirKey = 'up';
+        else if (dirY > 0) dirKey = 'down';
+        else if (dirX < 0) dirKey = 'left';
+        else if (dirX > 0) dirKey = 'right';
+        if (!dirKey) return -1;
+        const graph = this.buildDirectionalNavGraph(targets, options);
+        if (!graph[currentIndex]) return -1;
+        return graph[currentIndex][dirKey];
+    }
+
     drawCharacter(ctx, img, action, frame, x, y, options = {}) {
         if (!img) return;
         const { flip = false, sinkOffset = 0, isSubmerged = false, tint = null, hideBottom = 0, scale = 1.0, isProp = false } = options;
