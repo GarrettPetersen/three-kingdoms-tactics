@@ -48,6 +48,9 @@ export class TacticsScene extends BaseScene {
         this.history = [];
         this.subStep = 0;
         this.showEndTurnConfirm = false;
+        this.controllerNavTargets = [];
+        this.controllerNavIndex = -1;
+        this.controllerNavMouseEnabled = true;
     }
 
     enter(params = {}) {
@@ -136,6 +139,9 @@ export class TacticsScene extends BaseScene {
         this.onChoiceRestrain = params.onChoiceRestrain || null; // Callback for peaceful choice
         this.onChoiceFight = params.onChoiceFight || null; // Callback for fight choice
         this.onFightVictory = params.onFightVictory || null; // Callback for cage-break victory
+        this.controllerNavTargets = [];
+        this.controllerNavIndex = -1;
+        this.controllerNavMouseEnabled = true;
         
         // If resuming a battle with choices but no callbacks provided, set them up dynamically
         if (this.battleId === 'guangzong_encounter' && !this.onChoiceRestrain) {
@@ -5062,6 +5068,8 @@ export class TacticsScene extends BaseScene {
         }
 
         this.drawUI();
+        this.rebuildControllerNavTargets();
+        this.drawControllerNavFocus(ctx);
 
         // 4. Final Pass: Draw UX elements (like push arrows) above everything
         if (!this.isIntroAnimating) {
@@ -5249,6 +5257,186 @@ export class TacticsScene extends BaseScene {
                 });
             });
         });
+    }
+
+    rebuildControllerNavTargets() {
+        const prev = (this.controllerNavIndex >= 0 && this.controllerNavIndex < this.controllerNavTargets.length)
+            ? this.controllerNavTargets[this.controllerNavIndex]
+            : null;
+        const prevId = prev ? prev.id : null;
+        const targets = [];
+
+        if (this.isChoiceActive && this.choiceRects) {
+            this.choiceRects.forEach(rect => {
+                targets.push({
+                    id: `choice:${rect.index}`,
+                    type: 'choice',
+                    x: rect.x + rect.w / 2,
+                    y: rect.y + rect.h / 2,
+                    rect,
+                    choiceIndex: rect.index
+                });
+            });
+        } else if (this.showEndTurnConfirm) {
+            if (this.confirmYesRect) {
+                targets.push({
+                    id: 'confirm:yes',
+                    type: 'confirm_yes',
+                    x: this.confirmYesRect.x + this.confirmYesRect.w / 2,
+                    y: this.confirmYesRect.y + this.confirmYesRect.h / 2,
+                    rect: this.confirmYesRect
+                });
+            }
+            if (this.confirmNoRect) {
+                targets.push({
+                    id: 'confirm:no',
+                    type: 'confirm_no',
+                    x: this.confirmNoRect.x + this.confirmNoRect.w / 2,
+                    y: this.confirmNoRect.y + this.confirmNoRect.h / 2,
+                    rect: this.confirmNoRect
+                });
+            }
+        } else if (!this.isProcessingTurn && !this.isIntroAnimating && !this.isGameOver) {
+            if (this.endTurnRect) targets.push({ id: 'ui:end_turn', type: 'ui', x: this.endTurnRect.x + this.endTurnRect.w / 2, y: this.endTurnRect.y + this.endTurnRect.h / 2, rect: this.endTurnRect });
+            if (this.resetTurnRect) targets.push({ id: 'ui:reset', type: 'ui', x: this.resetTurnRect.x + this.resetTurnRect.w / 2, y: this.resetTurnRect.y + this.resetTurnRect.h / 2, rect: this.resetTurnRect });
+            if (this.attackOrderRect) targets.push({ id: 'ui:order', type: 'ui', x: this.attackOrderRect.x + this.attackOrderRect.w / 2, y: this.attackOrderRect.y + this.attackOrderRect.h / 2, rect: this.attackOrderRect });
+            if (this.undoRect) targets.push({ id: 'ui:undo', type: 'ui', x: this.undoRect.x + this.undoRect.w / 2, y: this.undoRect.y + this.undoRect.h / 2, rect: this.undoRect });
+
+            if (this.attackRects && this.selectedUnit && this.selectedUnit.faction === 'player') {
+                this.attackRects.forEach(r => {
+                    targets.push({
+                        id: `ability:${r.key}`,
+                        type: 'ability',
+                        x: r.x + r.w / 2,
+                        y: r.y + r.h / 2,
+                        rect: r,
+                        attackKey: r.key
+                    });
+                });
+            }
+
+            if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack) {
+                for (const key of this.attackTiles.keys()) {
+                    const [r, q] = key.split(',').map(Number);
+                    const pos = this.getPixelPos(r, q);
+                    targets.push({ id: `attack_cell:${r},${q}`, type: 'attack_cell', x: pos.x, y: pos.y, r, q });
+                }
+            } else if (this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved) {
+                for (const key of this.reachableTiles.keys()) {
+                    const [r, q] = key.split(',').map(Number);
+                    const pos = this.getPixelPos(r, q);
+                    targets.push({ id: `move_cell:${r},${q}`, type: 'move_cell', x: pos.x, y: pos.y, r, q });
+                }
+            }
+
+            this.units.forEach(u => {
+                if (u.hp > 0 && !u.isGone) {
+                    targets.push({
+                        id: `unit:${u.id}`,
+                        type: 'unit',
+                        x: u.visualX,
+                        y: u.visualY,
+                        unit: u
+                    });
+                }
+            });
+        }
+
+        this.controllerNavTargets = targets;
+        if (targets.length === 0) {
+            this.controllerNavIndex = -1;
+            return;
+        }
+
+        const preserved = prevId ? targets.findIndex(t => t.id === prevId) : -1;
+        if (preserved >= 0) {
+            this.controllerNavIndex = preserved;
+        } else {
+            const defaultUnit = this.selectedUnit ? targets.findIndex(t => t.type === 'unit' && t.unit === this.selectedUnit) : -1;
+            this.controllerNavIndex = defaultUnit >= 0 ? defaultUnit : 0;
+        }
+    }
+
+    drawControllerNavFocus(ctx) {
+        if (this.controllerNavMouseEnabled) return;
+        if (!this.controllerNavTargets || this.controllerNavTargets.length === 0) return;
+        if (this.controllerNavIndex < 0 || this.controllerNavIndex >= this.controllerNavTargets.length) return;
+        const t = this.controllerNavTargets[this.controllerNavIndex];
+        ctx.save();
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 1;
+        if (t.rect) {
+            ctx.strokeRect(Math.floor(t.rect.x) - 1.5, Math.floor(t.rect.y) - 1.5, Math.floor(t.rect.w) + 2, Math.floor(t.rect.h) + 2);
+        } else {
+            const size = (t.type === 'unit') ? 16 : 14;
+            ctx.strokeRect(Math.floor(t.x - size / 2) - 0.5, Math.floor(t.y - size / 2) - 0.5, size, size);
+        }
+        ctx.restore();
+    }
+
+    moveControllerSelection(dirX, dirY) {
+        if (!this.controllerNavTargets || this.controllerNavTargets.length <= 1) return;
+        if (this.controllerNavIndex < 0 || this.controllerNavIndex >= this.controllerNavTargets.length) {
+            this.controllerNavIndex = 0;
+            return;
+        }
+        const cur = this.controllerNavTargets[this.controllerNavIndex];
+        let bestIdx = -1;
+        let bestScore = -Infinity;
+        for (let i = 0; i < this.controllerNavTargets.length; i++) {
+            if (i === this.controllerNavIndex) continue;
+            const t = this.controllerNavTargets[i];
+            const vx = t.x - cur.x;
+            const vy = t.y - cur.y;
+            const dist = Math.sqrt(vx * vx + vy * vy) || 1;
+            const nx = vx / dist;
+            const ny = vy / dist;
+            const dot = nx * dirX + ny * dirY;
+            if (dot <= 0.2) continue;
+            const score = (dot * 3) - (dist / 300);
+            if (score > bestScore) {
+                bestScore = score;
+                bestIdx = i;
+            }
+        }
+        if (bestIdx !== -1) {
+            this.controllerNavIndex = bestIdx;
+            const t = this.controllerNavTargets[bestIdx];
+            if (t.type === 'unit' && t.unit) this.hoveredCell = this.tacticsMap.getCell(t.unit.r, t.unit.q);
+            if ((t.type === 'move_cell' || t.type === 'attack_cell') && t.r !== undefined) this.hoveredCell = this.tacticsMap.getCell(t.r, t.q);
+            assets.playSound('ui_click', 0.5);
+        }
+    }
+
+    activateControllerTarget() {
+        if (this.controllerNavIndex < 0 || this.controllerNavIndex >= this.controllerNavTargets.length) return;
+        const t = this.controllerNavTargets[this.controllerNavIndex];
+        if (!t) return;
+        if (t.type === 'unit' && t.unit) {
+            this.hoveredCell = this.tacticsMap.getCell(t.unit.r, t.unit.q);
+        } else if ((t.type === 'move_cell' || t.type === 'attack_cell') && t.r !== undefined && t.q !== undefined) {
+            this.hoveredCell = this.tacticsMap.getCell(t.r, t.q);
+        }
+        this.clickLogicalPoint(t.x, t.y);
+    }
+
+    clickLogicalPoint(x, y) {
+        const { canvas } = this.manager;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const clientX = rect.left + x / scaleX;
+        const clientY = rect.top + y / scaleY;
+        this.handleInput({ clientX, clientY });
+    }
+
+    clearBattleSelection() {
+        this.selectedUnit = null;
+        this.selectedAttack = null;
+        this.reachableTiles.clear();
+        this.attackTiles.clear();
+        this.attackRects = [];
+        this.activeDialogue = null;
     }
 
     drawHpBar(ctx, unit, x, y) {
@@ -7277,11 +7465,80 @@ export class TacticsScene extends BaseScene {
     }
 
     handleKeyDown(e) {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.controllerNavMouseEnabled = false;
+            if (this.showEndTurnConfirm) {
+                this.showEndTurnConfirm = false;
+                assets.playSound('ui_click', 0.5);
+                return;
+            }
+            if (this.selectedUnit || this.selectedAttack || this.activeDialogue) {
+                this.clearBattleSelection();
+                assets.playSound('ui_click', 0.5);
+                return;
+            }
+            return;
+        }
+
         if (e.key === 'Enter' || e.key === ' ') {
-            // Only advance if dialogue is active
+            // Advance dialogue-like overlays first
             if (this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCleanupDialogueActive || this.activeDialogue) {
+                e.preventDefault();
+                this.onNonMouseInput();
+                this.controllerNavMouseEnabled = false;
                 this.handleInput(e);
+                return;
             }
         }
+
+        this.rebuildControllerNavTargets();
+        if (!this.controllerNavTargets || this.controllerNavTargets.length === 0) return;
+
+        if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.controllerNavMouseEnabled = false;
+            this.moveControllerSelection(0, -1);
+            return;
+        }
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.controllerNavMouseEnabled = false;
+            this.moveControllerSelection(0, 1);
+            return;
+        }
+        if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.controllerNavMouseEnabled = false;
+            this.moveControllerSelection(-1, 0);
+            return;
+        }
+        if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.controllerNavMouseEnabled = false;
+            this.moveControllerSelection(1, 0);
+            return;
+        }
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.controllerNavMouseEnabled = false;
+            this.activateControllerTarget();
+        }
+    }
+
+    onMouseInput(mouseX, mouseY) {
+        super.onMouseInput(mouseX, mouseY);
+        this.controllerNavMouseEnabled = true;
+    }
+
+    onNonMouseInput() {
+        super.onNonMouseInput();
+        this.controllerNavMouseEnabled = false;
     }
 }
