@@ -69,6 +69,29 @@ export class TacticsScene extends BaseScene {
         return null;
     }
 
+    getActiveChoiceState() {
+        const activeScript = this.getActiveDialogueScript();
+        const activeStep = activeScript && activeScript[this.dialogueStep];
+        if (activeStep && activeStep.type === 'choice' && Array.isArray(activeStep.options) && activeStep.options.length > 0) {
+            return {
+                kind: 'narrative',
+                script: activeScript,
+                step: activeStep,
+                options: activeStep.options
+            };
+        }
+        if (this.hasChoice && (this.onChoiceRestrain || this.onChoiceFight)) {
+            return {
+                kind: 'battle',
+                options: [
+                    { lines: ["Stay your hand,", "brother!"], color: '#88ff88', hoverColor: '#aaffaa' },
+                    { lines: ["Free him,", "brothers!"], color: '#ff8888', hoverColor: '#ffaaaa' }
+                ]
+            };
+        }
+        return null;
+    }
+
     enter(params = {}) {
         const gs = this.manager.gameState;
         
@@ -849,6 +872,7 @@ export class TacticsScene extends BaseScene {
     addAmbushUnit(id, name, imgKey, r, q, attacks, flip = false) {
         const gs = this.manager.gameState;
         const unitXP = gs.getCampaignVar('unitXP') || {};
+        const unitLevelsSeen = gs.getCampaignVar('unitLevelsSeen') || {};
         const unitClasses = gs.getCampaignVar('unitClasses') || {};
         
         const xp = unitXP[id] || 0;
@@ -1037,6 +1061,7 @@ export class TacticsScene extends BaseScene {
                         } else if (u.faction === 'allied') {
                             // Allied soldiers are replaced with Level 1 (0 XP)
                             unitXP[u.id] = 0;
+                            unitLevelsSeen[u.id] = 1;
                             const unitClasses = gs.getCampaignVar('unitClasses') || {};
                             delete unitClasses[u.id];
                             gs.setCampaignVar('unitClasses', unitClasses);
@@ -1047,12 +1072,15 @@ export class TacticsScene extends BaseScene {
                         const oldLevel = this.getLevelFromXP(oldXP);
                         unitXP[u.id] = oldXP + xpGained;
                         const newLevel = this.getLevelFromXP(unitXP[u.id]);
-                        
-                        if (newLevel > oldLevel) {
+                        const seenLevel = (typeof unitLevelsSeen[u.id] === 'number')
+                            ? unitLevelsSeen[u.id]
+                            : oldLevel;
+
+                        if (newLevel > seenLevel) {
                             levelUps.push({
                                 id: u.id,
                                 name: u.name,
-                                oldLevel: oldLevel,
+                                oldLevel: seenLevel,
                                 newLevel: newLevel,
                                 imgKey: u.imgKey
                             });
@@ -1061,6 +1089,7 @@ export class TacticsScene extends BaseScene {
                 }
             });
             gs.setCampaignVar('unitXP', unitXP);
+            gs.setCampaignVar('unitLevelsSeen', unitLevelsSeen);
         }
 
         this.finalStats = {
@@ -1445,6 +1474,72 @@ export class TacticsScene extends BaseScene {
         });
     }
 
+    isVictimDesiredForNpcAttack(attacker, victim) {
+        if (!attacker || !victim) return false;
+        if (attacker.faction === 'enemy') {
+            return (victim.faction === 'player' || victim.faction === 'allied') && !victim.caged;
+        }
+        return victim.faction === 'enemy' || (victim.faction === 'allied' && victim.caged);
+    }
+
+    isVictimFriendlyForNpcAttack(attacker, victim) {
+        if (!attacker || !victim) return false;
+        if (attacker.faction === 'enemy') return victim.faction === 'enemy';
+        return victim.faction === 'player' || victim.faction === 'allied';
+    }
+
+    evaluateNpcAttackAt(unit, attackKey, fromR, fromQ, targetR, targetQ) {
+        if (!unit) return { score: Number.NEGATIVE_INFINITY, desiredHits: 0, friendlyHits: 0 };
+
+        const original = { r: unit.r, q: unit.q, flip: unit.flip };
+        let best = { score: Number.NEGATIVE_INFINITY, desiredHits: 0, friendlyHits: 0 };
+        const flipsToTry = unit.onHorse ? [false, true] : [unit.flip];
+
+        for (const flip of flipsToTry) {
+            unit.r = fromR;
+            unit.q = fromQ;
+            unit.flip = flip;
+
+            if (unit.onHorse && !this.getMountedHeadCellFor(unit, fromR, fromQ)) continue;
+
+            const affected = this.getAffectedTiles(unit, attackKey, targetR, targetQ);
+            const hitVictims = new Set();
+            let desiredHits = 0;
+            let friendlyHits = 0;
+            let structureHits = 0;
+
+            for (const t of affected) {
+                const cell = this.tacticsMap.getCell(t.r, t.q);
+                if (!cell) continue;
+
+                const isDestructible = (cell.terrain.includes('house') || cell.terrain.includes('ice')) &&
+                    !cell.terrain.includes('destroyed') && !cell.terrain.includes('broken');
+                if (isDestructible) structureHits++;
+
+                const victim = this.getRiderUnitFromCell(cell);
+                if (!victim || hitVictims.has(victim)) continue;
+                hitVictims.add(victim);
+
+                if (this.isVictimDesiredForNpcAttack(unit, victim)) desiredHits++;
+                else if (this.isVictimFriendlyForNpcAttack(unit, victim)) friendlyHits++;
+            }
+
+            const friendlyPenalty = unit.faction === 'allied' ? 8 : 3;
+            let score = desiredHits * 6 - friendlyHits * friendlyPenalty;
+            if (unit.faction === 'enemy') score += structureHits * 1.5;
+            if (desiredHits === 0 && friendlyHits > 0) score -= 4;
+
+            if (score > best.score) {
+                best = { score, desiredHits, friendlyHits };
+            }
+        }
+
+        unit.r = original.r;
+        unit.q = original.q;
+        unit.flip = original.flip;
+        return best;
+    }
+
     moveNpcAndTelegraph(unit, onComplete) {
         const attackKey = unit.attacks[0] || 'stab';
         const attackConfig = ATTACKS[attackKey] || ATTACKS.stab;
@@ -1472,6 +1567,7 @@ export class TacticsScene extends BaseScene {
         
         let bestTile = { r: unit.r, q: unit.q };
         let chosenTargetPos = null;
+        let chosenTargetId = null;
 
         // Filter reachable hexes to those that aren't occupied (can't end on a unit)
         const validDestinations = new Map();
@@ -1528,36 +1624,23 @@ export class TacticsScene extends BaseScene {
         });
 
         if (unitAttackTiles.length > 0) {
-            // Rank potential attacks by distance, dog-piling, and type
+            // Rank attacks by AOE value first (maximize desired hits, minimize friendly fire),
+            // then apply softer distance/dog-pile preferences.
             const isRanged = maxRange > 1;
-            
-            unitAttackTiles.sort((a, b) => {
-                const distA = this.tacticsMap.getDistance(a.r, a.q, a.target.r, a.target.q);
-                const distB = this.tacticsMap.getDistance(b.r, b.q, b.target.r, b.target.q);
-                
-                // Base score: Melee prefers close, Ranged prefers far
-                let scoreA = isRanged ? distA : (10 - distA);
-                let scoreB = isRanged ? distB : (10 - distB);
-                
-                // Randomized jitter (0-2 points)
-                scoreA += Math.random() * 2;
-                scoreB += Math.random() * 2;
-                
-                // Penalty for dog-piling: Check if another unit of same faction already targeting this unit
-                const targetersA = this.units.filter(u => u !== unit && u.faction === unit.faction && u.intent && u.intent.targetId === a.target.id).length;
-                const targetersB = this.units.filter(u => u !== unit && u.faction === unit.faction && u.intent && u.intent.targetId === b.target.id).length;
-                
-                scoreA -= targetersA * 3;
-                scoreB -= targetersB * 3;
-
-                // Priority for Dong Zhuo for enemies (but with the dog-piling penalty it should balance out)
-                if (unit.faction === 'enemy' && a.target.id === 'dongzhuo') scoreA += 4;
-                if (unit.faction === 'enemy' && b.target.id === 'dongzhuo') scoreB += 4;
-
-                return scoreB - scoreA;
+            const scored = unitAttackTiles.map(c => {
+                const aoe = this.evaluateNpcAttackAt(unit, attackKey, c.r, c.q, c.target.r, c.target.q);
+                const dist = this.tacticsMap.getDistance(c.r, c.q, c.target.r, c.target.q);
+                let score = aoe.score + (isRanged ? dist * 0.5 : (10 - dist) * 0.5);
+                const targeters = this.units.filter(u => u !== unit && u.faction === unit.faction && u.intent && u.intent.targetId === c.target.id).length;
+                score -= targeters * 2.5;
+                if (unit.faction === 'enemy' && c.target.id === 'dongzhuo') score += 3;
+                score += Math.random() * 1.5;
+                return { ...c, _score: score };
             });
-            bestTile = unitAttackTiles[0];
+            scored.sort((a, b) => b._score - a._score);
+            bestTile = scored[0];
             chosenTargetPos = { r: bestTile.target.r, q: bestTile.target.q };
+            chosenTargetId = bestTile.target.id || null;
         } 
         // 2. If no units reachable, check if enemy can reach a house
         else if (unit.faction === 'enemy') {
@@ -1577,6 +1660,7 @@ export class TacticsScene extends BaseScene {
             if (houseAttackTiles.length > 0) {
                 bestTile = houseAttackTiles[0];
                 chosenTargetPos = { r: bestTile.target.r, q: bestTile.target.q };
+                chosenTargetId = null;
             }
         }
 
@@ -1757,7 +1841,7 @@ export class TacticsScene extends BaseScene {
             }
         });
         
-        const targetUnit = unitTargets.find(t => {
+        const candidates = unitTargets.filter(t => {
             const origins = this.getAttackOrigins(unit);
             return origins.some(o => {
                 const dist = this.tacticsMap.getDistance(o.r, o.q, t.r, t.q);
@@ -1766,14 +1850,33 @@ export class TacticsScene extends BaseScene {
         });
         
         let targetPos = null;
-        if (targetUnit) {
-            targetPos = { r: targetUnit.r, q: targetUnit.q };
+        let targetId = null;
+        if (candidates.length > 0) {
+            const isRanged = maxRange > 1;
+            const scored = candidates.map(t => {
+                const aoe = this.evaluateNpcAttackAt(unit, attackKey, unit.r, unit.q, t.r, t.q);
+                const origins = this.getAttackOrigins(unit);
+                let dist = Infinity;
+                origins.forEach(o => {
+                    dist = Math.min(dist, this.tacticsMap.getDistance(o.r, o.q, t.r, t.q));
+                });
+                let score = aoe.score + (isRanged ? dist * 0.5 : (10 - dist) * 0.5);
+                const targeters = this.units.filter(u => u !== unit && u.faction === unit.faction && u.intent && u.intent.targetId === t.id).length;
+                score -= targeters * 2.5;
+                if (unit.faction === 'enemy' && t.id === 'dongzhuo') score += 3;
+                score += Math.random() * 1.0;
+                return { t, score };
+            }).sort((a, b) => b.score - a.score);
+
+            targetPos = { r: scored[0].t.r, q: scored[0].t.q };
+            targetId = scored[0].t.id || null;
         } else if (unit.faction === 'enemy') {
             // Enemies look for adjacent houses if no units are nearby
             const neighbors = this.tacticsMap.getNeighbors(unit.r, unit.q);
             const adjacentHouse = neighbors.find(n => n.terrain.includes('house') && !n.terrain.includes('destroyed'));
             if (adjacentHouse) {
                 targetPos = { r: adjacentHouse.r, q: adjacentHouse.q };
+                targetId = null;
             }
         }
 
@@ -1805,7 +1908,8 @@ export class TacticsScene extends BaseScene {
                 relX: toCube.x - fromCube.x,
                 relY: toCube.y - fromCube.y,
                 relZ: toCube.z - fromCube.z,
-                attackKey 
+                attackKey,
+                targetId: targetId || null
             };
         } else {
             unit.intent = null;
@@ -4186,8 +4290,9 @@ export class TacticsScene extends BaseScene {
         const dt = timestamp - (this.lastTime || timestamp);
             this.lastTime = timestamp;
 
-        // Periodic state saving for crash recovery (only for campaign battles)
-        if (!this.isCustomBattle && timestamp - this.lastSaveTime > this.saveInterval) {
+        // Periodic state saving for crash recovery (only for active campaign battles).
+        // Never re-save during/after game over or victory-dialogue transitions.
+        if (!this.isCustom && !this.isGameOver && !this.isVictoryDialogueActive && timestamp - this.lastSaveTime > this.saveInterval) {
             this.saveBattleState();
             this.lastSaveTime = timestamp;
         }
@@ -4525,15 +4630,12 @@ export class TacticsScene extends BaseScene {
         const attack = ATTACKS[attackKey];
 
         if (attackKey.startsWith('serpent_spear')) {
-            // Hits the target hex and all intermediate hexes in a line
-            affected.push({ r: targetR, q: targetQ });
-            
-            // Check for intermediate hexes
-            for (let d = 1; d < dist; d++) {
-                const intermediate = this.getIntermediateHex(origin.r, origin.q, targetR, targetQ, d);
-                if (intermediate) {
-                    affected.push(intermediate);
-                }
+            // Hits every hex on the line from origin to target (excluding origin).
+            // Use the map's canonical line helper to avoid occasional interpolation drift.
+            const line = this.tacticsMap.getLine(origin.r, origin.q, targetR, targetQ) || [];
+            for (let i = 1; i < line.length; i++) {
+                const t = line[i];
+                affected.push({ r: t.r, q: t.q });
             }
         } else if (attackKey.startsWith('green_dragon_slash') || attackKey === 'tyrant_sweep') {
             // 3-hex arc.
@@ -5310,12 +5412,8 @@ export class TacticsScene extends BaseScene {
 
     drawChoiceUI() {
         const { ctx, canvas } = this.manager;
-        const activeScript = this.getActiveDialogueScript();
-        const activeStep = activeScript && activeScript[this.dialogueStep];
-        const narrativeChoiceOptions = activeStep && activeStep.type === 'choice' && Array.isArray(activeStep.options)
-            ? activeStep.options
-            : null;
-        const isNarrativeChoice = !!(narrativeChoiceOptions && narrativeChoiceOptions.length > 0);
+        const choiceState = this.getActiveChoiceState();
+        const isNarrativeChoice = !!(choiceState && choiceState.kind === 'narrative');
         
         // Semi-transparent overlay - taller to fit wrapped text
         ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
@@ -5332,7 +5430,7 @@ export class TacticsScene extends BaseScene {
         });
         
         const options = isNarrativeChoice
-            ? narrativeChoiceOptions.map((opt, i) => {
+            ? choiceState.options.map((opt, i) => {
                 const displayText = getLocalizedText(opt.buttonText || opt.text || { en: `Choice ${i + 1}`, zh: `选项 ${i + 1}` });
                 return {
                     lines: this.wrapText(ctx, displayText, 94, '8px Silkscreen').slice(0, 2),
@@ -5340,10 +5438,7 @@ export class TacticsScene extends BaseScene {
                     hoverColor: '#ffffff'
                 };
             })
-            : [
-                { lines: ["Stay your hand,", "brother!"], color: '#88ff88', hoverColor: '#aaffaa' },
-                { lines: ["Free him,", "brothers!"], color: '#ff8888', hoverColor: '#ffaaaa' }
-            ];
+            : ((choiceState && choiceState.options) ? choiceState.options : []);
         
         const optionWidth = 100;
         const optionHeight = 36;
@@ -5585,10 +5680,14 @@ export class TacticsScene extends BaseScene {
     }
 
     activateChoiceTarget(choiceIndex) {
-        const activeScript = this.getActiveDialogueScript();
-        const activeStep = activeScript && activeScript[this.dialogueStep];
-        if (activeStep && activeStep.type === 'choice' && Array.isArray(activeStep.options)) {
-            const opt = activeStep.options[choiceIndex];
+        const choiceState = this.getActiveChoiceState();
+        if (!choiceState || !Array.isArray(choiceState.options) || choiceIndex < 0 || choiceIndex >= choiceState.options.length) {
+            return;
+        }
+
+        if (choiceState.kind === 'narrative') {
+            const activeStep = choiceState.step;
+            const opt = choiceState.options[choiceIndex];
             if (!opt) return;
             const choiceDialogue = {
                 type: 'dialogue',
@@ -5598,7 +5697,7 @@ export class TacticsScene extends BaseScene {
                 voiceId: opt.voiceId
             };
             const resultSteps = Array.isArray(opt.result) ? this.cloneScriptSteps(opt.result) : [];
-            activeScript.splice(this.dialogueStep + 1, 0, choiceDialogue, ...resultSteps);
+            choiceState.script.splice(this.dialogueStep + 1, 0, choiceDialogue, ...resultSteps);
             this.isChoiceActive = false;
             this.choiceHovered = -1;
             this.choiceRects = [];

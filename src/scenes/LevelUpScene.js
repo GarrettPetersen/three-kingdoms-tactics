@@ -38,10 +38,16 @@ export class LevelUpScene extends BaseScene {
 
     checkPromotion() {
         const current = this.levelUps[this.currentIndex];
-        if (current && current.id.startsWith('ally') && current.newLevel === 2) {
+        if (current && current.id.startsWith('ally') && current.newLevel >= 2) {
             const gs = this.manager.gameState;
             const classes = gs.getCampaignVar('unitClasses') || {};
-            if (!classes[current.id] || classes[current.id] === 'soldier') {
+            // Normal flow: prompt on level 2.
+            // Recovery flow: if class is still missing at higher levels, prompt again.
+            if (current.newLevel === 2) {
+                if (!classes[current.id] || classes[current.id] === 'soldier') {
+                    this.isPromoting = true;
+                }
+            } else if (!classes[current.id]) {
                 this.isPromoting = true;
             }
         }
@@ -260,6 +266,15 @@ export class LevelUpScene extends BaseScene {
     }
 
     next() {
+        const current = this.levelUps[this.currentIndex];
+        if (current) {
+            const gs = this.manager.gameState;
+            const seen = gs.getCampaignVar('unitLevelsSeen') || {};
+            const prevSeen = (typeof seen[current.id] === 'number') ? seen[current.id] : 1;
+            seen[current.id] = Math.max(prevSeen, current.newLevel || prevSeen);
+            gs.setCampaignVar('unitLevelsSeen', seen);
+        }
+
         this.currentIndex++;
         if (this.currentIndex >= this.levelUps.length) {
             if (this.onComplete) {

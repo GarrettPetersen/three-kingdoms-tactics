@@ -106,7 +106,7 @@ export class GameState {
     resolveContinueTarget(options = {}) {
         const {
             validateNarrativeState = () => true,
-            excludedScenes = ['title', 'custom_battle']
+            excludedScenes = ['title', 'custom_battle', 'summary', 'levelup', 'recovery']
         } = options;
 
         const campaignId = this.getCurrentCampaign();
@@ -114,6 +114,11 @@ export class GameState {
         const narrativeState = this.getSceneState('narrative');
         const battleState = this.getSceneState('tactics');
         const mapState = this.getSceneState('map');
+
+        // Completed campaign stories should resume at story selection, not stale in-campaign states.
+        if (this.isCampaignComplete(campaignId)) {
+            return { scene: 'campaign_selection', params: {} };
+        }
 
         const hasValidNarrativeState = !!(narrativeState && validateNarrativeState(narrativeState));
         if (narrativeState && !hasValidNarrativeState) {
@@ -151,13 +156,17 @@ export class GameState {
         if (resolvedLastScene === 'narrative' && !hasValidNarrativeState) {
             resolvedLastScene = campaignId ? 'map' : 'campaign_selection';
         }
+        if (resolvedLastScene === 'tactics' && !battleState) {
+            // Never "continue" into a fresh battle when no tactics save exists.
+            resolvedLastScene = campaignId ? 'map' : 'campaign_selection';
+        }
 
         const sceneState = this.getSceneState(resolvedLastScene);
         if (sceneState) {
             return { scene: resolvedLastScene, params: { isResume: true } };
         }
 
-        return { scene: resolvedLastScene, params: { campaignId, isResume: true } };
+        return { scene: resolvedLastScene, params: { campaignId } };
     }
 
     validateAndRepairInvariants(targetScene = null, targetParams = {}) {
@@ -316,6 +325,21 @@ export class GameState {
 
     hasMilestone(id) {
         return (this.data.progress?.milestones || []).includes(id);
+    }
+
+    isCampaignComplete(campaignId = null) {
+        const id = campaignId || this.getCurrentCampaign();
+        if (!id) return false;
+
+        // Generic naming convention for future campaigns.
+        if (this.hasMilestone(`${id}_complete`)) return true;
+
+        // Legacy/explicit completion milestones.
+        const legacyCompletionMilestone = {
+            liubei: 'chapter1_complete'
+        };
+        const legacyKey = legacyCompletionMilestone[id];
+        return !!(legacyKey && this.hasMilestone(legacyKey));
     }
 
     hasSave() {
