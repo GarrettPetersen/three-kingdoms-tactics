@@ -197,7 +197,7 @@ export class RecoveryScene extends BaseScene {
             this.manager.switchTo('tactics', { battleId: 'qingzhou_cleanup' });
         } else if (this.isCustom) {
             this.manager.switchTo('title');
-        } else if (this.battleId === 'daxing' && this.manager.gameState.get('battleState')?.won !== false) {
+        } else if (this.battleId === 'daxing' && this.manager.gameState.getSceneState('tactics')?.won !== false) {
             // Note: BattleSummary handles the Daxing messenger narrative, but if we came straight here...
             // Actually, BattleSummary should be the one deciding where to go after this.
             // We just need to go to map or narrative as a fallback.

@@ -56,7 +56,7 @@ export class CampaignSelectionScene extends BaseScene {
         const liubei = this.campaigns.find(c => c.id === 'liubei');
         if (liubei) {
             // Check progress
-            liubei.isInProgress = (gs.get('currentCampaign') === 'liubei') || gs.hasMilestone('prologue_complete');
+            liubei.isInProgress = (gs.getCurrentCampaign() === 'liubei') || gs.hasMilestone('prologue_complete');
             
             if (isComplete) {
                 liubei.isComplete = true;
@@ -167,8 +167,10 @@ export class CampaignSelectionScene extends BaseScene {
 
         // 2. CHARACTER ICONS ON MAP
         const frame = Math.floor(Date.now() / 150) % 4;
+        const currentNavTarget = this.getCurrentNavTarget();
         this.campaigns.forEach((c, i) => {
             const isSelected = this.selectedIndex === i;
+            const isFocusedByNav = !!(currentNavTarget && currentNavTarget.type === 'campaign' && currentNavTarget.index === i);
             const charImg = assets.getImage(c.imgKey);
             
             if (charImg) {
@@ -186,6 +188,33 @@ export class CampaignSelectionScene extends BaseScene {
                     ctx.beginPath();
                     ctx.arc(c.x, c.y, 10 + pulse * 5, 0, Math.PI * 2);
                     ctx.fill();
+                }
+
+                // Strong indicator for keyboard focus on campaign targets.
+                if (isFocusedByNav) {
+                    const pulse = Math.abs(Math.sin(Date.now() / 260));
+                    const ringRadius = 16 + pulse * 2;
+                    ctx.strokeStyle = c.locked ? 'rgba(140, 140, 140, 0.95)' : 'rgba(255, 215, 0, 0.95)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(c.x, c.y, ringRadius, 0, Math.PI * 2);
+                    ctx.stroke();
+
+                    // Crosshair ticks help readability even when color contrast is low.
+                    const tickLen = 4;
+                    const tickGap = ringRadius + 1;
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(c.x - tickGap - tickLen, c.y);
+                    ctx.lineTo(c.x - tickGap, c.y);
+                    ctx.moveTo(c.x + tickGap, c.y);
+                    ctx.lineTo(c.x + tickGap + tickLen, c.y);
+                    ctx.moveTo(c.x, c.y - tickGap - tickLen);
+                    ctx.lineTo(c.x, c.y - tickGap);
+                    ctx.moveTo(c.x, c.y + tickGap);
+                    ctx.lineTo(c.x, c.y + tickGap + tickLen);
+                    ctx.stroke();
                 }
 
                 // If complete, no idle animation
@@ -265,7 +294,8 @@ export class CampaignSelectionScene extends BaseScene {
                 const promptText = selected.isInProgress 
                     ? getLocalizedText(UI_TEXT['CLICK CHARACTER TO CONTINUE'])
                     : getLocalizedText(UI_TEXT['CLICK CHARACTER TO BEGIN']);
-                this.drawPixelText(ctx, promptText, bx + boxW / 2, bottomTextY, { color: '#eee', font: '8px Tiny5', align: 'center' });
+                const keyboardHint = currentNavTarget && currentNavTarget.type === 'campaign' ? ' [ENTER]' : '';
+                this.drawPixelText(ctx, `${promptText}${keyboardHint}`, bx + boxW / 2, bottomTextY, { color: '#eee', font: '8px Tiny5', align: 'center' });
                 ctx.globalAlpha = 1.0;
             }
         }
@@ -275,8 +305,8 @@ export class CampaignSelectionScene extends BaseScene {
         
         // Back Button
         const backRect = { x: canvas.width - 55, y: 5, w: 50, h: 14 };
-        const navTarget = this.getCurrentNavTarget();
-        const isBackFocused = navTarget && navTarget.type === 'back';
+        const backNavTarget = this.getCurrentNavTarget();
+        const isBackFocused = backNavTarget && backNavTarget.type === 'back';
         ctx.fillStyle = 'rgba(60, 0, 0, 0.8)';
         ctx.fillRect(backRect.x, backRect.y, backRect.w, backRect.h);
         ctx.strokeStyle = isBackFocused ? '#ffd700' : '#8b0000';
@@ -406,7 +436,7 @@ export class CampaignSelectionScene extends BaseScene {
                 return;
             }
             const gs = this.manager.gameState;
-            gs.set('currentCampaign', selected.id);
+            gs.setCurrentCampaign(selected.id);
             // Ensure party starts at Zhuo by default for a fresh run
             gs.setCampaignVar('partyX', 190, selected.id);
             gs.setCampaignVar('partyY', 70, selected.id);
@@ -417,9 +447,9 @@ export class CampaignSelectionScene extends BaseScene {
                 gs.hasMilestone('qingzhou_siege') ||
                 gs.hasMilestone('qingzhou_cleanup') ||
                 gs.hasMilestone('guangzong_encounter') ||
-                !!gs.get('mapState') ||
-                !!gs.get('battleState') ||
-                !!gs.get('narrativeState');
+                !!gs.getSceneState('map') ||
+                !!gs.getSceneState('tactics') ||
+                !!gs.getSceneState('narrative');
 
             // Fresh start: skip the map "march to Zhuo" and jump straight into the first battle.
             if (selected.id === 'liubei' && !hasProgress) {
@@ -483,7 +513,7 @@ export class CampaignSelectionScene extends BaseScene {
                         this.addMessage(getLocalizedText(UI_TEXT['This story is complete.']), '#ff4444');
                     } else {
                         const gs = this.manager.gameState;
-                        gs.set('currentCampaign', c.id);
+                        gs.setCurrentCampaign(c.id);
                         gs.setCampaignVar('partyX', 190, c.id);
                         gs.setCampaignVar('partyY', 70, c.id);
 
@@ -493,9 +523,9 @@ export class CampaignSelectionScene extends BaseScene {
                             gs.hasMilestone('qingzhou_siege') ||
                             gs.hasMilestone('qingzhou_cleanup') ||
                             gs.hasMilestone('guangzong_encounter') ||
-                            !!gs.get('mapState') ||
-                            !!gs.get('battleState') ||
-                            !!gs.get('narrativeState');
+                            !!gs.getSceneState('map') ||
+                            !!gs.getSceneState('tactics') ||
+                            !!gs.getSceneState('narrative');
 
                         if (c.id === 'liubei' && !hasProgress) {
                             this.manager.switchTo('tactics', { battleId: 'yellow_turban_rout' });

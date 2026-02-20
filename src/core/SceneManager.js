@@ -37,6 +37,8 @@ export class SceneManager {
     }
 
     switchTo(name, params = {}) {
+        this.gameState.validateAndRepairInvariants(name, params);
+
         // Excluded scenes that should never be saved as lastScene
         // campaign_selection is now allowed so users can continue from there
         const excludedScenes = ['title', 'custom_battle'];
@@ -57,10 +59,10 @@ export class SceneManager {
             if (this.currentSceneKey === 'tactics') {
                 const tacticsScene = this.scenes['tactics'];
                 if (tacticsScene && !tacticsScene.isCustom) {
-                    this.gameState.set('lastScene', this.currentSceneKey);
+                    this.gameState.setLastScene(this.currentSceneKey);
                 }
             } else {
-                this.gameState.set('lastScene', this.currentSceneKey);
+                this.gameState.setLastScene(this.currentSceneKey);
             }
         }
         

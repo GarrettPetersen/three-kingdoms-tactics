@@ -198,6 +198,35 @@ export class BaseScene {
         return graph[currentIndex][dirKey];
     }
 
+    navigateTargetIndex(currentIndex, targets, dirX, dirY, options = {}) {
+        if (!targets || targets.length === 0) return -1;
+        if (currentIndex < 0 || currentIndex >= targets.length) return 0;
+        let nextIndex = this.findDirectionalTargetIndex(currentIndex, targets, dirX, dirY, options);
+        if (nextIndex === -1 && targets.length > 0) {
+            nextIndex = (currentIndex + 1) % targets.length;
+        }
+        return nextIndex;
+    }
+
+    activateNavigationTarget(target, handlers = {}, fallback = null) {
+        if (!target) return false;
+        const handler = handlers[target.type];
+        if (typeof handler === 'function') {
+            handler(target);
+            return true;
+        }
+        if (typeof fallback === 'function') {
+            fallback(target);
+            return true;
+        }
+        return false;
+    }
+
+    activateNavigationIndex(targets, index, handlers = {}, fallback = null) {
+        if (!targets || index < 0 || index >= targets.length) return false;
+        return this.activateNavigationTarget(targets[index], handlers, fallback);
+    }
+
     drawCharacter(ctx, img, action, frame, x, y, options = {}) {
         if (!img) return;
         const { flip = false, sinkOffset = 0, isSubmerged = false, tint = null, hideBottom = 0, scale = 1.0, isProp = false } = options;
@@ -405,6 +434,96 @@ export class BaseScene {
         hctx.drawImage(img, srcX + localX, srcY + localY, 1, 1, 0, 0, 1, 1);
         const alpha = hctx.getImageData(0, 0, 1, 1).data[3];
         return alpha > alphaThreshold;
+    }
+
+    drawCharacterPixelOutline(ctx, img, action, frame, x, y, options = {}) {
+        if (!img) return;
+        const { flip = false, sinkOffset = 0, color = '#ffd700', alphaThreshold = 10 } = options;
+        const sourceSize = 72;
+        const feetY = -44;
+
+        const anim = ANIMATIONS[action] || ANIMATIONS.standby;
+        const f = Math.floor(frame) % anim.length;
+        const frameIdx = anim.start + f;
+        const sx = (frameIdx % 8) * sourceSize;
+        const sy = Math.floor(frameIdx / 8) * sourceSize;
+
+        if (!this._outlineSrcCanvas) {
+            this._outlineSrcCanvas = document.createElement('canvas');
+            this._outlineSrcCanvas.width = sourceSize;
+            this._outlineSrcCanvas.height = sourceSize;
+            this._outlineSrcCtx = this._outlineSrcCanvas.getContext('2d', { willReadFrequently: true });
+            this._outlineDstCanvas = document.createElement('canvas');
+            this._outlineDstCanvas.width = sourceSize;
+            this._outlineDstCanvas.height = sourceSize;
+            this._outlineDstCtx = this._outlineDstCanvas.getContext('2d');
+        }
+
+        const srcCtx = this._outlineSrcCtx;
+        const dstCtx = this._outlineDstCtx;
+        srcCtx.clearRect(0, 0, sourceSize, sourceSize);
+        dstCtx.clearRect(0, 0, sourceSize, sourceSize);
+        srcCtx.drawImage(img, sx, sy, sourceSize, sourceSize, 0, 0, sourceSize, sourceSize);
+
+        const srcData = srcCtx.getImageData(0, 0, sourceSize, sourceSize);
+        const outData = dstCtx.createImageData(sourceSize, sourceSize);
+        const rgb = this._hexToRgb(color);
+        const w = sourceSize;
+        const h = sourceSize;
+
+        for (let py = 0; py < h; py++) {
+            for (let px = 0; px < w; px++) {
+                const idx = (py * w + px) * 4;
+                const a = srcData.data[idx + 3];
+                if (a > alphaThreshold) continue;
+
+                let edge = false;
+                for (let oy = -1; oy <= 1 && !edge; oy++) {
+                    for (let ox = -1; ox <= 1; ox++) {
+                        if (ox === 0 && oy === 0) continue;
+                        const nx = px + ox;
+                        const ny = py + oy;
+                        if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
+                        const nIdx = (ny * w + nx) * 4;
+                        if (srcData.data[nIdx + 3] > alphaThreshold) {
+                            edge = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (edge) {
+                    outData.data[idx] = rgb.r;
+                    outData.data[idx + 1] = rgb.g;
+                    outData.data[idx + 2] = rgb.b;
+                    outData.data[idx + 3] = 255;
+                }
+            }
+        }
+
+        dstCtx.putImageData(outData, 0, 0);
+
+        ctx.save();
+        ctx.translate(Math.floor(x), Math.floor(y + sinkOffset));
+        if (flip) ctx.scale(-1, 1);
+        ctx.drawImage(this._outlineDstCanvas, -36, feetY, sourceSize, sourceSize);
+        ctx.restore();
+    }
+
+    _hexToRgb(hex) {
+        if (!hex || typeof hex !== 'string' || !hex.startsWith('#')) {
+            return { r: 255, g: 215, b: 0 };
+        }
+        const clean = hex.slice(1);
+        const expanded = clean.length === 3
+            ? `${clean[0]}${clean[0]}${clean[1]}${clean[1]}${clean[2]}${clean[2]}`
+            : clean;
+        if (expanded.length !== 6) return { r: 255, g: 215, b: 0 };
+        return {
+            r: parseInt(expanded.slice(0, 2), 16),
+            g: parseInt(expanded.slice(2, 4), 16),
+            b: parseInt(expanded.slice(4, 6), 16)
+        };
     }
 
     wrapText(ctx, text, maxWidth, font = '8px Tiny5') {

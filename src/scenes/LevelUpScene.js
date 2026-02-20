@@ -272,7 +272,7 @@ export class LevelUpScene extends BaseScene {
                 this.manager.switchTo('tactics', { battleId: 'qingzhou_cleanup' });
             } else if (this.isCustom) {
                 this.manager.switchTo('title');
-            } else if (this.manager.gameState.get('currentBattleId') === 'daxing') {
+            } else if (this.manager.gameState.getCurrentBattleId() === 'daxing') {
                 this.manager.switchTo('narrative', {
                     scriptId: 'daxing_messenger',
                     onComplete: () => {
@@ -280,7 +280,7 @@ export class LevelUpScene extends BaseScene {
                     }
                 });
             } else {
-                this.manager.switchTo('map', { afterEvent: this.manager.gameState.get('currentBattleId') });
+                this.manager.switchTo('map', { afterEvent: this.manager.gameState.getCurrentBattleId() });
             }
         } else {
             this.timer = 0;

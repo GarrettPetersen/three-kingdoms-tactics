@@ -39,8 +39,8 @@ export class NarrativeScene extends BaseScene {
     enter(params) {
         this.invalidScriptRecoveryScheduled = false;
         const gs = this.manager.gameState;
-        const isResume = params.isResume && gs.get('narrativeState');
-        const savedState = isResume ? gs.get('narrativeState') : null;
+        const isResume = params.isResume && gs.getSceneState('narrative');
+        const savedState = isResume ? gs.getSceneState('narrative') : null;
         
         if (!isResume) {
             // Only set music on initial entry, not on resume (resume will restore it)
@@ -70,9 +70,9 @@ export class NarrativeScene extends BaseScene {
                     scriptParamLength: params.script ? params.script.length : 0
                 });
                 // Clear stale narrative state and recover to a safe scene.
-                gs.set('narrativeState', null);
+                gs.clearSceneState('narrative');
                 setTimeout(() => {
-                    const campaignId = gs.get('currentCampaign');
+                    const campaignId = gs.getCurrentCampaign();
                     if (campaignId) {
                         this.manager.switchTo('map', { campaignId });
                     } else {
@@ -118,7 +118,7 @@ export class NarrativeScene extends BaseScene {
                 availableScripts: Object.keys(NARRATIVE_SCRIPTS)
             });
             // Clear the invalid narrative state and switch to map
-            this.manager.gameState.set('narrativeState', null);
+            this.manager.gameState.clearSceneState('narrative');
             this.script = [];
             setTimeout(() => {
                 this.manager.switchTo('map');
@@ -139,7 +139,7 @@ export class NarrativeScene extends BaseScene {
                 availableScripts: Object.keys(NARRATIVE_SCRIPTS)
             });
             // Clear the invalid narrative state and switch to map
-            this.manager.gameState.set('narrativeState', null);
+            this.manager.gameState.clearSceneState('narrative');
             this.script = [];
             // Switch to map as a safe fallback
             setTimeout(() => {
@@ -157,7 +157,7 @@ export class NarrativeScene extends BaseScene {
                 scriptLength: this.script.length
             });
             // Clear the narrative state
-            this.manager.gameState.set('narrativeState', null);
+            this.manager.gameState.clearSceneState('narrative');
             
             // Try to transition to the next scene if we have that info
             if (state.nextScene) {
@@ -697,8 +697,8 @@ export class NarrativeScene extends BaseScene {
 
         if (this.currentStep >= this.script.length) {
             // Clear narrative state when script completes
-            const savedState = this.manager.gameState.get('narrativeState');
-            this.manager.gameState.set('narrativeState', null);
+            const savedState = this.manager.gameState.getSceneState('narrative');
+            this.manager.gameState.clearSceneState('narrative');
             
             // Use onComplete if available, otherwise use saved nextScene info
             if (this.onComplete) {
@@ -736,7 +736,7 @@ export class NarrativeScene extends BaseScene {
                 currentStep: this.currentStep
             });
             // Clear any existing invalid state
-            gs.set('narrativeState', null);
+            gs.clearSceneState('narrative');
             return;
         }
         
@@ -748,7 +748,7 @@ export class NarrativeScene extends BaseScene {
                 scriptLength: this.script.length
             });
             // Clear any existing invalid state
-            gs.set('narrativeState', null);
+            gs.clearSceneState('narrative');
             return;
         }
         
@@ -781,7 +781,8 @@ export class NarrativeScene extends BaseScene {
             insertedStepsCount: this.insertedStepsCount || 0,
             insertedStepsStartIndex: this.insertedStepsStartIndex !== undefined ? this.insertedStepsStartIndex : -1
         };
-        gs.set('narrativeState', state);
+        gs.setSceneState('narrative', state);
+        gs.setLastScene('narrative');
     }
 
     update(timestamp) {
@@ -970,9 +971,9 @@ export class NarrativeScene extends BaseScene {
             if (!this.invalidScriptRecoveryScheduled) {
                 this.invalidScriptRecoveryScheduled = true;
                 const gs = this.manager.gameState;
-                gs.set('narrativeState', null);
+                gs.clearSceneState('narrative');
                 setTimeout(() => {
-                    const campaignId = gs.get('currentCampaign');
+                    const campaignId = gs.getCurrentCampaign();
                     if (campaignId) {
                         this.manager.switchTo('map', { campaignId });
                     } else {
@@ -1031,6 +1032,7 @@ export class NarrativeScene extends BaseScene {
         }
 
         const sortedActors = Object.values(this.actors).sort((a, b) => a.y - b.y);
+        let hoveredActorOutline = null;
         sortedActors.forEach(a => {
             if (!a.img && a.imgKey) {
                 a.img = assets.getImage(a.imgKey);
@@ -1047,15 +1049,27 @@ export class NarrativeScene extends BaseScene {
             this.drawCharacter(ctx, a.img, a.action, a.frame, actorScreenX, actorScreenY, { flip: a.flip });
             
             if (isHovered) {
-                // Subtle focus box so controller navigation has clear visual feedback.
-                ctx.save();
-                ctx.strokeStyle = '#ffd700';
-                ctx.lineWidth = 1;
-                ctx.globalAlpha = 0.65;
-                ctx.strokeRect(Math.floor(actorScreenX - 12) + 0.5, Math.floor(actorScreenY - 36) + 0.5, 24, 36);
-                ctx.restore();
+                hoveredActorOutline = {
+                    img: a.img,
+                    action: a.action,
+                    frame: a.frame,
+                    x: actorScreenX,
+                    y: actorScreenY,
+                    flip: a.flip
+                };
             }
         });
+        if (hoveredActorOutline) {
+            this.drawCharacterPixelOutline(
+                ctx,
+                hoveredActorOutline.img,
+                hoveredActorOutline.action,
+                hoveredActorOutline.frame,
+                hoveredActorOutline.x,
+                hoveredActorOutline.y,
+                { flip: hoveredActorOutline.flip, color: '#ffd700' }
+            );
+        }
         ctx.restore();
 
         // Fade overlay
@@ -1342,6 +1356,115 @@ export class NarrativeScene extends BaseScene {
         }
     }
 
+    activateInteractiveRegion(regionId) {
+        const region = this.clickableRegions?.[regionId];
+        if (!region) return false;
+        assets.playSound('ui_click', 0.5);
+        const clickHandler = region.onClick;
+
+        if (clickHandler) {
+            if (Array.isArray(clickHandler)) {
+                if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
+                    this.script.splice(this.insertedStepsStartIndex, this.insertedStepsCount);
+                    this.insertedStepsCount = 0;
+                    this.insertedStepsStartIndex = -1;
+                }
+                const insertIndex = this.currentStep + 1;
+                this.script.splice(insertIndex, 0, ...clickHandler);
+                for (let i = 0; i < clickHandler.length; i++) {
+                    if (this.script[insertIndex + i]) this.script[insertIndex + i]._isInserted = true;
+                }
+                this.insertedStepsCount = clickHandler.length;
+                this.insertedStepsStartIndex = insertIndex;
+            } else if (clickHandler.branch) {
+                if (clickHandler.return !== false) this.returnStack.push(this.currentStep);
+                const branchSteps = clickHandler.branch;
+                if (Array.isArray(branchSteps)) {
+                    const stepsToInsert = clickHandler.return !== false ? [...branchSteps, { type: 'command', action: 'return' }] : branchSteps;
+                    this.script.splice(this.currentStep + 1, 0, ...stepsToInsert);
+                } else if (typeof branchSteps === 'string') {
+                    this.script.splice(this.currentStep + 1, 0,
+                        { type: 'command', action: 'saveReturn' },
+                        { type: 'command', action: 'jump', label: branchSteps },
+                        { type: 'command', action: 'return' }
+                    );
+                }
+            } else if (typeof clickHandler === 'string') {
+                this.script.splice(this.currentStep + 1, 0,
+                    { type: 'command', action: 'saveReturn' },
+                    { type: 'command', action: 'jump', label: clickHandler },
+                    { type: 'command', action: 'return' }
+                );
+            }
+        }
+
+        const shouldAdvanceRegion = !!region.advanceOnClick || (!!region.promptStyle && !clickHandler);
+        if (shouldAdvanceRegion) {
+            if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
+                const lastInsertedIndex = this.insertedStepsStartIndex + this.insertedStepsCount - 1;
+                if (this.script[lastInsertedIndex]) this.script[lastInsertedIndex]._advanceAfterThis = true;
+            } else {
+                this.pendingInteractiveAdvance = true;
+            }
+        }
+        this.nextStep();
+        return true;
+    }
+
+    activateInteractiveActor(actorId) {
+        const actor = this.clickableActors?.[actorId];
+        if (!actor) return false;
+        assets.playSound('ui_click', 0.5);
+        const clickHandler = actor.onClick;
+
+        if (clickHandler) {
+            if (Array.isArray(clickHandler)) {
+                if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
+                    this.script.splice(this.insertedStepsStartIndex, this.insertedStepsCount);
+                    this.insertedStepsCount = 0;
+                    this.insertedStepsStartIndex = -1;
+                }
+                const insertIndex = this.currentStep + 1;
+                this.script.splice(insertIndex, 0, ...clickHandler);
+                for (let i = 0; i < clickHandler.length; i++) {
+                    if (this.script[insertIndex + i]) this.script[insertIndex + i]._isInserted = true;
+                }
+                this.insertedStepsCount = clickHandler.length;
+                this.insertedStepsStartIndex = insertIndex;
+            } else if (clickHandler.branch) {
+                if (clickHandler.return !== false) this.returnStack.push(this.currentStep);
+                const branchSteps = clickHandler.branch;
+                if (Array.isArray(branchSteps)) {
+                    const stepsToInsert = clickHandler.return !== false ? [...branchSteps, { type: 'command', action: 'return' }] : branchSteps;
+                    this.script.splice(this.currentStep + 1, 0, ...stepsToInsert);
+                } else if (typeof branchSteps === 'string') {
+                    this.script.splice(this.currentStep + 1, 0,
+                        { type: 'command', action: 'saveReturn' },
+                        { type: 'command', action: 'jump', label: branchSteps },
+                        { type: 'command', action: 'return' }
+                    );
+                }
+            } else if (typeof clickHandler === 'string') {
+                this.script.splice(this.currentStep + 1, 0,
+                    { type: 'command', action: 'saveReturn' },
+                    { type: 'command', action: 'jump', label: clickHandler },
+                    { type: 'command', action: 'return' }
+                );
+            }
+        }
+
+        if (actor.advanceOnClick) {
+            if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
+                const lastInsertedIndex = this.insertedStepsStartIndex + this.insertedStepsCount - 1;
+                if (this.script[lastInsertedIndex]) this.script[lastInsertedIndex]._advanceAfterThis = true;
+            } else {
+                this.pendingInteractiveAdvance = true;
+            }
+        }
+        this.nextStep();
+        return true;
+    }
+
     handleInput(e) {
         const step = this.script[this.currentStep];
         
@@ -1364,162 +1487,14 @@ export class NarrativeScene extends BaseScene {
                 // Check for clicks on clickable regions first (they're usually on top)
                 const clickedRegion = this.checkRegionClick(x, y);
                 if (clickedRegion && this.clickableRegions[clickedRegion]) {
-                    assets.playSound('ui_click', 0.5);
-                    const region = this.clickableRegions[clickedRegion];
-                    const clickHandler = region.onClick;
-                    
-                    // Handle branching: onClick can be script steps, branch object, or label name
-                    if (clickHandler) {
-                        if (Array.isArray(clickHandler)) {
-                            // Remove any previously inserted steps first
-                            if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
-                                this.script.splice(this.insertedStepsStartIndex, this.insertedStepsCount);
-                                this.insertedStepsCount = 0;
-                                this.insertedStepsStartIndex = -1;
-                            }
-                            // Insert new steps
-                            const insertIndex = this.currentStep + 1;
-                            this.script.splice(insertIndex, 0, ...clickHandler);
-                            // Mark these steps as inserted by adding a flag
-                            for (let i = 0; i < clickHandler.length; i++) {
-                                if (this.script[insertIndex + i]) {
-                                    this.script[insertIndex + i]._isInserted = true;
-                                }
-                            }
-                            this.insertedStepsCount = clickHandler.length;
-                            this.insertedStepsStartIndex = insertIndex;
-                        } else if (clickHandler.branch) {
-                            // Branch object: { branch: [...steps], return: true/false }
-                            // Save return position if needed
-                            if (clickHandler.return !== false) {
-                                this.returnStack.push(this.currentStep);
-                            }
-                            // Insert branch steps
-                            const branchSteps = clickHandler.branch;
-                            if (Array.isArray(branchSteps)) {
-                                // Add return command at end if return is true
-                                const stepsToInsert = clickHandler.return !== false 
-                                    ? [...branchSteps, { type: 'command', action: 'return' }]
-                                    : branchSteps;
-                                this.script.splice(this.currentStep + 1, 0, ...stepsToInsert);
-                            } else if (typeof branchSteps === 'string') {
-                                // Branch is a label name - jump to it
-                                this.script.splice(this.currentStep + 1, 0, 
-                                    { type: 'command', action: 'saveReturn' },
-                                    { type: 'command', action: 'jump', label: branchSteps },
-                                    { type: 'command', action: 'return' }
-                                );
-                            }
-                        } else if (typeof clickHandler === 'string') {
-                            // onClick is a label name - jump to it and return
-                            this.script.splice(this.currentStep + 1, 0,
-                                { type: 'command', action: 'saveReturn' },
-                                { type: 'command', action: 'jump', label: clickHandler },
-                                { type: 'command', action: 'return' }
-                            );
-                        }
-                    }
-                    // Check if this region should advance the plot
-                    const shouldAdvanceRegion = !!region.advanceOnClick || (!!region.promptStyle && !clickHandler);
-                    if (shouldAdvanceRegion) {
-                        // Mark the inserted steps to advance after they complete
-                        // Don't exit interactive mode yet - wait until inserted steps are done
-                        if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
-                            // Mark the last inserted step to advance after it
-                            const lastInsertedIndex = this.insertedStepsStartIndex + this.insertedStepsCount - 1;
-                            if (this.script[lastInsertedIndex]) {
-                                this.script[lastInsertedIndex]._advanceAfterThis = true;
-                            }
-                        } else {
-                            // Allow transitions that do not insert dialogue/branch steps.
-                            this.pendingInteractiveAdvance = true;
-                        }
-                        this.nextStep();
-                    } else {
-                        // Stay in interactive mode - just show dialogue
-                        this.nextStep();
-                    }
+                    this.activateInteractiveRegion(clickedRegion);
                     return;
                 }
                 
                 // Check for clicks on clickable actors
                 const clickedActor = this.checkActorClick(x, y);
                 if (clickedActor && this.clickableActors[clickedActor]) {
-                    assets.playSound('ui_click', 0.5);
-                    const actor = this.clickableActors[clickedActor];
-                    const clickHandler = actor.onClick;
-                    
-                    // Handle branching: onClick can be script steps or a branch object
-                    if (clickHandler) {
-                        if (Array.isArray(clickHandler)) {
-                            // Remove any previously inserted steps first
-                            if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
-                                this.script.splice(this.insertedStepsStartIndex, this.insertedStepsCount);
-                                this.insertedStepsCount = 0;
-                                this.insertedStepsStartIndex = -1;
-                            }
-                            // Insert new steps
-                            const insertIndex = this.currentStep + 1;
-                            this.script.splice(insertIndex, 0, ...clickHandler);
-                            // Mark these steps as inserted by adding a flag
-                            for (let i = 0; i < clickHandler.length; i++) {
-                                if (this.script[insertIndex + i]) {
-                                    this.script[insertIndex + i]._isInserted = true;
-                                }
-                            }
-                            this.insertedStepsCount = clickHandler.length;
-                            this.insertedStepsStartIndex = insertIndex;
-                        } else if (clickHandler.branch) {
-                            // Branch object: { branch: [...steps], return: true/false }
-                            // Save return position if needed
-                            if (clickHandler.return !== false) {
-                                this.returnStack.push(this.currentStep);
-                            }
-                            // Insert branch steps
-                            const branchSteps = clickHandler.branch;
-                            if (Array.isArray(branchSteps)) {
-                                // Add return command at end if return is true
-                                const stepsToInsert = clickHandler.return !== false 
-                                    ? [...branchSteps, { type: 'command', action: 'return' }]
-                                    : branchSteps;
-                                this.script.splice(this.currentStep + 1, 0, ...stepsToInsert);
-                            } else if (typeof branchSteps === 'string') {
-                                // Branch is a label name - jump to it
-                                this.script.splice(this.currentStep + 1, 0, 
-                                    { type: 'command', action: 'saveReturn' },
-                                    { type: 'command', action: 'jump', label: branchSteps },
-                                    { type: 'command', action: 'return' }
-                                );
-                            }
-                        } else if (typeof clickHandler === 'string') {
-                            // onClick is a label name - jump to it
-                            this.script.splice(this.currentStep + 1, 0,
-                                { type: 'command', action: 'saveReturn' },
-                                { type: 'command', action: 'jump', label: clickHandler },
-                                { type: 'command', action: 'return' }
-                            );
-                        }
-                    }
-                    
-                    // Check if this actor should advance the plot
-                    if (actor.advanceOnClick) {
-                        // Mark the inserted steps to advance after they complete
-                        // Don't exit interactive mode yet - wait until inserted steps are done
-                        if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
-                            // Mark the last inserted step to advance after it
-                            const lastInsertedIndex = this.insertedStepsStartIndex + this.insertedStepsCount - 1;
-                            if (this.script[lastInsertedIndex]) {
-                                this.script[lastInsertedIndex]._advanceAfterThis = true;
-                            }
-                        } else {
-                            // Allow transitions that do not insert dialogue/branch steps.
-                            this.pendingInteractiveAdvance = true;
-                        }
-                        this.nextStep();
-                    } else {
-                        // Stay in interactive mode - just show dialogue/branch
-                        this.nextStep();
-                    }
+                    this.activateInteractiveActor(clickedActor);
                     return;
                 }
             }
@@ -1766,24 +1741,16 @@ export class NarrativeScene extends BaseScene {
             return;
         }
 
-        let bestIdx = this.findDirectionalTargetIndex(this.interactiveNavIndex, this.interactiveNavTargets, dirX, dirY, { coneSlope: 2.2 });
-        if (bestIdx === -1) {
-            // Fallback: cycle in deterministic order if no directional candidate.
-            bestIdx = (this.interactiveNavIndex + 1) % this.interactiveNavTargets.length;
-        }
+        const bestIdx = this.navigateTargetIndex(this.interactiveNavIndex, this.interactiveNavTargets, dirX, dirY, { coneSlope: 2.2 });
         this.interactiveNavIndex = bestIdx;
         this.syncInteractiveHoverFromNav();
     }
 
     activateInteractiveTarget(target) {
-        if (!target) return;
-        const { canvas } = this.manager;
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const clientX = rect.left + target.x / scaleX;
-        const clientY = rect.top + target.y / scaleY;
-        this.handleInput({ clientX, clientY });
+        this.activateNavigationTarget(target, {
+            region: (t) => this.activateInteractiveRegion(t.regionId),
+            actor: (t) => this.activateInteractiveActor(t.actorId)
+        });
     }
 
     updateHoverState(mouseX, mouseY) {

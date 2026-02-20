@@ -785,6 +785,198 @@ export class CustomBattleMenuScene extends BaseScene {
         });
     }
 
+    handleButtonAction(btn, x) {
+        if (!btn) return;
+        if (btn.type === 'dropdown') {
+            const wasOpen = this.dropdowns[btn.key].open;
+            for (const k in this.dropdowns) this.dropdowns[k].open = false;
+            this.dropdowns[btn.key].open = !wasOpen;
+            assets.playSound('ui_click', 0.5);
+        } else if (btn.type === 'item') {
+            this.options[btn.key] = btn.value;
+            this.dropdowns[btn.key].open = false;
+            assets.playSound('ui_click');
+        } else if (btn.type === 'unit_item') {
+            // Clicking a unit directly adds it and opens the editing screen
+            if (this.options.roster.length < 20) {
+                const u = this.availableUnits[btn.index];
+                const defaultFaction = u.type.startsWith('enemy') ? 'enemy' : (u.type.startsWith('hero') ? 'player' : 'allied');
+                this.options.roster.push({
+                    ...u,
+                    faction: defaultFaction,
+                    level: 1,
+                    onHorse: false,
+                    horseType: 'brown'
+                });
+                this.selectedRosterIndex = this.options.roster.length - 1;
+                this.dropdowns.unit.selectedIndex = undefined;
+                this.dropdowns.unit.open = false;
+                this.dropdowns.unit.scrollOffset = 0;
+                assets.playSound('ui_click', 0.6);
+            } else {
+                assets.playSound('ui_error', 0.5);
+            }
+        } else if (btn.type === 'unit_scroll_down') {
+            this.dropdowns.unit.scrollOffset = Math.min(
+                this.availableUnits.length - 6,
+                (this.dropdowns.unit.scrollOffset || 0) + 1
+            );
+            assets.playSound('ui_click', 0.3);
+        } else if (btn.type === 'unit_scroll_up') {
+            this.dropdowns.unit.scrollOffset = Math.max(0, (this.dropdowns.unit.scrollOffset || 0) - 1);
+            assets.playSound('ui_click', 0.3);
+        } else if (btn.type === 'scroll_down') {
+            // Scroll down for biome/layout/weather dropdowns
+            this.dropdowns[btn.key].scrollOffset = Math.min(
+                this.dropdowns[btn.key].items.length - 6,
+                (this.dropdowns[btn.key].scrollOffset || 0) + 1
+            );
+            assets.playSound('ui_click', 0.3);
+        } else if (btn.type === 'scroll_up') {
+            // Scroll up for biome/layout/weather dropdowns
+            this.dropdowns[btn.key].scrollOffset = Math.max(0, (this.dropdowns[btn.key].scrollOffset || 0) - 1);
+            assets.playSound('ui_click', 0.3);
+        } else if (btn.type === 'roster_scroll_down') {
+            // Scroll down roster
+            const { canvas } = this.manager;
+            const rowH = LANGUAGE.current === 'zh' ? 18 : 16;
+            const availableHeight = (canvas.height - 30) - (50 + (LANGUAGE.current === 'zh' ? 18 : 12));
+            const maxVisibleRows = Math.floor(availableHeight / rowH);
+            const maxScroll = Math.max(0, this.options.roster.length - maxVisibleRows);
+            this.rosterScrollOffset = Math.min(maxScroll, this.rosterScrollOffset + 1);
+            assets.playSound('ui_click', 0.3);
+        } else if (btn.type === 'roster_scroll_up') {
+            // Scroll up roster
+            this.rosterScrollOffset = Math.max(0, this.rosterScrollOffset - 1);
+            assets.playSound('ui_click', 0.3);
+        } else if (btn.type === 'density_slider') {
+            const ratio = Math.max(0, Math.min(1, (x - btn.x) / btn.w));
+            this.options[btn.key] = ratio * 0.3;
+        } else if (btn.type === 'view_stats') {
+            this.view = 'STATS';
+            assets.playSound('ui_click');
+        } else if (btn.type === 'menu_view') {
+            this.view = 'MENU';
+            this.setupStep = 0;
+            assets.playSound('ui_click');
+        } else if (btn.type === 'next_step') {
+            this.setupStep = 1;
+            assets.playSound('ui_click');
+        } else if (btn.type === 'prev_step') {
+            this.setupStep = 0;
+            assets.playSound('ui_click');
+        } else if (btn.type === 'back') {
+            this.manager.switchTo('title');
+            assets.playSound('ui_click');
+        } else if (btn.type === 'undo_add_unit') {
+            // Remove the unit being added and return to unit selection
+            if (this.selectedRosterIndex >= 0 && this.selectedRosterIndex < this.options.roster.length) {
+                this.options.roster.splice(this.selectedRosterIndex, 1);
+                this.selectedRosterIndex = -1;
+                assets.playSound('ui_click', 0.4);
+            }
+        } else if (btn.type === 'confirm_add_unit') {
+            // Confirm adding the unit (just deselect it to finish)
+            this.selectedRosterIndex = -1;
+            assets.playSound('ui_click', 0.6);
+        } else if (btn.type === 'deselect_unit') {
+            this.selectedRosterIndex = -1;
+            assets.playSound('ui_click', 0.4);
+        } else if (btn.type === 'start') {
+            assets.playSound('gong', 0.8);
+
+            const units = this.options.roster.map((u, i) => {
+                let r, q;
+                if (u.faction === 'enemy') {
+                    r = 7 + Math.floor(i / 4);
+                    q = 2 + (i % 6);
+                } else {
+                    r = 2 + Math.floor(i / 4);
+                    q = 2 + (i % 6);
+                }
+
+                return {
+                    id: `custom_${u.templateId}_${i}`,
+                    type: u.type,
+                    templateId: u.templateId,
+                    name: u.name,
+                    imgKey: u.imgKey,
+                    faction: u.faction,
+                    level: u.level,
+                    isArcher: u.isArcher || false,
+                    onHorse: !!u.onHorse,
+                    horseType: u.horseType || 'brown',
+                    r, q
+                };
+            });
+
+            this.manager.switchTo('tactics', {
+                battleId: 'custom',
+                isCustom: true,
+                mapGen: { ...this.options },
+                units: units
+            });
+        } else if (btn.type === 'add_unit') {
+            // Legacy support - should not be used with dropdown
+            if (this.options.roster.length < 20) {
+                const u = btn.unit;
+                const defaultFaction = u.type.startsWith('enemy') ? 'enemy' : (u.type.startsWith('hero') ? 'player' : 'allied');
+                this.options.roster.push({
+                    ...u,
+                    faction: defaultFaction,
+                    level: 1,
+                    onHorse: false,
+                    horseType: 'brown'
+                });
+                this.selectedRosterIndex = this.options.roster.length - 1;
+                assets.playSound('ui_click', 0.6);
+            } else {
+                assets.playSound('ui_error', 0.5);
+            }
+        } else if (btn.type === 'remove_unit') {
+            this.options.roster.splice(btn.index, 1);
+            this.selectedRosterIndex = -1;
+            assets.playSound('ui_click', 0.4);
+        } else if (btn.type === 'select_roster') {
+            this.selectedRosterIndex = btn.index;
+            assets.playSound('ui_click', 0.6);
+        } else if (btn.type === 'cycle_faction') {
+            if (this.selectedRosterIndex >= 0) {
+                const cur = this.options.roster[this.selectedRosterIndex];
+                const order = ['player', 'allied', 'enemy'];
+                const idx = Math.max(0, order.indexOf(cur.faction));
+                cur.faction = order[(idx + 1) % order.length];
+                assets.playSound('ui_click', 0.7);
+            }
+        } else if (btn.type === 'set_level') {
+            if (this.selectedRosterIndex >= 0) {
+                this.options.roster[this.selectedRosterIndex].level = btn.level;
+                assets.playSound('ui_click', 0.7);
+            }
+        } else if (btn.type === 'toggle_horse') {
+            if (this.selectedRosterIndex >= 0) {
+                const cur = this.options.roster[this.selectedRosterIndex];
+                const order = [
+                    { onHorse: false, horseType: 'brown' },
+                    { onHorse: true, horseType: 'brown' },
+                    { onHorse: true, horseType: 'black' },
+                    { onHorse: true, horseType: 'white' },
+                    { onHorse: true, horseType: 'redhare' }
+                ];
+                const curKey = `${!!cur.onHorse}:${cur.horseType || 'brown'}`;
+                const idx = Math.max(0, order.findIndex(s => `${!!s.onHorse}:${s.horseType}` === curKey));
+                const next = order[(idx + 1) % order.length];
+                cur.onHorse = next.onHorse;
+                cur.horseType = next.horseType;
+                assets.playSound('ui_click', 0.6);
+            }
+        } else if (btn.type === 'clear_roster') {
+            this.options.roster = [];
+            this.selectedRosterIndex = -1;
+            assets.playSound('ui_click', 0.5);
+        }
+    }
+
     handleInput(e) {
         const { x, y } = this.getMousePos(e);
         
@@ -796,211 +988,16 @@ export class CustomBattleMenuScene extends BaseScene {
                 const idx = this.buttonRects.indexOf(btn);
                 if (idx >= 0) this.selection.highlightedIndex = idx;
             }
-            if (btn.type === 'dropdown') {
-                const wasOpen = this.dropdowns[btn.key].open;
-                for (const k in this.dropdowns) this.dropdowns[k].open = false;
-                this.dropdowns[btn.key].open = !wasOpen;
-                assets.playSound('ui_click', 0.5);
-            } else if (btn.type === 'item') {
-                this.options[btn.key] = btn.value;
-                this.dropdowns[btn.key].open = false;
-                assets.playSound('ui_click');
-            } else if (btn.type === 'unit_item') {
-                // Clicking a unit directly adds it and opens the editing screen
-                if (this.options.roster.length < 20) {
-                    const u = this.availableUnits[btn.index];
-                    const defaultFaction = u.type.startsWith('enemy') ? 'enemy' : (u.type.startsWith('hero') ? 'player' : 'allied');
-                    this.options.roster.push({
-                        ...u,
-                        faction: defaultFaction,
-                        level: 1,
-                        onHorse: false,
-                        horseType: 'brown'
-                    });
-                    this.selectedRosterIndex = this.options.roster.length - 1;
-                    this.dropdowns.unit.selectedIndex = undefined;
-                    this.dropdowns.unit.open = false;
-                    this.dropdowns.unit.scrollOffset = 0;
-                    assets.playSound('ui_click', 0.6);
-                } else {
-                    assets.playSound('ui_error', 0.5);
-                }
-            } else if (btn.type === 'unit_scroll_down') {
-                this.dropdowns.unit.scrollOffset = Math.min(
-                    this.availableUnits.length - 6,
-                    (this.dropdowns.unit.scrollOffset || 0) + 1
-                );
-                assets.playSound('ui_click', 0.3);
-            } else if (btn.type === 'unit_scroll_up') {
-                this.dropdowns.unit.scrollOffset = Math.max(0, (this.dropdowns.unit.scrollOffset || 0) - 1);
-                assets.playSound('ui_click', 0.3);
-            } else if (btn.type === 'scroll_down') {
-                // Scroll down for biome/layout/weather dropdowns
-                this.dropdowns[btn.key].scrollOffset = Math.min(
-                    this.dropdowns[btn.key].items.length - 6,
-                    (this.dropdowns[btn.key].scrollOffset || 0) + 1
-                );
-                assets.playSound('ui_click', 0.3);
-            } else if (btn.type === 'scroll_up') {
-                // Scroll up for biome/layout/weather dropdowns
-                this.dropdowns[btn.key].scrollOffset = Math.max(0, (this.dropdowns[btn.key].scrollOffset || 0) - 1);
-                assets.playSound('ui_click', 0.3);
-            } else if (btn.type === 'roster_scroll_down') {
-                // Scroll down roster
-                const { canvas } = this.manager;
-                const rowH = LANGUAGE.current === 'zh' ? 18 : 16;
-                const availableHeight = (canvas.height - 30) - (50 + (LANGUAGE.current === 'zh' ? 18 : 12));
-                const maxVisibleRows = Math.floor(availableHeight / rowH);
-                const maxScroll = Math.max(0, this.options.roster.length - maxVisibleRows);
-                this.rosterScrollOffset = Math.min(maxScroll, this.rosterScrollOffset + 1);
-                assets.playSound('ui_click', 0.3);
-            } else if (btn.type === 'roster_scroll_up') {
-                // Scroll up roster
-                this.rosterScrollOffset = Math.max(0, this.rosterScrollOffset - 1);
-                assets.playSound('ui_click', 0.3);
-            } else if (btn.type === 'density_slider') {
-                const ratio = Math.max(0, Math.min(1, (x - btn.x) / btn.w));
-                this.options[btn.key] = ratio * 0.3;
-            } else if (btn.type === 'view_stats') {
-                this.view = 'STATS';
-                assets.playSound('ui_click');
-            } else if (btn.type === 'menu_view') {
-                this.view = 'MENU';
-                this.setupStep = 0;
-                assets.playSound('ui_click');
-            } else if (btn.type === 'next_step') {
-                this.setupStep = 1;
-                assets.playSound('ui_click');
-            } else if (btn.type === 'prev_step') {
-                this.setupStep = 0;
-                assets.playSound('ui_click');
-            } else if (btn.type === 'back') {
-                this.manager.switchTo('title');
-                assets.playSound('ui_click');
-            } else if (btn.type === 'undo_add_unit') {
-                // Remove the unit being added and return to unit selection
-                if (this.selectedRosterIndex >= 0 && this.selectedRosterIndex < this.options.roster.length) {
-                    this.options.roster.splice(this.selectedRosterIndex, 1);
-                    this.selectedRosterIndex = -1;
-                    assets.playSound('ui_click', 0.4);
-                }
-            } else if (btn.type === 'confirm_add_unit') {
-                // Confirm adding the unit (just deselect it to finish)
-                this.selectedRosterIndex = -1;
-                assets.playSound('ui_click', 0.6);
-            } else if (btn.type === 'deselect_unit') {
-                this.selectedRosterIndex = -1;
-                assets.playSound('ui_click', 0.4);
-            } else if (btn.type === 'start') {
-                assets.playSound('gong', 0.8);
-                
-                const units = this.options.roster.map((u, i) => {
-                    let r, q;
-                    if (u.faction === 'enemy') {
-                        r = 7 + Math.floor(i / 4);
-                        q = 2 + (i % 6);
-                    } else {
-                        r = 2 + Math.floor(i / 4);
-                        q = 2 + (i % 6);
-                    }
-
-                    return {
-                        id: `custom_${u.templateId}_${i}`,
-                        type: u.type,
-                        templateId: u.templateId,
-                        name: u.name,
-                        imgKey: u.imgKey,
-                        faction: u.faction,
-                        level: u.level,
-                        isArcher: u.isArcher || false,
-                        onHorse: !!u.onHorse,
-                        horseType: u.horseType || 'brown',
-                        r, q
-                    };
-                });
-
-                this.manager.switchTo('tactics', {
-                    battleId: 'custom',
-                    isCustom: true,
-                    mapGen: { ...this.options },
-                    units: units
-                });
-            } else if (btn.type === 'add_unit') {
-                // Legacy support - should not be used with dropdown
-                if (this.options.roster.length < 20) {
-                    const u = btn.unit;
-                    const defaultFaction = u.type.startsWith('enemy') ? 'enemy' : (u.type.startsWith('hero') ? 'player' : 'allied');
-                    this.options.roster.push({
-                        ...u,
-                        faction: defaultFaction,
-                        level: 1,
-                        onHorse: false,
-                        horseType: 'brown'
-                    });
-                    this.selectedRosterIndex = this.options.roster.length - 1;
-                    assets.playSound('ui_click', 0.6);
-                } else {
-                    assets.playSound('ui_error', 0.5);
-                }
-            } else if (btn.type === 'remove_unit') {
-                this.options.roster.splice(btn.index, 1);
-                this.selectedRosterIndex = -1;
-                assets.playSound('ui_click', 0.4);
-            } else if (btn.type === 'select_roster') {
-                this.selectedRosterIndex = btn.index;
-                assets.playSound('ui_click', 0.6);
-            } else if (btn.type === 'cycle_faction') {
-                if (this.selectedRosterIndex >= 0) {
-                    const cur = this.options.roster[this.selectedRosterIndex];
-                    const order = ['player', 'allied', 'enemy'];
-                    const idx = Math.max(0, order.indexOf(cur.faction));
-                    cur.faction = order[(idx + 1) % order.length];
-                    assets.playSound('ui_click', 0.7);
-                }
-            } else if (btn.type === 'set_level') {
-                if (this.selectedRosterIndex >= 0) {
-                    this.options.roster[this.selectedRosterIndex].level = btn.level;
-                    assets.playSound('ui_click', 0.7);
-                }
-            } else if (btn.type === 'toggle_horse') {
-                if (this.selectedRosterIndex >= 0) {
-                    const cur = this.options.roster[this.selectedRosterIndex];
-                    const order = [
-                        { onHorse: false, horseType: 'brown' },
-                        { onHorse: true, horseType: 'brown' },
-                        { onHorse: true, horseType: 'black' },
-                        { onHorse: true, horseType: 'white' },
-                        { onHorse: true, horseType: 'redhare' }
-                    ];
-                    const curKey = `${!!cur.onHorse}:${cur.horseType || 'brown'}`;
-                    const idx = Math.max(0, order.findIndex(s => `${!!s.onHorse}:${s.horseType}` === curKey));
-                    const next = order[(idx + 1) % order.length];
-                    cur.onHorse = next.onHorse;
-                    cur.horseType = next.horseType;
-                    assets.playSound('ui_click', 0.6);
-                }
-            } else if (btn.type === 'clear_roster') {
-                this.options.roster = [];
-                this.selectedRosterIndex = -1;
-                assets.playSound('ui_click', 0.5);
-            }
+            this.handleButtonAction(btn, x);
         } else {
             for (const k in this.dropdowns) this.dropdowns[k].open = false;
         }
     }
 
     activateSelectionIndex(index) {
-        if (index < 0 || index >= this.buttonRects.length) return;
-        const r = this.buttonRects[index];
-        const logicalX = r.x + r.w / 2;
-        const logicalY = r.y + r.h / 2;
-        const { canvas } = this.manager;
-        const canvasRect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / canvasRect.width;
-        const scaleY = canvas.height / canvasRect.height;
-        const clientX = canvasRect.left + logicalX / scaleX;
-        const clientY = canvasRect.top + logicalY / scaleY;
-        this.handleInput({ clientX, clientY });
+        this.activateNavigationIndex(this.buttonRects, index, {}, (btn) => {
+            this.handleButtonAction(btn, btn.x + btn.w / 2);
+        });
     }
 
     moveSelectionDirectional(dirX, dirY) {
@@ -1009,14 +1006,8 @@ export class CustomBattleMenuScene extends BaseScene {
         if (this.selection.highlightedIndex < 0 || this.selection.highlightedIndex >= count) {
             this.selection.highlightedIndex = 0;
         }
-        const curIdx = this.selection.highlightedIndex;
-        const cur = this.buttonRects[curIdx];
-        const curX = cur.x + cur.w / 2;
-        const curY = cur.y + cur.h / 2;
-
         const targets = this.buttonRects.map(r => ({ x: r.x + r.w / 2, y: r.y + r.h / 2 }));
-        let bestIdx = this.findDirectionalTargetIndex(curIdx, targets, dirX, dirY, { coneSlope: 2.2 });
-        if (bestIdx === -1) bestIdx = (curIdx + 1) % count;
+        const bestIdx = this.navigateTargetIndex(this.selection.highlightedIndex, targets, dirX, dirY, { coneSlope: 2.2 });
         if (bestIdx !== -1) {
             this.selection.highlightedIndex = bestIdx;
             assets.playSound('ui_click', 0.5);

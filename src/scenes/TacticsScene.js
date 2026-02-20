@@ -57,11 +57,11 @@ export class TacticsScene extends BaseScene {
         const gs = this.manager.gameState;
         
         // Check if we're resuming a saved battle
-        const isResume = params.isResume && gs.get('battleState');
-        const savedState = isResume ? gs.get('battleState') : null;
+        const isResume = params.isResume && gs.getSceneState('tactics');
+        const savedState = isResume ? gs.getSceneState('tactics') : null;
         
         // Scenario-specific initialization
-        this.battleId = params.battleId || (savedState?.battleId) || gs.get('currentBattleId') || 'daxing'; 
+        this.battleId = params.battleId || (savedState?.battleId) || gs.getCurrentBattleId() || 'daxing'; 
         this.isCustom = params.isCustom || this.battleId === 'custom';
         
         const battleDef = BATTLES[this.battleId];
@@ -69,7 +69,7 @@ export class TacticsScene extends BaseScene {
         this.hasChoice = battleDef?.hasChoice || false;
 
         if (!this.isCustom) {
-            gs.set('currentBattleId', this.battleId);
+            gs.setCurrentBattleId(this.battleId);
         }
 
         console.log(`Entering battle: ${this.battleId}${isResume ? ' (resuming)' : ''}`);
@@ -285,12 +285,16 @@ export class TacticsScene extends BaseScene {
         this.particles = [];
         if (!this.isCustom) {
             // Don't set lastScene here - SceneManager will handle it when switching away
-            this.manager.gameState.set('currentBattleId', this.battleId);
+            this.manager.gameState.setCurrentBattleId(this.battleId);
         }
         
-        // Initialize history for undo
-        this.history = [];
+        // Initialize history for undo.
+        // Resume restores its own baseline in restoreBattleState(); avoid clobbering it here.
         if (!isResume) {
+            this.history = [];
+            this.pushHistory();
+        } else if (!Array.isArray(this.history) || this.history.length === 0) {
+            this.history = [];
             this.pushHistory();
         }
 
@@ -1796,7 +1800,8 @@ export class TacticsScene extends BaseScene {
         if (this.battleId === 'custom') return; // Don't save state for custom battles
         const gs = this.manager.gameState;
         const state = this.captureState();
-        gs.set('battleState', state);
+        gs.setSceneState('tactics', state);
+        gs.setLastScene('tactics');
     }
 
     captureState() {
@@ -2415,7 +2420,7 @@ export class TacticsScene extends BaseScene {
     }
 
     clearBattleState() {
-        this.manager.gameState.set('battleState', null);
+        this.manager.gameState.clearSceneState('tactics');
     }
 
     startPlayerTurn() {
@@ -4247,109 +4252,131 @@ export class TacticsScene extends BaseScene {
             }
         }
 
+        const controllerTarget = (
+            !this.controllerNavMouseEnabled &&
+            this.controllerNavTargets &&
+            this.controllerNavIndex >= 0 &&
+            this.controllerNavIndex < this.controllerNavTargets.length
+        ) ? this.controllerNavTargets[this.controllerNavIndex] : null;
+
         // --- UPDATE CHOICE HOVER ---
         if (this.isChoiceActive && this.choiceRects) {
-            const mx = this.manager.logicalMouseX;
-            const my = this.manager.logicalMouseY;
             this.choiceHovered = -1;
-            for (const rect of this.choiceRects) {
-                if (mx >= rect.x && mx <= rect.x + rect.w && my >= rect.y && my <= rect.y + rect.h) {
-                    this.choiceHovered = rect.index;
-                    break;
+            if (controllerTarget && controllerTarget.type === 'choice') {
+                this.choiceHovered = controllerTarget.choiceIndex;
+            } else {
+                const mx = this.manager.logicalMouseX;
+                const my = this.manager.logicalMouseY;
+                for (const rect of this.choiceRects) {
+                    if (mx >= rect.x && mx <= rect.x + rect.w && my >= rect.y && my <= rect.y + rect.h) {
+                        this.choiceHovered = rect.index;
+                        break;
+                    }
                 }
             }
         }
 
         // --- UPDATE HOVERED CELL (Must match handleInput selection logic) ---
-        const hx = this.manager.logicalMouseX;
-        const hy = this.manager.logicalMouseY;
-        
-        let hoveredUnit = null;
-        const activeUnits = this.units.filter(u => u.hp > 0 && !u.isGone);
-        // Match draw order (bottom-to-top) for picking
-        activeUnits.sort((a, b) => b.currentSortR - a.currentSortR);
-        
-        for (let u of activeUnits) {
-            const ux = u.visualX;
-            const uy = u.visualY;
-            let sinkOffset = 0;
-            if (u.isDrowning) sinkOffset = Math.min(1, u.drownTimer / 2000) * 40;
-            else {
-                const cell = this.tacticsMap.getCell(u.r, u.q);
-                if (cell && cell.terrain.includes('water_shallow')) sinkOffset = 4;
-                
-                // Standing on corpse? Raise hit box by 4px
-                if (u.hp > 0 && !u.isMoving && !u.pushData) {
-                    const hasCorpse = this.units.some(other => other !== u && other.r === u.r && other.q === u.q && other.hp <= 0 && !other.isGone);
-                    if (hasCorpse) sinkOffset -= 4;
-                }
+        // Controller/keyboard focus should drive the same hover previews as mouseover.
+        if (controllerTarget) {
+            if (controllerTarget.type === 'unit' && controllerTarget.unit) {
+                this.hoveredCell = this.tacticsMap.getCell(controllerTarget.unit.r, controllerTarget.unit.q);
+            } else if ((controllerTarget.type === 'move_cell' || controllerTarget.type === 'attack_cell') && controllerTarget.r !== undefined && controllerTarget.q !== undefined) {
+                this.hoveredCell = this.tacticsMap.getCell(controllerTarget.r, controllerTarget.q);
+            } else {
+                this.hoveredCell = null;
             }
-            // Mounted hover: match the mounted click logic (rider OR horse), but allow click-through on transparent pixels
-            if (u.onHorse) {
-                const spacing = this.manager.config.horizontalSpacing;
-                const buttX = ux;
-                const buttY = uy + sinkOffset;
-                const headX = buttX + (u.flip ? -spacing : spacing);
-                const midX = Math.floor((buttX + headX) / 2);
-                const midY = buttY;
-
-                const riderX = midX;
-                const riderY = midY - 22;
-
-                const riderHit = this.checkCharacterHit(u.img, (u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action), u.frame, riderX, riderY, hx, hy, {
-                    flip: u.flip,
-                    sinkOffset: 0,
-                    isProp: false
-                });
-
-                // Pixel-perfect horse hit (64x64 frame), so transparent pixels don't block what’s behind
-                const keys = this.getHorseSpriteKeys(u.horseType || 'brown');
-                const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
-                const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
-                const isRunning = (u.isMoving || u.action === 'walk') && horseRun;
-                const horseImg = isRunning ? horseRun : horseStand;
-
-                let horseHit = false;
-                if (horseImg) {
-                    const frameW = 64;
-                    const frameH = 64;
-                    const frameCount = Math.max(1, Math.floor((horseImg.width || frameW) / frameW));
-                    const f = isRunning ? (Math.floor(Date.now() / 80) % frameCount) : 0;
-                    const srcX = f * frameW;
-                    const srcY = 0;
-
-                    const horseFeetY = 15;
-                    const destX = midX - frameW / 2;
-                    const destY = midY + (horseFeetY - frameH);
-                    horseHit = this.checkImageFrameHit(horseImg, srcX, srcY, frameW, frameH, destX, destY, hx, hy, { flip: u.flip });
+        } else {
+            const hx = this.manager.logicalMouseX;
+            const hy = this.manager.logicalMouseY;
+            
+            let hoveredUnit = null;
+            const activeUnits = this.units.filter(u => u.hp > 0 && !u.isGone);
+            // Match draw order (bottom-to-top) for picking
+            activeUnits.sort((a, b) => b.currentSortR - a.currentSortR);
+            
+            for (let u of activeUnits) {
+                const ux = u.visualX;
+                const uy = u.visualY;
+                let sinkOffset = 0;
+                if (u.isDrowning) sinkOffset = Math.min(1, u.drownTimer / 2000) * 40;
+                else {
+                    const cell = this.tacticsMap.getCell(u.r, u.q);
+                    if (cell && cell.terrain.includes('water_shallow')) sinkOffset = 4;
+                    
+                    // Standing on corpse? Raise hit box by 4px
+                    if (u.hp > 0 && !u.isMoving && !u.pushData) {
+                        const hasCorpse = this.units.some(other => other !== u && other.r === u.r && other.q === u.q && other.hp <= 0 && !other.isGone);
+                        if (hasCorpse) sinkOffset -= 4;
+                    }
                 }
+                // Mounted hover: match the mounted click logic (rider OR horse), but allow click-through on transparent pixels
+                if (u.onHorse) {
+                    const spacing = this.manager.config.horizontalSpacing;
+                    const buttX = ux;
+                    const buttY = uy + sinkOffset;
+                    const headX = buttX + (u.flip ? -spacing : spacing);
+                    const midX = Math.floor((buttX + headX) / 2);
+                    const midY = buttY;
 
-                if (riderHit || horseHit) {
+                    const riderX = midX;
+                    const riderY = midY - 22;
+
+                    const riderHit = this.checkCharacterHit(u.img, (u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action), u.frame, riderX, riderY, hx, hy, {
+                        flip: u.flip,
+                        sinkOffset: 0,
+                        isProp: false
+                    });
+
+                    // Pixel-perfect horse hit (64x64 frame), so transparent pixels don't block what’s behind
+                    const keys = this.getHorseSpriteKeys(u.horseType || 'brown');
+                    const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
+                    const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
+                    const isRunning = (u.isMoving || u.action === 'walk') && horseRun;
+                    const horseImg = isRunning ? horseRun : horseStand;
+
+                    let horseHit = false;
+                    if (horseImg) {
+                        const frameW = 64;
+                        const frameH = 64;
+                        const frameCount = Math.max(1, Math.floor((horseImg.width || frameW) / frameW));
+                        const f = isRunning ? (Math.floor(Date.now() / 80) % frameCount) : 0;
+                        const srcX = f * frameW;
+                        const srcY = 0;
+
+                        const horseFeetY = 15;
+                        const destX = midX - frameW / 2;
+                        const destY = midY + (horseFeetY - frameH);
+                        horseHit = this.checkImageFrameHit(horseImg, srcX, srcY, frameW, frameH, destX, destY, hx, hy, { flip: u.flip });
+                    }
+
+                    if (riderHit || horseHit) {
+                        hoveredUnit = u;
+                        break;
+                    }
+                } else if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, hx, hy, { 
+                        flip: u.flip, 
+                        sinkOffset,
+                        isProp: u.name === 'Boulder'
+                    })) {
                     hoveredUnit = u;
                     break;
                 }
-            } else if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, hx, hy, { 
-                    flip: u.flip, 
-                    sinkOffset,
-                    isProp: u.name === 'Boulder'
-                })) {
-                hoveredUnit = u;
-                break;
             }
-        }
 
-        const rawHoveredCell = this.getCellAt(hx, hy);
-        
-        if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack) {
-            // When targeting an attack, prioritize unit sprite IF it's in range
-            if (hoveredUnit && this.attackTiles.has(`${hoveredUnit.r},${hoveredUnit.q}`)) {
-                this.hoveredCell = this.tacticsMap.getCell(hoveredUnit.r, hoveredUnit.q);
+            const rawHoveredCell = this.getCellAt(hx, hy);
+            
+            if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack) {
+                // When targeting an attack, prioritize unit sprite IF it's in range
+                if (hoveredUnit && this.attackTiles.has(`${hoveredUnit.r},${hoveredUnit.q}`)) {
+                    this.hoveredCell = this.tacticsMap.getCell(hoveredUnit.r, hoveredUnit.q);
+                } else {
+                    this.hoveredCell = rawHoveredCell;
+                }
             } else {
-                this.hoveredCell = rawHoveredCell;
+                // Standard selection hover
+                this.hoveredCell = hoveredUnit ? this.tacticsMap.getCell(hoveredUnit.r, hoveredUnit.q) : rawHoveredCell;
             }
-        } else {
-            // Standard selection hover
-            this.hoveredCell = hoveredUnit ? this.tacticsMap.getCell(hoveredUnit.r, hoveredUnit.q) : rawHoveredCell;
         }
 
         this.updateWeather(dt);
@@ -5396,15 +5423,49 @@ export class TacticsScene extends BaseScene {
         if (!this.controllerNavTargets || this.controllerNavTargets.length === 0) return;
         if (this.controllerNavIndex < 0 || this.controllerNavIndex >= this.controllerNavTargets.length) return;
         const t = this.controllerNavTargets[this.controllerNavIndex];
+        const isAttackTargetingMode = !!(this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack);
         ctx.save();
         ctx.strokeStyle = '#ffd700';
         ctx.lineWidth = 1;
-        if (t.rect) {
+        if ((t.type === 'move_cell' || t.type === 'attack_cell') && t.r !== undefined && t.q !== undefined) {
+            const pos = this.getPixelPos(t.r, t.q);
+            this.drawHexOutline(ctx, pos.x, pos.y, '#ffd700');
+        } else if (t.type === 'unit' && t.unit && t.unit.img && t.unit.name !== 'Boulder') {
+            const u = t.unit;
+            const canAttackThisUnit = isAttackTargetingMode && this.attackTiles.has(`${u.r},${u.q}`);
+            this.drawCharacterPixelOutline(
+                ctx,
+                u.img,
+                u.currentAnimAction || u.action,
+                u.frame,
+                u.visualX,
+                u.visualY,
+                { flip: u.flip, color: canAttackThisUnit ? '#ff3333' : '#ffd700' }
+            );
+        } else if (t.rect) {
             ctx.strokeRect(Math.floor(t.rect.x) - 1.5, Math.floor(t.rect.y) - 1.5, Math.floor(t.rect.w) + 2, Math.floor(t.rect.h) + 2);
         } else {
             const size = (t.type === 'unit') ? 16 : 14;
             ctx.strokeRect(Math.floor(t.x - size / 2) - 0.5, Math.floor(t.y - size / 2) - 0.5, size, size);
         }
+        ctx.restore();
+    }
+
+    drawHexOutline(ctx, x, y, color = '#ffd700') {
+        ctx.save();
+        ctx.translate(Math.floor(x), Math.floor(y));
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        // Pointy-top hex shape to match the tile highlight footprint.
+        ctx.moveTo(0, -12);
+        ctx.lineTo(12, -6);
+        ctx.lineTo(12, 6);
+        ctx.lineTo(0, 12);
+        ctx.lineTo(-12, 6);
+        ctx.lineTo(-12, -6);
+        ctx.closePath();
+        ctx.stroke();
         ctx.restore();
     }
 
@@ -5461,26 +5522,174 @@ export class TacticsScene extends BaseScene {
         assets.playSound('ui_click', 0.5);
     }
 
+    activateChoiceTarget(choiceIndex) {
+        this.isChoiceActive = false;
+        if (choiceIndex === 0) this.startRestrainDialogue();
+        else if (choiceIndex === 1) this.startFight();
+    }
+
+    activateUiTarget(uiId) {
+        if (uiId === 'ui:end_turn') {
+            if (this.allUnitsActed()) {
+                this.startExecutionPhase();
+            } else {
+                assets.playSound('ui_click');
+                this.showEndTurnConfirm = true;
+            }
+            return;
+        }
+        if (uiId === 'ui:reset') {
+            this.resetTurn();
+            return;
+        }
+        if (uiId === 'ui:order') {
+            this.showAttackOrder = !this.showAttackOrder;
+            assets.playSound('ui_click', 0.5);
+            return;
+        }
+        if (uiId === 'ui:undo') {
+            this.undo();
+        }
+    }
+
+    activateCellTarget(r, q, type) {
+        const clickedCell = this.tacticsMap.getCell(r, q);
+        if (!clickedCell) return;
+        this.hoveredCell = clickedCell;
+
+        if (type === 'attack_cell') {
+            if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack && this.attackTiles.has(`${r},${q}`)) {
+                const attacker = this.selectedUnit;
+                this.isProcessingTurn = true;
+                this.executeAttack(attacker, this.selectedAttack, r, q, () => {
+                    if (this.turn === 'player' && attacker.hp > 0) {
+                        attacker.hasAttacked = true;
+                        attacker.hasActed = true;
+                        if (this.selectedUnit === attacker) {
+                            this.selectedUnit = null;
+                            this.selectedAttack = null;
+                            this.attackTiles.clear();
+                        }
+                        this.pushHistory();
+                    }
+                    this.isProcessingTurn = false;
+                });
+            }
+            return;
+        }
+
+        if (type === 'move_cell' && this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && this.reachableTiles.has(`${r},${q}`)) {
+            if (!clickedCell.unit || clickedCell.unit === this.selectedUnit) {
+                let destR = clickedCell.r;
+                let destQ = clickedCell.q;
+                let plannedFlip = this.selectedUnit.flip;
+                let headCellForReserve = null;
+
+                if (this.selectedUnit.onHorse) {
+                    const plan = this.getMountedPlanForClickedCell(clickedCell.r, clickedCell.q);
+                    if (!plan) {
+                        assets.playSound('ui_error', 0.4);
+                        return;
+                    }
+                    destR = plan.butt.r;
+                    destQ = plan.butt.q;
+                    plannedFlip = plan.plannedFlip;
+                    headCellForReserve = this.tacticsMap.getCell(plan.head.r, plan.head.q);
+                }
+
+                const path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, destR, destQ, this.selectedUnit.moveRange, this.selectedUnit);
+
+                if (path && (!this.selectedUnit.onHorse || headCellForReserve)) {
+                    this.isProcessingTurn = true;
+                    const oldCell = this.tacticsMap.getCell(this.selectedUnit.r, this.selectedUnit.q);
+                    if (oldCell) oldCell.unit = null;
+                    if (this.selectedUnit.onHorse) {
+                        const oldHead = this.getMountedHeadCellFor(this.selectedUnit, this.selectedUnit.r, this.selectedUnit.q);
+                        if (oldHead) oldHead.unit = null;
+                        const horse = this.getHorseById(this.selectedUnit.horseId);
+                        if (horse) this.clearHorseFromCells(horse);
+                    }
+
+                    if (this.selectedUnit.onHorse) this.selectedUnit.flip = plannedFlip;
+
+                    this.selectedUnit.startPath(path);
+                    const destCell = this.tacticsMap.getCell(destR, destQ);
+                    if (destCell) destCell.unit = this.selectedUnit;
+                    if (this.selectedUnit.onHorse && headCellForReserve) headCellForReserve.unit = this.selectedUnit;
+                    this.selectedUnit.hasMoved = true;
+                    const movingUnit = this.selectedUnit;
+                    const checkArrival = () => {
+                        if (this.turn !== 'player' || !movingUnit) {
+                            this.isProcessingTurn = false;
+                            return;
+                        }
+                        if (!movingUnit.isMoving) {
+                            if (movingUnit.onHorse) {
+                                const horse = this.getHorseById(movingUnit.horseId);
+                                if (horse) {
+                                    horse.r = movingUnit.r;
+                                    horse.q = movingUnit.q;
+                                    horse.flip = !!movingUnit.flip;
+                                    this.placeHorseOnCells(horse);
+                                }
+                                this.syncMountedOccupancy(movingUnit);
+                            }
+                            if (!movingUnit.onHorse) this.tryAutoMount(movingUnit, movingUnit.r, movingUnit.q);
+                            if (this.selectedUnit === movingUnit && movingUnit.attacks.length > 0) this.selectAttack(movingUnit.attacks[0]);
+                            this.pushHistory();
+                            this.isProcessingTurn = false;
+                        } else setTimeout(checkArrival, 100);
+                    };
+                    checkArrival();
+                }
+                this.reachableTiles.clear();
+            }
+        }
+    }
+
     activateControllerTarget() {
         if (this.controllerNavIndex < 0 || this.controllerNavIndex >= this.controllerNavTargets.length) return;
         const t = this.controllerNavTargets[this.controllerNavIndex];
         if (!t) return;
-        if (t.type === 'unit' && t.unit) {
-            this.hoveredCell = this.tacticsMap.getCell(t.unit.r, t.unit.q);
-        } else if ((t.type === 'move_cell' || t.type === 'attack_cell') && t.r !== undefined && t.q !== undefined) {
-            this.hoveredCell = this.tacticsMap.getCell(t.r, t.q);
+        if (t.type === 'choice') {
+            this.activateChoiceTarget(t.choiceIndex);
+            return;
         }
-        this.clickLogicalPoint(t.x, t.y);
-    }
-
-    clickLogicalPoint(x, y) {
-        const { canvas } = this.manager;
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const clientX = rect.left + x / scaleX;
-        const clientY = rect.top + y / scaleY;
-        this.handleInput({ clientX, clientY });
+        if (t.type === 'confirm_yes') {
+            assets.playSound('ui_click');
+            this.showEndTurnConfirm = false;
+            this.startExecutionPhase();
+            return;
+        }
+        if (t.type === 'confirm_no') {
+            assets.playSound('ui_click');
+            this.showEndTurnConfirm = false;
+            return;
+        }
+        if (t.type === 'ui') {
+            this.activateUiTarget(t.id);
+            return;
+        }
+        if (t.type === 'ability' && t.attackKey && this.selectedUnit && !this.selectedUnit.hasAttacked) {
+            this.selectAttack(t.attackKey);
+            return;
+        }
+        if (t.type === 'unit' && t.unit) {
+            const targetCell = this.tacticsMap.getCell(t.unit.r, t.unit.q);
+            this.hoveredCell = targetCell;
+            const isAttackTargetingMode = !!(this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack);
+            const canAttackThisUnit = isAttackTargetingMode && this.attackTiles.has(`${t.unit.r},${t.unit.q}`);
+            if (canAttackThisUnit) {
+                // In attack targeting mode, Enter on a unit should attack its cell (allies included).
+                this.activateCellTarget(t.unit.r, t.unit.q, 'attack_cell');
+            } else {
+                this.selectTargetUnit(t.unit);
+            }
+            return;
+        }
+        if ((t.type === 'move_cell' || t.type === 'attack_cell') && t.r !== undefined && t.q !== undefined) {
+            this.activateCellTarget(t.r, t.q, t.type);
+        }
     }
 
     clearBattleSelection() {
@@ -5490,6 +5699,47 @@ export class TacticsScene extends BaseScene {
         this.attackTiles.clear();
         this.attackRects = [];
         this.activeDialogue = null;
+    }
+
+    selectTargetUnit(targetUnit) {
+        if (!targetUnit) return;
+        this.selectedUnit = targetUnit;
+        this.selectedAttack = null;
+        this.attackTiles.clear();
+        this.attackRects = [];
+        if (this.selectedUnit.faction === 'player' && !this.selectedUnit.hasActed) {
+            if (!this.selectedUnit.hasMoved) {
+                const rawReachable = this.tacticsMap.getReachableData(this.selectedUnit.r, this.selectedUnit.q, this.selectedUnit.moveRange, this.selectedUnit);
+                this.reachableTiles = new Map();
+                rawReachable.forEach((data, key) => {
+                    const [r, q] = key.split(',').map(Number);
+                    const cell = this.tacticsMap.getCell(r, q);
+                    if (this.selectedUnit.onHorse) {
+                        // Allow moving the butt through 1-hex corridors; only the END destination needs head+butt space.
+                        if (!cell.unit || cell.unit === this.selectedUnit) this.reachableTiles.set(key, data);
+                    } else {
+                        if (!cell.unit || cell.unit === this.selectedUnit) this.reachableTiles.set(key, data);
+                    }
+                });
+
+                if (this.selectedUnit.onHorse) {
+                    // Build mounted destination plans and highlight both butt+head tiles for each plan
+                    this.mountedMovePlans = this.buildMountedMovePlans(this.selectedUnit, rawReachable);
+                    const highlight = new Map();
+                    this.mountedMovePlans.forEach(p => {
+                        highlight.set(`${p.butt.r},${p.butt.q}`, true);
+                        highlight.set(`${p.head.r},${p.head.q}`, true);
+                    });
+                    this.reachableTiles = highlight;
+                } else {
+                    this.mountedMovePlans = null;
+                }
+            } else {
+                this.reachableTiles.clear();
+                if (this.selectedUnit.attacks.length > 0) this.selectAttack(this.selectedUnit.attacks[0]);
+            }
+        } else this.reachableTiles.clear();
+        if (this.selectedUnit.dialogue) this.activeDialogue = { unit: this.selectedUnit, expires: Date.now() + 3000 };
     }
 
     drawHpBar(ctx, unit, x, y) {
@@ -6986,6 +7236,8 @@ export class TacticsScene extends BaseScene {
                 }
                 return;
             }
+            // This is a non-interactive cutscene state; consume clicks so they don't select units.
+            return;
         }
 
         if (this.showEndTurnConfirm) {
@@ -7402,43 +7654,7 @@ export class TacticsScene extends BaseScene {
         // C. SELECT UNIT (HoveredCell has priority if it contains a unit)
         const targetUnit = spriteUnit || (this.hoveredCell ? this.hoveredCell.unit : null);
         if (targetUnit) {
-            this.selectedUnit = targetUnit;
-            this.selectedAttack = null;
-            this.attackTiles.clear();
-            this.attackRects = [];
-            if (this.selectedUnit.faction === 'player' && !this.selectedUnit.hasActed) {
-                if (!this.selectedUnit.hasMoved) {
-                    const rawReachable = this.tacticsMap.getReachableData(this.selectedUnit.r, this.selectedUnit.q, this.selectedUnit.moveRange, this.selectedUnit);
-                    this.reachableTiles = new Map();
-                    rawReachable.forEach((data, key) => {
-                        const [r, q] = key.split(',').map(Number);
-                        const cell = this.tacticsMap.getCell(r, q);
-                        if (this.selectedUnit.onHorse) {
-                            // Allow moving the butt through 1-hex corridors; only the END destination needs head+butt space.
-                            if (!cell.unit || cell.unit === this.selectedUnit) this.reachableTiles.set(key, data);
-                        } else {
-                            if (!cell.unit || cell.unit === this.selectedUnit) this.reachableTiles.set(key, data);
-                        }
-                    });
-
-                    if (this.selectedUnit.onHorse) {
-                        // Build mounted destination plans and highlight both butt+head tiles for each plan
-                        this.mountedMovePlans = this.buildMountedMovePlans(this.selectedUnit, rawReachable);
-                        const highlight = new Map();
-                        this.mountedMovePlans.forEach(p => {
-                            highlight.set(`${p.butt.r},${p.butt.q}`, true);
-                            highlight.set(`${p.head.r},${p.head.q}`, true);
-                        });
-                        this.reachableTiles = highlight;
-                    } else {
-                        this.mountedMovePlans = null;
-                    }
-                } else {
-                    this.reachableTiles.clear();
-                    if (this.selectedUnit.attacks.length > 0) this.selectAttack(this.selectedUnit.attacks[0]);
-                }
-            } else this.reachableTiles.clear();
-            if (this.selectedUnit.dialogue) this.activeDialogue = { unit: this.selectedUnit, expires: Date.now() + 3000 };
+            this.selectTargetUnit(targetUnit);
             return;
         }
 
@@ -7542,6 +7758,14 @@ export class TacticsScene extends BaseScene {
                 this.onNonMouseInput();
                 this.controllerNavMouseEnabled = false;
                 this.handleInput(e);
+                return;
+            }
+            // In non-interactive cutscene states, Enter/Space should advance the same way as click.
+            if (this.isCutscene && !this.isIntroAnimating && !this.isProcessingTurn && !this.isCleanupDialogueActive && !this.isIntroDialogueActive && !this.isVictoryDialogueActive) {
+                e.preventDefault();
+                this.onNonMouseInput();
+                this.controllerNavMouseEnabled = false;
+                this.handleInput({});
                 return;
             }
         }

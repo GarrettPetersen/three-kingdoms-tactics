@@ -7,15 +7,6 @@ import { UI_TEXT } from '../data/Translations.js';
 
 // Locations and reminders will eventually be moved to CHAPTERS data
 const LOCATIONS = {
-    zhuo: {
-        id: 'zhuo',
-        x: 190,
-        y: 70,
-        name: 'Zhuo County',
-        imgKey: 'hut',
-        campaignId: 'liubei',
-        unlockCondition: (gs) => !gs.hasMilestone('prologue_complete') && !gs.hasMilestone('daxing') && !gs.hasMilestone('qingzhou_siege')
-    },
     magistrate: {
         id: 'magistrate',
         x: 182,
@@ -23,7 +14,8 @@ const LOCATIONS = {
         name: 'Magistrate Zhou Jing',
         imgKey: 'tent',
         battleId: 'daxing',
-        unlockCondition: (gs) => gs.hasMilestone('prologue_complete') && !gs.hasMilestone('daxing'),
+        // With the legacy Zhuo-start scene removed, magistrate is the first actionable map objective.
+        unlockCondition: (gs) => !gs.hasMilestone('daxing'),
         isCompleted: (gs) => gs.hasMilestone('daxing')
     },
     qingzhou: {
@@ -113,7 +105,6 @@ export class MapScene extends BaseScene {
         super();
         this.selectedLocation = null;
         this.dialogueElapsed = 0;
-        this.prologueComplete = false;
         this.interactionSelected = null;
         this.subStep = 0;
         this.moveState = {
@@ -148,11 +139,10 @@ export class MapScene extends BaseScene {
         
         // Load state if it exists
         const gs = this.manager.gameState;
-        const isResume = params.isResume && gs.get('mapState');
-        const savedState = isResume ? gs.get('mapState') : null;
+        const isResume = params.isResume && gs.getSceneState('map');
+        const savedState = isResume ? gs.getSceneState('map') : null;
         
         // Don't set lastScene here - SceneManager will handle it when switching away
-        this.prologueComplete = gs.hasMilestone('prologue_complete') || gs.hasMilestone('daxing') || gs.hasMilestone('qingzhou_siege');
 
         if (!isResume) {
             this.dialogueElapsed = 0;
@@ -179,7 +169,7 @@ export class MapScene extends BaseScene {
 
             if (params && params.campaignId) {
                 this.currentCampaignId = params.campaignId;
-                gs.set('currentCampaign', params.campaignId);
+                gs.setCurrentCampaign(params.campaignId);
                 // Don't set lastScene here - SceneManager will handle it
 
                 // Initialize party based on campaign
@@ -197,7 +187,7 @@ export class MapScene extends BaseScene {
                 }
             } else {
                 // No params (coming from Continue), restore from save
-                this.currentCampaignId = gs.get('currentCampaign');
+                this.currentCampaignId = gs.getCurrentCampaign();
                 const savedX = gs.getCampaignVar('partyX');
                 const savedY = gs.getCampaignVar('partyY');
                 if (this.currentCampaignId === 'liubei') {
@@ -287,7 +277,8 @@ export class MapScene extends BaseScene {
             selectedLocation: this.selectedLocation,
             moveState: this.moveState.isMoving ? { ...this.moveState } : null
         };
-        gs.set('mapState', state);
+        gs.setSceneState('map', state);
+        gs.setLastScene('map');
     }
     
     exit() {
@@ -376,7 +367,10 @@ export class MapScene extends BaseScene {
             }
 
             this.drawCharacter(ctx, charImg, action, frameIdx, cx, cy, { flip });
+            this.partyRenderPose = { img: charImg, action, frame: frameIdx, x: cx, y: cy, flip };
             navTargets.push({ type: 'party', id: 'party', x: cx, y: cy });
+        } else {
+            this.partyRenderPose = null;
         }
 
         if (this.interactionSelected === 'hero_reminder' && this.currentReminder) {
@@ -532,7 +526,13 @@ export class MapScene extends BaseScene {
         ctx.save();
         ctx.strokeStyle = '#ffd700';
         ctx.lineWidth = 1;
-        if (t.rect) {
+        if (t.type === 'party' && this.partyRenderPose) {
+            const pose = this.partyRenderPose;
+            this.drawCharacterPixelOutline(ctx, pose.img, pose.action, pose.frame, pose.x, pose.y, {
+                flip: pose.flip,
+                color: '#ffd700'
+            });
+        } else if (t.rect) {
             ctx.strokeRect(Math.floor(t.rect.x) - 1.5, Math.floor(t.rect.y) - 1.5, Math.floor(t.rect.w) + 2, Math.floor(t.rect.h) + 2);
         } else {
             const size = (t.type === 'party') ? 14 : 18;
@@ -542,31 +542,14 @@ export class MapScene extends BaseScene {
     }
 
     activateNavTarget(index) {
-        if (index < 0 || index >= this.navTargets.length) return;
-        const target = this.navTargets[index];
-        if (target.type === 'back') {
-            assets.playSound('ui_click');
-            this.manager.switchTo('campaign_selection');
-            return;
-        }
-        if (target.type === 'location') {
-            this.activateLocationTarget(target.id);
-            return;
-        }
-        if (target.type === 'party') {
-            this.activatePartyTarget();
-            return;
-        }
-        const logicalX = target.x;
-        const logicalY = target.y;
-
-        const { canvas } = this.manager;
-        const canvasRect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / canvasRect.width;
-        const scaleY = canvas.height / canvasRect.height;
-        const clientX = canvasRect.left + logicalX / scaleX;
-        const clientY = canvasRect.top + logicalY / scaleY;
-        this.handleInput({ clientX, clientY });
+        this.activateNavigationIndex(this.navTargets, index, {
+            back: () => {
+                assets.playSound('ui_click');
+                this.manager.switchTo('campaign_selection');
+            },
+            location: (target) => this.activateLocationTarget(target.id),
+            party: () => this.activatePartyTarget()
+        });
     }
 
     moveNavDirectional(dirX, dirY) {
@@ -574,8 +557,7 @@ export class MapScene extends BaseScene {
         if (this.selection.highlightedIndex < 0 || this.selection.highlightedIndex >= this.navTargets.length) {
             this.selection.highlightedIndex = 0;
         }
-        let bestIdx = this.findDirectionalTargetIndex(this.selection.highlightedIndex, this.navTargets, dirX, dirY, { coneSlope: 2.2 });
-        if (bestIdx === -1) bestIdx = (this.selection.highlightedIndex + 1) % this.navTargets.length;
+        const bestIdx = this.navigateTargetIndex(this.selection.highlightedIndex, this.navTargets, dirX, dirY, { coneSlope: 2.2 });
         this.selection.highlightedIndex = bestIdx;
         assets.playSound('ui_click', 0.5);
     }
@@ -589,8 +571,7 @@ export class MapScene extends BaseScene {
             const isDone = loc.isCompleted ? loc.isCompleted(gs) : false;
             if (!isDone) {
                 this.heroMoveTo(loc.x, loc.y, () => {
-                    if (loc.campaignId) this.startCampaign(loc.campaignId);
-                    else if (loc.battleId === 'daxing') this.startBriefing();
+                    if (loc.battleId === 'daxing') this.startBriefing();
                     else if (loc.battleId === 'qingzhou_siege') this.startQingzhouBriefing();
                     else if (loc.battleId === 'guangzong_encounter') this.startGuangzongBriefing();
                     else if (loc.battleId === 'zhuo_return') this.startZhuoReturn();
@@ -604,36 +585,21 @@ export class MapScene extends BaseScene {
 
     activatePartyTarget() {
         const gs = this.manager.gameState;
-        const isZhuoAvailable = !gs.hasMilestone('prologue_complete') &&
-            !gs.hasMilestone('daxing') &&
-            !gs.hasMilestone('qingzhou_siege') &&
-            !gs.hasMilestone('qingzhou_cleanup');
+        this.showCurrentPartyReminder(gs);
+    }
 
-        if (isZhuoAvailable || this.selectedLocation === 'zhuo') {
-            if (gs.hasMilestone('prologue_complete') ||
-                gs.hasMilestone('daxing') ||
-                gs.hasMilestone('qingzhou_siege') ||
-                gs.hasMilestone('qingzhou_cleanup') ||
-                gs.hasMilestone('guangzong_encounter')) {
-                let reminderKey = 'prologue_complete';
-                if (gs.hasMilestone('guangzong_encounter')) reminderKey = 'guangzong_encounter';
-                else if (gs.hasMilestone('qingzhou_cleanup')) reminderKey = 'qingzhou_cleanup';
-                else if (gs.hasMilestone('qingzhou_siege')) reminderKey = 'qingzhou_siege';
-                else if (gs.hasMilestone('daxing')) reminderKey = 'daxing';
-                this.interactionSelected = 'hero_reminder';
-                this.currentReminder = HERO_REMINDERS[reminderKey];
-                this.subStep = 0;
-                if (this.currentReminder && this.currentReminder.voiceId) assets.playVoice(this.currentReminder.voiceId);
-            } else {
-                this.startCampaign('liubei');
-            }
-        } else {
-            if (isZhuoAvailable) {
-                this.selectedLocation = 'zhuo';
-            }
-            this.interactionSelected = null;
-            this.subStep = 0;
+    advanceInteractionDialogue() {
+        if (this.dialogueElapsed < 250) return;
+        if (this.hasNextChunk) {
+            this.subStep++;
+            this.dialogueElapsed = 0;
+            return;
         }
+        this.interactionSelected = null;
+        this.subStep = 0;
+        this.currentEvent = null;
+        this.currentReminder = null;
+        this.dialogueElapsed = 0;
     }
 
     handleInput(e) {
@@ -663,23 +629,41 @@ export class MapScene extends BaseScene {
 
         // Advance dialogue if active
         if (this.interactionSelected === 'hero_reminder' || this.interactionSelected === 'story_event') {
-            if (this.dialogueElapsed < 250) return;
+            this.advanceInteractionDialogue();
+            return;
+        }
 
-            if (this.hasNextChunk) {
-                this.subStep++;
-                this.dialogueElapsed = 0;
-            } else {
-                this.interactionSelected = null;
-                this.subStep = 0;
-                this.currentEvent = null;
-                this.currentReminder = null;
-                this.dialogueElapsed = 0;
-            }
+        // Handle party click first (party sprite can overlap location icons like the magistrate).
+        // A precise click on Liu Bei should always trigger his reminder dialogue.
+        const gs = this.manager.gameState;
+        const cx = mx + this.party.x;
+        const cy = my + this.party.y;
+        
+        const charImg = assets.getImage(this.party.imgKey);
+        const frame = Math.floor(Date.now() / 150) % 4;
+        const walkFrame = Math.floor(Date.now() / 100) % 4;
+        
+        let action = 'standby';
+        let frameIdx = frame;
+        let flip = false;
+        let currentX = cx;
+        let currentY = cy;
+
+        if (this.moveState.isMoving) {
+            currentX = mx + this.moveState.startX + (this.moveState.targetX - this.moveState.startX) * this.moveState.progress;
+            currentY = my + this.moveState.startY + (this.moveState.targetY - this.moveState.startY) * this.moveState.progress;
+            action = 'walk';
+            frameIdx = walkFrame;
+            if (this.moveState.targetX < this.moveState.startX) flip = true;
+        }
+
+        const charHit = this.checkCharacterHit(charImg, action, frameIdx, currentX, currentY, mouseX, mouseY, { flip });
+        if (charHit) {
+            this.showCurrentPartyReminder(gs);
             return;
         }
 
         // Handle dynamic location clicks
-        const gs = this.manager.gameState;
         for (const locId in LOCATIONS) {
             const loc = LOCATIONS[locId];
             if (loc.unlockCondition(gs)) {
@@ -706,8 +690,7 @@ export class MapScene extends BaseScene {
                         const isDone = loc.isCompleted ? loc.isCompleted(gs) : false;
                         if (!isDone) {
                             this.heroMoveTo(loc.x, loc.y, () => {
-                                if (loc.campaignId) this.startCampaign(loc.campaignId);
-                                else if (loc.battleId === 'daxing') this.startBriefing();
+                                if (loc.battleId === 'daxing') this.startBriefing();
                                 else if (loc.battleId === 'qingzhou_siege') this.startQingzhouBriefing();
                                 else if (loc.battleId === 'guangzong_encounter') this.startGuangzongBriefing();
                                 else if (loc.battleId === 'zhuo_return') this.startZhuoReturn();
@@ -721,80 +704,10 @@ export class MapScene extends BaseScene {
                 }
             }
         }
-
-        // Check party/Zhuo County hit
-        const cx = mx + this.party.x;
-        const cy = my + this.party.y;
         
-        const charImg = assets.getImage(this.party.imgKey);
-        const frame = Math.floor(Date.now() / 150) % 4;
-        const walkFrame = Math.floor(Date.now() / 100) % 4;
-        
-        let action = 'standby';
-        let frameIdx = frame;
-        let flip = false;
-        let currentX = cx;
-        let currentY = cy;
-
-        if (this.moveState.isMoving) {
-            currentX = mx + this.moveState.startX + (this.moveState.targetX - this.moveState.startX) * this.moveState.progress;
-            currentY = my + this.moveState.startY + (this.moveState.targetY - this.moveState.startY) * this.moveState.progress;
-            action = 'walk';
-            frameIdx = walkFrame;
-            if (this.moveState.targetX < this.moveState.startX) flip = true;
-        }
-
-        const charHit = this.checkCharacterHit(charImg, action, frameIdx, currentX, currentY, mouseX, mouseY, { flip });
-        
-        let boxHit = false;
-        // Always check box hit if the label is visible (prologue not complete)
-        if (!this.prologueComplete) {
-            this.manager.ctx.save();
-            this.manager.ctx.font = '8px Silkscreen';
-            const metrics = this.manager.ctx.measureText("ZHUO COUNTY");
-            this.manager.ctx.restore();
-            
-            const boxW = Math.floor(metrics.width + 10);
-            const boxH = 24;
-            const bx = Math.floor(cx - 20 - boxW);
-            const by = Math.floor(cy - 45);
-            boxHit = (mouseX >= bx && mouseX <= bx + boxW && mouseY >= by && mouseY <= by + boxH);
-        }
-
-        if (charHit || boxHit) {
-            const isZhuoAvailable = !gs.hasMilestone('prologue_complete') && !gs.hasMilestone('daxing') && !gs.hasMilestone('qingzhou_siege') && !gs.hasMilestone('qingzhou_cleanup');
-            
-            // Always enter immediately if the prologue is not complete
-            if (isZhuoAvailable || boxHit || this.selectedLocation === 'zhuo') {
-                if (gs.hasMilestone('prologue_complete') || gs.hasMilestone('daxing') || gs.hasMilestone('qingzhou_siege') || gs.hasMilestone('qingzhou_cleanup') || gs.hasMilestone('guangzong_encounter')) {
-                    let reminderKey = 'prologue_complete';
-                    
-                    if (gs.hasMilestone('guangzong_encounter')) reminderKey = 'guangzong_encounter';
-                    else if (gs.hasMilestone('qingzhou_cleanup')) reminderKey = 'qingzhou_cleanup';
-                    else if (gs.hasMilestone('qingzhou_siege')) reminderKey = 'qingzhou_siege';
-                    else if (gs.hasMilestone('daxing')) reminderKey = 'daxing';
-                    
-                    this.interactionSelected = 'hero_reminder';
-                    this.currentReminder = HERO_REMINDERS[reminderKey];
-                    this.subStep = 0;
-                    if (this.currentReminder && this.currentReminder.voiceId) assets.playVoice(this.currentReminder.voiceId);
-                } else {
-                    this.startCampaign('liubei');
-                }
-            } else {
-                // First click on character selects the location (if available)
-                if (isZhuoAvailable) {
-                this.selectedLocation = 'zhuo';
-                }
-                this.interactionSelected = null;
-                this.subStep = 0;
-            }
-            return;
-        } else {
-            this.selectedLocation = null;
-            if (this.interactionSelected !== 'hero_reminder' && this.interactionSelected !== 'story_event') {
-                this.interactionSelected = null;
-            }
+        this.selectedLocation = null;
+        if (this.interactionSelected !== 'hero_reminder' && this.interactionSelected !== 'story_event') {
+            this.interactionSelected = null;
         }
     }
 
@@ -812,10 +725,7 @@ export class MapScene extends BaseScene {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 this.onNonMouseInput();
-                this.handleInput({
-                    clientX: this.manager.lastPointerX,
-                    clientY: this.manager.lastPointerY
-                });
+                this.advanceInteractionDialogue();
             }
             return;
         }
@@ -866,6 +776,32 @@ export class MapScene extends BaseScene {
                 houseDensity: 0.2
             }
         });
+    }
+
+    getCurrentPartyReminderKey(gs) {
+        // Highest-priority progression first.
+        if (gs.hasMilestone('guangzong_encounter')) return 'guangzong_encounter';
+        if (gs.hasMilestone('qingzhou_cleanup')) return 'qingzhou_cleanup';
+        if (gs.hasMilestone('qingzhou_siege')) return 'qingzhou_siege';
+        if (gs.hasMilestone('daxing')) return 'daxing';
+        if (gs.hasMilestone('prologue_complete')) return 'prologue_complete';
+        // Fallback for any pre-Daxing map state: still guide player to the magistrate.
+        return 'prologue_complete';
+    }
+
+    showCurrentPartyReminder(gs) {
+        const reminderKey = this.getCurrentPartyReminderKey(gs);
+        const reminder = reminderKey ? HERO_REMINDERS[reminderKey] : null;
+        if (!reminder) {
+            this.interactionSelected = null;
+            this.subStep = 0;
+            return;
+        }
+
+        this.interactionSelected = 'hero_reminder';
+        this.currentReminder = reminder;
+        this.subStep = 0;
+        if (this.currentReminder.voiceId) assets.playVoice(this.currentReminder.voiceId);
     }
 
     startGuangzongBriefing() {
@@ -1073,14 +1009,4 @@ export class MapScene extends BaseScene {
         });
     }
 
-    startCampaign(id) {
-        if (id === 'liubei') {
-            // Start with the Yellow Turban rout cutscene battle
-            // The battle will transition to narrative with scriptId 'yellow_turban_to_noticeboard'
-            // which then transitions to the noticeboard script
-            this.manager.switchTo('tactics', {
-                battleId: 'yellow_turban_rout'
-            });
-        }
-    }
 }

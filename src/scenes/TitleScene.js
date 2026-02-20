@@ -693,83 +693,20 @@ export class TitleScene extends BaseScene {
         if (action === 'continue') {
             assets.playSound('gong', 0.8);
             const gs = this.manager.gameState;
-            const campaignId = gs.get('currentCampaign');
-            
-            // Check for saved states in priority order
-            // If there's a saved narrative state, resume narrative
-            const narrativeState = gs.get('narrativeState');
-            if (narrativeState) {
-                // Check if we have a valid script to restore
-                let hasValidScript = false;
-                if (narrativeState.scriptId) {
-                    // Using scriptId - check if script exists and currentStep is valid
-                    const script = NARRATIVE_SCRIPTS[narrativeState.scriptId];
-                    if (script && narrativeState.currentStep < script.length) {
-                        hasValidScript = true;
+            const target = gs.resolveContinueTarget({
+                validateNarrativeState: (narrativeState) => {
+                    if (!narrativeState) return false;
+                    if (narrativeState.scriptId) {
+                        const script = NARRATIVE_SCRIPTS[narrativeState.scriptId];
+                        return !!(script && narrativeState.currentStep < script.length);
                     }
-                } else if (narrativeState.script && Array.isArray(narrativeState.script) && narrativeState.script.length > 0) {
-                    // Using custom script - check if currentStep is valid
-                    if (narrativeState.currentStep < narrativeState.script.length) {
-                        hasValidScript = true;
+                    if (narrativeState.script && Array.isArray(narrativeState.script) && narrativeState.script.length > 0) {
+                        return narrativeState.currentStep < narrativeState.script.length;
                     }
+                    return false;
                 }
-                
-                if (hasValidScript) {
-                    this.manager.switchTo('narrative', { isResume: true });
-                    return;
-                } else {
-                    // Invalid narrative state - clear it
-                    console.warn('Clearing invalid narrative state', narrativeState);
-                    gs.set('narrativeState', null);
-                }
-            }
-            
-            // If there's a saved battle state, resume battle
-            if (gs.get('battleState')) {
-                this.manager.switchTo('tactics', { isResume: true });
-                return;
-            }
-            
-            // If there's a saved map state, resume map
-            if (gs.get('mapState')) {
-                this.manager.switchTo('map', { campaignId, isResume: true });
-                return;
-            }
-            
-            // Fallback to lastScene (with exclusion check)
-            let lastScene = gs.get('lastScene');
-            const excludedScenes = ['title', 'custom_battle']; // campaign_selection is now allowed
-            
-            // If lastScene is excluded or doesn't exist, default to map
-            if (!lastScene || excludedScenes.includes(lastScene)) {
-                // If no lastScene but we have a campaign, go to map
-                // Otherwise, go to campaign_selection
-                if (campaignId) {
-                    lastScene = 'map';
-                } else {
-                    lastScene = 'campaign_selection';
-                }
-            }
-
-            // Never resume bare narrative without a valid narrative state payload.
-            if (lastScene === 'narrative' && !gs.get('narrativeState')) {
-                lastScene = campaignId ? 'map' : 'campaign_selection';
-            }
-            
-            // Check for scene-specific saved states (generic approach for future scenes)
-            // Any scene can implement saveState() method that saves to `${sceneName}State`
-            // and restore via enter({ isResume: true })
-            // This allows any scene to opt into save/restore without modifying continue logic
-            const sceneStateKey = `${lastScene}State`;
-            const sceneState = gs.get(sceneStateKey);
-            if (sceneState) {
-                // Scene has saved state - resume it
-                this.manager.switchTo(lastScene, { isResume: true });
-                return;
-            }
-            
-            // No saved state for this scene - just switch to it normally
-            this.manager.switchTo(lastScene, { campaignId, isResume: true });
+            });
+            this.manager.switchTo(target.scene, target.params || {});
         } else if (action === 'newgame') {
             const hasSave = this.manager.gameState.hasSave();
             if (hasSave) {
