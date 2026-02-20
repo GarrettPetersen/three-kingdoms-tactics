@@ -324,15 +324,27 @@ export class MapScene extends BaseScene {
                 const lx = mx + loc.x;
                 const ly = my + loc.y;
                 const isDone = loc.isCompleted ? loc.isCompleted(gs) : false;
-                navTargets.push({ type: 'location', id: locId, x: lx, y: ly });
                 
                 const img = assets.getImage(loc.imgKey);
                 if (img) {
+                    const drawX = Math.floor(lx - img.width / 2);
+                    const drawY = Math.floor(ly - img.height / 2);
+                    navTargets.push({
+                        type: 'location',
+                        id: locId,
+                        x: lx,
+                        y: ly,
+                        img,
+                        drawX,
+                        drawY,
+                        w: img.width,
+                        h: img.height
+                    });
                     ctx.save();
                     if (isDone) ctx.globalAlpha = 0.5;
                     
                     // Draw centered at the location coordinates
-                    ctx.drawImage(img, Math.floor(lx - img.width / 2), Math.floor(ly - img.height / 2), img.width, img.height);
+                    ctx.drawImage(img, drawX, drawY, img.width, img.height);
                     ctx.restore();
 
                     if (this.interactionSelected === locId) {
@@ -534,11 +546,85 @@ export class MapScene extends BaseScene {
             });
         } else if (t.rect) {
             ctx.strokeRect(Math.floor(t.rect.x) - 1.5, Math.floor(t.rect.y) - 1.5, Math.floor(t.rect.w) + 2, Math.floor(t.rect.h) + 2);
+        } else if (t.type === 'location' && t.img) {
+            this.drawLocationSpriteOutline(ctx, t.img, t.drawX, t.drawY, { color: '#ffd700' });
         } else {
             const size = (t.type === 'party') ? 14 : 18;
             ctx.strokeRect(Math.floor(t.x - size / 2) - 0.5, Math.floor(t.y - size / 2) - 0.5, size, size);
         }
         ctx.restore();
+    }
+
+    drawLocationSpriteOutline(ctx, img, drawX, drawY, options = {}) {
+        if (!img) return;
+        const { color = '#ffd700', alphaThreshold = 10 } = options;
+        const w = img.width;
+        const h = img.height;
+        if (!w || !h) return;
+
+        if (!this._locationOutlineSrcCanvas || this._locationOutlineSrcCanvas.width !== w || this._locationOutlineSrcCanvas.height !== h) {
+            this._locationOutlineSrcCanvas = document.createElement('canvas');
+            this._locationOutlineSrcCanvas.width = w;
+            this._locationOutlineSrcCanvas.height = h;
+            this._locationOutlineSrcCtx = this._locationOutlineSrcCanvas.getContext('2d', { willReadFrequently: true });
+
+            this._locationOutlineDstCanvas = document.createElement('canvas');
+            this._locationOutlineDstCanvas.width = w;
+            this._locationOutlineDstCanvas.height = h;
+            this._locationOutlineDstCtx = this._locationOutlineDstCanvas.getContext('2d');
+        }
+
+        const srcCtx = this._locationOutlineSrcCtx;
+        const dstCtx = this._locationOutlineDstCtx;
+        srcCtx.clearRect(0, 0, w, h);
+        dstCtx.clearRect(0, 0, w, h);
+        srcCtx.drawImage(img, 0, 0, w, h);
+
+        const srcData = srcCtx.getImageData(0, 0, w, h);
+        const outData = dstCtx.createImageData(w, h);
+        const rgb = { r: 255, g: 215, b: 0 };
+        if (typeof color === 'string' && color.startsWith('#') && (color.length === 7 || color.length === 4)) {
+            const clean = color.slice(1);
+            const expanded = clean.length === 3
+                ? `${clean[0]}${clean[0]}${clean[1]}${clean[1]}${clean[2]}${clean[2]}`
+                : clean;
+            rgb.r = parseInt(expanded.slice(0, 2), 16);
+            rgb.g = parseInt(expanded.slice(2, 4), 16);
+            rgb.b = parseInt(expanded.slice(4, 6), 16);
+        }
+
+        for (let py = 0; py < h; py++) {
+            for (let px = 0; px < w; px++) {
+                const idx = (py * w + px) * 4;
+                const a = srcData.data[idx + 3];
+                if (a > alphaThreshold) continue;
+
+                let edge = false;
+                for (let oy = -1; oy <= 1 && !edge; oy++) {
+                    for (let ox = -1; ox <= 1; ox++) {
+                        if (ox === 0 && oy === 0) continue;
+                        const nx = px + ox;
+                        const ny = py + oy;
+                        if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
+                        const nIdx = (ny * w + nx) * 4;
+                        if (srcData.data[nIdx + 3] > alphaThreshold) {
+                            edge = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (edge) {
+                    outData.data[idx] = rgb.r;
+                    outData.data[idx + 1] = rgb.g;
+                    outData.data[idx + 2] = rgb.b;
+                    outData.data[idx + 3] = 255;
+                }
+            }
+        }
+
+        dstCtx.putImageData(outData, 0, 0);
+        ctx.drawImage(this._locationOutlineDstCanvas, Math.floor(drawX), Math.floor(drawY), w, h);
     }
 
     activateNavTarget(index) {
@@ -780,6 +866,7 @@ export class MapScene extends BaseScene {
 
     getCurrentPartyReminderKey(gs) {
         // Highest-priority progression first.
+        if (gs.hasMilestone('chapter1_complete')) return null;
         if (gs.hasMilestone('guangzong_encounter')) return 'guangzong_encounter';
         if (gs.hasMilestone('qingzhou_cleanup')) return 'qingzhou_cleanup';
         if (gs.hasMilestone('qingzhou_siege')) return 'qingzhou_siege';
