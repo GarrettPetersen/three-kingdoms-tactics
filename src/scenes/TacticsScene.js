@@ -1805,6 +1805,8 @@ export class TacticsScene extends BaseScene {
             battleId: this.battleId,
             turn: this.turn,
             turnNumber: this.turnNumber,
+            ambushTriggered: !!this.ambushTriggered,
+            reachedFlag: !!this.reachedFlag,
             weatherType: this.weatherType,
             mapGen: this.mapGenParams,
             grid: this.tacticsMap.grid.map(row => row.map(cell => ({
@@ -1929,6 +1931,8 @@ export class TacticsScene extends BaseScene {
         
         this.turn = state.turn;
         this.turnNumber = state.turnNumber;
+        this.ambushTriggered = !!state.ambushTriggered;
+        this.reachedFlag = !!state.reachedFlag;
         this.weatherType = state.weatherType;
         this.horses = [];
         
@@ -1955,9 +1959,37 @@ export class TacticsScene extends BaseScene {
         state.units.forEach(uData => {
             let u = this.units.find(unit => unit.id === uData.id);
             if (!u) {
-                // Unit doesn't exist, might need to create it from saved data
-                // For now, skip units that don't exist
-                return; 
+                // Dynamically spawned units (e.g. Qingzhou reinforcements/ambush units)
+                // may not exist in battle definitions. Recreate them from save data.
+                u = new Unit(uData.id, {
+                    id: uData.id,
+                    name: uData.name,
+                    imgKey: uData.imgKey,
+                    img: assets.getImage(uData.imgKey),
+                    faction: uData.faction,
+                    r: uData.r,
+                    q: uData.q,
+                    hp: uData.hp,
+                    maxHp: uData.maxHp,
+                    moveRange: uData.moveRange,
+                    baseMoveRange: uData.baseMoveRange !== undefined ? uData.baseMoveRange : uData.moveRange,
+                    onHorse: !!uData.onHorse,
+                    horseId: uData.horseId || null,
+                    horseType: uData.horseType || 'brown',
+                    hasMoved: !!uData.hasMoved,
+                    hasAttacked: !!uData.hasAttacked,
+                    hasActed: !!uData.hasActed,
+                    attacks: uData.attacks || [],
+                    intent: uData.intent ? { ...uData.intent } : null,
+                    action: uData.action || 'standby',
+                    isDrowning: !!uData.isDrowning,
+                    isGone: !!uData.isGone,
+                    flip: !!uData.flip,
+                    caged: !!uData.caged,
+                    cageHp: uData.cageHp,
+                    cageSprite: uData.cageSprite
+                });
+                this.units.push(u);
             }
 
             u.r = uData.r;
@@ -5336,6 +5368,8 @@ export class TacticsScene extends BaseScene {
                         type: 'unit',
                         x: u.visualX,
                         y: u.visualY,
+                        r: u.r,
+                        q: u.q,
                         unit: u
                     });
                 }
@@ -5381,6 +5415,39 @@ export class TacticsScene extends BaseScene {
             return;
         }
         const cur = this.controllerNavTargets[this.controllerNavIndex];
+
+        const isMapTarget = (t) => t && (t.type === 'move_cell' || t.type === 'attack_cell' || t.type === 'unit');
+        const findMapTargetAt = (r, q, preferredType = null) => {
+            if (preferredType) {
+                const exact = this.controllerNavTargets.findIndex(t => t.r === r && t.q === q && t.type === preferredType);
+                if (exact >= 0) return exact;
+            }
+            return this.controllerNavTargets.findIndex(t => t.r === r && t.q === q && isMapTarget(t));
+        };
+
+        // Hex-first navigation: for map targets, arrow keys should prefer adjacent hexes.
+        if (isMapTarget(cur) && cur.r !== undefined && cur.q !== undefined) {
+            let dirChoices = [];
+            if (dirX > 0) dirChoices = [1];       // E
+            else if (dirX < 0) dirChoices = [4];  // W
+            else if (dirY < 0) dirChoices = [0, 5]; // NE, NW
+            else if (dirY > 0) dirChoices = [2, 3]; // SE, SW
+
+            for (const d of dirChoices) {
+                const n = this.tacticsMap.getNeighborInDirection(cur.r, cur.q, d);
+                if (!n) continue;
+                const idx = findMapTargetAt(n.r, n.q, cur.type);
+                if (idx >= 0) {
+                    this.controllerNavIndex = idx;
+                    const t = this.controllerNavTargets[idx];
+                    if (t.type === 'unit' && t.unit) this.hoveredCell = this.tacticsMap.getCell(t.unit.r, t.unit.q);
+                    if ((t.type === 'move_cell' || t.type === 'attack_cell') && t.r !== undefined) this.hoveredCell = this.tacticsMap.getCell(t.r, t.q);
+                    assets.playSound('ui_click', 0.5);
+                    return;
+                }
+            }
+        }
+
         let bestIdx = -1;
         let bestScore = -Infinity;
         for (let i = 0; i < this.controllerNavTargets.length; i++) {
