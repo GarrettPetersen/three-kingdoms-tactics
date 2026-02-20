@@ -405,7 +405,28 @@ export class CampaignSelectionScene extends BaseScene {
                 this.addMessage(getLocalizedText(UI_TEXT['This story is complete.']), '#ff4444');
                 return;
             }
-            this.manager.switchTo('map', { campaignId: selected.id });
+            const gs = this.manager.gameState;
+            gs.set('currentCampaign', selected.id);
+            // Ensure party starts at Zhuo by default for a fresh run
+            gs.setCampaignVar('partyX', 190, selected.id);
+            gs.setCampaignVar('partyY', 70, selected.id);
+
+            const hasProgress =
+                gs.hasMilestone('prologue_complete') ||
+                gs.hasMilestone('daxing') ||
+                gs.hasMilestone('qingzhou_siege') ||
+                gs.hasMilestone('qingzhou_cleanup') ||
+                gs.hasMilestone('guangzong_encounter') ||
+                !!gs.get('mapState') ||
+                !!gs.get('battleState') ||
+                !!gs.get('narrativeState');
+
+            // Fresh start: skip the map "march to Zhuo" and jump straight into the first battle.
+            if (selected.id === 'liubei' && !hasProgress) {
+                this.manager.switchTo('tactics', { battleId: 'yellow_turban_rout' });
+            } else {
+                this.manager.switchTo('map', { campaignId: selected.id });
+            }
         }
     }
 
@@ -461,7 +482,26 @@ export class CampaignSelectionScene extends BaseScene {
                     if (c.isComplete) {
                         this.addMessage(getLocalizedText(UI_TEXT['This story is complete.']), '#ff4444');
                     } else {
-                    this.manager.switchTo('map', { campaignId: c.id });
+                        const gs = this.manager.gameState;
+                        gs.set('currentCampaign', c.id);
+                        gs.setCampaignVar('partyX', 190, c.id);
+                        gs.setCampaignVar('partyY', 70, c.id);
+
+                        const hasProgress =
+                            gs.hasMilestone('prologue_complete') ||
+                            gs.hasMilestone('daxing') ||
+                            gs.hasMilestone('qingzhou_siege') ||
+                            gs.hasMilestone('qingzhou_cleanup') ||
+                            gs.hasMilestone('guangzong_encounter') ||
+                            !!gs.get('mapState') ||
+                            !!gs.get('battleState') ||
+                            !!gs.get('narrativeState');
+
+                        if (c.id === 'liubei' && !hasProgress) {
+                            this.manager.switchTo('tactics', { battleId: 'yellow_turban_rout' });
+                        } else {
+                            this.manager.switchTo('map', { campaignId: c.id });
+                        }
                     }
                 } else {
                     this.selectedIndex = i;

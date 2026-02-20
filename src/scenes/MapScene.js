@@ -296,6 +296,11 @@ export class MapScene extends BaseScene {
     }
 
     heroMoveTo(targetX, targetY, onComplete) {
+        // If we're already at the destination, don't play a "walk in place" animation.
+        if (this.party && this.party.x === targetX && this.party.y === targetY) {
+            if (onComplete) onComplete();
+            return;
+        }
         this.moveState = {
             isMoving: true,
             progress: 0,

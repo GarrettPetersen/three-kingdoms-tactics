@@ -49,16 +49,12 @@ function setupCanvas() {
     canvas.height = config.virtualHeight;
     ctx.imageSmoothingEnabled = false;
 
-    // Use CSS to scale the canvas to fit the window while maintaining aspect ratio
+    // Scale canvas to the largest size that fits the viewport (maintain aspect ratio)
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
-    const multiplier = Math.max(1, Math.floor(Math.min(screenWidth / config.virtualWidth, screenHeight / config.virtualHeight)));
-    
-    // We can either use a whole-number multiplier for sharpest pixels, 
-    // or just let 'object-fit: contain' handle it in CSS.
-    // Let's set a explicit style size to ensure it's large enough.
-    canvas.style.width = `${config.virtualWidth * multiplier}px`;
-    canvas.style.height = `${config.virtualHeight * multiplier}px`;
+    const scale = Math.max(1, Math.min(screenWidth / config.virtualWidth, screenHeight / config.virtualHeight));
+    canvas.style.width = `${Math.floor(config.virtualWidth * scale)}px`;
+    canvas.style.height = `${Math.floor(config.virtualHeight * scale)}px`;
 }
 
 /**

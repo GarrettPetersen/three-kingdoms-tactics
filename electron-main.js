@@ -4,8 +4,8 @@ const isDev = process.env.NODE_ENV === 'development';
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 512, // Double the virtual resolution for better visibility
-    height: 512,
+    width: 1024,
+    height: 1024,
     useContentSize: true,
     resizable: true,
     backgroundColor: '#000000',
@@ -19,6 +19,8 @@ function createWindow() {
 
   // Hide menu bar
   win.setMenuBarVisibility(false);
+  // Start maximized so the game fills available screen space.
+  win.maximize();
 
   if (isDev) {
     win.loadURL('http://localhost:5173');
