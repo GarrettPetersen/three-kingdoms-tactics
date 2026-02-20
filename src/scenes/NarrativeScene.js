@@ -36,6 +36,28 @@ export class NarrativeScene extends BaseScene {
         this.invalidScriptRecoveryScheduled = false;
     }
 
+    cloneScriptSteps(steps) {
+        if (!Array.isArray(steps)) return [];
+        try {
+            return JSON.parse(JSON.stringify(steps));
+        } catch (err) {
+            console.error('Failed to clone narrative script steps:', err);
+            return steps.map(step => ({ ...step }));
+        }
+    }
+
+    createChoiceDialogueStep(step, opt) {
+        const fallbackText = opt?.buttonText || '';
+        const dialogueText = opt?.text !== undefined && opt?.text !== null ? opt.text : fallbackText;
+        return {
+            type: 'dialogue',
+            portraitKey: step.portraitKey || 'liubei',
+            name: step.name || 'Liu Bei',
+            text: dialogueText,
+            voiceId: opt?.voiceId
+        };
+    }
+
     enter(params) {
         this.invalidScriptRecoveryScheduled = false;
         const gs = this.manager.gameState;
@@ -55,10 +77,10 @@ export class NarrativeScene extends BaseScene {
         
         if (!isResume) {
             if (params.scriptId && NARRATIVE_SCRIPTS[params.scriptId]) {
-                this.script = NARRATIVE_SCRIPTS[params.scriptId];
+                this.script = this.cloneScriptSteps(NARRATIVE_SCRIPTS[params.scriptId]);
                 this.scriptId = params.scriptId;
             } else {
-                this.script = params.script || [];
+                this.script = this.cloneScriptSteps(params.script || []);
                 this.scriptId = null;
             }
 
@@ -110,7 +132,7 @@ export class NarrativeScene extends BaseScene {
         this.scriptId = state.scriptId;
         if (this.scriptId && NARRATIVE_SCRIPTS[this.scriptId]) {
             // Restore from scriptId
-            this.script = NARRATIVE_SCRIPTS[this.scriptId];
+            this.script = this.cloneScriptSteps(NARRATIVE_SCRIPTS[this.scriptId]);
         } else if (this.scriptId && !NARRATIVE_SCRIPTS[this.scriptId]) {
             // scriptId exists but script doesn't exist in NARRATIVE_SCRIPTS
             console.error('Cannot restore: scriptId not found in NARRATIVE_SCRIPTS', {
@@ -126,7 +148,7 @@ export class NarrativeScene extends BaseScene {
             return;
         } else if (state.script && Array.isArray(state.script) && state.script.length > 0) {
             // Custom script (no scriptId) - only use if it's not empty
-            this.script = state.script;
+            this.script = this.cloneScriptSteps(state.script);
         } else {
             // No valid script found - this includes empty arrays
             console.error('Cannot restore: invalid or empty script state', {
@@ -1534,14 +1556,9 @@ export class NarrativeScene extends BaseScene {
                     
                     if (x >= m.px && x <= m.px + m.panelWidth && 
                         y >= currentY - 2 && y <= currentY + optionHeight + 2) {
-                        // Create a dialogue step for the choice so it gets voiced and displayed
-                        const choiceDialogue = {
-                            type: 'dialogue',
-                            portraitKey: step.portraitKey || 'liubei',
-                            name: step.name || 'Liu Bei',
-                            text: opt.text,
-                            voiceId: opt.voiceId
-                        };
+                        // Create a dialogue step for the choice so it gets voiced and displayed.
+                        // Fallback to button text if full text is missing to avoid blank dialogue panels.
+                        const choiceDialogue = this.createChoiceDialogueStep(step, opt);
 
                         const resultSteps = opt.result || [];
                         this.script.splice(this.currentStep + 1, 0, choiceDialogue, ...resultSteps);
@@ -1776,14 +1793,9 @@ export class NarrativeScene extends BaseScene {
                 // Select the currently highlighted choice
                 const opt = options[selectedIndex];
                 if (opt) {
-                    // Create a dialogue step for the choice so it gets voiced and displayed
-                    const choiceDialogue = {
-                        type: 'dialogue',
-                        portraitKey: step.portraitKey || 'liubei',
-                        name: step.name || 'Liu Bei',
-                        text: opt.text,
-                        voiceId: opt.voiceId
-                    };
+                    // Create a dialogue step for the choice so it gets voiced and displayed.
+                    // Fallback to button text if full text is missing to avoid blank dialogue panels.
+                    const choiceDialogue = this.createChoiceDialogueStep(step, opt);
 
                     const resultSteps = opt.result || [];
                     this.script.splice(this.currentStep + 1, 0, choiceDialogue, ...resultSteps);

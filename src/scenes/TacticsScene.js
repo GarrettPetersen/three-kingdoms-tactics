@@ -53,6 +53,22 @@ export class TacticsScene extends BaseScene {
         this.controllerNavMouseEnabled = true;
     }
 
+    cloneScriptSteps(steps) {
+        if (!Array.isArray(steps)) return [];
+        try {
+            return JSON.parse(JSON.stringify(steps));
+        } catch (err) {
+            console.error('Failed to clone cutscene script steps:', err);
+            return steps.map(step => ({ ...step }));
+        }
+    }
+
+    getActiveDialogueScript() {
+        if (this.isIntroDialogueActive && this.introScript) return this.introScript;
+        if (this.isVictoryDialogueActive && this.victoryScript) return this.victoryScript;
+        return null;
+    }
+
     enter(params = {}) {
         const gs = this.manager.gameState;
         
@@ -324,7 +340,7 @@ export class TacticsScene extends BaseScene {
         const battleDef = BATTLES[this.battleId];
         
         if (battleDef && battleDef.introScript) {
-            this.introScript = battleDef.introScript;
+            this.introScript = this.cloneScriptSteps(battleDef.introScript);
         }
         
         if (this.introScript && this.introScript.length > 0) {
@@ -502,7 +518,7 @@ export class TacticsScene extends BaseScene {
     startPostCombatDialogue() {
         const battleDef = BATTLES[this.battleId];
         if (battleDef && battleDef.postCombatScript) {
-            this.introScript = battleDef.postCombatScript;
+            this.introScript = this.cloneScriptSteps(battleDef.postCombatScript);
             this.isIntroDialogueActive = true;
             this.isPostCombatDialogue = true; // Mark as post-combat dialogue
             this.dialogueStep = 0;
@@ -518,7 +534,7 @@ export class TacticsScene extends BaseScene {
         }
         
         this.isVictoryDialogueActive = true;
-        this.victoryScript = NARRATIVE_SCRIPTS[scriptId];
+        this.victoryScript = this.cloneScriptSteps(NARRATIVE_SCRIPTS[scriptId]);
         this.dialogueStep = 0;
         this.subStep = 0;
         this.dialogueElapsed = 0;
@@ -1800,6 +1816,12 @@ export class TacticsScene extends BaseScene {
         if (this.battleId === 'custom') return; // Don't save state for custom battles
         const gs = this.manager.gameState;
         const state = this.captureState();
+        // Persist current-turn history so Undo/Reset survive Continue/resume.
+        // Deep clone snapshots to keep save data detached from live mutable objects.
+        state.history = (this.history || []).map(h => JSON.parse(JSON.stringify(h)));
+        if (state.history.length === 0) {
+            state.history.push(JSON.parse(JSON.stringify(state)));
+        }
         gs.setSceneState('tactics', state);
         gs.setLastScene('tactics');
     }
@@ -2074,10 +2096,10 @@ export class TacticsScene extends BaseScene {
             const battleDef = BATTLES[this.battleId];
             if (this.isPostCombatDialogue && battleDef && battleDef.postCombatScript) {
                 // Restore post-combat script
-                this.introScript = battleDef.postCombatScript;
+                this.introScript = this.cloneScriptSteps(battleDef.postCombatScript);
             } else if (battleDef && battleDef.introScript) {
                 // Restore intro script
-                this.introScript = battleDef.introScript;
+                this.introScript = this.cloneScriptSteps(battleDef.introScript);
             }
             
             // Validate dialogueStep is within bounds
@@ -2243,7 +2265,7 @@ export class TacticsScene extends BaseScene {
                             // Already in post-combat dialogue - ensure script is loaded and dialogueStep is valid
                             const battleDef = BATTLES[this.battleId];
                             if (battleDef && battleDef.postCombatScript) {
-                                this.introScript = battleDef.postCombatScript;
+                                this.introScript = this.cloneScriptSteps(battleDef.postCombatScript);
                                 // Validate dialogueStep is within bounds
                                 if (this.dialogueStep >= this.introScript.length) {
                                     console.warn(`dialogueStep ${this.dialogueStep} out of bounds for post-combat script length ${this.introScript.length}, resetting to last step`);
@@ -2290,9 +2312,13 @@ export class TacticsScene extends BaseScene {
             }
         }
         
-        // Initialize history for undo
-        this.history = [];
-        this.pushHistory();
+        // Restore history for undo/reset if available; otherwise use current snapshot as baseline.
+        if (Array.isArray(state.history) && state.history.length > 0) {
+            this.history = state.history.map(h => JSON.parse(JSON.stringify(h)));
+        } else {
+            this.history = [];
+            this.pushHistory();
+        }
     }
 
     restoreState(state) {
@@ -2939,52 +2965,66 @@ export class TacticsScene extends BaseScene {
                 if (onComplete) onComplete();
             }, 1000);
         } else {
-            setTimeout(() => {
-                // Flash swish indicator at the strike moment
-                if (attackKey.startsWith('slash')) {
-                    // Standard sword slash — medium perpendicular stroke
-                    this.spawnSwish(
-                        [{ r: targetR, q: targetQ }],
-                        startPos, 'slash',
-                        { maxWidth: 7, duration: 130 }
-                    );
-                } else if (attackKey === 'bash') {
-                    // Heavy blunt bash — shorter, chunkier slash stroke
-                    this.spawnSwish(
-                        [{ r: targetR, q: targetQ }],
-                        startPos, 'slash',
-                        { maxWidth: 6, duration: 120 }
-                    );
-                } else if (attackKey === 'whirlwind') {
-                    // Spinning strike — wide sweeping slash
-                    this.spawnSwish(
-                        [{ r: targetR, q: targetQ }],
-                        startPos, 'slash',
-                        { maxWidth: 10, duration: 150 }
-                    );
-                } else if (attackKey === 'heavy_thrust') {
-                    // Thrust with a polearm — thin needle stab
-                    this.spawnSwish(
-                        [{ r: targetR, q: targetQ }],
-                        startPos, 'stab',
-                        { maxWidth: 3, duration: 140 }
-                    );
+            // Keep melee swish/damage tied to the actual swing frame so telegraphed NPC attacks
+            // and player attacks stay visually in-sync across all units.
+            let struck = false;
+            const checkSwing = () => {
+                if (struck) return;
+                if (attacker.action !== attack.animation) return;
+
+                if (attacker.frame >= 1) {
+                    struck = true;
+
+                    // Flash swish indicator at the strike moment
+                    if (attackKey.startsWith('slash')) {
+                        // Standard sword slash — medium perpendicular stroke
+                        this.spawnSwish(
+                            [{ r: targetR, q: targetQ }],
+                            startPos, 'slash',
+                            { maxWidth: 7, duration: 130 }
+                        );
+                    } else if (attackKey === 'bash') {
+                        // Heavy blunt bash — shorter, chunkier slash stroke
+                        this.spawnSwish(
+                            [{ r: targetR, q: targetQ }],
+                            startPos, 'slash',
+                            { maxWidth: 6, duration: 120 }
+                        );
+                    } else if (attackKey === 'whirlwind') {
+                        // Spinning strike — wide sweeping slash
+                        this.spawnSwish(
+                            [{ r: targetR, q: targetQ }],
+                            startPos, 'slash',
+                            { maxWidth: 10, duration: 150 }
+                        );
+                    } else if (attackKey === 'heavy_thrust') {
+                        // Thrust with a polearm — thin needle stab
+                        this.spawnSwish(
+                            [{ r: targetR, q: targetQ }],
+                            startPos, 'stab',
+                            { maxWidth: 3, duration: 140 }
+                        );
+                    }
+
+                    const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
+
+                    this.damageCell(targetR, targetQ);
+                    if (victim) {
+                        this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos);
+                    } else if (!isDestructible) {
+                        assets.playSound('whiff');
+                    }
+                    
+                    setTimeout(() => {
+                        attacker.action = 'standby';
+                        if (onComplete) onComplete();
+                    }, 400);
+                    return;
                 }
 
-                const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
-
-                this.damageCell(targetR, targetQ);
-                if (victim) {
-                    this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos);
-                } else if (!isDestructible) {
-                    assets.playSound('whiff');
-                }
-                
-                setTimeout(() => {
-                    attacker.action = 'standby';
-                    if (onComplete) onComplete();
-                }, 400);
-            }, 400);
+                setTimeout(checkSwing, 16);
+            };
+            setTimeout(checkSwing, 16);
         }
     }
 
@@ -4514,16 +4554,14 @@ export class TacticsScene extends BaseScene {
                 if (west) affected.push({ r: west.r, q: west.q });
             } else {
                 // Default: fan on the SAME distance ring from the attacker.
-                // This guarantees all 3 hexes are the same distance from `origin` AND form a contiguous arc.
-                // Always include the targeted hex, then add the two neighboring hexes that are also at the same distance.
+                // Always include the targeted hex, then include immediate neighboring ring hexes.
+                // At map edges, this naturally degrades to 2 tiles (or 1) by skipping off-map neighbors.
                 affected.push({ r: targetR, q: targetQ });
                 if (dirIndex !== -1 && dist > 0) {
                     const neighbors = this.tacticsMap.getNeighbors(targetR, targetQ) || [];
                     const sameRing = neighbors.filter(n => this.tacticsMap.getDistance(origin.r, origin.q, n.r, n.q) === dist);
-                    // Usually exactly 2 neighbors sit on the same distance ring; include them to form the 3-hex arc.
-                    if (sameRing.length >= 2) {
-                        affected.push({ r: sameRing[0].r, q: sameRing[0].q });
-                        affected.push({ r: sameRing[1].r, q: sameRing[1].q });
+                    for (let i = 0; i < Math.min(2, sameRing.length); i++) {
+                        affected.push({ r: sameRing[i].r, q: sameRing[i].q });
                     }
                 }
             }
@@ -5196,16 +5234,23 @@ export class TacticsScene extends BaseScene {
             }
             const step = script[this.dialogueStep];
             if (step) {
+                if (step.type === 'choice') {
+                    this.isChoiceActive = true;
+                } else {
+                    this.isChoiceActive = false;
+                }
                 // Play voice if it hasn't been played for this step yet
                 if (step.voiceId && !step._voicePlayed) {
                     assets.playVoice(step.voiceId);
                     step._voicePlayed = true;
                 }
-                this.renderDialogueBox(ctx, canvas, {
-                    portraitKey: step.portraitKey,
-                    name: step.name,
-                    text: step.text
-                }, { subStep: this.subStep || 0 });
+                if (step.type !== 'choice') {
+                    this.renderDialogueBox(ctx, canvas, {
+                        portraitKey: step.portraitKey,
+                        name: step.name,
+                        text: step.text
+                    }, { subStep: this.subStep || 0 });
+                }
             }
         }
 
@@ -5265,23 +5310,40 @@ export class TacticsScene extends BaseScene {
 
     drawChoiceUI() {
         const { ctx, canvas } = this.manager;
+        const activeScript = this.getActiveDialogueScript();
+        const activeStep = activeScript && activeScript[this.dialogueStep];
+        const narrativeChoiceOptions = activeStep && activeStep.type === 'choice' && Array.isArray(activeStep.options)
+            ? activeStep.options
+            : null;
+        const isNarrativeChoice = !!(narrativeChoiceOptions && narrativeChoiceOptions.length > 0);
         
         // Semi-transparent overlay - taller to fit wrapped text
         ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
         ctx.fillRect(0, canvas.height - 90, canvas.width, 90);
         
         // Choice prompt
-        this.drawPixelText(ctx, "What will you do?", canvas.width / 2, canvas.height - 82, {
+        const promptText = isNarrativeChoice
+            ? getLocalizedText({ en: 'Choose your reply', zh: '请选择回复' })
+            : "What will you do?";
+        this.drawPixelText(ctx, promptText, canvas.width / 2, canvas.height - 82, {
             color: '#ffd700',
             align: 'center',
             font: '10px Silkscreen'
         });
         
-        // Choice options - two lines each
-        const options = [
-            { lines: ["Stay your hand,", "brother!"], color: '#88ff88', hoverColor: '#aaffaa' },
-            { lines: ["Free him,", "brothers!"], color: '#ff8888', hoverColor: '#ffaaaa' }
-        ];
+        const options = isNarrativeChoice
+            ? narrativeChoiceOptions.map((opt, i) => {
+                const displayText = getLocalizedText(opt.buttonText || opt.text || { en: `Choice ${i + 1}`, zh: `选项 ${i + 1}` });
+                return {
+                    lines: this.wrapText(ctx, displayText, 94, '8px Silkscreen').slice(0, 2),
+                    color: '#ffd700',
+                    hoverColor: '#ffffff'
+                };
+            })
+            : [
+                { lines: ["Stay your hand,", "brother!"], color: '#88ff88', hoverColor: '#aaffaa' },
+                { lines: ["Free him,", "brothers!"], color: '#ff8888', hoverColor: '#ffaaaa' }
+            ];
         
         const optionWidth = 100;
         const optionHeight = 36;
@@ -5523,6 +5585,29 @@ export class TacticsScene extends BaseScene {
     }
 
     activateChoiceTarget(choiceIndex) {
+        const activeScript = this.getActiveDialogueScript();
+        const activeStep = activeScript && activeScript[this.dialogueStep];
+        if (activeStep && activeStep.type === 'choice' && Array.isArray(activeStep.options)) {
+            const opt = activeStep.options[choiceIndex];
+            if (!opt) return;
+            const choiceDialogue = {
+                type: 'dialogue',
+                portraitKey: activeStep.portraitKey || 'liu-bei',
+                name: activeStep.name || 'Liu Bei',
+                text: (opt.text !== undefined && opt.text !== null) ? opt.text : (opt.buttonText || ''),
+                voiceId: opt.voiceId
+            };
+            const resultSteps = Array.isArray(opt.result) ? this.cloneScriptSteps(opt.result) : [];
+            activeScript.splice(this.dialogueStep + 1, 0, choiceDialogue, ...resultSteps);
+            this.isChoiceActive = false;
+            this.choiceHovered = -1;
+            this.choiceRects = [];
+            this.subStep = 0;
+            this.dialogueStep++;
+            this.dialogueElapsed = 0;
+            return;
+        }
+
         this.isChoiceActive = false;
         if (choiceIndex === 0) this.startRestrainDialogue();
         else if (choiceIndex === 1) this.startFight();
@@ -5852,6 +5937,11 @@ export class TacticsScene extends BaseScene {
             x: this.startX + targetQ * this.manager.config.horizontalSpacing + xOffset,
             y: this.startY + targetR * this.manager.config.verticalSpacing - (this.tacticsMap.getCell(targetR, targetQ)?.elevation || 0)
         };
+
+        const fromCell = this.tacticsMap.getCell(fromR, fromQ);
+        const targetCell = this.tacticsMap.getCell(targetR, targetQ);
+        const levelDiff = (targetCell?.level || 0) - (fromCell?.level || 0);
+        const isCliffDrop = levelDiff < -1;
         
         const dx = targetPos.x - fromPos.x;
         const dy = targetPos.y - fromPos.y;
@@ -5860,23 +5950,36 @@ export class TacticsScene extends BaseScene {
         // Snap to pixels
         const sx = Math.floor(fromPos.x);
         const sy = Math.floor(fromPos.y);
-        const ex = Math.floor(fromPos.x + dx * 0.5); // Shortened arrow
-        const ey = Math.floor(fromPos.y + dy * 0.5);
+        const ex = Math.floor(fromPos.x + dx * 0.6);
+        const ey = Math.floor(fromPos.y + dy * 0.6);
         
         ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
         ctx.shadowBlur = 0; // No blur for pixel perfect
         ctx.shadowOffsetY = 1;
         
-        ctx.strokeStyle = '#fff';
-        ctx.fillStyle = '#fff';
+        ctx.strokeStyle = isCliffDrop ? '#ffcc66' : '#fff';
+        ctx.fillStyle = isCliffDrop ? '#ffcc66' : '#fff';
         ctx.lineWidth = 1; // Thinner
-        
-        ctx.beginPath();
-        ctx.moveTo(sx, sy);
-        ctx.lineTo(ex, ey);
-        ctx.stroke();
-        
-        const angle = Math.atan2(dy, dx);
+
+        let angle = Math.atan2(dy, dx);
+        if (isCliffDrop) {
+            // Curved "fall" arrow to telegraph knock-off-cliff pushes.
+            const midX = (sx + ex) / 2;
+            const midY = (sy + ey) / 2;
+            const controlX = Math.floor(midX);
+            const controlY = Math.floor(midY + 8);
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            ctx.quadraticCurveTo(controlX, controlY, ex, ey);
+            ctx.stroke();
+            angle = Math.atan2(ey - controlY, ex - controlX);
+        } else {
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(ex, ey);
+            ctx.stroke();
+        }
+
         ctx.translate(ex, ey);
         ctx.rotate(angle);
         ctx.beginPath();
@@ -7160,17 +7263,10 @@ export class TacticsScene extends BaseScene {
 
         // Handle choice selection
         if (this.isChoiceActive && this.choiceRects) {
-            if (x === -1000) return; // Mouse only for choices for now
+            if (x === -1000) return; // keyboard/controller uses nav activation path
             for (const rect of this.choiceRects) {
                 if (x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h) {
-                    this.isChoiceActive = false;
-                    if (rect.index === 0) {
-                        // Peaceful choice - restrain Zhang Fei, show dialogue on map
-                        this.startRestrainDialogue();
-                    } else if (rect.index === 1) {
-                        // Fight choice - start fight in current map
-                        this.startFight();
-                    }
+                    this.activateChoiceTarget(rect.index);
                     return;
                 }
             }
@@ -7269,7 +7365,7 @@ export class TacticsScene extends BaseScene {
                     // Try to reload the post-combat script
                     const battleDef = BATTLES[this.battleId];
                     if (battleDef && battleDef.postCombatScript) {
-                        this.introScript = battleDef.postCombatScript;
+                            this.introScript = this.cloneScriptSteps(battleDef.postCombatScript);
                         this.dialogueStep = 0; // Reset to start
                         console.log('Reloaded post-combat script and reset dialogueStep to 0');
                     }
@@ -7279,6 +7375,18 @@ export class TacticsScene extends BaseScene {
             const step = script[this.dialogueStep];
             if (!step) {
                 console.error(`Dialogue step ${this.dialogueStep} is null or undefined`);
+                return;
+            }
+            if (step.type === 'choice') {
+                this.isChoiceActive = true;
+                if (x !== -1000 && this.choiceRects) {
+                    for (const rect of this.choiceRects) {
+                        if (x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h) {
+                            this.activateChoiceTarget(rect.index);
+                            return;
+                        }
+                    }
+                }
                 return;
             }
             const status = this.renderDialogueBox(this.manager.ctx, this.manager.canvas, {
@@ -7317,6 +7425,7 @@ export class TacticsScene extends BaseScene {
                         }
                     } else if (this.isVictoryDialogueActive) {
                         this.isVictoryDialogueActive = false;
+                        this.isChoiceActive = false;
                         if (this.victoryOnComplete) this.victoryOnComplete();
                     }
                 }
@@ -7752,6 +7861,14 @@ export class TacticsScene extends BaseScene {
         }
 
         if (e.key === 'Enter' || e.key === ' ') {
+            if (this.isChoiceActive) {
+                e.preventDefault();
+                this.onNonMouseInput();
+                this.controllerNavMouseEnabled = false;
+                this.rebuildControllerNavTargets();
+                this.activateControllerTarget();
+                return;
+            }
             // Advance dialogue-like overlays first
             if (this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCleanupDialogueActive || this.activeDialogue) {
                 e.preventDefault();
