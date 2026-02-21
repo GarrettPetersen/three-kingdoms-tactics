@@ -2431,7 +2431,8 @@ export class TacticsScene extends BaseScene {
             if (unit.onHorse) this.turnMountedInPlace(unit, desiredFlip);
             else unit.flip = desiredFlip;
 
-            const fromCube = this.tacticsMap.offsetToCube(unit.r, unit.q);
+            const intentOrigin = this.getAttackOriginForTarget(unit, targetPos.r, targetPos.q);
+            const fromCube = this.tacticsMap.offsetToCube(intentOrigin.r, intentOrigin.q);
             const toCube = this.tacticsMap.offsetToCube(targetPos.r, targetPos.q);
             
             // RELATIVE INTENT: Store the relative cube vector
@@ -2440,6 +2441,7 @@ export class TacticsScene extends BaseScene {
                 relX: toCube.x - fromCube.x,
                 relY: toCube.y - fromCube.y,
                 relZ: toCube.z - fromCube.z,
+                originKind: intentOrigin.kind || 'butt',
                 attackKey,
                 targetId: targetId || null
             };
@@ -2538,7 +2540,16 @@ export class TacticsScene extends BaseScene {
         if (!unit || !unit.intent) return null;
         if (unit.intent.relX === undefined) return null;
 
-        const currentCube = this.tacticsMap.offsetToCube(unit.r, unit.q);
+        let originR = unit.r;
+        let originQ = unit.q;
+        if (unit.intent.originKind === 'head' && unit.onHorse) {
+            const head = this.getMountedHeadCellFor(unit, unit.r, unit.q);
+            if (head) {
+                originR = head.r;
+                originQ = head.q;
+            }
+        }
+        const currentCube = this.tacticsMap.offsetToCube(originR, originQ);
         const targetCube = {
             x: currentCube.x + unit.intent.relX,
             y: currentCube.y + unit.intent.relY,
