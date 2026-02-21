@@ -3,9 +3,9 @@
         "id": "ch1_end_01",
         "character": "narrator",
         "original_text": "But slaying the ungrateful would Mean many deaths a year.  Dong Zhuo's fate will be unrolled in later chapters...",
-        "stt_output": "但是时期使用 DelaynidianIDian改成了特定第四十回时期接近加拿大的Аändern揮手共和国立",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:daxing_gy_01": {
@@ -408,18 +408,18 @@
         "id": "gz_nar_poem_01",
         "character": "narrator",
         "original_text": "古往今来皆如此，\n布衣虽有功，\n官场仍当道；\n张飞，直率而急躁，\n何处可寻其匹？",
-        "stt_output": "武网进来接如此,不一锁有功,官场仍当道,张飞直帅儿及造,何处可寻其皮。",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:gz_nar_restrain_01": {
         "id": "gz_nar_restrain_01",
         "character": "narrator",
         "original_text": "于是，护送队和三兄弟分道扬镳。继续走那条通往广宗的路已无意义。",
-        "stt_output": "于是互送对和三兄弟分到阳标继续走那条通往广宗的路易无意义",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:gz_zf_01": {
@@ -696,117 +696,117 @@
         "id": "intro_narrator_01",
         "character": "narrator",
         "original_text": "话说天下大势，分久必合，合久必分。",
-        "stt_output": "話說天下大事,分酒必合和酒必分",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_narrator_02a": {
         "id": "intro_narrator_02a",
         "character": "narrator",
         "original_text": "周末七国分争，并入于秦。及秦灭之后，楚、汉分争，又并入于汉。",
-        "stt_output": "周末祭国分争并如于秦极行灭之后处汉分争又并如于汉",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_narrator_02b": {
         "id": "intro_narrator_02b",
         "character": "narrator",
         "original_text": "汉朝自高祖斩白蛇而起义，一统天下。后来光武中兴，传至献帝，遂分为三国。",
-        "stt_output": "漢朝自高族展白蛇起一同天下后来光武中心传制限敌碎纷为三国",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_narrator_02c": {
         "id": "intro_narrator_02c",
         "character": "narrator",
         "original_text": "推其致乱之由，殆始于桓、灵二帝。",
-        "stt_output": "推奇制软自由但是于环0 2D",
-        "wer": 2.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_narrator_03a": {
         "id": "intro_narrator_03a",
         "character": "narrator",
         "original_text": "桓帝禁锢善类，崇信宦官。及桓帝崩，灵帝即位，大将军窦武、太傅陈蕃，共相辅佐。",
-        "stt_output": "魂地进步善类重新换关及魂地崩、领地机位大将军、豆武、太府城番、共乡府左",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_narrator_03b": {
         "id": "intro_narrator_03b",
         "character": "narrator",
         "original_text": "时有宦官曹节等弄权，窦武、陈蕃谋诛之，作事不密，反为所害。",
-        "stt_output": "使用患官曹劫等弄权豆腐沉泛膜珠汁做事不密反味所害",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_narrator_03c": {
         "id": "intro_narrator_03c",
         "character": "narrator",
         "original_text": "中涓自此愈横。",
-        "stt_output": "中間自此一行",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_narrator_04a": {
         "id": "intro_narrator_04a",
         "character": "narrator",
         "original_text": "在这乱世之中，涿县有三位豪杰，见天下大乱，欲起兵报国。",
-        "stt_output": "在这乱世之中 拙线有三位好结今天下大乱与起兵报国",
-        "wer": 2.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_narrator_04b": {
         "id": "intro_narrator_04b",
         "character": "narrator",
         "original_text": "时巨鹿郡有兄弟三人：张角，本是个不第秀才，因入山采药，遇一老人，授以天书三卷。",
-        "stt_output": "十句入君有兄弟三人,張教本是個不得修裁,因如山才藥與一老人,受一天輸三卷。",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_narrator_04c": {
         "id": "intro_narrator_04c",
         "character": "narrator",
         "original_text": "角得此书，能呼风唤雨，号为太平道人。中平元年正月内，疫气流行，张角散施符水，为人治病，自称大贤良师。角有徒弟五百余人，云游四方，皆能书符念咒。次后徒众日多，角乃立三十六方，大方万余人，小方六七千，各立渠帅，称为将军。讹言：'苍天已死，黄天当立；岁在甲子，天下大吉。'",
-        "stt_output": "角德此书能呼风换鱼,耗为太平导人,中平元年中月内一起流行,张角散失敷水,为人治病,自称,大仙良师,角有图地五百亿人,云游四房,皆能舒服念州。四后图众日多,角乃利三十六方,大方万亿人,小方六七千,各力取帅,称为将军,俄言康天已死,皇天当立,岁在甲子天下大吉。",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_narrator_05a": {
         "id": "intro_narrator_05a",
         "character": "narrator",
         "original_text": "四方百姓，裹黄巾从张角反者四五十万。",
-        "stt_output": "四方百姓 古皇金从张角反折四五十万",
-        "wer": 2.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_narrator_05b": {
         "id": "intro_narrator_05b",
         "character": "narrator",
         "original_text": "黄巾之乱，由此而起。",
-        "stt_output": "王寧之乱有此而其",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_narrator_05c": {
         "id": "intro_narrator_05c",
         "character": "narrator",
         "original_text": "汉室将倾，天下大乱。",
-        "stt_output": "漢石江青 天下大亂",
-        "wer": 2.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_zb_01": {
@@ -831,45 +831,45 @@
         "id": "intro_zj_01",
         "character": "zhangjue",
         "original_text": "汉运将终，大贤出矣！",
-        "stt_output": "害命將中大嫌出疑",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_zj_02": {
         "id": "intro_zj_02",
         "character": "zhangjue",
         "original_text": "成大事者，最难在于得民心。但民心已归我。此等良机，不可错过！",
-        "stt_output": "成那是者最难在于德明星但明星已归我此等良机不可错过",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_zj_03": {
         "id": "intro_zj_03",
         "character": "zhangjue",
         "original_text": "我乃张角，天公将军！与吾弟张宝，地公将军，张梁，人公将军，必将推翻这腐朽的王朝！",
-        "stt_output": "我乃张角天功将军与无地张宝帝功将军张两人功将军必将推翻这副秀的王朝",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_zj_04": {
         "id": "intro_zj_04",
         "character": "zhangjue",
         "original_text": "汉朝的时代已经结束。今天，一个新的时代开始了——一个由大贤领导的人民时代！",
-        "stt_output": "漢朝的時代已經結束今天一個新的時代開始了一個由大仙靈島的人民時代",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_zj_05": {
         "id": "intro_zj_05",
         "character": "zhangjue",
         "original_text": "现在我们进军涿郡！所有阻挡我们的人，都将被黄巾军的旗帜碾碎！",
-        "stt_output": "現在我們禁軍卓軍所有阻擋我們的人都將被黃金軍的奇滯免稅",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:intro_zl_01": {
@@ -993,18 +993,18 @@
         "id": "pg_nar_01",
         "character": "narrator",
         "original_text": "在桃园中，盛开的桃花下，宰杀黑牛白马，祭告天地。",
-        "stt_output": "在桃園中盛開的桃花下宰沙黑牛白馬技稿天地",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:pg_nar_02": {
         "id": "pg_nar_02",
         "character": "narrator",
         "original_text": "祭毕，拜刘备为兄，关羽次之，张飞为弟。",
-        "stt_output": "即便拜留被为兄关于此之张废为敌",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:pg_zf_01": {
@@ -1371,9 +1371,9 @@
         "id": "qz_vic_nar_01",
         "character": "narrator",
         "original_text": "運籌決算有神功，二虎還須遜一龍。初出便能垂偉績，自應分鼎在孤窮。",
-        "stt_output": "运头角色有神功二虎还虚迅一龙出书便能垂伟机子英分顶在孤球",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:qz_vic_zf_01": {
@@ -1491,6 +1491,96 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_oath_dz_restrain_01": {
+        "id": "ch2_oath_dz_restrain_01",
+        "character": "dongzhuo",
+        "original_text": "认清自己的身份，草民。能让本官同你们说话，已是恩典。",
+        "stt_output": "人情自己的身份草民能让本官同一们说话已是n点",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_oath_dz_strike_01": {
+        "id": "ch2_oath_dz_strike_01",
+        "character": "dongzhuo",
+        "original_text": "你们竟敢对我动兵？我定要把你们的脑袋插在枪上！",
+        "stt_output": "你们竟然对我动兵我定要把你们的脑袋插在枪上",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_oath_gy_restrain_01": {
+        "id": "ch2_oath_gy_restrain_01",
+        "character": "guanyu",
+        "original_text": "我等走吧。天下尚有更大的火要灭。",
+        "stt_output": "我等走吧,天下上有更大的火药面",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_oath_gy_strike_after_01": {
+        "id": "ch2_oath_gy_strike_after_01",
+        "character": "guanyu",
+        "original_text": "连江水都把他吐了回来。天罚只是暂缓。",
+        "stt_output": "連江水都把它土了回來,天法只是暫緩",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_oath_lb_restrain_01": {
+        "id": "ch2_oath_lb_restrain_01",
+        "character": "liubei",
+        "original_text": "三弟且住！一时之怒可胜一口气，正道却要胜一世。",
+        "stt_output": "三弟且住,一時之怒可勝一口氣,正到卻要勝一事。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_oath_lb_strike_01": {
+        "id": "ch2_oath_lb_strike_01",
+        "character": "liubei",
+        "original_text": "既然言语无用，便以刀兵明是非。",
+        "stt_output": "既然言語無用,便已到兵名是非",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_oath_zf_restrain_01": {
+        "id": "ch2_oath_zf_restrain_01",
+        "character": "zhangfei",
+        "original_text": "哼……我听大哥的。只是这口气，我记下了。",
+        "stt_output": "我听大哥的只是这口气我记下了",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_oath_zf_strike_01": {
+        "id": "ch2_oath_zf_strike_01",
+        "character": "zhangfei",
+        "original_text": "哈！这才痛快！",
+        "stt_output": "哈!这才痛快",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_oath_zf_strike_after_01": {
+        "id": "ch2_oath_zf_strike_after_01",
+        "character": "zhangfei",
+        "original_text": "哼！下回那屠夫可跑不了这么快。",
+        "stt_output": "很明下回那徒夫可跑不了这么快",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_oath_zf_strike_water_after_01": {
+        "id": "ch2_oath_zf_strike_water_after_01",
+        "character": "zhangfei",
+        "original_text": "呸！连淹都淹不死这胆小鬼。下次俺也去亲手给他绑块石头！",
+        "stt_output": "嘿 連煙都淹不死這膽小鬼下次來也去親手給他賣快食的",
+        "wer": 2.0,
+        "is_bad": true,
         "language": "zh"
     }
 }

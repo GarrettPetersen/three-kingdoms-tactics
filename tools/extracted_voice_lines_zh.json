@@ -6,6 +6,66 @@
     "source": "MapScene.js"
   },
   {
+    "id": "ch2_oath_dz_restrain_01",
+    "char": "dongzhuo",
+    "text": "认清自己的身份，草民。能让本官同你们说话，已是恩典。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_dz_strike_01",
+    "char": "dongzhuo",
+    "text": "你们竟敢对我动兵？我定要把你们的脑袋插在枪上！",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_gy_restrain_01",
+    "char": "guanyu",
+    "text": "我等走吧。天下尚有更大的火要灭。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_gy_strike_after_01",
+    "char": "guanyu",
+    "text": "连江水都把他吐了回来。天罚只是暂缓。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_lb_restrain_01",
+    "char": "liubei",
+    "text": "三弟且住！一时之怒可胜一口气，正道却要胜一世。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_lb_strike_01",
+    "char": "liubei",
+    "text": "既然言语无用，便以刀兵明是非。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_zf_restrain_01",
+    "char": "zhangfei",
+    "text": "哼……我听大哥的。只是这口气，我记下了。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_zf_strike_01",
+    "char": "zhangfei",
+    "text": "哈！这才痛快！",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_zf_strike_after_01",
+    "char": "zhangfei",
+    "text": "哼！下回那屠夫可跑不了这么快。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_zf_strike_water_after_01",
+    "char": "zhangfei",
+    "text": "呸！连淹都淹不死这胆小鬼。下次俺也去亲手给他绑块石头！",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "daxing_gy_01",
     "char": "guanyu",
     "text": "三弟说得对。我们已发誓要消灭这些叛徒，恢复和平。我们已准备好出征。",
@@ -141,13 +201,13 @@
     "id": "gz_dz_01",
     "char": "dongzhuo",
     "text": "你们三人身居何职？",
-    "source": "TacticsScene.js"
+    "source": "Battles.js"
   },
   {
     "id": "gz_dz_02",
     "char": "dongzhuo",
     "text": "哼。无官无职的平民。你们可以走了。",
-    "source": "TacticsScene.js"
+    "source": "Battles.js"
   },
   {
     "id": "gz_dz_help_01",
@@ -231,7 +291,7 @@
     "id": "gz_lb_office_01",
     "char": "liubei",
     "text": "无。",
-    "source": "TacticsScene.js"
+    "source": "Battles.js"
   },
   {
     "id": "gz_lb_restrain_01",
@@ -303,7 +363,7 @@
     "id": "gz_zf_rage_01",
     "char": "zhangfei",
     "text": "我们刚刚在一场血战中救了这个小人物，现在他却对我们无礼！只有他的死才能平息我的怒火。",
-    "source": "TacticsScene.js"
+    "source": "Battles.js"
   },
   {
     "id": "gz_zf_rage_outlaw_01",

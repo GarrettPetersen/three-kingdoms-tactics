@@ -7,6 +7,66 @@
     "phonetic_text": "But slaying the ungrateful would Mean many deaths a year. Dong Jwoh's fate will be unrolled in later chapters."
   },
   {
+    "id": "ch2_oath_dz_restrain_01",
+    "char": "dongzhuo",
+    "text": "Know your place, commoners. Be grateful I even speak to you.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_dz_strike_01",
+    "char": "dongzhuo",
+    "text": "You dare raise steel against me? I'll have your heads on pikes!",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_gy_restrain_01",
+    "char": "guanyu",
+    "text": "Let us depart. The realm has larger fires ahead.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_gy_strike_after_01",
+    "char": "guanyu",
+    "text": "Even the river spat him back out. Heaven has postponed his punishment.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_lb_restrain_01",
+    "char": "liubei",
+    "text": "Brother, hold! Fury may win a breath, but righteousness must win the age.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_lb_strike_01",
+    "char": "liubei",
+    "text": "If words fail, then let steel answer steel.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_zf_restrain_01",
+    "char": "zhangfei",
+    "text": "Hmph... I obey, eldest brother. But I will remember this insult.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_zf_strike_01",
+    "char": "zhangfei",
+    "text": "HA! At last!",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_zf_strike_after_01",
+    "char": "zhangfei",
+    "text": "Hmph! Next time, that butcher will not run so fast.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_zf_strike_water_after_01",
+    "char": "zhangfei",
+    "text": "Bah! Not even drowning would keep that coward down. Next time, I'll tie a stone to him myself.",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "daxing_gy_01",
     "char": "guanyu",
     "text": "Third brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march.",
@@ -142,13 +202,13 @@
     "id": "gz_dz_01",
     "char": "dongzhuo",
     "text": "What offices do you three hold?",
-    "source": "TacticsScene.js"
+    "source": "Battles.js"
   },
   {
     "id": "gz_dz_02",
     "char": "dongzhuo",
     "text": "Hmph. Common men with no rank. You may go.",
-    "source": "TacticsScene.js"
+    "source": "Battles.js"
   },
   {
     "id": "gz_dz_help_01",
@@ -233,7 +293,7 @@
     "id": "gz_lb_office_01",
     "char": "liubei",
     "text": "None.",
-    "source": "TacticsScene.js",
+    "source": "Battles.js",
     "phonetic_text": "None."
   },
   {
@@ -313,7 +373,7 @@
     "id": "gz_zf_rage_01",
     "char": "zhangfei",
     "text": "We have just rescued this menial in a bloody fight, and now he is rude to us! Nothing but his death can slake my anger.",
-    "source": "TacticsScene.js"
+    "source": "Battles.js"
   },
   {
     "id": "gz_zf_rage_outlaw_01",
