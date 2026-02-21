@@ -81,8 +81,8 @@ export const NARRATIVE_SCRIPTS = {
         {
             type: 'narrator',
             text: {
-                en: "In this chaos, three brothers from Julu County see their chance.",
-                zh: "在这乱世之中，涿县有三位豪杰，见天下大乱，欲起兵报国。"
+                en: "In this chaos, the three Zhang brothers of Julu Commandery see their chance.",
+                zh: "在这乱世之中，巨鹿郡张氏三兄弟窥见了机会。"
             },
             voiceId: 'intro_narrator_04a'
         },
