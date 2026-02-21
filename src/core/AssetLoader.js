@@ -17,6 +17,7 @@ export class AssetLoader {
         this.voices = {}; // Cache for recently played voices
         this.currentVoice = null;
         this.baseMusicVolume = 0.5;
+        this.loopingSounds = new Map(); // key -> { audio, fadeInterval }
     }
 
     async playVoice(voiceId, volume = 1.0) {
@@ -348,13 +349,107 @@ export class AssetLoader {
     }
 
     playSound(key, volume = 1.0) {
-        const sound = this.getSound(key);
+        let resolvedKey = key;
+        let resolvedVolume = volume;
+        if (key === 'death') {
+            const hasA = !!this.getSound('death_a');
+            const hasB = !!this.getSound('death_b');
+            if (hasA || hasB) {
+                if (hasA && hasB) {
+                    resolvedKey = Math.random() < 0.5 ? 'death_a' : 'death_b';
+                } else {
+                    resolvedKey = hasA ? 'death_a' : 'death_b';
+                }
+            }
+        }
+
+        const sound = this.getSound(resolvedKey);
         if (sound) {
             const clone = sound.cloneNode();
             // Clamp volume between 0 and 1 to prevent IndexSizeError
-            clone.volume = Math.max(0, Math.min(1, volume));
+            clone.volume = Math.max(0, Math.min(1, resolvedVolume));
             clone.play().catch(e => console.log("Sound play prevented:", e));
         }
+    }
+
+    playLoopingSound(key, volume = 1.0, fadeInMs = 0) {
+        const base = this.getSound(key);
+        if (!base) return;
+
+        const targetVolume = Math.max(0, Math.min(1, volume));
+        const existing = this.loopingSounds.get(key);
+        if (existing) {
+            if (existing.fadeInterval) {
+                clearInterval(existing.fadeInterval);
+                existing.fadeInterval = null;
+            }
+            existing.audio.loop = true;
+            if (fadeInMs <= 0) {
+                existing.audio.volume = targetVolume;
+            } else {
+                const startVol = existing.audio.volume;
+                const startTime = Date.now();
+                existing.fadeInterval = setInterval(() => {
+                    const t = Math.min(1, (Date.now() - startTime) / fadeInMs);
+                    existing.audio.volume = startVol + (targetVolume - startVol) * t;
+                    if (t >= 1) {
+                        clearInterval(existing.fadeInterval);
+                        existing.fadeInterval = null;
+                    }
+                }, 16);
+            }
+            return;
+        }
+
+        const audio = base.cloneNode();
+        audio.loop = true;
+        audio.volume = (fadeInMs > 0) ? 0 : targetVolume;
+        const entry = { audio, fadeInterval: null };
+        this.loopingSounds.set(key, entry);
+        audio.play().catch(e => console.log("Looping sound play prevented:", e));
+
+        if (fadeInMs > 0) {
+            const startTime = Date.now();
+            entry.fadeInterval = setInterval(() => {
+                const t = Math.min(1, (Date.now() - startTime) / fadeInMs);
+                audio.volume = targetVolume * t;
+                if (t >= 1) {
+                    clearInterval(entry.fadeInterval);
+                    entry.fadeInterval = null;
+                }
+            }, 16);
+        }
+    }
+
+    stopLoopingSound(key, fadeOutMs = 120) {
+        const entry = this.loopingSounds.get(key);
+        if (!entry) return;
+        if (entry.fadeInterval) {
+            clearInterval(entry.fadeInterval);
+            entry.fadeInterval = null;
+        }
+
+        const audio = entry.audio;
+        if (fadeOutMs <= 0) {
+            audio.pause();
+            audio.currentTime = 0;
+            this.loopingSounds.delete(key);
+            return;
+        }
+
+        const startVol = audio.volume;
+        const startTime = Date.now();
+        entry.fadeInterval = setInterval(() => {
+            const t = Math.min(1, (Date.now() - startTime) / fadeOutMs);
+            audio.volume = Math.max(0, startVol * (1 - t));
+            if (t >= 1) {
+                clearInterval(entry.fadeInterval);
+                entry.fadeInterval = null;
+                audio.pause();
+                audio.currentTime = 0;
+                this.loopingSounds.delete(key);
+            }
+        }, 16);
     }
 
     playMusic(key, targetVolume = 0.5) {

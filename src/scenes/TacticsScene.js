@@ -54,6 +54,10 @@ export class TacticsScene extends BaseScene {
         this.chapter2DongZhuoFightActive = false;
         this.chapter2DongZhuoEscapeTriggered = false;
         this.chapter2DongZhuoEscapedFromDrowning = false;
+        this.horseRunSfxActive = false;
+        this.horseRunElapsedMs = 0;
+        this.horseRunCycleIndex = -1;
+        this.horseRunCues = { snortA: false, neigh: false, snortB: false };
     }
 
     cloneScriptSteps(steps) {
@@ -189,6 +193,11 @@ export class TacticsScene extends BaseScene {
         this.chapter2DongZhuoFightActive = false;
         this.chapter2DongZhuoEscapeTriggered = false;
         this.chapter2DongZhuoEscapedFromDrowning = false;
+        this.horseRunSfxActive = false;
+        this.horseRunElapsedMs = 0;
+        this.horseRunCycleIndex = -1;
+        this.horseRunCues = { snortA: false, neigh: false, snortB: false };
+        assets.stopLoopingSound('horse_gallop_loop', 0);
         
         // If resuming a battle with choices but no callbacks provided, set them up dynamically
         if (this.battleId === 'guangzong_encounter' && !this.onChoiceRestrain) {
@@ -1985,7 +1994,10 @@ export class TacticsScene extends BaseScene {
                     if (arrivePos.x < fromPos.x) plannedFlip = true;
                     else if (arrivePos.x > fromPos.x) plannedFlip = false;
                 }
-                if (this.isValidMountedButtDestination(unit, r, q, plannedFlip)) filtered.set(key, data);
+                const resolvedFlip = this.getValidMountedFlipForDestination(unit, r, q, plannedFlip);
+                if (resolvedFlip !== null) {
+                    filtered.set(key, { ...data, mountedFlip: resolvedFlip });
+                }
             });
             validDestinations.clear();
             filtered.forEach((v, k) => validDestinations.set(k, v));
@@ -2166,6 +2178,9 @@ export class TacticsScene extends BaseScene {
                     if (lastPos.x < prevPos.x) plannedFlip = true;
                     else if (lastPos.x > prevPos.x) plannedFlip = false;
                 }
+                const resolvedFlip = this.getValidMountedFlipForDestination(unit, bestTile.r, bestTile.q, plannedFlip);
+                if (resolvedFlip !== null) plannedFlip = resolvedFlip;
+                unit.flip = plannedFlip;
                 const tmp = { ...unit, flip: plannedFlip };
                 const headCell = this.getMountedHeadCellFor(tmp, bestTile.r, bestTile.q);
                 if (headCell) headCell.unit = unit;
@@ -2932,9 +2947,60 @@ export class TacticsScene extends BaseScene {
     }
 
     exit() {
+        assets.stopLoopingSound('horse_gallop_loop', 100);
+        this.horseRunSfxActive = false;
         // Save battle state when leaving (unless it's a custom battle or battle is complete)
         if (!this.isCustom && !this.isGameOver && !this.isVictoryDialogueActive) {
             this.saveBattleState();
+        }
+    }
+
+    updateMountedRunAudio(dt) {
+        const mountedRunning = this.units.some(u => u.hp > 0 && !u.isGone && u.onHorse && u.isMoving);
+        if (!mountedRunning) {
+            if (this.horseRunSfxActive) {
+                assets.stopLoopingSound('horse_gallop_loop', 100);
+                this.horseRunSfxActive = false;
+            }
+            this.horseRunElapsedMs = 0;
+            this.horseRunCycleIndex = -1;
+            this.horseRunCues = { snortA: false, neigh: false, snortB: false };
+            return;
+        }
+
+        if (!this.horseRunSfxActive) {
+            // Always run as a loop; short moves get a quick fade-out on stop.
+            assets.playLoopingSound('horse_gallop_loop', 0.85, 30);
+            this.horseRunSfxActive = true;
+            this.horseRunElapsedMs = 0;
+            this.horseRunCycleIndex = -1;
+            this.horseRunCues = { snortA: false, neigh: false, snortB: false };
+        } else {
+            this.horseRunElapsedMs += dt;
+        }
+
+        const cycleMs = 8000;
+        const cycleIndex = Math.floor(this.horseRunElapsedMs / cycleMs);
+        const cycleTime = this.horseRunElapsedMs % cycleMs;
+        if (cycleIndex !== this.horseRunCycleIndex) {
+            this.horseRunCycleIndex = cycleIndex;
+            this.horseRunCues = { snortA: false, neigh: false, snortB: false };
+        }
+
+        // Front-load a cue so short runs still feel alive; then accent later in longer runs.
+        if (!this.horseRunCues.snortA && cycleTime >= 850) {
+            assets.playSound('horse_snort', 0.7);
+            this.horseRunCues.snortA = true;
+        }
+        if (!this.horseRunCues.neigh && cycleTime >= 1650) {
+            const neighKeys = ['horse_neigh_a', 'horse_neigh_b', 'horse_neigh_c'];
+            const neighKey = neighKeys[Math.floor(Math.random() * neighKeys.length)];
+            assets.playSound(neighKey, 0.9);
+            this.horseRunCues.neigh = true;
+        }
+        if (!this.horseRunCues.snortB && cycleTime >= 5200) {
+            assets.playSound('horse_snort', 0.6);
+            this.horseRunCues.snortB = true;
         }
     }
 
@@ -4345,6 +4411,17 @@ export class TacticsScene extends BaseScene {
         return true;
     }
 
+    getValidMountedFlipForDestination(unit, buttR, buttQ, preferredFlip = null) {
+        if (preferredFlip !== null && this.isValidMountedButtDestination(unit, buttR, buttQ, preferredFlip)) {
+            return preferredFlip;
+        }
+        const alternateFlip = preferredFlip === null ? !unit.flip : !preferredFlip;
+        if (this.isValidMountedButtDestination(unit, buttR, buttQ, alternateFlip)) {
+            return alternateFlip;
+        }
+        return null;
+    }
+
     // Mounted move planning (butt + head) for UI highlighting / click handling
     buildMountedMovePlans(unit, reachableData) {
         const plans = [];
@@ -4366,19 +4443,16 @@ export class TacticsScene extends BaseScene {
                 else if (lastPos.x > prevPos.x) plannedFlip = false;
             }
 
-            const tmp = { ...unit, flip: plannedFlip };
+            const resolvedFlip = this.getValidMountedFlipForDestination(unit, r, q, plannedFlip);
+            if (resolvedFlip === null) return;
+            const tmp = { ...unit, flip: resolvedFlip };
             const headCell = this.getMountedHeadCellFor(tmp, r, q);
-            if (!headCell || headCell.impassable) return;
-            if (headCell.unit && headCell.unit !== unit) return;
-
-            // Can't straddle a cliff at the destination
-            const levelDiff = Math.abs((buttCell.level || 0) - (headCell.level || 0));
-            if (levelDiff > 1) return;
+            if (!headCell) return;
 
             plans.push({
                 butt: { r, q },
                 head: { r: headCell.r, q: headCell.q },
-                plannedFlip
+                plannedFlip: resolvedFlip
             });
         });
         return plans;
@@ -4780,6 +4854,7 @@ export class TacticsScene extends BaseScene {
             
             u.update(dt, (r, q) => this.getPixelPos(r, q), shouldAnimate, terrainType);
         });
+        this.updateMountedRunAudio(dt);
 
         // Update damage numbers
         for (let i = this.damageNumbers.length - 1; i >= 0; i--) {

@@ -261,6 +261,7 @@ export class Unit {
     }
 
     playStepSound(terrainType) {
+        if (this.onHorse) return;
         let soundKey = 'step_generic';
         if (terrainType.includes('grass')) soundKey = 'step_grass';
         else if (terrainType.includes('water_shallow')) soundKey = 'step_water_walk';
