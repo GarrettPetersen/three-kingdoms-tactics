@@ -1072,8 +1072,8 @@ export class TacticsMap {
             neighbors.forEach(n => {
                 if (n.impassable) return;
 
-                // Friendly units can be passed through, but enemy units block entirely.
-                if (n.unit && n.unit !== movingUnit) {
+                // Living units block movement; corpses do not.
+                if (n.unit && n.unit !== movingUnit && n.unit.hp > 0 && !n.unit.isGone) {
                     const movingFaction = movingUnit ? movingUnit.faction : null;
                     const neighborFaction = n.unit.faction;
 

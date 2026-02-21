@@ -1972,7 +1972,8 @@ export class TacticsScene extends BaseScene {
         reachableData.forEach((data, key) => {
             const [r, q] = key.split(',').map(Number);
             const cell = this.tacticsMap.getCell(r, q);
-            if (!cell.unit || cell.unit === unit) {
+            const blockedByLiving = !!this.getLivingUnitOccupyingCell(r, q, unit);
+            if (!blockedByLiving) {
                 validDestinations.set(key, data);
             }
         });
@@ -3809,6 +3810,9 @@ export class TacticsScene extends BaseScene {
     }
 
     applyUnitDamage(victim, damage, sourceCell = null) {
+        // Corpses should not take damage or retrigger death SFX.
+        if (!victim || victim.isGone || victim.hp <= 0) return 0;
+
         // Caged units - damage the cage, not the unit
         if (victim.caged) {
             // Initialize cage HP if not set
@@ -3882,9 +3886,10 @@ export class TacticsScene extends BaseScene {
             }
         }
 
+        const wasAlive = victim.hp > 0;
         victim.hp -= finalDamage;
 
-        if (victim.hp <= 0) {
+        if (victim.hp <= 0 && wasAlive) {
             victim.hp = 0;
             // If a mounted unit dies, it falls off and the horse remains (horse is immortal)
             if (victim.onHorse) {
@@ -3900,10 +3905,12 @@ export class TacticsScene extends BaseScene {
             if (victim.faction === 'enemy') {
                 this.enemiesKilled++;
             }
-        } else {
+        } else if (victim.hp > 0) {
             if (victim.name !== 'Boulder') {
                 victim.action = 'hit';
             }
+        } else {
+            victim.hp = 0;
         }
 
         return finalDamage;
@@ -3914,6 +3921,7 @@ export class TacticsScene extends BaseScene {
         // (Mounted units occupy 2 hexes, and some multi-hex attacks can otherwise reference the other hex.)
         if (!attacker || !victim) return;
         if (victim === attacker) return;
+        if (victim.hp <= 0 || victim.isGone) return;
 
         let finalDamage = attack.damage;
         let isCrit = false;
@@ -4405,8 +4413,10 @@ export class TacticsScene extends BaseScene {
         if (levelDiff > 1) return false;
 
         // Both hexes must be free (or occupied by the moving unit itself)
-        if (buttCell.unit && buttCell.unit !== unit) return false;
-        if (headCell.unit && headCell.unit !== unit) return false;
+        const buttBlocked = !!this.getLivingUnitOccupyingCell(buttR, buttQ, unit);
+        const headBlocked = !!this.getLivingUnitOccupyingCell(headCell.r, headCell.q, unit);
+        if (buttBlocked) return false;
+        if (headBlocked) return false;
 
         return true;
     }
@@ -4431,7 +4441,7 @@ export class TacticsScene extends BaseScene {
             if (!buttCell) return;
 
             // Butt must be free (or this unit)
-            if (buttCell.unit && buttCell.unit !== unit) return;
+            if (this.getLivingUnitOccupyingCell(r, q, unit)) return;
 
             // Determine final facing from cheapest-path parent -> node
             let plannedFlip = unit.flip;
@@ -4514,10 +4524,13 @@ export class TacticsScene extends BaseScene {
 
     getRiderUnitFromCell(cell) {
         if (!cell) return null;
-        if (cell.unit) return cell.unit;
+        const livingOccupant = this.getLivingUnitOccupyingCell(cell.r, cell.q, null);
+        if (livingOccupant) return livingOccupant;
         const riderId = cell.horse?.riderId;
         if (!riderId) return null;
-        return this.units.find(u => u.id === riderId) || null;
+        const rider = this.units.find(u => u.id === riderId) || null;
+        if (!rider || rider.hp <= 0 || rider.isGone) return null;
+        return rider;
     }
 
     unitOccupiesCell(unit, r, q) {
@@ -4536,6 +4549,25 @@ export class TacticsScene extends BaseScene {
             if (this.unitOccupiesCell(u, r, q)) return u;
         }
         return null;
+    }
+
+    rebuildLivingUnitOccupancy() {
+        if (!this.tacticsMap) return;
+        for (let r = 0; r < this.tacticsMap.height; r++) {
+            for (let q = 0; q < this.tacticsMap.width; q++) {
+                const cell = this.tacticsMap.getCell(r, q);
+                if (cell) cell.unit = null;
+            }
+        }
+        for (const u of this.units) {
+            if (!u || u.hp <= 0 || u.isGone) continue;
+            const buttCell = this.tacticsMap.getCell(u.r, u.q);
+            if (buttCell) buttCell.unit = u;
+            if (u.onHorse) {
+                const headCell = this.getMountedHeadCellFor(u, u.r, u.q);
+                if (headCell) headCell.unit = u;
+            }
+        }
     }
 
     getHorseMoveBonus(horseType) {
@@ -6264,7 +6296,8 @@ export class TacticsScene extends BaseScene {
         }
 
         if (type === 'move_cell' && this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && this.reachableTiles.has(`${r},${q}`)) {
-            if (!clickedCell.unit || clickedCell.unit === this.selectedUnit) {
+            const blockedByLiving = !!this.getLivingUnitOccupyingCell(clickedCell.r, clickedCell.q, this.selectedUnit);
+            if (!blockedByLiving) {
                 let destR = clickedCell.r;
                 let destQ = clickedCell.q;
                 let plannedFlip = this.selectedUnit.flip;
@@ -6388,6 +6421,9 @@ export class TacticsScene extends BaseScene {
 
     selectTargetUnit(targetUnit) {
         if (!targetUnit) return;
+        if (!this.units.some(u => u.isMoving || u.pushData)) {
+            this.rebuildLivingUnitOccupancy();
+        }
         this.selectedUnit = targetUnit;
         this.selectedAttack = null;
         this.attackTiles.clear();
@@ -6398,12 +6434,12 @@ export class TacticsScene extends BaseScene {
                 this.reachableTiles = new Map();
                 rawReachable.forEach((data, key) => {
                     const [r, q] = key.split(',').map(Number);
-                    const cell = this.tacticsMap.getCell(r, q);
+                    const blockedByLiving = !!this.getLivingUnitOccupyingCell(r, q, this.selectedUnit);
                     if (this.selectedUnit.onHorse) {
                         // Allow moving the butt through 1-hex corridors; only the END destination needs head+butt space.
-                        if (!cell.unit || cell.unit === this.selectedUnit) this.reachableTiles.set(key, data);
+                        if (!blockedByLiving) this.reachableTiles.set(key, data);
                     } else {
-                        if (!cell.unit || cell.unit === this.selectedUnit) this.reachableTiles.set(key, data);
+                        if (!blockedByLiving) this.reachableTiles.set(key, data);
                     }
                 });
 
@@ -8280,7 +8316,8 @@ export class TacticsScene extends BaseScene {
         // B. MOVE UNIT (Priority if move is valid, even if clicking a sprite)
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && clickedCell && this.reachableTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
             // Check landing spot (cannot land on another unit)
-            if (!clickedCell.unit || clickedCell.unit === this.selectedUnit) {
+            const blockedByLiving = !!this.getLivingUnitOccupyingCell(clickedCell.r, clickedCell.q, this.selectedUnit);
+            if (!blockedByLiving) {
                 let destR = clickedCell.r;
                 let destQ = clickedCell.q;
                 let plannedFlip = this.selectedUnit.flip;

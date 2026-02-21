@@ -118,8 +118,13 @@ export class SceneManager {
         const down = (gp.buttons[13] && gp.buttons[13].pressed) || gp.axes[1] > axisDeadzone;
         const left = (gp.buttons[14] && gp.buttons[14].pressed) || gp.axes[0] < -axisDeadzone;
         const right = (gp.buttons[15] && gp.buttons[15].pressed) || gp.axes[0] > axisDeadzone;
-        const confirm = (gp.buttons[0] && gp.buttons[0].pressed) || (gp.buttons[9] && gp.buttons[9].pressed); // A / Start
-        const cancel = gp.buttons[1] && gp.buttons[1].pressed; // B
+        const confirm = (gp.buttons[0] && gp.buttons[0].pressed) || (gp.buttons[9] && gp.buttons[9].pressed); // South face / Start
+        // Cancel supports multiple common mappings across controllers:
+        // East face (B/Circle), West face (X/Square on some remaps), and Back/View.
+        const cancel =
+            (gp.buttons[1] && gp.buttons[1].pressed) ||
+            (gp.buttons[2] && gp.buttons[2].pressed) ||
+            (gp.buttons[8] && gp.buttons[8].pressed);
 
         this._emitGamepadKey('up', up, 'ArrowUp', timestamp, true);
         this._emitGamepadKey('down', down, 'ArrowDown', timestamp, true);

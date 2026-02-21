@@ -333,9 +333,6 @@ export class CampaignSelectionScene extends BaseScene {
         this.drawPixelText(ctx, returnText, backRect.x + backRect.w / 2, backRect.y + 3, { color: '#eee', font: '8px Silkscreen', align: 'center' });
         this.backRect = backRect;
 
-        // Visual helper for ESC
-        this.drawPixelText(ctx, "[ESC]", backRect.x - 2, backRect.y + 3, { color: '#444', font: '8px Tiny5', align: 'right' });
-
         // Fade Overlay
         if (this.fadeAlpha > 0) {
             ctx.fillStyle = `rgba(0, 0, 0, ${this.fadeAlpha})`;
