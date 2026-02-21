@@ -389,8 +389,19 @@ export class AssetLoader {
             return;
         }
 
-        const candidate = this.currentIntro || this.currentLoop || Object.values(this.music)[0] || Object.values(this.sounds)[0] || null;
-        if (!candidate) return;
+        const pendingCandidate = this.pendingMusic
+            ? (this.getMusic(`${this.pendingMusic.key}_intro`) || this.getMusic(`${this.pendingMusic.key}_loop`) || null)
+            : null;
+        const candidate = pendingCandidate || this.currentIntro || this.currentLoop || Object.values(this.music)[0] || Object.values(this.sounds)[0] || null;
+        if (!candidate) {
+            if (this.pendingMusic) {
+                const pending = this.pendingMusic;
+                this.pendingMusic = null;
+                this.currentMusicKey = null;
+                this.playMusic(pending.key, pending.targetVolume);
+            }
+            return;
+        }
 
         try {
             const probe = candidate.cloneNode();

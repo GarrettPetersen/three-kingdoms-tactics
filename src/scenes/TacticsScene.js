@@ -4334,6 +4334,39 @@ export class TacticsScene extends BaseScene {
         return null;
     }
 
+    findNearestMountedDestination(unit, r, q, maxDist = 6, preferredFlip = null) {
+        const tryCell = (cell) => {
+            if (!cell) return null;
+            const resolvedFlip = this.getValidMountedFlipForDestination(unit, cell.r, cell.q, preferredFlip);
+            if (resolvedFlip === null) return null;
+            return { cell, flip: resolvedFlip };
+        };
+
+        const startCell = this.tacticsMap.getCell(r, q);
+        const startPick = tryCell(startCell);
+        if (startPick) return startPick;
+
+        const queue = [{ r, q, d: 0 }];
+        const visited = new Set([`${r},${q}`]);
+
+        while (queue.length > 0) {
+            const current = queue.shift();
+            if (current.d >= maxDist) continue;
+
+            const neighbors = this.tacticsMap.getNeighbors(current.r, current.q);
+            for (const n of neighbors) {
+                const key = `${n.r},${n.q}`;
+                if (visited.has(key)) continue;
+                visited.add(key);
+
+                const pick = tryCell(n);
+                if (pick) return pick;
+                queue.push({ r: n.r, q: n.q, d: current.d + 1 });
+            }
+        }
+        return null;
+    }
+
     getXPForLevel(level) {
         if (level <= 1) return 0;
         // Level 2 at 10 XP, Level 3 at 25 XP, Level 4 at 45 XP, etc.
@@ -4393,14 +4426,34 @@ export class TacticsScene extends BaseScene {
             const unitClasses = gs.getCampaignVar('unitClasses') || {};
 
             unitsToPlace.forEach(u => {
-                const cell = this.findNearestFreeCell(u.r, u.q, 5);
-                if (!cell) {
-                    console.warn(`Could not find a free spot for unit ${u.id} at (${u.r},${u.q})`);
-                    return;
+                let finalR = u.r;
+                let finalQ = u.q;
+                let mountedSpawnPick = null;
+                const wantsHorseSpawn = !!u.onHorse;
+
+                if (wantsHorseSpawn) {
+                    mountedSpawnPick = this.findNearestMountedDestination(
+                        { ...u, onHorse: true, flip: !!u.flip },
+                        u.r,
+                        u.q,
+                        8,
+                        u.flip ?? null
+                    );
+                    if (mountedSpawnPick) {
+                        finalR = mountedSpawnPick.cell.r;
+                        finalQ = mountedSpawnPick.cell.q;
+                    }
                 }
 
-                const finalR = cell.r;
-                const finalQ = cell.q;
+                if (!mountedSpawnPick) {
+                    const cell = this.findNearestFreeCell(u.r, u.q, 6);
+                    if (!cell) {
+                        console.warn(`Could not find a free spot for unit ${u.id} at (${u.r},${u.q})`);
+                        return;
+                    }
+                    finalR = cell.r;
+                    finalQ = cell.q;
+                }
 
                 let level = u.level;
                 if (!this.isCustom || !level) {
@@ -4487,10 +4540,12 @@ export class TacticsScene extends BaseScene {
                     unit.horseType = u.horseType || 'brown';
                     unit.moveRange = unit.baseMoveRange + this.getHorseMoveBonus(unit.horseType);
                     unit.horseId = `horse_${unit.id}`;
+                    if (mountedSpawnPick) unit.flip = !!mountedSpawnPick.flip;
                 }
                 
             this.units.push(unit);
-                cell.unit = unit;
+                const buttCell = this.tacticsMap.getCell(unit.r, unit.q);
+                if (buttCell) buttCell.unit = unit;
                 if (unit.onHorse) {
                     if (this.isValidMountedButtDestination(unit, unit.r, unit.q)) {
                         const headCell = this.getMountedHeadCellFor(unit, unit.r, unit.q);
@@ -4499,6 +4554,7 @@ export class TacticsScene extends BaseScene {
                         this.horses.push(horse);
                         this.placeHorseOnCells(horse);
                     } else {
+                        console.warn(`Mounted spawn fallback: ${unit.id} had no valid 2-hex footprint and was dismounted.`);
                         unit.onHorse = false;
                         unit.horseId = null;
                         unit.moveRange = unit.baseMoveRange;
@@ -4532,6 +4588,8 @@ export class TacticsScene extends BaseScene {
         const dq = flip ? -1 : 1;
         const headCell = this.tacticsMap.getCell(buttR, buttQ + dq);
         if (!headCell || headCell.impassable) return false;
+        const isSolidHouse = (cell) => cell && cell.terrain && cell.terrain.includes('house') && !cell.terrain.includes('destroyed');
+        if (isSolidHouse(buttCell) || isSolidHouse(headCell)) return false;
 
         // Horse can't straddle a cliff: the two occupied hexes must be within 1 level of each other
         const levelDiff = Math.abs((buttCell.level || 0) - (headCell.level || 0));
@@ -5930,7 +5988,8 @@ export class TacticsScene extends BaseScene {
                         
                         // Only show arrow if there's a unit to be pushed
                         if (targetCell && targetCell.unit) {
-                            const dirIndex = this.tacticsMap.getDirectionIndex(u.r, u.q, targetCell.r, targetCell.q);
+                            const origin = this.getAttackOriginForTarget(u, targetCell.r, targetCell.q);
+                            const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, targetCell.r, targetCell.q);
                             if (dirIndex !== -1) {
                                 this.drawPushArrow(ctx, targetCell.r, targetCell.q, dirIndex);
                             }
@@ -8415,12 +8474,20 @@ export class TacticsScene extends BaseScene {
         
         // A. PERFORM ATTACK (Highest Priority if attack is active)
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack) {
-            // Use the same hoveredCell calculated in update() to ensure consistency
-            if (this.hoveredCell && this.attackTiles.has(`${this.hoveredCell.r},${this.hoveredCell.q}`)) {
+            let chosenAttackCell = null;
+            if (clickedCell && this.attackTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
+                chosenAttackCell = clickedCell;
+            } else if (spriteUnit && this.attackTiles.has(`${spriteUnit.r},${spriteUnit.q}`)) {
+                chosenAttackCell = this.tacticsMap.getCell(spriteUnit.r, spriteUnit.q);
+            } else if (this.hoveredCell && this.attackTiles.has(`${this.hoveredCell.r},${this.hoveredCell.q}`)) {
+                chosenAttackCell = this.hoveredCell;
+            }
+
+            if (chosenAttackCell) {
                 const attacker = this.selectedUnit;
                 this.isProcessingTurn = true; // Lock turn during animation
                 
-                this.executeAttack(attacker, this.selectedAttack, this.hoveredCell.r, this.hoveredCell.q, () => {
+                this.executeAttack(attacker, this.selectedAttack, chosenAttackCell.r, chosenAttackCell.q, () => {
                     // Safety: only apply if the action wasn't undone or state reset
                     if (this.turn === 'player' && attacker.hp > 0) {
                         attacker.hasAttacked = true;
