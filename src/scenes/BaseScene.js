@@ -510,6 +510,79 @@ export class BaseScene {
         ctx.restore();
     }
 
+    drawImageFramePixelOutline(ctx, img, srcX, srcY, srcW, srcH, destX, destY, options = {}) {
+        if (!img) return;
+        const { flip = false, color = '#ffd700', alphaThreshold = 10 } = options;
+        if (srcW <= 0 || srcH <= 0) return;
+
+        if (
+            !this._outlineFrameSrcCanvas ||
+            this._outlineFrameSrcCanvas.width !== srcW ||
+            this._outlineFrameSrcCanvas.height !== srcH
+        ) {
+            this._outlineFrameSrcCanvas = document.createElement('canvas');
+            this._outlineFrameSrcCanvas.width = srcW;
+            this._outlineFrameSrcCanvas.height = srcH;
+            this._outlineFrameSrcCtx = this._outlineFrameSrcCanvas.getContext('2d', { willReadFrequently: true });
+            this._outlineFrameDstCanvas = document.createElement('canvas');
+            this._outlineFrameDstCanvas.width = srcW;
+            this._outlineFrameDstCanvas.height = srcH;
+            this._outlineFrameDstCtx = this._outlineFrameDstCanvas.getContext('2d');
+        }
+
+        const srcCtx = this._outlineFrameSrcCtx;
+        const dstCtx = this._outlineFrameDstCtx;
+        srcCtx.clearRect(0, 0, srcW, srcH);
+        dstCtx.clearRect(0, 0, srcW, srcH);
+        srcCtx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, srcW, srcH);
+
+        const srcData = srcCtx.getImageData(0, 0, srcW, srcH);
+        const outData = dstCtx.createImageData(srcW, srcH);
+        const rgb = this._hexToRgb(color);
+
+        for (let py = 0; py < srcH; py++) {
+            for (let px = 0; px < srcW; px++) {
+                const idx = (py * srcW + px) * 4;
+                const a = srcData.data[idx + 3];
+                if (a > alphaThreshold) continue;
+
+                let edge = false;
+                for (let oy = -1; oy <= 1 && !edge; oy++) {
+                    for (let ox = -1; ox <= 1; ox++) {
+                        if (ox === 0 && oy === 0) continue;
+                        const nx = px + ox;
+                        const ny = py + oy;
+                        if (nx < 0 || nx >= srcW || ny < 0 || ny >= srcH) continue;
+                        const nIdx = (ny * srcW + nx) * 4;
+                        if (srcData.data[nIdx + 3] > alphaThreshold) {
+                            edge = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (edge) {
+                    outData.data[idx] = rgb.r;
+                    outData.data[idx + 1] = rgb.g;
+                    outData.data[idx + 2] = rgb.b;
+                    outData.data[idx + 3] = 255;
+                }
+            }
+        }
+
+        dstCtx.putImageData(outData, 0, 0);
+
+        ctx.save();
+        if (flip) {
+            ctx.translate(Math.floor(destX + srcW), Math.floor(destY));
+            ctx.scale(-1, 1);
+            ctx.drawImage(this._outlineFrameDstCanvas, 0, 0, srcW, srcH);
+        } else {
+            ctx.drawImage(this._outlineFrameDstCanvas, Math.floor(destX), Math.floor(destY), srcW, srcH);
+        }
+        ctx.restore();
+    }
+
     _hexToRgb(hex) {
         if (!hex || typeof hex !== 'string' || !hex.startsWith('#')) {
             return { r: 255, g: 215, b: 0 };

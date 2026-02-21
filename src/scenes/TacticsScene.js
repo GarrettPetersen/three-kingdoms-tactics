@@ -30,6 +30,7 @@ export class TacticsScene extends BaseScene {
         
         this.activeDialogue = null;
         this.hoveredCell = null;
+        this.hoveredMountedAttackRegions = null;
         this.damageNumbers = []; // { x, y, value, timer, maxTime }
         this.projectiles = []; // { startX, startY, targetX, targetY, progress, type, duration }
         this.particles = []; // { x, y, r, type, vx, vy, life, targetY }
@@ -152,6 +153,7 @@ export class TacticsScene extends BaseScene {
         this.selectedUnit = null;
         this.selectedAttack = null;
         this.hoveredCell = null;
+        this.hoveredMountedAttackRegions = null;
         this.activeDialogue = null;
         this.introScript = null; // Fix dialogue flicker
         this.isPostCombatDialogue = false; // Track if we're in post-combat dialogue
@@ -4773,6 +4775,215 @@ export class TacticsScene extends BaseScene {
         return { r: horse.r, q: horse.q + dq };
     }
 
+    getMountedTargetCellFromPointer(unit, pointerX, pointerY, sinkOffset = 0) {
+        if (!unit?.onHorse) return this.tacticsMap.getCell(unit.r, unit.q);
+        const spacing = this.manager.config.horizontalSpacing;
+        const buttX = unit.visualX;
+        const buttY = unit.visualY + sinkOffset;
+        const headX = buttX + (unit.flip ? -spacing : spacing);
+        const headY = buttY;
+
+        const buttDistSq = ((pointerX - buttX) ** 2) + ((pointerY - buttY) ** 2);
+        const headDistSq = ((pointerX - headX) ** 2) + ((pointerY - headY) ** 2);
+        if (headDistSq < buttDistSq) {
+            return this.tacticsMap.getCell(unit.r, unit.q + (unit.flip ? -1 : 1));
+        }
+        return this.tacticsMap.getCell(unit.r, unit.q);
+    }
+
+    getMountedAttackRegions(unit) {
+        if (!unit?.onHorse) return [];
+        const buttCell = this.tacticsMap.getCell(unit.r, unit.q);
+        const headCell = this.getMountedHeadCellFor(unit, unit.r, unit.q);
+        const regions = [];
+        if (headCell) {
+            regions.push({
+                cell: headCell,
+                role: 'front',
+                canAttack: this.attackTiles.has(`${headCell.r},${headCell.q}`)
+            });
+        }
+        if (buttCell) {
+            regions.push({
+                cell: buttCell,
+                role: 'back',
+                canAttack: this.attackTiles.has(`${buttCell.r},${buttCell.q}`)
+            });
+        }
+        return regions;
+    }
+
+    resolveMountedAttackTargetCell(attacker, mountedUnit, preferredCell = null) {
+        const regions = this.getMountedAttackRegions(mountedUnit).filter(r => r.canAttack && r.cell);
+        if (regions.length === 0) return null;
+        if (regions.length === 1) return regions[0].cell;
+
+        // If caller provided a preferred region (e.g. current hover), honor it if valid.
+        if (preferredCell) {
+            const preferred = regions.find(r => r.cell.r === preferredCell.r && r.cell.q === preferredCell.q);
+            if (preferred) return preferred.cell;
+        }
+
+        // Deterministic tiebreaker when both front/back are legal:
+        // choose the region that is closer to the attacker; if tied, prefer front.
+        const scored = regions.map(r => ({
+            region: r,
+            dist: this.tacticsMap.getDistance(attacker.r, attacker.q, r.cell.r, r.cell.q)
+        }));
+        scored.sort((a, b) => {
+            if (a.dist !== b.dist) return a.dist - b.dist;
+            if (a.region.role === b.region.role) return 0;
+            return a.region.role === 'front' ? -1 : 1;
+        });
+        return scored[0].region.cell;
+    }
+
+    drawMountedSpriteOutline(ctx, unit, surfaceY, timestamp, color = '#ffd700', regionRole = null) {
+        if (!unit?.onHorse) return;
+        const cell = this.tacticsMap.getCell(unit.r, unit.q);
+        const headForSink = this.getMountedHeadCellFor(unit, unit.r, unit.q);
+        const isHorseInShallow =
+            (!!cell && cell.terrain?.includes('water_shallow')) ||
+            (!!headForSink && headForSink.terrain?.includes('water_shallow'));
+        const terrainSink = isHorseInShallow ? 4 : 0;
+
+        const buttX = unit.visualX + unit.visualOffsetX;
+        const buttY = surfaceY + unit.visualOffsetY + terrainSink;
+        const spacing = this.manager.config.horizontalSpacing;
+        const headX = buttX + (unit.flip ? -spacing : spacing);
+        const midX = Math.floor((buttX + headX) / 2);
+        const midY = buttY;
+
+        const riderAction = (unit.action === 'walk') ? 'standby' : (unit.currentAnimAction || unit.action);
+        const riderX = midX;
+        const riderY = midY - 22;
+        const keys = this.getHorseSpriteKeys(unit.horseType || 'brown');
+        const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
+        const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
+        const isRunning = (unit.isMoving || unit.action === 'walk') && horseRun;
+        const horseImg = isRunning ? horseRun : horseStand;
+
+        const riderMinX = riderX - 36;
+        const riderMaxX = riderX + 36;
+        const riderMinY = riderY - 44;
+        const riderMaxY = riderY + 28;
+        const horseMinX = midX - 32;
+        const horseMaxX = midX + 32;
+        const horseMinY = midY - 49; // horseFeetY(15) - frameH(64)
+        const horseMaxY = midY + 15;
+        const minX = Math.floor(Math.min(riderMinX, horseMinX)) - 2;
+        const maxX = Math.ceil(Math.max(riderMaxX, horseMaxX)) + 2;
+        const minY = Math.floor(Math.min(riderMinY, horseMinY)) - 2;
+        const maxY = Math.ceil(Math.max(riderMaxY, horseMaxY)) + 2;
+        const canvasW = Math.max(1, maxX - minX + 1);
+        const canvasH = Math.max(1, maxY - minY + 1);
+
+        if (!this._mountedOutlineSrcCanvas || this._mountedOutlineSrcCanvas.width !== canvasW || this._mountedOutlineSrcCanvas.height !== canvasH) {
+            this._mountedOutlineSrcCanvas = document.createElement('canvas');
+            this._mountedOutlineSrcCanvas.width = canvasW;
+            this._mountedOutlineSrcCanvas.height = canvasH;
+            this._mountedOutlineSrcCtx = this._mountedOutlineSrcCanvas.getContext('2d', { willReadFrequently: true });
+            this._mountedOutlineDstCanvas = document.createElement('canvas');
+            this._mountedOutlineDstCanvas.width = canvasW;
+            this._mountedOutlineDstCanvas.height = canvasH;
+            this._mountedOutlineDstCtx = this._mountedOutlineDstCanvas.getContext('2d');
+        }
+
+        const srcCtx = this._mountedOutlineSrcCtx;
+        const dstCtx = this._mountedOutlineDstCtx;
+        srcCtx.clearRect(0, 0, canvasW, canvasH);
+        dstCtx.clearRect(0, 0, canvasW, canvasH);
+
+        const localRiderX = riderX - minX;
+        const localRiderY = riderY - minY;
+        const localMidX = midX - minX;
+        const localMidY = midY - minY;
+        const nearSide = unit.flip ? 'right' : 'left';
+        const farSide = nearSide === 'left' ? 'right' : 'left';
+        const riderDrawOptions = { flip: unit.flip, sinkOffset: 0, isSubmerged: false };
+
+        const drawRiderHalf = (side) => {
+            srcCtx.save();
+            const clipX = side === 'left' ? Math.floor(localRiderX - 36) : Math.floor(localRiderX);
+            srcCtx.beginPath();
+            srcCtx.rect(clipX, Math.floor(localRiderY - 100), 36, 140);
+            srcCtx.clip();
+            this.drawCharacter(srcCtx, unit.img, riderAction, unit.frame, localRiderX, localRiderY, riderDrawOptions);
+            srcCtx.restore();
+        };
+
+        // Match visible render layering: far leg -> horse -> near leg.
+        drawRiderHalf(farSide);
+        if (horseImg) {
+            const frameW = 64;
+            const frameH = 64;
+            const frameCount = isRunning ? Math.max(1, Math.floor(horseImg.width / frameW)) : 1;
+            const f = isRunning ? (Math.floor(timestamp / 80) % frameCount) : 0;
+            const sx = f * frameW;
+            const dx = -frameW / 2;
+            const dy = 15 - frameH;
+            srcCtx.save();
+            srcCtx.translate(Math.floor(localMidX), Math.floor(localMidY));
+            if (unit.flip) srcCtx.scale(-1, 1);
+            srcCtx.drawImage(horseImg, sx, 0, frameW, frameH, dx, dy, frameW, frameH);
+            srcCtx.restore();
+        }
+        drawRiderHalf(nearSide);
+
+        const srcData = srcCtx.getImageData(0, 0, canvasW, canvasH);
+        const outData = dstCtx.createImageData(canvasW, canvasH);
+        const rgb = this._hexToRgb(color);
+        const splitX = Math.floor(localMidX);
+        const useHalf = regionRole === 'front' || regionRole === 'back';
+        let keepLeft = true;
+        if (useHalf) {
+            const frontIsLeft = !!unit.flip;
+            if (regionRole === 'front') keepLeft = frontIsLeft;
+            else keepLeft = !frontIsLeft;
+        }
+
+        for (let py = 0; py < canvasH; py++) {
+            for (let px = 0; px < canvasW; px++) {
+                if (useHalf) {
+                    const inLeftHalf = px <= splitX;
+                    if (keepLeft !== inLeftHalf) continue;
+                }
+                const idx = (py * canvasW + px) * 4;
+                const a = srcData.data[idx + 3];
+                if (a > 10) continue;
+
+                let edge = false;
+                for (let oy = -1; oy <= 1 && !edge; oy++) {
+                    for (let ox = -1; ox <= 1; ox++) {
+                        if (ox === 0 && oy === 0) continue;
+                        const nx = px + ox;
+                        const ny = py + oy;
+                        if (nx < 0 || nx >= canvasW || ny < 0 || ny >= canvasH) continue;
+                        if (useHalf) {
+                            const nLeft = nx <= splitX;
+                            if (keepLeft !== nLeft) continue;
+                        }
+                        const nIdx = (ny * canvasW + nx) * 4;
+                        if (srcData.data[nIdx + 3] > 10) {
+                            edge = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (edge) {
+                    outData.data[idx] = rgb.r;
+                    outData.data[idx + 1] = rgb.g;
+                    outData.data[idx + 2] = rgb.b;
+                    outData.data[idx + 3] = 255;
+                }
+            }
+        }
+
+        dstCtx.putImageData(outData, 0, 0);
+        ctx.drawImage(this._mountedOutlineDstCanvas, minX, minY, canvasW, canvasH);
+    }
+
     clearHorseFromCells(horse) {
         if (!horse) return;
         const butt = this.tacticsMap.getCell(horse.r, horse.q);
@@ -5119,8 +5330,23 @@ export class TacticsScene extends BaseScene {
         // --- UPDATE HOVERED CELL (Must match handleInput selection logic) ---
         // Controller/keyboard focus should drive the same hover previews as mouseover.
         if (controllerTarget) {
+            this.hoveredMountedAttackRegions = null;
             if (controllerTarget.type === 'unit' && controllerTarget.unit) {
                 this.hoveredCell = this.tacticsMap.getCell(controllerTarget.unit.r, controllerTarget.unit.q);
+                if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack && controllerTarget.unit.onHorse) {
+                    const regions = this.getMountedAttackRegions(controllerTarget.unit);
+                    if (regions.some(r => r.canAttack)) {
+                        this.hoveredMountedAttackRegions = regions;
+                        const resolved = this.resolveMountedAttackTargetCell(this.selectedUnit, controllerTarget.unit, this.hoveredCell);
+                        if (resolved) this.hoveredCell = resolved;
+                    }
+                }
+            } else if (controllerTarget.type === 'unit_region' && controllerTarget.unit && controllerTarget.r !== undefined && controllerTarget.q !== undefined) {
+                this.hoveredCell = this.tacticsMap.getCell(controllerTarget.r, controllerTarget.q);
+                if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack && controllerTarget.unit.onHorse) {
+                    const regions = this.getMountedAttackRegions(controllerTarget.unit);
+                    if (regions.length > 0) this.hoveredMountedAttackRegions = regions;
+                }
             } else if ((controllerTarget.type === 'move_cell' || controllerTarget.type === 'attack_cell') && controllerTarget.r !== undefined && controllerTarget.q !== undefined) {
                 this.hoveredCell = this.tacticsMap.getCell(controllerTarget.r, controllerTarget.q);
             } else {
@@ -5131,6 +5357,7 @@ export class TacticsScene extends BaseScene {
             const hy = this.manager.logicalMouseY;
             
             let hoveredUnit = null;
+            let hoveredUnitCell = null;
             const activeUnits = this.units.filter(u => u.hp > 0 && !u.isGone);
             // Match draw order (bottom-to-top) for picking
             activeUnits.sort((a, b) => b.currentSortR - a.currentSortR);
@@ -5192,6 +5419,7 @@ export class TacticsScene extends BaseScene {
 
                     if (riderHit || horseHit) {
                         hoveredUnit = u;
+                        hoveredUnitCell = this.getMountedTargetCellFromPointer(u, hx, hy, sinkOffset);
                         break;
                     }
                 } else if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, hx, hy, { 
@@ -5200,22 +5428,34 @@ export class TacticsScene extends BaseScene {
                         isProp: u.name === 'Boulder'
                     })) {
                     hoveredUnit = u;
+                    hoveredUnitCell = this.tacticsMap.getCell(u.r, u.q);
                     break;
                 }
             }
 
             const rawHoveredCell = this.getCellAt(hx, hy);
+            this.hoveredMountedAttackRegions = null;
             
             if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack) {
-                // When targeting an attack, prioritize unit sprite IF it's in range
-                if (hoveredUnit && this.attackTiles.has(`${hoveredUnit.r},${hoveredUnit.q}`)) {
-                    this.hoveredCell = this.tacticsMap.getCell(hoveredUnit.r, hoveredUnit.q);
+                if (hoveredUnit && hoveredUnit.onHorse) {
+                    const regions = this.getMountedAttackRegions(hoveredUnit);
+                    if (regions.some(r => r.canAttack)) {
+                        this.hoveredMountedAttackRegions = regions;
+                    }
+                    if (hoveredUnitCell && this.attackTiles.has(`${hoveredUnitCell.r},${hoveredUnitCell.q}`)) {
+                        this.hoveredCell = hoveredUnitCell;
+                    } else {
+                        this.hoveredCell = rawHoveredCell;
+                    }
+                } else if (hoveredUnitCell && this.attackTiles.has(`${hoveredUnitCell.r},${hoveredUnitCell.q}`)) {
+                    // When targeting an attack, prioritize unit sprite IF it's in range
+                    this.hoveredCell = hoveredUnitCell;
                 } else {
                     this.hoveredCell = rawHoveredCell;
                 }
             } else {
                 // Standard selection hover
-                this.hoveredCell = hoveredUnit ? this.tacticsMap.getCell(hoveredUnit.r, hoveredUnit.q) : rawHoveredCell;
+                this.hoveredCell = hoveredUnitCell || rawHoveredCell;
             }
         }
 
@@ -5747,7 +5987,11 @@ export class TacticsScene extends BaseScene {
 
                 const isSelected = this.selectedUnit === u;
                 if (isSelected) {
-                    this.drawHighlight(ctx, u.visualX, surfaceY, 'rgba(255, 255, 255, 0.4)');
+                    if (u.onHorse) {
+                        this.drawMountedSpriteOutline(ctx, u, surfaceY, timestamp, '#ffffff');
+                    } else {
+                        this.drawHighlight(ctx, u.visualX, surfaceY, 'rgba(255, 255, 255, 0.4)');
+                    }
                 }
 
                 // Mounted rendering: draw rider split around the horse so legs "straddle"
@@ -5976,7 +6220,14 @@ export class TacticsScene extends BaseScene {
 
         this.drawUI();
         this.rebuildControllerNavTargets();
-        this.drawControllerNavFocus(ctx);
+        this.drawControllerNavFocus(ctx, timestamp);
+
+        if (this.selectedAttack && this.hoveredMountedAttackRegions && this.hoveredMountedAttackRegions.length > 0) {
+            this.hoveredMountedAttackRegions.forEach(region => {
+                const pos = this.getPixelPos(region.cell.r, region.cell.q);
+                this.drawHexOutline(ctx, pos.x, pos.y, region.canAttack ? '#ff3333' : '#ffd700');
+            });
+        }
 
         // 4. Final Pass: Draw UX elements (like push arrows) above everything
         if (!this.isIntroAnimating) {
@@ -6254,18 +6505,36 @@ export class TacticsScene extends BaseScene {
                 }
             }
 
+            const isAttackTargetingMode = !!(this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack);
             this.units.forEach(u => {
-                if (u.hp > 0 && !u.isGone) {
-                    targets.push({
-                        id: `unit:${u.id}`,
-                        type: 'unit',
-                        x: u.visualX,
-                        y: u.visualY,
-                        r: u.r,
-                        q: u.q,
-                        unit: u
+                if (u.hp <= 0 || u.isGone) return;
+                if (isAttackTargetingMode && u.onHorse) {
+                    const regions = this.getMountedAttackRegions(u);
+                    regions.forEach(region => {
+                        const pos = this.getPixelPos(region.cell.r, region.cell.q);
+                        targets.push({
+                            id: `unit_region:${u.id}:${region.role}`,
+                            type: 'unit_region',
+                            x: pos.x,
+                            y: pos.y,
+                            r: region.cell.r,
+                            q: region.cell.q,
+                            role: region.role,
+                            canAttack: !!region.canAttack,
+                            unit: u
+                        });
                     });
+                    return;
                 }
+                targets.push({
+                    id: `unit:${u.id}`,
+                    type: 'unit',
+                    x: u.visualX,
+                    y: u.visualY,
+                    r: u.r,
+                    q: u.q,
+                    unit: u
+                });
             });
         }
 
@@ -6284,7 +6553,7 @@ export class TacticsScene extends BaseScene {
         }
     }
 
-    drawControllerNavFocus(ctx) {
+    drawControllerNavFocus(ctx, timestamp = Date.now()) {
         if (this.controllerNavMouseEnabled) return;
         if (!this.controllerNavTargets || this.controllerNavTargets.length === 0) return;
         if (this.controllerNavIndex < 0 || this.controllerNavIndex >= this.controllerNavTargets.length) return;
@@ -6295,10 +6564,22 @@ export class TacticsScene extends BaseScene {
         ctx.lineWidth = 1;
         if ((t.type === 'move_cell' || t.type === 'attack_cell') && t.r !== undefined && t.q !== undefined) {
             const pos = this.getPixelPos(t.r, t.q);
-            this.drawHexOutline(ctx, pos.x, pos.y, '#ffd700');
+            this.drawHexOutline(ctx, pos.x, pos.y, t.type === 'attack_cell' ? '#ff3333' : '#ffd700');
         } else if (t.type === 'unit' && t.unit && t.unit.img && t.unit.name !== 'Boulder') {
             const u = t.unit;
-            const canAttackThisUnit = isAttackTargetingMode && this.attackTiles.has(`${u.r},${u.q}`);
+            const mountedRegions = (isAttackTargetingMode && u.onHorse) ? this.getMountedAttackRegions(u) : null;
+            const canAttackThisUnit = isAttackTargetingMode && (
+                this.attackTiles.has(`${u.r},${u.q}`) ||
+                (mountedRegions && mountedRegions.some(r => r.canAttack))
+            );
+            if (mountedRegions && mountedRegions.length > 0) {
+                mountedRegions.forEach(region => {
+                    const pos = this.getPixelPos(region.cell.r, region.cell.q);
+                    this.drawHexOutline(ctx, pos.x, pos.y, region.canAttack ? '#ff3333' : '#ffd700');
+                });
+            } else if (u.onHorse) {
+                this.drawMountedSpriteOutline(ctx, u, u.visualY, timestamp, '#ffd700');
+            }
             this.drawCharacterPixelOutline(
                 ctx,
                 u.img,
@@ -6308,6 +6589,12 @@ export class TacticsScene extends BaseScene {
                 u.visualY,
                 { flip: u.flip, color: canAttackThisUnit ? '#ff3333' : '#ffd700' }
             );
+        } else if (t.type === 'unit_region' && t.unit && t.r !== undefined && t.q !== undefined) {
+            const pos = this.getPixelPos(t.r, t.q);
+            this.drawHexOutline(ctx, pos.x, pos.y, t.canAttack ? '#ff3333' : '#ffd700');
+            if (t.unit.onHorse) {
+                this.drawMountedSpriteOutline(ctx, t.unit, t.unit.visualY, timestamp, t.canAttack ? '#ff3333' : '#ffd700', t.role);
+            }
         } else if (t.rect) {
             ctx.strokeRect(Math.floor(t.rect.x) - 1.5, Math.floor(t.rect.y) - 1.5, Math.floor(t.rect.w) + 2, Math.floor(t.rect.h) + 2);
         } else {
@@ -6343,7 +6630,7 @@ export class TacticsScene extends BaseScene {
         }
         const cur = this.controllerNavTargets[this.controllerNavIndex];
 
-        const isMapTarget = (t) => t && (t.type === 'move_cell' || t.type === 'attack_cell' || t.type === 'unit');
+        const isMapTarget = (t) => t && (t.type === 'move_cell' || t.type === 'attack_cell' || t.type === 'unit' || t.type === 'unit_region');
         const findMapTargetAt = (r, q, preferredType = null) => {
             if (preferredType) {
                 const exact = this.controllerNavTargets.findIndex(t => t.r === r && t.q === q && t.type === preferredType);
@@ -6368,6 +6655,7 @@ export class TacticsScene extends BaseScene {
                     this.controllerNavIndex = idx;
                     const t = this.controllerNavTargets[idx];
                     if (t.type === 'unit' && t.unit) this.hoveredCell = this.tacticsMap.getCell(t.unit.r, t.unit.q);
+                    if (t.type === 'unit_region' && t.r !== undefined && t.q !== undefined) this.hoveredCell = this.tacticsMap.getCell(t.r, t.q);
                     if ((t.type === 'move_cell' || t.type === 'attack_cell') && t.r !== undefined) this.hoveredCell = this.tacticsMap.getCell(t.r, t.q);
                     assets.playSound('ui_click', 0.5);
                     return;
@@ -6384,6 +6672,7 @@ export class TacticsScene extends BaseScene {
         this.controllerNavIndex = bestIdx;
         const t = this.controllerNavTargets[bestIdx];
         if (t.type === 'unit' && t.unit) this.hoveredCell = this.tacticsMap.getCell(t.unit.r, t.unit.q);
+        if (t.type === 'unit_region' && t.r !== undefined && t.q !== undefined) this.hoveredCell = this.tacticsMap.getCell(t.r, t.q);
         if ((t.type === 'move_cell' || t.type === 'attack_cell') && t.r !== undefined) this.hoveredCell = this.tacticsMap.getCell(t.r, t.q);
         assets.playSound('ui_click', 0.5);
     }
@@ -6580,10 +6869,31 @@ export class TacticsScene extends BaseScene {
             const targetCell = this.tacticsMap.getCell(t.unit.r, t.unit.q);
             this.hoveredCell = targetCell;
             const isAttackTargetingMode = !!(this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack);
+            if (isAttackTargetingMode && t.unit.onHorse) {
+                const resolvedMountedCell = this.resolveMountedAttackTargetCell(this.selectedUnit, t.unit, this.hoveredCell);
+                if (resolvedMountedCell) {
+                    this.hoveredCell = resolvedMountedCell;
+                    this.activateCellTarget(resolvedMountedCell.r, resolvedMountedCell.q, 'attack_cell');
+                    return;
+                }
+                this.selectTargetUnit(t.unit);
+                return;
+            }
+
             const canAttackThisUnit = isAttackTargetingMode && this.attackTiles.has(`${t.unit.r},${t.unit.q}`);
             if (canAttackThisUnit) {
                 // In attack targeting mode, Enter on a unit should attack its cell (allies included).
                 this.activateCellTarget(t.unit.r, t.unit.q, 'attack_cell');
+            } else {
+                this.selectTargetUnit(t.unit);
+            }
+            return;
+        }
+        if (t.type === 'unit_region' && t.unit && t.r !== undefined && t.q !== undefined) {
+            this.hoveredCell = this.tacticsMap.getCell(t.r, t.q);
+            const isAttackTargetingMode = !!(this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack);
+            if (isAttackTargetingMode && t.canAttack) {
+                this.activateCellTarget(t.r, t.q, 'attack_cell');
             } else {
                 this.selectTargetUnit(t.unit);
             }
@@ -8394,6 +8704,7 @@ export class TacticsScene extends BaseScene {
 
         // 3. Detect Sprite & Cell
         let spriteUnit = null;
+        let spriteHitCell = null;
         const activeUnits = this.units.filter(u => u.hp > 0);
         activeUnits.sort((a, b) => b.currentSortR - a.currentSortR);
         for (let u of activeUnits) {
@@ -8455,6 +8766,7 @@ export class TacticsScene extends BaseScene {
 
                 if (riderHit || horseHit) {
                     spriteUnit = u;
+                    spriteHitCell = this.getMountedTargetCellFromPointer(u, x, y, sinkOffset);
                     break;
                 }
             }
@@ -8465,6 +8777,7 @@ export class TacticsScene extends BaseScene {
                 isProp: u.name === 'Boulder'
             })) {
                 spriteUnit = u;
+                spriteHitCell = this.tacticsMap.getCell(u.r, u.q);
                 break;
             }
         }
@@ -8475,10 +8788,15 @@ export class TacticsScene extends BaseScene {
         // A. PERFORM ATTACK (Highest Priority if attack is active)
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack) {
             let chosenAttackCell = null;
-            if (clickedCell && this.attackTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
+            const clickedMountedRegion = !!(spriteUnit && spriteUnit.onHorse && spriteHitCell);
+            if (clickedMountedRegion) {
+                if (this.attackTiles.has(`${spriteHitCell.r},${spriteHitCell.q}`)) {
+                    chosenAttackCell = spriteHitCell;
+                }
+            } else if (clickedCell && this.attackTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
                 chosenAttackCell = clickedCell;
-            } else if (spriteUnit && this.attackTiles.has(`${spriteUnit.r},${spriteUnit.q}`)) {
-                chosenAttackCell = this.tacticsMap.getCell(spriteUnit.r, spriteUnit.q);
+            } else if (spriteHitCell && this.attackTiles.has(`${spriteHitCell.r},${spriteHitCell.q}`)) {
+                chosenAttackCell = spriteHitCell;
             } else if (this.hoveredCell && this.attackTiles.has(`${this.hoveredCell.r},${this.hoveredCell.q}`)) {
                 chosenAttackCell = this.hoveredCell;
             }
@@ -8501,6 +8819,11 @@ export class TacticsScene extends BaseScene {
                     }
                     this.isProcessingTurn = false; // Unlock turn
                 });
+                return;
+            }
+
+            if (clickedMountedRegion) {
+                this.selectTargetUnit(spriteUnit);
                 return;
             }
         }
