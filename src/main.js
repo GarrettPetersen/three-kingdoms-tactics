@@ -197,6 +197,12 @@ async function init() {
     sceneManager.addScene('credits', new CreditsScene());
 
     canvas.addEventListener('pointerdown', (e) => sceneManager.handleInput(e));
+    const unlockAudio = () => {
+        assets.unlockAudioFromGesture();
+    };
+    window.addEventListener('pointerdown', unlockAudio, { passive: true });
+    window.addEventListener('touchstart', unlockAudio, { passive: true });
+    window.addEventListener('keydown', unlockAudio);
 
     let inputBuffer = "";
     window.addEventListener('keydown', (e) => {

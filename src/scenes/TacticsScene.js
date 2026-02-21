@@ -1417,11 +1417,136 @@ export class TacticsScene extends BaseScene {
 
             assets.playMusic('battle', 0.4);
             this.addDamageNumber(this.manager.canvas.width / 2, 40, "FORCE DONG ZHUO TO FLEE!", '#ffd700');
-            this.startPlayerTurn();
+            const reinforcements = this.spawnChapter2DongZhuoHorseReinforcements();
+            if (reinforcements.length > 0) {
+                this.addDamageNumber(this.manager.canvas.width / 2, 56, "REINFORCEMENTS!", '#ffcc66');
+                const speaker = reinforcements[0];
+                speaker.dialogue = getLocalizedText({
+                    en: "General Dong Zhuo! Imperial cavalry rides to your aid!",
+                    zh: "董将军！朝廷骑兵前来助阵！"
+                });
+                this.activeDialogue = { unit: speaker, timer: 2200 };
+            }
+
+            const beginPlayerTurnWhenReady = () => {
+                const stillMoving = reinforcements.some(u => u && u.isMoving);
+                if (stillMoving) {
+                    setTimeout(beginPlayerTurnWhenReady, 80);
+                    return;
+                }
+                reinforcements.forEach(u => {
+                    if (!u || !u.onHorse) return;
+                    const horse = this.getHorseById(u.horseId);
+                    if (horse) {
+                        this.clearHorseFromCells(horse);
+                        horse.r = u.r;
+                        horse.q = u.q;
+                        horse.flip = !!u.flip;
+                        this.placeHorseOnCells(horse);
+                    }
+                    this.syncMountedOccupancy(u);
+                });
+                this.startPlayerTurn();
+            };
+            beginPlayerTurnWhenReady();
         };
 
         const firstStep = this.cleanupDialogueScript[0];
         if (firstStep.voiceId) assets.playVoice(firstStep.voiceId);
+    }
+
+    spawnChapter2DongZhuoHorseReinforcements() {
+        if (this.battleId !== 'chapter2_oath_dongzhuo_choice') return [];
+        const defs = [
+            { id: 'dz_reinforce_black', horseType: 'black', start: { r: 5, q: this.manager.config.mapWidth - 1 }, dest: { r: 5, q: this.manager.config.mapWidth - 3 } },
+            { id: 'dz_reinforce_brown', horseType: 'brown', start: { r: 7, q: this.manager.config.mapWidth - 1 }, dest: { r: 7, q: this.manager.config.mapWidth - 3 } }
+        ];
+        const spawned = [];
+
+        const chooseMountedCell = (unit, preferredCell) => {
+            const candidates = [];
+            if (preferredCell) candidates.push(preferredCell);
+            if (preferredCell) {
+                this.tacticsMap.getNeighbors(preferredCell.r, preferredCell.q).forEach(n => candidates.push(n));
+            }
+            for (const c of candidates) {
+                if (!c || c.impassable) continue;
+                if (this.getLivingUnitOccupyingCell(c.r, c.q, unit)) continue;
+                const resolved = this.getValidMountedFlipForDestination(unit, c.r, c.q, true);
+                if (resolved !== null) return { cell: c, flip: resolved };
+            }
+            return null;
+        };
+
+        defs.forEach((d) => {
+            if (this.units.find(u => u.id === d.id)) return;
+            const unit = new Unit(d.id, {
+                name: 'Imperial Escort',
+                imgKey: 'soldier',
+                img: assets.getImage('soldier'),
+                faction: 'enemy',
+                hp: 3,
+                maxHp: 3,
+                level: 2,
+                moveRange: 3,
+                attacks: ['slash'],
+                onHorse: true,
+                horseId: `horse_${d.id}`,
+                horseType: d.horseType
+            });
+            unit.baseMoveRange = unit.moveRange;
+            unit.moveRange = unit.baseMoveRange + this.getHorseMoveBonus(unit.horseType);
+
+            const startCell = this.tacticsMap.getCell(d.start.r, d.start.q) || this.findNearestFreeCell(d.start.r, d.start.q, 4);
+            const startPick = chooseMountedCell(unit, startCell);
+            if (!startPick) return;
+            unit.r = startPick.cell.r;
+            unit.q = startPick.cell.q;
+            unit.flip = !!startPick.flip;
+            this.units.push(unit);
+            this.syncMountedOccupancy(unit);
+            const horse = { id: unit.horseId, riderId: unit.id, r: unit.r, q: unit.q, flip: !!unit.flip, type: unit.horseType || 'brown' };
+            this.horses.push(horse);
+            this.placeHorseOnCells(horse);
+            spawned.push(unit);
+
+            const targetCell = this.tacticsMap.getCell(d.dest.r, d.dest.q) || this.findNearestFreeCell(d.dest.r, d.dest.q, 4);
+            const destPick = chooseMountedCell(unit, targetCell);
+            if (!destPick) return;
+            const path = this.tacticsMap.getPath(unit.r, unit.q, destPick.cell.r, destPick.cell.q, 12, unit);
+            if (!path || path.length < 2) return;
+
+            const oldButt = this.tacticsMap.getCell(unit.r, unit.q);
+            const oldHead = this.getMountedHeadCellFor(unit, unit.r, unit.q);
+            if (oldButt && oldButt.unit === unit) oldButt.unit = null;
+            if (oldHead && oldHead.unit === unit) oldHead.unit = null;
+            this.clearHorseFromCells(horse);
+
+            let plannedFlip = unit.flip;
+            if (path.length >= 2) {
+                const prev = path[path.length - 2];
+                const last = path[path.length - 1];
+                const prevPos = this.getPixelPos(prev.r, prev.q);
+                const lastPos = this.getPixelPos(last.r, last.q);
+                if (lastPos.x < prevPos.x) plannedFlip = true;
+                else if (lastPos.x > prevPos.x) plannedFlip = false;
+            }
+            const resolvedFlip = this.getValidMountedFlipForDestination(unit, destPick.cell.r, destPick.cell.q, plannedFlip);
+            if (resolvedFlip !== null) plannedFlip = resolvedFlip;
+            unit.flip = plannedFlip;
+
+            unit.startPath(path);
+            const destButt = this.tacticsMap.getCell(destPick.cell.r, destPick.cell.q);
+            const destHead = this.getMountedHeadCellFor({ ...unit, flip: plannedFlip }, destPick.cell.r, destPick.cell.q);
+            if (destButt) destButt.unit = unit;
+            if (destHead) destHead.unit = unit;
+            horse.r = destPick.cell.r;
+            horse.q = destPick.cell.q;
+            horse.flip = !!plannedFlip;
+            this.placeHorseOnCells(horse);
+        });
+
+        return spawned;
     }
 
     triggerChapter2DongZhuoEscape(fromDrowning = false) {

@@ -39,8 +39,7 @@ export class CustomBattleMenuScene extends BaseScene {
             { name: 'Liu Bei', imgKey: 'liubei', type: 'hero', templateId: 'liubei' },
             { name: 'Guan Yu', imgKey: 'guanyu', type: 'hero', templateId: 'guanyu' },
             { name: 'Zhang Fei', imgKey: 'zhangfei', type: 'hero', templateId: 'zhangfei' },
-            { name: 'Volunteer', imgKey: 'soldier', type: 'allied_soldier', templateId: 'ally' },
-            { name: 'Qingzhou Guard', imgKey: 'soldier', type: 'allied_soldier', templateId: 'guard' },
+            { name: 'Soldier', imgKey: 'soldier', type: 'soldier', templateId: 'soldier' },
             { name: 'Gong Jing', imgKey: 'gongjing_sprite', type: 'commander', templateId: 'gongjing' },
             { name: 'Lu Zhi', imgKey: 'zhoujing', type: 'commander', templateId: 'luzhi' },
             { name: 'Dong Zhuo', imgKey: 'dongzhuo', type: 'warlord', templateId: 'dongzhuo' },
@@ -48,7 +47,6 @@ export class CustomBattleMenuScene extends BaseScene {
             { name: 'YT Captain', imgKey: 'bandit2', type: 'enemy_captain', templateId: 'zhang_jue_captain' },
             { name: 'Deng Mao', imgKey: 'bandit1', type: 'enemy_captain', templateId: 'dengmao' },
             { name: 'Cheng Yuanzhi', imgKey: 'bandit2', type: 'enemy_captain', templateId: 'chengyuanzhi' },
-            { name: 'Imp. Escort', imgKey: 'soldier', type: 'imperial_soldier', templateId: 'escort' },
             { name: 'Archer', imgKey: 'archer', type: 'enemy_soldier', templateId: 'rebel', isArcher: true, hp: 2 },
         ];
         

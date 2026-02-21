@@ -375,6 +375,22 @@ export const BATTLES = {
     }
 };
 
+const SOLDIER_BASE = {
+    imgKey: 'soldier',
+    moveRange: 3,
+    attacks: ['slash']
+};
+
+const SOLDIER_VARIANTS = {
+    // Unified soldier archetype with role-specific title/faction/stat overrides.
+    volunteer: { ...SOLDIER_BASE, name: 'Volunteer', hp: 2, faction: 'allied' },
+    qingzhou_guard: { ...SOLDIER_BASE, name: 'Qingzhou Guard', hp: 3, faction: 'allied' },
+    imperial_guard_dead: { ...SOLDIER_BASE, name: 'Imperial Guard', hp: 0, moveRange: 0, attacks: [], faction: 'allied' },
+    imperial_soldier: { ...SOLDIER_BASE, name: 'Imperial Soldier', hp: 1, faction: 'allied' },
+    imperial_escort: { ...SOLDIER_BASE, name: 'Imperial Escort', hp: 3, faction: 'enemy' },
+    generic: { ...SOLDIER_BASE, name: 'Soldier', hp: 3, faction: 'allied' }
+};
+
 export const UNIT_TEMPLATES = {
     'hero': {
         'liubei': { name: 'Liu Bei', imgKey: 'liubei', hp: 4, moveRange: 4, attacks: ['double_blades'], faction: 'player' },
@@ -382,9 +398,10 @@ export const UNIT_TEMPLATES = {
         'zhangfei': { name: 'Zhang Fei', imgKey: 'zhangfei', hp: 4, moveRange: 4, attacks: ['serpent_spear'], faction: 'player' }
     },
     'allied_soldier': {
-        'ally': { name: 'Volunteer', imgKey: 'soldier', hp: 2, moveRange: 3, attacks: ['slash'], faction: 'allied' },
-        'guard': { name: 'Qingzhou Guard', imgKey: 'soldier', hp: 3, moveRange: 3, attacks: ['slash'], faction: 'allied' },
-        'dead_guard': { name: 'Imperial Guard', imgKey: 'soldier', hp: 0, moveRange: 0, attacks: [], faction: 'allied' }
+        'ally': { ...SOLDIER_VARIANTS.volunteer },
+        'guard': { ...SOLDIER_VARIANTS.qingzhou_guard },
+        'camp_guard': { ...SOLDIER_VARIANTS.qingzhou_guard },
+        'dead_guard': { ...SOLDIER_VARIANTS.imperial_guard_dead }
     },
     'enemy_soldier': {
         'rebel': { name: 'Yellow Turban', imgKey: 'yellowturban', hp: 3, moveRange: 3, attacks: ['bash'], faction: 'enemy', level: 2 }
@@ -393,8 +410,12 @@ export const UNIT_TEMPLATES = {
         'rebel': { name: 'Yellow Turban', imgKey: 'yellowturban', hp: 2, moveRange: 3, attacks: ['bash'], faction: 'enemy', level: 1 }
     },
     'imperial_soldier': {
-        'soldier': { name: 'Imperial Soldier', imgKey: 'soldier', hp: 1, moveRange: 3, attacks: ['slash'], faction: 'allied' },
-        'escort': { name: 'Imperial Escort', imgKey: 'soldier', hp: 3, moveRange: 3, attacks: ['slash'], faction: 'enemy' }
+        'soldier': { ...SOLDIER_VARIANTS.imperial_soldier },
+        'escort': { ...SOLDIER_VARIANTS.imperial_escort }
+    },
+    // Generic custom-battle soldier option.
+    'soldier': {
+        'soldier': { ...SOLDIER_VARIANTS.generic }
     },
     'enemy_captain': {
         'dengmao': { name: 'Deng Mao', imgKey: 'bandit1', hp: 5, moveRange: 3, attacks: ['heavy_thrust'], faction: 'enemy' },

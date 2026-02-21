@@ -18,6 +18,8 @@ export class AssetLoader {
         this.currentVoice = null;
         this.baseMusicVolume = 0.5;
         this.loopingSounds = new Map(); // key -> { audio, fadeInterval }
+        this.audioUnlocked = false;
+        this.pendingMusic = null; // { key, targetVolume }
     }
 
     async playVoice(voiceId, volume = 1.0) {
@@ -368,7 +370,45 @@ export class AssetLoader {
             const clone = sound.cloneNode();
             // Clamp volume between 0 and 1 to prevent IndexSizeError
             clone.volume = Math.max(0, Math.min(1, resolvedVolume));
-            clone.play().catch(e => console.log("Sound play prevented:", e));
+            clone.play().catch(e => {
+                this.audioUnlocked = false;
+                console.log("Sound play prevented:", e);
+            });
+        }
+    }
+
+    async unlockAudioFromGesture() {
+        // Already unlocked: still flush pending music if any.
+        if (this.audioUnlocked) {
+            if (this.pendingMusic) {
+                const pending = this.pendingMusic;
+                this.pendingMusic = null;
+                this.currentMusicKey = null; // force restart even if key matches
+                this.playMusic(pending.key, pending.targetVolume);
+            }
+            return;
+        }
+
+        const candidate = this.currentIntro || this.currentLoop || Object.values(this.music)[0] || Object.values(this.sounds)[0] || null;
+        if (!candidate) return;
+
+        try {
+            const probe = candidate.cloneNode();
+            probe.volume = 0;
+            probe.muted = true;
+            await probe.play();
+            probe.pause();
+            probe.currentTime = 0;
+            this.audioUnlocked = true;
+        } catch (e) {
+            return;
+        }
+
+        if (this.pendingMusic) {
+            const pending = this.pendingMusic;
+            this.pendingMusic = null;
+            this.currentMusicKey = null; // force replay of blocked request
+            this.playMusic(pending.key, pending.targetVolume);
         }
     }
 
@@ -484,7 +524,13 @@ export class AssetLoader {
         let activeNextPart = nextIntro || nextLoop;
         activeNextPart.volume = 0;
         activeNextPart.currentTime = 0;
-        activeNextPart.play().catch(e => console.log("Music play prevented:", e));
+        activeNextPart.play().catch(e => {
+            this.audioUnlocked = false;
+            this.pendingMusic = { key, targetVolume };
+            // Leave music state clear so a post-gesture retry can restart cleanly.
+            if (this.currentMusicKey === key) this.currentMusicKey = null;
+            console.log("Music play prevented:", e);
+        });
 
         // If there's an intro, set up the transition to loop
         if (nextIntro && nextLoop) {
@@ -493,7 +539,12 @@ export class AssetLoader {
                     const currentTarget = this.currentVoice ? this.baseMusicVolume * 0.3 : this.baseMusicVolume;
                     nextLoop.volume = currentTarget;
                     nextLoop.currentTime = 0;
-                    nextLoop.play().catch(e => console.log("Music loop play prevented:", e));
+                    nextLoop.play().catch(e => {
+                        this.audioUnlocked = false;
+                        this.pendingMusic = { key, targetVolume: this.baseMusicVolume };
+                        if (this.currentMusicKey === key) this.currentMusicKey = null;
+                        console.log("Music loop play prevented:", e);
+                    });
                     this.currentIntro = null;
                 }
             };
