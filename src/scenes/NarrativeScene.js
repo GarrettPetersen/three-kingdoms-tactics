@@ -1284,6 +1284,7 @@ export class NarrativeScene extends BaseScene {
         const currentLang = getCurrentLanguage();
         const padding = 10;
         const lineSpacing = currentLang === 'zh' ? 14 : 12;
+        const optionInnerPadY = 2;
         const optionSpacing = 6;
         const panelWidth = Math.max(220, Math.min(360, Math.floor(canvas.width * 0.84)));
         
@@ -1321,11 +1322,11 @@ export class NarrativeScene extends BaseScene {
         let currentY = py + padding;
         wrappedOptions.forEach((lines, i) => {
             const optionTopY = currentY;
-            const optionHeight = lines.length * lineSpacing;
+            const optionHeight = lines.length * lineSpacing + optionInnerPadY * 2;
             
             // Check if mouse is over this option
             const isMouseOver = this.lastMouseX >= px && this.lastMouseX <= px + panelWidth &&
-                              this.lastMouseY >= optionTopY && this.lastMouseY <= optionTopY + optionHeight + optionSpacing;
+                              this.lastMouseY >= optionTopY && this.lastMouseY <= optionTopY + optionHeight;
             
             // Update highlighted index on mouseover (only if mouseover is enabled)
             if (isMouseOver && this.selection) {
@@ -1337,11 +1338,11 @@ export class NarrativeScene extends BaseScene {
 
             if (isHovered) {
                 ctx.fillStyle = 'rgba(255, 215, 0, 0.2)';
-                ctx.fillRect(px + 2, optionTopY - 2, panelWidth - 4, optionHeight + 4);
+                ctx.fillRect(px + 2, optionTopY, panelWidth - 4, optionHeight);
             }
 
             lines.forEach((line, lineIdx) => {
-                this.drawPixelText(ctx, line, px + 10, optionTopY + lineIdx * lineSpacing, { 
+                this.drawPixelText(ctx, line, px + 10, optionTopY + optionInnerPadY + lineIdx * lineSpacing, { 
                     color: isHovered ? '#fff' : '#ccc', 
                     font: '8px Dogica' 
                 });
@@ -1351,7 +1352,7 @@ export class NarrativeScene extends BaseScene {
         });
 
         // Store panel metadata for input handling
-        step._panelMetadata = { px, py, panelWidth, panelHeight, wrappedOptions, padding, lineSpacing, optionSpacing };
+        step._panelMetadata = { px, py, panelWidth, panelHeight, wrappedOptions, padding, lineSpacing, optionSpacing, optionInnerPadY };
     }
 
     renderTitleCard(step) {
@@ -1558,10 +1559,10 @@ export class NarrativeScene extends BaseScene {
                 
                 step.options.forEach((opt, i) => {
                     const lines = m.wrappedOptions[i];
-                    const optionHeight = lines.length * m.lineSpacing;
+                    const optionHeight = lines.length * m.lineSpacing + (m.optionInnerPadY || 0) * 2;
                     
                     if (x >= m.px && x <= m.px + m.panelWidth && 
-                        y >= currentY - 2 && y <= currentY + optionHeight + 2) {
+                        y >= currentY && y <= currentY + optionHeight) {
                         // Create a dialogue step for the choice so it gets voiced and displayed.
                         // Fallback to button text if full text is missing to avoid blank dialogue panels.
                         const choiceDialogue = this.createChoiceDialogueStep(step, opt);

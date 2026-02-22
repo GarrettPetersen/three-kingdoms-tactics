@@ -340,7 +340,7 @@ export const NARRATIVE_SCRIPTS = {
         {
             type: 'interactive',
             promptOptions: [
-                { id: 'to_map', text: { en: 'TO MAP', zh: '前往地图' }, position: 'left', advanceOnClick: true }
+                { id: 'to_map', text: { en: 'TO DAXING', zh: '前往大兴' }, position: 'left', y: 72, advanceOnClick: true }
             ],
             clickableActors: {
                 'zhoujing': {
