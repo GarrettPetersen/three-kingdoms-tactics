@@ -100,7 +100,7 @@ export class LevelUpScene extends BaseScene {
 
         // Text
         const pulse = Math.abs(Math.sin(Date.now() / 300));
-        this.drawPixelText(ctx, "LEVEL UP!", cx, 40, { 
+        this.drawPixelText(ctx, getLocalizedText({ en: "LEVEL UP!", zh: "升级！" }), cx, 40, { 
             color: `rgba(255, 215, 0, ${0.8 + pulse * 0.2})`, 
             font: '16px Silkscreen', 
             align: 'center',
@@ -113,7 +113,10 @@ export class LevelUpScene extends BaseScene {
             align: 'center' 
         });
 
-        this.drawPixelText(ctx, `LEVEL ${current.oldLevel} -> ${current.newLevel}`, cx, 165, { 
+        this.drawPixelText(ctx, getLocalizedText({
+            en: `LEVEL ${current.oldLevel} -> ${current.newLevel}`,
+            zh: `等级 ${current.oldLevel} -> ${current.newLevel}`
+        }), cx, 165, {
             color: '#ffd700', 
             font: '8px Silkscreen', 
             align: 'center' 
@@ -124,15 +127,18 @@ export class LevelUpScene extends BaseScene {
             
             // 1. Stat Bonuses
             const bonuses = [
-                "Increased Critical Chance",
-                "Increased Damage Resistance"
+                getLocalizedText({ en: "Increased Critical Chance", zh: "暴击率提升" }),
+                getLocalizedText({ en: "Increased Damage Resistance", zh: "减伤能力提升" })
             ];
             
             // Asymptotic HP Bonus check (check if max hp actually increased)
             const oldMaxHp = this.getMaxHpForLevel(current.oldLevel);
             const newMaxHp = this.getMaxHpForLevel(current.newLevel);
             if (newMaxHp > oldMaxHp) {
-                bonuses.push(`Max HP +${newMaxHp - oldMaxHp}`);
+                bonuses.push(getLocalizedText({
+                    en: `Max HP +${newMaxHp - oldMaxHp}`,
+                    zh: `最大生命 +${newMaxHp - oldMaxHp}`
+                }));
             }
 
             // 2. Weapon Upgrades
@@ -142,17 +148,21 @@ export class LevelUpScene extends BaseScene {
             const path = UPGRADE_PATHS[unitClass];
             if (path && path[current.newLevel]) {
                 const upgrade = path[current.newLevel];
-                const attackName = ATTACKS[upgrade.attack]?.name || "New Technique";
-                bonuses.push(`Learned ${attackName}: ${upgrade.text}`);
+                const attackName = getLocalizedText(ATTACKS[upgrade.attack]?.name || { en: "New Technique", zh: "新招式" });
+                const upgradeText = getLocalizedText(upgrade.text || '');
+                bonuses.push(getLocalizedText({
+                    en: `Learned ${attackName}: ${upgradeText}`,
+                    zh: `习得 ${attackName}：${upgradeText}`
+                }));
             }
 
             // 3. Class specific bonuses added AFTER selection
             if (this.chosenClass === 'soldier') {
-                bonuses.push("+ Melee Attack");
-                bonuses.push("+ 1 HP");
+                bonuses.push(getLocalizedText({ en: "+ Melee Attack", zh: "+ 近战攻击" }));
+                bonuses.push(getLocalizedText({ en: "+ 1 HP", zh: "+ 1 生命" }));
             } else if (this.chosenClass === 'archer') {
-                bonuses.push("+ Ranged Attack");
-                bonuses.push("+ Range 2");
+                bonuses.push(getLocalizedText({ en: "+ Ranged Attack", zh: "+ 远程攻击" }));
+                bonuses.push(getLocalizedText({ en: "+ Range 2", zh: "+ 射程 2" }));
             }
 
             bonuses.forEach(b => {
@@ -194,7 +204,7 @@ export class LevelUpScene extends BaseScene {
     }
 
     renderPromotionUI(ctx, canvas, cx, y) {
-        this.drawPixelText(ctx, "CHOOSE PROMOTION:", cx, y, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+        this.drawPixelText(ctx, getLocalizedText({ en: "CHOOSE PROMOTION:", zh: "选择晋升：" }), cx, y, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
         
         const bw = 80;
         const bh = 40; // Taller to fit bonuses
@@ -207,7 +217,7 @@ export class LevelUpScene extends BaseScene {
         ctx.lineWidth = 2;
         ctx.fillRect(sx, sy, bw, bh);
         ctx.strokeRect(sx + 1, sy + 1, bw - 2, bh - 2);
-        this.drawPixelText(ctx, "SOLDIER", sx + bw/2, sy + bh/2 - 4, { color: '#fff', font: '8px Tiny5', align: 'center' });
+        this.drawPixelText(ctx, getLocalizedText({ en: "SOLDIER", zh: "步兵" }), sx + bw/2, sy + bh/2 - 4, { color: '#fff', font: '8px Tiny5', align: 'center' });
         this.soldierRect = { x: sx, y: sy, w: bw, h: bh };
 
         // Archer Button
@@ -218,7 +228,7 @@ export class LevelUpScene extends BaseScene {
         ctx.lineWidth = 2;
         ctx.fillRect(ax, ay, bw, bh);
         ctx.strokeRect(ax + 1, ay + 1, bw - 2, bh - 2);
-        this.drawPixelText(ctx, "ARCHER", ax + bw/2, ay + bh/2 - 4, { color: '#fff', font: '8px Tiny5', align: 'center' });
+        this.drawPixelText(ctx, getLocalizedText({ en: "ARCHER", zh: "弓兵" }), ax + bw/2, ay + bh/2 - 4, { color: '#fff', font: '8px Tiny5', align: 'center' });
         this.archerRect = { x: ax, y: ay, w: bw, h: bh };
     }
 

@@ -992,7 +992,7 @@ export class TacticsScene extends BaseScene {
         
         this.units.push(unit);
         finalCell.unit = unit;
-        this.addDamageNumber(this.getPixelPos(finalCell.r, finalCell.q).x, this.getPixelPos(finalCell.r, finalCell.q).y - 20, "AMBUSH!", '#ffd700');
+        this.addDamageNumber(this.getPixelPos(finalCell.r, finalCell.q).x, this.getPixelPos(finalCell.r, finalCell.q).y - 20, getLocalizedText({ en: "AMBUSH!", zh: "伏击！" }), '#ffd700');
         
         return unit;
     }
@@ -1003,7 +1003,10 @@ export class TacticsScene extends BaseScene {
 
         const liubei = this.units.find(u => u.id === 'liubei');
         if (liubei && liubei.hp > 0) {
-            liubei.dialogue = "We have scattered their vanguard, but there are too many! We must retreat!";
+            liubei.dialogue = getLocalizedText({
+                en: "We have scattered their vanguard, but there are too many! We must retreat!",
+                zh: "我们击溃了他们的前锋，但敌人太多！必须撤退！"
+            });
             liubei.voiceId = 'gz_lb_ret_01';
             this.activeDialogue = { unit: liubei, timer: 3000 };
             assets.playVoice(liubei.voiceId);
@@ -1243,7 +1246,7 @@ export class TacticsScene extends BaseScene {
             });
             
             // Show objective
-            this.addDamageNumber(this.manager.canvas.width / 2, 40, "BREAK THE CAGE!", '#ffd700');
+            this.addDamageNumber(this.manager.canvas.width / 2, 40, getLocalizedText({ en: "BREAK THE CAGE!", zh: "打破牢笼！" }), '#ffd700');
             
             // Start with NPC phase so enemies get their first turn to move and telegraph
             this.startNpcPhase();
@@ -1418,10 +1421,10 @@ export class TacticsScene extends BaseScene {
             }
 
             assets.playMusic('battle', 0.4);
-            this.addDamageNumber(this.manager.canvas.width / 2, 40, "FORCE DONG ZHUO TO FLEE!", '#ffd700');
+            this.addDamageNumber(this.manager.canvas.width / 2, 40, getLocalizedText({ en: "FORCE DONG ZHUO TO FLEE!", zh: "迫使董卓撤退！" }), '#ffd700');
             const reinforcements = this.spawnChapter2DongZhuoHorseReinforcements();
             if (reinforcements.length > 0) {
-                this.addDamageNumber(this.manager.canvas.width / 2, 56, "REINFORCEMENTS!", '#ffcc66');
+                this.addDamageNumber(this.manager.canvas.width / 2, 56, getLocalizedText({ en: "REINFORCEMENTS!", zh: "援军到达！" }), '#ffcc66');
                 const speaker = reinforcements[0];
                 speaker.dialogue = getLocalizedText({
                     en: "General Dong Zhuo! Imperial cavalry rides to your aid!",
@@ -3296,10 +3299,13 @@ export class TacticsScene extends BaseScene {
             });
 
             if (spawns > 0) {
-                this.addDamageNumber(this.manager.canvas.width / 2, 50, "REINFORCEMENTS!");
+                this.addDamageNumber(this.manager.canvas.width / 2, 50, getLocalizedText({ en: "REINFORCEMENTS!", zh: "援军到达！" }));
                 const liubei = this.units.find(u => u.id === 'liubei');
                 if (liubei && liubei.hp > 0) {
-                    liubei.dialogue = "They keep coming! We must defeat Deng Mao and Cheng Yuanzhi to break them!";
+                    liubei.dialogue = getLocalizedText({
+                        en: "They keep coming! We must defeat Deng Mao and Cheng Yuanzhi to break them!",
+                        zh: "敌人源源不断！我们必须击败邓茂和程远志才能击溃他们！"
+                    });
                     liubei.voiceId = 'dx_lb_03';
                     this.activeDialogue = { unit: liubei, timer: 2000 };
                     assets.playVoice(liubei.voiceId);
@@ -3348,7 +3354,7 @@ export class TacticsScene extends BaseScene {
             });
 
             if (spawns > 0) {
-                this.addDamageNumber(this.manager.canvas.width / 2, 50, "REBEL ADVANCE!");
+                this.addDamageNumber(this.manager.canvas.width / 2, 50, getLocalizedText({ en: "REBEL ADVANCE!", zh: "叛军推进！" }));
             }
         }
     }
@@ -3487,13 +3493,13 @@ export class TacticsScene extends BaseScene {
         if (cell.terrain === 'house_01') {
             cell.terrain = 'house_damaged_01';
             const pos = this.getPixelPos(r, q);
-            this.addDamageNumber(pos.x, pos.y - 20, "DAMAGED");
+            this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "DAMAGED", zh: "受损" }));
             assets.playSound('building_damage');
         } else if (cell.terrain === 'house_damaged_01') {
             cell.terrain = 'house_destroyed_01';
             cell.impassable = false;
             const pos = this.getPixelPos(r, q);
-            this.addDamageNumber(pos.x, pos.y - 20, "DESTROYED");
+            this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "DESTROYED", zh: "摧毁" }));
             assets.playSound('building_damage', 1.0); // Clamped to max 1.0
         } else if (cell.terrain === 'wall_01') {
             // Walls are sturdy and don't break yet, but we play a sound
@@ -3501,13 +3507,13 @@ export class TacticsScene extends BaseScene {
         } else if (cell.terrain === 'ice_01') {
             cell.terrain = 'ice_cracked_01';
             const pos = this.getPixelPos(r, q);
-            this.addDamageNumber(pos.x, pos.y - 20, "CRACKED");
+            this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "CRACKED", zh: "开裂" }));
             assets.playSound('ice_crack');
         } else if (cell.terrain === 'ice_cracked_01') {
             cell.terrain = 'water_deep_01_01';
             cell.impassable = true;
             const pos = this.getPixelPos(r, q);
-            this.addDamageNumber(pos.x, pos.y - 20, "BROKEN");
+            this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "BROKEN", zh: "破碎" }));
             assets.playSound('ice_break');
             assets.playSound('splash', 0.8);
             
@@ -3964,7 +3970,7 @@ export class TacticsScene extends BaseScene {
                 // Cage broken! Free the prisoner
                 victim.caged = false;
                 victim.cageHp = 0;
-                this.addDamageNumber(victim.visualX, victim.visualY - 20, "FREED!", '#00ff00');
+                this.addDamageNumber(victim.visualX, victim.visualY - 20, getLocalizedText({ en: "FREED!", zh: "已解救！" }), '#00ff00');
                 assets.playSound('building_damage', 1.0);
                 
                 // Check for victory condition
@@ -3974,7 +3980,7 @@ export class TacticsScene extends BaseScene {
                     
                     // Show victory message and end - use endBattle to compute stats
                     setTimeout(() => {
-                        this.addDamageNumber(this.manager.canvas.width / 2, 50, "VICTORY!", '#ffd700');
+                        this.addDamageNumber(this.manager.canvas.width / 2, 50, getLocalizedText({ en: "VICTORY!", zh: "胜利！" }), '#ffd700');
                         setTimeout(() => {
                             this.endBattle(true);
                         }, 1500);
@@ -3982,7 +3988,10 @@ export class TacticsScene extends BaseScene {
                 }
             } else {
                 // Show cage damage
-                this.addDamageNumber(victim.visualX, victim.visualY - 20, `CAGE: ${victim.cageHp}/3`);
+                this.addDamageNumber(victim.visualX, victim.visualY - 20, getLocalizedText({
+                    en: `CAGE: ${victim.cageHp}/3`,
+                    zh: `牢笼：${victim.cageHp}/3`
+                }));
                 assets.playSound('building_damage', 0.7);
                 
                 // Visual: switch cage sprite based on damage
@@ -6371,12 +6380,14 @@ export class TacticsScene extends BaseScene {
         if (this.isGameOver) {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            const text = this.won ? "VICTORY!" : "DEFEAT...";
+            const text = this.won
+                ? getLocalizedText({ en: "VICTORY!", zh: "胜利！" })
+                : getLocalizedText({ en: "DEFEAT...", zh: "失败..." });
             const color = this.won ? "#ffd700" : "#ff4444";
             this.drawPixelText(ctx, text, canvas.width / 2, canvas.height / 2 - 10, { color, font: '16px Silkscreen', align: 'center' });
             
             if (this.battleId === 'daxing' && this.won) {
-                this.drawPixelText(ctx, "The Yellow Turbans scatter!", canvas.width / 2, canvas.height / 2 + 15, { color: '#aaa', font: '8px Tiny5', align: 'center' });
+                this.drawPixelText(ctx, getLocalizedText({ en: "The Yellow Turbans scatter!", zh: "黄巾军溃散了！" }), canvas.width / 2, canvas.height / 2 + 15, { color: '#aaa', font: '8px Tiny5', align: 'center' });
             }
         }
     }
@@ -6393,7 +6404,7 @@ export class TacticsScene extends BaseScene {
         // Choice prompt
         const promptText = isNarrativeChoice
             ? getLocalizedText({ en: 'Choose your reply', zh: '请选择回复' })
-            : "What will you do?";
+            : getLocalizedText({ en: "What will you do?", zh: "你要怎么做？" });
         this.drawPixelText(ctx, promptText, canvas.width / 2, canvas.height - 82, {
             color: '#ffd700',
             align: 'center',
@@ -8069,9 +8080,9 @@ export class TacticsScene extends BaseScene {
 
         // Objective Display
         if (this.battleId === 'qingzhou_siege') {
-            let objectiveText = "GOAL: RETREAT TO THE FLAG";
+            let objectiveText = getLocalizedText({ en: "GOAL: RETREAT TO THE FLAG", zh: "目标：撤退到旗帜处" });
             if (this.reachedFlag) {
-                objectiveText = "GOAL: DEFEAT ALL REBELS";
+                objectiveText = getLocalizedText({ en: "GOAL: DEFEAT ALL REBELS", zh: "目标：击败所有叛军" });
             }
             this.drawPixelText(ctx, objectiveText, canvas.width / 2, 8, { 
                 color: '#fff', 
@@ -8079,13 +8090,13 @@ export class TacticsScene extends BaseScene {
                 align: 'center' 
             });
         } else if (this.isFightMode) {
-            this.drawPixelText(ctx, "GOAL: FREE LU ZHI", canvas.width / 2, 8, { 
+            this.drawPixelText(ctx, getLocalizedText({ en: "GOAL: FREE LU ZHI", zh: "目标：解救卢植" }), canvas.width / 2, 8, { 
                 color: '#fff', 
                 font: '8px Tiny5', 
                 align: 'center' 
             });
         } else if (this.battleId === 'dongzhuo_battle') {
-            this.drawPixelText(ctx, "GOAL: SAVE DONG ZHUO", canvas.width / 2, 8, { 
+            this.drawPixelText(ctx, getLocalizedText({ en: "GOAL: SAVE DONG ZHUO", zh: "目标：救下董卓" }), canvas.width / 2, 8, { 
                 color: '#fff', 
                 font: '8px Tiny5', 
                 align: 'center' 
@@ -9010,7 +9021,7 @@ export class TacticsScene extends BaseScene {
                 } else {
                     // No room to squish! Fatal crush.
                     this.applyUnitDamage(occupant, 999); // Force death
-                    this.addDamageNumber(targetPos.x, targetPos.y - 20, "CRUSHED", '#ff0000');
+                    this.addDamageNumber(targetPos.x, targetPos.y - 20, getLocalizedText({ en: "CRUSHED", zh: "碾碎" }), '#ff0000');
                     targetCell.unit = (faller.hp > 0) ? faller : null;
                 }
             }

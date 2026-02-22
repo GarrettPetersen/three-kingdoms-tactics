@@ -198,7 +198,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "For justice.",
+                    buttonText: { en: "For justice.", zh: "为了正义。" },
                     text: {
                         en: "The people cry out for justice. We cannot stand idle.",
                         zh: "百姓呼唤正义。我们不能袖手旁观。"
@@ -220,7 +220,7 @@ export const NARRATIVE_SCRIPTS = {
                     ]
                 },
                 { 
-                    buttonText: "For glory.",
+                    buttonText: { en: "For glory.", zh: "为了荣耀。" },
                     text: {
                         en: "We seek glory in service to the Han.",
                         zh: "我们为汉朝效力，追求荣耀。"
@@ -282,7 +282,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "To Daxing District.",
+                    buttonText: { en: "To Daxing District.", zh: "前往大兴县。" },
                     text: {
                         en: "Magistrate Zhou, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion.",
                         zh: "邹县令，我们只求为国效力。请带我们到大兴县，让我们结束这场叛乱。"
@@ -303,7 +303,7 @@ export const NARRATIVE_SCRIPTS = {
                     ]
                 },
                 { 
-                    buttonText: "We can handle them!",
+                    buttonText: { en: "We can handle them!", zh: "我们能应付！" },
                     text: {
                         en: "Fifty thousand rebels? We three alone could handle them!",
                         zh: "五万叛军？我们三人足以对付！"
@@ -365,7 +365,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "I will go.",
+                    buttonText: { en: "I will go.", zh: "我去。" },
                     text: {
                         en: "I will go. We cannot let the people of Qingzhou suffer.",
                         zh: "我去。我们不能让青州百姓受苦。"
@@ -375,7 +375,7 @@ export const NARRATIVE_SCRIPTS = {
                     result: []
                 },
                 { 
-                    buttonText: "We'll help.",
+                    buttonText: { en: "We'll help.", zh: "我们来援助。" },
                     text: {
                         en: "The people cry out for aid. We must answer their call at once.",
                         zh: "百姓呼唤援助。我们必须立即响应他们的呼唤。"
@@ -440,7 +440,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "To the gates.",
+                    buttonText: { en: "To the gates.", zh: "回城门。" },
                     text: {
                         en: "Let us not tarry. The city is still in peril. We must return to the gates and ensure the Imperial Protector is safe.",
                         zh: "我们不要耽搁。城池仍在危险中。我们必须返回城门，确保太守安全。"
@@ -450,7 +450,7 @@ export const NARRATIVE_SCRIPTS = {
                     result: []
                 },
                 { 
-                    buttonText: "Victory.",
+                    buttonText: { en: "Victory.", zh: "胜利。" },
                     text: {
                         en: "A fine victory, but we must remain vigilant. The city gates await us.",
                         zh: "一场漂亮的胜利，但我们必须保持警惕。城门在等待我们。"
@@ -501,7 +501,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "Peace restored.",
+                    buttonText: { en: "Peace restored.", zh: "和平已复。" },
                     text: {
                         en: "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere.",
                         zh: "我们很高兴能为您效力，太守。这里恢复了和平，但叛乱仍在其他地方肆虐。"
@@ -511,7 +511,7 @@ export const NARRATIVE_SCRIPTS = {
                     result: []
                 },
                 { 
-                    buttonText: "An honor.",
+                    buttonText: { en: "An honor.", zh: "荣幸之至。" },
                     text: {
                         en: "It was an honor to serve. The people of Qingzhou can rest easy now.",
                         zh: "能为您效力是我们的荣幸。青州百姓现在可以安心了。"
@@ -551,7 +551,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "My teacher.",
+                    buttonText: { en: "My teacher.", zh: "我的老师。" },
                     text: {
                         en: "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!",
                         zh: "卢植！他是我多年前的老师。我不能让他独自面对如此大军。兄弟们，我们向广宗进军！"
@@ -561,7 +561,7 @@ export const NARRATIVE_SCRIPTS = {
                     result: []
                 },
                 { 
-                    buttonText: "We must help.",
+                    buttonText: { en: "We must help.", zh: "我们必须援助。" },
                     text: {
                         en: "Commander Lu Zhi needs aid. We cannot abandon a loyal servant of the Han.",
                         zh: "卢植中郎将需要援助。我们不能抛弃汉朝的忠臣。"
@@ -745,7 +745,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "For the people.",
+                    buttonText: { en: "For the people.", zh: "为了百姓。" },
                     text: {
                         en: "I sigh for the suffering people.",
                         zh: "我叹百姓受苦。"
@@ -766,7 +766,7 @@ export const NARRATIVE_SCRIPTS = {
                     ]
                 },
                 { 
-                    buttonText: "For my status.",
+                    buttonText: { en: "For my status.", zh: "为了我的身份。" },
                     text: {
                         en: "I sigh for my own lost status.",
                         zh: "我叹自己失去的地位。"
@@ -1164,7 +1164,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: "Restore the Han.",
+                    buttonText: { en: "Restore the Han.", zh: "匡扶汉室。" },
                     text: {
                         en: "To restore the Han and bring peace to the common people. That is our shared destiny.",
                         zh: "恢复汉室，给百姓带来和平。这是我们共同的使命。"
@@ -1174,7 +1174,7 @@ export const NARRATIVE_SCRIPTS = {
                     result: []
                 },
                 { 
-                    buttonText: "For the people.",
+                    buttonText: { en: "For the people.", zh: "为了百姓。" },
                     text: {
                         en: "We fight not for glory, but for the people who suffer under this chaos.",
                         zh: "我们不为荣耀而战，而是为在这乱世中受苦的百姓。"

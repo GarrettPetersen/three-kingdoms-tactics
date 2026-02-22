@@ -425,10 +425,19 @@ export class MapScene extends BaseScene {
 
         // Draw Back Button (Top Right)
         const returnText = getLocalizedText(UI_TEXT['RETURN']);
-        // Calculate button size properly for Chinese text
-        const buttonSize = getTextContainerSize(ctx, returnText, '8px Silkscreen', 10, 14);
-        const backW = Math.max(40, buttonSize.width);
-        const backH = Math.max(14, buttonSize.height); // Minimum 14px for Chinese text
+        // Measure using the actual render font so Chinese glyphs always fit.
+        ctx.save();
+        const returnFont = getFontForLanguage('8px Silkscreen');
+        ctx.font = returnFont;
+        const returnMetrics = ctx.measureText(returnText);
+        const measuredW = Math.ceil(returnMetrics.width);
+        const measuredH = Math.ceil((returnMetrics.actualBoundingBoxAscent || 0) + (returnMetrics.actualBoundingBoxDescent || 0))
+            || (LANGUAGE.current === 'zh' ? 12 : 8);
+        ctx.restore();
+        const padX = LANGUAGE.current === 'zh' ? 10 : 8;
+        const padY = LANGUAGE.current === 'zh' ? 4 : 3;
+        const backW = Math.max(40, measuredW + padX * 2);
+        const backH = Math.max(14, measuredH + padY * 2);
         const bx = canvas.width - backW - 5;
         const by = 5;
         
@@ -438,8 +447,7 @@ export class MapScene extends BaseScene {
         ctx.lineWidth = 1;
         ctx.strokeRect(bx + 0.5, by + 0.5, backW - 1, backH - 1);
         
-        // Center text vertically (adjust for Chinese font which is taller)
-        const textY = by + backH / 2 + (LANGUAGE.current === 'zh' ? 2 : -4);
+        const textY = by + Math.floor((backH - measuredH) / 2);
         this.drawPixelText(ctx, returnText, bx + backW/2, textY, { 
             color: '#ffd700', 
             font: '8px Silkscreen', 
@@ -984,8 +992,8 @@ export class MapScene extends BaseScene {
                 { bg: 'black', type: 'command', action: 'clearActors' },
                 {
                     type: 'title',
-                    text: "CHAPTER 1 COMPLETE",
-                    subtext: "The Oath in the Peach Garden",
+                    text: { en: "CHAPTER 1 COMPLETE", zh: "第一章完成" },
+                    subtext: { en: "The Oath in the Peach Garden", zh: "桃园结义" },
                     duration: 4000
                 },
                 {
@@ -998,12 +1006,15 @@ export class MapScene extends BaseScene {
                     type: 'dialogue',
                     portraitKey: 'narrator',
                     voiceId: 'ch1_end_01',
-                    text: "But slaying the ungrateful would\nMean many deaths a year.\n\nDong Zhuo's fate will be unrolled in later chapters..."
+                    text: {
+                        en: "But slaying the ungrateful would\nMean many deaths a year.\n\nDong Zhuo's fate will be unrolled in later chapters...",
+                        zh: "若尽诛忘恩之徒，\n一年不知要杀多少人。\n\n董卓的命运，将在后续章节展开……"
+                    }
                 },
                 { 
                     type: 'title', 
-                    text: "END OF CHAPTER 1", 
-                    subtext: "Liu Bei's Story will continue...",
+                    text: { en: "END OF CHAPTER 1", zh: "第一章终" }, 
+                    subtext: { en: "Liu Bei's Story will continue...", zh: "刘备的故事仍将继续……" },
                     duration: 5000 
                 },
                 { type: 'command', action: 'fade', target: 1, speed: 0.001 }

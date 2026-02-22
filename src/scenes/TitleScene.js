@@ -413,7 +413,7 @@ export class TitleScene extends BaseScene {
                 h: 20 
             };
 
-            const cbText = "CUSTOM BATTLE";
+            const cbText = getLocalizedText(UI_TEXT['CUSTOM BATTLE']);
             const cbY = cy + 25;
             const isHighlightedCB = this.selection && this.selection.highlightedIndex === 1;
             const cbMetrics = this.drawPixelText(ctx, cbText, cx, cbY, { 
