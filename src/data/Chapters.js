@@ -8,7 +8,10 @@ export const CHAPTERS = {
             { id: 'daxing', type: 'battle', battleId: 'daxing' },
             { id: 'victory_daxing', type: 'narrative', scriptId: 'victory_daxing' },
             { id: 'qingzhou_prelude', type: 'battle', battleId: 'qingzhou_prelude' },
-            { id: 'qingzhou_siege', type: 'battle', battleId: 'qingzhou_siege' }
+            { id: 'qingzhou_siege', type: 'battle', battleId: 'qingzhou_siege' },
+            { id: 'guangzong_camp', type: 'battle', battleId: 'guangzong_camp' },
+            { id: 'yingchuan_aftermath', type: 'battle', battleId: 'yingchuan_aftermath' },
+            { id: 'guangzong_encounter', type: 'battle', battleId: 'guangzong_encounter' }
         ]
     },
     2: {

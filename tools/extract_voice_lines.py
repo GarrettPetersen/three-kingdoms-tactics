@@ -37,6 +37,8 @@ PORTRAIT_TO_CHAR = {
     'zhang-bao': 'zhangbao',
     'custom-male-17': 'gongjing',
     'custom-male-22': 'luzhi',
+    'Huangfu-Song-generic': 'huangfusong',
+    'Zhu-Jun-generic': 'zhujun',
     'bandit1': 'dengmao',
     'bandit2': 'chengyuanzhi',
     'dong-zhuo': 'dongzhuo',
@@ -57,6 +59,8 @@ NAME_TO_CHAR = {
     'Gong Jing': 'gongjing',
     'Protector Gong Jing': 'gongjing',
     'Lu Zhi': 'luzhi',
+    'Huangfu Song': 'huangfusong',
+    'Zhu Jun': 'zhujun',
     'Deng Mao': 'dengmao',
     'Cheng Yuanzhi': 'chengyuanzhi',
     'Dong Zhuo': 'dongzhuo',
@@ -113,7 +117,12 @@ def extract_voice_lines_from_file(filepath):
         lang_to_extract = os.environ.get('EXTRACT_LANG', 'en')
         
         # First try object format: text: { en: "...", zh: "..." }
-        if re.search(r'text\s*:\s*\{', obj_str, re.DOTALL):
+        # Use word boundary to avoid matching buttonText.
+        text_obj_start = re.search(r'\btext\s*:\s*\{', obj_str, re.DOTALL)
+        if text_obj_start:
+            # Search language keys only within/after the true text field so
+            # option.buttonText does not get extracted as spoken dialogue.
+            text_region = obj_str[text_obj_start.start():]
             # Try to extract the specified language - handle multiline strings with \n
             lang_key = lang_to_extract
             # Pattern: look for 'zh': or "zh": followed by the text
@@ -127,11 +136,11 @@ def extract_voice_lines_from_file(filepath):
             pattern_no_quotes = rf'{lang_key}\s*:\s*"(.+?)"(?=\s*[,{{}}])'
             pattern_double = rf'"{lang_key}"\s*:\s*"(.+?)"(?=\s*[,{{}}])'
             pattern_single = rf"'{lang_key}'\s*:\s*'(.+?)'(?=\s*[,{{}}])"
-            text_obj_match = re.search(pattern_no_quotes, obj_str, re.DOTALL)
+            text_obj_match = re.search(pattern_no_quotes, text_region, re.DOTALL)
             if not text_obj_match:
-                text_obj_match = re.search(pattern_double, obj_str, re.DOTALL)
+                text_obj_match = re.search(pattern_double, text_region, re.DOTALL)
             if not text_obj_match:
-                text_obj_match = re.search(pattern_single, obj_str, re.DOTALL)
+                text_obj_match = re.search(pattern_single, text_region, re.DOTALL)
             
             if text_obj_match:
                 text = text_obj_match.group(1)
@@ -144,9 +153,9 @@ def extract_voice_lines_from_file(filepath):
                 if lang_to_extract != 'en':
                     pattern_en_no_quotes = r'en\s*:\s*"(.+?)"(?=\s*[,}])'
                     pattern_en_double = r'"en"\s*:\s*"(.+?)"(?=\s*[,}])'
-                    text_obj_match = re.search(pattern_en_no_quotes, obj_str, re.DOTALL)
+                    text_obj_match = re.search(pattern_en_no_quotes, text_region, re.DOTALL)
                     if not text_obj_match:
-                        text_obj_match = re.search(pattern_en_double, obj_str, re.DOTALL)
+                        text_obj_match = re.search(pattern_en_double, text_region, re.DOTALL)
                     if text_obj_match:
                         text = text_obj_match.group(1)
                         text = text.replace('\\n', '\n')
@@ -157,7 +166,7 @@ def extract_voice_lines_from_file(filepath):
                     text = None
         else:
             # Fall back to string format: text: "..."
-            text_match = re.search(r'text\s*:\s*[\'"](.+?)[\'"](?:\s*[,}])', obj_str, re.DOTALL)
+            text_match = re.search(r'\btext\s*:\s*[\'"](.+?)[\'"](?:\s*[,}])', obj_str, re.DOTALL)
             if not text_match:
                 # Try escaped quotes or other formats
                 text_match = re.search(r'text\s*:\s*[\'"](.+?)[\'"]', obj_str, re.DOTALL)

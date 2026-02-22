@@ -34,6 +34,7 @@ export class TacticsScene extends BaseScene {
         this.damageNumbers = []; // { x, y, value, timer, maxTime }
         this.projectiles = []; // { startX, startY, targetX, targetY, progress, type, duration }
         this.particles = []; // { x, y, r, type, vx, vy, life, targetY }
+        this.fireSmokeParticles = []; // { x, y, r, life, maxLife, vx, vy, alpha, driftTimer, size }
         this.weatherType = null; // 'rain', 'snow'
         this.enemiesKilled = 0; // Track kills for specific objectives
         this.ambushTriggered = false;
@@ -161,6 +162,7 @@ export class TacticsScene extends BaseScene {
         this.attackTiles = new Map();
         this.projectiles = [];
         this.particles = [];
+        this.fireSmokeParticles = [];
         this.damageNumbers = [];
         this.ambushTriggered = false;
         this.reachedFlag = false;
@@ -200,6 +202,8 @@ export class TacticsScene extends BaseScene {
         this.horseRunCycleIndex = -1;
         this.horseRunCues = { snortA: false, neigh: false, snortB: false };
         assets.stopLoopingSound('horse_gallop_loop', 0);
+        this.fireCrackleSfxActive = false;
+        assets.stopLoopingSound('fire_crackle_loop', 0);
         
         // If resuming a battle with choices but no callbacks provided, set them up dynamically
         if (this.battleId === 'guangzong_encounter' && !this.onChoiceRestrain) {
@@ -351,6 +355,7 @@ export class TacticsScene extends BaseScene {
         }
 
         this.particles = [];
+        this.fireSmokeParticles = [];
         if (!this.isCustom) {
             // Don't set lastScene here - SceneManager will handle it when switching away
             this.manager.gameState.setCurrentBattleId(this.battleId);
@@ -593,6 +598,111 @@ export class TacticsScene extends BaseScene {
         this.victoryOnComplete = onComplete;
     }
 
+    isImmortalUnit(unit) {
+        if (!unit) return false;
+        if (typeof unit.isImmortal === 'function') return unit.isImmortal();
+        if (typeof unit.immortal === 'boolean') return unit.immortal;
+        if (unit.immortal && typeof unit.immortal === 'object') return unit.immortal.enabled !== false;
+        return false;
+    }
+
+    getImmortalTriggerHp(unit) {
+        if (!this.isImmortalUnit(unit)) return 0;
+        if (typeof unit.getImmortalTriggerHp === 'function') return unit.getImmortalTriggerHp();
+        if (unit.immortal && typeof unit.immortal === 'object' && Number.isFinite(unit.immortal.triggerHp)) {
+            return Math.max(1, Math.floor(unit.immortal.triggerHp));
+        }
+        return 1;
+    }
+
+    makeUnitFleeOffscreen(unit, fleeCfg = {}) {
+        if (!unit || unit.isGone) return;
+        const edge = fleeCfg.edge || 'right';
+        const durationMs = Number.isFinite(fleeCfg.durationMs) ? fleeCfg.durationMs : 650;
+        const extraTiles = Number.isFinite(fleeCfg.extraTiles) ? fleeCfg.extraTiles : 3;
+        const spacingX = this.manager.config.horizontalSpacing;
+        const spacingY = this.manager.config.verticalSpacing;
+        const startPos = {
+            x: (typeof unit.visualX === 'number') ? unit.visualX : this.getPixelPos(unit.r, unit.q).x,
+            y: (typeof unit.visualY === 'number') ? unit.visualY : this.getPixelPos(unit.r, unit.q).y
+        };
+
+        let endPos = { ...startPos };
+        if (edge === 'left') {
+            endPos.x = startPos.x - spacingX * extraTiles;
+            unit.flip = true;
+        } else if (edge === 'top') {
+            endPos.y = startPos.y - spacingY * extraTiles;
+        } else if (edge === 'bottom') {
+            endPos.y = startPos.y + spacingY * extraTiles;
+        } else {
+            endPos.x = startPos.x + spacingX * extraTiles;
+            unit.flip = false;
+        }
+
+        unit.intent = null;
+        unit.action = 'walk';
+        unit.currentAnimAction = 'walk';
+        const oldCell = this.tacticsMap.getCell(unit.r, unit.q);
+        if (oldCell && oldCell.unit === unit) oldCell.unit = null;
+
+        const startedAt = Date.now();
+        const animate = () => {
+            const progress = Math.min((Date.now() - startedAt) / durationMs, 1);
+            unit.visualX = startPos.x + (endPos.x - startPos.x) * progress;
+            unit.visualY = startPos.y + (endPos.y - startPos.y) * progress;
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+                return;
+            }
+            unit.isGone = true;
+            if (fleeCfg.endBattle && typeof fleeCfg.endBattle.won === 'boolean') {
+                this.endBattle(!!fleeCfg.endBattle.won);
+            }
+        };
+        animate();
+    }
+
+    triggerImmortalBehavior(unit, cause = 'damage') {
+        if (!unit) return;
+        if (unit.immortalTriggered) return;
+        unit.immortalTriggered = true;
+
+        const immortalCfg = (unit.immortal && typeof unit.immortal === 'object') ? unit.immortal : {};
+        const nearDeathCfg = (immortalCfg.onNearDeath && typeof immortalCfg.onNearDeath === 'object') ? immortalCfg.onNearDeath : {};
+        const callback = nearDeathCfg.callback || immortalCfg.callback;
+
+        if (callback === 'chapter2_dongzhuo_escape') {
+            this.triggerChapter2DongZhuoEscape(cause === 'drown');
+            return;
+        }
+
+        const sayCfg = nearDeathCfg.say || immortalCfg.say;
+        const sayDuration = Number.isFinite(sayCfg?.durationMs) ? sayCfg.durationMs : 2200;
+        if (sayCfg?.text) {
+            unit.dialogue = getLocalizedText(sayCfg.text);
+            if (sayCfg.voiceId) {
+                unit.voiceId = sayCfg.voiceId;
+                assets.playVoice(sayCfg.voiceId);
+            }
+            this.activeDialogue = { unit, timer: sayDuration, lockSkips: !!sayCfg.lockSkips };
+        }
+
+        const fleeCfg = nearDeathCfg.flee || immortalCfg.flee;
+        if (fleeCfg) {
+            const delayMs = Number.isFinite(fleeCfg.delayMs) ? fleeCfg.delayMs : sayDuration;
+            setTimeout(() => this.makeUnitFleeOffscreen(unit, fleeCfg), Math.max(0, delayMs));
+        }
+
+        const endBattleCfg = nearDeathCfg.endBattle || immortalCfg.endBattle;
+        if (endBattleCfg && typeof endBattleCfg.won === 'boolean') {
+            const delayMs = Number.isFinite(endBattleCfg.delayMs) ? endBattleCfg.delayMs : sayDuration;
+            setTimeout(() => {
+                if (!this.isGameOver) this.endBattle(!!endBattleCfg.won);
+            }, Math.max(0, delayMs));
+        }
+    }
+
     checkWinLoss() {
         if (this.isGameOver || this.isIntroAnimating || this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCleanupDialogueActive || this.isCutscene) return;
 
@@ -603,14 +713,6 @@ export class TacticsScene extends BaseScene {
         // Chapter 2 opener: never resolve standard victory/defeat while Dong Zhuo
         // escape sequence is pending/playing. He must flee via scripted sequence.
         if (this.battleId === 'chapter2_oath_dongzhuo_choice' && this.chapter2DongZhuoFightActive) {
-            const dongzhuo = this.units.find(u => u.id === 'dongzhuo');
-            if (dongzhuo && !this.chapter2DongZhuoEscapeTriggered) {
-                if (dongzhuo.isDrowning && (dongzhuo.drownTimer >= 1900 || dongzhuo.hp <= 0 || dongzhuo.isGone)) {
-                    this.triggerChapter2DongZhuoEscape(true);
-                } else if (!dongzhuo.isDrowning && dongzhuo.hp <= 2) {
-                    this.triggerChapter2DongZhuoEscape(false);
-                }
-            }
             return;
         }
 
@@ -1409,6 +1511,13 @@ export class TacticsScene extends BaseScene {
             const dongzhuo = this.units.find(u => u.id === 'dongzhuo');
             if (dongzhuo) {
                 dongzhuo.faction = 'enemy';
+                dongzhuo.immortal = {
+                    enabled: true,
+                    triggerHp: 2,
+                    onNearDeath: { callback: 'chapter2_dongzhuo_escape' }
+                };
+                dongzhuo.immortalTriggered = false;
+                dongzhuo.immortalPendingCause = null;
                 dongzhuo.hasMoved = false;
                 dongzhuo.hasAttacked = false;
                 dongzhuo.hasActed = false;
@@ -2040,7 +2149,7 @@ export class TacticsScene extends BaseScene {
                 const cell = this.tacticsMap.getCell(t.r, t.q);
                 if (!cell) continue;
 
-                const isDestructible = (cell.terrain.includes('house') || cell.terrain.includes('ice')) &&
+                const isDestructible = (cell.terrain.includes('house') || cell.terrain.includes('tent') || cell.terrain.includes('ice')) &&
                     !cell.terrain.includes('destroyed') && !cell.terrain.includes('broken');
                 if (isDestructible) structureHits++;
 
@@ -2183,7 +2292,7 @@ export class TacticsScene extends BaseScene {
                 // For houses, we'll still mostly look for adjacent ones unless we want archers to snipe houses
                 // For now let's keep it simple and just use maxRange 1 for houses unless it's a dedicated siege unit
                 const neighbors = this.tacticsMap.getNeighbors(r, q);
-                const houseNeighbor = neighbors.find(n => n.terrain.includes('house') && !n.terrain.includes('destroyed'));
+                const houseNeighbor = neighbors.find(n => (n.terrain.includes('house') || n.terrain.includes('tent')) && !n.terrain.includes('destroyed'));
                 if (houseNeighbor) {
                     houseAttackTiles.push({ r, q, target: houseNeighbor });
                 }
@@ -2238,7 +2347,7 @@ export class TacticsScene extends BaseScene {
                 for (let r = 0; r < this.manager.config.mapHeight; r++) {
                     for (let q = 0; q < this.manager.config.mapWidth; q++) {
                         const cell = this.tacticsMap.getCell(r, q);
-                        if (cell.terrain.includes('house') && !cell.terrain.includes('destroyed')) {
+                        if ((cell.terrain.includes('house') || cell.terrain.includes('tent')) && !cell.terrain.includes('destroyed')) {
                             const d = this.tacticsMap.getDistance(unit.r, unit.q, r, q);
                             if (d < minDist) {
                                 minDist = d;
@@ -2408,7 +2517,7 @@ export class TacticsScene extends BaseScene {
         } else if (unit.faction === 'enemy') {
             // Enemies look for adjacent houses if no units are nearby
             const neighbors = this.tacticsMap.getNeighbors(unit.r, unit.q);
-            const adjacentHouse = neighbors.find(n => n.terrain.includes('house') && !n.terrain.includes('destroyed'));
+            const adjacentHouse = neighbors.find(n => (n.terrain.includes('house') || n.terrain.includes('tent')) && !n.terrain.includes('destroyed'));
             if (adjacentHouse) {
                 targetPos = { r: adjacentHouse.r, q: adjacentHouse.q };
                 targetId = null;
@@ -2515,6 +2624,9 @@ export class TacticsScene extends BaseScene {
                 isDrowning: u.isDrowning,
                 isGone: u.isGone,
                 flip: u.flip,
+                immortal: u.immortal ? JSON.parse(JSON.stringify(u.immortal)) : null,
+                immortalTriggered: !!u.immortalTriggered,
+                immortalPendingCause: u.immortalPendingCause || null,
                 caged: u.caged,
                 cageHp: u.cageHp,
                 cageSprite: u.cageSprite
@@ -2662,6 +2774,9 @@ export class TacticsScene extends BaseScene {
                     isDrowning: !!uData.isDrowning,
                     isGone: !!uData.isGone,
                     flip: !!uData.flip,
+                    immortal: uData.immortal ? JSON.parse(JSON.stringify(uData.immortal)) : null,
+                    immortalTriggered: !!uData.immortalTriggered,
+                    immortalPendingCause: uData.immortalPendingCause || null,
                     caged: !!uData.caged,
                     cageHp: uData.cageHp,
                     cageSprite: uData.cageSprite
@@ -2692,6 +2807,15 @@ export class TacticsScene extends BaseScene {
             u.isDrowning = uData.isDrowning || false;
             u.isGone = uData.isGone || false;
             u.flip = uData.flip || false;
+            if (Object.prototype.hasOwnProperty.call(uData, 'immortal')) {
+                u.immortal = uData.immortal ? JSON.parse(JSON.stringify(uData.immortal)) : null;
+            }
+            if (Object.prototype.hasOwnProperty.call(uData, 'immortalTriggered')) {
+                u.immortalTriggered = !!uData.immortalTriggered;
+            }
+            if (Object.prototype.hasOwnProperty.call(uData, 'immortalPendingCause')) {
+                u.immortalPendingCause = uData.immortalPendingCause || null;
+            }
             u.caged = uData.caged || false;
             u.cageHp = uData.cageHp;
             u.cageSprite = uData.cageSprite;
@@ -3028,6 +3152,15 @@ export class TacticsScene extends BaseScene {
             u.isDrowning = uData.isDrowning || false;
             u.isGone = uData.isGone || false;
             u.flip = uData.flip || false;
+            if (Object.prototype.hasOwnProperty.call(uData, 'immortal')) {
+                u.immortal = uData.immortal ? JSON.parse(JSON.stringify(uData.immortal)) : null;
+            }
+            if (Object.prototype.hasOwnProperty.call(uData, 'immortalTriggered')) {
+                u.immortalTriggered = !!uData.immortalTriggered;
+            }
+            if (Object.prototype.hasOwnProperty.call(uData, 'immortalPendingCause')) {
+                u.immortalPendingCause = uData.immortalPendingCause || null;
+            }
             u.caged = uData.caged || false;
             u.cageHp = uData.cageHp;
             u.cageSprite = uData.cageSprite;
@@ -3090,7 +3223,9 @@ export class TacticsScene extends BaseScene {
 
     exit() {
         assets.stopLoopingSound('horse_gallop_loop', 100);
+        assets.stopLoopingSound('fire_crackle_loop', 120);
         this.horseRunSfxActive = false;
+        this.fireCrackleSfxActive = false;
         // Save battle state when leaving (unless it's a custom battle or battle is complete)
         if (!this.isCustom && !this.isGameOver && !this.isVictoryDialogueActive) {
             this.saveBattleState();
@@ -3143,6 +3278,86 @@ export class TacticsScene extends BaseScene {
         if (!this.horseRunCues.snortB && cycleTime >= 5200) {
             assets.playSound('horse_snort', 0.6);
             this.horseRunCues.snortB = true;
+        }
+    }
+
+    isBurningTerrain(terrainKey) {
+        const t = terrainKey || '';
+        return t === 'tent_burning' || t === 'tent_white_burning' || t.startsWith('fire_yellow_');
+    }
+
+    getVisibleBurningCells() {
+        if (!this.tacticsMap || this.startX === undefined || this.startY === undefined) return [];
+        const { canvas, config } = this.manager;
+        const marginX = 24;
+        const marginY = 56;
+        const burningCells = [];
+        for (let r = 0; r < config.mapHeight; r++) {
+            for (let q = 0; q < config.mapWidth; q++) {
+                const cell = this.tacticsMap.getCell(r, q);
+                if (!cell) continue;
+                if (!this.isBurningTerrain(cell.terrain)) continue;
+                const pos = this.getPixelPos(r, q);
+                if (
+                    pos.x >= -marginX && pos.x <= canvas.width + marginX &&
+                    pos.y >= -marginY && pos.y <= canvas.height + marginY
+                ) {
+                    burningCells.push({ r, q, x: pos.x, y: pos.y });
+                }
+            }
+        }
+        return burningCells;
+    }
+
+    isBurningTerrainOnScreen() {
+        return this.getVisibleBurningCells().length > 0;
+    }
+
+    updateFireCrackleAudio() {
+        const hasVisibleFire = this.isBurningTerrainOnScreen();
+        if (hasVisibleFire) {
+            if (!this.fireCrackleSfxActive) {
+                assets.playLoopingSound('fire_crackle_loop', 0.28, 180);
+                this.fireCrackleSfxActive = true;
+            }
+        } else if (this.fireCrackleSfxActive) {
+            assets.stopLoopingSound('fire_crackle_loop', 220);
+            this.fireCrackleSfxActive = false;
+        }
+    }
+
+    updateFireSmoke(dt) {
+        const burningCells = this.getVisibleBurningCells();
+        const spawnChancePerCell = Math.min(0.5, dt * 0.0032);
+
+        for (const cell of burningCells) {
+            if (Math.random() >= spawnChancePerCell) continue;
+            const maxLife = 650 + Math.random() * 700;
+            this.fireSmokeParticles.push({
+                x: cell.x + (Math.random() - 0.5) * 8,
+                y: cell.y - 11 + (Math.random() - 0.5) * 4,
+                r: cell.r + 0.35,
+                life: maxLife,
+                maxLife,
+                vy: -(0.014 + Math.random() * 0.02),
+                vx: (Math.random() - 0.5) * 0.01,
+                alpha: 0.12 + Math.random() * 0.22,
+                driftTimer: Math.random() * Math.PI * 2,
+                size: 1 + Math.random() * 2
+            });
+        }
+
+        for (let i = this.fireSmokeParticles.length - 1; i >= 0; i--) {
+            const p = this.fireSmokeParticles[i];
+            p.life -= dt;
+            if (p.life <= 0) {
+                this.fireSmokeParticles.splice(i, 1);
+                continue;
+            }
+            p.driftTimer += dt * 0.0024;
+            const lateral = Math.sin(p.driftTimer) * 0.005;
+            p.x += (p.vx + lateral) * dt;
+            p.y += p.vy * dt;
         }
     }
 
@@ -3501,6 +3716,12 @@ export class TacticsScene extends BaseScene {
             const pos = this.getPixelPos(r, q);
             this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "DESTROYED", zh: "摧毁" }));
             assets.playSound('building_damage', 1.0); // Clamped to max 1.0
+        } else if (cell.terrain === 'tent' || cell.terrain === 'tent_white' || cell.terrain === 'tent_burning' || cell.terrain === 'tent_white_burning') {
+            cell.terrain = 'mud_01';
+            cell.impassable = false;
+            const pos = this.getPixelPos(r, q);
+            this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "BURNED", zh: "焚毁" }));
+            assets.playSound('building_damage', 0.85);
         } else if (cell.terrain === 'wall_01') {
             // Walls are sturdy and don't break yet, but we play a sound
             assets.playSound('building_damage', 0.6);
@@ -3557,7 +3778,7 @@ export class TacticsScene extends BaseScene {
 
         const targetCell = this.tacticsMap.getCell(targetR, targetQ);
         const victim = targetCell ? this.getRiderUnitFromCell(targetCell) : null;
-        const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
+        const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('tent') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
 
         // Play attack sound
         if (attackKey.startsWith('serpent_spear')) assets.playSound('stab');
@@ -3641,7 +3862,7 @@ export class TacticsScene extends BaseScene {
                                 assets.playSound('arrow_hit', 0.7);
                                 this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos);
                             } else {
-                                const isHouse = targetCell && targetCell.terrain.includes('house');
+                                const isHouse = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('tent'));
                                 const isIce = targetCell && targetCell.terrain.includes('ice');
                                 if (isHouse) {
                                     assets.playSound('building_damage', 0.8);
@@ -3710,7 +3931,7 @@ export class TacticsScene extends BaseScene {
                         );
                     }
 
-                    const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
+                    const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('tent') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
 
                     this.damageCell(targetR, targetQ);
                     if (victim) {
@@ -3753,8 +3974,8 @@ export class TacticsScene extends BaseScene {
         const frontVictim = (frontVictimRaw === attacker) ? null : frontVictimRaw;
         const backVictim = (backVictimRaw === attacker) ? null : backVictimRaw;
         
-        const isFrontDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
-        const isBackDestructible = backCell && (backCell.terrain.includes('house') || backCell.terrain.includes('ice')) && !backCell.terrain.includes('destroyed') && !backCell.terrain.includes('broken');
+        const isFrontDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('tent') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
+        const isBackDestructible = backCell && (backCell.terrain.includes('house') || backCell.terrain.includes('tent') || backCell.terrain.includes('ice')) && !backCell.terrain.includes('destroyed') && !backCell.terrain.includes('broken');
 
         // First strike: poll for the swing frame (frame >= 1), same pattern as green dragon / serpent spear.
         let struck1 = false;
@@ -3861,7 +4082,7 @@ export class TacticsScene extends BaseScene {
                     this.damageCell(pos.r, pos.q);
                     const cell = this.tacticsMap.getCell(pos.r, pos.q);
                     if (cell) {
-                        const isDestructible = (cell.terrain.includes('house') || cell.terrain.includes('ice')) && !cell.terrain.includes('destroyed') && !cell.terrain.includes('broken');
+                        const isDestructible = (cell.terrain.includes('house') || cell.terrain.includes('tent') || cell.terrain.includes('ice')) && !cell.terrain.includes('destroyed') && !cell.terrain.includes('broken');
                         if (isDestructible) hitAnything = true;
 
                         const victim = this.getRiderUnitFromCell(cell);
@@ -3922,7 +4143,7 @@ export class TacticsScene extends BaseScene {
                 this.damageCell(pos.r, pos.q);
                 const cell = this.tacticsMap.getCell(pos.r, pos.q);
                 if (cell) {
-                    const isDestructible = (cell.terrain.includes('house') || cell.terrain.includes('ice')) && !cell.terrain.includes('destroyed') && !cell.terrain.includes('broken');
+                    const isDestructible = (cell.terrain.includes('house') || cell.terrain.includes('tent') || cell.terrain.includes('ice')) && !cell.terrain.includes('destroyed') && !cell.terrain.includes('broken');
                     if (isDestructible) hitAnything = true;
 
                     const victim = this.getRiderUnitFromCell(cell);
@@ -4005,22 +4226,6 @@ export class TacticsScene extends BaseScene {
         }
         
         let finalDamage = damage;
-
-        // Chapter 2 opener special-case:
-        // Dong Zhuo can be forced to flee but cannot die in this encounter.
-        if (
-            this.battleId === 'chapter2_oath_dongzhuo_choice' &&
-            this.chapter2DongZhuoFightActive &&
-            victim.id === 'dongzhuo'
-        ) {
-            finalDamage = Math.max(0, finalDamage);
-            victim.hp = Math.max(1, victim.hp - finalDamage);
-            if (victim.name !== 'Boulder') {
-                victim.action = 'hit';
-                victim.currentAnimAction = 'hit';
-            }
-            return finalDamage;
-        }
         
         // Boulder Special Logic: Cracked on first damage, destroyed on second
         if (victim.name === 'Boulder') {
@@ -4034,6 +4239,19 @@ export class TacticsScene extends BaseScene {
         }
 
         const wasAlive = victim.hp > 0;
+        const triggerHp = this.getImmortalTriggerHp(victim);
+        if (wasAlive && this.isImmortalUnit(victim) && victim.hp - finalDamage <= triggerHp) {
+            finalDamage = Math.max(0, victim.hp - triggerHp);
+            victim.hp = triggerHp;
+            victim.intent = null;
+            victim.isGone = false;
+            if (victim.name !== 'Boulder') {
+                victim.action = 'hit';
+                victim.currentAnimAction = 'hit';
+            }
+            this.triggerImmortalBehavior(victim, 'damage');
+            return finalDamage;
+        }
         victim.hp -= finalDamage;
 
         if (victim.hp <= 0 && wasAlive) {
@@ -4425,6 +4643,7 @@ export class TacticsScene extends BaseScene {
                         id: uDef.id,
                         r: uDef.r,
                         q: uDef.q,
+                        immortal: uDef.immortal ? JSON.parse(JSON.stringify(uDef.immortal)) : null,
                         isDead: uDef.isDead || false,  // Preserve isDead flag for corpses
                         isPreDead: uDef.isDead || false, // NEW: Track if unit started dead
                         caged: uDef.caged || false,     // Preserve caged flag
@@ -4614,7 +4833,7 @@ export class TacticsScene extends BaseScene {
         const dq = flip ? -1 : 1;
         const headCell = this.tacticsMap.getCell(buttR, buttQ + dq);
         if (!headCell || headCell.impassable) return false;
-        const isSolidHouse = (cell) => cell && cell.terrain && cell.terrain.includes('house') && !cell.terrain.includes('destroyed');
+        const isSolidHouse = (cell) => cell && cell.terrain && (cell.terrain.includes('house') || cell.terrain.includes('tent')) && !cell.terrain.includes('destroyed');
         if (isSolidHouse(buttCell) || isSolidHouse(headCell)) return false;
 
         // Horse can't straddle a cliff: the two occupied hexes must be within 1 level of each other
@@ -5253,6 +5472,8 @@ export class TacticsScene extends BaseScene {
 
         this.animationFrame = Math.floor(timestamp / 150) % 4;
         this.updateRiderlessHorseAnimations(dt);
+        this.updateFireCrackleAudio();
+        this.updateFireSmoke(dt);
         
         if (this.isIntroDialogueActive || this.activeDialogue || this.isVictoryDialogueActive || this.isCleanupDialogueActive || this.isCutscene) {
             this.dialogueElapsed = (this.dialogueElapsed || 0) + dt;
@@ -5303,6 +5524,11 @@ export class TacticsScene extends BaseScene {
             const terrainType = cell ? cell.terrain : 'grass_01';
             
             u.update(dt, (r, q) => this.getPixelPos(r, q), shouldAnimate, terrainType);
+            if (u.immortalPendingCause) {
+                const cause = u.immortalPendingCause;
+                u.immortalPendingCause = null;
+                this.triggerImmortalBehavior(u, cause);
+            }
         });
         this.updateMountedRunAudio(dt);
 
@@ -5906,6 +6132,16 @@ export class TacticsScene extends BaseScene {
                 alpha: p.alpha * alpha
             });
         });
+        this.fireSmokeParticles.forEach(p => {
+            const { alpha } = this.getIntroEffect(Math.floor(p.r), 0);
+            if (alpha <= 0) return;
+            drawCalls.push({
+                type: 'fire_smoke',
+                r: p.r,
+                particle: p,
+                alpha: alpha
+            });
+        });
 
         // 4. Sort by row, then by priority (hex < particle < unit)
         drawCalls.sort((a, b) => {
@@ -5915,7 +6151,7 @@ export class TacticsScene extends BaseScene {
             if (depthA !== depthB) return depthA - depthB;
             
             // Priority within same depth
-            const priorities = { 'hex': 0, 'particle': 1, 'unit': 2, 'flag': 1.5 };
+            const priorities = { 'hex': 0, 'particle': 1, 'fire_smoke': 1.1, 'unit': 2, 'flag': 1.5 };
             if (priorities[a.type] !== priorities[b.type]) return priorities[a.type] - priorities[b.type];
             
             // Within same type and row:
@@ -5936,7 +6172,7 @@ export class TacticsScene extends BaseScene {
 
         for (const call of drawCalls) {
             const effect = this.getIntroEffect(Math.floor(call.r), call.q || 0);
-            if (effect.alpha <= 0 && call.type !== 'particle') continue; // Particles have their own alpha check
+            if (effect.alpha <= 0 && call.type !== 'particle' && call.type !== 'fire_smoke') continue; // Particles have their own alpha check
             
             ctx.save();
             ctx.globalAlpha = call.alpha || effect.alpha;
@@ -6211,6 +6447,18 @@ export class TacticsScene extends BaseScene {
                     // Snow: simple pixel squares
                     const size = p.life > 0 ? 1 : 1;
                     ctx.fillStyle = '#fff';
+                    ctx.fillRect(px, py, size, size);
+                }
+            } else if (call.type === 'fire_smoke') {
+                const p = call.particle;
+                const lifeRatio = Math.max(0, Math.min(1, p.life / p.maxLife));
+                const alpha = call.alpha * p.alpha * lifeRatio;
+                if (alpha > 0.01) {
+                    const px = Math.floor(p.x);
+                    const py = Math.floor(p.y);
+                    const size = Math.max(1, Math.floor(p.size + (1 - lifeRatio) * 2));
+                    ctx.globalAlpha = alpha;
+                    ctx.fillStyle = '#6f6f6f';
                     ctx.fillRect(px, py, size, size);
                 }
             }
@@ -7548,6 +7796,15 @@ export class TacticsScene extends BaseScene {
         if (terrainType.startsWith('water_deep_02')) {
             return `water_deep_02_0${frame}`;
         }
+
+        if (terrainType.startsWith('fire_yellow_')) {
+            // Fire should flicker quickly and cycle all authored frames.
+            const fireFrameCount = 8;
+            const fireFrameMs = 90;
+            const fireStagger = (r * 77 + q * 131) % (fireFrameMs * fireFrameCount);
+            const fireFrame = (Math.floor((Date.now() + fireStagger) / fireFrameMs) % fireFrameCount) + 1;
+            return `fire_yellow_${String(fireFrame).padStart(2, '0')}`;
+        }
         
         return terrainType;
     }
@@ -7621,7 +7878,9 @@ export class TacticsScene extends BaseScene {
 
     drawTile(terrainType, x, y, elevation = 0, r = 0, q = 0, edgeStatus = {}, slopeInfo = {}) {
         const { ctx, config } = this.manager;
-        const animatedKey = this.getAnimatedTerrain(terrainType, r, q);
+        const isBurningTent = terrainType === 'tent_burning' || terrainType === 'tent_white_burning';
+        const baseTerrain = terrainType === 'tent_white_burning' ? 'tent_white' : (terrainType === 'tent_burning' ? 'tent' : terrainType);
+        const animatedKey = this.getAnimatedTerrain(baseTerrain, r, q);
         const img = assets.getImage(animatedKey);
         if (!img) return;
         
@@ -7648,7 +7907,7 @@ export class TacticsScene extends BaseScene {
         const directions = this.tacticsMap.getDirections(r);
         const labels = ['NE', 'E', 'SE', 'SW', 'W', 'NW'];
         const currentCell = this.tacticsMap.getCell(r, q);
-        const isCurrentBuilding = currentCell && (currentCell.terrain.includes('house') || currentCell.terrain.includes('wall'));
+        const isCurrentBuilding = currentCell && (currentCell.terrain.includes('house') || currentCell.terrain.includes('wall') || currentCell.terrain.includes('tent'));
         
         // Helper to check if an edge should show black outline (cliffs only, not buildings)
         const isCliffEdge = (edgeLabel) => {
@@ -7659,7 +7918,7 @@ export class TacticsScene extends BaseScene {
             if (!neighbor) return false;
             // Don't show black edges for buildings
             if (isCurrentBuilding) return false;
-            const isNeighborBuilding = neighbor.terrain && (neighbor.terrain.includes('house') || neighbor.terrain.includes('wall'));
+            const isNeighborBuilding = neighbor.terrain && (neighbor.terrain.includes('house') || neighbor.terrain.includes('wall') || neighbor.terrain.includes('tent'));
             if (isNeighborBuilding) return false;
             // Only show black edge if it's a cliff (height diff > 1)
             const levelDiff = Math.abs((neighbor.level || 0) - (currentCell?.level || 0));
@@ -7892,6 +8151,16 @@ export class TacticsScene extends BaseScene {
                         ctx.fillRect(dx + ix, Math.max(0, highlightY), 2, 2);
                     }
                 }
+            }
+        }
+
+        if (isBurningTent) {
+            const fireKey = this.getAnimatedTerrain('fire_yellow_01', r, q);
+            const fireImg = assets.getImage(fireKey);
+            if (fireImg) {
+                const fx = Math.floor(x - fireImg.width / 2);
+                const fy = Math.floor(y - 22 - fireImg.height / 2);
+                ctx.drawImage(fireImg, fx, fy);
             }
         }
     }
@@ -8469,14 +8738,6 @@ export class TacticsScene extends BaseScene {
             if (battleDef && battleDef.nextScene) {
                 if (this.battleId === 'qingzhou_cleanup') {
                     return;
-                } else if (this.battleId === 'guangzong_camp') {
-                    this.manager.gameState.addMilestone('guangzong_camp');
-                    this.manager.switchTo('narrative', {
-                        scriptId: 'guangzong_arrival',
-                        onComplete: () => {
-                            this.manager.switchTo('map', { campaignId: 'liubei' });
-                        }
-                    });
                 } else if (this.battleId === 'yellow_turban_rout') {
                     // Go to noticeboard scene, then inn scene, then map
                     this.manager.switchTo('narrative', {
@@ -8492,6 +8753,13 @@ export class TacticsScene extends BaseScene {
                         }
                     });
                 } else {
+                    // Mark non-combat cutscene beats as completed before leaving the map.
+                    // This prevents repeat-entry loops on map nodes like guangzong_camp.
+                    if (!this.isCustom) {
+                        const gs = this.manager.gameState;
+                        gs.addMilestone(this.battleId);
+                        gs.setStoryCursor(this.battleId);
+                    }
                     this.manager.switchTo(battleDef.nextScene, battleDef.nextParams);
                 }
                 return;

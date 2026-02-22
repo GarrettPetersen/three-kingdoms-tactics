@@ -55,6 +55,8 @@ CHAR_TARGETS = {
     "volunteer": "movies/clean/clean_hercules_young_adult_hero.wav",  # Heroic, enthusiastic voice for volunteers
     "gongjing": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
     "luzhi": "movies/clean/clean_mulan-emperor.wav",
+    "huangfusong": "movies/clean/clean_mulan-emperor.wav",
+    "zhujun": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
     "dongzhuo": "movies/clean/clean_kublai-khan.wav",  # Gruff and arrogant
     "zhangjue": "movies/clean/clean_anton-ego-villainous-food-critic.wav",  # Villainous, commanding
     "zhangbao": "movies/clean/clean_kublai-khan.wav",  # Aggressive, warrior-like
@@ -88,6 +90,8 @@ CHAR_TARGETS_MANDARIN = {
     "volunteer": "mandarin/clean/clean_young_adult_male_mandarin.wav",  # Young, enthusiastic
     "gongjing": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
     "luzhi": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
+    "huangfusong": "mandarin/clean/clean_serious_male_mandarin.wav",  # Commanding imperial general
+    "zhujun": "mandarin/clean/clean_deep_male_mandarin.wav",  # Veteran field commander
     "dongzhuo": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Gruff, arrogant (shared)
     "zhangjue": "mandarin/clean/clean_fearsome_elder_male_mandarin.wav",  # Fearsome, commanding elder
     "zhangbao": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Aggressive (shared)

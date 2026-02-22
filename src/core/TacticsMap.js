@@ -111,7 +111,7 @@ export class TacticsMap {
         if (!cell) return {};
         
         // Never create slopes for buildings/walls - they should always be cliffs
-        const isBuilding = cell.terrain && (cell.terrain.includes('house') || cell.terrain.includes('wall'));
+        const isBuilding = cell.terrain && (cell.terrain.includes('house') || cell.terrain.includes('wall') || cell.terrain.includes('tent'));
         if (isBuilding) return {};
         
         const slopes = {};
@@ -123,7 +123,7 @@ export class TacticsMap {
             const label = labels[i];
             if (n) {
                 // Also check if neighbor is a building - don't create slopes to/from buildings
-                const neighborIsBuilding = n.terrain && (n.terrain.includes('house') || n.terrain.includes('wall'));
+                const neighborIsBuilding = n.terrain && (n.terrain.includes('house') || n.terrain.includes('wall') || n.terrain.includes('tent'));
                 if (neighborIsBuilding) return;
                 
                 const levelDiff = (n.level || 0) - (cell.level || 0);
@@ -308,6 +308,8 @@ export class TacticsMap {
             this.generateFoothills();
         } else if (layout === 'road') {
             this.generateRoad();
+        } else if (layout === 'army_camp') {
+            this.generateArmyCamp();
         } else if (layout === 'city_gate') {
             this.generateCityGate();
         } else if (layout === 'siege_walls') {
@@ -433,6 +435,62 @@ export class TacticsMap {
         }
     }
 
+    generateArmyCamp() {
+        // Start from open field and add broad mud lanes between tent rows.
+        this.generatePlains();
+
+        const centerR = Math.floor(this.height / 2);
+        const centerQ = Math.floor(this.width / 2);
+        const laneRows = [centerR - 2, centerR, centerR + 2];
+        const laneCols = [centerQ - 2, centerQ + 1];
+
+        for (let r = 0; r < this.height; r++) {
+            for (let q = 0; q < this.width; q++) {
+                const cell = this.grid[r][q];
+                if (!cell) continue;
+                const onLane = laneRows.includes(r) || laneCols.includes(q);
+                if (onLane && Math.random() < 0.9) {
+                    cell.terrain = Math.random() < 0.3 ? 'earth_cracked' : 'mud_01';
+                    cell.level = 0;
+                }
+            }
+        }
+
+        const tentTerrain = this.params.tentTerrain || (this.params.campFaction === 'imperial' ? 'tent_white' : 'tent');
+        const burningTerrain = tentTerrain === 'tent_white' ? 'tent_white_burning' : 'tent_burning';
+        const tentCount = Math.max(4, Math.min(20, this.params.campTentCount || 10));
+        const burningCount = Math.max(0, Math.min(tentCount, this.params.burningTentCount || 0));
+
+        const candidates = [];
+        for (let r = 1; r < this.height - 1; r++) {
+            for (let q = 1; q < this.width - 1; q++) {
+                const cell = this.grid[r][q];
+                if (!cell || cell.terrain.includes('mud') || cell.terrain.includes('earth')) continue;
+                candidates.push({ r, q });
+            }
+        }
+
+        for (let i = candidates.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const t = candidates[i];
+            candidates[i] = candidates[j];
+            candidates[j] = t;
+        }
+
+        const placed = [];
+        const minSeparation = 2;
+        for (const pos of candidates) {
+            if (placed.length >= tentCount) break;
+            const tooClose = placed.some(p => Math.abs(p.r - pos.r) + Math.abs(p.q - pos.q) < minSeparation);
+            if (tooClose) continue;
+            const cell = this.grid[pos.r][pos.q];
+            cell.terrain = placed.length < burningCount ? burningTerrain : tentTerrain;
+            cell.impassable = true;
+            cell.level = 0;
+            placed.push(pos);
+        }
+    }
+
     generateFoothills() {
         // Rolling hills
         for (let i = 0; i < 8; i++) {
@@ -547,7 +605,7 @@ export class TacticsMap {
         // Force start cell to be passable
         startCell.impassable = false;
         startCell.level = 0;
-        if (startCell.terrain.includes('mountain') || startCell.terrain.includes('wall') || startCell.terrain.includes('water_deep') || startCell.terrain.includes('house')) {
+        if (startCell.terrain.includes('mountain') || startCell.terrain.includes('wall') || startCell.terrain.includes('water_deep') || startCell.terrain.includes('house') || startCell.terrain.includes('tent')) {
             startCell.terrain = this.getDefaultGrass();
         }
 
@@ -598,7 +656,7 @@ export class TacticsMap {
                     stepCell.level = lastLevel > stepCell.level ? lastLevel - 1 : lastLevel + 1;
                 }
                 // Clear blocking terrain on the ramp
-                if (stepCell.terrain.includes('mountain') || stepCell.terrain.includes('wall') || stepCell.terrain.includes('house')) {
+                if (stepCell.terrain.includes('mountain') || stepCell.terrain.includes('wall') || stepCell.terrain.includes('house') || stepCell.terrain.includes('tent')) {
                     stepCell.terrain = this.getDefaultGrass();
                 }
                 if (stepCell.terrain.includes('water_deep')) {
@@ -656,7 +714,7 @@ export class TacticsMap {
         for (let r = 0; r < this.height; r++) {
             for (let q = 0; q < this.width; q++) {
                 const cell = this.grid[r][q];
-                if (cell && !cell.terrain.includes('house') && !cell.terrain.includes('wall')) {
+                if (cell && !cell.terrain.includes('house') && !cell.terrain.includes('wall') && !cell.terrain.includes('tent')) {
                     cell.level = 1;
                     cell.terrain = this.getDefaultGrass();
                 }
@@ -703,7 +761,7 @@ export class TacticsMap {
                     // Banks are at level 1 (same as plain, walkable slope from level 0)
                     n.level = 1;
                     // Use sand, mud, or earth for bank terrain (not mountain stone)
-                    if (!n.terrain.includes('house') && !n.terrain.includes('wall')) {
+                    if (!n.terrain.includes('house') && !n.terrain.includes('wall') && !n.terrain.includes('tent')) {
                         const bankTerrain = Math.random() < 0.4 ? 'sand_01' : 
                                           (Math.random() < 0.5 ? 'mud_01' : 'earth_cracked');
                         n.terrain = bankTerrain;
@@ -764,7 +822,7 @@ export class TacticsMap {
                     bankCells.add(nKey);
                     n.level = 1;
                     // Use sand for the immediate bank
-                    if (!n.terrain.includes('house') && !n.terrain.includes('wall')) {
+                    if (!n.terrain.includes('house') && !n.terrain.includes('wall') && !n.terrain.includes('tent')) {
                         n.terrain = 'sand_01';
                     }
                 }
@@ -779,7 +837,7 @@ export class TacticsMap {
                 const nKey = `${n.r},${n.q}`;
                 if (!allWaterCells.has(nKey) && !bankCells.has(nKey)) {
                     // Second tier bank at level 2
-                    if (n.level === 0 && !n.terrain.includes('house') && !n.terrain.includes('wall')) {
+                    if (n.level === 0 && !n.terrain.includes('house') && !n.terrain.includes('wall') && !n.terrain.includes('tent')) {
                         if (Math.random() < 0.7) {
                             n.level = 2;
                             // Transition from sand to earth/grass

@@ -55,6 +55,9 @@ export class Unit {
         this.isGone = config.isGone || false;
         this.drownTimer = 0;
         this.deathSoundPlayed = config.deathSoundPlayed || false;
+        this.immortal = config.immortal || null; // Boolean or config object
+        this.immortalTriggered = config.immortalTriggered || false;
+        this.immortalPendingCause = config.immortalPendingCause || null; // 'damage' | 'drown'
         this.stepTimer = 0;
         this.level = config.level || 1;
         this.caged = config.caged || false;  // For cage overlay rendering
@@ -65,6 +68,21 @@ export class Unit {
         if (this.deathSoundPlayed) return;
         this.deathSoundPlayed = true;
         assets.playSound('death', 0.6);
+    }
+
+    isImmortal() {
+        if (!this.immortal) return false;
+        if (typeof this.immortal === 'boolean') return this.immortal;
+        if (typeof this.immortal === 'object') return this.immortal.enabled !== false;
+        return false;
+    }
+
+    getImmortalTriggerHp() {
+        if (!this.isImmortal()) return 0;
+        if (typeof this.immortal === 'object' && Number.isFinite(this.immortal.triggerHp)) {
+            return Math.max(1, Math.floor(this.immortal.triggerHp));
+        }
+        return 1;
     }
 
     update(dt, getPixelPos, shouldAnimate = true, terrainType = 'grass_01') {
@@ -84,6 +102,20 @@ export class Unit {
             this.currentSortR = this.r;
 
             if (this.drownTimer > 2000) {
+                if (this.isImmortal()) {
+                    this.hp = Math.max(this.hp, this.getImmortalTriggerHp());
+                    this.intent = null;
+                    this.isDrowning = false;
+                    this.drownTimer = 0;
+                    this.isGone = false;
+                    this.action = 'standby';
+                    this.currentAnimAction = 'standby';
+                    this.frame = 0;
+                    if (!this.immortalTriggered) {
+                        this.immortalPendingCause = 'drown';
+                    }
+                    return;
+                }
                 this.hp = 0;
                 this.intent = null;
                 this.isDrowning = false;

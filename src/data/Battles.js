@@ -186,6 +186,10 @@ export const BATTLES = {
             layout: 'army_camp',
             seed: 'guangzong',
             mirror: true,
+            campFaction: 'imperial',
+            tentTerrain: 'tent_white',
+            campTentCount: 9,
+            burningTentCount: 0,
             forestDensity: 0.2,
             mountainDensity: 0.1,
             riverDensity: 0.0,
@@ -197,11 +201,100 @@ export const BATTLES = {
             { id: 'zhangfei', r: 8, q: 6, type: 'hero' },
             { id: 'luzhi', r: 5, q: 5, type: 'commander' },
             { id: 'camp_guard1', r: 4, q: 4, type: 'allied_soldier' },
-            { id: 'camp_guard2', r: 4, q: 6, type: 'allied_soldier' }
+            { id: 'camp_guard2', r: 4, q: 6, type: 'allied_soldier' },
+            { id: 'camp_guard3', r: 5, q: 4, type: 'allied_soldier' }
         ],
         isCutscene: true,
-        nextScene: 'narrative',
-        nextParams: { scriptId: 'guangzong_arrival' }
+        introScript: [
+            { speaker: 'liubei', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_camp_lb_01', text: { en: "Master Lu! Liu Bei has brought volunteers from Youzhou. We came as soon as we heard you had engaged Zhang Jue at Guangzong.", zh: "卢师！刘备率幽州义勇来援。得知您在广宗与张角交战，我们便立刻赶来。" } },
+            { speaker: 'luzhi', portraitKey: 'custom-male-22', name: 'Lu Zhi', voiceId: 'gz_camp_lz_01', text: { en: "Xuande, your loyalty honors me. I have Zhang Jue pinned here, but his brothers Zhang Liang and Zhang Bao contest Huangfu Song and Zhu Jun at Yingchuan.", zh: "玄德，你的忠义令我欣慰。我在此牵制张角，但其弟张梁、张宝正在颍川与皇甫嵩、朱儁对垒。" } },
+            { speaker: 'luzhi', portraitKey: 'custom-male-22', name: 'Lu Zhi', voiceId: 'gz_camp_lz_02', text: { en: "Take your five hundred and I will lend a thousand regulars. March to Yingchuan, scout the situation, and strike when the chance appears.", zh: "你带本部五百人，我再拨你一千官军。即刻赶赴颍川，先探敌情，见机剿击。" } },
+            {
+                type: 'choice',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                options: [
+                    {
+                        buttonText: { en: "At once.", zh: "即刻出发" },
+                        voiceId: 'gz_camp_lb_choice_01',
+                        text: { en: "Your command is clear. We march to Yingchuan at once.", zh: "军令已明。我们即刻赶赴颍川。" },
+                        speaker: 'liubei'
+                    },
+                    {
+                        buttonText: { en: "Request details.", zh: "再问军情" },
+                        voiceId: 'gz_camp_lb_choice_02',
+                        text: { en: "Before we depart, tell me: where should we regroup after contact?", zh: "临行前请示：与敌接触后，应在何处会合？" },
+                        speaker: 'liubei',
+                        result: [
+                            { speaker: 'luzhi', portraitKey: 'custom-male-22', name: 'Lu Zhi', voiceId: 'gz_camp_lz_choice_01', text: { en: "If the rebels break, report back at Guangzong immediately.", zh: "若贼军溃散，立刻回广宗复命。" } }
+                        ]
+                    }
+                ]
+            },
+            { speaker: 'guanyu', portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'gz_camp_gy_01', text: { en: "Understood. We ride at once.", zh: "明白。我们即刻出发。" } }
+        ],
+        nextScene: 'map',
+        nextParams: { campaignId: 'liubei', partyX: 205, partyY: 55 }
+    },
+    'yingchuan_aftermath': {
+        name: 'Yingchuan - Burned Rebel Camp',
+        map: {
+            biome: 'northern',
+            layout: 'army_camp',
+            seed: 'yingchuan_after_fire',
+            campFaction: 'yellow_turban',
+            tentTerrain: 'tent',
+            campTentCount: 11,
+            burningTentCount: 6,
+            forestDensity: 0.08,
+            mountainDensity: 0.03,
+            riverDensity: 0.0,
+            houseDensity: 0.0
+        },
+        units: [
+            { id: 'liubei', r: 8, q: 2, type: 'hero' },
+            { id: 'guanyu', r: 9, q: 2, type: 'hero' },
+            { id: 'zhangfei', r: 8, q: 3, type: 'hero' },
+            { id: 'huangfusong', r: 4, q: 6, type: 'commander' },
+            { id: 'zhujun', r: 5, q: 7, type: 'commander' },
+            { id: 'imperial1', r: 4, q: 5, type: 'imperial_soldier' },
+            { id: 'imperial2', r: 6, q: 6, type: 'imperial_soldier' },
+            { id: 'imperial3', r: 5, q: 5, type: 'imperial_soldier' },
+            { id: 'rebel_corpse_a', r: 3, q: 7, type: 'enemy_soldier', isDead: true },
+            { id: 'rebel_corpse_b', r: 6, q: 7, type: 'enemy_soldier', isDead: true },
+            { id: 'rebel_corpse_c', r: 5, q: 8, type: 'enemy_soldier', isDead: true },
+            { id: 'rebel_corpse_d', r: 7, q: 6, type: 'enemy_soldier', isDead: true }
+        ],
+        isCutscene: true,
+        introScript: [
+            { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'yc_af_zf_01', text: { en: "Look at this blaze! We arrived too late to wet our blades.", zh: "看这冲天火势！咱们来晚了，连刀都没沾上血。" } },
+            { speaker: 'huangfusong', portraitKey: 'Huangfu-Song-generic', name: 'Huangfu Song', voiceId: 'yc_af_hfs_01', text: { en: "You are Liu Xuande? We fired the grass camp in the second watch. The rebels had no saddles, no armor, and broke in panic.", zh: "你就是刘玄德？二更后我军火攻草营，贼众马不及鞍、人不及甲，仓皇四散。" } },
+            { speaker: 'zhujun', portraitKey: 'Zhu-Jun-generic', name: 'Zhu Jun', voiceId: 'yc_af_zj_01', text: { en: "Zhang Liang and Zhang Bao escaped with remnants toward Guangzong. Report this to Commander Lu Zhi at once.", zh: "张梁、张宝率残兵往广宗遁去。你速回报卢植中郎将。" } },
+            {
+                type: 'choice',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                options: [
+                    {
+                        buttonText: { en: "Return now.", zh: "即刻回报" },
+                        voiceId: 'yc_af_lb_choice_01',
+                        text: { en: "Understood. Brothers, we return to Master Lu immediately.", zh: "明白。二弟三弟，立刻回去复命。" },
+                        speaker: 'liubei'
+                    },
+                    {
+                        buttonText: { en: "Ask after enemy.", zh: "询问敌踪" },
+                        voiceId: 'yc_af_lb_choice_02',
+                        text: { en: "Do you judge Zhang Liang and Zhang Bao to rejoin Zhang Jue without delay?", zh: "二位以为张梁、张宝会不会立刻回援张角？" },
+                        speaker: 'liubei',
+                        result: [
+                            { speaker: 'zhujun', portraitKey: 'Zhu-Jun-generic', name: 'Zhu Jun', voiceId: 'yc_af_zj_choice_01', text: { en: "That is most likely. Speed your march and Lu Zhi may catch them in disorder.", zh: "十有八九如此。你们快马回报，卢植或可乘其乱而击之。" } }
+                        ]
+                    }
+                ]
+            }
+        ],
+        nextScene: 'map',
+        nextParams: { campaignId: 'liubei', partyX: 188, partyY: 92 }
     },
     'guangzong_encounter': {
         name: 'The Road to Guangzong',
@@ -323,8 +416,36 @@ export const BATTLES = {
             { id: 'rebel8', r: 8, q: 7, type: 'enemy_soldier_weak' },
             { id: 'rebel9', r: 3, q: 4, type: 'enemy_soldier' },
             { id: 'rebel10', r: 9, q: 4, type: 'enemy_soldier_weak' },
-            // Yellow Turban captain
-            { id: 'zhang_jue_captain', r: 6, q: 2, type: 'enemy_captain' }
+            // Zhang Jue himself leads this assault; he retreats when near defeat.
+            {
+                id: 'zhangjue',
+                r: 6,
+                q: 2,
+                type: 'zhang_jue',
+                immortal: {
+                    enabled: true,
+                    triggerHp: 2,
+                    onNearDeath: {
+                        say: {
+                            speaker: 'zhangjue',
+                            text: {
+                                en: "Fall back! We withdraw for now—but the Yellow Heaven will rise again!",
+                                zh: "先撤！暂退一步——黄天终将再起！"
+                            },
+                            voiceId: 'gz_zj_retreat_01',
+                            durationMs: 2300,
+                            lockSkips: true
+                        },
+                        flee: {
+                            edge: 'right',
+                            delayMs: 1900,
+                            durationMs: 900,
+                            extraTiles: 5,
+                            endBattle: { won: true }
+                        }
+                    }
+                }
+            }
         ],
         victoryCondition: {
             type: 'defeat_all_enemies',
@@ -332,6 +453,7 @@ export const BATTLES = {
         },
         introScript: [
             { speaker: 'dongzhuo', portraitKey: 'dong-zhuo', name: 'Dong Zhuo', voiceId: 'gz_dz_help_01', text: { en: "CURSE THESE REBELS! They have slaughtered my men! Is there no one left to fight?!", zh: "这些叛军该死！他们屠杀了我的部下！难道没有人能战斗了吗？！" } },
+            { speaker: 'zhangjue', portraitKey: 'custom-male-10', name: 'Zhang Jue', voiceId: 'gz_zj_rescue_01', text: { en: "The Blue Heaven is dead; the Yellow Heaven shall rise! Dong Zhuo, today your fate ends!", zh: "苍天已死，黄天当立！董卓，今日便是你的死期！" } },
             { speaker: 'liubei', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_lb_attack_01', text: { en: "That banner reads 'Zhang Jue, Lord of Heaven!' Government soldiers are losing! Brothers, we attack!", zh: "那旗帜上写着'张角，天公将军'！官军正在败退！兄弟们，我们进攻！" } },
             { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_attack_01', text: { en: "HA! Finally some Yellow Turbans to smash! Let's go!", zh: "哈！终于有黄巾贼可以痛打了！我们走！" } }
         ],
@@ -424,7 +546,9 @@ export const UNIT_TEMPLATES = {
     },
     'commander': {
         'gongjing': { name: 'Gong Jing', imgKey: 'gongjing_sprite', hp: 5, moveRange: 3, attacks: ['slash'], faction: 'allied' },
-        'luzhi': { name: 'Lu Zhi', imgKey: 'zhoujing', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' }
+        'luzhi': { name: 'Lu Zhi', imgKey: 'zhoujing', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' },
+        'huangfusong': { name: 'Huangfu Song', imgKey: 'huangfusong_sprite', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' },
+        'zhujun': { name: 'Zhu Jun', imgKey: 'zhujun_sprite', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' }
     },
     'warlord': {
         'dongzhuo': { name: 'Dong Zhuo', imgKey: 'dongzhuo', hp: 9, moveRange: 3, attacks: ['tyrant_sweep'], faction: 'allied' }

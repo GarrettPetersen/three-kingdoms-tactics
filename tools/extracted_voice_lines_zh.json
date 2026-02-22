@@ -164,25 +164,25 @@
   {
     "id": "daxing_lb_03",
     "char": "zhoujing",
-    "text": "赴大兴",
+    "text": "邹县令，我们只求为国效力。请带我们到大兴县，让我们结束这场叛乱。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "daxing_lb_choice_01",
     "char": "liubei",
-    "text": "为正义",
+    "text": "百姓呼唤正义。我们不能袖手旁观。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "daxing_lb_choice_02",
     "char": "liubei",
-    "text": "为荣耀",
+    "text": "我们为汉朝效力，追求荣耀。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "daxing_lb_choice_03",
     "char": "liubei",
-    "text": "我们能打",
+    "text": "五万叛军？我们三人足以对付！",
     "source": "NarrativeScripts.js"
   },
   {
@@ -267,6 +267,48 @@
     "id": "dx_zf_01",
     "char": "zhangfei",
     "text": "让我来对付他们！我的丈八蛇矛渴饮叛军之血！",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_camp_gy_01",
+    "char": "guanyu",
+    "text": "明白。我们即刻出发。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_camp_lb_01",
+    "char": "liubei",
+    "text": "卢师！刘备率幽州义勇来援。得知您在广宗与张角交战，我们便立刻赶来。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_camp_lb_choice_01",
+    "char": "liubei",
+    "text": "军令已明。我们即刻赶赴颍川。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_camp_lb_choice_02",
+    "char": "liubei",
+    "text": "临行前请示：与敌接触后，应在何处会合？",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_camp_lz_01",
+    "char": "luzhi",
+    "text": "玄德，你的忠义令我欣慰。我在此牵制张角，但其弟张梁、张宝正在颍川与皇甫嵩、朱儁对垒。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_camp_lz_02",
+    "char": "luzhi",
+    "text": "你带本部五百人，我再拨你一千官军。即刻赶赴颍川，先探敌情，见机剿击。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_camp_lz_choice_01",
+    "char": "luzhi",
+    "text": "若贼军溃散，立刻回广宗复命。",
     "source": "Battles.js"
   },
   {
@@ -450,6 +492,18 @@
     "source": "TacticsScene.js"
   },
   {
+    "id": "gz_zj_rescue_01",
+    "char": "zhangjue",
+    "text": "苍天已死，黄天当立！董卓，今日便是你的死期！",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_zj_retreat_01",
+    "char": "zhangjue",
+    "text": "先撤！暂退一步——黄天终将再起！",
+    "source": "Battles.js"
+  },
+  {
     "id": "inn_farmer_01",
     "char": "farmer",
     "text": "这些黄巾叛军...我想借酒消愁，但忧虑总是回来。我们该怎么办？",
@@ -512,13 +566,13 @@
   {
     "id": "inn_lb_03",
     "char": "liubei",
-    "text": "义胆可嘉",
+    "text": "高尚的心！我是刘备，这是张飞。我们刚刚决定自己组建一支志愿军。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_lb_04",
     "char": "liubei",
-    "text": "匡扶汉室",
+    "text": "恢复汉室，给百姓带来和平。这是我们共同的使命。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -530,13 +584,13 @@
   {
     "id": "inn_lb_choice_01",
     "char": "liubei",
-    "text": "与我同袍",
+    "text": "你的事业是正义的。加入我们，让我们一起为汉朝效力。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_lb_choice_02",
     "char": "liubei",
-    "text": "为百姓",
+    "text": "我们不为荣耀而战，而是为在这乱世中受苦的百姓。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -752,7 +806,7 @@
   {
     "id": "map_lb_rem_04",
     "char": "liubei",
-    "text": "卢植，我的老师，在广宗处境艰难。我们必须北上援助他，对抗张角的大军！",
+    "text": "卢师正在广宗牵制张角。我们应先赶赴营中会合，听候调遣。",
     "source": "MapScene.js"
   },
   {
@@ -860,13 +914,13 @@
   {
     "id": "pro_lb_choice_01",
     "char": "zhangfei",
-    "text": "为百姓",
+    "text": "我叹百姓受苦。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_lb_choice_02",
     "char": "zhangfei",
-    "text": "为名位",
+    "text": "我叹自己失去的地位。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -950,7 +1004,7 @@
   {
     "id": "qz_lb_01",
     "char": "liubei",
-    "text": "我去",
+    "text": "我去。我们不能让青州百姓受苦。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -968,7 +1022,7 @@
   {
     "id": "qz_lb_choice_01",
     "char": "liubei",
-    "text": "立即支援",
+    "text": "百姓呼唤援助。我们必须立即响应他们的呼唤。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1004,25 +1058,25 @@
   {
     "id": "qz_ret_lb_01",
     "char": "liubei",
-    "text": "平定此地",
+    "text": "我们很高兴能为您效力，太守。这里恢复了和平，但叛乱仍在其他地方肆虐。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "qz_ret_lb_02",
     "char": "liubei",
-    "text": "卢植是师",
+    "text": "卢植！他是我多年前的老师。我不能让他独自面对如此大军。兄弟们，我们向广宗进军！",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "qz_ret_lb_choice_01",
     "char": "liubei",
-    "text": "不胜荣幸",
+    "text": "能为您效力是我们的荣幸。青州百姓现在可以安心了。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "qz_ret_lb_choice_02",
     "char": "liubei",
-    "text": "必须援卢",
+    "text": "卢植中郎将需要援助。我们不能抛弃汉朝的忠臣。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1034,13 +1088,13 @@
   {
     "id": "qz_vic_lb_01",
     "char": "liubei",
-    "text": "回城门",
+    "text": "我们不要耽搁。城池仍在危险中。我们必须返回城门，确保太守安全。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "qz_vic_lb_choice_01",
     "char": "liubei",
-    "text": "乘胜回城",
+    "text": "一场漂亮的胜利，但我们必须保持警惕。城门在等待我们。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1126,5 +1180,41 @@
     "char": "zhangfei",
     "text": "呸！那些混蛋只是侥幸得手！下次，他们就没这么幸运了！",
     "source": "RecoveryScene.js"
+  },
+  {
+    "id": "yc_af_hfs_01",
+    "char": "huangfusong",
+    "text": "你就是刘玄德？二更后我军火攻草营，贼众马不及鞍、人不及甲，仓皇四散。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "yc_af_lb_choice_01",
+    "char": "liubei",
+    "text": "明白。二弟三弟，立刻回去复命。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "yc_af_lb_choice_02",
+    "char": "liubei",
+    "text": "二位以为张梁、张宝会不会立刻回援张角？",
+    "source": "Battles.js"
+  },
+  {
+    "id": "yc_af_zf_01",
+    "char": "zhangfei",
+    "text": "看这冲天火势！咱们来晚了，连刀都没沾上血。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "yc_af_zj_01",
+    "char": "zhujun",
+    "text": "张梁、张宝率残兵往广宗遁去。你速回报卢植中郎将。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "yc_af_zj_choice_01",
+    "char": "zhujun",
+    "text": "十有八九如此。你们快马回报，卢植或可乘其乱而击之。",
+    "source": "Battles.js"
   }
 ]

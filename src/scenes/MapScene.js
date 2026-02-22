@@ -12,7 +12,7 @@ const LOCATIONS = {
         x: 182,
         y: 85,
         name: 'Magistrate Zhou Jing',
-        imgKey: 'tent',
+        imgKey: 'camp_tent',
         battleId: 'daxing',
         // With the legacy Zhuo-start scene removed, magistrate is the first actionable map objective.
         unlockCondition: (gs) => !(gs.hasReachedStoryNode('daxing', 'liubei') || gs.hasMilestone('daxing')),
@@ -33,9 +33,29 @@ const LOCATIONS = {
         x: 205,
         y: 55,
         name: 'Guangzong Region',
-        imgKey: 'tent',
+        imgKey: 'camp_tent',
+        battleId: 'guangzong_camp',
+        unlockCondition: (gs) => (gs.hasReachedStoryNode('qingzhou_cleanup', 'liubei') || gs.hasMilestone('qingzhou_cleanup')) && !(gs.hasReachedStoryNode('guangzong_camp', 'liubei') || gs.hasMilestone('guangzong_camp')),
+        isCompleted: (gs) => gs.hasReachedStoryNode('guangzong_camp', 'liubei') || gs.hasMilestone('guangzong_camp')
+    },
+    yingchuan: {
+        id: 'yingchuan',
+        x: 188,
+        y: 92,
+        name: 'Yingchuan Region',
+        imgKey: 'city',
+        battleId: 'yingchuan_aftermath',
+        unlockCondition: (gs) => (gs.hasReachedStoryNode('guangzong_camp', 'liubei') || gs.hasMilestone('guangzong_camp')) && !(gs.hasReachedStoryNode('yingchuan_aftermath', 'liubei') || gs.hasMilestone('yingchuan_aftermath')),
+        isCompleted: (gs) => gs.hasReachedStoryNode('yingchuan_aftermath', 'liubei') || gs.hasMilestone('yingchuan_aftermath')
+    },
+    guangzong_return: {
+        id: 'guangzong_return',
+        x: 205,
+        y: 55,
+        name: 'Guangzong Road',
+        imgKey: 'camp_tent',
         battleId: 'guangzong_encounter',
-        unlockCondition: (gs) => (gs.hasReachedStoryNode('qingzhou_cleanup', 'liubei') || gs.hasMilestone('qingzhou_cleanup')) && !(gs.hasReachedStoryNode('guangzong_encounter', 'liubei') || gs.hasMilestone('guangzong_encounter')),
+        unlockCondition: (gs) => (gs.hasReachedStoryNode('yingchuan_aftermath', 'liubei') || gs.hasMilestone('yingchuan_aftermath')) && !(gs.hasReachedStoryNode('guangzong_encounter', 'liubei') || gs.hasMilestone('guangzong_encounter')),
         isCompleted: (gs) => gs.hasReachedStoryNode('guangzong_encounter', 'liubei') || gs.hasMilestone('guangzong_encounter')
     },
     zhuo_county: {
@@ -90,7 +110,17 @@ const HERO_REMINDERS = {
         portraitKey: 'liu-bei',
         name: 'Liu Bei',
         voiceId: 'map_lb_rem_04',
-        text: { en: "Lu Zhi, my old teacher, is hard-pressed at Guangzong. We must march north to aid him against Zhang Jue's horde!", zh: "卢植，我的老师，在广宗处境艰难。我们必须北上援助他，对抗张角的大军！" }
+        text: { en: "Master Lu Zhi is confronting Zhang Jue at Guangzong. We should reinforce his camp first and await orders.", zh: "卢师正在广宗牵制张角。我们应先赶赴营中会合，听候调遣。" }
+    },
+    'guangzong_camp': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        text: { en: "Master Lu sent us to Yingchuan. Huangfu Song and Zhu Jun are engaging Zhang Liang and Zhang Bao there.", zh: "卢师命我们去颍川。皇甫嵩与朱儁正在那里迎击张梁、张宝。" }
+    },
+    'yingchuan_aftermath': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        text: { en: "The rebels have already been routed at Yingchuan. We must return at once and report to Master Lu.", zh: "颍川叛军已败。我们应立刻回去向卢师复命。" }
     },
     'guangzong_encounter': {
         portraitKey: 'liu-bei',
@@ -697,6 +727,8 @@ export class MapScene extends BaseScene {
                 this.heroMoveTo(loc.x, loc.y, () => {
                     if (loc.battleId === 'daxing') this.startBriefing();
                     else if (loc.battleId === 'qingzhou_siege') this.startQingzhouBriefing();
+                    else if (loc.battleId === 'guangzong_camp') this.startGuangzongCamp();
+                    else if (loc.battleId === 'yingchuan_aftermath') this.startYingchuanAftermath();
                     else if (loc.battleId === 'guangzong_encounter') this.startGuangzongBriefing();
                     else if (loc.battleId === 'zhuo_return') this.startZhuoReturn();
                 });
@@ -816,6 +848,8 @@ export class MapScene extends BaseScene {
                             this.heroMoveTo(loc.x, loc.y, () => {
                                 if (loc.battleId === 'daxing') this.startBriefing();
                                 else if (loc.battleId === 'qingzhou_siege') this.startQingzhouBriefing();
+                                else if (loc.battleId === 'guangzong_camp') this.startGuangzongCamp();
+                                else if (loc.battleId === 'yingchuan_aftermath') this.startYingchuanAftermath();
                                 else if (loc.battleId === 'guangzong_encounter') this.startGuangzongBriefing();
                                 else if (loc.battleId === 'zhuo_return') this.startZhuoReturn();
                             });
@@ -902,10 +936,24 @@ export class MapScene extends BaseScene {
         });
     }
 
+    startGuangzongCamp() {
+        this.manager.switchTo('tactics', {
+            battleId: 'guangzong_camp'
+        });
+    }
+
+    startYingchuanAftermath() {
+        this.manager.switchTo('tactics', {
+            battleId: 'yingchuan_aftermath'
+        });
+    }
+
     getCurrentPartyReminderKey(gs) {
         // Highest-priority progression first.
         if (gs.hasReachedStoryNode('chapter1_complete', 'liubei') || gs.hasMilestone('chapter1_complete')) return null;
         if (gs.hasReachedStoryNode('guangzong_encounter', 'liubei') || gs.hasMilestone('guangzong_encounter')) return 'guangzong_encounter';
+        if (gs.hasReachedStoryNode('yingchuan_aftermath', 'liubei') || gs.hasMilestone('yingchuan_aftermath')) return 'yingchuan_aftermath';
+        if (gs.hasReachedStoryNode('guangzong_camp', 'liubei') || gs.hasMilestone('guangzong_camp')) return 'guangzong_camp';
         if (gs.hasReachedStoryNode('qingzhou_cleanup', 'liubei') || gs.hasMilestone('qingzhou_cleanup')) return 'qingzhou_cleanup';
         if (gs.hasReachedStoryNode('qingzhou_siege', 'liubei') || gs.hasMilestone('qingzhou_siege')) return 'qingzhou_siege';
         if (gs.hasReachedStoryNode('daxing', 'liubei') || gs.hasMilestone('daxing')) return 'daxing';

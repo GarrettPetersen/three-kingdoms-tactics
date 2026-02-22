@@ -165,25 +165,25 @@
   {
     "id": "daxing_lb_03",
     "char": "zhoujing",
-    "text": "To Daxing District.",
+    "text": "Magistrate Zhou, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "daxing_lb_choice_01",
     "char": "liubei",
-    "text": "For justice.",
+    "text": "The people cry out for justice. We cannot stand idle.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "daxing_lb_choice_02",
     "char": "liubei",
-    "text": "For glory.",
+    "text": "We seek glory in service to the Han.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "daxing_lb_choice_03",
     "char": "liubei",
-    "text": "We can handle them!",
+    "text": "Fifty thousand rebels? We three alone could handle them!",
     "source": "NarrativeScripts.js"
   },
   {
@@ -268,6 +268,48 @@
     "id": "dx_zf_01",
     "char": "zhangfei",
     "text": "Let me at them! My Serpent Spear is thirsty for rebel blood!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_camp_gy_01",
+    "char": "guanyu",
+    "text": "Understood. We ride at once.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_camp_lb_01",
+    "char": "liubei",
+    "text": "Master Lu! Liu Bei has brought volunteers from Youzhou. We came as soon as we heard you had engaged Zhang Jue at Guangzong.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_camp_lb_choice_01",
+    "char": "liubei",
+    "text": "Your command is clear. We march to Yingchuan at once.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_camp_lb_choice_02",
+    "char": "liubei",
+    "text": "Before we depart, tell me: where should we regroup after contact?",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_camp_lz_01",
+    "char": "luzhi",
+    "text": "Xuande, your loyalty honors me. I have Zhang Jue pinned here, but his brothers Zhang Liang and Zhang Bao contest Huangfu Song and Zhu Jun at Yingchuan.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_camp_lz_02",
+    "char": "luzhi",
+    "text": "Take your five hundred and I will lend a thousand regulars. March to Yingchuan, scout the situation, and strike when the chance appears.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_camp_lz_choice_01",
+    "char": "luzhi",
+    "text": "If the rebels break, report back at Guangzong immediately.",
     "source": "Battles.js"
   },
   {
@@ -460,6 +502,18 @@
     "source": "TacticsScene.js"
   },
   {
+    "id": "gz_zj_rescue_01",
+    "char": "zhangjue",
+    "text": "The Blue Heaven is dead; the Yellow Heaven shall rise! Dong Zhuo, today your fate ends!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_zj_retreat_01",
+    "char": "zhangjue",
+    "text": "Fall back! We withdraw for now—but the Yellow Heaven will rise again!",
+    "source": "Battles.js"
+  },
+  {
     "id": "inn_farmer_01",
     "char": "farmer",
     "text": "These Yellow Turban rebels... I try to drink away my worries, but they always return. What will become of us?",
@@ -522,13 +576,13 @@
   {
     "id": "inn_lb_03",
     "char": "liubei",
-    "text": "A noble heart!",
+    "text": "A noble heart! I am Liu Bei, and this is Zhang Fei. We have just agreed to raise a volunteer army ourselves.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_lb_04",
     "char": "liubei",
-    "text": "Restore the Han.",
+    "text": "To restore the Han and bring peace to the common people. That is our shared destiny.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -540,13 +594,13 @@
   {
     "id": "inn_lb_choice_01",
     "char": "liubei",
-    "text": "Join us.",
+    "text": "Your cause is just. Join us, and together we shall serve the Han.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_lb_choice_02",
     "char": "liubei",
-    "text": "For the people.",
+    "text": "We fight not for glory, but for the people who suffer under this chaos.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -766,7 +820,7 @@
   {
     "id": "map_lb_rem_04",
     "char": "liubei",
-    "text": "Lu Zhi, my old teacher, is hard-pressed at Guangzong. We must march north to aid him against Zhang Jue's horde!",
+    "text": "Master Lu Zhi is confronting Zhang Jue at Guangzong. We should reinforce his camp first and await orders.",
     "source": "MapScene.js",
     "phonetic_text": "Lu Jee, my old teacher, is hard-pressed at Gwang-zong. We must march north to aid him against Jang Jway's horde!"
   },
@@ -876,13 +930,13 @@
   {
     "id": "pro_lb_choice_01",
     "char": "zhangfei",
-    "text": "For the people.",
+    "text": "I sigh for the suffering people.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_lb_choice_02",
     "char": "zhangfei",
-    "text": "For my status.",
+    "text": "I sigh for my own lost status.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -967,7 +1021,7 @@
   {
     "id": "qz_lb_01",
     "char": "liubei",
-    "text": "I will go.",
+    "text": "I will go. We cannot let the people of Qingzhou suffer.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -985,7 +1039,7 @@
   {
     "id": "qz_lb_choice_01",
     "char": "liubei",
-    "text": "We'll help.",
+    "text": "The people cry out for aid. We must answer their call at once.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1021,25 +1075,25 @@
   {
     "id": "qz_ret_lb_01",
     "char": "liubei",
-    "text": "Peace restored.",
+    "text": "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "qz_ret_lb_02",
     "char": "liubei",
-    "text": "My teacher.",
+    "text": "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "qz_ret_lb_choice_01",
     "char": "liubei",
-    "text": "An honor.",
+    "text": "It was an honor to serve. The people of Qingzhou can rest easy now.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "qz_ret_lb_choice_02",
     "char": "liubei",
-    "text": "We must help.",
+    "text": "Commander Lu Zhi needs aid. We cannot abandon a loyal servant of the Han.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1051,13 +1105,13 @@
   {
     "id": "qz_vic_lb_01",
     "char": "liubei",
-    "text": "To the gates.",
+    "text": "Let us not tarry. The city is still in peril. We must return to the gates and ensure the Imperial Protector is safe.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "qz_vic_lb_choice_01",
     "char": "liubei",
-    "text": "Victory.",
+    "text": "A fine victory, but we must remain vigilant. The city gates await us.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1144,5 +1198,41 @@
     "char": "zhangfei",
     "text": "Bah! Those rascals got a lucky hit in! Next time, they won't be so fortunate!",
     "source": "RecoveryScene.js"
+  },
+  {
+    "id": "yc_af_hfs_01",
+    "char": "huangfusong",
+    "text": "You are Liu Xuande? We fired the grass camp in the second watch. The rebels had no saddles, no armor, and broke in panic.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "yc_af_lb_choice_01",
+    "char": "liubei",
+    "text": "Understood. Brothers, we return to Master Lu immediately.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "yc_af_lb_choice_02",
+    "char": "liubei",
+    "text": "Do you judge Zhang Liang and Zhang Bao to rejoin Zhang Jue without delay?",
+    "source": "Battles.js"
+  },
+  {
+    "id": "yc_af_zf_01",
+    "char": "zhangfei",
+    "text": "Look at this blaze! We arrived too late to wet our blades.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "yc_af_zj_01",
+    "char": "zhujun",
+    "text": "Zhang Liang and Zhang Bao escaped with remnants toward Guangzong. Report this to Commander Lu Zhi at once.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "yc_af_zj_choice_01",
+    "char": "zhujun",
+    "text": "That is most likely. Speed your march and Lu Zhi may catch them in disorder.",
+    "source": "Battles.js"
   }
 ]

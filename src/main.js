@@ -36,6 +36,7 @@ const TERRAIN_TYPES = [
     'earth_cracked', 'earth_rocky',
     'mountain_stone_01', 'mountain_stone_02', 'mountain_stone_03', 'earth_stone',
     'house_01', 'house_damaged_01', 'house_destroyed_01', 'wall_01',
+    'tent',
     'mud_01', 'mud_02', 'mud_03', 'mud_04', 'mud_05', 'mud_06', 'mud_07',
     'jungle_dense_01', 'jungle_dense_02', 'jungle_dense_03', 'jungle_palm_01', 'jungle_palm_02', 'jungle_palm_03',
     'pine_forest_01', 'pine_forest_snow_01',
@@ -432,6 +433,7 @@ async function init() {
             'Liu-Bei', 'Guan-Yu', 'Zhang-Fei', 'Zhou-Jing', 'Diaochan', 
             'Deng-Mao', 'Cheng-Yuanzhi', 'The-Noticeboard', 'Yellow-Turban',
             'Dong-Zhuo', 'Zhang-Jiao', 'Zhang-Bao',
+            'Huangfu-Song-generic', 'Zhu-Jun-generic',
             // Custom portraits for NPCs
             'Custom-Male-10',  // Zhang Jue (Lord of Heaven)
             'Custom-Male-12',  // Zhang Liang (Lord of Human)
@@ -467,7 +469,7 @@ async function init() {
                 army_camp: 'assets/settings/army_camp.png',
                 dirt_road_city_in_distance: 'assets/settings/dirt_road_city_in_distance.png',
                 china_map: 'assets/settings/china_map.png',
-                tent: 'assets/terrain/buildings/yellow_tent.png',
+                camp_tent: 'assets/terrain/buildings/yellow_tent.png',
                 hut: 'assets/terrain/buildings/green_hut.png',
                 city: 'assets/terrain/buildings/red_house.png',
                 lvbu: 'assets/characters/001_lvbu.png',
@@ -478,6 +480,8 @@ async function init() {
                 zhugeliang: 'assets/characters/051_zhugeliang.png',
                 zhoujing: 'assets/characters/071_chendeng.png',
                 gongjing_sprite: 'assets/characters/067_dongyun.png',
+                huangfusong_sprite: 'assets/characters/072_liyan.png',
+                zhujun_sprite: 'assets/characters/073_chendao.png',
                 yellowturban: 'assets/characters/097_yellowturban.png',
                 merchant: 'assets/characters/090_fushang01.png',
                 blacksmith: 'assets/characters/091_tiejiang01.png',
@@ -500,6 +504,14 @@ async function init() {
                 cage_damaged: 'assets/terrain/individual/cage_damaged.png',
                 cage_more_damaged: 'assets/terrain/individual/cage_more_damaged.png',
                 cage_destroyed: 'assets/terrain/individual/cage_destroyed.png',
+                fire_yellow_01: 'assets/fire/fire_yellow_01.png',
+                fire_yellow_02: 'assets/fire/fire_yellow_02.png',
+                fire_yellow_03: 'assets/fire/fire_yellow_03.png',
+                fire_yellow_04: 'assets/fire/fire_yellow_04.png',
+                fire_yellow_05: 'assets/fire/fire_yellow_05.png',
+                fire_yellow_06: 'assets/fire/fire_yellow_06.png',
+                fire_yellow_07: 'assets/fire/fire_yellow_07.png',
+                fire_yellow_08: 'assets/fire/fire_yellow_08.png',
                 ...terrainAssets
             }),
             assets.loadSounds({
@@ -533,7 +545,8 @@ async function init() {
                 horse_snort: 'assets/sfx/horse_snort.mp3',
                 death: 'assets/sfx/death.wav',
                 gong: 'assets/sfx/gong.mp3',
-                unsheath_sword: 'assets/sfx/unsheath_sword.mp3'
+                unsheath_sword: 'assets/sfx/unsheath_sword.mp3',
+                fire_crackle_loop: 'assets/sfx/fire_crackle_loop.mp3'
             }),
             assets.loadMusic({
                 title_loop: 'assets/music/title_loop.ogg',
@@ -680,6 +693,60 @@ async function init() {
 
         // Apply palette to terrain assets
         assets.palettizeKeys(TERRAIN_TYPES, 'vinik24');
+
+        // Imperial camp tents: recolor yellow tent art to a pale white canvas variant.
+        const baseTent = assets.getImage('tent');
+        if (baseTent) {
+            const rgbToHueSat = (r, g, b) => {
+                const rn = r / 255;
+                const gn = g / 255;
+                const bn = b / 255;
+                const max = Math.max(rn, gn, bn);
+                const min = Math.min(rn, gn, bn);
+                const delta = max - min;
+                let hue = 0;
+                if (delta > 0.0001) {
+                    if (max === rn) hue = ((gn - bn) / delta) % 6;
+                    else if (max === gn) hue = (bn - rn) / delta + 2;
+                    else hue = (rn - gn) / delta + 4;
+                    hue *= 60;
+                    if (hue < 0) hue += 360;
+                }
+                const sat = max <= 0.0001 ? 0 : delta / max;
+                return { hue, sat };
+            };
+
+            const tentCanvas = document.createElement('canvas');
+            tentCanvas.width = baseTent.width;
+            tentCanvas.height = baseTent.height;
+            const tctx = tentCanvas.getContext('2d', { willReadFrequently: true });
+            tctx.imageSmoothingEnabled = false;
+            tctx.drawImage(baseTent, 0, 0);
+            const imageData = tctx.getImageData(0, 0, tentCanvas.width, tentCanvas.height);
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                if (data[i + 3] < 10) continue;
+
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+                const lum = (r + g + b) / 3;
+                if (lum <= 18) continue; // Keep dark line art intact.
+
+                // Only recolor yellow cloth pixels. Keep brown/mud pixels unchanged.
+                const { hue, sat } = rgbToHueSat(r, g, b);
+                const isYellowCloth = hue >= 38 && hue <= 72 && sat >= 0.22;
+                if (!isYellowCloth) continue;
+
+                const v = Math.max(155, Math.min(245, 165 + lum * 0.35));
+                data[i] = v;
+                data[i + 1] = v;
+                data[i + 2] = Math.min(255, v + 4);
+            }
+            tctx.putImageData(imageData, 0, 0);
+            tentCanvas.silhouette = baseTent.silhouette;
+            assets.images['tent_white'] = tentCanvas;
+        }
 
         sceneManager.switchTo('title');
 

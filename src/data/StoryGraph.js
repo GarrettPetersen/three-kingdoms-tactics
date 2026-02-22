@@ -8,7 +8,9 @@ export const STORY_ROUTES = {
             prologue_complete: { next: 'daxing' },
             daxing: { next: 'qingzhou_siege' },
             qingzhou_siege: { next: 'qingzhou_cleanup' },
-            qingzhou_cleanup: { next: 'guangzong_encounter' },
+            qingzhou_cleanup: { next: 'guangzong_camp' },
+            guangzong_camp: { next: 'yingchuan_aftermath' },
+            yingchuan_aftermath: { next: 'guangzong_encounter' },
             guangzong_encounter: { next: 'dongzhuo_battle' },
             dongzhuo_battle: { next: 'chapter1_complete' },
             chapter1_complete: { next: null }
