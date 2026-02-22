@@ -4048,7 +4048,11 @@ export class TacticsScene extends BaseScene {
             victim.intent = null;
             const currentCell = sourceCell || this.tacticsMap.getCell(victim.r, victim.q);
             if (currentCell) currentCell.unit = null;
-            assets.playSound('death', 0.6);
+            if (typeof victim.playDeathSoundOnce === 'function') {
+                victim.playDeathSoundOnce();
+            } else {
+                assets.playSound('death', 0.6);
+            }
             if (victim.faction === 'enemy') {
                 this.enemiesKilled++;
             }

@@ -54,13 +54,23 @@ export class Unit {
         this.isDrowning = config.isDrowning || false;
         this.isGone = config.isGone || false;
         this.drownTimer = 0;
+        this.deathSoundPlayed = config.deathSoundPlayed || false;
         this.stepTimer = 0;
         this.level = config.level || 1;
         this.caged = config.caged || false;  // For cage overlay rendering
         this.isPreDead = config.isPreDead || false; // Started the mission dead (don't count for casualties)
     }
 
+    playDeathSoundOnce() {
+        if (this.deathSoundPlayed) return;
+        this.deathSoundPlayed = true;
+        assets.playSound('death', 0.6);
+    }
+
     update(dt, getPixelPos, shouldAnimate = true, terrainType = 'grass_01') {
+        if (this.hp > 0 && this.deathSoundPlayed) {
+            this.deathSoundPlayed = false;
+        }
         if (this.isDrowning) {
             // ... drowning logic ...
             this.drownTimer += dt;
@@ -80,7 +90,7 @@ export class Unit {
                 this.isGone = true;
                 this.action = 'death';
                 this.currentAnimAction = 'death';
-                assets.playSound('death', 0.6);
+                this.playDeathSoundOnce();
             }
             return;
         }
@@ -89,7 +99,7 @@ export class Unit {
         if (this.hp <= 0 && this.action !== 'death') {
             this.action = 'death';
             this.frame = 0;
-            assets.playSound('death', 0.6);
+            this.playDeathSoundOnce();
         }
 
         let animAction = this.action;

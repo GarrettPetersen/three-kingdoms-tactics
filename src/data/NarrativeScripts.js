@@ -198,7 +198,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: { en: "For justice.", zh: "为了正义。" },
+                    buttonText: { en: "For justice.", zh: "为正义" },
                     text: {
                         en: "The people cry out for justice. We cannot stand idle.",
                         zh: "百姓呼唤正义。我们不能袖手旁观。"
@@ -220,7 +220,7 @@ export const NARRATIVE_SCRIPTS = {
                     ]
                 },
                 { 
-                    buttonText: { en: "For glory.", zh: "为了荣耀。" },
+                    buttonText: { en: "For glory.", zh: "为荣耀" },
                     text: {
                         en: "We seek glory in service to the Han.",
                         zh: "我们为汉朝效力，追求荣耀。"
@@ -282,7 +282,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: { en: "To Daxing District.", zh: "前往大兴县。" },
+                    buttonText: { en: "To Daxing District.", zh: "赴大兴" },
                     text: {
                         en: "Magistrate Zhou, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion.",
                         zh: "邹县令，我们只求为国效力。请带我们到大兴县，让我们结束这场叛乱。"
@@ -303,7 +303,7 @@ export const NARRATIVE_SCRIPTS = {
                     ]
                 },
                 { 
-                    buttonText: { en: "We can handle them!", zh: "我们能应付！" },
+                    buttonText: { en: "We can handle them!", zh: "我们能打" },
                     text: {
                         en: "Fifty thousand rebels? We three alone could handle them!",
                         zh: "五万叛军？我们三人足以对付！"
@@ -337,6 +337,182 @@ export const NARRATIVE_SCRIPTS = {
                 }
             ]
         },
+        {
+            type: 'interactive',
+            promptOptions: [
+                { id: 'to_map', text: { en: 'TO MAP', zh: '前往地图' }, position: 'left', advanceOnClick: true }
+            ],
+            clickableActors: {
+                'zhoujing': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhou-jing',
+                            name: 'Zhou Jing',
+                            position: 'top',
+                            text: {
+                                en: "The rebels rally under yellow banners and false promises. We must break their momentum before fear spreads.",
+                                zh: "贼军以黄旗惑众，趁乱煽动民心。必须尽快挫其锋芒，免得人心再乱。"
+                            }
+                        }
+                    ]
+                },
+                'guard1': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'soldier',
+                            name: 'Guard',
+                            position: 'top',
+                            text: {
+                                en: "Word is the main rebel host numbers in the tens of thousands. Staying in formation is our only chance.",
+                                zh: "听说贼军有数万之众。我们唯有严守阵形，方有生机。"
+                            }
+                        }
+                    ]
+                },
+                'guard2': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'soldier',
+                            name: 'Guard',
+                            position: 'top',
+                            text: {
+                                en: "They paint \"Jiazi\" on their gates and call it Heaven's will. Steel will answer that lie.",
+                                zh: "他们在门上写“甲子”，妄称天命。此等谎言，自当以兵刃破之。"
+                            }
+                        }
+                    ]
+                },
+                'soldier3': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'soldier',
+                            name: 'Soldier',
+                            position: 'top',
+                            text: {
+                                en: "I have never seen Zhuo this tense. Even the market folk are carrying spears now.",
+                                zh: "涿县从未如此紧张，连集市百姓都在备矛守望。"
+                            }
+                        }
+                    ]
+                },
+                'soldier4': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'soldier',
+                            name: 'Soldier',
+                            position: 'top',
+                            text: {
+                                en: "After Cheng Yuanzhi, more rebel captains will come. We have to win this first clash cleanly.",
+                                zh: "程远志之后，必有更多贼将来犯。这一战必须打得干净利落。"
+                            }
+                        }
+                    ]
+                },
+                'merchant': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'merchant',
+                            name: 'Merchant',
+                            position: 'top',
+                            text: {
+                                en: "Roads to the east are half-blocked by refugees. If you march, march fast before supply lines choke.",
+                                zh: "东面道路已被流民堵了大半。若要出兵，须速行，免得粮道先断。"
+                            }
+                        }
+                    ]
+                },
+                'blacksmith': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'blacksmith',
+                            name: 'Blacksmith',
+                            position: 'top',
+                            text: {
+                                en: "I reforged farm iron into spearheads all night. The county's fate now hangs on your vanguard.",
+                                zh: "我连夜把农具熔成枪头。全县安危，如今都系在你们先锋身上。"
+                            }
+                        }
+                    ]
+                },
+                'volunteer1': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'soldier',
+                            name: 'Volunteer',
+                            position: 'top',
+                            text: {
+                                en: "I was a field hand yesterday. Today I carry a blade. If we fail, our families have nowhere to run.",
+                                zh: "我昨日还在田里，今日已执兵刃。此战若败，家人便无处可逃。"
+                            }
+                        }
+                    ]
+                },
+                'volunteer2': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'soldier',
+                            name: 'Volunteer',
+                            position: 'top',
+                            text: {
+                                en: "People say the Zhang brothers can call wind and rain. I do not know about that—but I know we cannot yield.",
+                                zh: "民间都说张氏兄弟能呼风唤雨。我不知真假，只知此时绝不能退。"
+                            }
+                        }
+                    ]
+                },
+                'liubei': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'liu-bei',
+                            name: 'Liu Bei',
+                            position: 'top',
+                            text: {
+                                en: "To shield the people is our vow. Brothers, we fight not for fame, but to end this terror.",
+                                zh: "护民安众，正是我等所誓。兄弟们，此战不为功名，只为止乱。"
+                            }
+                        }
+                    ]
+                },
+                'guanyu': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'guan-yu',
+                            name: 'Guan Yu',
+                            position: 'top',
+                            text: {
+                                en: "When the line wavers, hold your ground. Discipline cuts deeper than any blade.",
+                                zh: "阵脚一乱，必生溃败。守住军纪，胜过万般锋刃。"
+                            }
+                        }
+                    ]
+                },
+                'zhangfei': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhang-fei',
+                            name: 'Zhang Fei',
+                            position: 'top',
+                            text: {
+                                en: "Ha! Let Cheng Yuanzhi come. I have been waiting to test this spear on real rebels.",
+                                zh: "哈！程远志尽管来。我这杆蛇矛，正等着拿真贼开锋。"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
         { type: 'command', action: 'fade', target: 1, speed: 0.001         }
     ],
     'daxing_messenger': [
@@ -365,7 +541,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: { en: "I will go.", zh: "我去。" },
+                    buttonText: { en: "I will go.", zh: "我去" },
                     text: {
                         en: "I will go. We cannot let the people of Qingzhou suffer.",
                         zh: "我去。我们不能让青州百姓受苦。"
@@ -375,7 +551,7 @@ export const NARRATIVE_SCRIPTS = {
                     result: []
                 },
                 { 
-                    buttonText: { en: "We'll help.", zh: "我们来援助。" },
+                    buttonText: { en: "We'll help.", zh: "立即支援" },
                     text: {
                         en: "The people cry out for aid. We must answer their call at once.",
                         zh: "百姓呼唤援助。我们必须立即响应他们的呼唤。"
@@ -440,7 +616,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: { en: "To the gates.", zh: "回城门。" },
+                    buttonText: { en: "To the gates.", zh: "回城门" },
                     text: {
                         en: "Let us not tarry. The city is still in peril. We must return to the gates and ensure the Imperial Protector is safe.",
                         zh: "我们不要耽搁。城池仍在危险中。我们必须返回城门，确保太守安全。"
@@ -450,7 +626,7 @@ export const NARRATIVE_SCRIPTS = {
                     result: []
                 },
                 { 
-                    buttonText: { en: "Victory.", zh: "胜利。" },
+                    buttonText: { en: "Victory.", zh: "乘胜回城" },
                     text: {
                         en: "A fine victory, but we must remain vigilant. The city gates await us.",
                         zh: "一场漂亮的胜利，但我们必须保持警惕。城门在等待我们。"
@@ -501,7 +677,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: { en: "Peace restored.", zh: "和平已复。" },
+                    buttonText: { en: "Peace restored.", zh: "平定此地" },
                     text: {
                         en: "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere.",
                         zh: "我们很高兴能为您效力，太守。这里恢复了和平，但叛乱仍在其他地方肆虐。"
@@ -511,7 +687,7 @@ export const NARRATIVE_SCRIPTS = {
                     result: []
                 },
                 { 
-                    buttonText: { en: "An honor.", zh: "荣幸之至。" },
+                    buttonText: { en: "An honor.", zh: "不胜荣幸" },
                     text: {
                         en: "It was an honor to serve. The people of Qingzhou can rest easy now.",
                         zh: "能为您效力是我们的荣幸。青州百姓现在可以安心了。"
@@ -551,7 +727,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: { en: "My teacher.", zh: "我的老师。" },
+                    buttonText: { en: "My teacher.", zh: "卢植是师" },
                     text: {
                         en: "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!",
                         zh: "卢植！他是我多年前的老师。我不能让他独自面对如此大军。兄弟们，我们向广宗进军！"
@@ -561,7 +737,7 @@ export const NARRATIVE_SCRIPTS = {
                     result: []
                 },
                 { 
-                    buttonText: { en: "We must help.", zh: "我们必须援助。" },
+                    buttonText: { en: "We must help.", zh: "必须援卢" },
                     text: {
                         en: "Commander Lu Zhi needs aid. We cannot abandon a loyal servant of the Han.",
                         zh: "卢植中郎将需要援助。我们不能抛弃汉朝的忠臣。"
@@ -745,7 +921,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: { en: "For the people.", zh: "为了百姓。" },
+                    buttonText: { en: "For the people.", zh: "为百姓" },
                     text: {
                         en: "I sigh for the suffering people.",
                         zh: "我叹百姓受苦。"
@@ -766,7 +942,7 @@ export const NARRATIVE_SCRIPTS = {
                     ]
                 },
                 { 
-                    buttonText: { en: "For my status.", zh: "为了我的身份。" },
+                    buttonText: { en: "For my status.", zh: "为名位" },
                     text: {
                         en: "I sigh for my own lost status.",
                         zh: "我叹自己失去的地位。"
@@ -1066,7 +1242,7 @@ export const NARRATIVE_SCRIPTS = {
                 { 
                     buttonText: {
                         en: "A noble heart!",
-                        zh: "高尚的心！"
+                        zh: "义胆可嘉"
                     },
                     text: {
                         en: "A noble heart! I am Liu Bei, and this is Zhang Fei. We have just agreed to raise a volunteer army ourselves.",
@@ -1079,7 +1255,7 @@ export const NARRATIVE_SCRIPTS = {
                 { 
                     buttonText: {
                         en: "Join us.",
-                        zh: "加入我们。"
+                        zh: "与我同袍"
                     },
                     text: {
                         en: "Your cause is just. Join us, and together we shall serve the Han.",
@@ -1164,7 +1340,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: { en: "Restore the Han.", zh: "匡扶汉室。" },
+                    buttonText: { en: "Restore the Han.", zh: "匡扶汉室" },
                     text: {
                         en: "To restore the Han and bring peace to the common people. That is our shared destiny.",
                         zh: "恢复汉室，给百姓带来和平。这是我们共同的使命。"
@@ -1174,7 +1350,7 @@ export const NARRATIVE_SCRIPTS = {
                     result: []
                 },
                 { 
-                    buttonText: { en: "For the people.", zh: "为了百姓。" },
+                    buttonText: { en: "For the people.", zh: "为百姓" },
                     text: {
                         en: "We fight not for glory, but for the people who suffer under this chaos.",
                         zh: "我们不为荣耀而战，而是为在这乱世中受苦的百姓。"
