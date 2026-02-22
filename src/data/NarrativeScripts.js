@@ -886,7 +886,7 @@ export const NARRATIVE_SCRIPTS = {
         {
             type: 'interactive',
             promptOptions: [
-                { id: 'to_inn', text: 'TO INN', position: 'left', advanceOnClick: true }
+                { id: 'to_inn', text: { en: 'TO INN', zh: '前往酒店' }, position: 'left', advanceOnClick: true }
             ]
         },
         { type: 'command', action: 'flip', id: 'liubei', flip: true },
