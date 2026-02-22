@@ -2,7 +2,7 @@
   {
     "id": "ch1_end_01",
     "char": "narrator",
-    "text": "But slaying the ungrateful would Mean many deaths a year.  Dong Zhuo's fate will be unrolled in later chapters...",
+    "text": "若尽诛忘恩之徒，\n一年不知要杀多少人。\n\n董卓的命运，将在后续章节展开……",
     "source": "MapScene.js"
   },
   {
@@ -78,6 +78,78 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "daxing_int_blacksmith_01",
+    "char": "farmer",
+    "text": "我连夜把农具熔成枪头。全县安危，如今都系在你们先锋身上。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_int_guard1_01",
+    "char": "soldier",
+    "text": "听说贼军有数万之众。我们唯有严守阵形，方有生机。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_int_guard2_01",
+    "char": "soldier",
+    "text": "他们在门上写“甲子”，妄称天命。此等谎言，自当以兵刃破之。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_int_gy_01",
+    "char": "guanyu",
+    "text": "阵脚一乱，必生溃败。守住军纪，胜过万般锋刃。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_int_lb_01",
+    "char": "liubei",
+    "text": "护民安众，正是我等所誓。兄弟们，此战不为功名，只为止乱。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_int_merchant_01",
+    "char": "farmer",
+    "text": "东面道路已被流民堵了大半。若要出兵，须速行，免得粮道先断。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_int_soldier3_01",
+    "char": "soldier",
+    "text": "涿县从未如此紧张，连集市百姓都在备矛守望。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_int_soldier4_01",
+    "char": "soldier",
+    "text": "程远志之后，必有更多贼将来犯。这一战必须打得干净利落。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_int_volunteer1_01",
+    "char": "volunteer",
+    "text": "我昨日还在田里，今日已执兵刃。此战若败，家人便无处可逃。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_int_volunteer2_01",
+    "char": "volunteer",
+    "text": "民间都说张氏兄弟能呼风唤雨。我不知真假，只知此时绝不能退。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_int_zf_01",
+    "char": "zhangfei",
+    "text": "哈！程远志尽管来。我这杆蛇矛，正等着拿真贼开锋。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "daxing_int_zj_01",
+    "char": "zhoujing",
+    "text": "贼军以黄旗惑众，趁乱煽动民心。必须尽快挫其锋芒，免得人心再乱。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "daxing_lb_01",
     "char": "liubei",
     "text": "我是刘备，中山靖王之后，汉景帝玄孙。这两位是我的结义兄弟，关羽和张飞。",
@@ -92,25 +164,25 @@
   {
     "id": "daxing_lb_03",
     "char": "zhoujing",
-    "text": "邹县令，我们只求为国效力。请带我们到大兴县，让我们结束这场叛乱。",
+    "text": "赴大兴",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "daxing_lb_choice_01",
     "char": "liubei",
-    "text": "百姓呼唤正义。我们不能袖手旁观。",
+    "text": "为正义",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "daxing_lb_choice_02",
     "char": "liubei",
-    "text": "我们为汉朝效力，追求荣耀。",
+    "text": "为荣耀",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "daxing_lb_choice_03",
     "char": "liubei",
-    "text": "五万叛军？我们三人足以对付！",
+    "text": "我们能打",
     "source": "NarrativeScripts.js"
   },
   {
@@ -440,13 +512,13 @@
   {
     "id": "inn_lb_03",
     "char": "liubei",
-    "text": "高尚的心！",
+    "text": "义胆可嘉",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_lb_04",
     "char": "liubei",
-    "text": "恢复汉室，给百姓带来和平。这是我们共同的使命。",
+    "text": "匡扶汉室",
     "source": "NarrativeScripts.js"
   },
   {
@@ -458,13 +530,13 @@
   {
     "id": "inn_lb_choice_01",
     "char": "liubei",
-    "text": "加入我们。",
+    "text": "与我同袍",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_lb_choice_02",
     "char": "liubei",
-    "text": "我们不为荣耀而战，而是为在这乱世中受苦的百姓。",
+    "text": "为百姓",
     "source": "NarrativeScripts.js"
   },
   {
@@ -788,13 +860,13 @@
   {
     "id": "pro_lb_choice_01",
     "char": "zhangfei",
-    "text": "我叹百姓受苦。",
+    "text": "为百姓",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_lb_choice_02",
     "char": "zhangfei",
-    "text": "我叹自己失去的地位。",
+    "text": "为名位",
     "source": "NarrativeScripts.js"
   },
   {
@@ -878,7 +950,7 @@
   {
     "id": "qz_lb_01",
     "char": "liubei",
-    "text": "我去。我们不能让青州百姓受苦。",
+    "text": "我去",
     "source": "NarrativeScripts.js"
   },
   {
@@ -896,7 +968,7 @@
   {
     "id": "qz_lb_choice_01",
     "char": "liubei",
-    "text": "百姓呼唤援助。我们必须立即响应他们的呼唤。",
+    "text": "立即支援",
     "source": "NarrativeScripts.js"
   },
   {
@@ -932,25 +1004,25 @@
   {
     "id": "qz_ret_lb_01",
     "char": "liubei",
-    "text": "我们很高兴能为您效力，太守。这里恢复了和平，但叛乱仍在其他地方肆虐。",
+    "text": "平定此地",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "qz_ret_lb_02",
     "char": "liubei",
-    "text": "卢植！他是我多年前的老师。我不能让他独自面对如此大军。兄弟们，我们向广宗进军！",
+    "text": "卢植是师",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "qz_ret_lb_choice_01",
     "char": "liubei",
-    "text": "能为您效力是我们的荣幸。青州百姓现在可以安心了。",
+    "text": "不胜荣幸",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "qz_ret_lb_choice_02",
     "char": "liubei",
-    "text": "卢植中郎将需要援助。我们不能抛弃汉朝的忠臣。",
+    "text": "必须援卢",
     "source": "NarrativeScripts.js"
   },
   {
@@ -962,13 +1034,13 @@
   {
     "id": "qz_vic_lb_01",
     "char": "liubei",
-    "text": "我们不要耽搁。城池仍在危险中。我们必须返回城门，确保太守安全。",
+    "text": "回城门",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "qz_vic_lb_choice_01",
     "char": "liubei",
-    "text": "一场漂亮的胜利，但我们必须保持警惕。城门在等待我们。",
+    "text": "乘胜回城",
     "source": "NarrativeScripts.js"
   },
   {

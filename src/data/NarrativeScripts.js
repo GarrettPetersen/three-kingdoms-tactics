@@ -350,6 +350,8 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'zhou-jing',
                             name: 'Zhou Jing',
                             position: 'top',
+                            voiceId: 'daxing_int_zj_01',
+                            speaker: 'zhoujing',
                             text: {
                                 en: "The rebels rally under yellow banners and false promises. We must break their momentum before fear spreads.",
                                 zh: "贼军以黄旗惑众，趁乱煽动民心。必须尽快挫其锋芒，免得人心再乱。"
@@ -364,6 +366,8 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'soldier',
                             name: 'Guard',
                             position: 'top',
+                            voiceId: 'daxing_int_guard1_01',
+                            speaker: 'soldier',
                             text: {
                                 en: "Word is the main rebel host numbers in the tens of thousands. Staying in formation is our only chance.",
                                 zh: "听说贼军有数万之众。我们唯有严守阵形，方有生机。"
@@ -378,6 +382,8 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'soldier',
                             name: 'Guard',
                             position: 'top',
+                            voiceId: 'daxing_int_guard2_01',
+                            speaker: 'soldier',
                             text: {
                                 en: "They paint \"Jiazi\" on their gates and call it Heaven's will. Steel will answer that lie.",
                                 zh: "他们在门上写“甲子”，妄称天命。此等谎言，自当以兵刃破之。"
@@ -392,6 +398,8 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'soldier',
                             name: 'Soldier',
                             position: 'top',
+                            voiceId: 'daxing_int_soldier3_01',
+                            speaker: 'soldier',
                             text: {
                                 en: "I have never seen Zhuo this tense. Even the market folk are carrying spears now.",
                                 zh: "涿县从未如此紧张，连集市百姓都在备矛守望。"
@@ -406,6 +414,8 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'soldier',
                             name: 'Soldier',
                             position: 'top',
+                            voiceId: 'daxing_int_soldier4_01',
+                            speaker: 'soldier',
                             text: {
                                 en: "After Cheng Yuanzhi, more rebel captains will come. We have to win this first clash cleanly.",
                                 zh: "程远志之后，必有更多贼将来犯。这一战必须打得干净利落。"
@@ -420,6 +430,8 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'merchant',
                             name: 'Merchant',
                             position: 'top',
+                            voiceId: 'daxing_int_merchant_01',
+                            speaker: 'farmer',
                             text: {
                                 en: "Roads to the east are half-blocked by refugees. If you march, march fast before supply lines choke.",
                                 zh: "东面道路已被流民堵了大半。若要出兵，须速行，免得粮道先断。"
@@ -434,6 +446,8 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'blacksmith',
                             name: 'Blacksmith',
                             position: 'top',
+                            voiceId: 'daxing_int_blacksmith_01',
+                            speaker: 'farmer',
                             text: {
                                 en: "I reforged farm iron into spearheads all night. The county's fate now hangs on your vanguard.",
                                 zh: "我连夜把农具熔成枪头。全县安危，如今都系在你们先锋身上。"
@@ -448,6 +462,8 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'soldier',
                             name: 'Volunteer',
                             position: 'top',
+                            voiceId: 'daxing_int_volunteer1_01',
+                            speaker: 'volunteer',
                             text: {
                                 en: "I was a field hand yesterday. Today I carry a blade. If we fail, our families have nowhere to run.",
                                 zh: "我昨日还在田里，今日已执兵刃。此战若败，家人便无处可逃。"
@@ -462,6 +478,8 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'soldier',
                             name: 'Volunteer',
                             position: 'top',
+                            voiceId: 'daxing_int_volunteer2_01',
+                            speaker: 'volunteer',
                             text: {
                                 en: "People say the Zhang brothers can call wind and rain. I do not know about that—but I know we cannot yield.",
                                 zh: "民间都说张氏兄弟能呼风唤雨。我不知真假，只知此时绝不能退。"
@@ -476,6 +494,8 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'liu-bei',
                             name: 'Liu Bei',
                             position: 'top',
+                            voiceId: 'daxing_int_lb_01',
+                            speaker: 'liubei',
                             text: {
                                 en: "To shield the people is our vow. Brothers, we fight not for fame, but to end this terror.",
                                 zh: "护民安众，正是我等所誓。兄弟们，此战不为功名，只为止乱。"
@@ -490,6 +510,8 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'guan-yu',
                             name: 'Guan Yu',
                             position: 'top',
+                            voiceId: 'daxing_int_gy_01',
+                            speaker: 'guanyu',
                             text: {
                                 en: "When the line wavers, hold your ground. Discipline cuts deeper than any blade.",
                                 zh: "阵脚一乱，必生溃败。守住军纪，胜过万般锋刃。"
@@ -504,6 +526,8 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'zhang-fei',
                             name: 'Zhang Fei',
                             position: 'top',
+                            voiceId: 'daxing_int_zf_01',
+                            speaker: 'zhangfei',
                             text: {
                                 en: "Ha! Let Cheng Yuanzhi come. I have been waiting to test this spear on real rebels.",
                                 zh: "哈！程远志尽管来。我这杆蛇矛，正等着拿真贼开锋。"

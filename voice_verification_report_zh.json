@@ -2,7 +2,7 @@
     "zh:ch1_end_01": {
         "id": "ch1_end_01",
         "character": "narrator",
-        "original_text": "But slaying the ungrateful would Mean many deaths a year.  Dong Zhuo's fate will be unrolled in later chapters...",
+        "original_text": "若尽诛忘恩之徒，\n一年不知要杀多少人。\n\n董卓的命运，将在后续章节展开……",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -47,7 +47,7 @@
     "zh:daxing_lb_03": {
         "id": "daxing_lb_03",
         "character": "zhoujing",
-        "original_text": "邹县令，我们只求为国效力。请带我们到大兴县，让我们结束这场叛乱。",
+        "original_text": "赴大兴",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -56,7 +56,7 @@
     "zh:daxing_lb_choice_01": {
         "id": "daxing_lb_choice_01",
         "character": "liubei",
-        "original_text": "百姓呼唤正义。我们不能袖手旁观。",
+        "original_text": "为正义",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -65,7 +65,7 @@
     "zh:daxing_lb_choice_02": {
         "id": "daxing_lb_choice_02",
         "character": "liubei",
-        "original_text": "我们为汉朝效力，追求荣耀。",
+        "original_text": "为荣耀",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -74,7 +74,7 @@
     "zh:daxing_lb_choice_03": {
         "id": "daxing_lb_choice_03",
         "character": "liubei",
-        "original_text": "五万叛军？我们三人足以对付！",
+        "original_text": "我们能打",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -569,7 +569,7 @@
     "zh:inn_lb_03": {
         "id": "inn_lb_03",
         "character": "liubei",
-        "original_text": "高尚的心！",
+        "original_text": "义胆可嘉",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -578,7 +578,7 @@
     "zh:inn_lb_04": {
         "id": "inn_lb_04",
         "character": "liubei",
-        "original_text": "恢复汉室，给百姓带来和平。这是我们共同的使命。",
+        "original_text": "匡扶汉室",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -596,7 +596,7 @@
     "zh:inn_lb_choice_01": {
         "id": "inn_lb_choice_01",
         "character": "liubei",
-        "original_text": "加入我们。",
+        "original_text": "与我同袍",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -605,7 +605,7 @@
     "zh:inn_lb_choice_02": {
         "id": "inn_lb_choice_02",
         "character": "liubei",
-        "original_text": "我们不为荣耀而战，而是为在这乱世中受苦的百姓。",
+        "original_text": "为百姓",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -758,7 +758,7 @@
     "zh:intro_narrator_04a": {
         "id": "intro_narrator_04a",
         "character": "narrator",
-        "original_text": "在这乱世之中，涿县有三位豪杰，见天下大乱，欲起兵报国。",
+        "original_text": "在这乱世之中，巨鹿郡张氏三兄弟窥见了机会。",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1091,7 +1091,7 @@
     "zh:pro_lb_choice_01": {
         "id": "pro_lb_choice_01",
         "character": "zhangfei",
-        "original_text": "我叹百姓受苦。",
+        "original_text": "为百姓",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1100,7 +1100,7 @@
     "zh:pro_lb_choice_02": {
         "id": "pro_lb_choice_02",
         "character": "zhangfei",
-        "original_text": "我叹自己失去的地位。",
+        "original_text": "为名位",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1226,7 +1226,7 @@
     "zh:qz_lb_01": {
         "id": "qz_lb_01",
         "character": "liubei",
-        "original_text": "我去。我们不能让青州百姓受苦。",
+        "original_text": "我去",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1253,7 +1253,7 @@
     "zh:qz_lb_choice_01": {
         "id": "qz_lb_choice_01",
         "character": "liubei",
-        "original_text": "百姓呼唤援助。我们必须立即响应他们的呼唤。",
+        "original_text": "立即支援",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1307,7 +1307,7 @@
     "zh:qz_ret_lb_01": {
         "id": "qz_ret_lb_01",
         "character": "liubei",
-        "original_text": "我们很高兴能为您效力，太守。这里恢复了和平，但叛乱仍在其他地方肆虐。",
+        "original_text": "平定此地",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1316,7 +1316,7 @@
     "zh:qz_ret_lb_02": {
         "id": "qz_ret_lb_02",
         "character": "liubei",
-        "original_text": "卢植！他是我多年前的老师。我不能让他独自面对如此大军。兄弟们，我们向广宗进军！",
+        "original_text": "卢植是师",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1325,7 +1325,7 @@
     "zh:qz_ret_lb_choice_01": {
         "id": "qz_ret_lb_choice_01",
         "character": "liubei",
-        "original_text": "能为您效力是我们的荣幸。青州百姓现在可以安心了。",
+        "original_text": "不胜荣幸",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1334,7 +1334,7 @@
     "zh:qz_ret_lb_choice_02": {
         "id": "qz_ret_lb_choice_02",
         "character": "liubei",
-        "original_text": "卢植中郎将需要援助。我们不能抛弃汉朝的忠臣。",
+        "original_text": "必须援卢",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1352,7 +1352,7 @@
     "zh:qz_vic_lb_01": {
         "id": "qz_vic_lb_01",
         "character": "liubei",
-        "original_text": "我们不要耽搁。城池仍在危险中。我们必须返回城门，确保太守安全。",
+        "original_text": "回城门",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1361,7 +1361,7 @@
     "zh:qz_vic_lb_choice_01": {
         "id": "qz_vic_lb_choice_01",
         "character": "liubei",
-        "original_text": "一场漂亮的胜利，但我们必须保持警惕。城门在等待我们。",
+        "original_text": "乘胜回城",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1497,89 +1497,197 @@
         "id": "ch2_oath_dz_restrain_01",
         "character": "dongzhuo",
         "original_text": "认清自己的身份，草民。能让本官同你们说话，已是恩典。",
-        "stt_output": "人情自己的身份草民能让本官同一们说话已是n点",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:ch2_oath_dz_strike_01": {
         "id": "ch2_oath_dz_strike_01",
         "character": "dongzhuo",
         "original_text": "你们竟敢对我动兵？我定要把你们的脑袋插在枪上！",
-        "stt_output": "你们竟然对我动兵我定要把你们的脑袋插在枪上",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:ch2_oath_gy_restrain_01": {
         "id": "ch2_oath_gy_restrain_01",
         "character": "guanyu",
         "original_text": "我等走吧。天下尚有更大的火要灭。",
-        "stt_output": "我等走吧,天下上有更大的火药面",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:ch2_oath_gy_strike_after_01": {
         "id": "ch2_oath_gy_strike_after_01",
         "character": "guanyu",
         "original_text": "连江水都把他吐了回来。天罚只是暂缓。",
-        "stt_output": "連江水都把它土了回來,天法只是暫緩",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:ch2_oath_lb_restrain_01": {
         "id": "ch2_oath_lb_restrain_01",
         "character": "liubei",
         "original_text": "三弟且住！一时之怒可胜一口气，正道却要胜一世。",
-        "stt_output": "三弟且住,一時之怒可勝一口氣,正到卻要勝一事。",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:ch2_oath_lb_strike_01": {
         "id": "ch2_oath_lb_strike_01",
         "character": "liubei",
         "original_text": "既然言语无用，便以刀兵明是非。",
-        "stt_output": "既然言語無用,便已到兵名是非",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:ch2_oath_zf_restrain_01": {
         "id": "ch2_oath_zf_restrain_01",
         "character": "zhangfei",
         "original_text": "哼……我听大哥的。只是这口气，我记下了。",
-        "stt_output": "我听大哥的只是这口气我记下了",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:ch2_oath_zf_strike_01": {
         "id": "ch2_oath_zf_strike_01",
         "character": "zhangfei",
         "original_text": "哈！这才痛快！",
-        "stt_output": "哈!这才痛快",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:ch2_oath_zf_strike_after_01": {
         "id": "ch2_oath_zf_strike_after_01",
         "character": "zhangfei",
         "original_text": "哼！下回那屠夫可跑不了这么快。",
-        "stt_output": "很明下回那徒夫可跑不了这么快",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:ch2_oath_zf_strike_water_after_01": {
         "id": "ch2_oath_zf_strike_water_after_01",
         "character": "zhangfei",
         "original_text": "呸！连淹都淹不死这胆小鬼。下次俺也去亲手给他绑块石头！",
-        "stt_output": "嘿 連煙都淹不死這膽小鬼下次來也去親手給他賣快食的",
-        "wer": 2.0,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_int_blacksmith_01": {
+        "id": "daxing_int_blacksmith_01",
+        "character": "farmer",
+        "original_text": "我连夜把农具熔成枪头。全县安危，如今都系在你们先锋身上。",
+        "stt_output": "我連夜把農具融成槍頭全線安危如今都系喺你們先風身上",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:daxing_int_guard1_01": {
+        "id": "daxing_int_guard1_01",
+        "character": "soldier",
+        "original_text": "听说贼军有数万之众。我们唯有严守阵形，方有生机。",
+        "stt_output": "聽說在軍有數萬之中我們唯有言守陣行方有升機",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:daxing_int_guard2_01": {
+        "id": "daxing_int_guard2_01",
+        "character": "soldier",
+        "original_text": "他们在门上写“甲子”，妄称天命。此等谎言，自当以兵刃破之。",
+        "stt_output": "他们在门上斜 甲子 望称天命此等谎言 自当已兵认破制",
+        "wer": 4.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:daxing_int_gy_01": {
+        "id": "daxing_int_gy_01",
+        "character": "guanyu",
+        "original_text": "阵脚一乱，必生溃败。守住军纪，胜过万般锋刃。",
+        "stt_output": "圣角一乱,必生亏百,守住君己,胜过万般封任。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:daxing_int_lb_01": {
+        "id": "daxing_int_lb_01",
+        "character": "liubei",
+        "original_text": "护民安众，正是我等所誓。兄弟们，此战不为功名，只为止乱。",
+        "stt_output": "库民安众正使我等所事兄弟们此战不为公民只为指乱",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:daxing_int_merchant_01": {
+        "id": "daxing_int_merchant_01",
+        "character": "farmer",
+        "original_text": "东面道路已被流民堵了大半。若要出兵，须速行，免得粮道先断。",
+        "stt_output": "都面倒入以被溜民堵的大半若要出兵虚素形免得两道先断",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:daxing_int_soldier3_01": {
+        "id": "daxing_int_soldier3_01",
+        "character": "soldier",
+        "original_text": "涿县从未如此紧张，连集市百姓都在备矛守望。",
+        "stt_output": "拙线从未如此紧张联集识百姓都在被毛守望",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:daxing_int_soldier4_01": {
+        "id": "daxing_int_soldier4_01",
+        "character": "soldier",
+        "original_text": "程远志之后，必有更多贼将来犯。这一战必须打得干净利落。",
+        "stt_output": "成員制之後,必有更多賊江來犯這一戰必須打的乾淨利落",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:daxing_int_volunteer1_01": {
+        "id": "daxing_int_volunteer1_01",
+        "character": "volunteer",
+        "original_text": "我昨日还在田里，今日已执兵刃。此战若败，家人便无处可逃。",
+        "stt_output": "我昨日還在田裡,今日已職兵任此戰弱敗家人變無出可逃",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:daxing_int_volunteer2_01": {
+        "id": "daxing_int_volunteer2_01",
+        "character": "volunteer",
+        "original_text": "民间都说张氏兄弟能呼风唤雨。我不知真假，只知此时绝不能退。",
+        "stt_output": "明天都说张世兄弟能忽风换鱼我不知道真假只知此时绝不能退",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:daxing_int_zf_01": {
+        "id": "daxing_int_zf_01",
+        "character": "zhangfei",
+        "original_text": "哈！程远志尽管来。我这杆蛇矛，正等着拿真贼开锋。",
+        "stt_output": "哈 成远至尽管来我这干什么 正等着 拿针贼开封",
+        "wer": 4.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:daxing_int_zj_01": {
+        "id": "daxing_int_zj_01",
+        "character": "zhoujing",
+        "original_text": "贼军以黄旗惑众，趁乱煽动民心。必须尽快挫其锋芒，免得人心再乱。",
+        "stt_output": "贼君以皇席或称称乱山洞明星必须尽快撮席风忙免得人心再乱",
+        "wer": 1.0,
         "is_bad": true,
         "language": "zh"
     }

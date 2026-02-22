@@ -2,7 +2,7 @@
     "en:ch1_end_01": {
         "id": "ch1_end_01",
         "character": "narrator",
-        "original_text": "But slaying the ungrateful would Mean many deaths a year.  Dong Zhuo's fate will be unrolled in later chapters...",
+        "original_text": "But slaying the ungrateful would\nMean many deaths a year.\n\nDong Zhuo's fate will be unrolled in later chapters...",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -12,8 +12,8 @@
         "id": "ch2_oath_dz_restrain_01",
         "character": "dongzhuo",
         "original_text": "Know your place, commoners. Be grateful I even speak to you.",
-        "stt_output": "Now your place commoners, be grateful I even speak to you.",
-        "wer": 0.09090909090909091,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -21,8 +21,8 @@
         "id": "ch2_oath_dz_strike_01",
         "character": "dongzhuo",
         "original_text": "You dare raise steel against me? I'll have your heads on pikes!",
-        "stt_output": "You dare racedy against me. I'll have your heads on pikes!",
-        "wer": 0.16666666666666666,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -30,8 +30,8 @@
         "id": "ch2_oath_gy_restrain_01",
         "character": "guanyu",
         "original_text": "Let us depart. The realm has larger fires ahead.",
-        "stt_output": "Let us depart. The realm has larger fires ahead.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -39,8 +39,8 @@
         "id": "ch2_oath_gy_strike_after_01",
         "character": "guanyu",
         "original_text": "Even the river spat him back out. Heaven has postponed his punishment.",
-        "stt_output": "Even the river spat him back out. Heaven has postponed his punishment.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -48,8 +48,8 @@
         "id": "ch2_oath_lb_restrain_01",
         "character": "liubei",
         "original_text": "Brother, hold! Fury may win a breath, but righteousness must win the age.",
-        "stt_output": "Brother, hold! Curie may win a breath, but righteousness must win the age.",
-        "wer": 0.07692307692307693,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -57,8 +57,8 @@
         "id": "ch2_oath_lb_strike_01",
         "character": "liubei",
         "original_text": "If words fail, then let steel answer steel.",
-        "stt_output": "If words fail, then let's steal answer steal.",
-        "wer": 0.375,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -66,8 +66,8 @@
         "id": "ch2_oath_zf_restrain_01",
         "character": "zhangfei",
         "original_text": "Hmph... I obey, eldest brother. But I will remember this insult.",
-        "stt_output": "I... Timm! I A.O.B. Eldest Brother. But I will remember this insult.",
-        "wer": 0.2727272727272727,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -75,17 +75,17 @@
         "id": "ch2_oath_zf_strike_01",
         "character": "zhangfei",
         "original_text": "HA! At last!",
-        "stt_output": "Ha! There you at last!",
-        "wer": 0.6666666666666666,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "en"
     },
     "en:ch2_oath_zf_strike_after_01": {
         "id": "ch2_oath_zf_strike_after_01",
         "character": "zhangfei",
         "original_text": "Hmph! Next time, that butcher will not run so fast.",
-        "stt_output": "Huh, next time that butcher will not run so fast.",
-        "wer": 0.1,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -93,8 +93,8 @@
         "id": "ch2_oath_zf_strike_water_after_01",
         "character": "zhangfei",
         "original_text": "Bah! Not even drowning would keep that coward down. Next time, I'll tie a stone to him myself.",
-        "stt_output": "Ah, watch here! Not even drowning would keep that coward down. Next time, I'll tie a stone to him myself.",
-        "wer": 0.16666666666666666,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -137,7 +137,7 @@
     "en:daxing_lb_03": {
         "id": "daxing_lb_03",
         "character": "zhoujing",
-        "original_text": "Magistrate Zhou, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion.",
+        "original_text": "To Daxing District.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -146,7 +146,7 @@
     "en:daxing_lb_choice_01": {
         "id": "daxing_lb_choice_01",
         "character": "liubei",
-        "original_text": "The people cry out for justice. We cannot stand idle.",
+        "original_text": "For justice.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -155,7 +155,7 @@
     "en:daxing_lb_choice_02": {
         "id": "daxing_lb_choice_02",
         "character": "liubei",
-        "original_text": "We seek glory in service to the Han.",
+        "original_text": "For glory.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -164,7 +164,7 @@
     "en:daxing_lb_choice_03": {
         "id": "daxing_lb_choice_03",
         "character": "liubei",
-        "original_text": "Fifty thousand rebels? We three alone could handle them!",
+        "original_text": "We can handle them!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -668,7 +668,7 @@
     "en:inn_lb_04": {
         "id": "inn_lb_04",
         "character": "liubei",
-        "original_text": "To restore the Han and bring peace to the common people. That is our shared destiny.",
+        "original_text": "Restore the Han.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -695,7 +695,7 @@
     "en:inn_lb_choice_02": {
         "id": "inn_lb_choice_02",
         "character": "liubei",
-        "original_text": "We fight not for glory, but for the people who suffer under this chaos.",
+        "original_text": "For the people.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -848,7 +848,7 @@
     "en:intro_narrator_04a": {
         "id": "intro_narrator_04a",
         "character": "narrator",
-        "original_text": "In this chaos, three brothers from Julu County see their chance.",
+        "original_text": "In this chaos, the three Zhang brothers of Julu Commandery see their chance.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1181,7 +1181,7 @@
     "en:pro_lb_choice_01": {
         "id": "pro_lb_choice_01",
         "character": "zhangfei",
-        "original_text": "I sigh for the suffering people.",
+        "original_text": "For the people.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1190,7 +1190,7 @@
     "en:pro_lb_choice_02": {
         "id": "pro_lb_choice_02",
         "character": "zhangfei",
-        "original_text": "I sigh for my own lost status.",
+        "original_text": "For my status.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1316,7 +1316,7 @@
     "en:qz_lb_01": {
         "id": "qz_lb_01",
         "character": "liubei",
-        "original_text": "I will go. We cannot let the people of Qingzhou suffer.",
+        "original_text": "I will go.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1343,7 +1343,7 @@
     "en:qz_lb_choice_01": {
         "id": "qz_lb_choice_01",
         "character": "liubei",
-        "original_text": "The people cry out for aid. We must answer their call at once.",
+        "original_text": "We'll help.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1397,7 +1397,7 @@
     "en:qz_ret_lb_01": {
         "id": "qz_ret_lb_01",
         "character": "liubei",
-        "original_text": "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere.",
+        "original_text": "Peace restored.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1406,7 +1406,7 @@
     "en:qz_ret_lb_02": {
         "id": "qz_ret_lb_02",
         "character": "liubei",
-        "original_text": "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!",
+        "original_text": "My teacher.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1415,7 +1415,7 @@
     "en:qz_ret_lb_choice_01": {
         "id": "qz_ret_lb_choice_01",
         "character": "liubei",
-        "original_text": "It was an honor to serve. The people of Qingzhou can rest easy now.",
+        "original_text": "An honor.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1424,7 +1424,7 @@
     "en:qz_ret_lb_choice_02": {
         "id": "qz_ret_lb_choice_02",
         "character": "liubei",
-        "original_text": "Commander Lu Zhi needs aid. We cannot abandon a loyal servant of the Han.",
+        "original_text": "We must help.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1442,7 +1442,7 @@
     "en:qz_vic_lb_01": {
         "id": "qz_vic_lb_01",
         "character": "liubei",
-        "original_text": "Let us not tarry. The city is still in peril. We must return to the gates and ensure the Imperial Protector is safe.",
+        "original_text": "To the gates.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1451,7 +1451,7 @@
     "en:qz_vic_lb_choice_01": {
         "id": "qz_vic_lb_choice_01",
         "character": "liubei",
-        "original_text": "A fine victory, but we must remain vigilant. The city gates await us.",
+        "original_text": "Victory.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -1580,6 +1580,114 @@
         "original_text": "Bah! Those rascals got a lucky hit in! Next time, they won't be so fortunate!",
         "stt_output": "",
         "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:daxing_int_blacksmith_01": {
+        "id": "daxing_int_blacksmith_01",
+        "character": "farmer",
+        "original_text": "I reforged farm iron into spearheads all night. The county's fate now hangs on your vanguard.",
+        "stt_output": "I reforged farm iron into spearheads all night. The county's fate now hangs on your vanguard.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:daxing_int_guard1_01": {
+        "id": "daxing_int_guard1_01",
+        "character": "soldier",
+        "original_text": "Word is the main rebel host numbers in the tens of thousands. Staying in formation is our only chance.",
+        "stt_output": "Word is the main herbal host numbers in the tens of thousands. Staying in formation is our only chance.",
+        "wer": 0.05263157894736842,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:daxing_int_guard2_01": {
+        "id": "daxing_int_guard2_01",
+        "character": "soldier",
+        "original_text": "They paint \"Jiazi\" on their gates and call it Heaven's will. Steel will answer that lie.",
+        "stt_output": "a paint jazzy on their gates and call it heaven's will. Steel will answer that lie.",
+        "wer": 0.125,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:daxing_int_gy_01": {
+        "id": "daxing_int_gy_01",
+        "character": "guanyu",
+        "original_text": "When the line wavers, hold your ground. Discipline cuts deeper than any blade.",
+        "stt_output": "When the line wavers, hold your ground, discipline cuts deeper than any blade.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:daxing_int_lb_01": {
+        "id": "daxing_int_lb_01",
+        "character": "liubei",
+        "original_text": "To shield the people is our vow. Brothers, we fight not for fame, but to end this terror.",
+        "stt_output": "to shield the people is our vow. Brothers, we fight not for fame, but to end this terror.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:daxing_int_merchant_01": {
+        "id": "daxing_int_merchant_01",
+        "character": "farmer",
+        "original_text": "Roads to the east are half-blocked by refugees. If you march, march fast before supply lines choke.",
+        "stt_output": "Roads to the east are half blocked by refugees if you march, march fast before supply lines choke.",
+        "wer": 0.11764705882352941,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:daxing_int_soldier3_01": {
+        "id": "daxing_int_soldier3_01",
+        "character": "soldier",
+        "original_text": "I have never seen Zhuo this tense. Even the market folk are carrying spears now.",
+        "stt_output": "I have never seen Shu wo this tense. Even the market folk are carrying spears now.",
+        "wer": 0.13333333333333333,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:daxing_int_soldier4_01": {
+        "id": "daxing_int_soldier4_01",
+        "character": "soldier",
+        "original_text": "After Cheng Yuanzhi, more rebel captains will come. We have to win this first clash cleanly.",
+        "stt_output": "After Chen Yuan-C, more rebel captains will come. We have to win this first clash cleanly.",
+        "wer": 0.125,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:daxing_int_volunteer1_01": {
+        "id": "daxing_int_volunteer1_01",
+        "character": "volunteer",
+        "original_text": "I was a field hand yesterday. Today I carry a blade. If we fail, our families have nowhere to run.",
+        "stt_output": "I was a field hand yesterday. Today, I carry a blade. If we fail, our families have nowhere to run.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:daxing_int_volunteer2_01": {
+        "id": "daxing_int_volunteer2_01",
+        "character": "volunteer",
+        "original_text": "People say the Zhang brothers can call wind and rain. I do not know about that—but I know we cannot yield.",
+        "stt_output": "People say the Zhang brothers can call wind and ray. I do not know about that, but I know we cannot yield.",
+        "wer": 0.14285714285714285,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:daxing_int_zf_01": {
+        "id": "daxing_int_zf_01",
+        "character": "zhangfei",
+        "original_text": "Ha! Let Cheng Yuanzhi come. I have been waiting to test this spear on real rebels.",
+        "stt_output": "Ha! Ha! Let Chang Yuan Zikun, I have been waiting to test the spear on real rebels.",
+        "wer": 0.3125,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:daxing_int_zj_01": {
+        "id": "daxing_int_zj_01",
+        "character": "zhoujing",
+        "original_text": "The rebels rally under yellow banners and false promises. We must break their momentum before fear spreads.",
+        "stt_output": "The rebels rally under yellow banners and false promises. We must break their momentum before fear spreads.",
+        "wer": 0.0,
         "is_bad": false,
         "language": "en"
     }
