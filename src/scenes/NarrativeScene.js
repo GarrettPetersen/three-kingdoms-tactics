@@ -2,7 +2,7 @@ import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 import { ANIMATIONS } from '../core/Constants.js';
 import { NARRATIVE_SCRIPTS } from '../data/NarrativeScripts.js';
-import { getLocalizedText, getUIScale } from '../core/Language.js';
+import { getCurrentLanguage, getLocalizedText } from '../core/Language.js';
 import { UI_TEXT } from '../data/Translations.js';
 
 export class NarrativeScene extends BaseScene {
@@ -130,7 +130,10 @@ export class NarrativeScene extends BaseScene {
         }
         
         this.scriptId = state.scriptId;
-        if (this.scriptId && NARRATIVE_SCRIPTS[this.scriptId]) {
+        if (state.script && Array.isArray(state.script) && state.script.length > 0) {
+            // Prefer exact runtime snapshot when available.
+            this.script = this.cloneScriptSteps(state.script);
+        } else if (this.scriptId && NARRATIVE_SCRIPTS[this.scriptId]) {
             // Restore from scriptId
             this.script = this.cloneScriptSteps(NARRATIVE_SCRIPTS[this.scriptId]);
         } else if (this.scriptId && !NARRATIVE_SCRIPTS[this.scriptId]) {
@@ -254,21 +257,19 @@ export class NarrativeScene extends BaseScene {
         this.pendingInteractiveAdvance = false;
         this.onComplete = null; // Don't restore callbacks
         
-        // Critical: If we're in interactive mode, ensure currentStep is at the interactive step
-        // This prevents accidentally being past the interactive step after restore
+        // Recovery guard: interactive flags can be stale in some saved states.
+        // Keep interactive mode only when at an interactive step or inside inserted branch steps.
         if (this.isInteractive && this.interactiveStepIndex >= 0) {
-            // If currentStep is past the interactive step, reset to interactive step
-            // This can happen if state was saved incorrectly or if inserted steps weren't cleaned up
-            if (this.currentStep > this.interactiveStepIndex) {
-                console.warn('Restoring interactive state: currentStep was past interactive step, resetting', {
-                    currentStep: this.currentStep,
-                    interactiveStepIndex: this.interactiveStepIndex
-                });
-                this.currentStep = this.interactiveStepIndex;
-                this.isWaiting = true;
-                // Clear any inserted steps tracking since we're resetting
-                this.insertedStepsCount = 0;
-                this.insertedStepsStartIndex = -1;
+            const stepAtCurrent = this.script[this.currentStep];
+            const isAtInteractiveStep = !!(stepAtCurrent && (stepAtCurrent.type === 'interactive' || stepAtCurrent.type === 'prompt'));
+            const insertedEnd = this.insertedStepsStartIndex >= 0 ? this.insertedStepsStartIndex + this.insertedStepsCount : -1;
+            const isInsideInsertedBranch = this.insertedStepsCount > 0
+                && this.currentStep >= this.insertedStepsStartIndex
+                && this.currentStep < insertedEnd;
+            if (!isAtInteractiveStep && !isInsideInsertedBranch) {
+                this.isInteractive = false;
+                this.clickableActors = {};
+                this.clickableRegions = {};
             }
         }
         
@@ -781,9 +782,10 @@ export class NarrativeScene extends BaseScene {
         let nextScene = this.getNextSceneForScriptId(this.scriptId);
         let nextParams = this.getNextParamsForScriptId(this.scriptId);
         
+        const includeRuntimeScript = !this.scriptId || this.isInteractive || this.insertedStepsCount > 0;
         const state = {
             scriptId: this.scriptId,
-            script: this.scriptId ? null : (this.script && this.script.length > 0 ? this.script : null), // Only save script if not using scriptId and it's not empty
+            script: includeRuntimeScript && this.script && this.script.length > 0 ? this.script : null,
             currentStep: this.currentStep,
             subStep: this.subStep,
             actors: this.actors,
@@ -1279,19 +1281,22 @@ export class NarrativeScene extends BaseScene {
     renderChoice(step) {
         const { ctx, canvas } = this.manager;
         const options = step.options || [];
-        const uiScale = getUIScale();
-        const padding = Math.round(10 * uiScale);
-        const lineSpacing = Math.round(12 * uiScale);
-        const optionSpacing = Math.round(8 * uiScale);
-        const panelWidth = Math.round(200 * uiScale);
+        const currentLang = getCurrentLanguage();
+        const padding = 10;
+        const lineSpacing = currentLang === 'zh' ? 14 : 12;
+        const optionSpacing = 6;
+        const panelWidth = Math.max(220, Math.min(360, Math.floor(canvas.width * 0.84)));
         
         // Pre-calculate wrapped lines and total height
         const wrappedOptions = options.map(opt => {
             // ALWAYS use buttonText for display in the choice box (it's the abbreviated version)
             // Only fall back to text if buttonText is not provided
+            const hasLocalizedButtonObject = !!(opt.buttonText && typeof opt.buttonText === 'object');
             const buttonText = (opt.buttonText !== undefined && opt.buttonText !== null) ? getLocalizedText(opt.buttonText) : null;
             const text = getLocalizedText(opt.text);
-            const displayText = buttonText || text;
+            const displayText = hasLocalizedButtonObject
+                ? (buttonText || text)
+                : (currentLang === 'en' ? (buttonText || text) : (text || buttonText));
             // Use wrapText which handles Chinese properly
             const lines = this.wrapText(ctx, displayText, panelWidth - 20, '8px Dogica');
             return lines;
@@ -1302,7 +1307,7 @@ export class NarrativeScene extends BaseScene {
             totalContentHeight += lines.length * lineSpacing + optionSpacing;
         });
         
-        const panelHeight = totalContentHeight + padding * 2;
+        const panelHeight = Math.min(totalContentHeight + padding * 2, canvas.height - 24);
         const px = Math.floor((canvas.width - panelWidth) / 2);
         const py = Math.floor((canvas.height - panelHeight) / 2);
 

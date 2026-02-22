@@ -6402,7 +6402,15 @@ export class TacticsScene extends BaseScene {
         
         const options = isNarrativeChoice
             ? choiceState.options.map((opt, i) => {
-                const displayText = getLocalizedText(opt.buttonText || opt.text || { en: `Choice ${i + 1}`, zh: `选项 ${i + 1}` });
+                const lang = LANGUAGE.current || 'en';
+                const hasLocalizedButtonObject = !!(opt.buttonText && typeof opt.buttonText === 'object');
+                const buttonText = getLocalizedText(opt.buttonText || '');
+                const fullText = getLocalizedText(opt.text || '');
+                const displayText = hasLocalizedButtonObject
+                    ? (buttonText || fullText || getLocalizedText({ en: `Choice ${i + 1}`, zh: `选项 ${i + 1}` }))
+                    : (lang === 'en'
+                        ? (buttonText || fullText || getLocalizedText({ en: `Choice ${i + 1}`, zh: `选项 ${i + 1}` }))
+                        : (fullText || buttonText || getLocalizedText({ en: `Choice ${i + 1}`, zh: `选项 ${i + 1}` })));
                 return {
                     lines: this.wrapText(ctx, displayText, 94, '8px Silkscreen').slice(0, 2),
                     color: '#ffd700',
