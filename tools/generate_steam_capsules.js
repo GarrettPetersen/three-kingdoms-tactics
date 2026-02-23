@@ -58,6 +58,7 @@ const LIBRARY_SIZES = [
 ];
 
 const LIBRARY_LOGO_SIZE = { width: 1280, height: 720 }; // Aspect ratio maintained
+const SHORTCUT_ICON_SIZE = { width: 256, height: 256, name: 'shortcut_icon' };
 
 /**
  * Process title image to add red color and black outline (matching TitleScene.js)
@@ -181,6 +182,8 @@ function drawHorse(ctx, canvas, horseImg, panX, scale, sizeName) {
         horseYOffset = 5 * scale; // Less offset for vertical to reduce gap
     } else if (sizeName === 'library_capsule') {
         horseYOffset = 5 * scale; // Less offset for library capsule to reduce gap
+    } else if (sizeName === 'shortcut_icon') {
+        horseYOffset = 4 * scale; // Keep horse reaching the top edge on 256x256
     }
     
     // Extend top row of pixels upward (add extra height at top)
@@ -190,6 +193,8 @@ function drawHorse(ctx, canvas, horseImg, panX, scale, sizeName) {
         baseExtraHeight = 10; // More extension for vertical
     } else if (sizeName === 'library_capsule') {
         baseExtraHeight = 10; // More extension for library capsule
+    } else if (sizeName === 'shortcut_icon') {
+        baseExtraHeight = 10; // Match tighter top extension used on tall compositions
     }
     const extraHeight = Math.max(1, Math.ceil(baseExtraHeight * scale)); // Extend (scaled), minimum 1px
     // Position horse so extension goes all the way up (no gap)
@@ -249,6 +254,8 @@ function drawGuandao(ctx, canvas, guandaoImg, horseRightEdge, horseImg, scale, s
         baseSpacing = -165; // Slightly closer for small
     } else if (sizeName === 'vertical') {
         baseSpacing = -155; // Slightly more for vertical
+    } else if (sizeName === 'shortcut_icon') {
+        baseSpacing = -170; // Keep left-side composition tight on square icon
     }
     
     // Scale the spacing to match everything else
@@ -631,6 +638,32 @@ async function generateCapsules() {
     const logoZhFile = path.join(outputDir, 'library_logo_schinese.png');
     fs.writeFileSync(logoZhFile, logoZhBuffer);
     console.log(`  ✓ library_logo_schinese.png (${logoWidth}x${logoHeight})`);
+
+    // Shortcut icon (256x256) - same composition approach as capsules
+    console.log('\nGenerating shortcut icon...');
+    const iconScaleX = SHORTCUT_ICON_SIZE.width / ORIGINAL_WIDTH;
+    const iconScaleY = SHORTCUT_ICON_SIZE.height / ORIGINAL_HEIGHT;
+    const iconScale = Math.max(iconScaleX, iconScaleY);
+
+    const iconBaseCanvas = createCanvas(ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
+    const iconBaseCtx = iconBaseCanvas.getContext('2d');
+    Object.assign(iconBaseCtx, pixelArtConfig);
+    drawLayers(iconBaseCtx, iconBaseCanvas, layerImages, PAN_X, true, -10);
+    const iconBaseBuffer = canvasToBuffer(iconBaseCanvas);
+    const iconScaledBaseBuffer = await scaleImage(iconBaseBuffer, SHORTCUT_ICON_SIZE.width, SHORTCUT_ICON_SIZE.height);
+    const iconScaledBase = await loadImage(iconScaledBaseBuffer);
+
+    // Single shortcut icon (language-agnostic, no title text).
+    const iconCanvas = createCanvas(SHORTCUT_ICON_SIZE.width, SHORTCUT_ICON_SIZE.height);
+    const iconCtx = iconCanvas.getContext('2d');
+    Object.assign(iconCtx, pixelArtConfig);
+    iconCtx.drawImage(iconScaledBase, 0, 0);
+    const iconHorseRight = drawHorse(iconCtx, iconCanvas, horseImg, PAN_X, iconScale, SHORTCUT_ICON_SIZE.name);
+    drawGuandao(iconCtx, iconCanvas, guandaoImg, iconHorseRight, horseImg, iconScale, SHORTCUT_ICON_SIZE.name);
+
+    const iconDefaultFile = path.join(outputDir, 'shortcut_icon_256.png');
+    fs.writeFileSync(iconDefaultFile, iconCanvas.toBuffer('image/png'));
+    console.log(`  ✓ shortcut_icon_256.png (${SHORTCUT_ICON_SIZE.width}x${SHORTCUT_ICON_SIZE.height})`);
     
     console.log('\n✅ All capsule and library art generated in steam_capsules/');
 }
