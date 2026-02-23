@@ -136,9 +136,12 @@ def extract_voice_lines_from_file(filepath):
             # Use non-greedy match (.+?) to capture everything between quotes
             # Escape braces in f-string: {{ and }}
             pattern_no_quotes = rf'{lang_key}\s*:\s*"(.+?)"(?=\s*[,{{}}])'
+            pattern_no_quotes_single_value = rf"{lang_key}\s*:\s*'(.+?)'(?=\s*[,{{}}])"
             pattern_double = rf'"{lang_key}"\s*:\s*"(.+?)"(?=\s*[,{{}}])'
             pattern_single = rf"'{lang_key}'\s*:\s*'(.+?)'(?=\s*[,{{}}])"
             text_obj_match = re.search(pattern_no_quotes, text_region, re.DOTALL)
+            if not text_obj_match:
+                text_obj_match = re.search(pattern_no_quotes_single_value, text_region, re.DOTALL)
             if not text_obj_match:
                 text_obj_match = re.search(pattern_double, text_region, re.DOTALL)
             if not text_obj_match:
@@ -154,8 +157,11 @@ def extract_voice_lines_from_file(filepath):
                 # Fallback: if requested language not found, try 'en'
                 if lang_to_extract != 'en':
                     pattern_en_no_quotes = r'en\s*:\s*"(.+?)"(?=\s*[,}])'
+                    pattern_en_no_quotes_single_value = r"en\s*:\s*'(.+?)'(?=\s*[,}])"
                     pattern_en_double = r'"en"\s*:\s*"(.+?)"(?=\s*[,}])'
                     text_obj_match = re.search(pattern_en_no_quotes, text_region, re.DOTALL)
+                    if not text_obj_match:
+                        text_obj_match = re.search(pattern_en_no_quotes_single_value, text_region, re.DOTALL)
                     if not text_obj_match:
                         text_obj_match = re.search(pattern_en_double, text_region, re.DOTALL)
                     if text_obj_match:

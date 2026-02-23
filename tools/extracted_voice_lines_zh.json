@@ -1,5 +1,77 @@
 [
   {
+    "id": "cc_dq_01",
+    "char": "caocao",
+    "text": "朝廷迟疑不决，黄巾蜂起为乱。若要止此祸，终须有人先行。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_02",
+    "char": "caocao",
+    "text": "这些流民，必须尽快处置。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_03",
+    "char": "caocao",
+    "text": "正合我意，今得以正兵讨贼。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_04",
+    "char": "caocao",
+    "text": "即刻缮写征发文书，遍告诸户；再遣快骑，传令四乡。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_05",
+    "char": "caocao",
+    "text": "另发急信与我从弟曹仁，命其尽集骑士速来会合。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_06",
+    "char": "caocao",
+    "text": "再令我家丁披甲执兵，并从我家马厩点出战马配骑，即刻备战。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_att_01",
+    "char": "soldier",
+    "text": "谨遵县令之命。即刻开仓施粥，并维持秩序。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_att_02",
+    "char": "soldier",
+    "text": "明白，县令。末将即刻去闭城门。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_att_03",
+    "char": "soldier",
+    "text": "谨遵县令之命。属下这就分头施行。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_choice_01",
+    "char": "soldier",
+    "text": "开城中仓廪，于东市设粥棚，按户登记，依次赈济。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_choice_02",
+    "char": "soldier",
+    "text": "即刻闭门，后来流民引往邻县，勿使城中先乱。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_msg_01",
+    "char": "soldier",
+    "text": "洛阳急报！奉朝廷诏令：东郡当募骑兵五千，自各乡里征发丁壮与战马，以讨黄巾。今擢曹操县令为骑都尉，总领东郡所募此部骑军出战。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch1_end_01",
     "char": "narrator",
     "text": "若尽诛忘恩之徒，\n一年不知要杀多少人。\n\n董卓的命运，将在后续章节展开……",
