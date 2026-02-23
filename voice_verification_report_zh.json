@@ -1902,36 +1902,54 @@
         "id": "cc_dq_att_03",
         "character": "zhoujing",
         "original_text": "谨遵县令之命。属下这就分头施行。",
-        "stt_output": "紧紧线令之命 属下这就分头施行",
-        "wer": 2.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:cc_dq_choice_01": {
         "id": "cc_dq_choice_01",
         "character": "caocao",
         "original_text": "开城中仓廪，于东市设粥棚，按户登记，依次赈济。",
-        "stt_output": "開城中艙林,於東市射洲棚,暗戶登記,一次證集。",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:cc_dq_choice_02": {
         "id": "cc_dq_choice_02",
         "character": "caocao",
         "original_text": "即刻闭门，后来流民引往邻县，勿使城中先乱。",
-        "stt_output": "即刻閉門後來留名銀往零線誤使城中先亂",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:cc_dq_msg_01": {
         "id": "cc_dq_msg_01",
         "character": "soldier",
-        "original_text": "洛阳急报！奉朝廷诏令：东郡当募骑兵五千，自各乡里征发丁壮与战马，以讨黄巾。今擢曹操县令为骑都尉，总领东郡所募此部骑军出战。",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false,
+        "original_text": "洛阳急报！奉朝廷诏令：东郡当募骑兵五千。",
+        "stt_output": "洛陽吉報 鳳潮廷照令 東俊當幕 習兵5000",
+        "wer": 4.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:cc_dq_msg_02": {
+        "id": "cc_dq_msg_02",
+        "character": "soldier",
+        "original_text": "自各乡里征发丁壮与战马，进讨黄巾逆军。",
+        "stt_output": "四個項目正發定狀於戰馬 進討黃金逆軍",
+        "wer": 2.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:cc_dq_msg_03": {
+        "id": "cc_dq_msg_03",
+        "character": "soldier",
+        "original_text": "今擢曹操县令为骑都尉，总领东郡所募此部骑军。",
+        "stt_output": "金卓曹操线另外其都位总领冬军所募此不其军",
+        "wer": 1.0,
+        "is_bad": true,
         "language": "zh"
     }
 }

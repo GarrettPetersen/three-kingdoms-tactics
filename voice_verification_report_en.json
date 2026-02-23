@@ -1866,8 +1866,8 @@
         "id": "cc_dq_05",
         "character": "caocao",
         "original_text": "Send word to my cousin Cao Ren: gather every horseman he can and join me without delay.",
-        "stt_output": "",
-        "wer": 0,
+        "stt_output": "Send word to my cousin, Sourin, gather every horseman he can, and join me without delay.",
+        "wer": 0.11764705882352941,
         "is_bad": false,
         "language": "en"
     },
@@ -1902,8 +1902,8 @@
         "id": "cc_dq_att_03",
         "character": "zhoujing",
         "original_text": "As you command, Magistrate. I will see these orders carried out at once.",
-        "stt_output": "As you command, Megastrate, I will see these orders carried out at once.",
-        "wer": 0.07692307692307693,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1911,8 +1911,8 @@
         "id": "cc_dq_choice_01",
         "character": "caocao",
         "original_text": "Open the city granaries. Issue gruel at the east market and register each household in order.",
-        "stt_output": "Open the city granaries, issue gruel at the east market and register each household in order.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1920,17 +1920,35 @@
         "id": "cc_dq_choice_02",
         "character": "caocao",
         "original_text": "Close the gates at once. Redirect new arrivals to neighboring counties before panic swallows the city.",
-        "stt_output": "Close the gates at once. Redirect new arrivals to neighboring counties before panic swallows the city.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
     "en:cc_dq_msg_01": {
         "id": "cc_dq_msg_01",
         "character": "soldier",
-        "original_text": "Dispatch from Luoyang! Imperial order: Dong Commandery is to muster a cavalry force of five thousand, drafting men and horses from local households. Magistrate Cao Cao is elevated to Cavalry Commander and given overall command of this Dong Commandery cavalry force to strike the Yellow Turbans.",
-        "stt_output": "",
-        "wer": 0,
+        "original_text": "Dispatch from Luoyang! Imperial order: Dong Commandery is to muster a cavalry force of five thousand.",
+        "stt_output": "This patch from Luoyang, Imperial Order, Don't Commandery, is to muster a cavalry force of 5,000.",
+        "wer": 0.3125,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_dq_msg_02": {
+        "id": "cc_dq_msg_02",
+        "character": "soldier",
+        "original_text": "Draft men and horses from local households and march against the Yellow Turban rebels.",
+        "stt_output": "Draft men and horses from local households and march against the yellow turban rebels.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_dq_msg_03": {
+        "id": "cc_dq_msg_03",
+        "character": "soldier",
+        "original_text": "Magistrate Cao Cao is elevated to Cavalry Commander and placed in command of this Dong Commandery cavalry force.",
+        "stt_output": "Magistrat Zau Zau is elevated to cavalry commander and placed in command of this Don cavalry force.",
+        "wer": 0.2777777777777778,
         "is_bad": false,
         "language": "en"
     }

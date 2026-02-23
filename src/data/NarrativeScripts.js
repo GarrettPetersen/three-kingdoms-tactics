@@ -1778,8 +1778,34 @@ export const NARRATIVE_SCRIPTS = {
             bg: 'urban_street',
             fg: 'urban_street_foreground',
             text: {
-                en: 'Dispatch from Luoyang! Imperial order: Dong Commandery is to muster a cavalry force of five thousand, drafting men and horses from local households. Magistrate Cao Cao is elevated to Cavalry Commander and given overall command of this Dong Commandery cavalry force to strike the Yellow Turbans.',
-                zh: '洛阳急报！奉朝廷诏令：东郡当募骑兵五千，自各乡里征发丁壮与战马，以讨黄巾。今擢曹操县令为骑都尉，总领东郡所募此部骑军出战。'
+                en: 'Dispatch from Luoyang! Imperial order: Dong Commandery is to muster a cavalry force of five thousand.',
+                zh: '洛阳急报！奉朝廷诏令：东郡当募骑兵五千。'
+            }
+        },
+        {
+            type: 'dialogue',
+            name: 'Messenger',
+            portraitKey: 'soldier',
+            voiceId: 'cc_dq_msg_02',
+            position: 'top',
+            bg: 'urban_street',
+            fg: 'urban_street_foreground',
+            text: {
+                en: 'Draft men and horses from local households and march against the Yellow Turban rebels.',
+                zh: '自各乡里征发丁壮与战马，进讨黄巾逆军。'
+            }
+        },
+        {
+            type: 'dialogue',
+            name: 'Messenger',
+            portraitKey: 'soldier',
+            voiceId: 'cc_dq_msg_03',
+            position: 'top',
+            bg: 'urban_street',
+            fg: 'urban_street_foreground',
+            text: {
+                en: 'Magistrate Cao Cao is elevated to Cavalry Commander and placed in command of this Dong Commandery cavalry force.',
+                zh: '今擢曹操县令为骑都尉，总领东郡所募此部骑军。'
             }
         },
         {
@@ -1837,7 +1863,7 @@ export const NARRATIVE_SCRIPTS = {
         {
             type: 'dialogue',
             name: 'Civil Attendant',
-            portraitKey: 'zhou-jing',
+            portraitKey: 'zhoujing',
             voiceId: 'cc_dq_att_03',
             position: 'top',
             bg: 'urban_street',

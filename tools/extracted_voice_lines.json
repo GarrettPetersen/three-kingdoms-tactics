@@ -27,7 +27,8 @@
     "id": "cc_dq_05",
     "char": "caocao",
     "text": "Send word to my cousin Cao Ren: gather every horseman he can and join me without delay.",
-    "source": "NarrativeScripts.js"
+    "source": "NarrativeScripts.js",
+    "phonetic_text": "Send word to my cousin Tsao Ren: gather every horseman he can and join me without delay."
   },
   {
     "id": "cc_dq_06",
@@ -68,8 +69,21 @@
   {
     "id": "cc_dq_msg_01",
     "char": "soldier",
-    "text": "Dispatch from Luoyang! Imperial order: Dong Commandery is to muster a cavalry force of five thousand, drafting men and horses from local households. Magistrate Cao Cao is elevated to Cavalry Commander and given overall command of this Dong Commandery cavalry force to strike the Yellow Turbans.",
+    "text": "Dispatch from Luoyang! Imperial order: Dong Commandery is to muster a cavalry force of five thousand.",
     "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_msg_02",
+    "char": "soldier",
+    "text": "Draft men and horses from local households and march against the Yellow Turban rebels.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_msg_03",
+    "char": "soldier",
+    "text": "Magistrate Cao Cao is elevated to Cavalry Commander and placed in command of this Dong Commandery cavalry force.",
+    "source": "NarrativeScripts.js",
+    "phonetic_text": "Magistrate Tsao Tsao is elevated to Cavalry Commander and placed in command of this Dong Commandery cavalry force."
   },
   {
     "id": "ch1_end_01",

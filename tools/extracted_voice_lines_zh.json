@@ -68,7 +68,19 @@
   {
     "id": "cc_dq_msg_01",
     "char": "soldier",
-    "text": "洛阳急报！奉朝廷诏令：东郡当募骑兵五千，自各乡里征发丁壮与战马，以讨黄巾。今擢曹操县令为骑都尉，总领东郡所募此部骑军出战。",
+    "text": "洛阳急报！奉朝廷诏令：东郡当募骑兵五千。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_msg_02",
+    "char": "soldier",
+    "text": "自各乡里征发丁壮与战马，进讨黄巾逆军。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_msg_03",
+    "char": "soldier",
+    "text": "今擢曹操县令为骑都尉，总领东郡所募此部骑军。",
     "source": "NarrativeScripts.js"
   },
   {
