@@ -1634,6 +1634,38 @@ export const NARRATIVE_SCRIPTS = {
             },
             duration: 3000
         }
+    ],
+    'caocao_dunqiu_intro': [
+        {
+            type: 'title',
+            text: {
+                en: 'DUNQIU',
+                zh: '顿丘'
+            },
+            subtext: {
+                en: '184 AD',
+                zh: '中平元年（184年）'
+            },
+            duration: 2800
+        },
+        { bg: 'urban_street', fg: 'urban_street_foreground', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'addActor', id: 'refugee_m_01', imgKey: 'farmer', x: -28, y: 136, action: 'walk', speed: 0.22, loopXStart: -36, loopXEnd: 292 },
+        { type: 'command', action: 'addActor', id: 'refugee_f_01', imgKey: 'farmer2', x: -92, y: 140, action: 'walk', speed: 0.19, loopXStart: -100, loopXEnd: 296 },
+        { type: 'command', action: 'addActor', id: 'refugee_m_02', imgKey: 'farmer', x: -160, y: 144, action: 'walk', speed: 0.17, loopXStart: -170, loopXEnd: 302 },
+        { type: 'command', action: 'addActor', id: 'refugee_f_02', imgKey: 'farmer2', x: -224, y: 138, action: 'walk', speed: 0.2, loopXStart: -232, loopXEnd: 300 },
+        { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: -26, y: 194, action: 'walk', speed: 0.72 },
+        { type: 'command', action: 'addActor', id: 'caocao_attendant', imgKey: 'soldier', x: -58, y: 200, action: 'walk', speed: 0.66 },
+        { type: 'command', action: 'move', id: 'caocao', x: 108, y: 194, wait: false },
+        { type: 'command', action: 'move', id: 'caocao_attendant', x: 76, y: 200, wait: true },
+        {
+            type: 'narrator',
+            bg: 'urban_street',
+            fg: 'urban_street_foreground',
+            text: {
+                en: 'Refugees stream through Dunqiu. Amid the hunger and fear, a cavalry commander prepares to ride for Yingchuan.',
+                zh: '流民穿过顿丘街巷。饥馑与恐惧之中，一名骑都尉正整军待发，驰援颍川。'
+            }
+        }
     ]
     // Note: Guangzong scene is now handled inline in MapScene.startGuangzongBriefing()
     // following the novel where Lu Zhi was arrested and Liu Bei encounters Dong Zhuo

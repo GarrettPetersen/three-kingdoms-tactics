@@ -200,7 +200,7 @@ export class MapScene extends BaseScene {
             if (params && params.campaignId) {
                 this.currentCampaignId = params.campaignId;
                 gs.setCurrentCampaign(params.campaignId);
-                if (params.campaignId === 'liubei' && gs.getStoryCursor().routeId !== 'liubei') {
+                if (params.campaignId === 'liubei' && !gs.getStoryCursor('liubei').nodeId) {
                     gs.startStoryRoute('liubei', 'prologue_complete');
                 }
                 // Don't set lastScene here - SceneManager will handle it

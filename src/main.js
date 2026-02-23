@@ -467,6 +467,8 @@ async function init() {
                 inn_evening: 'assets/settings/village_inn_evening.png',
                 peach_garden: 'assets/settings/peach_garden.png',
                 army_camp: 'assets/settings/army_camp.png',
+                urban_street: 'assets/settings/urban_street.png',
+                urban_street_foreground: 'assets/settings/urban_street_foreground.png',
                 dirt_road_city_in_distance: 'assets/settings/dirt_road_city_in_distance.png',
                 china_map: 'assets/settings/china_map.png',
                 camp_tent: 'assets/terrain/buildings/yellow_tent.png',
@@ -474,6 +476,7 @@ async function init() {
                 city: 'assets/terrain/buildings/red_house.png',
                 lvbu: 'assets/characters/001_lvbu.png',
                 dongzhuo: 'assets/characters/002_dongzhuo.png',
+                caocao: 'assets/characters/031_caocao.png',
                 liubei: 'assets/characters/048_liubei.png',
                 guanyu: 'assets/characters/049_guanyu.png',
                 zhangfei: 'assets/characters/050_zhangfei.png',
@@ -558,7 +561,8 @@ async function init() {
                 oath_intro: 'assets/music/oath_intro.ogg',
                 oath_loop: 'assets/music/oath_loop.ogg',
                 forest_intro: 'assets/music/forest_intro.ogg',
-                forest_loop: 'assets/music/forest_loop.ogg'
+                forest_loop: 'assets/music/forest_loop.ogg',
+                grim_refugees_loop: 'assets/music/grim_refugees_loop.ogg'
             })
         ]);
 
@@ -746,6 +750,29 @@ async function init() {
             tctx.putImageData(imageData, 0, 0);
             tentCanvas.silhouette = baseTent.silhouette;
             assets.images['tent_white'] = tentCanvas;
+        }
+
+        // Urban foreground art includes a black matte in the center; convert near-black to transparent
+        // so actors/background remain visible behind the foreground pillars.
+        const urbanFg = assets.getImage('urban_street_foreground');
+        if (urbanFg) {
+            const fgCanvas = document.createElement('canvas');
+            fgCanvas.width = urbanFg.width;
+            fgCanvas.height = urbanFg.height;
+            const fgCtx = fgCanvas.getContext('2d', { willReadFrequently: true });
+            fgCtx.imageSmoothingEnabled = false;
+            fgCtx.drawImage(urbanFg, 0, 0);
+            const fgData = fgCtx.getImageData(0, 0, fgCanvas.width, fgCanvas.height);
+            const data = fgData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                if (data[i + 3] < 10) continue;
+                if (data[i] <= 12 && data[i + 1] <= 12 && data[i + 2] <= 12) {
+                    data[i + 3] = 0;
+                }
+            }
+            fgCtx.putImageData(fgData, 0, 0);
+            fgCanvas.silhouette = assets.analyzeSilhouette(fgCanvas);
+            assets.images['urban_street_foreground'] = fgCanvas;
         }
 
         sceneManager.switchTo('title');

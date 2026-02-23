@@ -108,6 +108,14 @@ export const UI_TEXT = {
         en: 'THE OATH - STORY COMPLETE',
         zh: '桃园结义 - 故事完成'
     },
+    'ASCENT OF THE CAVALRY COMMANDER': {
+        en: 'ASCENT OF THE CAVALRY COMMANDER',
+        zh: '骑都尉之崛起'
+    },
+    'CAVALRY COMMANDER ASCENT - STORY COMPLETE': {
+        en: 'CAVALRY COMMANDER ASCENT - STORY COMPLETE',
+        zh: '骑都尉之崛起 - 故事完成'
+    },
     'CH2 OATH ARC': {
         en: 'CHAPTER 2: BROTHERS AGAINST THE TIDE',
         zh: '第二章：兄弟逆流而行'
@@ -163,6 +171,10 @@ export const UI_TEXT = {
     'campaign_ch2_oath_complete': {
         en: 'You have begun the Oath Brothers route of Chapter 2 and faced the first choice of honor and fury.',
         zh: '你已开启第二章义兄弟线，并面对第一道在义与怒之间的抉择。'
+    },
+    'campaign_caocao_description': {
+        en: 'When the realm nears chaos and Yellow Turbans rise like a tide, a cavalry commander rides from Dunqiu. In the smoke of war, his name begins to spread.',
+        zh: '汉室将倾，黄巾蜂起。顿丘一名骑都尉应召出征，于兵火之间，渐露其名。'
     },
     'Zhuo County': {
         en: 'Zhuo County',
@@ -567,6 +579,7 @@ export const CHARACTER_NAMES = {
     'Zhang Jue': { en: 'Zhang Jue', zh: '张角' },
     'Zhang Bao': { en: 'Zhang Bao', zh: '张宝' },
     'Zhang Liang': { en: 'Zhang Liang', zh: '张梁' },
+    'Cao Cao': { en: 'Cao Cao', zh: '曹操' },
     'Cheng Yuanzhi': { en: 'Cheng Yuanzhi', zh: '程远志' },
     'Deng Mao': { en: 'Deng Mao', zh: '邓茂' },
     'Huangfu Song': { en: 'Huangfu Song', zh: '皇甫嵩' },

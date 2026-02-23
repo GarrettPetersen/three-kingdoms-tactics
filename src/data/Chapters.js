@@ -2,6 +2,16 @@ export const CHAPTERS = {
     1: {
         id: 1,
         title: "The Oath in the Peach Garden",
+        routes: {
+            liubei: {
+                id: 'liubei',
+                title: 'The Oath in the Peach Garden'
+            },
+            caocao: {
+                id: 'caocao',
+                title: 'Ascent of the Cavalry Commander'
+            }
+        },
         scenes: [
             { id: 'prologue', type: 'narrative', scriptId: 'prologue' },
             { id: 'magistrate_briefing', type: 'narrative', scriptId: 'magistrate_briefing' },

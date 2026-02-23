@@ -16,6 +16,15 @@ export const STORY_ROUTES = {
             chapter1_complete: { next: null }
         }
     },
+    caocao: {
+        id: 'caocao',
+        startNode: 'caocao_intro',
+        terminalNode: 'caocao_intro_complete',
+        nodes: {
+            caocao_intro: { next: 'caocao_intro_complete' },
+            caocao_intro_complete: { next: null }
+        }
+    },
     chapter2_oath: {
         id: 'chapter2_oath',
         startNode: 'chapter2_oath_dongzhuo_choice',

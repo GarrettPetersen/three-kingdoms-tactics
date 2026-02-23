@@ -1,4 +1,5 @@
 import { STORY_ROUTES, buildParentMap } from '../data/StoryGraph.js';
+import { CHAPTERS } from '../data/Chapters.js';
 
 export class GameState {
     constructor() {
@@ -8,7 +9,7 @@ export class GameState {
 
     getDefaults() {
         return {
-            version: 2,
+            version: 3,
             progress: {
                 unlockedYears: ['184'],
                 milestones: [] // e.g. 'prologue_complete', 'daxing_won'
@@ -20,13 +21,16 @@ export class GameState {
                 story: {
                     activeRoute: null,
                     cursorNode: null,
-                    choices: {}
+                    choices: {},
+                    routes: {},
+                    globalChoices: {}
                 },
                 sceneStates: {
                     map: null,
                     tactics: null,
                     narrative: null
-                }
+                },
+                sceneStatesByRoute: {} // { routeId: { map, tactics, narrative } }
             },
             // Campaign-specific persistent state
             campaignState: {}, // { 'liubei': { partyX, partyY, unitXP, unitClasses } }
@@ -82,6 +86,17 @@ export class GameState {
     setCurrentCampaign(campaignId) {
         if (!this.data.session) this.data.session = {};
         this.data.session.currentCampaign = campaignId;
+        if (campaignId && STORY_ROUTES[campaignId]) {
+            const story = this.getStoryState(campaignId);
+            this.data.session.story = {
+                ...(this.data.session.story || {}),
+                activeRoute: campaignId,
+                cursorNode: story.cursorNode ?? STORY_ROUTES[campaignId].startNode,
+                choices: { ...(story.choices || {}) },
+                routes: { ...(story.routes || {}) },
+                globalChoices: { ...(story.globalChoices || {}) }
+            };
+        }
         this.save();
     }
 
@@ -95,22 +110,60 @@ export class GameState {
         this.save();
     }
 
-    getStoryState() {
+    getStoryState(routeId = null) {
         const storyDefaults = this.getDefaults().session.story;
-        const story = this.data.session?.story || {};
-        return {
+        const rawStory = this.data.session?.story || {};
+        const merged = {
             ...storyDefaults,
-            ...story,
-            choices: { ...(storyDefaults.choices || {}), ...(story.choices || {}) }
+            ...rawStory,
+            routes: { ...(rawStory.routes || {}) },
+            globalChoices: {
+                ...(storyDefaults.globalChoices || {}),
+                ...(rawStory.globalChoices || {}),
+                ...(rawStory.choices || {})
+            }
+        };
+
+        const activeRoute = routeId || merged.activeRoute || this.getCurrentCampaign() || null;
+        if (activeRoute && !merged.routes[activeRoute]) {
+            merged.routes[activeRoute] = {
+                cursorNode: null,
+                choices: {}
+            };
+        }
+        const activeRouteState = activeRoute ? (merged.routes[activeRoute] || { cursorNode: null, choices: {} }) : { cursorNode: null, choices: {} };
+        return {
+            ...merged,
+            activeRoute,
+            cursorNode: activeRouteState.cursorNode ?? null,
+            choices: { ...(activeRouteState.choices || {}) }
         };
     }
 
     setStoryState(storyState) {
         if (!this.data.session) this.data.session = {};
-        this.data.session.story = {
-            ...this.getDefaults().session.story,
+        const defaults = this.getDefaults().session.story;
+        const merged = {
+            ...defaults,
             ...(storyState || {}),
-            choices: { ...(storyState?.choices || {}) }
+            routes: { ...((storyState && storyState.routes) || {}) },
+            globalChoices: { ...((storyState && storyState.globalChoices) || {}) }
+        };
+        const activeRoute = merged.activeRoute || null;
+        if (activeRoute) {
+            const bucket = merged.routes[activeRoute] || { cursorNode: null, choices: {} };
+            if (merged.cursorNode !== undefined) bucket.cursorNode = merged.cursorNode;
+            if (merged.choices) bucket.choices = { ...(bucket.choices || {}), ...(merged.choices || {}) };
+            merged.routes[activeRoute] = bucket;
+        }
+        const activeBucket = activeRoute ? merged.routes[activeRoute] : null;
+        this.data.session.story = {
+            ...defaults,
+            activeRoute,
+            cursorNode: activeBucket?.cursorNode ?? null,
+            choices: { ...(activeBucket?.choices || {}) },
+            routes: merged.routes,
+            globalChoices: merged.globalChoices
         };
         this.save();
     }
@@ -118,9 +171,11 @@ export class GameState {
     startStoryRoute(routeId, startNode = null) {
         const route = STORY_ROUTES[routeId];
         if (!route) return;
-        const node = startNode || route.startNode;
+        const story = this.getStoryState(routeId);
+        const existingNode = story.routes?.[routeId]?.cursorNode;
+        const node = startNode || existingNode || route.startNode;
         this.setStoryState({
-            ...this.getStoryState(),
+            ...story,
             activeRoute: routeId,
             cursorNode: node
         });
@@ -131,25 +186,30 @@ export class GameState {
         const resolvedRouteId = routeId || story.activeRoute || this.getCurrentCampaign();
         const route = STORY_ROUTES[resolvedRouteId];
         if (!route || !route.nodes[nodeId]) return;
+        const routes = { ...(story.routes || {}) };
+        const bucket = routes[resolvedRouteId] || { cursorNode: null, choices: {} };
+        bucket.cursorNode = nodeId;
+        routes[resolvedRouteId] = bucket;
         this.setStoryState({
             ...story,
             activeRoute: resolvedRouteId,
+            routes,
             cursorNode: nodeId
         });
     }
 
-    getStoryCursor() {
-        const story = this.getStoryState();
+    getStoryCursor(routeId = null) {
+        const story = this.getStoryState(routeId);
         return { routeId: story.activeRoute, nodeId: story.cursorNode };
     }
 
     hasReachedStoryNode(nodeId, routeId = null) {
-        const story = this.getStoryState();
+        const story = this.getStoryState(routeId);
         const resolvedRouteId = routeId || story.activeRoute;
         if (!resolvedRouteId) return false;
         const route = STORY_ROUTES[resolvedRouteId];
         if (!route || !route.nodes[nodeId]) return false;
-        let cur = story.cursorNode;
+        let cur = story.routes?.[resolvedRouteId]?.cursorNode ?? null;
         const parents = buildParentMap(resolvedRouteId);
         while (cur) {
             if (cur === nodeId) return true;
@@ -158,30 +218,67 @@ export class GameState {
         return false;
     }
 
-    setStoryChoice(key, value) {
-        const story = this.getStoryState();
-        story.choices[key] = value;
-        this.setStoryState(story);
+    setStoryChoice(key, value, routeId = null) {
+        const story = this.getStoryState(routeId);
+        const resolvedRouteId = routeId || story.activeRoute || this.getCurrentCampaign();
+        if (!resolvedRouteId) {
+            this.setStoryState({
+                ...story,
+                globalChoices: { ...(story.globalChoices || {}), [key]: value }
+            });
+            return;
+        }
+        const routes = { ...(story.routes || {}) };
+        const bucket = routes[resolvedRouteId] || { cursorNode: null, choices: {} };
+        bucket.choices = { ...(bucket.choices || {}), [key]: value };
+        routes[resolvedRouteId] = bucket;
+        this.setStoryState({
+            ...story,
+            activeRoute: resolvedRouteId,
+            routes,
+            choices: bucket.choices,
+            globalChoices: { ...(story.globalChoices || {}), [key]: value }
+        });
     }
 
-    getStoryChoice(key, fallback = null) {
-        const story = this.getStoryState();
-        return story.choices[key] ?? fallback;
+    getStoryChoice(key, fallback = null, routeId = null) {
+        const story = this.getStoryState(routeId);
+        const resolvedRouteId = routeId || story.activeRoute || this.getCurrentCampaign();
+        const routeValue = story.routes?.[resolvedRouteId]?.choices?.[key];
+        if (routeValue !== undefined) return routeValue;
+        return story.globalChoices?.[key] ?? fallback;
     }
 
-    getSceneState(sceneName) {
+    resolveStoryRouteId(routeId = null) {
+        return routeId || this.getCurrentCampaign() || this.getStoryState().activeRoute || null;
+    }
+
+    getSceneState(sceneName, routeId = null) {
+        const resolvedRouteId = this.resolveStoryRouteId(routeId);
+        const byRoute = this.data.session?.sceneStatesByRoute?.[resolvedRouteId];
+        if (byRoute && Object.prototype.hasOwnProperty.call(byRoute, sceneName)) {
+            return byRoute[sceneName] ?? null;
+        }
         return this.data.session?.sceneStates?.[sceneName] ?? null;
     }
 
-    setSceneState(sceneName, state) {
+    setSceneState(sceneName, state, routeId = null) {
         if (!this.data.session) this.data.session = {};
         if (!this.data.session.sceneStates) this.data.session.sceneStates = {};
+        if (!this.data.session.sceneStatesByRoute) this.data.session.sceneStatesByRoute = {};
+        const resolvedRouteId = this.resolveStoryRouteId(routeId);
+        if (resolvedRouteId) {
+            if (!this.data.session.sceneStatesByRoute[resolvedRouteId]) {
+                this.data.session.sceneStatesByRoute[resolvedRouteId] = {};
+            }
+            this.data.session.sceneStatesByRoute[resolvedRouteId][sceneName] = state;
+        }
         this.data.session.sceneStates[sceneName] = state;
         this.save();
     }
 
-    clearSceneState(sceneName) {
-        this.setSceneState(sceneName, null);
+    clearSceneState(sceneName, routeId = null) {
+        this.setSceneState(sceneName, null, routeId);
     }
 
     resolveContinueTarget(options = {}) {
@@ -314,6 +411,15 @@ export class GameState {
             if (!this.data.session.story) {
                 this.data.session.story = { ...this.getDefaults().session.story };
                 changed = true;
+            } else {
+                if (!this.data.session.story.routes) {
+                    this.data.session.story.routes = {};
+                    changed = true;
+                }
+                if (!this.data.session.story.globalChoices) {
+                    this.data.session.story.globalChoices = { ...(this.data.session.story.choices || {}) };
+                    changed = true;
+                }
             }
             if (!this.data.session.sceneStates) {
                 this.data.session.sceneStates = { ...this.getDefaults().session.sceneStates };
@@ -325,6 +431,10 @@ export class GameState {
                         changed = true;
                     }
                 }
+            }
+            if (!this.data.session.sceneStatesByRoute) {
+                this.data.session.sceneStatesByRoute = {};
+                changed = true;
             }
         }
 
@@ -344,6 +454,8 @@ export class GameState {
                 const parsedProgress = parsed.progress || {};
                 const parsedSession = parsed.session || {};
                 const parsedSceneStates = parsedSession.sceneStates || {};
+                const parsedStory = parsedSession.story || {};
+                const parsedRouteStates = parsedSession.sceneStatesByRoute || {};
 
                 const migratedMilestones = [
                     ...(parsed.milestones || []),
@@ -363,6 +475,38 @@ export class GameState {
                 if (parsed.partyX !== undefined && migratedCampaignState.liubei.partyX === undefined) migratedCampaignState.liubei.partyX = parsed.partyX;
                 if (parsed.partyY !== undefined && migratedCampaignState.liubei.partyY === undefined) migratedCampaignState.liubei.partyY = parsed.partyY;
 
+                const migratedActiveRoute = parsedStory.activeRoute || parsedSession.currentCampaign || parsed.currentCampaign || null;
+                const migratedRoutes = { ...(parsedStory.routes || {}) };
+                if (migratedActiveRoute && !migratedRoutes[migratedActiveRoute]) {
+                    migratedRoutes[migratedActiveRoute] = {
+                        cursorNode: parsedStory.cursorNode || null,
+                        choices: { ...(parsedStory.choices || {}) }
+                    };
+                }
+                const activeRouteState = migratedActiveRoute ? migratedRoutes[migratedActiveRoute] : null;
+                const migratedStory = {
+                    ...defaults.session.story,
+                    ...parsedStory,
+                    activeRoute: migratedActiveRoute,
+                    cursorNode: activeRouteState?.cursorNode ?? parsedStory.cursorNode ?? null,
+                    choices: { ...(activeRouteState?.choices || parsedStory.choices || {}) },
+                    routes: migratedRoutes,
+                    globalChoices: {
+                        ...(parsedStory.globalChoices || {}),
+                        ...(parsedStory.choices || {})
+                    }
+                };
+
+                const migratedSceneStatesByRoute = { ...parsedRouteStates };
+                const routeForLegacyStates = parsedSession.currentCampaign || parsed.currentCampaign || migratedActiveRoute;
+                if (routeForLegacyStates && !migratedSceneStatesByRoute[routeForLegacyStates]) {
+                    migratedSceneStatesByRoute[routeForLegacyStates] = {
+                        map: parsedSceneStates.map ?? parsed.mapState ?? defaults.session.sceneStates.map,
+                        tactics: parsedSceneStates.tactics ?? parsed.battleState ?? defaults.session.sceneStates.tactics,
+                        narrative: parsedSceneStates.narrative ?? parsed.narrativeState ?? defaults.session.sceneStates.narrative
+                    };
+                }
+
                 this.data = {
                     ...defaults,
                     ...parsed,
@@ -378,24 +522,18 @@ export class GameState {
                         lastScene: parsedSession.lastScene || parsed.lastScene || defaults.session.lastScene,
                         currentCampaign: parsedSession.currentCampaign || parsed.currentCampaign || defaults.session.currentCampaign,
                         currentBattleId: parsedSession.currentBattleId || parsed.currentBattleId || defaults.session.currentBattleId,
-                        story: {
-                            ...defaults.session.story,
-                            ...(parsedSession.story || {}),
-                            choices: {
-                                ...defaults.session.story.choices,
-                                ...((parsedSession.story && parsedSession.story.choices) || {})
-                            }
-                        },
+                        story: migratedStory,
                         sceneStates: {
                             ...defaults.session.sceneStates,
                             ...parsedSceneStates,
                             map: parsedSceneStates.map ?? parsed.mapState ?? defaults.session.sceneStates.map,
                             tactics: parsedSceneStates.tactics ?? parsed.battleState ?? defaults.session.sceneStates.tactics,
                             narrative: parsedSceneStates.narrative ?? parsed.narrativeState ?? defaults.session.sceneStates.narrative
-                        }
+                        },
+                        sceneStatesByRoute: migratedSceneStatesByRoute
                     },
                     campaignState: migratedCampaignState,
-                    version: 2
+                    version: 3
                 };
 
                 // Persist migrated shape immediately so future loads are deterministic.
@@ -427,6 +565,27 @@ export class GameState {
 
     hasMilestone(id) {
         return (this.data.progress?.milestones || []).includes(id);
+    }
+
+    getChapterRouteIds(chapterId) {
+        const chapter = CHAPTERS?.[chapterId];
+        if (!chapter) return [];
+        if (chapter.routes && typeof chapter.routes === 'object') {
+            return Object.values(chapter.routes)
+                .map(route => route?.id)
+                .filter(Boolean);
+        }
+        // Legacy fallback for Chapter 1 before route objects were introduced.
+        if (Number(chapterId) === 1) return ['liubei'];
+        return [];
+    }
+
+    isChapterComplete(chapterId) {
+        const routeIds = this.getChapterRouteIds(chapterId);
+        if (routeIds.length > 0) {
+            return routeIds.every(routeId => this.isCampaignComplete(routeId));
+        }
+        return this.hasMilestone(`chapter${chapterId}_complete`);
     }
 
     isCampaignComplete(campaignId = null) {

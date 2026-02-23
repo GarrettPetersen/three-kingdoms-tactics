@@ -46,6 +46,15 @@ export class NarrativeScene extends BaseScene {
         }
     }
 
+    getActiveVisualKey(propName) {
+        const step = this.script?.[this.currentStep];
+        if (step && step[propName]) return step[propName];
+        for (let i = this.currentStep; i >= 0; i--) {
+            if (this.script[i]?.[propName]) return this.script[i][propName];
+        }
+        return null;
+    }
+
     createChoiceDialogueStep(step, opt) {
         const fallbackText = opt?.buttonText || '';
         const dialogueText = opt?.text !== undefined && opt?.text !== null ? opt.text : fallbackText;
@@ -210,7 +219,9 @@ export class NarrativeScene extends BaseScene {
                 flip: actor.flip || false,
                 targetX: actor.targetX !== undefined ? actor.targetX : actor.x || 0,
                 targetY: actor.targetY !== undefined ? actor.targetY : actor.y || 0,
-                speed: actor.speed || 1
+                speed: actor.speed || 1,
+                loopXStart: actor.loopXStart !== undefined ? actor.loopXStart : null,
+                loopXEnd: actor.loopXEnd !== undefined ? actor.loopXEnd : null
             };
         }
         
@@ -346,7 +357,9 @@ export class NarrativeScene extends BaseScene {
                     flip: cmd.flip || false,
                     targetX: cmd.x,
                     targetY: cmd.y,
-                    speed: cmd.speed || 1
+                    speed: cmd.speed || 1,
+                    loopXStart: cmd.loopXStart !== undefined ? cmd.loopXStart : null,
+                    loopXEnd: cmd.loopXEnd !== undefined ? cmd.loopXEnd : null
                 };
             }
             // Don't call nextStep() on resume
@@ -463,7 +476,9 @@ export class NarrativeScene extends BaseScene {
                 flip: cmd.flip || false,
                 targetX: cmd.x,
                 targetY: cmd.y,
-                speed: cmd.speed || 1
+                speed: cmd.speed || 1,
+                loopXStart: cmd.loopXStart !== undefined ? cmd.loopXStart : null,
+                loopXEnd: cmd.loopXEnd !== undefined ? cmd.loopXEnd : null
             };
             this.nextStep();
         } else if (cmd.action === 'move') {
@@ -734,6 +749,8 @@ export class NarrativeScene extends BaseScene {
                     // Add milestone when inn scene completes (normally done in onComplete)
                     this.manager.gameState.addMilestone('prologue_complete');
                     this.manager.gameState.setStoryCursor('prologue_complete', 'liubei');
+                } else if (this.scriptId === 'caocao_dunqiu_intro') {
+                    this.manager.gameState.setStoryCursor('caocao_intro_complete', 'caocao');
                 }
                 this.manager.switchTo(savedState.nextScene, savedState.nextParams || {});
                 return;
@@ -964,7 +981,16 @@ export class NarrativeScene extends BaseScene {
             } else {
                 a.x = a.targetX;
                 a.y = a.targetY;
-                if (a.action === 'walk') a.action = 'standby';
+                if (a.loopXStart !== null && a.loopXEnd !== null) {
+                    // Continuous side-scroller pedestrian loop.
+                    a.x = a.loopXStart;
+                    a.targetX = a.loopXEnd;
+                    a.targetY = a.y;
+                    a.action = 'walk';
+                    a.flip = false;
+                } else if (a.action === 'walk') {
+                    a.action = 'standby';
+                }
             }
         }
 
@@ -1022,23 +1048,22 @@ export class NarrativeScene extends BaseScene {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // Background
-        let bgKey = step?.bg;
-        if (!bgKey) {
-            for (let i = this.currentStep; i >= 0; i--) {
-                if (this.script[i].bg) {
-                    bgKey = this.script[i].bg;
-                    break;
-                }
-            }
-        }
+        const bgKey = this.getActiveVisualKey('bg');
+        const fgKey = this.getActiveVisualKey('fg');
 
         let bgX = 0;
         let bgY = 0;
         let bgWidth = 0;
         let bgHeight = 0;
         
+        let resolvedBg = null;
         if (bgKey) {
-            const bg = assets.getImage(bgKey);
+            resolvedBg = assets.getImage(bgKey);
+            // Defensive fallback for Cao Cao intro: never allow a pure black stage.
+            if (!resolvedBg && this.scriptId === 'caocao_dunqiu_intro') {
+                resolvedBg = assets.getImage('urban_street') || assets.getImage('army_camp');
+            }
+            const bg = resolvedBg;
             if (bg) {
                 bgWidth = bg.width;
                 bgHeight = bg.height;
@@ -1095,6 +1120,13 @@ export class NarrativeScene extends BaseScene {
                 { flip: hoveredActorOutline.flip, color: '#ffd700' }
             );
         }
+
+        if (fgKey && resolvedBg) {
+            const fg = assets.getImage(fgKey);
+            if (fg) {
+                ctx.drawImage(fg, bgX, bgY, bgWidth || fg.width, bgHeight || fg.height);
+            }
+        }
         ctx.restore();
 
         // Fade overlay
@@ -1106,15 +1138,7 @@ export class NarrativeScene extends BaseScene {
         if (step && step.type === 'title') {
             this.renderTitleCard(step);
         } else if (step && (step.type === 'dialogue' || step.type === 'narrator')) {
-            let bgKey = step?.bg;
-            if (!bgKey) {
-                for (let i = this.currentStep; i >= 0; i--) {
-                    if (this.script[i].bg) {
-                        bgKey = this.script[i].bg;
-                        break;
-                    }
-                }
-            }
+            const bgKey = this.getActiveVisualKey('bg');
             const bgImg = bgKey ? assets.getImage(bgKey) : null;
             const status = this.renderDialogueBox(ctx, canvas, step, { 
                 subStep: this.subStep,
@@ -1890,6 +1914,7 @@ export class NarrativeScene extends BaseScene {
             'magistrate_briefing': 'tactics',
             'daxing_messenger': 'map',
             'guangzong_arrival': 'map',
+            'caocao_dunqiu_intro': 'campaign_selection',
             'noticeboard': 'narrative', // Goes to inn scene next
             'inn': 'map',
             'qingzhou_victory': 'narrative', // Goes to qingzhou_gate_return next (but this is called from battle, so handled differently)
@@ -1918,6 +1943,7 @@ export class NarrativeScene extends BaseScene {
             },
             'daxing_messenger': { afterEvent: 'daxing' },
             'guangzong_arrival': { campaignId: 'liubei' },
+            'caocao_dunqiu_intro': {},
             'noticeboard': { scriptId: 'inn' }, // Chain to inn scene
             'inn': {}, // After inn, goes to map (milestone added in onComplete)
             'qingzhou_victory': { scriptId: 'qingzhou_gate_return' }, // Chain to gate return

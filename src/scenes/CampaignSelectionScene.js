@@ -31,6 +31,22 @@ export class CampaignSelectionScene extends BaseScene {
                 description: 'In the waning days of the Han, three heroes meet to swear an oath that will change history.',
                 x: 190,
                 y: 70,
+                nameOffsetX: 0,
+                nameOffsetY: -34,
+                locked: false
+            },
+            {
+                id: 'caocao',
+                nameKey: 'ASCENT OF THE CAVALRY COMMANDER',
+                nameCompleteKey: 'CAVALRY COMMANDER ASCENT - STORY COMPLETE',
+                charName: 'Cao Cao',
+                imgKey: 'caocao',
+                descriptionKey: 'campaign_caocao_description',
+                description: 'From Dunqiu in Henan, a rising officer strikes the Yellow Turban remnants at Yingchuan and wins his first renown.',
+                x: 176,
+                y: 98,
+                nameOffsetX: -18,
+                nameOffsetY: -34,
                 locked: false
             }
         ];
@@ -45,9 +61,10 @@ export class CampaignSelectionScene extends BaseScene {
         if (!liubei) return;
 
         const selectedChapter = this.chapters[this.selectedChapterIndex]?.id || '1';
-        const chapter1Complete = gs.isCampaignComplete('liubei');
+        const chapter1Complete = gs.isChapterComplete(1);
         const chapter2OathComplete = gs.isCampaignComplete('chapter2_oath');
         const freedLuZhi = gs.getStoryChoice('luzhi_outcome') === 'freed' || gs.hasMilestone('freed_luzhi');
+        const caocao = this.campaigns.find(c => c.id === 'caocao');
 
         if (selectedChapter === '2') {
             liubei.nameKey = 'CH2 OATH ARC';
@@ -56,6 +73,14 @@ export class CampaignSelectionScene extends BaseScene {
             liubei.isInProgress = gs.getCurrentCampaign() === 'chapter2_oath' && !chapter2OathComplete;
             liubei.locked = !chapter1Complete;
             liubei.description = getLocalizedText(UI_TEXT[chapter2OathComplete ? 'campaign_ch2_oath_complete' : 'campaign_ch2_oath_description']);
+            if (caocao) {
+                caocao.nameKey = 'ASCENT OF THE CAVALRY COMMANDER';
+                caocao.nameCompleteKey = 'CAVALRY COMMANDER ASCENT - STORY COMPLETE';
+                caocao.isComplete = false;
+                caocao.isInProgress = false;
+                caocao.locked = false;
+                caocao.description = getLocalizedText(UI_TEXT['campaign_caocao_description']);
+            }
             return;
         }
 
@@ -77,6 +102,15 @@ export class CampaignSelectionScene extends BaseScene {
             liubei.isComplete = false;
             liubei.description = getLocalizedText(UI_TEXT['campaign_liubei_description']);
         }
+
+        if (caocao) {
+            caocao.nameKey = 'ASCENT OF THE CAVALRY COMMANDER';
+            caocao.nameCompleteKey = 'CAVALRY COMMANDER ASCENT - STORY COMPLETE';
+            caocao.isComplete = gs.isCampaignComplete('caocao');
+            caocao.isInProgress = (gs.getCurrentCampaign() === 'caocao') && !caocao.isComplete;
+            caocao.locked = false;
+            caocao.description = getLocalizedText(UI_TEXT['campaign_caocao_description']);
+        }
     }
 
     enter() {
@@ -86,7 +120,7 @@ export class CampaignSelectionScene extends BaseScene {
         
         this.fadeAlpha = 1;
         const gs = this.manager.gameState;
-        const isComplete = gs.isCampaignComplete('liubei');
+        const isComplete = gs.isChapterComplete(1);
 
         // Chapter 2 is available only if Chapter 1 is complete
         this.chapters.find(ch => ch.id === '2').available = isComplete;
@@ -263,7 +297,9 @@ export class CampaignSelectionScene extends BaseScene {
                 const displayName = charNameText || c.charName;
                 // Only uppercase for English
                 const finalName = LANGUAGE.current === 'zh' ? displayName : displayName.toUpperCase();
-                this.drawPixelText(ctx, finalName, c.x, c.y - 45, { color: nameColor, font: '8px Silkscreen', align: 'center' });
+                const labelX = c.x + (c.nameOffsetX || 0);
+                const labelY = c.y + (c.nameOffsetY !== undefined ? c.nameOffsetY : -34);
+                this.drawPixelText(ctx, finalName, labelX, labelY, { color: nameColor, font: '8px Silkscreen', align: 'center' });
                 
                 ctx.restore();
             }
@@ -310,8 +346,7 @@ export class CampaignSelectionScene extends BaseScene {
                 const promptText = selected.isInProgress 
                     ? getLocalizedText(UI_TEXT['CLICK CHARACTER TO CONTINUE'])
                     : getLocalizedText(UI_TEXT['CLICK CHARACTER TO BEGIN']);
-                const keyboardHint = currentNavTarget && currentNavTarget.type === 'campaign' ? ' [ENTER]' : '';
-                this.drawPixelText(ctx, `${promptText}${keyboardHint}`, bx + boxW / 2, bottomTextY, { color: '#eee', font: '8px Tiny5', align: 'center' });
+                this.drawPixelText(ctx, promptText, bx + boxW / 2, bottomTextY, { color: '#eee', font: '8px Tiny5', align: 'center' });
                 ctx.globalAlpha = 1.0;
             }
         }
@@ -452,12 +487,27 @@ export class CampaignSelectionScene extends BaseScene {
             }
             const gs = this.manager.gameState;
             const selectedChapter = this.chapters[this.selectedChapterIndex]?.id || '1';
+            if (selected.id === 'caocao') {
+                gs.setCurrentCampaign('caocao');
+                gs.startStoryRoute('caocao', 'caocao_intro');
+                this.manager.switchTo('narrative', {
+                    scriptId: 'caocao_dunqiu_intro',
+                    musicKey: 'grim_refugees',
+                    musicVolume: 0.42,
+                    keepMusic: false,
+                    onComplete: () => {
+                        gs.setStoryCursor('caocao_intro_complete', 'caocao');
+                        this.manager.switchTo('campaign_selection');
+                    }
+                });
+                return;
+            }
             if (selectedChapter === '2') {
                 gs.setCurrentCampaign('chapter2_oath');
                 gs.startStoryRoute('chapter2_oath');
-                gs.clearSceneState('map');
-                gs.clearSceneState('narrative');
-                gs.clearSceneState('tactics');
+                gs.clearSceneState('map', 'chapter2_oath');
+                gs.clearSceneState('narrative', 'chapter2_oath');
+                gs.clearSceneState('tactics', 'chapter2_oath');
                 this.manager.switchTo('tactics', { battleId: 'chapter2_oath_dongzhuo_choice' });
                 return;
             }
@@ -466,25 +516,24 @@ export class CampaignSelectionScene extends BaseScene {
             gs.setCampaignVar('partyX', 190, selected.id);
             gs.setCampaignVar('partyY', 70, selected.id);
 
-            const cursor = gs.getStoryCursor();
+            const cursor = gs.getStoryCursor(selected.id);
             const hasStoryProgress =
-                cursor.routeId === 'liubei' &&
                 !!cursor.nodeId &&
                 cursor.nodeId !== 'prologue';
             const hasProgress =
                 hasStoryProgress ||
-                !!gs.getSceneState('map') ||
-                !!gs.getSceneState('tactics') ||
-                !!gs.getSceneState('narrative');
+                !!gs.getSceneState('map', selected.id) ||
+                !!gs.getSceneState('tactics', selected.id) ||
+                !!gs.getSceneState('narrative', selected.id);
 
             // Fresh start: skip the map "march to Zhuo" and jump straight into the first battle.
             if (selected.id === 'liubei' && !hasProgress) {
-                if (gs.getStoryCursor().routeId !== 'liubei') {
+                if (!cursor.nodeId) {
                     gs.startStoryRoute('liubei', 'prologue');
                 }
                 this.manager.switchTo('tactics', { battleId: 'yellow_turban_rout' });
             } else {
-                if (selected.id === 'liubei' && gs.getStoryCursor().routeId !== 'liubei') {
+                if (selected.id === 'liubei' && !cursor.nodeId) {
                     gs.startStoryRoute('liubei', 'prologue_complete');
                 }
                 this.manager.switchTo('map', { campaignId: selected.id });
@@ -544,12 +593,27 @@ export class CampaignSelectionScene extends BaseScene {
                     } else {
                         const gs = this.manager.gameState;
                         const selectedChapter = this.chapters[this.selectedChapterIndex]?.id || '1';
+                        if (c.id === 'caocao') {
+                            gs.setCurrentCampaign('caocao');
+                            gs.startStoryRoute('caocao', 'caocao_intro');
+                            this.manager.switchTo('narrative', {
+                                scriptId: 'caocao_dunqiu_intro',
+                                musicKey: 'grim_refugees',
+                                musicVolume: 0.42,
+                                keepMusic: false,
+                                onComplete: () => {
+                                    gs.setStoryCursor('caocao_intro_complete', 'caocao');
+                                    this.manager.switchTo('campaign_selection');
+                                }
+                            });
+                            return;
+                        }
                         if (selectedChapter === '2') {
                             gs.setCurrentCampaign('chapter2_oath');
                             gs.startStoryRoute('chapter2_oath');
-                            gs.clearSceneState('map');
-                            gs.clearSceneState('narrative');
-                            gs.clearSceneState('tactics');
+                            gs.clearSceneState('map', 'chapter2_oath');
+                            gs.clearSceneState('narrative', 'chapter2_oath');
+                            gs.clearSceneState('tactics', 'chapter2_oath');
                             this.manager.switchTo('tactics', { battleId: 'chapter2_oath_dongzhuo_choice' });
                             return;
                         }
@@ -558,24 +622,23 @@ export class CampaignSelectionScene extends BaseScene {
                         gs.setCampaignVar('partyX', 190, c.id);
                         gs.setCampaignVar('partyY', 70, c.id);
 
-                        const cursor = gs.getStoryCursor();
+                        const cursor = gs.getStoryCursor(c.id);
                         const hasStoryProgress =
-                            cursor.routeId === 'liubei' &&
                             !!cursor.nodeId &&
                             cursor.nodeId !== 'prologue';
                         const hasProgress =
                             hasStoryProgress ||
-                            !!gs.getSceneState('map') ||
-                            !!gs.getSceneState('tactics') ||
-                            !!gs.getSceneState('narrative');
+                            !!gs.getSceneState('map', c.id) ||
+                            !!gs.getSceneState('tactics', c.id) ||
+                            !!gs.getSceneState('narrative', c.id);
 
                         if (c.id === 'liubei' && !hasProgress) {
-                            if (gs.getStoryCursor().routeId !== 'liubei') {
+                            if (!cursor.nodeId) {
                                 gs.startStoryRoute('liubei', 'prologue');
                             }
                             this.manager.switchTo('tactics', { battleId: 'yellow_turban_rout' });
                         } else {
-                            if (c.id === 'liubei' && gs.getStoryCursor().routeId !== 'liubei') {
+                            if (c.id === 'liubei' && !cursor.nodeId) {
                                 gs.startStoryRoute('liubei', 'prologue_complete');
                             }
                             this.manager.switchTo('map', { campaignId: c.id });
