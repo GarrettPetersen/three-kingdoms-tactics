@@ -58,6 +58,7 @@ CHAR_TARGETS = {
     "huangfusong": "movies/clean/clean_mulan-emperor.wav",
     "zhujun": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
     "dongzhuo": "movies/clean/clean_kublai-khan.wav",  # Gruff and arrogant
+    "caocao": "movies/clean/clean_thanos_deep_villain.wav",  # Deep, commanding contrast vs guanyu
     "zhangjue": "movies/clean/clean_anton-ego-villainous-food-critic.wav",  # Villainous, commanding
     "zhangbao": "movies/clean/clean_kublai-khan.wav",  # Aggressive, warrior-like
     "zhangliang": "movies/clean/clean_mulan-emperor.wav",  # Authoritative, imperial
@@ -93,6 +94,7 @@ CHAR_TARGETS_MANDARIN = {
     "huangfusong": "mandarin/clean/clean_serious_male_mandarin.wav",  # Commanding imperial general
     "zhujun": "mandarin/clean/clean_deep_male_mandarin.wav",  # Veteran field commander
     "dongzhuo": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Gruff, arrogant (shared)
+    "caocao": "mandarin/clean/clean_deep_male_mandarin.wav",  # Cool-headed strategist
     "zhangjue": "mandarin/clean/clean_fearsome_elder_male_mandarin.wav",  # Fearsome, commanding elder
     "zhangbao": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Aggressive (shared)
     "zhangliang": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)

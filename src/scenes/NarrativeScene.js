@@ -34,6 +34,7 @@ export class NarrativeScene extends BaseScene {
         this.interactiveNavMouseEnabled = true;
         this.pendingInteractiveAdvance = false;
         this.invalidScriptRecoveryScheduled = false;
+        this.waitingForActorId = null;
     }
 
     cloneScriptSteps(steps) {
@@ -221,7 +222,8 @@ export class NarrativeScene extends BaseScene {
                 targetY: actor.targetY !== undefined ? actor.targetY : actor.y || 0,
                 speed: actor.speed || 1,
                 loopXStart: actor.loopXStart !== undefined ? actor.loopXStart : null,
-                loopXEnd: actor.loopXEnd !== undefined ? actor.loopXEnd : null
+                loopXEnd: actor.loopXEnd !== undefined ? actor.loopXEnd : null,
+                drawAboveForeground: !!actor.drawAboveForeground
             };
         }
         
@@ -239,6 +241,7 @@ export class NarrativeScene extends BaseScene {
         this.currentStep = targetStep;
         this.subStep = state.subStep || 0;
         this.isWaiting = state.isWaiting || false;
+        this.waitingForActorId = state.waitingForActorId || null;
         this.timer = state.timer || 0;
         this.fadeAlpha = state.fadeAlpha !== undefined ? state.fadeAlpha : 1;
         this.fadeTarget = state.fadeTarget !== undefined ? state.fadeTarget : this.fadeAlpha;
@@ -347,19 +350,23 @@ export class NarrativeScene extends BaseScene {
         if (cmd.action === 'addActor') {
             // Actor should already be in saved actors, but ensure it exists
             if (!this.actors[cmd.id]) {
+                const loopXStart = cmd.loopXStart !== undefined ? cmd.loopXStart : null;
+                const loopXEnd = cmd.loopXEnd !== undefined ? cmd.loopXEnd : null;
+                const initialTargetX = (loopXStart !== null && loopXEnd !== null) ? loopXEnd : cmd.x;
                 this.actors[cmd.id] = {
                     x: cmd.x,
                     y: cmd.y,
                     imgKey: cmd.imgKey,
                     img: assets.getImage(cmd.imgKey),
-                    action: 'standby',
+                    action: cmd.actorAction || cmd.animation || 'standby',
                     frame: 0,
                     flip: cmd.flip || false,
-                    targetX: cmd.x,
+                    targetX: initialTargetX,
                     targetY: cmd.y,
                     speed: cmd.speed || 1,
-                    loopXStart: cmd.loopXStart !== undefined ? cmd.loopXStart : null,
-                    loopXEnd: cmd.loopXEnd !== undefined ? cmd.loopXEnd : null
+                    loopXStart,
+                    loopXEnd,
+                    drawAboveForeground: !!cmd.drawAboveForeground
                 };
             }
             // Don't call nextStep() on resume
@@ -466,19 +473,23 @@ export class NarrativeScene extends BaseScene {
 
     handleCommand(cmd) {
         if (cmd.action === 'addActor') {
+            const loopXStart = cmd.loopXStart !== undefined ? cmd.loopXStart : null;
+            const loopXEnd = cmd.loopXEnd !== undefined ? cmd.loopXEnd : null;
+            const initialTargetX = (loopXStart !== null && loopXEnd !== null) ? loopXEnd : cmd.x;
             this.actors[cmd.id] = {
                 x: cmd.x,
                 y: cmd.y,
                 imgKey: cmd.imgKey,
                 img: assets.getImage(cmd.imgKey),
-                action: 'standby',
+                action: cmd.actorAction || cmd.animation || 'standby',
                 frame: 0,
                 flip: cmd.flip || false,
-                targetX: cmd.x,
+                targetX: initialTargetX,
                 targetY: cmd.y,
                 speed: cmd.speed || 1,
-                loopXStart: cmd.loopXStart !== undefined ? cmd.loopXStart : null,
-                loopXEnd: cmd.loopXEnd !== undefined ? cmd.loopXEnd : null
+                loopXStart,
+                loopXEnd,
+                drawAboveForeground: !!cmd.drawAboveForeground
             };
             this.nextStep();
         } else if (cmd.action === 'move') {
@@ -488,6 +499,7 @@ export class NarrativeScene extends BaseScene {
                 actor.targetY = cmd.y;
                 actor.action = 'walk';
                 if (cmd.wait !== false) {
+                    this.waitingForActorId = cmd.id;
                     this.isWaiting = true;
                 } else {
                     this.nextStep();
@@ -534,6 +546,28 @@ export class NarrativeScene extends BaseScene {
             }
         } else if (cmd.action === 'playMusic') {
             assets.playMusic(cmd.key, cmd.volume || 0.5);
+            this.nextStep();
+        } else if (cmd.action === 'playSound') {
+            assets.playSound(cmd.key, cmd.volume !== undefined ? cmd.volume : 1.0);
+            this.nextStep();
+        } else if (cmd.action === 'setStoryChoice') {
+            const routeId = cmd.routeId || this.manager.gameState.getCurrentCampaign() || null;
+            if (cmd.key) {
+                this.manager.gameState.setStoryChoice(cmd.key, cmd.value, routeId);
+            }
+            this.nextStep();
+        } else if (cmd.action === 'setActorLoop') {
+            const actor = this.actors[cmd.id];
+            if (actor) {
+                if (cmd.enabled === false) {
+                    actor.loopXStart = null;
+                    actor.loopXEnd = null;
+                    if (actor.action === 'walk') actor.action = 'standby';
+                } else {
+                    actor.loopXStart = cmd.loopXStart !== undefined ? cmd.loopXStart : actor.loopXStart;
+                    actor.loopXEnd = cmd.loopXEnd !== undefined ? cmd.loopXEnd : actor.loopXEnd;
+                }
+            }
             this.nextStep();
         } else if (cmd.action === 'setClickable') {
             // Make an actor clickable: { action: 'setClickable', id: 'actorId', onClick: [...] }
@@ -678,6 +712,7 @@ export class NarrativeScene extends BaseScene {
         this.subStep = 0;
         this.currentStep++;
         this.isWaiting = false;
+        this.waitingForActorId = null;
         this.timer = 0;
 
         // After advancing, check if we've passed inserted NPC dialogue
@@ -809,6 +844,7 @@ export class NarrativeScene extends BaseScene {
             nextScene: nextScene,
             nextParams: nextParams,
             isWaiting: this.isWaiting,
+            waitingForActorId: this.waitingForActorId,
             timer: this.timer,
             fadeAlpha: this.fadeAlpha,
             fadeTarget: this.fadeTarget,
@@ -994,7 +1030,22 @@ export class NarrativeScene extends BaseScene {
             }
         }
 
-        if (this.isWaiting && allMoved && this.timer === 0 && this.fadeAlpha === this.fadeTarget) {
+        if (this.isWaiting && this.waitingForActorId) {
+            const waitingActor = this.actors[this.waitingForActorId];
+            if (!waitingActor) {
+                this.nextStep();
+                return;
+            }
+            const waitDx = waitingActor.targetX - waitingActor.x;
+            const waitDy = waitingActor.targetY - waitingActor.y;
+            const waitDist = Math.sqrt(waitDx * waitDx + waitDy * waitDy);
+            if (waitDist <= 1 && this.fadeAlpha === this.fadeTarget) {
+                this.nextStep();
+                return;
+            }
+        }
+
+        if (this.isWaiting && !this.waitingForActorId && allMoved && this.timer === 0 && this.fadeAlpha === this.fadeTarget) {
             const step = this.script[this.currentStep];
             // Don't auto-advance if we're in interactive mode (wait for click)
             // Also don't auto-advance if the current step is interactive (should wait for click)
@@ -1050,6 +1101,8 @@ export class NarrativeScene extends BaseScene {
         // Background
         const bgKey = this.getActiveVisualKey('bg');
         const fgKey = this.getActiveVisualKey('fg');
+        const fgAlphaRaw = this.getActiveVisualKey('fgAlpha');
+        const fgAlpha = (typeof fgAlphaRaw === 'number') ? Math.max(0, Math.min(1, fgAlphaRaw)) : 1;
 
         let bgX = 0;
         let bgY = 0;
@@ -1082,8 +1135,10 @@ export class NarrativeScene extends BaseScene {
         }
 
         const sortedActors = Object.values(this.actors).sort((a, b) => a.y - b.y);
+        const actorsBelowForeground = sortedActors.filter(a => !a.drawAboveForeground);
+        const actorsAboveForeground = sortedActors.filter(a => !!a.drawAboveForeground);
         let hoveredActorOutline = null;
-        sortedActors.forEach(a => {
+        const drawActor = (a) => {
             if (!a.img && a.imgKey) {
                 a.img = assets.getImage(a.imgKey);
             }
@@ -1108,7 +1163,8 @@ export class NarrativeScene extends BaseScene {
                     flip: a.flip
                 };
             }
-        });
+        };
+        actorsBelowForeground.forEach(drawActor);
         if (hoveredActorOutline) {
             this.drawCharacterPixelOutline(
                 ctx,
@@ -1124,9 +1180,13 @@ export class NarrativeScene extends BaseScene {
         if (fgKey && resolvedBg) {
             const fg = assets.getImage(fgKey);
             if (fg) {
+                ctx.save();
+                ctx.globalAlpha *= fgAlpha;
                 ctx.drawImage(fg, bgX, bgY, bgWidth || fg.width, bgHeight || fg.height);
+                ctx.restore();
             }
         }
+        actorsAboveForeground.forEach(drawActor);
         ctx.restore();
 
         // Fade overlay

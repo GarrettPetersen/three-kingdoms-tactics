@@ -1648,24 +1648,211 @@ export const NARRATIVE_SCRIPTS = {
             },
             duration: 2800
         },
+        { type: 'command', action: 'fade', target: 0, speed: 0.0012, wait: false },
         { bg: 'urban_street', fg: 'urban_street_foreground', type: 'command', action: 'clearActors' },
-        { type: 'command', action: 'addActor', id: 'refugee_m_01', imgKey: 'farmer', x: -28, y: 136, action: 'walk', speed: 0.22, loopXStart: -36, loopXEnd: 292 },
-        { type: 'command', action: 'addActor', id: 'refugee_f_01', imgKey: 'farmer2', x: -92, y: 140, action: 'walk', speed: 0.19, loopXStart: -100, loopXEnd: 296 },
-        { type: 'command', action: 'addActor', id: 'refugee_m_02', imgKey: 'farmer', x: -160, y: 144, action: 'walk', speed: 0.17, loopXStart: -170, loopXEnd: 302 },
-        { type: 'command', action: 'addActor', id: 'refugee_f_02', imgKey: 'farmer2', x: -224, y: 138, action: 'walk', speed: 0.2, loopXStart: -232, loopXEnd: 300 },
-        { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: -26, y: 194, action: 'walk', speed: 0.72 },
-        { type: 'command', action: 'addActor', id: 'caocao_attendant', imgKey: 'soldier', x: -58, y: 200, action: 'walk', speed: 0.66 },
-        { type: 'command', action: 'move', id: 'caocao', x: 108, y: 194, wait: false },
-        { type: 'command', action: 'move', id: 'caocao_attendant', x: 76, y: 200, wait: true },
+        { type: 'command', action: 'addActor', id: 'refugee_m_01', imgKey: 'farmer', x: 22, y: 165, actorAction: 'walk', speed: 0.52, loopXStart: -44, loopXEnd: 320 },
+        { type: 'command', action: 'addActor', id: 'refugee_f_01', imgKey: 'farmer2', x: 86, y: 164, actorAction: 'walk', speed: 0.48, loopXStart: -62, loopXEnd: 326 },
+        { type: 'command', action: 'addActor', id: 'refugee_m_02', imgKey: 'farmer', x: 148, y: 166, actorAction: 'walk', speed: 0.44, loopXStart: -78, loopXEnd: 332 },
+        { type: 'command', action: 'addActor', id: 'refugee_f_02', imgKey: 'farmer2', x: 208, y: 163, actorAction: 'walk', speed: 0.56, loopXStart: -96, loopXEnd: 338 },
+        { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: 52, y: 258, actorAction: 'walk', speed: 0.72, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'caocao_attendant', imgKey: 'soldier', x: 28, y: 262, actorAction: 'walk', speed: 0.66, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'caocao_civil_attendant', imgKey: 'zhoujing', x: 36, y: 264, actorAction: 'walk', speed: 0.6, drawAboveForeground: true },
+        { type: 'command', action: 'move', id: 'caocao', x: 102, y: 206, wait: false },
+        { type: 'command', action: 'move', id: 'caocao_attendant', x: 76, y: 212, wait: false },
+        { type: 'command', action: 'move', id: 'caocao_civil_attendant', x: 78, y: 216, wait: true },
         {
-            type: 'narrator',
+            type: 'dialogue',
+            name: 'Cao Cao',
+            portraitKey: 'cao-cao',
+            voiceId: 'cc_dq_01',
+            position: 'top',
             bg: 'urban_street',
             fg: 'urban_street_foreground',
             text: {
-                en: 'Refugees stream through Dunqiu. Amid the hunger and fear, a cavalry commander prepares to ride for Yingchuan.',
-                zh: '流民穿过顿丘街巷。饥馑与恐惧之中，一名骑都尉正整军待发，驰援颍川。'
+                en: 'The court sits idle while the Yellow Turbans spread havoc. If this chaos is to end, someone must move first.',
+                zh: '朝廷迟疑不决，黄巾蜂起为乱。若要止此祸，终须有人先行。'
             }
-        }
+        },
+        {
+            type: 'dialogue',
+            name: 'Cao Cao',
+            portraitKey: 'cao-cao',
+            voiceId: 'cc_dq_02',
+            position: 'top',
+            bg: 'urban_street',
+            fg: 'urban_street_foreground',
+            text: {
+                en: 'Something must be done about these refugees.',
+                zh: '这些流民，必须尽快处置。'
+            }
+        },
+        {
+            type: 'choice',
+            portraitKey: 'cao-cao',
+            name: 'Cao Cao',
+            position: 'top',
+            options: [
+                {
+                    buttonText: { en: 'Open grain stores.', zh: '开仓赈民' },
+                    voiceId: 'cc_dq_choice_01',
+                    text: {
+                        en: 'Open the city granaries. Issue gruel at the east market and register each household in order.',
+                        zh: '开城中仓廪，于东市设粥棚，按户登记，依次赈济。'
+                    },
+                    result: [
+                        {
+                            type: 'command',
+                            action: 'setStoryChoice',
+                            key: 'caocao_refugee_policy',
+                            value: 'open_granaries',
+                            routeId: 'caocao'
+                        },
+                        {
+                            type: 'dialogue',
+                            name: 'Military Attendant',
+                            portraitKey: 'soldier',
+                            voiceId: 'cc_dq_att_01',
+                            position: 'top',
+                            bg: 'urban_street',
+                            fg: 'urban_street_foreground',
+                            text: {
+                                en: 'At once, Magistrate. We will open the stores and keep order.',
+                                zh: '谨遵县令之命。即刻开仓施粥，并维持秩序。'
+                            }
+                        },
+                        { type: 'command', action: 'move', id: 'caocao_attendant', x: 118, y: 324, wait: true },
+                        { type: 'command', action: 'removeActor', id: 'caocao_attendant' }
+                    ]
+                },
+                {
+                    buttonText: { en: 'Close the gates.', zh: '闭门止入' },
+                    voiceId: 'cc_dq_choice_02',
+                    text: {
+                        en: 'Close the gates at once. Redirect new arrivals to neighboring counties before panic swallows the city.',
+                        zh: '即刻闭门，后来流民引往邻县，勿使城中先乱。'
+                    },
+                    result: [
+                        {
+                            type: 'command',
+                            action: 'setStoryChoice',
+                            key: 'caocao_refugee_policy',
+                            value: 'close_gates',
+                            routeId: 'caocao'
+                        },
+                        {
+                            type: 'dialogue',
+                            name: 'Military Attendant',
+                            portraitKey: 'soldier',
+                            voiceId: 'cc_dq_att_02',
+                            position: 'top',
+                            bg: 'urban_street',
+                            fg: 'urban_street_foreground',
+                            text: {
+                                en: 'Understood, Magistrate. I will have the gates sealed at once.',
+                                zh: '明白，县令。末将即刻去闭城门。'
+                            }
+                        },
+                        { type: 'command', action: 'move', id: 'caocao_attendant', x: 118, y: 324, wait: true },
+                        { type: 'command', action: 'removeActor', id: 'caocao_attendant' },
+                        { type: 'command', action: 'playSound', key: 'building_damage', volume: 0.7 },
+                        { type: 'command', action: 'setActorLoop', id: 'refugee_m_01', enabled: false },
+                        { type: 'command', action: 'setActorLoop', id: 'refugee_f_01', enabled: false },
+                        { type: 'command', action: 'setActorLoop', id: 'refugee_m_02', enabled: false },
+                        { type: 'command', action: 'setActorLoop', id: 'refugee_f_02', enabled: false }
+                    ]
+                }
+            ]
+        },
+        { type: 'command', action: 'addActor', id: 'messenger', imgKey: 'soldier', x: 258, y: 266, actorAction: 'walk', speed: 0.84, drawAboveForeground: true },
+        { type: 'command', action: 'move', id: 'messenger', x: 166, y: 216, wait: true },
+        {
+            type: 'dialogue',
+            name: 'Messenger',
+            portraitKey: 'soldier',
+            voiceId: 'cc_dq_msg_01',
+            position: 'top',
+            bg: 'urban_street',
+            fg: 'urban_street_foreground',
+            text: {
+                en: 'Dispatch from Luoyang! Imperial order: Dong Commandery is to muster a cavalry force of five thousand, drafting men and horses from local households. Magistrate Cao Cao is elevated to Cavalry Commander and given overall command of this Dong Commandery cavalry force to strike the Yellow Turbans.',
+                zh: '洛阳急报！奉朝廷诏令：东郡当募骑兵五千，自各乡里征发丁壮与战马，以讨黄巾。今擢曹操县令为骑都尉，总领东郡所募此部骑军出战。'
+            }
+        },
+        {
+            type: 'dialogue',
+            name: 'Cao Cao',
+            portraitKey: 'cao-cao',
+            voiceId: 'cc_dq_03',
+            position: 'top',
+            bg: 'urban_street',
+            fg: 'urban_street_foreground',
+            text: {
+                en: 'At last - authority to strike the rebels.',
+                zh: '正合我意，今得以正兵讨贼。'
+            }
+        },
+        {
+            type: 'dialogue',
+            name: 'Cao Cao',
+            portraitKey: 'cao-cao',
+            voiceId: 'cc_dq_04',
+            position: 'top',
+            bg: 'urban_street',
+            fg: 'urban_street_foreground',
+            text: {
+                en: 'Write draft notices to every household at once, and send riders to every surrounding village.',
+                zh: '即刻缮写征发文书，遍告诸户；再遣快骑，传令四乡。'
+            }
+        },
+        {
+            type: 'dialogue',
+            name: 'Cao Cao',
+            portraitKey: 'cao-cao',
+            voiceId: 'cc_dq_05',
+            position: 'top',
+            bg: 'urban_street',
+            fg: 'urban_street_foreground',
+            text: {
+                en: 'Send word to my cousin Cao Ren: gather every horseman he can and join me without delay.',
+                zh: '另发急信与我从弟曹仁，命其尽集骑士速来会合。'
+            }
+        },
+        {
+            type: 'dialogue',
+            name: 'Cao Cao',
+            portraitKey: 'cao-cao',
+            voiceId: 'cc_dq_06',
+            position: 'top',
+            bg: 'urban_street',
+            fg: 'urban_street_foreground',
+            text: {
+                en: 'Arm my household retainers for war, and draw horses from my own stables to mount them.',
+                zh: '再令我家丁披甲执兵，并从我家马厩点出战马配骑，即刻备战。'
+            }
+        },
+        {
+            type: 'dialogue',
+            name: 'Civil Attendant',
+            portraitKey: 'soldier',
+            voiceId: 'cc_dq_att_03',
+            position: 'top',
+            bg: 'urban_street',
+            fg: 'urban_street_foreground',
+            text: {
+                en: 'As you command, Magistrate. I will see these orders carried out at once.',
+                zh: '谨遵县令之命。属下这就分头施行。'
+            }
+        },
+        { type: 'command', action: 'move', id: 'caocao', x: 142, y: 328, wait: false },
+        { type: 'command', action: 'move', id: 'caocao_civil_attendant', x: 116, y: 330, wait: false },
+        { type: 'command', action: 'move', id: 'messenger', x: 170, y: 332, wait: true },
+        { type: 'command', action: 'removeActor', id: 'caocao' },
+        { type: 'command', action: 'removeActor', id: 'caocao_civil_attendant' },
+        { type: 'command', action: 'removeActor', id: 'messenger' },
+        { type: 'command', action: 'setActorLoop', id: 'refugee_m_01', enabled: false },
+        { type: 'command', action: 'setActorLoop', id: 'refugee_f_01', enabled: false },
+        { type: 'command', action: 'setActorLoop', id: 'refugee_m_02', enabled: false },
+        { type: 'command', action: 'setActorLoop', id: 'refugee_f_02', enabled: false }
     ]
     // Note: Guangzong scene is now handled inline in MapScene.startGuangzongBriefing()
     // following the novel where Lu Zhi was arrested and Liu Bei encounters Dong Zhuo

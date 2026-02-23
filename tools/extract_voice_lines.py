@@ -42,6 +42,7 @@ PORTRAIT_TO_CHAR = {
     'bandit1': 'dengmao',
     'bandit2': 'chengyuanzhi',
     'dong-zhuo': 'dongzhuo',
+    'cao-cao': 'caocao',
     'peach_garden': 'narrator',
     'noticeboard': 'noticeboard',  # Noticeboard has its own voice
     'narrator': 'narrator',
@@ -64,6 +65,7 @@ NAME_TO_CHAR = {
     'Deng Mao': 'dengmao',
     'Cheng Yuanzhi': 'chengyuanzhi',
     'Dong Zhuo': 'dongzhuo',
+    'Cao Cao': 'caocao',
     'Narrator': 'narrator',
 }
 
