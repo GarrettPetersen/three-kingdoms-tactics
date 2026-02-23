@@ -1694,6 +1694,8 @@ export const NARRATIVE_SCRIPTS = {
             options: [
                 {
                     buttonText: { en: 'Open grain stores.', zh: '开仓赈民' },
+                    portraitKey: 'cao-cao',
+                    name: 'Cao Cao',
                     voiceId: 'cc_dq_choice_01',
                     text: {
                         en: 'Open the city granaries. Issue gruel at the east market and register each household in order.',
@@ -1726,6 +1728,8 @@ export const NARRATIVE_SCRIPTS = {
                 },
                 {
                     buttonText: { en: 'Close the gates.', zh: '闭门止入' },
+                    portraitKey: 'cao-cao',
+                    name: 'Cao Cao',
                     voiceId: 'cc_dq_choice_02',
                     text: {
                         en: 'Close the gates at once. Redirect new arrivals to neighboring counties before panic swallows the city.',
@@ -1833,7 +1837,7 @@ export const NARRATIVE_SCRIPTS = {
         {
             type: 'dialogue',
             name: 'Civil Attendant',
-            portraitKey: 'soldier',
+            portraitKey: 'zhou-jing',
             voiceId: 'cc_dq_att_03',
             position: 'top',
             bg: 'urban_street',

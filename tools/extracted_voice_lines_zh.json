@@ -49,19 +49,19 @@
   },
   {
     "id": "cc_dq_att_03",
-    "char": "soldier",
+    "char": "zhoujing",
     "text": "谨遵县令之命。属下这就分头施行。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "cc_dq_choice_01",
-    "char": "soldier",
+    "char": "caocao",
     "text": "开城中仓廪，于东市设粥棚，按户登记，依次赈济。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "cc_dq_choice_02",
-    "char": "soldier",
+    "char": "caocao",
     "text": "即刻闭门，后来流民引往邻县，勿使城中先乱。",
     "source": "NarrativeScripts.js"
   },

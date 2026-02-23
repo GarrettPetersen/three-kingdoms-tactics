@@ -49,19 +49,19 @@
   },
   {
     "id": "cc_dq_att_03",
-    "char": "soldier",
+    "char": "zhoujing",
     "text": "As you command, Magistrate. I will see these orders carried out at once.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "cc_dq_choice_01",
-    "char": "soldier",
+    "char": "caocao",
     "text": "Open the city granaries. Issue gruel at the east market and register each household in order.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "cc_dq_choice_02",
-    "char": "soldier",
+    "char": "caocao",
     "text": "Close the gates at once. Redirect new arrivals to neighboring counties before panic swallows the city.",
     "source": "NarrativeScripts.js"
   },
