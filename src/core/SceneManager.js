@@ -15,6 +15,14 @@ export class SceneManager {
         this.logicalMouseX = 0;
         this.logicalMouseY = 0;
         this._padRepeatState = new Map();
+        this._steamInputState = {
+            up: false,
+            down: false,
+            left: false,
+            right: false,
+            confirm: false,
+            cancel: false
+        };
 
         window.addEventListener('pointermove', (e) => {
             this.lastPointerX = e.clientX;
@@ -104,27 +112,62 @@ export class SceneManager {
     }
 
     pollGamepad(timestamp) {
-        if (!navigator.getGamepads) return;
-        const pads = navigator.getGamepads();
-        if (!pads) return;
-        const gp = Array.from(pads).find(Boolean);
-        if (!gp) {
+        // Steam Input bridge (optional via preload/steamworks.js)
+        if (typeof window !== 'undefined' && window.steamInput && typeof window.steamInput.poll === 'function') {
+            try {
+                this._steamInputState = window.steamInput.poll() || this._steamInputState;
+            } catch (_) {
+                // Keep last known safe state; gamepad fallback remains active.
+                this._steamInputState = {
+                    up: false,
+                    down: false,
+                    left: false,
+                    right: false,
+                    confirm: false,
+                    cancel: false
+                };
+            }
+        } else {
+            this._steamInputState = {
+                up: false,
+                down: false,
+                left: false,
+                right: false,
+                confirm: false,
+                cancel: false
+            };
+        }
+
+        let gp = null;
+        if (navigator.getGamepads) {
+            const pads = navigator.getGamepads();
+            if (pads) gp = Array.from(pads).find(Boolean);
+        }
+        if (!gp && !this._steamInputState.up && !this._steamInputState.down && !this._steamInputState.left && !this._steamInputState.right && !this._steamInputState.confirm && !this._steamInputState.cancel) {
             this._padRepeatState.clear();
             return;
         }
 
         const axisDeadzone = 0.5;
-        const up = (gp.buttons[12] && gp.buttons[12].pressed) || gp.axes[1] < -axisDeadzone;
-        const down = (gp.buttons[13] && gp.buttons[13].pressed) || gp.axes[1] > axisDeadzone;
-        const left = (gp.buttons[14] && gp.buttons[14].pressed) || gp.axes[0] < -axisDeadzone;
-        const right = (gp.buttons[15] && gp.buttons[15].pressed) || gp.axes[0] > axisDeadzone;
-        const confirm = (gp.buttons[0] && gp.buttons[0].pressed) || (gp.buttons[9] && gp.buttons[9].pressed); // South face / Start
+        const gpUp = gp ? ((gp.buttons[12] && gp.buttons[12].pressed) || gp.axes[1] < -axisDeadzone) : false;
+        const gpDown = gp ? ((gp.buttons[13] && gp.buttons[13].pressed) || gp.axes[1] > axisDeadzone) : false;
+        const gpLeft = gp ? ((gp.buttons[14] && gp.buttons[14].pressed) || gp.axes[0] < -axisDeadzone) : false;
+        const gpRight = gp ? ((gp.buttons[15] && gp.buttons[15].pressed) || gp.axes[0] > axisDeadzone) : false;
+        const gpConfirm = gp ? ((gp.buttons[0] && gp.buttons[0].pressed) || (gp.buttons[9] && gp.buttons[9].pressed)) : false; // South face / Start
         // Cancel supports multiple common mappings across controllers:
         // East face (B/Circle), West face (X/Square on some remaps), and Back/View.
-        const cancel =
-            (gp.buttons[1] && gp.buttons[1].pressed) ||
-            (gp.buttons[2] && gp.buttons[2].pressed) ||
-            (gp.buttons[8] && gp.buttons[8].pressed);
+        const gpCancel = gp
+            ? ((gp.buttons[1] && gp.buttons[1].pressed) ||
+              (gp.buttons[2] && gp.buttons[2].pressed) ||
+              (gp.buttons[8] && gp.buttons[8].pressed))
+            : false;
+
+        const up = gpUp || !!this._steamInputState.up;
+        const down = gpDown || !!this._steamInputState.down;
+        const left = gpLeft || !!this._steamInputState.left;
+        const right = gpRight || !!this._steamInputState.right;
+        const confirm = gpConfirm || !!this._steamInputState.confirm;
+        const cancel = gpCancel || !!this._steamInputState.cancel;
 
         this._emitGamepadKey('up', up, 'ArrowUp', timestamp, true);
         this._emitGamepadKey('down', down, 'ArrowDown', timestamp, true);

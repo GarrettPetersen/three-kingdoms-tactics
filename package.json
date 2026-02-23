@@ -25,6 +25,18 @@
       "!dist/assets/all_songs/**/*",
       "!dist/assets/voice_samples/**/*"
     ],
+    "extraResources": [
+      {
+        "from": "steam_input",
+        "to": "steam_input",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "asarUnpack": [
+      "node_modules/steamworks.js/**/*"
+    ],
     "directories": {
       "output": "release"
     },
@@ -80,5 +92,8 @@
     "electron-builder": "^26.7.0",
     "sharp": "^0.34.5",
     "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "steamworks.js": "^0.4.0"
   }
 }

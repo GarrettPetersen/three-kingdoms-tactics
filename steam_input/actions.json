@@ -1,0 +1,35 @@
+{
+  "game_actions": [
+    { "name": "gameplay", "type": "set" }
+  ],
+  "actions": [
+    { "name": "up", "type": "digital", "set": "gameplay" },
+    { "name": "down", "type": "digital", "set": "gameplay" },
+    { "name": "left", "type": "digital", "set": "gameplay" },
+    { "name": "right", "type": "digital", "set": "gameplay" },
+    { "name": "confirm", "type": "digital", "set": "gameplay" },
+    { "name": "cancel", "type": "digital", "set": "gameplay" }
+  ],
+  "localization": [
+    {
+      "language_tag": "en",
+      "set_gameplay": "Gameplay",
+      "up": "Move Up",
+      "down": "Move Down",
+      "left": "Move Left",
+      "right": "Move Right",
+      "confirm": "Confirm",
+      "cancel": "Cancel / Back"
+    },
+    {
+      "language_tag": "zh-CN",
+      "set_gameplay": "游戏操作",
+      "up": "上",
+      "down": "下",
+      "left": "左",
+      "right": "右",
+      "confirm": "确认",
+      "cancel": "返回"
+    }
+  ]
+}
