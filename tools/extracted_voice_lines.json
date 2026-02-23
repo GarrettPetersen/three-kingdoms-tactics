@@ -68,19 +68,19 @@
   },
   {
     "id": "cc_dq_msg_01",
-    "char": "soldier",
+    "char": "volunteer",
     "text": "Dispatch from Luoyang! Imperial order: Dong Commandery is to muster a cavalry force of five thousand.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "cc_dq_msg_02",
-    "char": "soldier",
+    "char": "volunteer",
     "text": "Draft men and horses from local households and march against the Yellow Turban rebels.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "cc_dq_msg_03",
-    "char": "soldier",
+    "char": "volunteer",
     "text": "Magistrate Cao Cao is elevated to Cavalry Commander and placed in command of this Dong Commandery cavalry force.",
     "source": "NarrativeScripts.js",
     "phonetic_text": "Magistrate Tsao Tsao is elevated to Cavalry Commander and placed in command of this Dong Commandery cavalry force."
@@ -1130,7 +1130,7 @@
   },
   {
     "id": "qz_ms_01",
-    "char": "soldier",
+    "char": "volunteer",
     "text": "URGENT! Imperial Protector Gong Jing of Qingzhou Region is under siege! The city is near falling!",
     "source": "NarrativeScripts.js"
   },

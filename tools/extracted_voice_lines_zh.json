@@ -67,19 +67,19 @@
   },
   {
     "id": "cc_dq_msg_01",
-    "char": "soldier",
+    "char": "volunteer",
     "text": "洛阳急报！奉朝廷诏令：东郡当募骑兵五千。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "cc_dq_msg_02",
-    "char": "soldier",
+    "char": "volunteer",
     "text": "自各乡里征发丁壮与战马，进讨黄巾逆军。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "cc_dq_msg_03",
-    "char": "soldier",
+    "char": "volunteer",
     "text": "今擢曹操县令为骑都尉，总领东郡所募此部骑军。",
     "source": "NarrativeScripts.js"
   },
@@ -1111,7 +1111,7 @@
   },
   {
     "id": "qz_ms_01",
-    "char": "soldier",
+    "char": "volunteer",
     "text": "紧急！青州太守龚景被围困！城池即将陷落！",
     "source": "NarrativeScripts.js"
   },

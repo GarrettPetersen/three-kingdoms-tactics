@@ -1261,11 +1261,11 @@
     },
     "zh:qz_ms_01": {
         "id": "qz_ms_01",
-        "character": "soldier",
+        "character": "volunteer",
         "original_text": "紧急！青州太守龚景被围困！城池即将陷落！",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false,
+        "stt_output": "緊急 新州太首公警被違困從此即將陷落",
+        "wer": 2.0,
+        "is_bad": true,
         "language": "zh"
     },
     "zh:qz_ret_gj_01": {
@@ -1927,27 +1927,27 @@
     },
     "zh:cc_dq_msg_01": {
         "id": "cc_dq_msg_01",
-        "character": "soldier",
+        "character": "volunteer",
         "original_text": "洛阳急报！奉朝廷诏令：东郡当募骑兵五千。",
-        "stt_output": "洛陽吉報 鳳潮廷照令 東俊當幕 習兵5000",
-        "wer": 4.0,
+        "stt_output": "若洋吉報鳳朝庭召令東俊當幕其兵5000",
+        "wer": 1.0,
         "is_bad": true,
         "language": "zh"
     },
     "zh:cc_dq_msg_02": {
         "id": "cc_dq_msg_02",
-        "character": "soldier",
+        "character": "volunteer",
         "original_text": "自各乡里征发丁壮与战马，进讨黄巾逆军。",
-        "stt_output": "四個項目正發定狀於戰馬 進討黃金逆軍",
-        "wer": 2.0,
+        "stt_output": "自個鄉裡蒸發丁撞與戰馬幸討皇金尼軍",
+        "wer": 1.0,
         "is_bad": true,
         "language": "zh"
     },
     "zh:cc_dq_msg_03": {
         "id": "cc_dq_msg_03",
-        "character": "soldier",
+        "character": "volunteer",
         "original_text": "今擢曹操县令为骑都尉，总领东郡所募此部骑军。",
-        "stt_output": "金卓曹操线另外其都位总领冬军所募此不其军",
+        "stt_output": "新卓朝朝线另外其都位總領東軍所募此不其軍",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"

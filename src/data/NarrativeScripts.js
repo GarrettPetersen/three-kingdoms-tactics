@@ -550,6 +550,7 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'move', id: 'messenger', x: 140, y: 180 },
         {
             type: 'dialogue',
+            speaker: 'volunteer',
             portraitKey: 'soldier',
             name: 'Messenger',
             position: 'top',
@@ -1771,6 +1772,7 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'move', id: 'messenger', x: 166, y: 216, wait: true },
         {
             type: 'dialogue',
+            speaker: 'volunteer',
             name: 'Messenger',
             portraitKey: 'soldier',
             voiceId: 'cc_dq_msg_01',
@@ -1784,6 +1786,7 @@ export const NARRATIVE_SCRIPTS = {
         },
         {
             type: 'dialogue',
+            speaker: 'volunteer',
             name: 'Messenger',
             portraitKey: 'soldier',
             voiceId: 'cc_dq_msg_02',
@@ -1797,6 +1800,7 @@ export const NARRATIVE_SCRIPTS = {
         },
         {
             type: 'dialogue',
+            speaker: 'volunteer',
             name: 'Messenger',
             portraitKey: 'soldier',
             voiceId: 'cc_dq_msg_03',

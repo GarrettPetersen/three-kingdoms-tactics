@@ -1351,10 +1351,10 @@
     },
     "en:qz_ms_01": {
         "id": "qz_ms_01",
-        "character": "soldier",
+        "character": "volunteer",
         "original_text": "URGENT! Imperial Protector Gong Jing of Qingzhou Region is under siege! The city is near falling!",
-        "stt_output": "",
-        "wer": 0,
+        "stt_output": "Virgin Imperial Protector Gong Jing of Qingzhou, region is under sea, the city is near falling.",
+        "wer": 0.125,
         "is_bad": false,
         "language": "en"
     },
@@ -1866,8 +1866,8 @@
         "id": "cc_dq_05",
         "character": "caocao",
         "original_text": "Send word to my cousin Cao Ren: gather every horseman he can and join me without delay.",
-        "stt_output": "Send word to my cousin, Sourin, gather every horseman he can, and join me without delay.",
-        "wer": 0.11764705882352941,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1927,28 +1927,28 @@
     },
     "en:cc_dq_msg_01": {
         "id": "cc_dq_msg_01",
-        "character": "soldier",
+        "character": "volunteer",
         "original_text": "Dispatch from Luoyang! Imperial order: Dong Commandery is to muster a cavalry force of five thousand.",
-        "stt_output": "This patch from Luoyang, Imperial Order, Don't Commandery, is to muster a cavalry force of 5,000.",
-        "wer": 0.3125,
-        "is_bad": false,
+        "stt_output": "dispatch from Luai Imperial order. Don't come under he is to muster a cavalry force of 5,000.",
+        "wer": 0.4375,
+        "is_bad": true,
         "language": "en"
     },
     "en:cc_dq_msg_02": {
         "id": "cc_dq_msg_02",
-        "character": "soldier",
+        "character": "volunteer",
         "original_text": "Draft men and horses from local households and march against the Yellow Turban rebels.",
-        "stt_output": "Draft men and horses from local households and march against the yellow turban rebels.",
-        "wer": 0.0,
+        "stt_output": "Draft men and horses from local households in March against the yellow turban rebel.",
+        "wer": 0.14285714285714285,
         "is_bad": false,
         "language": "en"
     },
     "en:cc_dq_msg_03": {
         "id": "cc_dq_msg_03",
-        "character": "soldier",
+        "character": "volunteer",
         "original_text": "Magistrate Cao Cao is elevated to Cavalry Commander and placed in command of this Dong Commandery cavalry force.",
-        "stt_output": "Magistrat Zau Zau is elevated to cavalry commander and placed in command of this Don cavalry force.",
-        "wer": 0.2777777777777778,
+        "stt_output": "Magistrate Saur! Saur is elevated to cavalry commander and placed in command of this Don Commandery cavalry force.",
+        "wer": 0.16666666666666666,
         "is_bad": false,
         "language": "en"
     }
