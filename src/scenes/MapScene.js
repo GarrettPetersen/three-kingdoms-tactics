@@ -150,6 +150,7 @@ const HERO_REMINDERS = {
     'caocao_intro_complete': {
         portraitKey: 'cao-cao',
         name: 'Cao Cao',
+        voiceId: 'map_cc_rem_01',
         text: {
             en: "Government armies are already engaged with the Yellow Turbans at Yingchuan. We march there now and cut off their retreat.",
             zh: "官军已在颍川与黄巾交战。我们即刻前往，断其退路。"
@@ -254,7 +255,7 @@ export class MapScene extends BaseScene {
                     this.party = {
                         id: 'caocao',
                         name: 'Cao Cao',
-                        x: params.partyX !== undefined ? params.partyX : (savedX !== undefined ? savedX : 176),
+                        x: params.partyX !== undefined ? params.partyX : (savedX !== undefined ? savedX : 168),
                         y: params.partyY !== undefined ? params.partyY : (savedY !== undefined ? savedY : 98),
                         imgKey: 'caocao'
                     };
@@ -276,7 +277,7 @@ export class MapScene extends BaseScene {
                     this.party = {
                         id: 'caocao',
                         name: 'Cao Cao',
-                        x: savedX !== undefined ? savedX : 176,
+                        x: savedX !== undefined ? savedX : 168,
                         y: savedY !== undefined ? savedY : 98,
                         imgKey: 'caocao'
                     };
@@ -289,6 +290,11 @@ export class MapScene extends BaseScene {
 
         this.initSelection({ defaultIndex: 0, totalOptions: 0 });
         this.navTargets = [];
+
+        // Cao Cao route map should open with his reminder line, and allow replay on sprite click.
+        if (!savedState && this.currentCampaignId === 'caocao') {
+            this.showCurrentPartyReminder(gs);
+        }
     }
     
     restoreMapState(state) {
@@ -443,8 +449,10 @@ export class MapScene extends BaseScene {
                     );
 
                     if (this.interactionSelected === locId) {
-                        const locName = getLocalizedText(UI_TEXT[loc.name]) || loc.name;
-                        const promptText = isDone ? getLocalizedText(UI_TEXT['COMPLETED']) : getLocalizedText(UI_TEXT['click to march']);
+                        const locName = getLocalizedText(UI_TEXT[loc.name] || { en: loc.name, zh: loc.name });
+                        const promptText = isDone
+                            ? getLocalizedText(UI_TEXT['COMPLETED'] || { en: 'COMPLETED', zh: '已完成' })
+                            : getLocalizedText(UI_TEXT['click to march'] || { en: 'click to march', zh: '点击进军' });
                         pendingLabels.push({ name: locName, x: lx, y: ly - 10, prompt: promptText });
                     }
                 }
@@ -840,8 +848,7 @@ export class MapScene extends BaseScene {
             return;
         }
 
-        // Handle party click first (party sprite can overlap location icons like the magistrate).
-        // A precise click on Liu Bei should always trigger his reminder dialogue.
+        // Resolve click by top-most overlap target (locations vs party), matching render depth.
         const gs = this.manager.gameState;
         const cx = mx + this.party.x;
         const cy = my + this.party.y;
@@ -864,13 +871,17 @@ export class MapScene extends BaseScene {
             if (this.moveState.targetX < this.moveState.startX) flip = true;
         }
 
+        const hitCandidates = [];
         const charHit = this.checkCharacterHit(charImg, action, frameIdx, currentX, currentY, mouseX, mouseY, { flip });
         if (charHit) {
-            this.showCurrentPartyReminder(gs);
-            return;
+            hitCandidates.push({
+                type: 'party',
+                sortY: currentY,
+                priority: 1
+            });
         }
 
-        // Handle dynamic location clicks
+        // Gather dynamic location hits
         const locations = this.getActiveLocations();
         for (const locId in locations) {
             const loc = locations[locId];
@@ -894,26 +905,49 @@ export class MapScene extends BaseScene {
             }
 
                 if (hit || labelHit) {
-                    if (this.interactionSelected === locId) {
-                        const isDone = loc.isCompleted ? loc.isCompleted(gs) : false;
-                        if (!isDone) {
-                            this.heroMoveTo(loc.x, loc.y, () => {
-                                if (loc.battleId === 'daxing') this.startBriefing();
-                                else if (loc.battleId === 'qingzhou_siege') this.startQingzhouBriefing();
-                                else if (loc.battleId === 'guangzong_camp') this.startGuangzongCamp();
-                                else if (loc.battleId === 'yingchuan_aftermath') this.startYingchuanAftermath();
-                                else if (loc.battleId === 'guangzong_encounter') this.startGuangzongBriefing();
-                                else if (loc.battleId === 'zhuo_return') this.startZhuoReturn();
-                                else if (loc.battleId === 'caocao_yingchuan_intercept') this.startCaocaoYingchuanIntercept();
-                            });
-                        }
-                } else {
-                        this.interactionSelected = locId;
-                        this.selectedLocation = locId;
-                }
-                return;
+                    // Location footY matches render depth sorting in render()
+                    hitCandidates.push({
+                        type: 'location',
+                        locId,
+                        loc,
+                        sortY: ly + ih / 2,
+                        priority: 0
+                    });
                 }
             }
+        }
+
+        if (hitCandidates.length > 0) {
+            hitCandidates.sort((a, b) => {
+                if (a.sortY !== b.sortY) return b.sortY - a.sortY;
+                return b.priority - a.priority;
+            });
+            const topHit = hitCandidates[0];
+
+            if (topHit.type === 'party') {
+                this.showCurrentPartyReminder(gs);
+                return;
+            }
+
+            const { locId, loc } = topHit;
+            if (this.interactionSelected === locId) {
+                const isDone = loc.isCompleted ? loc.isCompleted(gs) : false;
+                if (!isDone) {
+                    this.heroMoveTo(loc.x, loc.y, () => {
+                        if (loc.battleId === 'daxing') this.startBriefing();
+                        else if (loc.battleId === 'qingzhou_siege') this.startQingzhouBriefing();
+                        else if (loc.battleId === 'guangzong_camp') this.startGuangzongCamp();
+                        else if (loc.battleId === 'yingchuan_aftermath') this.startYingchuanAftermath();
+                        else if (loc.battleId === 'guangzong_encounter') this.startGuangzongBriefing();
+                        else if (loc.battleId === 'zhuo_return') this.startZhuoReturn();
+                        else if (loc.battleId === 'caocao_yingchuan_intercept') this.startCaocaoYingchuanIntercept();
+                    });
+                }
+            } else {
+                this.interactionSelected = locId;
+                this.selectedLocation = locId;
+            }
+            return;
         }
         
         this.selectedLocation = null;

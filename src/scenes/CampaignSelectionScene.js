@@ -43,7 +43,7 @@ export class CampaignSelectionScene extends BaseScene {
                 imgKey: 'caocao',
                 descriptionKey: 'campaign_caocao_description',
                 description: 'From Dunqiu in Henan, a rising officer strikes the Yellow Turban remnants at Yingchuan and wins his first renown.',
-                x: 176,
+                x: 168,
                 y: 98,
                 nameOffsetX: -18,
                 nameOffsetY: -34,
@@ -497,7 +497,7 @@ export class CampaignSelectionScene extends BaseScene {
                     keepMusic: false,
                     onComplete: () => {
                         gs.setStoryCursor('caocao_intro_complete', 'caocao');
-                        this.manager.switchTo('campaign_selection');
+                        this.manager.switchTo('map', { campaignId: 'caocao', partyX: 168, partyY: 98 });
                     }
                 });
                 return;
@@ -603,7 +603,7 @@ export class CampaignSelectionScene extends BaseScene {
                                 keepMusic: false,
                                 onComplete: () => {
                                     gs.setStoryCursor('caocao_intro_complete', 'caocao');
-                                    this.manager.switchTo('campaign_selection');
+                                    this.manager.switchTo('map', { campaignId: 'caocao', partyX: 168, partyY: 98 });
                                 }
                             });
                             return;

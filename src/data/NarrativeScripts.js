@@ -1663,6 +1663,20 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'move', id: 'caocao_civil_attendant', x: 78, y: 216, wait: true },
         {
             type: 'dialogue',
+            name: 'Civil Attendant',
+            portraitKey: 'zhoujing',
+            speaker: 'zhoujing',
+            voiceId: 'cc_dq_att_00',
+            position: 'top',
+            bg: 'urban_street',
+            fg: 'urban_street_foreground',
+            text: {
+                en: 'Magistrate, the refugees all report the Yellow Turbans are burning and plundering along the roads. The people are carrying old and young alike and pleading to enter the city for shelter.',
+                zh: '县令，流民皆称黄巾沿途焚掠，郡县震动。百姓扶老携幼，争入城中避难。'
+            }
+        },
+        {
+            type: 'dialogue',
             name: 'Cao Cao',
             portraitKey: 'cao-cao',
             voiceId: 'cc_dq_01',
@@ -1744,6 +1758,10 @@ export const NARRATIVE_SCRIPTS = {
                             value: 'close_gates',
                             routeId: 'caocao'
                         },
+                        { type: 'command', action: 'setActorLoop', id: 'refugee_m_01', enabled: false },
+                        { type: 'command', action: 'setActorLoop', id: 'refugee_f_01', enabled: false },
+                        { type: 'command', action: 'setActorLoop', id: 'refugee_m_02', enabled: false },
+                        { type: 'command', action: 'setActorLoop', id: 'refugee_f_02', enabled: false },
                         {
                             type: 'dialogue',
                             name: 'Military Attendant',
@@ -1759,11 +1777,7 @@ export const NARRATIVE_SCRIPTS = {
                         },
                         { type: 'command', action: 'move', id: 'caocao_attendant', x: 118, y: 324, wait: true },
                         { type: 'command', action: 'removeActor', id: 'caocao_attendant' },
-                        { type: 'command', action: 'playSound', key: 'building_damage', volume: 0.7 },
-                        { type: 'command', action: 'setActorLoop', id: 'refugee_m_01', enabled: false },
-                        { type: 'command', action: 'setActorLoop', id: 'refugee_f_01', enabled: false },
-                        { type: 'command', action: 'setActorLoop', id: 'refugee_m_02', enabled: false },
-                        { type: 'command', action: 'setActorLoop', id: 'refugee_f_02', enabled: false }
+                        { type: 'command', action: 'playSound', key: 'building_damage', volume: 0.7 }
                     ]
                 }
             ]

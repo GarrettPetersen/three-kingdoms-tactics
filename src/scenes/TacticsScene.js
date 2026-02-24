@@ -618,26 +618,21 @@ export class TacticsScene extends BaseScene {
     makeUnitFleeOffscreen(unit, fleeCfg = {}) {
         if (!unit || unit.isGone) return;
         const edge = fleeCfg.edge || 'right';
-        const durationMs = Number.isFinite(fleeCfg.durationMs) ? fleeCfg.durationMs : 650;
         const extraTiles = Number.isFinite(fleeCfg.extraTiles) ? fleeCfg.extraTiles : 3;
-        const spacingX = this.manager.config.horizontalSpacing;
-        const spacingY = this.manager.config.verticalSpacing;
-        const startPos = {
-            x: (typeof unit.visualX === 'number') ? unit.visualX : this.getPixelPos(unit.r, unit.q).x,
-            y: (typeof unit.visualY === 'number') ? unit.visualY : this.getPixelPos(unit.r, unit.q).y
-        };
-
-        let endPos = { ...startPos };
+        const mapW = this.manager.config.mapWidth;
+        const mapH = this.manager.config.mapHeight;
+        let destR = unit.r;
+        let destQ = unit.q;
         if (edge === 'left') {
-            endPos.x = startPos.x - spacingX * extraTiles;
             unit.flip = true;
+            destQ = -Math.max(1, extraTiles);
         } else if (edge === 'top') {
-            endPos.y = startPos.y - spacingY * extraTiles;
+            destR = -Math.max(1, extraTiles);
         } else if (edge === 'bottom') {
-            endPos.y = startPos.y + spacingY * extraTiles;
+            destR = (mapH - 1) + Math.max(1, extraTiles);
         } else {
-            endPos.x = startPos.x + spacingX * extraTiles;
             unit.flip = false;
+            destQ = (mapW - 1) + Math.max(1, extraTiles);
         }
 
         unit.intent = null;
@@ -645,14 +640,41 @@ export class TacticsScene extends BaseScene {
         unit.currentAnimAction = 'walk';
         const oldCell = this.tacticsMap.getCell(unit.r, unit.q);
         if (oldCell && oldCell.unit === unit) oldCell.unit = null;
+        const fleePath = [{ r: unit.r, q: unit.q }];
+        let curR = unit.r;
+        let curQ = unit.q;
 
-        const startedAt = Date.now();
-        const animate = () => {
-            const progress = Math.min((Date.now() - startedAt) / durationMs, 1);
-            unit.visualX = startPos.x + (endPos.x - startPos.x) * progress;
-            unit.visualY = startPos.y + (endPos.y - startPos.y) * progress;
-            if (progress < 1) {
-                requestAnimationFrame(animate);
+        // Build a stepped path so retreat remains visible even on low-FPS/mobile frames.
+        const stepToward = (targetR, targetQ) => {
+            while (curR !== targetR || curQ !== targetQ) {
+                if (curR < targetR) curR++;
+                else if (curR > targetR) curR--;
+                if (curQ < targetQ) curQ++;
+                else if (curQ > targetQ) curQ--;
+                fleePath.push({ r: curR, q: curQ });
+            }
+        };
+
+        // Exit via map boundary first, then continue off-map.
+        let boundaryR = curR;
+        let boundaryQ = curQ;
+        if (edge === 'left') boundaryQ = 0;
+        else if (edge === 'right') boundaryQ = mapW - 1;
+        else if (edge === 'top') boundaryR = 0;
+        else if (edge === 'bottom') boundaryR = mapH - 1;
+
+        stepToward(boundaryR, boundaryQ);
+        stepToward(destR, destQ);
+
+        if (fleePath.length < 2) {
+            fleePath.push({ r: destR, q: destQ });
+        }
+        unit.startPath(fleePath);
+
+        const waitUntilGone = () => {
+            if (unit.isGone) return;
+            if (unit.isMoving) {
+                setTimeout(waitUntilGone, 40);
                 return;
             }
             unit.isGone = true;
@@ -660,7 +682,7 @@ export class TacticsScene extends BaseScene {
                 this.endBattle(!!fleeCfg.endBattle.won);
             }
         };
-        animate();
+        waitUntilGone();
     }
 
     triggerImmortalBehavior(unit, cause = 'damage') {
@@ -685,7 +707,12 @@ export class TacticsScene extends BaseScene {
                 unit.voiceId = sayCfg.voiceId;
                 assets.playVoice(sayCfg.voiceId);
             }
-            this.activeDialogue = { unit, timer: sayDuration, lockSkips: !!sayCfg.lockSkips };
+            this.activeDialogue = {
+                unit,
+                portraitKey: sayCfg.portraitKey || unit.imgKey,
+                timer: sayDuration,
+                lockSkips: !!sayCfg.lockSkips
+            };
         }
 
         const fleeCfg = nearDeathCfg.flee || immortalCfg.flee;
@@ -707,8 +734,8 @@ export class TacticsScene extends BaseScene {
         if (this.isGameOver || this.isIntroAnimating || this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCleanupDialogueActive || this.isCutscene) return;
 
         const battleDef = BATTLES[this.battleId];
-        const playerUnits = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp > 0);
-        const enemyUnits = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
+        const playerUnits = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp > 0 && !u.isGone);
+        const enemyUnits = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.isGone);
 
         // Chapter 2 opener: never resolve standard victory/defeat while Dong Zhuo
         // escape sequence is pending/playing. He must flee via scripted sequence.
@@ -744,7 +771,7 @@ export class TacticsScene extends BaseScene {
             // Check Must Survive conditions
             const mustSurvive = (vc && typeof vc === 'object' && vc.mustSurvive) ? vc.mustSurvive : null;
             if (mustSurvive) {
-                const deadRequired = mustSurvive.some(id => !this.units.find(u => u.id === id && u.hp > 0));
+                const deadRequired = mustSurvive.some(id => !this.units.find(u => u.id === id && u.hp > 0 && !u.isGone));
                 if (deadRequired) {
                     this.endBattle(false);
                 return;
@@ -2212,7 +2239,8 @@ export class TacticsScene extends BaseScene {
             const [r, q] = key.split(',').map(Number);
             const cell = this.tacticsMap.getCell(r, q);
             const blockedByLiving = !!this.getLivingUnitOccupyingCell(r, q, unit);
-            if (!blockedByLiving) {
+            const blockedByHorse = !!(cell?.horse && cell.horse.riderId && (!unit.onHorse || cell.horse.id !== unit.horseId));
+            if (!blockedByLiving && !blockedByHorse) {
                 validDestinations.set(key, data);
             }
         });
@@ -2395,6 +2423,41 @@ export class TacticsScene extends BaseScene {
         const path = this.tacticsMap.getPath(unit.r, unit.q, bestTile.r, bestTile.q, unit.moveRange, unit);
         if (path && path.length > 1) {
             // Unit needs to move
+            if (unit.onHorse) {
+                let plannedFlip = unit.flip;
+                if (path.length >= 2) {
+                    const prev = path[path.length - 2];
+                    const last = path[path.length - 1];
+                    const prevPos = this.getPixelPos(prev.r, prev.q);
+                    const lastPos = this.getPixelPos(last.r, last.q);
+                    if (lastPos.x < prevPos.x) plannedFlip = true;
+                    else if (lastPos.x > prevPos.x) plannedFlip = false;
+                }
+                const resolvedFlip = this.getValidMountedFlipForDestination(unit, bestTile.r, bestTile.q, plannedFlip);
+                if (resolvedFlip === null) {
+                    unit.hasActed = true;
+                    unit.hasMoved = true;
+                    this.telegraphSingleNpc(unit);
+                    onComplete();
+                    return;
+                }
+                const tmp = { ...unit, flip: resolvedFlip };
+                const headCell = this.getMountedHeadCellFor(tmp, bestTile.r, bestTile.q);
+                if (!headCell || !this.ensureMountedDestinationClearOfRiderlessHorses(bestTile.r, bestTile.q, headCell.r, headCell.q, unit.horseId)) {
+                    unit.hasActed = true;
+                    unit.hasMoved = true;
+                    this.telegraphSingleNpc(unit);
+                    onComplete();
+                    return;
+                }
+            } else if (this.isCellBlockedByOtherHorse(unit, bestTile.r, bestTile.q, true)) {
+                unit.hasActed = true;
+                unit.hasMoved = true;
+                this.telegraphSingleNpc(unit);
+                onComplete();
+                return;
+            }
+
             const oldCell = this.tacticsMap.getCell(unit.r, unit.q);
             if (oldCell) oldCell.unit = null;
             if (unit.onHorse) {
@@ -3797,7 +3860,7 @@ export class TacticsScene extends BaseScene {
         const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('tent') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
 
         // Play attack sound
-        if (attackKey.startsWith('serpent_spear')) assets.playSound('stab');
+        if (attackKey.startsWith('serpent_spear') || attackKey.startsWith('caoren_spear')) assets.playSound('stab');
         else if (attackKey.startsWith('green_dragon_slash')) assets.playSound('green_dragon');
         else if (attackKey === 'tyrant_sweep') assets.playSound('green_dragon');  // Same sound as green dragon
         else if (attackKey === 'double_blades') assets.playSound('double_blades');
@@ -3835,7 +3898,7 @@ export class TacticsScene extends BaseScene {
             this.executeDoubleBlades(attacker, targetR, targetQ, wrappedOnComplete);
         } else if (attackKey.startsWith('green_dragon_slash') || attackKey === 'tyrant_sweep') {
             this.executeGreenDragonSlash(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
-        } else if (attackKey.startsWith('serpent_spear')) {
+        } else if (attackKey.startsWith('serpent_spear') || attackKey.startsWith('caoren_spear')) {
             this.executeSerpentSpear(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
         } else {
             // Standard single-target attack (Bash, etc.)
@@ -4311,8 +4374,8 @@ export class TacticsScene extends BaseScene {
         let finalDamage = attack.damage;
         let isCrit = false;
         let isResisted = false;
-        let critText = "CRIT!";
-        let resistText = "RESISTED!";
+        let critText = getLocalizedText({ en: "CRIT!", zh: "暴击！" });
+        let resistText = getLocalizedText({ en: "RESISTED!", zh: "格挡！" });
 
         const attackerCell = this.tacticsMap.getCell(attacker.r, attacker.q);
         const victimCell = this.tacticsMap.getCell(victim.r, victim.q);
@@ -4326,7 +4389,7 @@ export class TacticsScene extends BaseScene {
             // Height Bonus/Penalty
             if (heightDiff > 0) {
                 critChance *= 2;
-                critText = "HIGH GROUND CRIT!";
+                critText = getLocalizedText({ en: "HIGH GROUND CRIT!", zh: "高地暴击！" });
             } else if (heightDiff < 0) {
                 critChance *= 0.5;
             }
@@ -4346,13 +4409,13 @@ export class TacticsScene extends BaseScene {
                 ? (victim.shieldResistBase + ((victim.shieldResistPerLevel || 0) * Math.max(0, victim.level - 1)))
                 : (0.5 * (victim.level - 1) / (victim.level + 4));
             if (hasShieldResist) {
-                resistText = "SHIELD RESIST!";
+                resistText = getLocalizedText({ en: "SHIELD RESIST!", zh: "盾牌格挡！" });
             }
             
             // Height Bonus/Penalty (Victim is on high ground relative to attacker)
             if (heightDiff < 0) {
                 resistChance *= 2;
-                resistText = "HIGH GROUND RESIST!";
+                resistText = getLocalizedText({ en: "HIGH GROUND RESIST!", zh: "高地格挡！" });
             } else if (heightDiff > 0) {
                 resistChance *= 0.5;
             }
@@ -4740,7 +4803,7 @@ export class TacticsScene extends BaseScene {
                 
                 let unitClass = u.templateId || u.id.replace(/\d+$/, '');
                 if (!this.isCustom) {
-                    unitClass = unitClasses[u.id] || (u.id.startsWith('ally') ? 'soldier' : u.id);
+                    unitClass = unitClasses[u.id] || u.templateId || (u.id.startsWith('ally') ? 'soldier' : u.id);
                 } else {
                     if (u.isArcher) {
                         unitClass = 'archer';
@@ -4750,7 +4813,11 @@ export class TacticsScene extends BaseScene {
                 }
                 
                 // Level bonuses - soldiers gain +1 HP at level 2+, archers stay at 2 base
-                const isAlly = u.id.startsWith('ally') || u.id.startsWith('guard') || u.id.includes('custom_ally') || u.id.includes('custom_guard');
+                const isAlly = u.id.startsWith('ally')
+                    || u.id.startsWith('guard')
+                    || u.id.includes('custom_ally')
+                    || u.id.includes('custom_guard')
+                    || (u.faction === 'allied' && unitClass === 'soldier');
                 const isArcher = unitClass === 'archer';
                 let baseHp = u.maxHp || u.hp || 4;
                 if (isAlly) {
@@ -4890,7 +4957,7 @@ export class TacticsScene extends BaseScene {
 
     // Mounted move planning (butt + head) for UI highlighting / click handling
     buildMountedMovePlans(unit, reachableData) {
-        const plans = [];
+        const bestByLeftKey = new Map();
         reachableData.forEach((data, key) => {
             const [r, q] = key.split(',').map(Number);
             const buttCell = this.tacticsMap.getCell(r, q);
@@ -4914,22 +4981,30 @@ export class TacticsScene extends BaseScene {
             const tmp = { ...unit, flip: resolvedFlip };
             const headCell = this.getMountedHeadCellFor(tmp, r, q);
             if (!headCell) return;
-
-            plans.push({
+            const leftQ = Math.min(q, headCell.q);
+            const rightQ = Math.max(q, headCell.q);
+            const leftKey = `${r},${leftQ}`;
+            const candidate = {
                 butt: { r, q },
                 head: { r: headCell.r, q: headCell.q },
-                plannedFlip: resolvedFlip
-            });
+                left: { r, q: leftQ },
+                right: { r, q: rightQ },
+                plannedFlip: resolvedFlip,
+                cost: Number.isFinite(data?.cost) ? data.cost : Infinity
+            };
+
+            const existing = bestByLeftKey.get(leftKey);
+            if (!existing || candidate.cost < existing.cost) {
+                bestByLeftKey.set(leftKey, candidate);
+            }
         });
-        return plans;
+        return Array.from(bestByLeftKey.values());
     }
 
     getMountedPlanForClickedCell(clickedR, clickedQ) {
         if (!this.mountedMovePlans || this.mountedMovePlans.length === 0) return null;
-        // Prefer plans where the clicked cell is the head
-        const headPlan = this.mountedMovePlans.find(p => p.head.r === clickedR && p.head.q === clickedQ);
-        if (headPlan) return headPlan;
-        return this.mountedMovePlans.find(p => p.butt.r === clickedR && p.butt.q === clickedQ) || null;
+        // Canonical targeting rule: mounted destination is selected by the LEFT occupied hex.
+        return this.mountedMovePlans.find(p => p.left.r === clickedR && p.left.q === clickedQ) || null;
     }
 
     syncMountedOccupancy(unit) {
@@ -5397,7 +5472,108 @@ export class TacticsScene extends BaseScene {
         // Don't wander onto units
         if (buttCell.unit) return false;
         if (headCell.unit) return false;
+        // Don't overlap a different horse footprint
+        if (buttCell.horse && buttCell.horse !== horse) return false;
+        if (headCell.horse && headCell.horse !== horse) return false;
 
+        return true;
+    }
+
+    relocateRiderlessHorse(horse, avoidKeys = new Set(), maxDist = 12) {
+        if (!horse || horse.riderId) return true;
+
+        const canUse = (r, q, flip) => {
+            const testHorse = { ...horse, flip: !!flip };
+            const headQ = q + (flip ? -1 : 1);
+            if (avoidKeys.has(`${r},${q}`) || avoidKeys.has(`${r},${headQ}`)) return false;
+            return this.isValidHorseButtDestination(testHorse, r, q);
+        };
+
+        let chosen = null;
+        if (canUse(horse.r, horse.q, horse.flip)) {
+            return true; // already in a valid non-conflicting spot
+        }
+        if (canUse(horse.r, horse.q, !horse.flip)) {
+            chosen = { r: horse.r, q: horse.q, flip: !horse.flip };
+        }
+
+        if (!chosen) {
+            const queue = [{ r: horse.r, q: horse.q, d: 0 }];
+            const visited = new Set([`${horse.r},${horse.q}`]);
+            while (queue.length > 0 && !chosen) {
+                const current = queue.shift();
+                if (current.d >= maxDist) continue;
+                const neighbors = this.tacticsMap.getNeighbors(current.r, current.q);
+                for (const n of neighbors) {
+                    const key = `${n.r},${n.q}`;
+                    if (visited.has(key)) continue;
+                    visited.add(key);
+                    if (canUse(n.r, n.q, horse.flip)) {
+                        chosen = { r: n.r, q: n.q, flip: horse.flip };
+                        break;
+                    }
+                    if (canUse(n.r, n.q, !horse.flip)) {
+                        chosen = { r: n.r, q: n.q, flip: !horse.flip };
+                        break;
+                    }
+                    queue.push({ r: n.r, q: n.q, d: current.d + 1 });
+                }
+            }
+        }
+
+        if (!chosen) return false;
+
+        const prevPos = this.getPixelPos(horse.r, horse.q);
+        const nextPos = this.getPixelPos(chosen.r, chosen.q);
+        this.clearHorseFromCells(horse);
+        horse.r = chosen.r;
+        horse.q = chosen.q;
+        horse.flip = !!chosen.flip;
+        this.placeHorseOnCells(horse);
+
+        // Reuse existing horse wander animation style for consistency.
+        horse.moveData = {
+            startX: prevPos.x,
+            startY: prevPos.y,
+            endX: nextPos.x,
+            endY: nextPos.y,
+            t: 0,
+            duration: 220
+        };
+        horse.visualX = prevPos.x;
+        horse.visualY = prevPos.y;
+        horse.isMoving = true;
+        return true;
+    }
+
+    isCellBlockedByOtherHorse(unit, r, q, allowRiderlessForAutoMount = true) {
+        const cell = this.tacticsMap.getCell(r, q);
+        const horse = cell?.horse;
+        if (!horse) return false;
+        if (unit?.horseId && horse.id === unit.horseId) return false;
+        if (allowRiderlessForAutoMount && !horse.riderId && !unit?.onHorse) return false;
+        return true;
+    }
+
+    ensureMountedDestinationClearOfRiderlessHorses(buttR, buttQ, headR, headQ, movingHorseId = null) {
+        const buttHorse = this.tacticsMap.getCell(buttR, buttQ)?.horse;
+        const headHorse = this.tacticsMap.getCell(headR, headQ)?.horse;
+        const blocks = (h) => !!(h && h.id !== movingHorseId && h.riderId);
+        if (blocks(buttHorse) || blocks(headHorse)) return false;
+
+        const avoidKeys = new Set([`${buttR},${buttQ}`, `${headR},${headQ}`]);
+        const horsesToMove = [];
+        const pushHorse = (horse) => {
+            if (!horse || horse.riderId) return;
+            if (!horsesToMove.some(h => h.id === horse.id)) horsesToMove.push(horse);
+        };
+
+        pushHorse(this.tacticsMap.getCell(buttR, buttQ)?.horse);
+        pushHorse(this.tacticsMap.getCell(headR, headQ)?.horse);
+
+        for (const h of horsesToMove) {
+            if (!this.relocateRiderlessHorse(h, avoidKeys)) return false;
+        }
         return true;
     }
 
@@ -5855,7 +6031,7 @@ export class TacticsScene extends BaseScene {
         const dist = this.tacticsMap.getDistance(origin.r, origin.q, targetR, targetQ);
         const attack = ATTACKS[attackKey];
 
-        if (attackKey.startsWith('serpent_spear')) {
+        if (attackKey.startsWith('serpent_spear') || attackKey.startsWith('caoren_spear')) {
             // Hits every hex on the line from origin to target (excluding origin).
             // Use the map's canonical line helper to avoid occasional interpolation drift.
             const line = this.tacticsMap.getLine(origin.r, origin.q, targetR, targetQ) || [];
@@ -6569,7 +6745,7 @@ export class TacticsScene extends BaseScene {
                             this.drawPushArrow(ctx, backCell.r, backCell.q, oppositeDir);
                         }
                     }
-                } else if (this.selectedAttack === 'serpent_spear') {
+                } else if (this.selectedAttack && (this.selectedAttack.startsWith('serpent_spear') || this.selectedAttack.startsWith('caoren_spear'))) {
                     // Serpent Spear: Push the further target
                     const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, this.hoveredCell.r, this.hoveredCell.q);
                     if (dirIndex !== -1) {
@@ -7080,7 +7256,8 @@ export class TacticsScene extends BaseScene {
 
         if (type === 'move_cell' && this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && this.reachableTiles.has(`${r},${q}`)) {
             const blockedByLiving = !!this.getLivingUnitOccupyingCell(clickedCell.r, clickedCell.q, this.selectedUnit);
-            if (!blockedByLiving) {
+            const blockedByHorse = this.isCellBlockedByOtherHorse(this.selectedUnit, clickedCell.r, clickedCell.q, true);
+            if (!blockedByLiving && !blockedByHorse) {
                 let destR = clickedCell.r;
                 let destQ = clickedCell.q;
                 let plannedFlip = this.selectedUnit.flip;
@@ -7089,6 +7266,10 @@ export class TacticsScene extends BaseScene {
                 if (this.selectedUnit.onHorse) {
                     const plan = this.getMountedPlanForClickedCell(clickedCell.r, clickedCell.q);
                     if (!plan) {
+                        assets.playSound('ui_error', 0.4);
+                        return;
+                    }
+                    if (!this.ensureMountedDestinationClearOfRiderlessHorses(plan.butt.r, plan.butt.q, plan.head.r, plan.head.q, this.selectedUnit.horseId)) {
                         assets.playSound('ui_error', 0.4);
                         return;
                     }
@@ -7248,12 +7429,12 @@ export class TacticsScene extends BaseScene {
                 });
 
                 if (this.selectedUnit.onHorse) {
-                    // Build mounted destination plans and highlight both butt+head tiles for each plan
+                    // Build mounted destination plans and highlight only the canonical selector tile
+                    // (left occupied hex) to avoid front/back targeting ambiguity.
                     this.mountedMovePlans = this.buildMountedMovePlans(this.selectedUnit, rawReachable);
                     const highlight = new Map();
                     this.mountedMovePlans.forEach(p => {
-                        highlight.set(`${p.butt.r},${p.butt.q}`, true);
-                        highlight.set(`${p.head.r},${p.head.q}`, true);
+                        highlight.set(`${p.left.r},${p.left.q}`, true);
                     });
                     this.reachableTiles = highlight;
                 } else {
@@ -8598,9 +8779,9 @@ export class TacticsScene extends BaseScene {
             ctx.strokeStyle = '#ffd700';
             ctx.strokeRect(dx + 0.5, dy + 0.5, dw - 1, dh - 1);
             
-            this.drawPixelText(ctx, "UNFINISHED ACTIONS", dx + dw / 2, dy + 10, { color: '#ff4444', font: '8px Silkscreen', align: 'center' });
-            this.drawPixelText(ctx, "Some units have not acted.", dx + dw / 2, dy + 22, { color: '#fff', font: '8px Tiny5', align: 'center' });
-            this.drawPixelText(ctx, "End turn anyway?", dx + dw / 2, dy + 32, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, getLocalizedText({ en: "UNFINISHED ACTIONS", zh: "尚有单位未行动" }), dx + dw / 2, dy + 10, { color: '#ff4444', font: '8px Silkscreen', align: 'center' });
+            this.drawPixelText(ctx, getLocalizedText({ en: "Some units have not acted.", zh: "仍有单位尚未行动。" }), dx + dw / 2, dy + 22, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, getLocalizedText({ en: "End turn anyway?", zh: "仍要结束回合吗？" }), dx + dw / 2, dy + 32, { color: '#fff', font: '8px Tiny5', align: 'center' });
             
             // Buttons
             const bw = 50;
@@ -8613,7 +8794,7 @@ export class TacticsScene extends BaseScene {
             ctx.fillRect(yx, yy, bw, bh);
             ctx.strokeStyle = '#fff';
             ctx.strokeRect(yx + 0.5, yy + 0.5, bw - 1, bh - 1);
-            this.drawPixelText(ctx, "YES", yx + bw / 2, yy + 4, { color: '#fff', font: '8px Silkscreen', align: 'center' });
+            this.drawPixelText(ctx, getLocalizedText({ en: "YES", zh: "是" }), yx + bw / 2, yy + 4, { color: '#fff', font: '8px Silkscreen', align: 'center' });
             this.confirmYesRect = { x: yx, y: yy, w: bw, h: bh };
             
             // No
@@ -8623,13 +8804,13 @@ export class TacticsScene extends BaseScene {
             ctx.fillRect(nx, ny, bw, bh);
             ctx.strokeStyle = '#fff';
             ctx.strokeRect(nx + 0.5, ny + 0.5, bw - 1, bh - 1);
-            this.drawPixelText(ctx, "NO", nx + bw / 2, ny + 4, { color: '#fff', font: '8px Silkscreen', align: 'center' });
+            this.drawPixelText(ctx, getLocalizedText({ en: "NO", zh: "否" }), nx + bw / 2, ny + 4, { color: '#fff', font: '8px Silkscreen', align: 'center' });
             this.confirmNoRect = { x: nx, y: ny, w: bw, h: bh };
         }
 
         if (this.activeDialogue) {
             this.renderDialogueBox(ctx, canvas, {
-                portraitKey: this.activeDialogue.unit.imgKey,
+                portraitKey: this.activeDialogue.portraitKey || this.activeDialogue.unit.imgKey,
                 name: this.activeDialogue.unit.name,
                 text: this.activeDialogue.unit.dialogue
             }, { subStep: this.activeDialogue.subStep || 0 });
@@ -8662,7 +8843,7 @@ export class TacticsScene extends BaseScene {
             ctx.strokeStyle = isSelected ? '#ffd700' : (isDisabled ? '#333' : '#888');
             ctx.strokeRect(ax + 0.5, ay + 0.5, aw - 1, ah - 1);
 
-            const attackName = getLocalizedText(UI_TEXT[attack.name]) || attack.name;
+            const attackName = getLocalizedText(UI_TEXT[attack.name] || attack.name || { en: 'Attack', zh: '攻击' });
             this.drawPixelText(ctx, attackName, ax + aw / 2, ay + 3, { 
                 color: isDisabled ? '#555' : '#eee', 
                 font: '8px Tiny5',
@@ -8964,7 +9145,7 @@ export class TacticsScene extends BaseScene {
 
             // Check if there are more lines to show (for manual dialogue)
             const result = this.renderDialogueBox(this.manager.ctx, this.manager.canvas, {
-                portraitKey: this.activeDialogue.unit.imgKey,
+                portraitKey: this.activeDialogue.portraitKey || this.activeDialogue.unit.imgKey,
                 name: this.activeDialogue.unit.name,
                 text: this.activeDialogue.unit.dialogue
             }, { subStep: this.activeDialogue.subStep || 0 });
@@ -9119,12 +9300,11 @@ export class TacticsScene extends BaseScene {
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack) {
             let chosenAttackCell = null;
             const clickedMountedRegion = !!(spriteUnit && spriteUnit.onHorse && spriteHitCell);
-            if (clickedMountedRegion) {
-                if (this.attackTiles.has(`${spriteHitCell.r},${spriteHitCell.q}`)) {
-                    chosenAttackCell = spriteHitCell;
-                }
-            } else if (clickedCell && this.attackTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
+            // Prioritize the clicked hex itself (command intent) over overlapping sprite hit regions.
+            if (clickedCell && this.attackTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
                 chosenAttackCell = clickedCell;
+            } else if (clickedMountedRegion && this.attackTiles.has(`${spriteHitCell.r},${spriteHitCell.q}`)) {
+                chosenAttackCell = spriteHitCell;
             } else if (spriteHitCell && this.attackTiles.has(`${spriteHitCell.r},${spriteHitCell.q}`)) {
                 chosenAttackCell = spriteHitCell;
             } else if (this.hoveredCell && this.attackTiles.has(`${this.hoveredCell.r},${this.hoveredCell.q}`)) {
@@ -9162,7 +9342,8 @@ export class TacticsScene extends BaseScene {
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && clickedCell && this.reachableTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
             // Check landing spot (cannot land on another unit)
             const blockedByLiving = !!this.getLivingUnitOccupyingCell(clickedCell.r, clickedCell.q, this.selectedUnit);
-            if (!blockedByLiving) {
+            const blockedByHorse = this.isCellBlockedByOtherHorse(this.selectedUnit, clickedCell.r, clickedCell.q, true);
+            if (!blockedByLiving && !blockedByHorse) {
                 let destR = clickedCell.r;
                 let destQ = clickedCell.q;
                 let plannedFlip = this.selectedUnit.flip;
@@ -9172,6 +9353,10 @@ export class TacticsScene extends BaseScene {
                     // For mounted units, interpret the clicked hex as HEAD if possible; otherwise use BUTT.
                     const plan = this.getMountedPlanForClickedCell(clickedCell.r, clickedCell.q);
                     if (!plan) {
+                        assets.playSound('ui_error', 0.4);
+                        return;
+                    }
+                    if (!this.ensureMountedDestinationClearOfRiderlessHorses(plan.butt.r, plan.butt.q, plan.head.r, plan.head.q, this.selectedUnit.horseId)) {
                         assets.playSound('ui_error', 0.4);
                         return;
                     }

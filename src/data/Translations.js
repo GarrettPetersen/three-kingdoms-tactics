@@ -200,6 +200,14 @@ export const UI_TEXT = {
         en: 'Guangzong Region',
         zh: '广宗'
     },
+    'Yingchuan Region': {
+        en: 'Yingchuan Region',
+        zh: '颍川'
+    },
+    'Guangzong Road': {
+        en: 'Guangzong Road',
+        zh: '广宗道'
+    },
     // Custom Battle Menu
     'STEP 1: ENVIRONMENT': {
         en: 'STEP 1: ENVIRONMENT',

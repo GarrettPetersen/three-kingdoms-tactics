@@ -36,6 +36,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "cc_dq_att_00",
+    "char": "zhoujing",
+    "text": "县令，流民皆称黄巾沿途焚掠，郡县震动。百姓扶老携幼，争入城中避难。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "cc_dq_att_01",
     "char": "soldier",
     "text": "谨遵县令之命。即刻开仓施粥，并维持秩序。",
@@ -934,6 +940,12 @@
     "char": "zhangliang",
     "text": "让那些朝廷走狗逃吧！他们的城池将燃烧，他们的军队将崩溃。黄天当立！",
     "source": "Battles.js"
+  },
+  {
+    "id": "map_cc_rem_01",
+    "char": "caocao",
+    "text": "官军已在颍川与黄巾交战。我们即刻前往，断其退路。",
+    "source": "MapScene.js"
   },
   {
     "id": "map_lb_defeat",

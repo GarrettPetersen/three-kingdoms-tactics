@@ -37,6 +37,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "cc_dq_att_00",
+    "char": "zhoujing",
+    "text": "Magistrate, the refugees all report the Yellow Turbans are burning and plundering along the roads. The people are carrying old and young alike and pleading to enter the city for shelter.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "cc_dq_att_01",
     "char": "soldier",
     "text": "At once, Magistrate. We will open the stores and keep order.",
@@ -949,6 +955,12 @@
     "char": "zhangliang",
     "text": "Let the imperial dogs flee! Their cities will burn, their armies will crumble. The Yellow Heavens shall rise!",
     "source": "Battles.js"
+  },
+  {
+    "id": "map_cc_rem_01",
+    "char": "caocao",
+    "text": "Government armies are already engaged with the Yellow Turbans at Yingchuan. We march there now and cut off their retreat.",
+    "source": "MapScene.js"
   },
   {
     "id": "map_lb_defeat",

@@ -64,7 +64,8 @@ export class NarrativeScene extends BaseScene {
             portraitKey: step.portraitKey || 'liubei',
             name: step.name || 'Liu Bei',
             text: dialogueText,
-            voiceId: opt?.voiceId
+            voiceId: opt?.voiceId,
+            _isChoiceInserted: true
         };
     }
 
@@ -837,7 +838,8 @@ export class NarrativeScene extends BaseScene {
         let nextScene = this.getNextSceneForScriptId(this.scriptId);
         let nextParams = this.getNextParamsForScriptId(this.scriptId);
         
-        const includeRuntimeScript = !this.scriptId || this.isInteractive || this.insertedStepsCount > 0;
+        const hasChoiceInsertions = Array.isArray(this.script) && this.script.some(step => !!step?._isChoiceInserted);
+        const includeRuntimeScript = !this.scriptId || this.isInteractive || this.insertedStepsCount > 0 || hasChoiceInsertions;
         const state = {
             scriptId: this.scriptId,
             script: includeRuntimeScript && this.script && this.script.length > 0 ? this.script : null,
@@ -1654,7 +1656,10 @@ export class NarrativeScene extends BaseScene {
                         // Fallback to button text if full text is missing to avoid blank dialogue panels.
                         const choiceDialogue = this.createChoiceDialogueStep(step, opt);
 
-                        const resultSteps = opt.result || [];
+                        const resultSteps = this.cloneScriptSteps(opt.result || []);
+                        resultSteps.forEach(s => {
+                            if (s && typeof s === 'object') s._isChoiceInserted = true;
+                        });
                         this.script.splice(this.currentStep + 1, 0, choiceDialogue, ...resultSteps);
                         
                         this.nextStep();
@@ -1891,7 +1896,10 @@ export class NarrativeScene extends BaseScene {
                     // Fallback to button text if full text is missing to avoid blank dialogue panels.
                     const choiceDialogue = this.createChoiceDialogueStep(step, opt);
 
-                    const resultSteps = opt.result || [];
+                    const resultSteps = this.cloneScriptSteps(opt.result || []);
+                    resultSteps.forEach(s => {
+                        if (s && typeof s === 'object') s._isChoiceInserted = true;
+                    });
                     this.script.splice(this.currentStep + 1, 0, choiceDialogue, ...resultSteps);
                     
                     this.nextStep();
@@ -2007,7 +2015,7 @@ export class NarrativeScene extends BaseScene {
             },
             'daxing_messenger': { afterEvent: 'daxing' },
             'guangzong_arrival': { campaignId: 'liubei' },
-            'caocao_dunqiu_intro': { campaignId: 'caocao', partyX: 176, partyY: 98 },
+            'caocao_dunqiu_intro': { campaignId: 'caocao', partyX: 168, partyY: 98 },
             'caocao_ch1_end_card': {},
             'noticeboard': { scriptId: 'inn' }, // Chain to inn scene
             'inn': {}, // After inn, goes to map (milestone added in onComplete)

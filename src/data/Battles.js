@@ -499,7 +499,7 @@ export const BATTLES = {
         name: 'Yingchuan - Cavalry Intercept',
         map: {
             biome: 'northern',
-            layout: 'foothills',
+            layout: 'road',
             seed: 'caocao_yingchuan_intercept',
             forestDensity: 0.08,
             mountainDensity: 0.08,
@@ -507,27 +507,25 @@ export const BATTLES = {
             houseDensity: 0.0
         },
         units: [
-            // Cao Cao strikes from the front with mounted troops.
-            { id: 'caocao', r: 6, q: 10, type: 'caocao_force', onHorse: true, horseType: 'black', flip: true },
-            { id: 'caoren', r: 5, q: 10, type: 'caocao_force', onHorse: true, horseType: 'brown', flip: true },
-            { id: 'rider1', r: 7, q: 10, type: 'caocao_force', onHorse: true, horseType: 'brown', flip: true },
-            { id: 'rider2', r: 6, q: 9, type: 'caocao_force', onHorse: true, horseType: 'white', flip: true },
-            { id: 'rider3', r: 5, q: 9, type: 'caocao_force', onHorse: true, horseType: 'brown', flip: true },
+            // Cao Cao force enters from the right.
+            { id: 'caocao', r: 6, q: 9, type: 'caocao_force', onHorse: true, horseType: 'black', flip: true },
+            { id: 'caoren', r: 5, q: 9, type: 'caocao_force', onHorse: true, horseType: 'brown', flip: true },
+            { id: 'rider1', r: 7, q: 9, type: 'caocao_force', onHorse: true, horseType: 'brown', flip: true },
+            { id: 'rider2', r: 6, q: 8, type: 'caocao_force', onHorse: true, horseType: 'white', flip: true },
+            { id: 'rider3', r: 5, q: 8, type: 'caocao_force', onHorse: true, horseType: 'brown', flip: true },
 
             // Government troops in pursuit from the rear.
-            { id: 'imperial1', r: 6, q: 2, type: 'imperial_soldier' },
-            { id: 'imperial2', r: 7, q: 2, type: 'imperial_soldier' },
-            { id: 'imperial_dead1', r: 5, q: 3, type: 'imperial_soldier', isDead: true },
-            { id: 'imperial_dead2', r: 8, q: 3, type: 'imperial_soldier', isDead: true },
+            { id: 'imperial1', r: 6, q: 2, type: 'allied_soldier' },
+            { id: 'imperial2', r: 7, q: 2, type: 'allied_soldier' },
+            { id: 'imperial_dead1', r: 5, q: 3, type: 'allied_soldier', isDead: true },
+            { id: 'imperial_dead2', r: 8, q: 3, type: 'allied_soldier', isDead: true },
 
-            // Retreating Yellow Turban force.
+            // Retreating Yellow Turban force enters from the left.
             {
                 id: 'zhangbao',
                 r: 6,
-                q: 6,
+                q: 1,
                 type: 'zhang_bao',
-                onHorse: true,
-                horseType: 'black',
                 immortal: {
                     enabled: true,
                     triggerHp: 2,
@@ -554,16 +552,15 @@ export const BATTLES = {
             {
                 id: 'zhangliang',
                 r: 5,
-                q: 6,
+                q: 1,
                 type: 'zhang_liang',
-                onHorse: true,
-                horseType: 'brown',
                 immortal: {
                     enabled: true,
                     triggerHp: 2,
                     onNearDeath: {
                         say: {
                             speaker: 'zhangliang',
+                            portraitKey: 'custom-male-12',
                             text: {
                                 en: "To Guangzong! Rejoin the elder brother!",
                                 zh: "退往广宗！与兄长会合！"
@@ -581,12 +578,12 @@ export const BATTLES = {
                     }
                 }
             },
-            { id: 'rebel1', r: 7, q: 5, type: 'enemy_soldier' },
-            { id: 'rebel2', r: 6, q: 5, type: 'enemy_soldier' },
-            { id: 'rebel3', r: 5, q: 5, type: 'enemy_soldier' },
-            { id: 'rebel4', r: 7, q: 6, type: 'enemy_soldier' },
-            { id: 'rebel5', r: 4, q: 6, type: 'enemy_soldier_weak' },
-            { id: 'rebel6', r: 6, q: 7, type: 'enemy_soldier_weak' }
+            { id: 'rebel1', r: 7, q: 2, type: 'enemy_soldier' },
+            { id: 'rebel2', r: 6, q: 2, type: 'enemy_soldier' },
+            { id: 'rebel3', r: 5, q: 2, type: 'enemy_soldier' },
+            { id: 'rebel4', r: 7, q: 1, type: 'enemy_soldier' },
+            { id: 'rebel5', r: 4, q: 1, type: 'enemy_soldier_weak' },
+            { id: 'rebel6', r: 6, q: 3, type: 'enemy_soldier_weak' }
         ],
         victoryCondition: {
             type: 'defeat_all_enemies',
@@ -615,7 +612,7 @@ export const BATTLES = {
             },
             {
                 speaker: 'caoren',
-                portraitKey: 'soldier',
+                portraitKey: 'cao-ren',
                 name: 'Cao Ren',
                 voiceId: 'cc_yc_cr_01',
                 text: {
@@ -723,7 +720,7 @@ export const BATTLES = {
             },
             {
                 speaker: 'caoren',
-                portraitKey: 'soldier',
+                portraitKey: 'cao-ren',
                 name: 'Cao Ren',
                 voiceId: 'cc_yc_cr_02',
                 text: {
@@ -800,12 +797,12 @@ export const UNIT_TEMPLATES = {
             imgKey: 'caoren',
             hp: 5,
             moveRange: 4,
-            attacks: ['serpent_spear'],
+            attacks: ['caoren_spear'],
             faction: 'player',
             shieldResistBase: 0.2,
             shieldResistPerLevel: 0.05
         },
-        'rider': { name: 'Cavalry', imgKey: 'soldier', hp: 4, moveRange: 4, attacks: ['slash'], faction: 'player' }
+        'rider': { name: 'Cavalry', imgKey: 'soldier', hp: 4, moveRange: 4, attacks: ['slash'], faction: 'allied', templateId: 'soldier' }
     },
     'zhang_jue': {
         'zhangjue': { name: 'Zhang Jue', imgKey: 'zhangjiao', hp: 8, moveRange: 4, attacks: ['whirlwind'], faction: 'enemy' }

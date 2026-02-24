@@ -430,7 +430,7 @@ async function init() {
 
         // Character names for dedicated portraits
         const portraitNames = [
-            'Liu-Bei', 'Guan-Yu', 'Zhang-Fei', 'Cao-Cao', 'Zhou-Jing', 'Diaochan', 
+            'Liu-Bei', 'Guan-Yu', 'Zhang-Fei', 'Cao-Cao', 'Cao-Ren', 'Zhou-Jing', 'Diaochan', 
             'Deng-Mao', 'Cheng-Yuanzhi', 'The-Noticeboard', 'Yellow-Turban',
             'Dong-Zhuo', 'Zhang-Jiao', 'Zhang-Bao',
             'Huangfu-Song-generic', 'Zhu-Jun-generic',
