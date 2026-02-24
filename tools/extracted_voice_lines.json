@@ -128,10 +128,17 @@
     "source": "Battles.js"
   },
   {
+    "id": "cc_yc_cr_post_01",
+    "char": "caoren",
+    "text": "Understood. I'll sweep the road, gather stragglers, and have the cavalry ready to move.",
+    "source": "Battles.js"
+  },
+  {
     "id": "cc_yc_hfs_01",
     "char": "huangfusong",
     "text": "Cavalry Commander Cao, your interception came in perfect time. The routed bands have no order left.",
-    "source": "Battles.js"
+    "source": "Battles.js",
+    "phonetic_text": "Cavalry Commander Tsao, your interception came in perfect time. The routed bands have no order left."
   },
   {
     "id": "cc_yc_hfs_choice_01",

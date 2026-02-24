@@ -630,7 +630,31 @@ export const BATTLES = {
                     zh: "前方竟有骑军？冲出去！冲出去！"
                 }
             }
-        ]
+        ],
+        postCombatScript: [
+            {
+                speaker: 'caocao',
+                portraitKey: 'cao-cao',
+                name: 'Cao Cao',
+                voiceId: 'cc_yc_02',
+                text: {
+                    en: "We cut the road here. Leave none to regroup at Guangzong.",
+                    zh: "我军就在此断其去路，不可使其回广宗再聚。"
+                }
+            },
+            {
+                speaker: 'caoren',
+                portraitKey: 'cao-ren',
+                name: 'Cao Ren',
+                voiceId: 'cc_yc_cr_post_01',
+                text: {
+                    en: "Understood. I'll sweep the road, gather stragglers, and have the cavalry ready to move.",
+                    zh: "得令。我这就清扫道路、收拢散卒，整备骑军再进。"
+                }
+            }
+        ],
+        nextScene: 'tactics',
+        nextParams: { battleId: 'caocao_yingchuan_debrief' }
     },
     'caocao_yingchuan_debrief': {
         name: 'Yingchuan - After The Intercept',

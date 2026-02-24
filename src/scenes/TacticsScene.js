@@ -598,6 +598,23 @@ export class TacticsScene extends BaseScene {
         this.victoryOnComplete = onComplete;
     }
 
+    startBattleEndDialogue(script, onComplete) {
+        if (!Array.isArray(script) || script.length === 0) {
+            if (onComplete) onComplete();
+            return;
+        }
+        this.cleanupDialogueScript = this.cloneScriptSteps(script);
+        this.cleanupDialogueStep = 0;
+        this.subStep = 0;
+        this.dialogueElapsed = 0;
+        this.isCleanupDialogueActive = true;
+        this.cleanupDialogueOnComplete = onComplete || null;
+        const firstStep = this.cleanupDialogueScript[0];
+        if (firstStep && firstStep.voiceId) {
+            assets.playVoice(firstStep.voiceId);
+        }
+    }
+
     isImmortalUnit(unit) {
         if (!unit) return false;
         if (typeof unit.isImmortal === 'function') return unit.isImmortal();
@@ -821,7 +838,11 @@ export class TacticsScene extends BaseScene {
                     // Check for on-map victory dialogue (used by Dong Zhuo battle)
                     if (battleDef && battleDef.hasVictoryDialogue && this.battleId === 'dongzhuo_battle') {
                         this.startDongZhuoVictoryDialogue();
-        } else {
+                    } else if (battleDef && battleDef.postCombatScript && !this.isCleanupDialogueActive) {
+                        this.startBattleEndDialogue(battleDef.postCombatScript, () => {
+                            this.endBattle(true);
+                        });
+                    } else {
                         this.endBattle(true);
                     }
                 }
@@ -1298,6 +1319,17 @@ export class TacticsScene extends BaseScene {
 
         if (!this.isCustom) {
         this.clearBattleState();
+        }
+
+        // Default chained-battle continuation: after summary click, proceed to the next tactics scene.
+        // (Only if no custom callback was already supplied.)
+        if (won && !this.isCustom && !this.onVictoryCallback) {
+            const battleDef = BATTLES[this.battleId];
+            if (battleDef && battleDef.nextScene === 'tactics' && battleDef.nextParams) {
+                this.onVictoryCallback = () => {
+                    this.manager.switchTo('tactics', battleDef.nextParams);
+                };
+            }
         }
     }
 
@@ -2119,20 +2151,20 @@ export class TacticsScene extends BaseScene {
             }
         });
 
-        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
-        const allies = this.units.filter(u => u.faction === 'allied' && u.hp > 0);
+        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.isGone);
+        const allies = this.units.filter(u => u.faction === 'allied' && u.hp > 0 && !u.isGone);
         
         let order = 1;
         // Enemies first (Red numbers)
         enemies.forEach(e => {
             // ONLY assign order if they already have an intent from their move phase
-            if (e.intent) {
+            if (e.intent && e.intent.type === 'attack') {
                 e.attackOrder = order++;
             }
         });
         // Allies second (Green numbers)
         allies.forEach(a => {
-            if (a.intent) {
+            if (a.intent && a.intent.type === 'attack') {
                 a.attackOrder = order++;
             }
         });
@@ -3473,9 +3505,24 @@ export class TacticsScene extends BaseScene {
         this.attackTiles.clear();
         
         // Collect all telegraphed attacks
+        const factionExecutionPriority = (u) => {
+            // NPC flow expectation:
+            // enemies and player resolve before allied NPC support units.
+            if (u.faction === 'enemy') return 0;
+            if (u.faction === 'player') return 1;
+            if (u.faction === 'allied') return 2;
+            return 3;
+        };
         const attackers = this.units
-            .filter(u => u.hp > 0 && u.intent && u.intent.type === 'attack')
-            .sort((a, b) => (a.attackOrder || 99) - (b.attackOrder || 99));
+            .filter(u => u.hp > 0 && !u.isGone && u.intent && u.intent.type === 'attack')
+            .sort((a, b) => {
+                const p = factionExecutionPriority(a) - factionExecutionPriority(b);
+                if (p !== 0) return p;
+                const ao = Number.isFinite(a.attackOrder) ? a.attackOrder : 999;
+                const bo = Number.isFinite(b.attackOrder) ? b.attackOrder : 999;
+                if (ao !== bo) return ao - bo;
+                return (a.id || '').localeCompare(b.id || '');
+            });
         
         if (attackers.length === 0) {
             console.warn('startExecutionPhase() called but no attackers found with intents. Units with intents:', 
@@ -4463,12 +4510,8 @@ export class TacticsScene extends BaseScene {
             let victimPushQ = victim.q;
             const wasMounted = !!victim.onHorse;
             if (wasMounted) {
-                // Always push from the ACTUAL hit hex (targetR/targetQ) if it's one of the 2 occupied horse hexes.
-                // This makes head-hex pushes dismount and push in the expected direction even if facing/anchor changed.
-                const hitIsOnPair =
-                    (victim.r === targetR && victim.q === targetQ) ||
-                    (victim.r === targetR && victim.q + 1 === targetQ) ||
-                    (victim.r === targetR && victim.q - 1 === targetQ);
+                // Single-hex mounts: push from the actual occupied hex.
+                const hitIsOnPair = (victim.r === targetR && victim.q === targetQ);
                 if (hitIsOnPair) {
                     victimPushR = targetR;
                     victimPushQ = targetQ;
@@ -4913,33 +4956,20 @@ export class TacticsScene extends BaseScene {
     }
 
     getMountedHeadCellFor(unit, buttR, buttQ) {
-        const dq = unit.flip ? -1 : 1; // Only left/right horses for now
-        return this.tacticsMap.getCell(buttR, buttQ + dq);
+        // Single-hex mount model: mounted units only occupy their anchor hex.
+        return this.tacticsMap.getCell(buttR, buttQ);
     }
 
     isValidMountedButtDestination(unit, buttR, buttQ, plannedFlip = null) {
         const buttCell = this.tacticsMap.getCell(buttR, buttQ);
         if (!buttCell || buttCell.impassable) return false;
 
-        // Use plannedFlip if provided, otherwise fall back to the unit's current facing.
-        // This is important when validating destinations where the horse will turn: without
-        // plannedFlip the head cell would be on the wrong side and good tiles get rejected.
-        const flip = (plannedFlip !== null) ? plannedFlip : unit.flip;
-        const dq = flip ? -1 : 1;
-        const headCell = this.tacticsMap.getCell(buttR, buttQ + dq);
-        if (!headCell || headCell.impassable) return false;
         const isSolidHouse = (cell) => cell && cell.terrain && (cell.terrain.includes('house') || cell.terrain.includes('tent')) && !cell.terrain.includes('destroyed');
-        if (isSolidHouse(buttCell) || isSolidHouse(headCell)) return false;
+        if (isSolidHouse(buttCell)) return false;
 
-        // Horse can't straddle a cliff: the two occupied hexes must be within 1 level of each other
-        const levelDiff = Math.abs((buttCell.level || 0) - (headCell.level || 0));
-        if (levelDiff > 1) return false;
-
-        // Both hexes must be free (or occupied by the moving unit itself)
+        // Destination must be free (or occupied by the moving unit itself)
         const buttBlocked = !!this.getLivingUnitOccupyingCell(buttR, buttQ, unit);
-        const headBlocked = !!this.getLivingUnitOccupyingCell(headCell.r, headCell.q, unit);
         if (buttBlocked) return false;
-        if (headBlocked) return false;
 
         return true;
     }
@@ -4955,9 +4985,9 @@ export class TacticsScene extends BaseScene {
         return null;
     }
 
-    // Mounted move planning (butt + head) for UI highlighting / click handling
+    // Mounted move planning for UI highlighting / click handling (single-hex mounts).
     buildMountedMovePlans(unit, reachableData) {
-        const bestByLeftKey = new Map();
+        const plans = [];
         reachableData.forEach((data, key) => {
             const [r, q] = key.split(',').map(Number);
             const buttCell = this.tacticsMap.getCell(r, q);
@@ -4978,27 +5008,15 @@ export class TacticsScene extends BaseScene {
 
             const resolvedFlip = this.getValidMountedFlipForDestination(unit, r, q, plannedFlip);
             if (resolvedFlip === null) return;
-            const tmp = { ...unit, flip: resolvedFlip };
-            const headCell = this.getMountedHeadCellFor(tmp, r, q);
-            if (!headCell) return;
-            const leftQ = Math.min(q, headCell.q);
-            const rightQ = Math.max(q, headCell.q);
-            const leftKey = `${r},${leftQ}`;
-            const candidate = {
+            plans.push({
                 butt: { r, q },
-                head: { r: headCell.r, q: headCell.q },
-                left: { r, q: leftQ },
-                right: { r, q: rightQ },
-                plannedFlip: resolvedFlip,
-                cost: Number.isFinite(data?.cost) ? data.cost : Infinity
-            };
-
-            const existing = bestByLeftKey.get(leftKey);
-            if (!existing || candidate.cost < existing.cost) {
-                bestByLeftKey.set(leftKey, candidate);
-            }
+                head: { r, q },
+                left: { r, q },
+                right: { r, q },
+                plannedFlip: resolvedFlip
+            });
         });
-        return Array.from(bestByLeftKey.values());
+        return plans;
     }
 
     getMountedPlanForClickedCell(clickedR, clickedQ) {
@@ -5009,7 +5027,7 @@ export class TacticsScene extends BaseScene {
 
     syncMountedOccupancy(unit) {
         if (!unit?.onHorse) return;
-        // Clear any stale occupancy on both potential head tiles (E and W), then set the correct one.
+        // Single-hex mount model: clear stale adjacency, then occupy only anchor hex.
         const buttCell = this.tacticsMap.getCell(unit.r, unit.q);
         const eastCell = this.tacticsMap.getCell(unit.r, unit.q + 1);
         const westCell = this.tacticsMap.getCell(unit.r, unit.q - 1);
@@ -5017,18 +5035,10 @@ export class TacticsScene extends BaseScene {
         if (buttCell) buttCell.unit = unit;
         if (eastCell && eastCell.unit === unit) eastCell.unit = null;
         if (westCell && westCell.unit === unit) westCell.unit = null;
-
-        const headCell = this.getMountedHeadCellFor(unit, unit.r, unit.q);
-        if (headCell) headCell.unit = unit;
     }
 
     getAttackOrigins(attacker) {
-        const origins = [{ r: attacker.r, q: attacker.q, kind: 'butt' }];
-        if (attacker.onHorse) {
-            const head = this.getMountedHeadCellFor(attacker, attacker.r, attacker.q);
-            if (head) origins.push({ r: head.r, q: head.q, kind: 'head' });
-        }
-        return origins;
+        return [{ r: attacker.r, q: attacker.q, kind: 'body' }];
     }
 
     getAttackOriginForTarget(attacker, targetR, targetQ) {
@@ -5066,12 +5076,7 @@ export class TacticsScene extends BaseScene {
 
     unitOccupiesCell(unit, r, q) {
         if (!unit) return false;
-        if (unit.r === r && unit.q === q) return true;
-        if (unit.onHorse) {
-            const head = this.getMountedHeadCellFor(unit, unit.r, unit.q);
-            if (head && head.r === r && head.q === q) return true;
-        }
-        return false;
+        return unit.r === r && unit.q === q;
     }
 
     getLivingUnitOccupyingCell(r, q, excludeUnit = null) {
@@ -5094,10 +5099,6 @@ export class TacticsScene extends BaseScene {
             if (!u || u.hp <= 0 || u.isGone) continue;
             const buttCell = this.tacticsMap.getCell(u.r, u.q);
             if (buttCell) buttCell.unit = u;
-            if (u.onHorse) {
-                const headCell = this.getMountedHeadCellFor(u, u.r, u.q);
-                if (headCell) headCell.unit = u;
-            }
         }
     }
 
@@ -5117,42 +5118,22 @@ export class TacticsScene extends BaseScene {
     }
 
     getHorseHeadCoords(horse) {
-        const dq = horse.flip ? -1 : 1;
-        return { r: horse.r, q: horse.q + dq };
+        return { r: horse.r, q: horse.q };
     }
 
     getMountedTargetCellFromPointer(unit, pointerX, pointerY, sinkOffset = 0) {
         if (!unit?.onHorse) return this.tacticsMap.getCell(unit.r, unit.q);
-        const spacing = this.manager.config.horizontalSpacing;
-        const buttX = unit.visualX;
-        const buttY = unit.visualY + sinkOffset;
-        const headX = buttX + (unit.flip ? -spacing : spacing);
-        const headY = buttY;
-
-        const buttDistSq = ((pointerX - buttX) ** 2) + ((pointerY - buttY) ** 2);
-        const headDistSq = ((pointerX - headX) ** 2) + ((pointerY - headY) ** 2);
-        if (headDistSq < buttDistSq) {
-            return this.tacticsMap.getCell(unit.r, unit.q + (unit.flip ? -1 : 1));
-        }
         return this.tacticsMap.getCell(unit.r, unit.q);
     }
 
     getMountedAttackRegions(unit) {
         if (!unit?.onHorse) return [];
         const buttCell = this.tacticsMap.getCell(unit.r, unit.q);
-        const headCell = this.getMountedHeadCellFor(unit, unit.r, unit.q);
         const regions = [];
-        if (headCell) {
-            regions.push({
-                cell: headCell,
-                role: 'front',
-                canAttack: this.attackTiles.has(`${headCell.r},${headCell.q}`)
-            });
-        }
         if (buttCell) {
             regions.push({
                 cell: buttCell,
-                role: 'back',
+                role: 'body',
                 canAttack: this.attackTiles.has(`${buttCell.r},${buttCell.q}`)
             });
         }
@@ -5170,217 +5151,43 @@ export class TacticsScene extends BaseScene {
             if (preferred) return preferred.cell;
         }
 
-        // Deterministic tiebreaker when both front/back are legal:
-        // choose the region that is closer to the attacker; if tied, prefer front.
+        // Deterministic tiebreaker when multiple legal regions exist.
         const scored = regions.map(r => ({
             region: r,
             dist: this.tacticsMap.getDistance(attacker.r, attacker.q, r.cell.r, r.cell.q)
         }));
         scored.sort((a, b) => {
             if (a.dist !== b.dist) return a.dist - b.dist;
-            if (a.region.role === b.region.role) return 0;
-            return a.region.role === 'front' ? -1 : 1;
+            return 0;
         });
         return scored[0].region.cell;
     }
 
     drawMountedSpriteOutline(ctx, unit, surfaceY, timestamp, color = '#ffd700', regionRole = null) {
         if (!unit?.onHorse) return;
-        const cell = this.tacticsMap.getCell(unit.r, unit.q);
-        const headForSink = this.getMountedHeadCellFor(unit, unit.r, unit.q);
-        const isHorseInShallow =
-            (!!cell && cell.terrain?.includes('water_shallow')) ||
-            (!!headForSink && headForSink.terrain?.includes('water_shallow'));
-        const terrainSink = isHorseInShallow ? 4 : 0;
-
-        const buttX = unit.visualX + unit.visualOffsetX;
-        const buttY = surfaceY + unit.visualOffsetY + terrainSink;
-        const spacing = this.manager.config.horizontalSpacing;
-        const headX = buttX + (unit.flip ? -spacing : spacing);
-        const midX = Math.floor((buttX + headX) / 2);
-        const midY = buttY;
-
-        const riderAction = (unit.action === 'walk') ? 'standby' : (unit.currentAnimAction || unit.action);
-        const riderX = midX;
-        const riderY = midY - 22;
-        const keys = this.getHorseSpriteKeys(unit.horseType || 'brown');
-        const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
-        const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
-        const isRunning = (unit.isMoving || unit.action === 'walk') && horseRun;
-        const horseImg = isRunning ? horseRun : horseStand;
-
-        const riderMinX = riderX - 36;
-        const riderMaxX = riderX + 36;
-        const riderMinY = riderY - 44;
-        const riderMaxY = riderY + 28;
-        const horseMinX = midX - 32;
-        const horseMaxX = midX + 32;
-        const horseMinY = midY - 49; // horseFeetY(15) - frameH(64)
-        const horseMaxY = midY + 15;
-        const minX = Math.floor(Math.min(riderMinX, horseMinX)) - 2;
-        const maxX = Math.ceil(Math.max(riderMaxX, horseMaxX)) + 2;
-        const minY = Math.floor(Math.min(riderMinY, horseMinY)) - 2;
-        const maxY = Math.ceil(Math.max(riderMaxY, horseMaxY)) + 2;
-        const canvasW = Math.max(1, maxX - minX + 1);
-        const canvasH = Math.max(1, maxY - minY + 1);
-
-        if (!this._mountedOutlineSrcCanvas || this._mountedOutlineSrcCanvas.width !== canvasW || this._mountedOutlineSrcCanvas.height !== canvasH) {
-            this._mountedOutlineSrcCanvas = document.createElement('canvas');
-            this._mountedOutlineSrcCanvas.width = canvasW;
-            this._mountedOutlineSrcCanvas.height = canvasH;
-            this._mountedOutlineSrcCtx = this._mountedOutlineSrcCanvas.getContext('2d', { willReadFrequently: true });
-            this._mountedOutlineDstCanvas = document.createElement('canvas');
-            this._mountedOutlineDstCanvas.width = canvasW;
-            this._mountedOutlineDstCanvas.height = canvasH;
-            this._mountedOutlineDstCtx = this._mountedOutlineDstCanvas.getContext('2d');
-        }
-
-        const srcCtx = this._mountedOutlineSrcCtx;
-        const dstCtx = this._mountedOutlineDstCtx;
-        srcCtx.clearRect(0, 0, canvasW, canvasH);
-        dstCtx.clearRect(0, 0, canvasW, canvasH);
-
-        const localRiderX = riderX - minX;
-        const localRiderY = riderY - minY;
-        const localMidX = midX - minX;
-        const localMidY = midY - minY;
-        const nearSide = unit.flip ? 'right' : 'left';
-        const farSide = nearSide === 'left' ? 'right' : 'left';
-        const riderDrawOptions = { flip: unit.flip, sinkOffset: 0, isSubmerged: false };
-
-        const drawRiderHalf = (side) => {
-            srcCtx.save();
-            const clipX = side === 'left' ? Math.floor(localRiderX - 36) : Math.floor(localRiderX);
-            srcCtx.beginPath();
-            srcCtx.rect(clipX, Math.floor(localRiderY - 100), 36, 140);
-            srcCtx.clip();
-            this.drawCharacter(srcCtx, unit.img, riderAction, unit.frame, localRiderX, localRiderY, riderDrawOptions);
-            srcCtx.restore();
-        };
-
-        // Match visible render layering: far leg -> horse -> near leg.
-        drawRiderHalf(farSide);
-        if (horseImg) {
-            const frameW = 64;
-            const frameH = 64;
-            const frameCount = isRunning ? Math.max(1, Math.floor(horseImg.width / frameW)) : 1;
-            const f = isRunning ? (Math.floor(timestamp / 80) % frameCount) : 0;
-            const sx = f * frameW;
-            const dx = -frameW / 2;
-            const dy = 15 - frameH;
-            srcCtx.save();
-            srcCtx.translate(Math.floor(localMidX), Math.floor(localMidY));
-            if (unit.flip) srcCtx.scale(-1, 1);
-            srcCtx.drawImage(horseImg, sx, 0, frameW, frameH, dx, dy, frameW, frameH);
-            srcCtx.restore();
-        }
-        drawRiderHalf(nearSide);
-
-        const srcData = srcCtx.getImageData(0, 0, canvasW, canvasH);
-        const outData = dstCtx.createImageData(canvasW, canvasH);
         const rgb = this._hexToRgb(color);
-        const splitX = Math.floor(localMidX);
-        const useHalf = regionRole === 'front' || regionRole === 'back';
-        let keepLeft = true;
-        if (useHalf) {
-            const frontIsLeft = !!unit.flip;
-            if (regionRole === 'front') keepLeft = frontIsLeft;
-            else keepLeft = !frontIsLeft;
-        }
-
-        for (let py = 0; py < canvasH; py++) {
-            for (let px = 0; px < canvasW; px++) {
-                if (useHalf) {
-                    const inLeftHalf = px <= splitX;
-                    if (keepLeft !== inLeftHalf) continue;
-                }
-                const idx = (py * canvasW + px) * 4;
-                const a = srcData.data[idx + 3];
-                if (a > 10) continue;
-
-                let edge = false;
-                for (let oy = -1; oy <= 1 && !edge; oy++) {
-                    for (let ox = -1; ox <= 1; ox++) {
-                        if (ox === 0 && oy === 0) continue;
-                        const nx = px + ox;
-                        const ny = py + oy;
-                        if (nx < 0 || nx >= canvasW || ny < 0 || ny >= canvasH) continue;
-                        if (useHalf) {
-                            const nLeft = nx <= splitX;
-                            if (keepLeft !== nLeft) continue;
-                        }
-                        const nIdx = (ny * canvasW + nx) * 4;
-                        if (srcData.data[nIdx + 3] > 10) {
-                            edge = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (edge) {
-                    outData.data[idx] = rgb.r;
-                    outData.data[idx + 1] = rgb.g;
-                    outData.data[idx + 2] = rgb.b;
-                    outData.data[idx + 3] = 255;
-                }
-            }
-        }
-
-        dstCtx.putImageData(outData, 0, 0);
-        ctx.drawImage(this._mountedOutlineDstCanvas, minX, minY, canvasW, canvasH);
+        this.drawHighlight(ctx, unit.visualX, surfaceY, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.35)`);
     }
 
     clearHorseFromCells(horse) {
         if (!horse) return;
         const butt = this.tacticsMap.getCell(horse.r, horse.q);
-        const headCoords = this.getHorseHeadCoords(horse);
-        const head = this.tacticsMap.getCell(headCoords.r, headCoords.q);
         if (butt && butt.horse === horse) butt.horse = null;
-        if (head && head.horse === horse) head.horse = null;
     }
 
     placeHorseOnCells(horse) {
         if (!horse) return;
         const butt = this.tacticsMap.getCell(horse.r, horse.q);
-        const headCoords = this.getHorseHeadCoords(horse);
-        const head = this.tacticsMap.getCell(headCoords.r, headCoords.q);
         if (butt) butt.horse = horse;
-        if (head) head.horse = horse;
     }
 
-    // Mounted facing change without movement: keep the footprint on the same two hexes
-    // by swapping which occupied hex is the "butt" anchor.
+    // Mounted facing change without movement.
     turnMountedInPlace(unit, desiredFlip) {
         if (!unit?.onHorse) return;
         if (unit.isMoving) return;
         if (desiredFlip === undefined || desiredFlip === null) return;
         if (!!unit.flip === !!desiredFlip) return;
 
-        const oldButtCell = this.tacticsMap.getCell(unit.r, unit.q);
-        const oldHeadCell = this.getMountedHeadCellFor(unit, unit.r, unit.q);
-        if (!oldHeadCell) {
-            unit.flip = !!desiredFlip;
-            this.syncMountedOccupancy(unit);
-            const horse = this.getHorseById(unit.horseId);
-            if (horse) {
-                this.clearHorseFromCells(horse);
-                horse.r = unit.r;
-                horse.q = unit.q;
-                horse.flip = !!unit.flip;
-                this.placeHorseOnCells(horse);
-            }
-            return;
-        }
-
-        // Swap anchor: new butt becomes the previous head (occupied pair stays identical)
-        const newButtR = oldHeadCell.r;
-        const newButtQ = oldHeadCell.q;
-
-        if (oldButtCell && oldButtCell.unit === unit) oldButtCell.unit = null;
-        if (oldHeadCell && oldHeadCell.unit === unit) oldHeadCell.unit = null;
-
-        unit.r = newButtR;
-        unit.q = newButtQ;
         unit.flip = !!desiredFlip;
         this.syncMountedOccupancy(unit);
 
@@ -5408,11 +5215,9 @@ export class TacticsScene extends BaseScene {
             this.placeHorseOnCells(horse);
         }
 
-        // Clear unit occupancy from both horse hexes
+        // Clear unit occupancy from mounted hex
         const buttCell = this.tacticsMap.getCell(unit.r, unit.q);
-        const headCell = this.getMountedHeadCellFor(unit, unit.r, unit.q);
         if (buttCell && buttCell.unit === unit) buttCell.unit = null;
-        if (headCell && headCell.unit === unit) headCell.unit = null;
 
         unit.onHorse = false;
         unit.horseId = null;
@@ -5425,18 +5230,9 @@ export class TacticsScene extends BaseScene {
         const horse = cell?.horse;
         if (!horse || horse.riderId) return false;
 
-        const head = this.getHorseHeadCoords(horse);
-        const enteredIsButt = (horse.r === enteredR && horse.q === enteredQ);
-        const enteredIsHead = (head.r === enteredR && head.q === enteredQ);
-        if (!enteredIsButt && !enteredIsHead) return false;
-
-        // If we entered the head tile, flip the horse so the entered tile becomes the butt anchor
         this.clearHorseFromCells(horse);
-        if (enteredIsHead) {
-            horse.flip = !horse.flip;
-            horse.r = enteredR;
-            horse.q = enteredQ;
-        }
+        horse.r = enteredR;
+        horse.q = enteredQ;
         horse.riderId = unit.id;
         this.placeHorseOnCells(horse);
 
@@ -5449,11 +5245,9 @@ export class TacticsScene extends BaseScene {
         unit.q = horse.q;
         unit.flip = !!horse.flip;
 
-        // Occupy both hexes as a mounted unit
+        // Occupy mounted hex
         const buttCell = this.tacticsMap.getCell(unit.r, unit.q);
-        const headCell = this.getMountedHeadCellFor(unit, unit.r, unit.q);
         if (buttCell) buttCell.unit = unit;
-        if (headCell) headCell.unit = unit;
         return true;
     }
 
@@ -5461,20 +5255,10 @@ export class TacticsScene extends BaseScene {
         const buttCell = this.tacticsMap.getCell(buttR, buttQ);
         if (!buttCell || buttCell.impassable) return false;
 
-        const dq = horse.flip ? -1 : 1;
-        const headCell = this.tacticsMap.getCell(buttR, buttQ + dq);
-        if (!headCell || headCell.impassable) return false;
-
-        // Horse can't straddle a cliff
-        const levelDiff = Math.abs((buttCell.level || 0) - (headCell.level || 0));
-        if (levelDiff > 1) return false;
-
         // Don't wander onto units
         if (buttCell.unit) return false;
-        if (headCell.unit) return false;
         // Don't overlap a different horse footprint
         if (buttCell.horse && buttCell.horse !== horse) return false;
-        if (headCell.horse && headCell.horse !== horse) return false;
 
         return true;
     }
@@ -5484,8 +5268,7 @@ export class TacticsScene extends BaseScene {
 
         const canUse = (r, q, flip) => {
             const testHorse = { ...horse, flip: !!flip };
-            const headQ = q + (flip ? -1 : 1);
-            if (avoidKeys.has(`${r},${q}`) || avoidKeys.has(`${r},${headQ}`)) return false;
+            if (avoidKeys.has(`${r},${q}`)) return false;
             return this.isValidHorseButtDestination(testHorse, r, q);
         };
 
@@ -5557,11 +5340,10 @@ export class TacticsScene extends BaseScene {
 
     ensureMountedDestinationClearOfRiderlessHorses(buttR, buttQ, headR, headQ, movingHorseId = null) {
         const buttHorse = this.tacticsMap.getCell(buttR, buttQ)?.horse;
-        const headHorse = this.tacticsMap.getCell(headR, headQ)?.horse;
         const blocks = (h) => !!(h && h.id !== movingHorseId && h.riderId);
-        if (blocks(buttHorse) || blocks(headHorse)) return false;
+        if (blocks(buttHorse)) return false;
 
-        const avoidKeys = new Set([`${buttR},${buttQ}`, `${headR},${headQ}`]);
+        const avoidKeys = new Set([`${buttR},${buttQ}`]);
         const horsesToMove = [];
         const pushHorse = (horse) => {
             if (!horse || horse.riderId) return;
@@ -5569,7 +5351,6 @@ export class TacticsScene extends BaseScene {
         };
 
         pushHorse(this.tacticsMap.getCell(buttR, buttQ)?.horse);
-        pushHorse(this.tacticsMap.getCell(headR, headQ)?.horse);
 
         for (const h of horsesToMove) {
             if (!this.relocateRiderlessHorse(h, avoidKeys)) return false;
@@ -5833,15 +5614,13 @@ export class TacticsScene extends BaseScene {
                 }
                 // Mounted hover: match the mounted click logic (rider OR horse), but allow click-through on transparent pixels
                 if (u.onHorse) {
-                    const spacing = this.manager.config.horizontalSpacing;
                     const buttX = ux;
                     const buttY = uy + sinkOffset;
-                    const headX = buttX + (u.flip ? -spacing : spacing);
-                    const midX = Math.floor((buttX + headX) / 2);
+                    const midX = Math.floor(buttX);
                     const midY = buttY;
 
                     const riderX = midX;
-                    const riderY = midY - 22;
+                    const riderY = midY - 14;
 
                     const riderHit = this.checkCharacterHit(u.img, (u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action), u.frame, riderX, riderY, hx, hy, {
                         flip: u.flip,
@@ -5849,7 +5628,7 @@ export class TacticsScene extends BaseScene {
                         isProp: false
                     });
 
-                    // Pixel-perfect horse hit (64x64 frame), so transparent pixels don't block what’s behind
+                    // Pixel-perfect horse hit (48x48 frame), so transparent pixels don't block what’s behind
                     const keys = this.getHorseSpriteKeys(u.horseType || 'brown');
                     const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
                     const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
@@ -5858,14 +5637,14 @@ export class TacticsScene extends BaseScene {
 
                     let horseHit = false;
                     if (horseImg) {
-                        const frameW = 64;
-                        const frameH = 64;
+                        const frameW = 48;
+                        const frameH = 48;
                         const frameCount = Math.max(1, Math.floor((horseImg.width || frameW) / frameW));
-                        const f = isRunning ? (Math.floor(Date.now() / 80) % frameCount) : 0;
+                        const f = isRunning ? (Math.floor(Date.now() / 70) % frameCount) : 0;
                         const srcX = f * frameW;
                         const srcY = 0;
 
-                        const horseFeetY = 15;
+                        const horseFeetY = 12;
                         const destX = midX - frameW / 2;
                         const destY = midY + (horseFeetY - frameH);
                         horseHit = this.checkImageFrameHit(horseImg, srcX, srcY, frameW, frameH, destX, destY, hx, hy, { flip: u.flip });
@@ -6458,35 +6237,25 @@ export class TacticsScene extends BaseScene {
                     }
                 }
 
-                // Mounted rendering: draw rider split around the horse so legs "straddle"
+                // Mounted rendering: single-hex horse with rider seated on the back.
                 if (u.onHorse) {
                     const riderAction = (u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action);
                     const buttX = u.visualX + u.visualOffsetX;
-                    // Apply terrain sink ONCE for mounted rendering (we'll pass sinkOffset=0 to drawCharacter)
-                    const headForSink = this.getMountedHeadCellFor(u, u.r, u.q);
-                    const isHorseInShallow =
-                        (!!cell && cell.terrain?.includes('water_shallow')) ||
-                        (!!headForSink && headForSink.terrain?.includes('water_shallow'));
+                    const isHorseInShallow = !!(cell && cell.terrain?.includes('water_shallow'));
                     const terrainSink = Math.max(drawOptions.sinkOffset || 0, isHorseInShallow ? 4 : 0);
                     const buttY = surfaceY + u.visualOffsetY + terrainSink;
                     const riderDrawOptions = { ...drawOptions, sinkOffset: 0, isSubmerged: false };
 
-                    const spacing = this.manager.config.horizontalSpacing;
-                    const headX = buttX + (u.flip ? -spacing : spacing);
-                    const headY = buttY;
-                    const midX = Math.floor((buttX + headX) / 2);
-                    const midY = Math.floor((buttY + headY) / 2);
-
-                    // Tuning: horse feet were too low; lift the sprite a bit.
-                    // Also center/raise the rider so he's seated on the horse back.
-                    const horseFeetY = 15; // lower number lifts the horse (feet higher)
+                    const midX = Math.floor(buttX);
+                    const midY = Math.floor(buttY);
+                    const horseFeetY = 12;
                     const riderX = midX;
-                    // Requested: rider down 3px, but horse+rider up 5px overall => net rider up 2px from previous
-                    const riderY = midY - 22;
+                    const riderY = midY - 14;
 
-                    const nearSide = u.flip ? 'right' : 'left';
-                    const farSide = nearSide === 'left' ? 'right' : 'left';
-
+                    // Keep the classic "straddle" look:
+                    // rear half of rider in front of horse, front half behind horse.
+                    const rearSide = u.flip ? 'right' : 'left';
+                    const frontSide = rearSide === 'left' ? 'right' : 'left';
                     const drawHalf = (side) => {
                         ctx.save();
                         const clipX = side === 'left' ? Math.floor(riderX - 36) : Math.floor(riderX);
@@ -6497,20 +6266,19 @@ export class TacticsScene extends BaseScene {
                         ctx.restore();
                     };
 
-                    // Far leg behind the horse
-                    drawHalf(farSide);
+                    // Front-facing half goes behind horse.
+                    drawHalf(frontSide);
 
-                    // Horse (between two adjacent hexes)
                     const keys = this.getHorseSpriteKeys(u.horseType || 'brown');
                     const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
                     const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
                     const isRunning = (u.isMoving || u.action === 'walk') && horseRun;
                     const horseImg = isRunning ? horseRun : horseStand;
                     if (horseImg) {
-                        const frameW = 64;
-                        const frameH = 64;
+                        const frameW = 48;
+                        const frameH = 48;
                         const frameCount = isRunning ? Math.max(1, Math.floor(horseImg.width / frameW)) : 1;
-                        const f = isRunning ? (Math.floor(timestamp / 80) % frameCount) : 0;
+                        const f = isRunning ? (Math.floor(timestamp / 70) % frameCount) : 0;
                         const sx = f * frameW;
 
                         const dx = -frameW / 2;
@@ -6543,8 +6311,8 @@ export class TacticsScene extends BaseScene {
                         }
                     }
 
-                    // Near leg in front of the horse
-                    drawHalf(nearSide);
+                    // Rear-facing half goes in front of horse.
+                    drawHalf(rearSide);
                 } else {
                     this.drawCharacter(ctx, u.img, u.currentAnimAction || u.action, u.frame, u.visualX + u.visualOffsetX, surfaceY + u.visualOffsetY, drawOptions);
                 }
@@ -6572,26 +6340,20 @@ export class TacticsScene extends BaseScene {
                 const horseImg = isRunning ? horseRun : horseStand;
 
                 if (horseImg) {
-                    const spacing = this.manager.config.horizontalSpacing;
                     const buttPos = { x: call.x, y: call.y };
-                    const headPos = { x: buttPos.x + (h.flip ? -spacing : spacing), y: buttPos.y };
-                    const midX = Math.floor((buttPos.x + headPos.x) / 2);
-                    const head = this.getHorseHeadCoords(h);
+                    const midX = Math.floor(buttPos.x);
                     const buttCell = this.tacticsMap.getCell(h.r, h.q);
-                    const headCell = this.tacticsMap.getCell(head.r, head.q);
-                    const isShallow =
-                        (!!buttCell && buttCell.terrain?.includes('water_shallow')) ||
-                        (!!headCell && headCell.terrain?.includes('water_shallow'));
+                    const isShallow = !!(buttCell && buttCell.terrain?.includes('water_shallow'));
                     const sink = isShallow ? 4 : 0;
-                    const midY = Math.floor((buttPos.y + headPos.y) / 2) + effect.yOffset + sink;
+                    const midY = Math.floor(buttPos.y) + effect.yOffset + sink;
 
-                    const frameW = 64;
-                    const frameH = 64;
-                    const horseFeetY = 15;
+                    const frameW = 48;
+                    const frameH = 48;
+                    const horseFeetY = 12;
                     const dx = -frameW / 2;
-                    const dy = horseFeetY - frameH; // tuned: lift horse so feet aren't underground
+                    const dy = horseFeetY - frameH;
                     const frameCount = isRunning ? Math.max(1, Math.floor(horseImg.width / frameW)) : 1;
-                    const f = isRunning ? (Math.floor(timestamp / 80) % frameCount) : 0;
+                    const f = isRunning ? (Math.floor(timestamp / 70) % frameCount) : 0;
                     const sx = f * frameW;
 
                     const drawHorsePass = (alpha = 1.0, clipRect = null) => {
@@ -6613,8 +6375,8 @@ export class TacticsScene extends BaseScene {
                         const topY = midY + dy;
                         const feetY = midY + horseFeetY;
                         const waterlineY = feetY - sink;
-                        drawHorsePass(1.0, { x: midX - 40, y: topY - 10, w: 80, h: Math.max(0, waterlineY - (topY - 10)) });
-                        drawHorsePass(0.4, { x: midX - 40, y: waterlineY, w: 80, h: Math.max(0, (feetY + 10) - waterlineY) });
+                        drawHorsePass(1.0, { x: midX - 32, y: topY - 8, w: 64, h: Math.max(0, waterlineY - (topY - 8)) });
+                        drawHorsePass(0.4, { x: midX - 32, y: waterlineY, w: 64, h: Math.max(0, (feetY + 8) - waterlineY) });
                     } else {
                         drawHorsePass(1.0);
                     }
@@ -6804,7 +6566,7 @@ export class TacticsScene extends BaseScene {
                     'gongjing': 'custom-male-17'  // Older official portrait for Imperial Protector
                 };
                 this.renderDialogueBox(ctx, canvas, {
-                    portraitKey: portraitMap[step.speaker] || step.speaker,
+                    portraitKey: step.portraitKey || portraitMap[step.speaker] || step.speaker,
                     name: step.name,
                     text: step.text
                 }, { subStep: this.subStep || 0 });
@@ -9088,7 +8850,7 @@ export class TacticsScene extends BaseScene {
             };
             
             const status = this.renderDialogueBox(this.manager.ctx, this.manager.canvas, {
-                portraitKey: portraitMap[step.speaker] || step.speaker,
+                portraitKey: step.portraitKey || portraitMap[step.speaker] || step.speaker,
                 name: step.name,
                 text: step.text
             }, { subStep: this.subStep || 0 });
@@ -9236,16 +8998,14 @@ export class TacticsScene extends BaseScene {
 
             // Mounted selection: clicking rider OR horse should select
             if (u.onHorse) {
-                const spacing = this.manager.config.horizontalSpacing;
                 const buttX = ux;
                 const buttY = uy + sinkOffset;
-                const headX = buttX + (u.flip ? -spacing : spacing);
-                const midX = Math.floor((buttX + headX) / 2);
+                const midX = Math.floor(buttX);
                 const midY = buttY;
 
                 // Rider anchor must match render()
                 const riderX = midX;
-                const riderY = midY - 22;
+                const riderY = midY - 14;
 
                 const riderHit = this.checkCharacterHit(u.img, (u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action), u.frame, riderX, riderY, x, y, {
                     flip: u.flip,
@@ -9253,7 +9013,7 @@ export class TacticsScene extends BaseScene {
                     isProp: false
                 });
 
-                // Pixel-perfect horse hit (64x64 frame), so transparent pixels don't block what’s behind
+                // Pixel-perfect horse hit (48x48 frame), so transparent pixels don't block what’s behind
                 const keys = this.getHorseSpriteKeys(u.horseType || 'brown');
                 const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
                 const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
@@ -9262,14 +9022,14 @@ export class TacticsScene extends BaseScene {
 
                 let horseHit = false;
                 if (horseImg) {
-                    const frameW = 64;
-                    const frameH = 64;
+                    const frameW = 48;
+                    const frameH = 48;
                     const frameCount = Math.max(1, Math.floor((horseImg.width || frameW) / frameW));
-                    const f = isRunning ? (Math.floor(Date.now() / 80) % frameCount) : 0;
+                    const f = isRunning ? (Math.floor(Date.now() / 70) % frameCount) : 0;
                     const srcX = f * frameW;
                     const srcY = 0;
 
-                    const horseFeetY = 15;
+                    const horseFeetY = 12;
                     const destX = midX - frameW / 2;
                     const destY = midY + (horseFeetY - frameH);
                     horseHit = this.checkImageFrameHit(horseImg, srcX, srcY, frameW, frameH, destX, destY, x, y, { flip: u.flip });

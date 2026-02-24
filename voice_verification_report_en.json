@@ -2010,8 +2010,8 @@
         "id": "cc_yc_hfs_01",
         "character": "huangfusong",
         "original_text": "Cavalry Commander Cao, your interception came in perfect time. The routed bands have no order left.",
-        "stt_output": "",
-        "wer": 0,
+        "stt_output": "Havary Commander Tsau, your interception came in perfect time. The routed bands have no order left.",
+        "wer": 0.125,
         "is_bad": false,
         "language": "en"
     },
@@ -2073,8 +2073,17 @@
         "id": "cc_dq_att_00",
         "character": "zhoujing",
         "original_text": "Magistrate, the refugees all report the Yellow Turbans are burning and plundering along the roads. The people are carrying old and young alike and pleading to enter the city for shelter.",
-        "stt_output": "Makastrat, the refugees all report the yellow turbines are burning and plundering along the roads. The people are carrying old and young alike and pleading to enter the city for shelter.",
-        "wer": 0.06451612903225806,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_yc_cr_post_01": {
+        "id": "cc_yc_cr_post_01",
+        "character": "caoren",
+        "original_text": "Understood. I'll sweep the road, gather stragglers, and have the cavalry ready to move.",
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     }

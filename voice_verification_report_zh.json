@@ -2010,9 +2010,9 @@
         "id": "cc_yc_hfs_01",
         "character": "huangfusong",
         "original_text": "曹都尉，你截击得正是时候。贼众既溃，已无行列可言。",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false,
+        "stt_output": "操作為你結積得正式的時候在重擊盃以無行列可言",
+        "wer": 1.0,
+        "is_bad": true,
         "language": "zh"
     },
     "zh:cc_yc_hfs_choice_01": {
@@ -2073,7 +2073,16 @@
         "id": "cc_dq_att_00",
         "character": "zhoujing",
         "original_text": "县令，流民皆称黄巾沿途焚掠，郡县震动。百姓扶老携幼，争入城中避难。",
-        "stt_output": "限令流明接称黃金延途准略均限震动百幸福老邪又争入城中避难",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_yc_cr_post_01": {
+        "id": "cc_yc_cr_post_01",
+        "character": "caoren",
+        "original_text": "得令。我这就清扫道路、收拢散卒，整备骑军再进。",
+        "stt_output": "得令我这就清掃道路收拢散足准备齐一君在镜",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"

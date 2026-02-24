@@ -24,7 +24,7 @@ export class CampaignSelectionScene extends BaseScene {
             { 
                 id: 'liubei', 
                 nameKey: 'THE OATH IN THE PEACH GARDEN',
-                nameCompleteKey: 'THE OATH - STORY COMPLETE',
+                nameCompleteKey: 'THE OATH IN THE PEACH GARDEN',
                 charName: 'LIU BEI',
                 imgKey: 'liubei',
                 descriptionKey: 'campaign_liubei_description',
@@ -38,7 +38,7 @@ export class CampaignSelectionScene extends BaseScene {
             {
                 id: 'caocao',
                 nameKey: 'ASCENT OF THE CAVALRY COMMANDER',
-                nameCompleteKey: 'CAVALRY COMMANDER ASCENT - STORY COMPLETE',
+                nameCompleteKey: 'ASCENT OF THE CAVALRY COMMANDER',
                 charName: 'Cao Cao',
                 imgKey: 'caocao',
                 descriptionKey: 'campaign_caocao_description',
@@ -75,7 +75,7 @@ export class CampaignSelectionScene extends BaseScene {
             liubei.description = getLocalizedText(UI_TEXT[chapter2OathComplete ? 'campaign_ch2_oath_complete' : 'campaign_ch2_oath_description']);
             if (caocao) {
                 caocao.nameKey = 'ASCENT OF THE CAVALRY COMMANDER';
-                caocao.nameCompleteKey = 'CAVALRY COMMANDER ASCENT - STORY COMPLETE';
+                caocao.nameCompleteKey = 'ASCENT OF THE CAVALRY COMMANDER';
                 caocao.isComplete = false;
                 caocao.isInProgress = false;
                 caocao.locked = false;
@@ -85,7 +85,7 @@ export class CampaignSelectionScene extends BaseScene {
         }
 
         liubei.nameKey = 'THE OATH IN THE PEACH GARDEN';
-        liubei.nameCompleteKey = 'THE OATH - STORY COMPLETE';
+        liubei.nameCompleteKey = 'THE OATH IN THE PEACH GARDEN';
         liubei.locked = false;
         liubei.isInProgress = (gs.getCurrentCampaign() === 'liubei') && !chapter1Complete;
 
@@ -105,11 +105,23 @@ export class CampaignSelectionScene extends BaseScene {
 
         if (caocao) {
             caocao.nameKey = 'ASCENT OF THE CAVALRY COMMANDER';
-            caocao.nameCompleteKey = 'CAVALRY COMMANDER ASCENT - STORY COMPLETE';
+            caocao.nameCompleteKey = 'ASCENT OF THE CAVALRY COMMANDER';
             caocao.isComplete = gs.isCampaignComplete('caocao');
             caocao.isInProgress = (gs.getCurrentCampaign() === 'caocao') && !caocao.isComplete;
             caocao.locked = false;
-            caocao.description = getLocalizedText(UI_TEXT['campaign_caocao_description']);
+            if (caocao.isComplete) {
+                const refugeePolicy = gs.getStoryChoice('caocao_refugee_policy', null, 'caocao');
+                caocao.description = getLocalizedText(UI_TEXT['campaign_caocao_complete_base']);
+                if (refugeePolicy === 'open_granaries') {
+                    caocao.description += getLocalizedText(UI_TEXT['campaign_caocao_complete_open']);
+                } else if (refugeePolicy === 'close_gates') {
+                    caocao.description += getLocalizedText(UI_TEXT['campaign_caocao_complete_closed']);
+                } else {
+                    caocao.description += getLocalizedText(UI_TEXT['campaign_caocao_complete_neutral']);
+                }
+            } else {
+                caocao.description = getLocalizedText(UI_TEXT['campaign_caocao_description']);
+            }
         }
     }
 

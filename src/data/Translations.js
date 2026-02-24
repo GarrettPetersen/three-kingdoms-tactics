@@ -176,6 +176,22 @@ export const UI_TEXT = {
         en: 'When the realm nears chaos and Yellow Turbans rise like a tide, a cavalry commander rides from Dunqiu. In the smoke of war, his name begins to spread.',
         zh: '汉室将倾，黄巾蜂起。顿丘一名骑都尉应召出征，于兵火之间，渐露其名。'
     },
+    'campaign_caocao_complete_base': {
+        en: 'You received imperial orders at Dunqiu, raised cavalry for Dong Commandery, and cut off the routed Yellow Turbans at Yingchuan.',
+        zh: '你在顿丘奉诏起兵，征集东郡骑军，于颍川截击溃散黄巾。'
+    },
+    'campaign_caocao_complete_open': {
+        en: ' You opened the granaries to aid the refugees, then marched under your new command to claim your first victory.',
+        zh: '你又开仓赈民，继而统军出征，遂得初战之功。'
+    },
+    'campaign_caocao_complete_closed': {
+        en: ' You sealed the gates to preserve order, then marched under your new command to claim your first victory.',
+        zh: '你先闭门定乱，继而统军出征，遂得初战之功。'
+    },
+    'campaign_caocao_complete_neutral': {
+        en: ' You then marched under your new command to claim your first victory.',
+        zh: '其后你统军出征，遂得初战之功。'
+    },
     'Zhuo County': {
         en: 'Zhuo County',
         zh: '涿郡'

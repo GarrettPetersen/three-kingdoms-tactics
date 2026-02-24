@@ -126,6 +126,12 @@
     "source": "Battles.js"
   },
   {
+    "id": "cc_yc_cr_post_01",
+    "char": "caoren",
+    "text": "得令。我这就清扫道路、收拢散卒，整备骑军再进。",
+    "source": "Battles.js"
+  },
+  {
     "id": "cc_yc_hfs_01",
     "char": "huangfusong",
     "text": "曹都尉，你截击得正是时候。贼众既溃，已无行列可言。",
