@@ -148,7 +148,8 @@ export class LevelUpScene extends BaseScene {
             const path = UPGRADE_PATHS[unitClass];
             if (path && path[current.newLevel]) {
                 const upgrade = path[current.newLevel];
-                const attackName = getLocalizedText(ATTACKS[upgrade.attack]?.name || { en: "New Technique", zh: "新招式" });
+                const upgradedAttackKey = upgrade.attack || upgrade.secondaryAttack;
+                const attackName = getLocalizedText(ATTACKS[upgradedAttackKey]?.name || { en: "New Technique", zh: "新招式" });
                 const upgradeText = getLocalizedText(upgrade.text || '');
                 bonuses.push(getLocalizedText({
                     en: `Learned ${attackName}: ${upgradeText}`,

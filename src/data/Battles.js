@@ -815,7 +815,7 @@ export const UNIT_TEMPLATES = {
         'dongzhuo': { name: 'Dong Zhuo', imgKey: 'dongzhuo', hp: 9, moveRange: 3, attacks: ['tyrant_sweep'], faction: 'allied' }
     },
     'caocao_force': {
-        'caocao': { name: 'Cao Cao', imgKey: 'caocao', hp: 6, moveRange: 4, attacks: ['slash_cao'], faction: 'player' },
+        'caocao': { name: 'Cao Cao', imgKey: 'caocao', hp: 6, moveRange: 4, attacks: ['slash_cao', 'command'], faction: 'player' },
         'caoren': {
             name: 'Cao Ren',
             imgKey: 'caoren',

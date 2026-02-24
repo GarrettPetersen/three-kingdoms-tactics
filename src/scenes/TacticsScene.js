@@ -60,6 +60,10 @@ export class TacticsScene extends BaseScene {
         this.horseRunElapsedMs = 0;
         this.horseRunCycleIndex = -1;
         this.horseRunCues = { snortA: false, neigh: false, snortB: false };
+        this.commandTutorialActive = false;
+        this.commandTutorialStep = null;
+        this.commandTutorialTargetId = null;
+        this.commandTutorialCompleted = false;
     }
 
     cloneScriptSteps(steps) {
@@ -201,6 +205,10 @@ export class TacticsScene extends BaseScene {
         this.horseRunElapsedMs = 0;
         this.horseRunCycleIndex = -1;
         this.horseRunCues = { snortA: false, neigh: false, snortB: false };
+        this.commandTutorialActive = false;
+        this.commandTutorialStep = null;
+        this.commandTutorialTargetId = null;
+        this.commandTutorialCompleted = false;
         assets.stopLoopingSound('horse_gallop_loop', 0);
         this.fireCrackleSfxActive = false;
         assets.stopLoopingSound('fire_crackle_loop', 0);
@@ -1088,6 +1096,10 @@ export class TacticsScene extends BaseScene {
                     const upgrade = path[lvl];
                     if (upgrade.attack) {
                         finalAttacks[0] = upgrade.attack;
+                    }
+                    if (upgrade.secondaryAttack) {
+                        if (finalAttacks.length < 2) finalAttacks.push(upgrade.secondaryAttack);
+                        else finalAttacks[1] = upgrade.secondaryAttack;
                     }
                 }
             });
@@ -2052,6 +2064,10 @@ export class TacticsScene extends BaseScene {
     }
 
     startNpcPhase() {
+        this.clearTemporaryCommands({ markNpcActed: true });
+        this.commandTutorialActive = false;
+        this.commandTutorialStep = null;
+        this.commandTutorialTargetId = null;
         // For yellow_turban_rout cutscene, alternate between enemy and allied phases
         if (this.battleId === 'yellow_turban_rout' && this.cutsceneCombatTurns !== undefined) {
             // Determine which phase based on current turn state
@@ -2726,7 +2742,11 @@ export class TacticsScene extends BaseScene {
                 shieldResistPerLevel: Number.isFinite(u.shieldResistPerLevel) ? u.shieldResistPerLevel : 0,
                 caged: u.caged,
                 cageHp: u.cageHp,
-                cageSprite: u.cageSprite
+                cageSprite: u.cageSprite,
+                commandSourceId: u.commandSourceId || null,
+                commandOriginalFaction: u.commandOriginalFaction || null,
+                commandOriginalMoveRange: Number.isFinite(u.commandOriginalMoveRange) ? u.commandOriginalMoveRange : null,
+                commandDamageBonus: Number.isFinite(u.commandDamageBonus) ? u.commandDamageBonus : 0
             })),
             // Save intro/post-combat dialogue state
             isIntroDialogueActive: this.isIntroDialogueActive,
@@ -2740,7 +2760,11 @@ export class TacticsScene extends BaseScene {
             // Save combat state
             isProcessingTurn: this.isProcessingTurn,
             // Save cutscene combat complete flag for yellow_turban_rout
-            cutsceneCombatComplete: this.cutsceneCombatComplete
+            cutsceneCombatComplete: this.cutsceneCombatComplete,
+            commandTutorialActive: !!this.commandTutorialActive,
+            commandTutorialStep: this.commandTutorialStep || null,
+            commandTutorialTargetId: this.commandTutorialTargetId || null,
+            commandTutorialCompleted: !!this.commandTutorialCompleted
         };
     }
 
@@ -2878,7 +2902,11 @@ export class TacticsScene extends BaseScene {
                     shieldResistPerLevel: Number.isFinite(uData.shieldResistPerLevel) ? uData.shieldResistPerLevel : 0,
                     caged: !!uData.caged,
                     cageHp: uData.cageHp,
-                    cageSprite: uData.cageSprite
+                    cageSprite: uData.cageSprite,
+                    commandSourceId: uData.commandSourceId || null,
+                    commandOriginalFaction: uData.commandOriginalFaction || null,
+                    commandOriginalMoveRange: Number.isFinite(uData.commandOriginalMoveRange) ? uData.commandOriginalMoveRange : null,
+                    commandDamageBonus: Number.isFinite(uData.commandDamageBonus) ? uData.commandDamageBonus : 0
                 });
                 this.units.push(u);
             }
@@ -2924,6 +2952,14 @@ export class TacticsScene extends BaseScene {
             u.caged = uData.caged || false;
             u.cageHp = uData.cageHp;
             u.cageSprite = uData.cageSprite;
+            u.commandSourceId = uData.commandSourceId || null;
+            u.commandOriginalFaction = uData.commandOriginalFaction || null;
+            u.commandOriginalMoveRange = Number.isFinite(uData.commandOriginalMoveRange) ? uData.commandOriginalMoveRange : null;
+            u.commandDamageBonus = Number.isFinite(uData.commandDamageBonus) ? uData.commandDamageBonus : 0;
+            u.commandSourceId = uData.commandSourceId || null;
+            u.commandOriginalFaction = uData.commandOriginalFaction || null;
+            u.commandOriginalMoveRange = Number.isFinite(uData.commandOriginalMoveRange) ? uData.commandOriginalMoveRange : null;
+            u.commandDamageBonus = Number.isFinite(uData.commandDamageBonus) ? uData.commandDamageBonus : 0;
 
             // Clear animation states
             u.frame = 0;
@@ -2969,6 +3005,10 @@ export class TacticsScene extends BaseScene {
         this.introTimer = state.introTimer || 0;
         this.isPostCombatDialogue = state.isPostCombatDialogue || false;
         this.cutsceneCombatComplete = state.cutsceneCombatComplete;
+        this.commandTutorialActive = !!state.commandTutorialActive;
+        this.commandTutorialStep = state.commandTutorialStep || null;
+        this.commandTutorialTargetId = state.commandTutorialTargetId || null;
+        this.commandTutorialCompleted = !!state.commandTutorialCompleted;
         
         // Restore intro or post-combat script from battle definition if dialogue is active
         if (this.isIntroDialogueActive) {
@@ -3308,6 +3348,10 @@ export class TacticsScene extends BaseScene {
         this.attackRects = [];
         this.activeDialogue = null;
         this.mountedMovePlans = null;
+        this.commandTutorialActive = !!state.commandTutorialActive;
+        this.commandTutorialStep = state.commandTutorialStep || null;
+        this.commandTutorialTargetId = state.commandTutorialTargetId || null;
+        this.commandTutorialCompleted = !!state.commandTutorialCompleted;
     }
 
     undo() {
@@ -3476,9 +3520,108 @@ export class TacticsScene extends BaseScene {
         this.manager.gameState.clearSceneState('tactics');
     }
 
+    canCommandTarget(commander, targetUnit, attackDef) {
+        if (!commander || !targetUnit || !attackDef) return false;
+        if (targetUnit.hp <= 0 || targetUnit.isGone) return false;
+        if (targetUnit.id === commander.id) return false;
+        if (attackDef.allowEnemy) return true;
+        return targetUnit.faction === 'player' || targetUnit.faction === 'allied';
+    }
+
+    getCommandTargetFromCell(r, q) {
+        const cell = this.tacticsMap.getCell(r, q);
+        if (!cell) return null;
+        const rider = this.getRiderUnitFromCell(cell);
+        if (rider) return rider;
+        return cell.unit || null;
+    }
+
+    clearCommandForUnit(unit) {
+        if (!unit || !unit.commandSourceId) return;
+        const originalFaction = unit.commandOriginalFaction || unit.faction;
+        unit.faction = originalFaction;
+        if (Number.isFinite(unit.commandOriginalMoveRange)) {
+            unit.moveRange = unit.commandOriginalMoveRange;
+        }
+        unit.commandSourceId = null;
+        unit.commandOriginalFaction = null;
+        unit.commandOriginalMoveRange = null;
+        unit.commandDamageBonus = 0;
+    }
+
+    clearTemporaryCommands(options = {}) {
+        const markNpcActed = options.markNpcActed !== false;
+        this.units.forEach(u => {
+            if (!u.commandSourceId) return;
+            const originalFaction = u.commandOriginalFaction || u.faction;
+            this.clearCommandForUnit(u);
+            if (markNpcActed && originalFaction !== 'player') {
+                u.hasMoved = true;
+                u.hasAttacked = true;
+                u.hasActed = true;
+            }
+        });
+    }
+
+    beginCommandTutorial(targetUnitId) {
+        this.commandTutorialActive = true;
+        this.commandTutorialStep = 'ability';
+        this.commandTutorialTargetId = targetUnitId || null;
+        this.commandTutorialCompleted = false;
+        const caocao = this.units.find(u => u.id === 'caocao' && u.hp > 0 && !u.isGone);
+        if (caocao) {
+            this.selectTargetUnit(caocao);
+        }
+        const caoren = this.units.find(u => u.id === 'caoren' && u.hp > 0 && !u.isGone);
+        if (caoren) {
+            const tutorialPrompt = {
+                speaker: 'caoren',
+                portraitKey: 'cao-ren',
+                name: 'Cao Ren',
+                voiceId: 'cc_yc_cr_cmd_tutorial_01',
+                text: {
+                    en: "That soldier is in danger! Issue a command to get him to safety.",
+                    zh: "那名士兵有危险！立刻下令，让他脱险！"
+                }
+            };
+            caoren.dialogue = getLocalizedText(tutorialPrompt.text);
+            caoren.voiceId = tutorialPrompt.voiceId;
+            this.activeDialogue = { unit: caoren, timer: 2600 };
+        }
+    }
+
+    maybeStartCommandTutorial() {
+        if (this.commandTutorialCompleted || this.commandTutorialActive) return;
+        if (this.battleId !== 'caocao_yingchuan_intercept') return;
+        if (this.turn !== 'player' || this.isProcessingTurn || this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCleanupDialogueActive) return;
+
+        const pressure = new Map();
+        this.units.forEach(u => {
+            if (!u || u.hp <= 0 || u.isGone || !u.intent || u.intent.type !== 'attack' || !u.intent.targetId) return;
+            const target = this.units.find(v => v.id === u.intent.targetId);
+            if (!target || target.hp <= 0 || target.isGone) return;
+            if (target.faction !== 'allied') return;
+            pressure.set(target.id, (pressure.get(target.id) || 0) + 1);
+        });
+        if (pressure.size === 0) return;
+
+        let targetId = null;
+        let maxThreat = 0;
+        pressure.forEach((count, id) => {
+            if (count > maxThreat) {
+                maxThreat = count;
+                targetId = id;
+            }
+        });
+        if (targetId) {
+            this.beginCommandTutorial(targetId);
+        }
+    }
+
     startPlayerTurn() {
         this.turn = 'player';
         this.isProcessingTurn = false;
+        this.clearTemporaryCommands({ markNpcActed: false });
         this.units.forEach(u => {
             if (u.faction === 'player') {
                 u.hasMoved = false;
@@ -3490,6 +3633,7 @@ export class TacticsScene extends BaseScene {
         this.history = [];
         this.pushHistory(); // Save start of turn state
         this.saveBattleState();
+        this.maybeStartCommandTutorial();
     }
 
     startExecutionPhase() {
@@ -4419,6 +4563,9 @@ export class TacticsScene extends BaseScene {
         if (victim.hp <= 0 || victim.isGone) return;
 
         let finalDamage = attack.damage;
+        if (Number.isFinite(attacker.commandDamageBonus) && attacker.commandDamageBonus > 0) {
+            finalDamage += attacker.commandDamageBonus;
+        }
         let isCrit = false;
         let isResisted = false;
         let critText = getLocalizedText({ en: "CRIT!", zh: "暴击！" });
@@ -4892,6 +5039,10 @@ export class TacticsScene extends BaseScene {
                             if (upgrade.attack) {
                                 // Replace the primary attack with the upgraded version
                                 attacks[0] = upgrade.attack;
+                            }
+                            if (upgrade.secondaryAttack) {
+                                if (attacks.length < 2) attacks.push(upgrade.secondaryAttack);
+                                else attacks[1] = upgrade.secondaryAttack;
                             }
                         }
                     });
@@ -6688,7 +6839,7 @@ export class TacticsScene extends BaseScene {
             ? this.controllerNavTargets[this.controllerNavIndex]
             : null;
         const prevId = prev ? prev.id : null;
-        const targets = [];
+        let targets = [];
 
         if (this.isChoiceActive && this.choiceRects) {
             this.choiceRects.forEach(rect => {
@@ -6784,6 +6935,20 @@ export class TacticsScene extends BaseScene {
                     unit: u
                 });
             });
+        }
+
+        if (this.commandTutorialActive && this.commandTutorialStep === 'ability') {
+            targets = targets.filter(t => t.type === 'ability' && ATTACKS[t.attackKey]?.type === 'command');
+        } else if (this.commandTutorialActive && this.commandTutorialStep === 'target') {
+            const targetId = this.commandTutorialTargetId;
+            targets = targets.filter(t =>
+                (t.type === 'attack_cell' && targetId && t.r !== undefined && t.q !== undefined && (() => {
+                    const u = this.getCommandTargetFromCell(t.r, t.q);
+                    return !!u && u.id === targetId;
+                })()) ||
+                (t.type === 'unit' && t.unit && targetId && t.unit.id === targetId) ||
+                (t.type === 'unit_region' && t.unit && targetId && t.unit.id === targetId)
+            );
         }
 
         this.controllerNavTargets = targets;
@@ -6990,6 +7155,50 @@ export class TacticsScene extends BaseScene {
         }
     }
 
+    issueCommand(commander, targetR, targetQ, attackDef) {
+        if (!commander || !attackDef) return false;
+        const targetUnit = this.getCommandTargetFromCell(targetR, targetQ);
+        if (!this.canCommandTarget(commander, targetUnit, attackDef)) return false;
+
+        if (this.commandTutorialActive && this.commandTutorialStep === 'target' && this.commandTutorialTargetId) {
+            if (!targetUnit || targetUnit.id !== this.commandTutorialTargetId) {
+                return false;
+            }
+        }
+
+        if (targetUnit.commandSourceId && targetUnit.commandSourceId !== commander.id) {
+            this.clearCommandForUnit(targetUnit);
+        }
+
+        if (!targetUnit.commandSourceId) {
+            targetUnit.commandOriginalFaction = targetUnit.faction;
+            targetUnit.commandOriginalMoveRange = targetUnit.moveRange;
+        }
+
+        targetUnit.commandSourceId = commander.id;
+        targetUnit.commandDamageBonus = Number.isFinite(attackDef.commandDamageBonus) ? attackDef.commandDamageBonus : 0;
+        targetUnit.faction = 'player';
+        targetUnit.moveRange = (targetUnit.commandOriginalMoveRange || targetUnit.moveRange) + (attackDef.commandMoveBonus || 0);
+        targetUnit.hasMoved = false;
+        targetUnit.hasAttacked = false;
+        targetUnit.hasActed = false;
+
+        commander.hasAttacked = true;
+        commander.hasActed = true;
+        this.selectTargetUnit(targetUnit);
+
+        if (this.commandTutorialActive && this.commandTutorialStep === 'target') {
+            this.commandTutorialActive = false;
+            this.commandTutorialStep = null;
+            this.commandTutorialTargetId = null;
+            this.commandTutorialCompleted = true;
+        }
+
+        assets.playSound('ui_click');
+        this.pushHistory();
+        return true;
+    }
+
     activateCellTarget(r, q, type) {
         const clickedCell = this.tacticsMap.getCell(r, q);
         if (!clickedCell) return;
@@ -6997,6 +7206,11 @@ export class TacticsScene extends BaseScene {
 
         if (type === 'attack_cell') {
             if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack && this.attackTiles.has(`${r},${q}`)) {
+                const selectedAttackData = ATTACKS[this.selectedAttack];
+                if (selectedAttackData && selectedAttackData.type === 'command') {
+                    this.issueCommand(this.selectedUnit, r, q, selectedAttackData);
+                    return;
+                }
                 const attacker = this.selectedUnit;
                 this.isProcessingTurn = true;
                 this.executeAttack(attacker, this.selectedAttack, r, q, () => {
@@ -8525,6 +8739,7 @@ export class TacticsScene extends BaseScene {
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.turn === 'player' && !this.isProcessingTurn) {
             this.drawUnitAbilityUI(ctx, canvas, this.selectedUnit);
         }
+        this.renderCommandTutorialArrows(ctx);
 
         // End Turn Confirmation Dialog
         if (this.showEndTurnConfirm) {
@@ -8616,6 +8831,38 @@ export class TacticsScene extends BaseScene {
         });
     }
 
+    drawBouncingArrow(ctx, x, y, color = '#ffd700') {
+        const bob = Math.sin(Date.now() / 160) * 3;
+        ctx.save();
+        ctx.translate(Math.floor(x), Math.floor(y + bob));
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-6, -10);
+        ctx.lineTo(6, -10);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillRect(-2, -16, 4, 8);
+        ctx.restore();
+    }
+
+    renderCommandTutorialArrows(ctx) {
+        if (!this.commandTutorialActive) return;
+        if (this.commandTutorialStep === 'ability') {
+            const commandBtn = (this.attackRects || []).find(r => ATTACKS[r.key]?.type === 'command');
+            if (commandBtn) {
+                this.drawBouncingArrow(ctx, commandBtn.x + commandBtn.w / 2, commandBtn.y - 2);
+            }
+            return;
+        }
+        if (this.commandTutorialStep === 'target' && this.commandTutorialTargetId) {
+            const target = this.units.find(u => u.id === this.commandTutorialTargetId && u.hp > 0 && !u.isGone);
+            if (target) {
+                this.drawBouncingArrow(ctx, target.visualX, target.visualY - 18, '#ff6666');
+            }
+        }
+    }
+
     selectAttack(attackKey) {
         if (!this.selectedUnit || this.selectedUnit.faction !== 'player' || this.selectedUnit.hasAttacked) return;
         
@@ -8625,6 +8872,20 @@ export class TacticsScene extends BaseScene {
         // Find valid attack targets based on range
         this.attackTiles = new Map();
         const attack = ATTACKS[this.selectedAttack];
+        if (attack && attack.type === 'command') {
+            if (this.commandTutorialActive && this.commandTutorialStep === 'ability') {
+                this.commandTutorialStep = 'target';
+            }
+            this.units.forEach(u => {
+                if (!this.canCommandTarget(this.selectedUnit, u, attack)) return;
+                this.attackTiles.set(`${u.r},${u.q}`, true);
+                if (u.onHorse) {
+                    const head = this.getMountedHeadCellFor(u, u.r, u.q);
+                    if (head) this.attackTiles.set(`${head.r},${head.q}`, true);
+                }
+            });
+            return;
+        }
         const range = attack.range || 1;
         const minRange = attack.minRange || 0;
         const origins = this.getAttackOrigins(this.selectedUnit);
@@ -8936,9 +9197,20 @@ export class TacticsScene extends BaseScene {
         }
 
         if (this.isProcessingTurn || this.isIntroAnimating) return;
+        const tutorialStep = this.commandTutorialActive ? this.commandTutorialStep : null;
+
+        if (tutorialStep === 'ability') {
+            if (this.attackRects && this.selectedUnit && this.selectedUnit.faction === 'player') {
+                const btn = this.attackRects.find(r => ATTACKS[r.key]?.type === 'command' && x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h);
+                if (btn && !this.selectedUnit.hasAttacked) {
+                    this.selectAttack(btn.key);
+                }
+            }
+            return;
+        }
 
         // 1. Check UI Buttons (End/Reset/Order)
-        if (this.endTurnRect && x >= this.endTurnRect.x && x <= this.endTurnRect.x + this.endTurnRect.w &&
+        if (tutorialStep !== 'target' && this.endTurnRect && x >= this.endTurnRect.x && x <= this.endTurnRect.x + this.endTurnRect.w &&
             y >= this.endTurnRect.y && y <= this.endTurnRect.y + this.endTurnRect.h) {
             
             if (this.allUnitsActed()) {
@@ -8949,25 +9221,25 @@ export class TacticsScene extends BaseScene {
             }
             return;
         }
-        if (this.resetTurnRect && x >= this.resetTurnRect.x && x <= this.resetTurnRect.x + this.resetTurnRect.w &&
+        if (tutorialStep !== 'target' && this.resetTurnRect && x >= this.resetTurnRect.x && x <= this.resetTurnRect.x + this.resetTurnRect.w &&
             y >= this.resetTurnRect.y && y <= this.resetTurnRect.y + this.resetTurnRect.h) {
             this.resetTurn();
             return;
         }
-        if (this.attackOrderRect && x >= this.attackOrderRect.x && x <= this.attackOrderRect.x + this.attackOrderRect.w &&
+        if (tutorialStep !== 'target' && this.attackOrderRect && x >= this.attackOrderRect.x && x <= this.attackOrderRect.x + this.attackOrderRect.w &&
             y >= this.attackOrderRect.y && y <= this.attackOrderRect.y + this.attackOrderRect.h) {
             this.showAttackOrder = !this.showAttackOrder;
             assets.playSound('ui_click', 0.5);
             return;
         }
-        if (this.undoRect && x >= this.undoRect.x && x <= this.undoRect.x + this.undoRect.w &&
+        if (tutorialStep !== 'target' && this.undoRect && x >= this.undoRect.x && x <= this.undoRect.x + this.undoRect.w &&
             y >= this.undoRect.y && y <= this.undoRect.y + this.undoRect.h) {
             this.undo();
             return;
         }
 
         // 2. Check Ability Buttons
-        if (this.attackRects && this.selectedUnit && this.selectedUnit.faction === 'player') {
+        if (tutorialStep !== 'target' && this.attackRects && this.selectedUnit && this.selectedUnit.faction === 'player') {
             const btn = this.attackRects.find(r => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h);
             if (btn && !this.selectedUnit.hasAttacked) {
                 this.selectAttack(btn.key);
@@ -9058,6 +9330,7 @@ export class TacticsScene extends BaseScene {
         
         // A. PERFORM ATTACK (Highest Priority if attack is active)
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack) {
+            const selectedAttackData = ATTACKS[this.selectedAttack];
             let chosenAttackCell = null;
             const clickedMountedRegion = !!(spriteUnit && spriteUnit.onHorse && spriteHitCell);
             // Prioritize the clicked hex itself (command intent) over overlapping sprite hit regions.
@@ -9072,6 +9345,10 @@ export class TacticsScene extends BaseScene {
             }
 
             if (chosenAttackCell) {
+                if (selectedAttackData && selectedAttackData.type === 'command') {
+                    this.issueCommand(this.selectedUnit, chosenAttackCell.r, chosenAttackCell.q, selectedAttackData);
+                    return;
+                }
                 const attacker = this.selectedUnit;
                 this.isProcessingTurn = true; // Lock turn during animation
                 
@@ -9089,6 +9366,11 @@ export class TacticsScene extends BaseScene {
                     }
                     this.isProcessingTurn = false; // Unlock turn
                 });
+                return;
+            }
+
+            if (selectedAttackData && selectedAttackData.type === 'command') {
+                // Command tutorial target-step and command targeting mode do not allow side selections.
                 return;
             }
 
@@ -9278,6 +9560,9 @@ export class TacticsScene extends BaseScene {
             e.preventDefault();
             this.onNonMouseInput();
             this.controllerNavMouseEnabled = false;
+            if (this.commandTutorialActive) {
+                return;
+            }
             if (this.isLockedActiveDialogue()) {
                 return;
             }

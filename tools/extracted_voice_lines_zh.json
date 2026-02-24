@@ -126,6 +126,12 @@
     "source": "Battles.js"
   },
   {
+    "id": "cc_yc_cr_cmd_tutorial_01",
+    "char": "caoren",
+    "text": "那名士兵有危险！立刻下令，让他脱险！",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "cc_yc_cr_post_01",
     "char": "caoren",
     "text": "得令。我这就清扫道路、收拢散卒，整备骑军再进。",

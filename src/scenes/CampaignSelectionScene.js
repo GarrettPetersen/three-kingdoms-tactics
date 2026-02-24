@@ -8,10 +8,7 @@ export class CampaignSelectionScene extends BaseScene {
         super();
         this.chapters = [
             { id: '1', titleKey: 'Chapter 1', available: true },
-            { id: '2', titleKey: 'Chapter 2', available: false }, 
-            { id: '3', titleKey: 'Chapter 3', available: false },
-            { id: '4', titleKey: 'Chapter 4', available: false },
-            { id: '5', titleKey: 'Chapter 5', available: false }
+            { id: '2', titleKey: 'Chapter 2', available: false }
         ];
         this.selectedChapterIndex = 0;
         this.message = null;
@@ -224,6 +221,21 @@ export class CampaignSelectionScene extends BaseScene {
                 ctx.stroke();
             }
 
+            if (ch.id === '2' && !ch.available) {
+                // Small lock marker for chapter availability.
+                const lockX = timelineX + 11;
+                const lockY = ty - 7;
+                ctx.strokeStyle = '#777';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(lockX, lockY + 3, 8, 6);
+                ctx.beginPath();
+                ctx.moveTo(lockX + 2, lockY + 3);
+                ctx.lineTo(lockX + 2, lockY + 1);
+                ctx.lineTo(lockX + 6, lockY + 1);
+                ctx.lineTo(lockX + 6, lockY + 3);
+                ctx.stroke();
+            }
+
             this.drawPixelText(ctx, displayText, timelineX + 22, ty, { color: displayColor, font: '8px Silkscreen' });
         });
 
@@ -260,22 +272,6 @@ export class CampaignSelectionScene extends BaseScene {
                     ctx.lineWidth = 2;
                     ctx.beginPath();
                     ctx.arc(c.x, c.y, ringRadius, 0, Math.PI * 2);
-                    ctx.stroke();
-
-                    // Crosshair ticks help readability even when color contrast is low.
-                    const tickLen = 4;
-                    const tickGap = ringRadius + 1;
-                    ctx.strokeStyle = '#ffffff';
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(c.x - tickGap - tickLen, c.y);
-                    ctx.lineTo(c.x - tickGap, c.y);
-                    ctx.moveTo(c.x + tickGap, c.y);
-                    ctx.lineTo(c.x + tickGap + tickLen, c.y);
-                    ctx.moveTo(c.x, c.y - tickGap - tickLen);
-                    ctx.lineTo(c.x, c.y - tickGap);
-                    ctx.moveTo(c.x, c.y + tickGap);
-                    ctx.lineTo(c.x, c.y + tickGap + tickLen);
                     ctx.stroke();
                 }
 
@@ -478,7 +474,7 @@ export class CampaignSelectionScene extends BaseScene {
             const ch = this.chapters[t.index];
             if (!ch) return;
             if (!ch.available) {
-                this.addMessage(getLocalizedText(UI_TEXT['COMING SOON!']), '#ffd700', t.index);
+                this.addMessage(getLocalizedText(UI_TEXT['CAMPAIGN LOCKED']), '#8b0000', t.index);
                 return;
             }
             this.selectedChapterIndex = t.index;
@@ -581,7 +577,7 @@ export class CampaignSelectionScene extends BaseScene {
             // Wider hit area for the timeline items
             if (x >= 0 && x <= 120 && y >= ty - 5 && y <= ty + 20) {
                 if (!ch.available) {
-                    this.addMessage(getLocalizedText(UI_TEXT['COMING SOON!']), '#ffd700', i);
+                    this.addMessage(getLocalizedText(UI_TEXT['CAMPAIGN LOCKED']), '#8b0000', i);
                     return;
                 }
                 

@@ -168,6 +168,50 @@ export const ATTACKS = {
         animation: 'attack_1',
         description: { en: 'Veteran commander strike with high damage and push.', zh: '老练都尉之斩，高伤并击退。' }
     },
+    command: {
+        name: { en: 'Command', zh: '号令' },
+        damage: 0,
+        range: 99,
+        type: 'command',
+        animation: 'attack_2',
+        commandMoveBonus: 0,
+        commandDamageBonus: 0,
+        allowEnemy: false,
+        description: { en: 'Order any ally to act immediately.', zh: '号令任意友军立即行动。' }
+    },
+    command_2: {
+        name: { en: 'Command II', zh: '号令 II' },
+        damage: 0,
+        range: 99,
+        type: 'command',
+        animation: 'attack_2',
+        commandMoveBonus: 1,
+        commandDamageBonus: 0,
+        allowEnemy: false,
+        description: { en: 'Commanded units gain +1 movement.', zh: '被号令单位获得 +1 移动力。' }
+    },
+    command_3: {
+        name: { en: 'Command III', zh: '号令 III' },
+        damage: 0,
+        range: 99,
+        type: 'command',
+        animation: 'attack_2',
+        commandMoveBonus: 1,
+        commandDamageBonus: 1,
+        allowEnemy: false,
+        description: { en: 'Commanded units gain +1 movement and +1 damage.', zh: '被号令单位获得 +1 移动力与 +1 伤害。' }
+    },
+    command_4: {
+        name: { en: 'Command IV', zh: '号令 IV' },
+        damage: 0,
+        range: 99,
+        type: 'command',
+        animation: 'attack_2',
+        commandMoveBonus: 1,
+        commandDamageBonus: 1,
+        allowEnemy: true,
+        description: { en: 'Command any unit except self, including enemies.', zh: '可号令除自身外的任意单位（含敌方）。' }
+    },
     arrow_shot: {
         name: { en: 'Arrow Shot', zh: '箭射' },
         damage: 1,
@@ -243,7 +287,10 @@ export const UPGRADE_PATHS = {
     },
     'caocao': {
         3: { attack: 'slash_cao_2', text: { en: 'Damage increased to 3', zh: '伤害提升至 3' } },
-        6: { attack: 'slash_cao_3', text: { en: 'Damage increased to 4', zh: '伤害提升至 4' } }
+        4: { secondaryAttack: 'command_2', text: { en: 'Command now grants +1 movement', zh: '号令现可提供 +1 移动力' } },
+        6: { attack: 'slash_cao_3', text: { en: 'Damage increased to 4', zh: '伤害提升至 4' } },
+        7: { secondaryAttack: 'command_3', text: { en: 'Command now grants +1 damage', zh: '号令现可提供 +1 伤害' } },
+        9: { secondaryAttack: 'command_4', text: { en: 'Command can now target enemies', zh: '号令现可作用于敌方单位' } }
     },
     'soldier': {
         3: { attack: 'slash_2', text: { en: 'Damage increased to 2', zh: '伤害提升至 2' } },

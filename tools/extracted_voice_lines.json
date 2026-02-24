@@ -128,6 +128,12 @@
     "source": "Battles.js"
   },
   {
+    "id": "cc_yc_cr_cmd_tutorial_01",
+    "char": "caoren",
+    "text": "That soldier is in danger! Issue a command to get him to safety.",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "cc_yc_cr_post_01",
     "char": "caoren",
     "text": "Understood. I'll sweep the road, gather stragglers, and have the cavalry ready to move.",
