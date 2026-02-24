@@ -494,6 +494,246 @@ export const BATTLES = {
             { speaker: 'dongzhuo', portraitKey: 'dong-zhuo', name: 'Dong Zhuo', voiceId: 'gz_dz_02', text: { en: "Hmph. Common men with no rank. You may go.", zh: "哼。无官无职的平民。你们可以走了。" } },
             { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_rage_01', text: { en: "We have just rescued this menial in a bloody fight, and now he is rude to us! Nothing but his death can slake my anger.", zh: "我们刚刚在一场血战中救了这个小人物，现在他却对我们无礼！只有他的死才能平息我的怒火。" } }
         ]
+    },
+    'caocao_yingchuan_intercept': {
+        name: 'Yingchuan - Cavalry Intercept',
+        map: {
+            biome: 'northern',
+            layout: 'foothills',
+            seed: 'caocao_yingchuan_intercept',
+            forestDensity: 0.08,
+            mountainDensity: 0.08,
+            riverDensity: 0.0,
+            houseDensity: 0.0
+        },
+        units: [
+            // Cao Cao strikes from the front with mounted troops.
+            { id: 'caocao', r: 6, q: 10, type: 'caocao_force', onHorse: true, horseType: 'black', flip: true },
+            { id: 'caoren', r: 5, q: 10, type: 'caocao_force', onHorse: true, horseType: 'brown', flip: true },
+            { id: 'rider1', r: 7, q: 10, type: 'caocao_force', onHorse: true, horseType: 'brown', flip: true },
+            { id: 'rider2', r: 6, q: 9, type: 'caocao_force', onHorse: true, horseType: 'white', flip: true },
+            { id: 'rider3', r: 5, q: 9, type: 'caocao_force', onHorse: true, horseType: 'brown', flip: true },
+
+            // Government troops in pursuit from the rear.
+            { id: 'imperial1', r: 6, q: 2, type: 'imperial_soldier' },
+            { id: 'imperial2', r: 7, q: 2, type: 'imperial_soldier' },
+            { id: 'imperial_dead1', r: 5, q: 3, type: 'imperial_soldier', isDead: true },
+            { id: 'imperial_dead2', r: 8, q: 3, type: 'imperial_soldier', isDead: true },
+
+            // Retreating Yellow Turban force.
+            {
+                id: 'zhangbao',
+                r: 6,
+                q: 6,
+                type: 'zhang_bao',
+                onHorse: true,
+                horseType: 'black',
+                immortal: {
+                    enabled: true,
+                    triggerHp: 2,
+                    onNearDeath: {
+                        say: {
+                            speaker: 'zhangbao',
+                            text: {
+                                en: "Brother Liang, break away! We will settle this at Guangzong!",
+                                zh: "梁弟，速突围！回广宗再与官军算账！"
+                            },
+                            voiceId: 'cc_yc_zb_retreat_01',
+                            durationMs: 2100,
+                            lockSkips: true
+                        },
+                        flee: {
+                            edge: 'left',
+                            delayMs: 1700,
+                            durationMs: 900,
+                            extraTiles: 5
+                        }
+                    }
+                }
+            },
+            {
+                id: 'zhangliang',
+                r: 5,
+                q: 6,
+                type: 'zhang_liang',
+                onHorse: true,
+                horseType: 'brown',
+                immortal: {
+                    enabled: true,
+                    triggerHp: 2,
+                    onNearDeath: {
+                        say: {
+                            speaker: 'zhangliang',
+                            text: {
+                                en: "To Guangzong! Rejoin the elder brother!",
+                                zh: "退往广宗！与兄长会合！"
+                            },
+                            voiceId: 'cc_yc_zl_retreat_01',
+                            durationMs: 1900,
+                            lockSkips: true
+                        },
+                        flee: {
+                            edge: 'left',
+                            delayMs: 1500,
+                            durationMs: 850,
+                            extraTiles: 5
+                        }
+                    }
+                }
+            },
+            { id: 'rebel1', r: 7, q: 5, type: 'enemy_soldier' },
+            { id: 'rebel2', r: 6, q: 5, type: 'enemy_soldier' },
+            { id: 'rebel3', r: 5, q: 5, type: 'enemy_soldier' },
+            { id: 'rebel4', r: 7, q: 6, type: 'enemy_soldier' },
+            { id: 'rebel5', r: 4, q: 6, type: 'enemy_soldier_weak' },
+            { id: 'rebel6', r: 6, q: 7, type: 'enemy_soldier_weak' }
+        ],
+        victoryCondition: {
+            type: 'defeat_all_enemies',
+            mustSurvive: ['caocao', 'caoren']
+        },
+        introScript: [
+            {
+                speaker: 'caocao',
+                portraitKey: 'cao-cao',
+                name: 'Cao Cao',
+                voiceId: 'cc_yc_01',
+                text: {
+                    en: "Yingchuan burns behind them. Huangfu Song and Zhu Jun have already broken their camp.",
+                    zh: "颍川火光未息。皇甫嵩、朱儁已先破其营。"
+                }
+            },
+            {
+                speaker: 'caocao',
+                portraitKey: 'cao-cao',
+                name: 'Cao Cao',
+                voiceId: 'cc_yc_02',
+                text: {
+                    en: "We cut the road here. Leave none to regroup at Guangzong.",
+                    zh: "我军就在此断其去路，不可使其回广宗再聚。"
+                }
+            },
+            {
+                speaker: 'caoren',
+                portraitKey: 'soldier',
+                name: 'Cao Ren',
+                voiceId: 'cc_yc_cr_01',
+                text: {
+                    en: "Understood! Cavalry forward - close the pass and strike their rear guard!",
+                    zh: "明白！骑军前压，封住隘口，先斩其后队！"
+                }
+            },
+            {
+                speaker: 'zhangbao',
+                portraitKey: 'zhang-bao',
+                name: 'Zhang Bao',
+                voiceId: 'cc_yc_zb_01',
+                text: {
+                    en: "Cavalry ahead?! Break through! Break through!",
+                    zh: "前方竟有骑军？冲出去！冲出去！"
+                }
+            }
+        ]
+    },
+    'caocao_yingchuan_debrief': {
+        name: 'Yingchuan - After The Intercept',
+        map: {
+            biome: 'northern',
+            layout: 'army_camp',
+            seed: 'caocao_yingchuan_debrief',
+            campFaction: 'yellow_turban',
+            tentTerrain: 'tent',
+            campTentCount: 9,
+            burningTentCount: 5,
+            forestDensity: 0.05,
+            mountainDensity: 0.02,
+            riverDensity: 0.0,
+            houseDensity: 0.0
+        },
+        units: [
+            { id: 'caocao', r: 8, q: 3, type: 'caocao_force' },
+            { id: 'caoren', r: 9, q: 3, type: 'caocao_force' },
+            { id: 'huangfusong', r: 4, q: 6, type: 'commander' },
+            { id: 'zhujun', r: 5, q: 7, type: 'commander' },
+            { id: 'imperial1', r: 4, q: 5, type: 'imperial_soldier' },
+            { id: 'imperial2', r: 6, q: 6, type: 'imperial_soldier' },
+            { id: 'rebel_corpse_a', r: 3, q: 7, type: 'enemy_soldier', isDead: true },
+            { id: 'rebel_corpse_b', r: 6, q: 7, type: 'enemy_soldier', isDead: true },
+            { id: 'rebel_corpse_c', r: 5, q: 8, type: 'enemy_soldier', isDead: true }
+        ],
+        isCutscene: true,
+        introScript: [
+            {
+                speaker: 'huangfusong',
+                portraitKey: 'Huangfu-Song-generic',
+                name: 'Huangfu Song',
+                voiceId: 'cc_yc_hfs_01',
+                text: {
+                    en: "Cavalry Commander Cao, your interception came in perfect time. The routed bands have no order left.",
+                    zh: "曹都尉，你截击得正是时候。贼众既溃，已无行列可言。"
+                }
+            },
+            {
+                speaker: 'zhujun',
+                portraitKey: 'Zhu-Jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'cc_yc_zj_01',
+                text: {
+                    en: "Zhang Liang and Zhang Bao slipped away with a few horsemen. They will likely run toward Guangzong.",
+                    zh: "张梁、张宝只率少数骑卒突围，多半会往广宗而去。"
+                }
+            },
+            {
+                type: 'choice',
+                portraitKey: 'cao-cao',
+                name: 'Cao Cao',
+                options: [
+                    {
+                        buttonText: { en: 'Press pursuit north.', zh: '北追广宗' },
+                        voiceId: 'cc_yc_choice_01',
+                        text: {
+                            en: "Then we ride without delay. A beaten enemy must not be given a night to breathe.",
+                            zh: "那便即刻北追。败军最忌给它一夜喘息之机。"
+                        },
+                        speaker: 'caocao',
+                        result: []
+                    },
+                    {
+                        buttonText: { en: 'Stabilize here first.', zh: '先定颍川' },
+                        voiceId: 'cc_yc_choice_02',
+                        text: {
+                            en: "We secure this field first and gather remounts; then strike again with full speed.",
+                            zh: "先稳此地、补足战马，再以全速追击。"
+                        },
+                        speaker: 'caocao',
+                        result: [
+                            {
+                                speaker: 'huangfusong',
+                                portraitKey: 'Huangfu-Song-generic',
+                                name: 'Huangfu Song',
+                                voiceId: 'cc_yc_hfs_choice_01',
+                                text: {
+                                    en: "Prudent and sharp. Keep your riders fresh and your line intact.",
+                                    zh: "持重而不失锋芒。养住骑军，阵势自可再发。"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                speaker: 'caoren',
+                portraitKey: 'soldier',
+                name: 'Cao Ren',
+                voiceId: 'cc_yc_cr_02',
+                text: {
+                    en: "Orders received. I will regroup the riders and prepare to move at once.",
+                    zh: "军令已受。我这就整队骑士，随时再进。"
+                }
+            }
+        ],
+        nextScene: 'narrative',
+        nextParams: { scriptId: 'caocao_ch1_end_card' }
     }
 };
 
@@ -552,6 +792,20 @@ export const UNIT_TEMPLATES = {
     },
     'warlord': {
         'dongzhuo': { name: 'Dong Zhuo', imgKey: 'dongzhuo', hp: 9, moveRange: 3, attacks: ['tyrant_sweep'], faction: 'allied' }
+    },
+    'caocao_force': {
+        'caocao': { name: 'Cao Cao', imgKey: 'caocao', hp: 6, moveRange: 4, attacks: ['slash_cao'], faction: 'player' },
+        'caoren': {
+            name: 'Cao Ren',
+            imgKey: 'caoren',
+            hp: 5,
+            moveRange: 4,
+            attacks: ['serpent_spear'],
+            faction: 'player',
+            shieldResistBase: 0.2,
+            shieldResistPerLevel: 0.05
+        },
+        'rider': { name: 'Cavalry', imgKey: 'soldier', hp: 4, moveRange: 4, attacks: ['slash'], faction: 'player' }
     },
     'zhang_jue': {
         'zhangjue': { name: 'Zhang Jue', imgKey: 'zhangjiao', hp: 8, moveRange: 4, attacks: ['whirlwind'], faction: 'enemy' }

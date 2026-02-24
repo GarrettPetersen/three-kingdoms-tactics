@@ -19,10 +19,12 @@ export const STORY_ROUTES = {
     caocao: {
         id: 'caocao',
         startNode: 'caocao_intro',
-        terminalNode: 'caocao_intro_complete',
+        terminalNode: 'caocao_chapter1_complete',
         nodes: {
             caocao_intro: { next: 'caocao_intro_complete' },
-            caocao_intro_complete: { next: null }
+            caocao_intro_complete: { next: 'caocao_yingchuan_intercept' },
+            caocao_yingchuan_intercept: { next: 'caocao_chapter1_complete' },
+            caocao_chapter1_complete: { next: null }
         }
     },
     chapter2_oath: {

@@ -84,6 +84,78 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "cc_yc_01",
+    "char": "caocao",
+    "text": "颍川火光未息。皇甫嵩、朱儁已先破其营。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_02",
+    "char": "caocao",
+    "text": "我军就在此断其去路，不可使其回广宗再聚。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_choice_01",
+    "char": "caocao",
+    "text": "那便即刻北追。败军最忌给它一夜喘息之机。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_choice_02",
+    "char": "caocao",
+    "text": "先稳此地、补足战马，再以全速追击。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_cr_01",
+    "char": "caoren",
+    "text": "明白！骑军前压，封住隘口，先斩其后队！",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_cr_02",
+    "char": "caoren",
+    "text": "军令已受。我这就整队骑士，随时再进。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_hfs_01",
+    "char": "huangfusong",
+    "text": "曹都尉，你截击得正是时候。贼众既溃，已无行列可言。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_hfs_choice_01",
+    "char": "huangfusong",
+    "text": "持重而不失锋芒。养住骑军，阵势自可再发。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_zb_01",
+    "char": "zhangbao",
+    "text": "前方竟有骑军？冲出去！冲出去！",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_zb_retreat_01",
+    "char": "zhangbao",
+    "text": "梁弟，速突围！回广宗再与官军算账！",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_zj_01",
+    "char": "zhujun",
+    "text": "张梁、张宝只率少数骑卒突围，多半会往广宗而去。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_zl_retreat_01",
+    "char": "zhangliang",
+    "text": "退往广宗！与兄长会合！",
+    "source": "Battles.js"
+  },
+  {
     "id": "ch1_end_01",
     "char": "narrator",
     "text": "若尽诛忘恩之徒，\n一年不知要杀多少人。\n\n董卓的命运，将在后续章节展开……",

@@ -86,6 +86,78 @@
     "phonetic_text": "Magistrate Tsao Tsao is elevated to Cavalry Commander and placed in command of this Dong Commandery cavalry force."
   },
   {
+    "id": "cc_yc_01",
+    "char": "caocao",
+    "text": "Yingchuan burns behind them. Huangfu Song and Zhu Jun have already broken their camp.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_02",
+    "char": "caocao",
+    "text": "We cut the road here. Leave none to regroup at Guangzong.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_choice_01",
+    "char": "caocao",
+    "text": "Then we ride without delay. A beaten enemy must not be given a night to breathe.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_choice_02",
+    "char": "caocao",
+    "text": "We secure this field first and gather remounts; then strike again with full speed.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_cr_01",
+    "char": "caoren",
+    "text": "Understood! Cavalry forward - close the pass and strike their rear guard!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_cr_02",
+    "char": "caoren",
+    "text": "Orders received. I will regroup the riders and prepare to move at once.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_hfs_01",
+    "char": "huangfusong",
+    "text": "Cavalry Commander Cao, your interception came in perfect time. The routed bands have no order left.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_hfs_choice_01",
+    "char": "huangfusong",
+    "text": "Prudent and sharp. Keep your riders fresh and your line intact.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_zb_01",
+    "char": "zhangbao",
+    "text": "Cavalry ahead?! Break through! Break through!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_zb_retreat_01",
+    "char": "zhangbao",
+    "text": "Brother Liang, break away! We will settle this at Guangzong!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_zj_01",
+    "char": "zhujun",
+    "text": "Zhang Liang and Zhang Bao slipped away with a few horsemen. They will likely run toward Guangzong.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_zl_retreat_01",
+    "char": "zhangliang",
+    "text": "To Guangzong! Rejoin the elder brother!",
+    "source": "Battles.js"
+  },
+  {
     "id": "ch1_end_01",
     "char": "narrator",
     "text": "But slaying the ungrateful would\nMean many deaths a year.\n\nDong Zhuo's fate will be unrolled in later chapters...",

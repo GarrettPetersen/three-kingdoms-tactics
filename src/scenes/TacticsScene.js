@@ -2627,6 +2627,8 @@ export class TacticsScene extends BaseScene {
                 immortal: u.immortal ? JSON.parse(JSON.stringify(u.immortal)) : null,
                 immortalTriggered: !!u.immortalTriggered,
                 immortalPendingCause: u.immortalPendingCause || null,
+                shieldResistBase: Number.isFinite(u.shieldResistBase) ? u.shieldResistBase : 0,
+                shieldResistPerLevel: Number.isFinite(u.shieldResistPerLevel) ? u.shieldResistPerLevel : 0,
                 caged: u.caged,
                 cageHp: u.cageHp,
                 cageSprite: u.cageSprite
@@ -2777,6 +2779,8 @@ export class TacticsScene extends BaseScene {
                     immortal: uData.immortal ? JSON.parse(JSON.stringify(uData.immortal)) : null,
                     immortalTriggered: !!uData.immortalTriggered,
                     immortalPendingCause: uData.immortalPendingCause || null,
+                    shieldResistBase: Number.isFinite(uData.shieldResistBase) ? uData.shieldResistBase : 0,
+                    shieldResistPerLevel: Number.isFinite(uData.shieldResistPerLevel) ? uData.shieldResistPerLevel : 0,
                     caged: !!uData.caged,
                     cageHp: uData.cageHp,
                     cageSprite: uData.cageSprite
@@ -2815,6 +2819,12 @@ export class TacticsScene extends BaseScene {
             }
             if (Object.prototype.hasOwnProperty.call(uData, 'immortalPendingCause')) {
                 u.immortalPendingCause = uData.immortalPendingCause || null;
+            }
+            if (Object.prototype.hasOwnProperty.call(uData, 'shieldResistBase')) {
+                u.shieldResistBase = Number.isFinite(uData.shieldResistBase) ? uData.shieldResistBase : 0;
+            }
+            if (Object.prototype.hasOwnProperty.call(uData, 'shieldResistPerLevel')) {
+                u.shieldResistPerLevel = Number.isFinite(uData.shieldResistPerLevel) ? uData.shieldResistPerLevel : 0;
             }
             u.caged = uData.caged || false;
             u.cageHp = uData.cageHp;
@@ -3160,6 +3170,12 @@ export class TacticsScene extends BaseScene {
             }
             if (Object.prototype.hasOwnProperty.call(uData, 'immortalPendingCause')) {
                 u.immortalPendingCause = uData.immortalPendingCause || null;
+            }
+            if (Object.prototype.hasOwnProperty.call(uData, 'shieldResistBase')) {
+                u.shieldResistBase = Number.isFinite(uData.shieldResistBase) ? uData.shieldResistBase : 0;
+            }
+            if (Object.prototype.hasOwnProperty.call(uData, 'shieldResistPerLevel')) {
+                u.shieldResistPerLevel = Number.isFinite(uData.shieldResistPerLevel) ? uData.shieldResistPerLevel : 0;
             }
             u.caged = uData.caged || false;
             u.cageHp = uData.cageHp;
@@ -4323,7 +4339,15 @@ export class TacticsScene extends BaseScene {
 
         // 2. Damage Resistance (Player/Allied only)
         if (victim.faction === 'player' || victim.faction === 'allied') {
-            let resistChance = 0.5 * (victim.level - 1) / (victim.level + 4);
+            const hasShieldResist =
+                Number.isFinite(victim.shieldResistBase) &&
+                victim.shieldResistBase > 0;
+            let resistChance = hasShieldResist
+                ? (victim.shieldResistBase + ((victim.shieldResistPerLevel || 0) * Math.max(0, victim.level - 1)))
+                : (0.5 * (victim.level - 1) / (victim.level + 4));
+            if (hasShieldResist) {
+                resistText = "SHIELD RESIST!";
+            }
             
             // Height Bonus/Penalty (Victim is on high ground relative to attacker)
             if (heightDiff < 0) {
@@ -4332,6 +4356,7 @@ export class TacticsScene extends BaseScene {
             } else if (heightDiff > 0) {
                 resistChance *= 0.5;
             }
+            resistChance = Math.max(0, Math.min(0.95, resistChance));
 
             if (Math.random() < resistChance) {
                 finalDamage = 0;
@@ -4643,6 +4668,9 @@ export class TacticsScene extends BaseScene {
                         id: uDef.id,
                         r: uDef.r,
                         q: uDef.q,
+                        onHorse: !!uDef.onHorse,
+                        horseType: uDef.horseType || template.horseType || 'brown',
+                        flip: uDef.flip !== undefined ? !!uDef.flip : !!template.flip,
                         immortal: uDef.immortal ? JSON.parse(JSON.stringify(uDef.immortal)) : null,
                         isDead: uDef.isDead || false,  // Preserve isDead flag for corpses
                         isPreDead: uDef.isDead || false, // NEW: Track if unit started dead

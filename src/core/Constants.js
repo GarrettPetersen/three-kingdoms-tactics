@@ -112,6 +112,30 @@ export const ATTACKS = {
         animation: 'attack_1',
         description: 'Sword strike that pushes the target.'
     },
+    slash_cao: {
+        name: 'Commander Slash',
+        damage: 2,
+        range: 1,
+        push: true,
+        animation: 'attack_1',
+        description: 'A forceful one-hex strike that pushes.'
+    },
+    slash_cao_2: {
+        name: 'Commander Slash II',
+        damage: 3,
+        range: 1,
+        push: true,
+        animation: 'attack_1',
+        description: 'Improved one-hex strike with heavier damage.'
+    },
+    slash_cao_3: {
+        name: 'Commander Slash III',
+        damage: 4,
+        range: 1,
+        push: true,
+        animation: 'attack_1',
+        description: 'Veteran commander strike with high damage and push.'
+    },
     arrow_shot: {
         name: 'Arrow Shot',
         damage: 1,
@@ -179,6 +203,15 @@ export const UPGRADE_PATHS = {
         3: { attack: 'serpent_spear_2', text: 'Range increased to 3' },
         5: { attack: 'serpent_spear_3', text: 'Damage increased to 2' },
         8: { attack: 'serpent_spear_4', text: 'Push affects all targets in line' }
+    },
+    'caoren': {
+        3: { attack: 'serpent_spear_2', text: 'Range increased to 3' },
+        5: { attack: 'serpent_spear_3', text: 'Damage increased to 2' },
+        8: { attack: 'serpent_spear_4', text: 'Push affects all targets in line' }
+    },
+    'caocao': {
+        3: { attack: 'slash_cao_2', text: 'Damage increased to 3' },
+        6: { attack: 'slash_cao_3', text: 'Damage increased to 4' }
     },
     'soldier': {
         3: { attack: 'slash_2', text: 'Damage increased to 2' },

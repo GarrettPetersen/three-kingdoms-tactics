@@ -6,7 +6,7 @@ import { getLocalizedText, LANGUAGE, getFontForLanguage, getTextContainerSize } 
 import { UI_TEXT } from '../data/Translations.js';
 
 // Locations and reminders will eventually be moved to CHAPTERS data
-const LOCATIONS = {
+const LIUBEI_LOCATIONS = {
     magistrate: {
         id: 'magistrate',
         x: 182,
@@ -70,6 +70,25 @@ const LOCATIONS = {
     }
 };
 
+const CAOCAO_LOCATIONS = {
+    caocao_yingchuan: {
+        id: 'caocao_yingchuan',
+        x: 188,
+        y: 92,
+        name: 'Yingchuan Region',
+        imgKey: 'city',
+        battleId: 'caocao_yingchuan_intercept',
+        unlockCondition: (gs) =>
+            (gs.hasReachedStoryNode('caocao_intro_complete', 'caocao') || gs.hasMilestone('caocao_intro_complete')) &&
+            !(gs.hasReachedStoryNode('caocao_yingchuan_intercept', 'caocao') || gs.hasMilestone('caocao_yingchuan_intercept')),
+        isCompleted: (gs) =>
+            gs.hasReachedStoryNode('caocao_yingchuan_intercept', 'caocao') ||
+            gs.hasReachedStoryNode('caocao_chapter1_complete', 'caocao') ||
+            gs.hasMilestone('caocao_yingchuan_intercept') ||
+            gs.hasMilestone('caocao_chapter1_complete')
+    }
+};
+
 const STORY_EVENTS = {
     'defeat': {
         type: 'dialogue',
@@ -127,6 +146,14 @@ const HERO_REMINDERS = {
         name: 'Liu Bei',
         voiceId: 'map_lb_rem_05',
         text: { en: "There is nothing more for us at Guangzong. Let us return to Zhuo County.", zh: "广宗已无事可做。让我们返回涿郡。" }
+    },
+    'caocao_intro_complete': {
+        portraitKey: 'cao-cao',
+        name: 'Cao Cao',
+        text: {
+            en: "Government armies are already engaged with the Yellow Turbans at Yingchuan. We march there now and cut off their retreat.",
+            zh: "官军已在颍川与黄巾交战。我们即刻前往，断其退路。"
+        }
     }
 };
 
@@ -158,6 +185,10 @@ export class MapScene extends BaseScene {
         this.lastSaveTime = 0; // Track when we last saved state
         this.saveInterval = 2000; // Save every 2 seconds
         this.navTargets = [];
+    }
+
+    getActiveLocations() {
+        return this.currentCampaignId === 'caocao' ? CAOCAO_LOCATIONS : LIUBEI_LOCATIONS;
     }
 
     enter(params) {
@@ -217,6 +248,16 @@ export class MapScene extends BaseScene {
                         y: params.partyY !== undefined ? params.partyY : (savedY !== undefined ? savedY : 70),
                         imgKey: 'liubei'
                     };
+                } else if (params.campaignId === 'caocao') {
+                    const savedX = gs.getCampaignVar('partyX', 'caocao');
+                    const savedY = gs.getCampaignVar('partyY', 'caocao');
+                    this.party = {
+                        id: 'caocao',
+                        name: 'Cao Cao',
+                        x: params.partyX !== undefined ? params.partyX : (savedX !== undefined ? savedX : 176),
+                        y: params.partyY !== undefined ? params.partyY : (savedY !== undefined ? savedY : 98),
+                        imgKey: 'caocao'
+                    };
                 }
             } else {
                 // No params (coming from Continue), restore from save
@@ -230,6 +271,14 @@ export class MapScene extends BaseScene {
                         x: savedX !== undefined ? savedX : 190, 
                         y: savedY !== undefined ? savedY : 70,
                         imgKey: 'liubei'
+                    };
+                } else if (this.currentCampaignId === 'caocao') {
+                    this.party = {
+                        id: 'caocao',
+                        name: 'Cao Cao',
+                        x: savedX !== undefined ? savedX : 176,
+                        y: savedY !== undefined ? savedY : 98,
+                        imgKey: 'caocao'
                     };
                 }
             }
@@ -356,8 +405,9 @@ export class MapScene extends BaseScene {
         const pushDepthDrawable = (draw, sortY, priority = 0) => {
             depthDrawables.push({ draw, sortY, priority });
         };
-        for (const locId in LOCATIONS) {
-            const loc = LOCATIONS[locId];
+        const locations = this.getActiveLocations();
+        for (const locId in locations) {
+            const loc = locations[locId];
             if (loc.unlockCondition(gs)) {
                 const lx = mx + loc.x;
                 const ly = my + loc.y;
@@ -718,7 +768,7 @@ export class MapScene extends BaseScene {
 
     activateLocationTarget(locId) {
         const gs = this.manager.gameState;
-        const loc = LOCATIONS[locId];
+        const loc = this.getActiveLocations()[locId];
         if (!loc || !loc.unlockCondition(gs)) return;
 
         if (this.interactionSelected === locId) {
@@ -731,6 +781,7 @@ export class MapScene extends BaseScene {
                     else if (loc.battleId === 'yingchuan_aftermath') this.startYingchuanAftermath();
                     else if (loc.battleId === 'guangzong_encounter') this.startGuangzongBriefing();
                     else if (loc.battleId === 'zhuo_return') this.startZhuoReturn();
+                    else if (loc.battleId === 'caocao_yingchuan_intercept') this.startCaocaoYingchuanIntercept();
                 });
             }
         } else {
@@ -820,8 +871,9 @@ export class MapScene extends BaseScene {
         }
 
         // Handle dynamic location clicks
-        for (const locId in LOCATIONS) {
-            const loc = LOCATIONS[locId];
+        const locations = this.getActiveLocations();
+        for (const locId in locations) {
+            const loc = locations[locId];
             if (loc.unlockCondition(gs)) {
                 const lx = mx + loc.x;
                 const ly = my + loc.y;
@@ -852,6 +904,7 @@ export class MapScene extends BaseScene {
                                 else if (loc.battleId === 'yingchuan_aftermath') this.startYingchuanAftermath();
                                 else if (loc.battleId === 'guangzong_encounter') this.startGuangzongBriefing();
                                 else if (loc.battleId === 'zhuo_return') this.startZhuoReturn();
+                                else if (loc.battleId === 'caocao_yingchuan_intercept') this.startCaocaoYingchuanIntercept();
                             });
                         }
                 } else {
@@ -949,6 +1002,12 @@ export class MapScene extends BaseScene {
     }
 
     getCurrentPartyReminderKey(gs) {
+        if (this.currentCampaignId === 'caocao') {
+            if (gs.hasReachedStoryNode('caocao_chapter1_complete', 'caocao') || gs.hasMilestone('caocao_chapter1_complete')) return null;
+            if (gs.hasReachedStoryNode('caocao_intro_complete', 'caocao') || gs.hasMilestone('caocao_intro_complete')) return 'caocao_intro_complete';
+            return 'caocao_intro_complete';
+        }
+
         // Highest-priority progression first.
         if (gs.hasReachedStoryNode('chapter1_complete', 'liubei') || gs.hasMilestone('chapter1_complete')) return null;
         if (gs.hasReachedStoryNode('guangzong_encounter', 'liubei') || gs.hasMilestone('guangzong_encounter')) return 'guangzong_encounter';
@@ -1185,6 +1244,19 @@ export class MapScene extends BaseScene {
                 });
             },
             scriptId: 'magistrate_briefing'
+        });
+    }
+
+    startCaocaoYingchuanIntercept() {
+        this.manager.switchTo('tactics', {
+            battleId: 'caocao_yingchuan_intercept',
+            onVictory: () => this.startCaocaoYingchuanDebrief()
+        });
+    }
+
+    startCaocaoYingchuanDebrief() {
+        this.manager.switchTo('tactics', {
+            battleId: 'caocao_yingchuan_debrief'
         });
     }
 

@@ -786,6 +786,9 @@ export class NarrativeScene extends BaseScene {
                     this.manager.gameState.setStoryCursor('prologue_complete', 'liubei');
                 } else if (this.scriptId === 'caocao_dunqiu_intro') {
                     this.manager.gameState.setStoryCursor('caocao_intro_complete', 'caocao');
+                } else if (this.scriptId === 'caocao_ch1_end_card') {
+                    this.manager.gameState.setStoryCursor('caocao_chapter1_complete', 'caocao');
+                    this.manager.gameState.addMilestone('caocao_chapter1_complete');
                 }
                 this.manager.switchTo(savedState.nextScene, savedState.nextParams || {});
                 return;
@@ -1974,7 +1977,8 @@ export class NarrativeScene extends BaseScene {
             'magistrate_briefing': 'tactics',
             'daxing_messenger': 'map',
             'guangzong_arrival': 'map',
-            'caocao_dunqiu_intro': 'campaign_selection',
+            'caocao_dunqiu_intro': 'map',
+            'caocao_ch1_end_card': 'campaign_selection',
             'noticeboard': 'narrative', // Goes to inn scene next
             'inn': 'map',
             'qingzhou_victory': 'narrative', // Goes to qingzhou_gate_return next (but this is called from battle, so handled differently)
@@ -2003,7 +2007,8 @@ export class NarrativeScene extends BaseScene {
             },
             'daxing_messenger': { afterEvent: 'daxing' },
             'guangzong_arrival': { campaignId: 'liubei' },
-            'caocao_dunqiu_intro': {},
+            'caocao_dunqiu_intro': { campaignId: 'caocao', partyX: 176, partyY: 98 },
+            'caocao_ch1_end_card': {},
             'noticeboard': { scriptId: 'inn' }, // Chain to inn scene
             'inn': {}, // After inn, goes to map (milestone added in onComplete)
             'qingzhou_victory': { scriptId: 'qingzhou_gate_return' }, // Chain to gate return

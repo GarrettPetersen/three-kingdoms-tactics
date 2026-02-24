@@ -1263,9 +1263,9 @@
         "id": "qz_ms_01",
         "character": "volunteer",
         "original_text": "紧急！青州太守龚景被围困！城池即将陷落！",
-        "stt_output": "緊急 新州太首公警被違困從此即將陷落",
-        "wer": 2.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:qz_ret_gj_01": {
@@ -1929,25 +1929,133 @@
         "id": "cc_dq_msg_01",
         "character": "volunteer",
         "original_text": "洛阳急报！奉朝廷诏令：东郡当募骑兵五千。",
-        "stt_output": "若洋吉報鳳朝庭召令東俊當幕其兵5000",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:cc_dq_msg_02": {
         "id": "cc_dq_msg_02",
         "character": "volunteer",
         "original_text": "自各乡里征发丁壮与战马，进讨黄巾逆军。",
-        "stt_output": "自個鄉裡蒸發丁撞與戰馬幸討皇金尼軍",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:cc_dq_msg_03": {
         "id": "cc_dq_msg_03",
         "character": "volunteer",
         "original_text": "今擢曹操县令为骑都尉，总领东郡所募此部骑军。",
-        "stt_output": "新卓朝朝线另外其都位總領東軍所募此不其軍",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_yc_01": {
+        "id": "cc_yc_01",
+        "character": "caocao",
+        "original_text": "颍川火光未息。皇甫嵩、朱儁已先破其营。",
+        "stt_output": "影穿火光為西,黃腐松,朱俊以先破棋營",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:cc_yc_02": {
+        "id": "cc_yc_02",
+        "character": "caocao",
+        "original_text": "我军就在此断其去路，不可使其回广宗再聚。",
+        "stt_output": "我軍就在此斷其去路,不可使其回廣中再去",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:cc_yc_choice_01": {
+        "id": "cc_yc_choice_01",
+        "character": "caocao",
+        "original_text": "那便即刻北追。败军最忌给它一夜喘息之机。",
+        "stt_output": "那便及刻北追,拜軍追蹟給他一夜傳西之機",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:cc_yc_choice_02": {
+        "id": "cc_yc_choice_02",
+        "character": "caocao",
+        "original_text": "先稳此地、补足战马，再以全速追击。",
+        "stt_output": "先問此地,不足站了,再以全速追擊",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:cc_yc_cr_01": {
+        "id": "cc_yc_cr_01",
+        "character": "caoren",
+        "original_text": "明白！骑军前压，封住隘口，先斩其后队！",
+        "stt_output": "明白,其軍前押,封住艾口先展其後隊",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:cc_yc_cr_02": {
+        "id": "cc_yc_cr_02",
+        "character": "caoren",
+        "original_text": "军令已受。我这就整队骑士，随时再进。",
+        "stt_output": "軍內已受,我這就針對其事隨時在近",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:cc_yc_hfs_01": {
+        "id": "cc_yc_hfs_01",
+        "character": "huangfusong",
+        "original_text": "曹都尉，你截击得正是时候。贼众既溃，已无行列可言。",
+        "stt_output": "逃渡位,你结计得正式时候,贼重既愧,以无行列可言。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:cc_yc_hfs_choice_01": {
+        "id": "cc_yc_hfs_choice_01",
+        "character": "huangfusong",
+        "original_text": "持重而不失锋芒。养住骑军，阵势自可再发。",
+        "stt_output": "實眾而不失風忙,養住其軍正是自可再發",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:cc_yc_zb_01": {
+        "id": "cc_yc_zb_01",
+        "character": "zhangbao",
+        "original_text": "前方竟有骑军？冲出去！冲出去！",
+        "stt_output": "前方敬有其均冲出去冲出去",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:cc_yc_zb_retreat_01": {
+        "id": "cc_yc_zb_retreat_01",
+        "character": "zhangbao",
+        "original_text": "梁弟，速突围！回广宗再与官军算账！",
+        "stt_output": "梁帝速突围违广中在与冠军算着",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:cc_yc_zj_01": {
+        "id": "cc_yc_zj_01",
+        "character": "zhujun",
+        "original_text": "张梁、张宝只率少数骑卒突围，多半会往广宗而去。",
+        "stt_output": "商量张宝指率少数其组吐围多半会往广宗而去",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:cc_yc_zl_retreat_01": {
+        "id": "cc_yc_zl_retreat_01",
+        "character": "zhangliang",
+        "original_text": "退往广宗！与兄长会合！",
+        "stt_output": "退王廣宗與兄長會合",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"

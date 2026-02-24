@@ -477,6 +477,7 @@ async function init() {
                 lvbu: 'assets/characters/001_lvbu.png',
                 dongzhuo: 'assets/characters/002_dongzhuo.png',
                 caocao: 'assets/characters/031_caocao.png',
+                caoren: 'assets/characters/034_caoren.png',
                 liubei: 'assets/characters/048_liubei.png',
                 guanyu: 'assets/characters/049_guanyu.png',
                 zhangfei: 'assets/characters/050_zhangfei.png',

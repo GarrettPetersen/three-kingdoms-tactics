@@ -1887,6 +1887,25 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'setActorLoop', id: 'refugee_f_01', enabled: false },
         { type: 'command', action: 'setActorLoop', id: 'refugee_m_02', enabled: false },
         { type: 'command', action: 'setActorLoop', id: 'refugee_f_02', enabled: false }
+    ],
+    'caocao_ch1_end_card': [
+        { bg: 'black', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.0012 },
+        {
+            type: 'title',
+            text: { en: 'CHAPTER ONE COMPLETE', zh: '第一章完成' },
+            subtext: { en: 'Ascent Of The Cavalry Commander', zh: '骑都尉之崛起' },
+            duration: 3200
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'narrator',
+            text: {
+                en: "At Yingchuan the routed rebels were cut and scattered. Cao Cao pressed north at once, and from this campaign his name began to spread.",
+                zh: "颍川一役，败贼再遭截击，兵势益乱。曹操旋即北追，自此声名渐起。"
+            }
+        },
+        { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ]
     // Note: Guangzong scene is now handled inline in MapScene.startGuangzongBriefing()
     // following the novel where Lu Zhi was arrested and Liu Bei encounters Dong Zhuo

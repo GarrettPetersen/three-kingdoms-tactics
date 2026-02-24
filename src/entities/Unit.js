@@ -60,6 +60,8 @@ export class Unit {
         this.immortalPendingCause = config.immortalPendingCause || null; // 'damage' | 'drown'
         this.stepTimer = 0;
         this.level = config.level || 1;
+        this.shieldResistBase = Number.isFinite(config.shieldResistBase) ? config.shieldResistBase : 0;
+        this.shieldResistPerLevel = Number.isFinite(config.shieldResistPerLevel) ? config.shieldResistPerLevel : 0;
         this.caged = config.caged || false;  // For cage overlay rendering
         this.isPreDead = config.isPreDead || false; // Started the mission dead (don't count for casualties)
     }
