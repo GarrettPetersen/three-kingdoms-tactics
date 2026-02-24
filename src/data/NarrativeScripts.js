@@ -541,7 +541,7 @@ export const NARRATIVE_SCRIPTS = {
     ],
     'daxing_messenger': [
         { bg: 'army_camp', type: 'command', action: 'clearActors' },
-        { type: 'command', action: 'addActor', id: 'messenger', imgKey: 'soldier', x: 230, y: 180, flip: true, speed: 2 },
+        { type: 'command', action: 'addActor', id: 'messenger', imgKey: 'xiaoer', x: 230, y: 180, flip: true, speed: 2 },
         { type: 'command', action: 'addActor', id: 'zhoujing', imgKey: 'zhoujing', x: 180, y: 160, flip: true },
         { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 60, y: 200 },
         { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 20, y: 210 },
@@ -551,7 +551,7 @@ export const NARRATIVE_SCRIPTS = {
         {
             type: 'dialogue',
             speaker: 'volunteer',
-            portraitKey: 'soldier',
+            portraitKey: 'xiaoer',
             name: 'Messenger',
             position: 'top',
             voiceId: 'qz_ms_01',
@@ -1656,10 +1656,10 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'addActor', id: 'refugee_m_02', imgKey: 'farmer', x: 148, y: 166, actorAction: 'walk', speed: 0.44, loopXStart: -78, loopXEnd: 332 },
         { type: 'command', action: 'addActor', id: 'refugee_f_02', imgKey: 'farmer2', x: 208, y: 163, actorAction: 'walk', speed: 0.56, loopXStart: -96, loopXEnd: 338 },
         { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: 52, y: 258, actorAction: 'walk', speed: 0.72, drawAboveForeground: true },
-        { type: 'command', action: 'addActor', id: 'caocao_attendant', imgKey: 'soldier', x: 28, y: 262, actorAction: 'walk', speed: 0.66, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'caocao_attendant', imgKey: 'soldier', x: 56, y: 262, actorAction: 'walk', speed: 0.66, drawAboveForeground: true },
         { type: 'command', action: 'addActor', id: 'caocao_civil_attendant', imgKey: 'zhoujing', x: 36, y: 264, actorAction: 'walk', speed: 0.6, drawAboveForeground: true },
         { type: 'command', action: 'move', id: 'caocao', x: 102, y: 206, wait: false },
-        { type: 'command', action: 'move', id: 'caocao_attendant', x: 76, y: 212, wait: false },
+        { type: 'command', action: 'move', id: 'caocao_attendant', x: 90, y: 212, wait: false },
         { type: 'command', action: 'move', id: 'caocao_civil_attendant', x: 78, y: 216, wait: true },
         {
             type: 'dialogue',
@@ -1737,7 +1737,10 @@ export const NARRATIVE_SCRIPTS = {
                                 zh: '谨遵县令之命。即刻开仓施粥，并维持秩序。'
                             }
                         },
-                        { type: 'command', action: 'move', id: 'caocao_attendant', x: 118, y: 324, wait: true },
+                        { type: 'command', action: 'move', id: 'caocao_attendant', x: 140, y: 166, wait: true },
+                        { type: 'command', action: 'removeActor', id: 'caocao_attendant' },
+                        { type: 'command', action: 'addActor', id: 'caocao_attendant', imgKey: 'soldier', x: 140, y: 166, actorAction: 'walk', speed: 0.66, drawAboveForeground: false },
+                        { type: 'command', action: 'move', id: 'caocao_attendant', x: 340, y: 166, wait: true },
                         { type: 'command', action: 'removeActor', id: 'caocao_attendant' }
                     ]
                 },
@@ -1775,20 +1778,26 @@ export const NARRATIVE_SCRIPTS = {
                                 zh: '明白，县令。末将即刻去闭城门。'
                             }
                         },
-                        { type: 'command', action: 'move', id: 'caocao_attendant', x: 118, y: 324, wait: true },
+                        { type: 'command', action: 'move', id: 'caocao_attendant', x: 140, y: 166, wait: true },
+                        { type: 'command', action: 'removeActor', id: 'caocao_attendant' },
+                        { type: 'command', action: 'addActor', id: 'caocao_attendant', imgKey: 'soldier', x: 140, y: 166, actorAction: 'walk', speed: 0.66, drawAboveForeground: false },
+                        { type: 'command', action: 'move', id: 'caocao_attendant', x: -30, y: 166, wait: true },
                         { type: 'command', action: 'removeActor', id: 'caocao_attendant' },
                         { type: 'command', action: 'playSound', key: 'building_damage', volume: 0.7 }
                     ]
                 }
             ]
         },
-        { type: 'command', action: 'addActor', id: 'messenger', imgKey: 'soldier', x: 258, y: 266, actorAction: 'walk', speed: 0.84, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'messenger', imgKey: 'xiaoer', x: -30, y: 166, actorAction: 'walk', speed: 0.84, drawAboveForeground: false },
+        { type: 'command', action: 'move', id: 'messenger', x: 140, y: 166, wait: true },
+        { type: 'command', action: 'removeActor', id: 'messenger' },
+        { type: 'command', action: 'addActor', id: 'messenger', imgKey: 'xiaoer', x: 140, y: 166, actorAction: 'walk', speed: 0.84, drawAboveForeground: true },
         { type: 'command', action: 'move', id: 'messenger', x: 166, y: 216, wait: true },
         {
             type: 'dialogue',
             speaker: 'volunteer',
             name: 'Messenger',
-            portraitKey: 'soldier',
+            portraitKey: 'xiaoer',
             voiceId: 'cc_dq_msg_01',
             position: 'top',
             bg: 'urban_street',
@@ -1802,7 +1811,7 @@ export const NARRATIVE_SCRIPTS = {
             type: 'dialogue',
             speaker: 'volunteer',
             name: 'Messenger',
-            portraitKey: 'soldier',
+            portraitKey: 'xiaoer',
             voiceId: 'cc_dq_msg_02',
             position: 'top',
             bg: 'urban_street',
@@ -1816,7 +1825,7 @@ export const NARRATIVE_SCRIPTS = {
             type: 'dialogue',
             speaker: 'volunteer',
             name: 'Messenger',
-            portraitKey: 'soldier',
+            portraitKey: 'xiaoer',
             voiceId: 'cc_dq_msg_03',
             position: 'top',
             bg: 'urban_street',

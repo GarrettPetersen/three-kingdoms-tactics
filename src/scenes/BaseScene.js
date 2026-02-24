@@ -686,6 +686,11 @@ export class BaseScene {
 
         // Try to find a dedicated portrait first
         let portraitImg = null;
+        const genericName = (step.name || '').trim().toLowerCase();
+        if (genericName === 'yellow turban' || step.speaker === 'yellowturban') {
+            // Non-named rebels should use the generic battlefield sprite portrait.
+            step.portraitKey = 'yellowturban';
+        }
         if (isNoticeboard || isNarrator) {
             let useBg = bgImg;
             if (isNarrator && !useBg) {

@@ -487,6 +487,7 @@ async function init() {
                 huangfusong_sprite: 'assets/characters/072_liyan.png',
                 zhujun_sprite: 'assets/characters/073_chendao.png',
                 yellowturban: 'assets/characters/097_yellowturban.png',
+                xiaoer: 'assets/characters/086_xiaoer01.png',
                 merchant: 'assets/characters/090_fushang01.png',
                 blacksmith: 'assets/characters/091_tiejiang01.png',
                 bandit1: 'assets/characters/088_qiangdao01.png',
