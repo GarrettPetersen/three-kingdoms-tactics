@@ -1,5 +1,6 @@
 import os
 import sys
+import argparse
 import torch
 import shutil
 from PIL import Image
@@ -101,8 +102,18 @@ def load_pipeline():
         print(f"Failed to load model: {e}")
         return None
 
-def process_portrait(pipe, filename):
-    input_path = os.path.join(INPUT_DIR, filename)
+def process_portrait(
+    pipe,
+    filename,
+    input_path_override=None,
+    output_path_override=None,
+    prompt_override=None,
+    negative_prompt_override=None,
+    strength_override=None,
+    guidance_override=None,
+    steps_override=None,
+):
+    input_path = input_path_override or os.path.join(INPUT_DIR, filename)
     name_clean = filename.replace("-generic", "").replace(".png", "").replace("-", " ")
     
     age, gender, features = get_age_gender_features(filename)
@@ -127,11 +138,12 @@ def process_portrait(pipe, filename):
 
     # Final refined prompt:
     eye_prompt = "distinct high-contrast eyes with visible whites and dark black pupils"
-    strength = 0.30 # The safe remaster sweet spot
-    guidance = 7.5
+    strength = 0.30 if strength_override is None else float(strength_override)  # The safe remaster sweet spot
+    guidance = 7.5 if guidance_override is None else float(guidance_override)
+    steps = 20 if steps_override is None else int(steps_override)
 
-    prompt = f"pixel art portrait of Chinese Han Dynasty {age} {gender} {name_clean}, {features} {age_keywords} {eye_prompt}, distinct nose and mouth, proportionate facial features, sharp crisp outlines, cleaned up, refined, consistent palette, sharp pixels, 16-bit snes style"
-    negative_prompt = f"blurry, low quality, photographic, realistic, gradient, 3d render, soft, smooth, fuzzy outlines, merged nose and mouth, short face, distorted anatomy, {negative_age} changed face, different character"
+    prompt = prompt_override or f"pixel art portrait of Chinese Han Dynasty {age} {gender} {name_clean}, {features} {age_keywords} {eye_prompt}, distinct nose and mouth, proportionate facial features, sharp crisp outlines, cleaned up, refined, consistent palette, sharp pixels, 16-bit snes style"
+    negative_prompt = negative_prompt_override or f"blurry, low quality, photographic, realistic, gradient, 3d render, soft, smooth, fuzzy outlines, merged nose and mouth, short face, distorted anatomy, {negative_age} changed face, different character"
     
     try:
         image = pipe(
@@ -140,11 +152,11 @@ def process_portrait(pipe, filename):
             image=init_image,
             strength=strength, 
             guidance_scale=guidance, 
-            num_inference_steps=20
+            num_inference_steps=steps
         ).images[0]
         
         final_image = image.resize((TARGET_W, TARGET_H), Image.NEAREST)
-        output_path = os.path.join(OUTPUT_DIR, filename)
+        output_path = output_path_override or os.path.join(OUTPUT_DIR, filename)
         final_image.save(output_path)
         print(f"  SUCCESS! Saved to {output_path}")
         return True
@@ -153,18 +165,55 @@ def process_portrait(pipe, filename):
         return False
 
 def main():
+    parser = argparse.ArgumentParser(description="Generate portrait(s) with local RetroDiffusion img2img.")
+    parser.add_argument("target_name", nargs="?", default=None, help="Optional character filename substring (legacy behavior).")
+    parser.add_argument("--input-ref", dest="input_ref", default=None, help="Path to custom img2img reference image.")
+    parser.add_argument("--output", dest="output_path", default=None, help="Output portrait path for single custom run.")
+    parser.add_argument("--prompt-file", dest="prompt_file", default=None, help="Text file containing prompt.")
+    parser.add_argument("--negative-prompt-file", dest="negative_prompt_file", default=None, help="Text file containing negative prompt.")
+    parser.add_argument("--strength", dest="strength", type=float, default=None, help="Img2img strength override.")
+    parser.add_argument("--guidance", dest="guidance", type=float, default=None, help="Guidance scale override.")
+    parser.add_argument("--steps", dest="steps", type=int, default=None, help="Inference steps override.")
+    args = parser.parse_args()
+
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
         
     pipe = load_pipeline()
     if not pipe: return
 
+    prompt_override = None
+    negative_prompt_override = None
+    if args.prompt_file:
+        with open(args.prompt_file, "r", encoding="utf-8") as f:
+            prompt_override = f.read().strip()
+    if args.negative_prompt_file:
+        with open(args.negative_prompt_file, "r", encoding="utf-8") as f:
+            negative_prompt_override = f.read().strip()
+
+    # One-off custom run: use explicit reference/prompt/output but preserve model pipeline from this script.
+    if args.input_ref:
+        output_path = args.output_path or os.path.join(OUTPUT_DIR, "custom_portrait.png")
+        success = process_portrait(
+            pipe,
+            filename=os.path.basename(output_path),
+            input_path_override=args.input_ref,
+            output_path_override=output_path,
+            prompt_override=prompt_override,
+            negative_prompt_override=negative_prompt_override,
+            strength_override=args.strength,
+            guidance_override=args.guidance,
+            steps_override=args.steps,
+        )
+        print(f"\nFinished! Successfully processed {1 if success else 0}/1 portrait.")
+        return
+
     # Get list of all input files
     all_input_files = [f for f in os.listdir(INPUT_DIR) if f.endswith(".png")]
     all_input_files.sort()
     
     # Check if a specific character name was provided as an argument
-    target_name = sys.argv[1].lower() if len(sys.argv) > 1 else None
+    target_name = args.target_name.lower() if args.target_name else None
     
     if target_name:
         # Filter files that contain the target name (e.g. "liu-bei" matches "Liu-Bei.png")
@@ -183,7 +232,15 @@ def main():
         if DEVICE == "mps":
             torch.mps.empty_cache()
             
-        if process_portrait(pipe, f):
+        if process_portrait(
+            pipe,
+            f,
+            prompt_override=prompt_override,
+            negative_prompt_override=negative_prompt_override,
+            strength_override=args.strength,
+            guidance_override=args.guidance,
+            steps_override=args.steps,
+        ):
             success_count += 1
             
     print(f"\nFinished! Successfully processed {success_count}/{len(files)} portraits.")
