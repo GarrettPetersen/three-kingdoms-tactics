@@ -700,7 +700,13 @@ export class BaseScene {
             'zhou-jing': 'zhoujing',
             'dong-zhuo': 'dongzhuo',
             'zhang-bao': 'zhangbao',
-            'zhang-jiao': 'zhangjiao'
+            'zhang-jiao': 'zhangjiao',
+            'custom-male-10': 'zhangjiao',
+            'custom-male-12': 'zhangliang',
+            'custom-male-17': 'gongjing_sprite',
+            'custom-male-22': 'zhoujing',
+            'huangfu-song-generic': 'huangfusong_sprite',
+            'zhu-jun-generic': 'zhujun_sprite'
         };
         if (isNoticeboard || isNarrator) {
             let useBg = bgImg;
@@ -743,11 +749,42 @@ export class BaseScene {
                 const spriteImg =
                     assets.getImage(rawKey) ||
                     (mappedKey ? assets.getImage(mappedKey) : null) ||
-                    assets.getImage(normalizedKey);
+                    assets.getImage(normalizedKey) ||
+                    (step.speaker ? assets.getImage(step.speaker) : null);
                 if (spriteImg) {
-                    // Most character sheets are 72x72 frames laid out in rows; crop a head-focused area from frame 0.
-                    const crop = step.portraitRect || { x: 22, y: 8, w: 28, h: 28 };
-                    ctx.drawImage(spriteImg, crop.x, crop.y, crop.w, crop.h, portraitX, portraitY + 2, 40, 40);
+                    if (step.portraitRect) {
+                        const crop = step.portraitRect;
+                        ctx.drawImage(spriteImg, crop.x, crop.y, crop.w, crop.h, portraitX, portraitY, portraitW, portraitH);
+                    } else {
+                        // 1) Zoom frame 0, then 2) crop to exact 40x48 panel size.
+                        const frameH = spriteImg.height;
+                        const frameW = Math.min(frameH, spriteImg.width);
+                        const frameCanvas = document.createElement('canvas');
+                        frameCanvas.width = frameW;
+                        frameCanvas.height = frameH;
+                        const frameCtx = frameCanvas.getContext('2d', { willReadFrequently: true });
+                        frameCtx.imageSmoothingEnabled = false;
+                        frameCtx.drawImage(spriteImg, 0, 0, frameW, frameH, 0, 0, frameW, frameH);
+
+                        const zoom = 2;
+                        const zoomW = frameW * zoom;
+                        const zoomH = frameH * zoom;
+                        const zoomCanvas = document.createElement('canvas');
+                        zoomCanvas.width = zoomW;
+                        zoomCanvas.height = zoomH;
+                        const zoomCtx = zoomCanvas.getContext('2d', { willReadFrequently: true });
+                        zoomCtx.imageSmoothingEnabled = false;
+                        zoomCtx.drawImage(frameCanvas, 0, 0, frameW, frameH, 0, 0, zoomW, zoomH);
+
+                        const cropW = 40;
+                        const cropH = 48;
+                        // Deterministic crop window (after zoom) so weapons/props do not shift framing.
+                        let cropX = Math.floor((zoomW - cropW) / 2);
+                        let cropY = Math.floor(zoomH * 0.26);
+                        cropX = Math.max(0, Math.min(zoomW - cropW, cropX));
+                        cropY = Math.max(0, Math.min(zoomH - cropH, cropY));
+                        ctx.drawImage(zoomCanvas, cropX, cropY, cropW, cropH, portraitX, portraitY, portraitW, portraitH);
+                    }
                 }
             } else {
                 // Draw dedicated portrait at native 1:1 resolution

@@ -5,12 +5,16 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
 # --- Configuration ---
-BASE_URL = "https://kongming.net/3/portraits/snes/"
-OUTPUT_DIR = "assets/portraits/snes_raw"
+BASE_URL = os.environ.get("PORTRAIT_SOURCE_URL", "")
+OUTPUT_DIR = "assets/portraits/source_raw"
 
 def download_portraits():
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
+
+    if not BASE_URL:
+        print("Error: PORTRAIT_SOURCE_URL is not set.")
+        return
 
     print(f"Fetching page: {BASE_URL}")
     response = requests.get(BASE_URL)

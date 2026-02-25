@@ -13,7 +13,7 @@ MODEL_DIR, MODEL_NAME = resolve_sd_model_dir_and_name()
 
 async def test_gen():
     # 1. Prepare input image
-    input_src = "assets/portraits/snes_raw/Ahuinan-generic.png"
+    input_src = "assets/portraits/source_raw/Ahuinan-generic.png"
     if not os.path.exists(input_src):
         print(f"Error: {input_src} not found.")
         return

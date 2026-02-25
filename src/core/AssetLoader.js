@@ -267,13 +267,13 @@ export class AssetLoader {
     }
 
     async loadPortraits(characterNames) {
-        // Load dedicated portraits if they exist
+        // Load dedicated portraits from generated only.
+        // Missing generated portraits should fall back to in-scene sprite zoom logic.
         const promises = characterNames.map(name => {
             const formattedName = name.replace(/ /g, '-');
             const key = `portrait_${formattedName}`;
-            // Try generated first, then raw
+            // Generated portrait source
             const srcGenerated = `assets/portraits/generated/${formattedName}.png`;
-            const srcRaw = `assets/portraits/snes_raw/${formattedName}.png`;
             
             return new Promise((resolve) => {
                 const img = new Image();
@@ -282,16 +282,7 @@ export class AssetLoader {
                     resolve(img);
                 };
                 img.onerror = () => {
-                    // Try raw if generated fails
-                    const rawImg = new Image();
-                    rawImg.onload = () => {
-                        this.images[key] = rawImg;
-                        resolve(rawImg);
-                    };
-                    rawImg.onerror = () => {
-                        resolve(null); // No portrait found
-                    };
-                    rawImg.src = srcRaw;
+                    resolve(null); // No generated portrait found
                 };
                 img.src = srcGenerated;
             });

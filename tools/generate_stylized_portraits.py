@@ -27,7 +27,7 @@ from model_paths import resolve_sd_model_path
 
 # --- Configuration ---
 MODEL_PATH = str(resolve_sd_model_path())
-INPUT_DIR = "assets/portraits/snes_raw"
+INPUT_DIR = "assets/portraits/source_raw"
 OUTPUT_DIR = "assets/portraits/stylized"
 DEVICE = "mps" if torch.backends.mps.is_available() else "cpu"
 
@@ -109,7 +109,7 @@ def process_portrait(pipe, filename):
         negative_age = "childish, extreme wrinkles,"
 
     # STYLIZED PROMPT: Added "cartoon, stylized, simplified"
-    prompt = f"pixel art portrait of Chinese Han Dynasty {age} {gender} {name_clean}, cartoon, stylized, simplified, {age_keywords} distinct high-contrast eyes with visible whites, distinct nose and mouth, proportionate facial features, sharp crisp outlines, cleaned up, refined, consistent palette, sharp pixels, 16-bit snes style"
+    prompt = f"pixel art portrait of Chinese Han Dynasty {age} {gender} {name_clean}, cartoon, stylized, simplified, {age_keywords} distinct high-contrast eyes with visible whites, distinct nose and mouth, proportionate facial features, sharp crisp outlines, cleaned up, refined, consistent palette, sharp pixels, 16-bit style"
     negative_prompt = f"blurry, low quality, photographic, realistic, gradient, 3d render, soft, smooth, fuzzy outlines, merged nose and mouth, short face, distorted anatomy, detailed realism, hyper-realistic, {negative_age} changed face, different character"
     
     try:

@@ -2,7 +2,7 @@ import os
 import shutil
 
 # --- Configuration ---
-RAW_DIR = "assets/portraits/snes_raw"
+RAW_DIR = "assets/portraits/source_raw"
 
 # Character name mapping: (Filename in raw) -> (Internal name used in code)
 CHARACTER_MAP = {

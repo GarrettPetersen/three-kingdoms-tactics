@@ -24,7 +24,7 @@ def build_prompt() -> str:
         "pixel art portrait, late Eastern Han era Chinese character, "
         "neutral good expression, clear eyes, proportionate facial features, "
         "crisp outlines, non-blocky face shading, "
-        "clean 16-bit SNES style, original silhouette"
+        "clean 16-bit style, original silhouette"
     )
 
 

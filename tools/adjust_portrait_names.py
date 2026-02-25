@@ -1,7 +1,7 @@
 import os
 
 # --- Configuration ---
-PORTRAITS_DIR = "assets/portraits/snes_raw"
+PORTRAITS_DIR = "assets/portraits/source_raw"
 
 # Mapping of (Incorrect/Atypical) -> (Correct/Common)
 # We use hyphens to match the filename pattern

@@ -284,10 +284,17 @@ def _char_specs() -> Dict[str, dict]:
         "liubei": {
             "source_sprite": "assets/characters/048_liubei.png",
             "layers": [
-                ("head_normal.png", {}),
+                (
+                    "head_normal.png",
+                    {
+                        SKIN_LIGHT: (255, 206, 164, 255),
+                        SKIN_MID: (234, 170, 128, 255),
+                        SKIN_DARK: (186, 124, 88, 255),
+                    },
+                ),
                 ("shirt_robe.png", {}),
                 ("long_earlobe.png", {}),
-                ("hair_long.png", {}),
+                ("hair_short_bun.png", {}),
                 ("eyebrows_thin.png", {}),
                 ("moustache_thin.png", {}),
                 ("beard_pointy.png", {}),
@@ -298,13 +305,13 @@ def _char_specs() -> Dict[str, dict]:
             ],
             "manual_palette": {
                 "shirt_tones": {
-                    "dark": [53, 82, 156, 255],
-                    "mid": [91, 110, 225, 255],
-                    "light": [153, 229, 255, 255]
+                    "dark": [23, 86, 27, 255],
+                    "mid": [56, 134, 51, 255],
+                    "light": [215, 192, 50, 255]
                 },
                 "guan_hat_colors": [
-                    [55, 148, 110, 255],
-                    [251, 242, 54, 255]
+                    [56, 134, 51, 255],
+                    [215, 192, 50, 255]
                 ]
             },
         },
@@ -342,7 +349,14 @@ def _char_specs() -> Dict[str, dict]:
         "zhangfei": {
             "source_sprite": "assets/characters/050_zhangfei.png",
             "layers": [
-                ("head_chubby.png", {}),
+                (
+                    "head_chubby.png",
+                    {
+                        SKIN_LIGHT: (193, 97, 85, 255),
+                        SKIN_MID: (149, 76, 66, 255),
+                        SKIN_DARK: (107, 53, 46, 255),
+                    },
+                ),
                 ("shirt_armour.png", {}),
                 ("hair_short_bun.png", {}),
                 ("eyebrows_thick.png", {}),
