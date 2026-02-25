@@ -262,9 +262,9 @@ def _build_hat_tones(palette: List[dict], hue_a: float, hue_b: float) -> Tuple[R
 
 
 # Common creator palette swatches in source parts.
-SKIN_LIGHT: RGBA = (232, 200, 136, 255)
-SKIN_MID: RGBA = (200, 136, 136, 255)
-SKIN_DARK: RGBA = (136, 96, 96, 255)
+SKIN_LIGHT: RGBA = (238, 195, 154, 255)
+SKIN_MID: RGBA = (217, 160, 102, 255)
+SKIN_DARK: RGBA = (143, 86, 59, 255)
 ACCENT_RED: RGBA = (168, 64, 32, 255)
 ACCENT_GOLD: RGBA = (200, 136, 32, 255)
 EYE_WHITE: RGBA = (232, 232, 232, 255)
@@ -277,12 +277,17 @@ HAT_GUAN_DARK: RGBA = (118, 66, 138, 255)
 HAT_GUAN_ACCENT: RGBA = (172, 50, 50, 255)
 SCARF_DARK: RGBA = (223, 113, 38, 255)
 SCARF_LIGHT: RGBA = (251, 242, 54, 255)
+SKIN_LAYER_PARTS = {"head_normal.png", "head_chubby.png", "big_nose.png", "long_earlobe.png"}
 
 
 def _char_specs() -> Dict[str, dict]:
     return {
         "liubei": {
             "source_sprite": "assets/characters/048_liubei.png",
+            "bg_gradient": {
+                "top": [116, 102, 170],
+                "bottom": [66, 54, 114],
+            },
             "layers": [
                 (
                     "head_normal.png",
@@ -304,6 +309,11 @@ def _char_specs() -> Dict[str, dict]:
                 ),
             ],
             "manual_palette": {
+                "skin_tones": {
+                    "light": [255, 206, 164, 255],
+                    "mid": [234, 170, 128, 255],
+                    "dark": [186, 124, 88, 255]
+                },
                 "shirt_tones": {
                     "dark": [23, 86, 27, 255],
                     "mid": [56, 134, 51, 255],
@@ -317,6 +327,10 @@ def _char_specs() -> Dict[str, dict]:
         },
         "guanyu": {
             "source_sprite": "assets/characters/049_guanyu.png",
+            "bg_gradient": {
+                "top": [150, 118, 164],
+                "bottom": [86, 62, 106],
+            },
             "layers": [
                 (
                     "head_normal.png",
@@ -334,6 +348,11 @@ def _char_specs() -> Dict[str, dict]:
                 ("hat_headcloth.png", {}),
             ],
             "manual_palette": {
+                "skin_tones": {
+                    "light": [216, 148, 118, 255],
+                    "mid": [181, 92, 78, 255],
+                    "dark": [128, 62, 52, 255]
+                },
                 "shirt_tones": {
                     "dark": [24, 85, 27, 255],
                     "mid": [56, 135, 49, 255],
@@ -348,6 +367,10 @@ def _char_specs() -> Dict[str, dict]:
         },
         "zhangfei": {
             "source_sprite": "assets/characters/050_zhangfei.png",
+            "bg_gradient": {
+                "top": [92, 156, 170],
+                "bottom": [42, 96, 114],
+            },
             "layers": [
                 (
                     "head_chubby.png",
@@ -366,6 +389,11 @@ def _char_specs() -> Dict[str, dict]:
                 ("hat_headscarf.png", {}),
             ],
             "manual_palette": {
+                "skin_tones": {
+                    "light": [193, 97, 85, 255],
+                    "mid": [149, 76, 66, 255],
+                    "dark": [107, 53, 46, 255]
+                },
                 "headscarf_colors": [
                     [116, 11, 0, 255],
                     [229, 23, 7, 255]
@@ -378,10 +406,14 @@ def _char_specs() -> Dict[str, dict]:
 def build_reference(char_id: str, spec: dict) -> Tuple[Path, Path]:
     palette = _extract_full_palette(spec["source_sprite"]) if spec.get("source_sprite") else []
     manual_cfg = spec.get("manual_palette", {})
+    skin_tones: Dict[str, RGBA] = {}
     shirt_tones: Dict[str, RGBA] = {}
     headcloth_tones: Dict[str, RGBA] = {}
     guan_hat_colors: Tuple[RGBA, RGBA] = ((55, 148, 110, 255), (251, 242, 54, 255))
     headscarf_colors: Tuple[RGBA, RGBA] = ((223, 113, 38, 255), (251, 242, 54, 255))
+    if "skin_tones" in manual_cfg:
+        sk = manual_cfg["skin_tones"]
+        skin_tones = {"light": tuple(sk["light"]), "mid": tuple(sk["mid"]), "dark": tuple(sk["dark"])}
     if "shirt_tones" in manual_cfg:
         st = manual_cfg["shirt_tones"]
         shirt_tones = {"dark": tuple(st["dark"]), "mid": tuple(st["mid"]), "light": tuple(st["light"])}
@@ -398,6 +430,14 @@ def build_reference(char_id: str, spec: dict) -> Tuple[Path, Path]:
         layer = _load_rgba(part_name)
         local_swap_map = dict(swap_map)
         # Smart manual mapping using full extracted palette + role hints.
+        if skin_tones and part_name in SKIN_LAYER_PARTS:
+            local_swap_map.update(
+                {
+                    SKIN_LIGHT: skin_tones["light"],
+                    SKIN_MID: skin_tones["mid"],
+                    SKIN_DARK: skin_tones["dark"],
+                }
+            )
         if shirt_tones and part_name.startswith("shirt_"):
             local_swap_map.update(
                 {
@@ -434,8 +474,10 @@ def build_reference(char_id: str, spec: dict) -> Tuple[Path, Path]:
     portrait_40 = _compose(layers)
     portrait_320 = portrait_40.resize((REF_W, REF_H), Image.Resampling.NEAREST)
 
-    # Flatten over the same gradient we use for sprite-derived references.
-    bg = _make_vertical_gradient(REF_W, REF_H, (130, 146, 168), (74, 88, 108))
+    bg_cfg = spec.get("bg_gradient", {})
+    bg_top = tuple(bg_cfg.get("top", [130, 146, 168]))
+    bg_bottom = tuple(bg_cfg.get("bottom", [74, 88, 108]))
+    bg = _make_vertical_gradient(REF_W, REF_H, bg_top, bg_bottom)
     bg.alpha_composite(portrait_320)
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -450,10 +492,12 @@ def build_reference(char_id: str, spec: dict) -> Tuple[Path, Path]:
             "palette": palette,
             "manual_palette_config": manual_cfg,
             "resolved_swaps": {
+                "skin_tones": skin_tones,
                 "shirt_tones": shirt_tones,
                 "headcloth_tones": headcloth_tones,
                 "guan_hat_colors": [list(guan_hat_colors[0]), list(guan_hat_colors[1])],
                 "headscarf_colors": [list(headscarf_colors[0]), list(headscarf_colors[1])],
+                "bg_gradient": {"top": list(bg_top), "bottom": list(bg_bottom)},
             },
         }
         out_profile.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")

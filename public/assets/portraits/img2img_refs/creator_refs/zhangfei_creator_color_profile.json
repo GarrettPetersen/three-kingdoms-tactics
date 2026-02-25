@@ -1179,6 +1179,26 @@
     }
   ],
   "manual_palette_config": {
+    "skin_tones": {
+      "light": [
+        193,
+        97,
+        85,
+        255
+      ],
+      "mid": [
+        149,
+        76,
+        66,
+        255
+      ],
+      "dark": [
+        107,
+        53,
+        46,
+        255
+      ]
+    },
     "headscarf_colors": [
       [
         116,
@@ -1195,6 +1215,26 @@
     ]
   },
   "resolved_swaps": {
+    "skin_tones": {
+      "light": [
+        193,
+        97,
+        85,
+        255
+      ],
+      "mid": [
+        149,
+        76,
+        66,
+        255
+      ],
+      "dark": [
+        107,
+        53,
+        46,
+        255
+      ]
+    },
     "shirt_tones": {},
     "headcloth_tones": {},
     "guan_hat_colors": [
@@ -1224,6 +1264,18 @@
         7,
         255
       ]
-    ]
+    ],
+    "bg_gradient": {
+      "top": [
+        92,
+        156,
+        170
+      ],
+      "bottom": [
+        42,
+        96,
+        114
+      ]
+    }
   }
 }
