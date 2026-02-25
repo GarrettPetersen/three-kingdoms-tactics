@@ -434,6 +434,7 @@ async function init() {
             'Deng-Mao', 'Cheng-Yuanzhi', 'The-Noticeboard', 'Yellow-Turban',
             'Dong-Zhuo', 'Zhang-Jiao', 'Zhang-Bao',
             'Huangfu-Song-generic', 'Zhu-Jun-generic',
+            'farmer',
             // Custom portraits for NPCs
             'Custom-Male-10',  // Zhang Jue (Lord of Heaven)
             'Custom-Male-12',  // Zhang Liang (Lord of Human)

@@ -431,6 +431,32 @@ def _char_specs() -> Dict[str, dict]:
                 ]
             },
         },
+        "farmer": {
+            "source_sprite": "assets/characters/083_nongfu01.png",
+            "bg_gradient": {
+                "top": [150, 136, 108],
+                "bottom": [94, 78, 56],
+            },
+            "layers": [
+                ("head_normal.png", {}),
+                ("shirt_robe.png", {}),
+                ("hair_short.png", {}),
+                ("eyebrows_thin.png", {}),
+                ("hat_conical.png", {}),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [255, 194, 148, 255],
+                    "mid": [185, 126, 38, 255],
+                    "dark": [119, 83, 43, 255]
+                },
+                "shirt_tones": {
+                    "dark": [93, 53, 22, 255],
+                    "mid": [154, 100, 34, 255],
+                    "light": [221, 161, 43, 255]
+                }
+            },
+        },
     }
 
 
