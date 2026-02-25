@@ -490,6 +490,8 @@ async function init() {
                 xiaoer: 'assets/characters/086_xiaoer01.png',
                 merchant: 'assets/characters/090_fushang01.png',
                 blacksmith: 'assets/characters/091_tiejiang01.png',
+                dengmao: 'assets/characters/028_xusheng.png',
+                chengyuanzhi: 'assets/characters/027_chengpu.png',
                 bandit1: 'assets/characters/088_qiangdao01.png',
                 bandit2: 'assets/characters/089_qiangdao02.png',
                 archer: 'assets/characters/098_archer.png',

@@ -44,9 +44,8 @@ export class CustomBattleMenuScene extends BaseScene {
             { name: 'Lu Zhi', imgKey: 'zhoujing', type: 'commander', templateId: 'luzhi' },
             { name: 'Dong Zhuo', imgKey: 'dongzhuo', type: 'warlord', templateId: 'dongzhuo' },
             { name: 'Yellow Turban', imgKey: 'yellowturban', type: 'enemy_soldier', templateId: 'rebel' },
-            { name: 'YT Captain', imgKey: 'bandit2', type: 'enemy_captain', templateId: 'zhang_jue_captain' },
-            { name: 'Deng Mao', imgKey: 'bandit1', type: 'enemy_captain', templateId: 'dengmao' },
-            { name: 'Cheng Yuanzhi', imgKey: 'bandit2', type: 'enemy_captain', templateId: 'chengyuanzhi' },
+            { name: 'Deng Mao', imgKey: 'dengmao', type: 'enemy_captain', templateId: 'dengmao' },
+            { name: 'Cheng Yuanzhi', imgKey: 'chengyuanzhi', type: 'enemy_captain', templateId: 'chengyuanzhi' },
             { name: 'Archer', imgKey: 'archer', type: 'enemy_soldier', templateId: 'rebel', isArcher: true, hp: 2 },
         ];
         

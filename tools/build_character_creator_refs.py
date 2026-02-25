@@ -400,6 +400,37 @@ def _char_specs() -> Dict[str, dict]:
                 ]
             },
         },
+        "zhoujing": {
+            "source_sprite": "assets/characters/071_chendeng.png",
+            "bg_gradient": {
+                "top": [126, 128, 142],
+                "bottom": [78, 80, 92],
+            },
+            "layers": [
+                ("head_normal.png", {}),
+                ("shirt_robe.png", {}),
+                ("hair_short_bun.png", {}),
+                ("eyebrows_thin.png", {}),
+                ("moustache_thin.png", {}),
+                ("hat_guan.png", {}),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [255, 214, 194, 255],
+                    "mid": [203, 126, 113, 255],
+                    "dark": [176, 113, 99, 255]
+                },
+                "shirt_tones": {
+                    "dark": [120, 109, 76, 255],
+                    "mid": [196, 196, 196, 255],
+                    "light": [255, 238, 214, 255]
+                },
+                "guan_hat_colors": [
+                    [106, 98, 15, 255],
+                    [226, 210, 32, 255]
+                ]
+            },
+        },
     }
 
 

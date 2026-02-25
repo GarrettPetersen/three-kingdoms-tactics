@@ -80,8 +80,8 @@ export const BATTLES = {
             { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'dx_lb_01', text: { en: "The Yellow Turban vanguard is here. They seek to plunder Zhuo County!", zh: "黄巾先锋已至。他们欲劫掠涿郡！" } },
             { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'dx_gy_01', text: { en: "Their numbers are great, but they are but a rabble without leadership.", zh: "他们人数众多，但不过是一群乌合之众。" } },
             { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'dx_zf_01', text: { en: "Let me at them! My Serpent Spear is thirsty for rebel blood!", zh: "让我来对付他们！我的丈八蛇矛渴饮叛军之血！" } },
-            { portraitKey: 'bandit1', name: 'Deng Mao', voiceId: 'dx_dm_01', text: { en: "Imperial dogs! You dare stand in the way of the Lord of Heaven?", zh: "朝廷走狗！你们敢阻挡天公将军？" } },
-            { portraitKey: 'bandit2', name: 'Cheng Yuanzhi', voiceId: 'dx_cyz_01', text: { en: "Slay them all! The Han is dead, the Yellow Heavens shall rise!", zh: "杀光他们！汉室已亡，黄天当立！" } },
+            { portraitKey: 'dengmao', name: 'Deng Mao', voiceId: 'dx_dm_01', text: { en: "Imperial dogs! You dare stand in the way of the Lord of Heaven?", zh: "朝廷走狗！你们敢阻挡天公将军？" } },
+            { portraitKey: 'chengyuanzhi', name: 'Cheng Yuanzhi', voiceId: 'dx_cyz_01', text: { en: "Slay them all! The Han is dead, the Yellow Heavens shall rise!", zh: "杀光他们！汉室已亡，黄天当立！" } },
             { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'dx_lb_02', text: { en: "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!", zh: "他们意志薄弱。若我们击败这些头目，其余必溃散！" } }
         ]
     },
@@ -801,8 +801,8 @@ export const UNIT_TEMPLATES = {
         'soldier': { ...SOLDIER_VARIANTS.generic }
     },
     'enemy_captain': {
-        'dengmao': { name: 'Deng Mao', imgKey: 'bandit1', hp: 5, moveRange: 3, attacks: ['heavy_thrust'], faction: 'enemy' },
-        'chengyuanzhi': { name: 'Cheng Yuanzhi', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['whirlwind'], faction: 'enemy' },
+        'dengmao': { name: 'Deng Mao', imgKey: 'dengmao', hp: 5, moveRange: 3, attacks: ['heavy_thrust'], faction: 'enemy' },
+        'chengyuanzhi': { name: 'Cheng Yuanzhi', imgKey: 'chengyuanzhi', hp: 5, moveRange: 3, attacks: ['whirlwind'], faction: 'enemy' },
         'zhang_jue_captain': { name: 'Yellow Turban Captain', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['whirlwind'], faction: 'enemy' }
     },
     'commander': {
