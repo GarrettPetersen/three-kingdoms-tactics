@@ -1,0 +1,458 @@
+#!/usr/bin/env python3
+"""
+Build portrait references from character_creator modular parts.
+"""
+
+from __future__ import annotations
+
+import colorsys
+import json
+from pathlib import Path
+from typing import Dict, Iterable, List, Optional, Tuple
+
+from PIL import Image
+
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PARTS_DIR = PROJECT_ROOT / "assets" / "portraits" / "character_creator"
+OUT_DIR = PROJECT_ROOT / "assets" / "portraits" / "img2img_refs" / "creator_refs"
+
+BASE_W = 40
+BASE_H = 48
+REF_W = 320
+REF_H = 384
+
+
+RGBA = Tuple[int, int, int, int]
+RGB = Tuple[int, int, int]
+
+
+def _frame_box(frame_index: int, frame_width: int, frame_height: int, columns: int) -> Tuple[int, int, int, int]:
+    col = frame_index % columns
+    row = frame_index // columns
+    x0 = col * frame_width
+    y0 = row * frame_height
+    return (x0, y0, x0 + frame_width, y0 + frame_height)
+
+
+def _make_vertical_gradient(width: int, height: int, top_rgb: RGB, bottom_rgb: RGB) -> Image.Image:
+    base = Image.new("RGBA", (width, height))
+    px = base.load()
+    for y in range(height):
+        t = 0 if height <= 1 else (y / (height - 1))
+        r = int(round(top_rgb[0] * (1 - t) + bottom_rgb[0] * t))
+        g = int(round(top_rgb[1] * (1 - t) + bottom_rgb[1] * t))
+        b = int(round(top_rgb[2] * (1 - t) + bottom_rgb[2] * t))
+        for x in range(width):
+            px[x, y] = (r, g, b, 255)
+    return base
+
+
+def _load_rgba(name: str) -> Image.Image:
+    p = PARTS_DIR / name
+    if not p.exists():
+        raise FileNotFoundError(f"Missing layer part: {p}")
+    return Image.open(p).convert("RGBA")
+
+
+def _palette_swap_exact(image: Image.Image, rgba_map: Dict[RGBA, RGBA]) -> Image.Image:
+    if not rgba_map:
+        return image
+    out = image.copy()
+    src = out.load()
+    w, h = out.size
+    for y in range(h):
+        for x in range(w):
+            px = src[x, y]
+            src[x, y] = rgba_map.get(px, px)
+    return out
+
+
+def _compose(layers: Iterable[Image.Image]) -> Image.Image:
+    canvas = Image.new("RGBA", (BASE_W, BASE_H), (0, 0, 0, 0))
+    for layer in layers:
+        canvas.alpha_composite(layer)
+    return canvas
+
+
+def _is_skin_like(rgb: RGB) -> bool:
+    r, g, b = rgb
+    if r > 95 and g > 60 and b < 150 and r > g > b and (r - b) > 25:
+        return True
+    return False
+
+
+def _is_chromatic_candidate(rgb: RGB) -> bool:
+    r, g, b = rgb
+    if max(rgb) < 35:
+        return False
+    if min(rgb) > 235:
+        return False
+    if _is_skin_like(rgb):
+        return False
+    h, s, v = colorsys.rgb_to_hsv(r / 255.0, g / 255.0, b / 255.0)
+    if s < 0.18:
+        return False
+    if v < 0.20:
+        return False
+    return True
+
+
+def _lerp_rgb(a: RGB, b: RGB, t: float) -> RGB:
+    return (
+        int(round(a[0] * (1 - t) + b[0] * t)),
+        int(round(a[1] * (1 - t) + b[1] * t)),
+        int(round(a[2] * (1 - t) + b[2] * t)),
+    )
+
+
+def _brightness(rgb: RGB) -> float:
+    r, g, b = rgb
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def _clamp_u8(v: float) -> int:
+    return max(0, min(255, int(round(v))))
+
+
+def _scale_rgb(rgb: RGB, factor: float) -> RGB:
+    return (_clamp_u8(rgb[0] * factor), _clamp_u8(rgb[1] * factor), _clamp_u8(rgb[2] * factor))
+
+
+def _derive_shaded_ramp_from_mid(mid: RGB, src_dark: RGBA, src_mid: RGBA, src_light: RGBA) -> Tuple[RGB, RGB, RGB]:
+    """
+    Preserve shading by keeping the original dark/mid/light value ratios from source palette.
+    """
+    src_dark_b = max(1e-6, _brightness((src_dark[0], src_dark[1], src_dark[2])))
+    src_mid_b = max(1e-6, _brightness((src_mid[0], src_mid[1], src_mid[2])))
+    src_light_b = max(1e-6, _brightness((src_light[0], src_light[1], src_light[2])))
+
+    dark_ratio = src_dark_b / src_mid_b
+    light_ratio = src_light_b / src_mid_b
+
+    dark = _scale_rgb(mid, dark_ratio)
+    light = _scale_rgb(mid, light_ratio)
+    return dark, mid, light
+
+
+def _hue_distance(a: float, b: float) -> float:
+    d = abs(a - b)
+    return min(d, 1.0 - d)
+
+
+def _extract_full_palette(sprite_rel_path: str) -> List[dict]:
+    """
+    Pull a fuller palette from sprite frame 0, preserving counts + HSV metadata.
+    """
+    sprite_path = PROJECT_ROOT / sprite_rel_path
+    sprite = Image.open(sprite_path).convert("RGBA")
+    frame = sprite.crop(_frame_box(frame_index=0, frame_width=72, frame_height=72, columns=8))
+    rgb = frame.convert("RGB").quantize(colors=56, method=Image.Quantize.FASTOCTREE).convert("RGB")
+
+    frame_px = frame.load()
+    rgb_px = rgb.load()
+    counts: Dict[RGB, int] = {}
+    for y in range(frame.height):
+        for x in range(frame.width):
+            _, _, _, a = frame_px[x, y]
+            if a == 0:
+                continue
+            c = rgb_px[x, y]
+            counts[c] = counts.get(c, 0) + 1
+
+    total = sum(counts.values()) or 1
+    palette: List[dict] = []
+    for rgb_color, count in sorted(counts.items(), key=lambda item: item[1], reverse=True):
+        r, g, b = rgb_color
+        h, s, v = colorsys.rgb_to_hsv(r / 255.0, g / 255.0, b / 255.0)
+        palette.append(
+            {
+                "rgb": [r, g, b],
+                "rgba": [r, g, b, 255],
+                "count": count,
+                "ratio": round(count / total, 6),
+                "h": round(h, 6),
+                "s": round(s, 6),
+                "v": round(v, 6),
+                "brightness": round(_brightness((r, g, b)), 3),
+                "is_skin_like": _is_skin_like((r, g, b)),
+                "is_chromatic": _is_chromatic_candidate((r, g, b)),
+            }
+        )
+    return palette
+
+
+def _palette_candidates(palette: List[dict]) -> List[dict]:
+    return [
+        p
+        for p in palette
+        if p["is_chromatic"] and not p["is_skin_like"] and p["count"] > 0
+    ]
+
+
+def _select_color(
+    candidates: List[dict],
+    target_hue: Optional[float] = None,
+    prefer_dark: bool = False,
+    prefer_light: bool = False,
+) -> Optional[RGB]:
+    if not candidates:
+        return None
+    best = None
+    best_score = -10**9
+    max_count = max(c["count"] for c in candidates) or 1
+    for c in candidates:
+        h = float(c["h"])
+        s = float(c["s"])
+        v = float(c["v"])
+        count_term = c["count"] / max_count
+        score = (count_term * 2.2) + (s * 1.6)
+        if target_hue is not None:
+            hd = _hue_distance(h, target_hue)
+            score += (1.2 - (hd * 2.4))
+        if prefer_dark:
+            score += (1.0 - v) * 1.25
+        if prefer_light:
+            score += v * 1.25
+        if score > best_score:
+            best_score = score
+            best = c
+    if not best:
+        return None
+    r, g, b = best["rgb"]
+    return (r, g, b)
+
+
+def _derive_tones(mid: RGB) -> Tuple[RGB, RGB]:
+    dark = _lerp_rgb((0, 0, 0), mid, 0.62)
+    light = _lerp_rgb(mid, (255, 255, 255), 0.26)
+    return dark, light
+
+
+def _build_garment_tones(palette: List[dict], target_hue: Optional[float] = None) -> Dict[str, RGBA]:
+    candidates = _palette_candidates(palette)
+    mid = _select_color(candidates, target_hue=target_hue)
+    if mid is None:
+        mid = (106, 190, 48)
+    dark, mid, light = _derive_shaded_ramp_from_mid(mid, GARMENT_DARK, GARMENT_MID, GARMENT_LIGHT)
+    if mid is None:
+        # Defensive fallback (should not happen because of assignment above).
+        dark, mid, light = (55, 148, 110), (106, 190, 48), (153, 229, 80)
+    else:
+        # no-op branch, kept for readability symmetry after fallback block
+        pass
+    return {
+        "dark": (dark[0], dark[1], dark[2], 255),
+        "mid": (mid[0], mid[1], mid[2], 255),
+        "light": (light[0], light[1], light[2], 255),
+    }
+
+
+def _build_hat_tones(palette: List[dict], hue_a: float, hue_b: float) -> Tuple[RGBA, RGBA]:
+    candidates = _palette_candidates(palette)
+    a = _select_color(candidates, target_hue=hue_a)
+    b = _select_color(candidates, target_hue=hue_b, prefer_light=True)
+    if a is None and b is None:
+        return (55, 148, 110, 255), (251, 242, 54, 255)
+    if a is None and b is not None:
+        a = _lerp_rgb((0, 0, 0), b, 0.66)
+    if b is None and a is not None:
+        b = _lerp_rgb(a, (255, 255, 255), 0.28)
+    return (a[0], a[1], a[2], 255), (b[0], b[1], b[2], 255)
+
+
+# Common creator palette swatches in source parts.
+SKIN_LIGHT: RGBA = (232, 200, 136, 255)
+SKIN_MID: RGBA = (200, 136, 136, 255)
+SKIN_DARK: RGBA = (136, 96, 96, 255)
+ACCENT_RED: RGBA = (168, 64, 32, 255)
+ACCENT_GOLD: RGBA = (200, 136, 32, 255)
+EYE_WHITE: RGBA = (232, 232, 232, 255)
+OUTLINE: RGBA = (0, 0, 0, 255)
+HAIR_BLACK: RGBA = (0, 0, 0, 255)
+GARMENT_DARK: RGBA = (55, 148, 110, 255)
+GARMENT_MID: RGBA = (106, 190, 48, 255)
+GARMENT_LIGHT: RGBA = (153, 229, 80, 255)
+HAT_GUAN_DARK: RGBA = (118, 66, 138, 255)
+HAT_GUAN_ACCENT: RGBA = (172, 50, 50, 255)
+SCARF_DARK: RGBA = (223, 113, 38, 255)
+SCARF_LIGHT: RGBA = (251, 242, 54, 255)
+
+
+def _char_specs() -> Dict[str, dict]:
+    return {
+        "liubei": {
+            "source_sprite": "assets/characters/048_liubei.png",
+            "layers": [
+                ("head_normal.png", {}),
+                ("shirt_robe.png", {}),
+                ("long_earlobe.png", {}),
+                ("hair_long.png", {}),
+                ("eyebrows_thin.png", {}),
+                ("moustache_thin.png", {}),
+                ("beard_pointy.png", {}),
+                (
+                    "hat_guan.png",
+                    {},
+                ),
+            ],
+            "manual_palette": {
+                "shirt_tones": {
+                    "dark": [53, 82, 156, 255],
+                    "mid": [91, 110, 225, 255],
+                    "light": [153, 229, 255, 255]
+                },
+                "guan_hat_colors": [
+                    [55, 148, 110, 255],
+                    [251, 242, 54, 255]
+                ]
+            },
+        },
+        "guanyu": {
+            "source_sprite": "assets/characters/049_guanyu.png",
+            "layers": [
+                (
+                    "head_normal.png",
+                    {
+                        SKIN_LIGHT: (216, 148, 118, 255),
+                        SKIN_MID: (181, 92, 78, 255),
+                        SKIN_DARK: (128, 62, 52, 255),
+                    },
+                ),
+                ("shirt_high_collar.png", {}),
+                ("hair_long.png", {}),
+                ("eyebrows_spock.png", {}),
+                ("moustache_thick.png", {}),
+                ("beard_long.png", {}),
+                ("hat_headcloth.png", {}),
+            ],
+            "manual_palette": {
+                "shirt_tones": {
+                    "dark": [24, 85, 27, 255],
+                    "mid": [56, 135, 49, 255],
+                    "light": [61, 145, 54, 255]
+                },
+                "headcloth_tones": {
+                    "dark": [24, 85, 27, 255],
+                    "mid": [56, 135, 49, 255],
+                    "light": [61, 145, 54, 255]
+                }
+            },
+        },
+        "zhangfei": {
+            "source_sprite": "assets/characters/050_zhangfei.png",
+            "layers": [
+                ("head_chubby.png", {}),
+                ("shirt_armour.png", {}),
+                ("hair_short_bun.png", {}),
+                ("eyebrows_thick.png", {}),
+                ("big_nose.png", {}),
+                ("moustache_thick.png", {}),
+                ("beard_bushy.png", {}),
+                ("hat_headscarf.png", {}),
+            ],
+            "manual_palette": {
+                "headscarf_colors": [
+                    [116, 11, 0, 255],
+                    [229, 23, 7, 255]
+                ]
+            },
+        },
+    }
+
+
+def build_reference(char_id: str, spec: dict) -> Tuple[Path, Path]:
+    palette = _extract_full_palette(spec["source_sprite"]) if spec.get("source_sprite") else []
+    manual_cfg = spec.get("manual_palette", {})
+    shirt_tones: Dict[str, RGBA] = {}
+    headcloth_tones: Dict[str, RGBA] = {}
+    guan_hat_colors: Tuple[RGBA, RGBA] = ((55, 148, 110, 255), (251, 242, 54, 255))
+    headscarf_colors: Tuple[RGBA, RGBA] = ((223, 113, 38, 255), (251, 242, 54, 255))
+    if "shirt_tones" in manual_cfg:
+        st = manual_cfg["shirt_tones"]
+        shirt_tones = {"dark": tuple(st["dark"]), "mid": tuple(st["mid"]), "light": tuple(st["light"])}
+    if "headcloth_tones" in manual_cfg:
+        ht = manual_cfg["headcloth_tones"]
+        headcloth_tones = {"dark": tuple(ht["dark"]), "mid": tuple(ht["mid"]), "light": tuple(ht["light"])}
+    if "guan_hat_colors" in manual_cfg:
+        guan_hat_colors = (tuple(manual_cfg["guan_hat_colors"][0]), tuple(manual_cfg["guan_hat_colors"][1]))
+    if "headscarf_colors" in manual_cfg:
+        headscarf_colors = (tuple(manual_cfg["headscarf_colors"][0]), tuple(manual_cfg["headscarf_colors"][1]))
+
+    layers: List[Image.Image] = []
+    for part_name, swap_map in spec["layers"]:
+        layer = _load_rgba(part_name)
+        local_swap_map = dict(swap_map)
+        # Smart manual mapping using full extracted palette + role hints.
+        if shirt_tones and part_name.startswith("shirt_"):
+            local_swap_map.update(
+                {
+                    GARMENT_DARK: shirt_tones["dark"],
+                    GARMENT_MID: shirt_tones["mid"],
+                    GARMENT_LIGHT: shirt_tones["light"],
+                }
+            )
+        if headcloth_tones and part_name == "hat_headcloth.png":
+            local_swap_map.update(
+                {
+                    GARMENT_DARK: headcloth_tones["dark"],
+                    GARMENT_MID: headcloth_tones["mid"],
+                    GARMENT_LIGHT: headcloth_tones["light"],
+                }
+            )
+        if part_name == "hat_guan.png":
+            local_swap_map.update(
+                {
+                    HAT_GUAN_DARK: guan_hat_colors[0],
+                    HAT_GUAN_ACCENT: guan_hat_colors[1],
+                }
+            )
+        if part_name == "hat_headscarf.png":
+            local_swap_map.update(
+                {
+                    SCARF_DARK: headscarf_colors[0],
+                    SCARF_LIGHT: headscarf_colors[1],
+                }
+            )
+        layer = _palette_swap_exact(layer, local_swap_map)
+        layers.append(layer)
+
+    portrait_40 = _compose(layers)
+    portrait_320 = portrait_40.resize((REF_W, REF_H), Image.Resampling.NEAREST)
+
+    # Flatten over the same gradient we use for sprite-derived references.
+    bg = _make_vertical_gradient(REF_W, REF_H, (130, 146, 168), (74, 88, 108))
+    bg.alpha_composite(portrait_320)
+
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    out_small = OUT_DIR / f"{char_id}_creator_ref_40x48.png"
+    out_full = OUT_DIR / f"{char_id}_creator_ref.png"
+    out_profile = OUT_DIR / f"{char_id}_creator_color_profile.json"
+    portrait_40.save(out_small)
+    bg.save(out_full)
+    if palette:
+        payload = {
+            "source_sprite": spec.get("source_sprite"),
+            "palette": palette,
+            "manual_palette_config": manual_cfg,
+            "resolved_swaps": {
+                "shirt_tones": shirt_tones,
+                "headcloth_tones": headcloth_tones,
+                "guan_hat_colors": [list(guan_hat_colors[0]), list(guan_hat_colors[1])],
+                "headscarf_colors": [list(headscarf_colors[0]), list(headscarf_colors[1])],
+            },
+        }
+        out_profile.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    return out_small, out_full
+
+
+def main() -> None:
+    specs = _char_specs()
+    for char_id, spec in specs.items():
+        out_small, out_full = build_reference(char_id, spec)
+        print(f"[ok] {char_id}: {out_small.relative_to(PROJECT_ROOT)}")
+        print(f"[ok] {char_id}: {out_full.relative_to(PROJECT_ROOT)}")
+
+
+if __name__ == "__main__":
+    main()
