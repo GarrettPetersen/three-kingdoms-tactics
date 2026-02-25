@@ -24,9 +24,10 @@ except Exception:
     pass
 
 from diffusers import StableDiffusionImg2ImgPipeline
+from model_paths import resolve_sd_model_path
 
 # --- Configuration ---
-MODEL_PATH = "/Users/garrettpetersen/Image Gen Models/RetroDiffusion24x-64xModel.safetensors"
+MODEL_PATH = str(resolve_sd_model_path())
 INPUT_DIR = "assets/portraits/snes_raw"
 OUTPUT_DIR = "assets/portraits/generated"
 DEVICE = "mps" if torch.backends.mps.is_available() else "cpu"

@@ -2,12 +2,14 @@ import os
 import asyncio
 import websockets
 import shutil
+from model_paths import resolve_sd_model_dir_and_name
 
 # --- Configuration ---
 RD_SERVER_URL = "ws://localhost:8765"
 # Retro Diffusion extension path
 RD_EXTENSION_PATH = os.path.expanduser("~/Library/Application Support/Aseprite/extensions/RetroDiffusion")
 TEMP_DIR = os.path.join(RD_EXTENSION_PATH, "stable-diffusion-aseprite", "temp")
+MODEL_DIR, MODEL_NAME = resolve_sd_model_dir_and_name()
 
 async def test_gen():
     # 1. Prepare input image
@@ -26,14 +28,14 @@ async def test_gen():
         "{ddevice}mps"
         "{doptimized}true"
         "{dprecision}autocast"
-        "{dpath}/Users/garrettpetersen/Image Gen Models/"
-        "{dmodel}RetroDiffusion24x-64xModel.safetensors"
+        f"{{dpath}}{MODEL_DIR}/"
+        f"{{dmodel}}{MODEL_NAME}"
         "{end}"
     )
 
     # 3. Prepare img2img command with EXACT keys and order from server code
     img2img_params = [
-        ("dlorapath", "/Users/garrettpetersen/Image Gen Models/"),
+        ("dlorapath", f"{MODEL_DIR}/"),
         ("dlorafiles", "none"),
         ("dloraweights", "0"),
         ("ddevice", "mps"),

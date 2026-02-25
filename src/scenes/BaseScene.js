@@ -691,6 +691,17 @@ export class BaseScene {
             // Non-named rebels should use the generic battlefield sprite portrait.
             step.portraitKey = 'yellowturban';
         }
+        const portraitToSpriteKey = {
+            'liu-bei': 'liubei',
+            'guan-yu': 'guanyu',
+            'zhang-fei': 'zhangfei',
+            'cao-cao': 'caocao',
+            'cao-ren': 'caoren',
+            'zhou-jing': 'zhoujing',
+            'dong-zhuo': 'dongzhuo',
+            'zhang-bao': 'zhangbao',
+            'zhang-jiao': 'zhangjiao'
+        };
         if (isNoticeboard || isNarrator) {
             let useBg = bgImg;
             if (isNarrator && !useBg) {
@@ -725,12 +736,18 @@ export class BaseScene {
             }
             
             if (!portraitImg) {
-                // Fallback to the actor sprite sheet crop
-                portraitImg = assets.getImage(step.portraitKey);
-                if (portraitImg) {
-            const crop = step.portraitRect || { x: 26, y: 20, w: 20, h: 20 };
-                    // Draw fallback at 2x to fill space (scaled pixel art, but better than nothing)
-                    ctx.drawImage(portraitImg, crop.x, crop.y, crop.w, crop.h, portraitX, portraitY + 4, 40, 40);
+                // Universal fallback: zoomed sprite portrait from the actor sheet.
+                const rawKey = step.portraitKey || '';
+                const normalizedKey = rawKey.replace(/-/g, '').toLowerCase();
+                const mappedKey = portraitToSpriteKey[rawKey] || portraitToSpriteKey[normalizedKey] || null;
+                const spriteImg =
+                    assets.getImage(rawKey) ||
+                    (mappedKey ? assets.getImage(mappedKey) : null) ||
+                    assets.getImage(normalizedKey);
+                if (spriteImg) {
+                    // Most character sheets are 72x72 frames laid out in rows; crop a head-focused area from frame 0.
+                    const crop = step.portraitRect || { x: 22, y: 8, w: 28, h: 28 };
+                    ctx.drawImage(spriteImg, crop.x, crop.y, crop.w, crop.h, portraitX, portraitY + 2, 40, 40);
                 }
             } else {
                 // Draw dedicated portrait at native 1:1 resolution
