@@ -277,7 +277,7 @@ HAT_GUAN_DARK: RGBA = (118, 66, 138, 255)
 HAT_GUAN_ACCENT: RGBA = (172, 50, 50, 255)
 SCARF_DARK: RGBA = (223, 113, 38, 255)
 SCARF_LIGHT: RGBA = (251, 242, 54, 255)
-SKIN_LAYER_PARTS = {"head_normal.png", "head_chubby.png", "big_nose.png", "long_earlobe.png"}
+SKIN_LAYER_PARTS = {"head_normal.png", "head_chubby.png", "head_obese.png", "big_nose.png", "long_earlobe.png"}
 
 
 def _char_specs() -> Dict[str, dict]:
@@ -495,6 +495,116 @@ def _char_specs() -> Dict[str, dict]:
                     "dark": [93, 53, 22, 255],
                     "mid": [154, 100, 34, 255],
                     "light": [221, 161, 43, 255]
+                }
+            },
+        },
+        "xiaoer": {
+            "source_sprite": "assets/characters/086_xiaoer01.png",
+            "bg_gradient": {
+                "top": [118, 126, 148],
+                "bottom": [72, 80, 104],
+            },
+            "layers": [
+                ("head_normal.png", {}),
+                ("shirt_robe.png", {}),
+                ("hair_short.png", {}),
+                ("eyebrows_thin.png", {}),
+                ("hat_cloth_cap.png", {}),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [252, 201, 162, 255],
+                    "mid": [204, 154, 106, 255],
+                    "dark": [142, 97, 66, 255]
+                },
+                "shirt_tones": {
+                    "dark": [54, 58, 83, 255],
+                    "mid": [101, 122, 183, 255],
+                    "light": [187, 201, 239, 255]
+                }
+            },
+        },
+        "merchant": {
+            "source_sprite": "assets/characters/090_fushang01.png",
+            "bg_gradient": {
+                "top": [124, 120, 146],
+                "bottom": [74, 68, 98],
+            },
+            "layers": [
+                ("head_obese.png", {}),
+                ("shirt_robe.png", {}),
+                ("hair_short.png", {}),
+                ("eyebrows_thin.png", {}),
+                ("moustache_fu_manchu.png", {}),
+                ("beard_long.png", {}),
+                (
+                    "hat_square_futou.png",
+                    {
+                        (64, 64, 96, 255): (72, 72, 82, 255),
+                        (32, 32, 32, 255): (24, 24, 28, 255),
+                    },
+                ),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [249, 199, 159, 255],
+                    "mid": [206, 150, 102, 255],
+                    "dark": [143, 97, 62, 255]
+                },
+                "shirt_tones": {
+                    "dark": [62, 47, 29, 255],
+                    "mid": [108, 86, 62, 255],
+                    "light": [182, 160, 122, 255]
+                }
+            },
+        },
+        "blacksmith": {
+            "source_sprite": "assets/characters/091_tiejiang01.png",
+            "bg_gradient": {
+                "top": [132, 110, 88],
+                "bottom": [82, 62, 44],
+            },
+            "layers": [
+                ("head_chubby.png", {}),
+                ("shirt_high_collar.png", {}),
+                ("hair_short_bun.png", {
+                    (0, 0, 0, 255): (96, 96, 104, 255),
+                    (34, 32, 52, 255): (146, 146, 154, 255),
+                }),
+                ("eyebrows_thick.png", {
+                    (0, 0, 0, 255): (96, 96, 104, 255),
+                }),
+                ("moustache_thick.png", {
+                    (0, 0, 0, 255): (110, 110, 118, 255),
+                }),
+                ("beard_pointy.png", {
+                    (0, 0, 0, 255): (118, 118, 126, 255),
+                }),
+                ("hat_headscarf.png", {}),
+                ("short_bangs.png", {
+                    (0, 0, 0, 255): (96, 96, 104, 255),
+                    (106, 106, 108, 255): (146, 146, 154, 255),
+                }),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [248, 194, 149, 255],
+                    "mid": [198, 142, 95, 255],
+                    "dark": [132, 91, 60, 255]
+                },
+                "shirt_tones": {
+                    "dark": [73, 50, 32, 255],
+                    "mid": [122, 83, 52, 255],
+                    "light": [188, 147, 95, 255]
+                },
+                "headscarf_colors": [
+                    [70, 41, 19, 255],
+                    [190, 128, 66, 255]
+                ],
+                "headcloth_tones": {
+                    "dark": [70, 41, 19, 255],
+                    "mid": [125, 74, 36, 255],
+                    "light": [190, 128, 66, 255]
                 }
             },
         },

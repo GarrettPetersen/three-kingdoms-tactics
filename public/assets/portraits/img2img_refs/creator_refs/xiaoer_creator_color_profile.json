@@ -1,0 +1,1306 @@
+{
+  "source_sprite": "assets/characters/086_xiaoer01.png",
+  "palette": [
+    {
+      "rgb": [
+        0,
+        0,
+        0
+      ],
+      "rgba": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "count": 191,
+      "ratio": 0.350459,
+      "h": 0.0,
+      "s": 0.0,
+      "v": 0.0,
+      "brightness": 0.0,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        22,
+        21,
+        26
+      ],
+      "rgba": [
+        22,
+        21,
+        26,
+        255
+      ],
+      "count": 33,
+      "ratio": 0.06055,
+      "h": 0.7,
+      "s": 0.192308,
+      "v": 0.101961,
+      "brightness": 21.574,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        99,
+        103,
+        148
+      ],
+      "rgba": [
+        99,
+        103,
+        148,
+        255
+      ],
+      "count": 19,
+      "ratio": 0.034862,
+      "h": 0.653061,
+      "s": 0.331081,
+      "v": 0.580392,
+      "brightness": 105.399,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        39,
+        39,
+        38
+      ],
+      "rgba": [
+        39,
+        39,
+        38,
+        255
+      ],
+      "count": 17,
+      "ratio": 0.031193,
+      "h": 0.166667,
+      "s": 0.025641,
+      "v": 0.152941,
+      "brightness": 38.928,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        24,
+        24,
+        34
+      ],
+      "rgba": [
+        24,
+        24,
+        34,
+        255
+      ],
+      "count": 14,
+      "ratio": 0.025688,
+      "h": 0.666667,
+      "s": 0.294118,
+      "v": 0.133333,
+      "brightness": 24.722,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        51,
+        51,
+        50
+      ],
+      "rgba": [
+        51,
+        51,
+        50,
+        255
+      ],
+      "count": 14,
+      "ratio": 0.025688,
+      "h": 0.166667,
+      "s": 0.019608,
+      "v": 0.2,
+      "brightness": 50.928,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        254,
+        219,
+        198
+      ],
+      "rgba": [
+        254,
+        219,
+        198,
+        255
+      ],
+      "count": 13,
+      "ratio": 0.023853,
+      "h": 0.0625,
+      "s": 0.220472,
+      "v": 0.996078,
+      "brightness": 224.925,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        214,
+        168,
+        152
+      ],
+      "rgba": [
+        214,
+        168,
+        152,
+        255
+      ],
+      "count": 12,
+      "ratio": 0.022018,
+      "h": 0.043011,
+      "s": 0.28972,
+      "v": 0.839216,
+      "brightness": 176.624,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        56,
+        58,
+        86
+      ],
+      "rgba": [
+        56,
+        58,
+        86,
+        255
+      ],
+      "count": 11,
+      "ratio": 0.020183,
+      "h": 0.655556,
+      "s": 0.348837,
+      "v": 0.337255,
+      "brightness": 59.596,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        98,
+        94,
+        96
+      ],
+      "rgba": [
+        98,
+        94,
+        96,
+        255
+      ],
+      "count": 11,
+      "ratio": 0.020183,
+      "h": 0.916667,
+      "s": 0.040816,
+      "v": 0.384314,
+      "brightness": 94.995,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        52,
+        41,
+        37
+      ],
+      "rgba": [
+        52,
+        41,
+        37,
+        255
+      ],
+      "count": 11,
+      "ratio": 0.020183,
+      "h": 0.044444,
+      "s": 0.288462,
+      "v": 0.203922,
+      "brightness": 43.05,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        194,
+        116,
+        106
+      ],
+      "rgba": [
+        194,
+        116,
+        106,
+        255
+      ],
+      "count": 9,
+      "ratio": 0.016514,
+      "h": 0.018939,
+      "s": 0.453608,
+      "v": 0.760784,
+      "brightness": 131.861,
+      "is_skin_like": true,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        70,
+        72,
+        105
+      ],
+      "rgba": [
+        70,
+        72,
+        105,
+        255
+      ],
+      "count": 8,
+      "ratio": 0.014679,
+      "h": 0.657143,
+      "s": 0.333333,
+      "v": 0.411765,
+      "brightness": 73.957,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        51,
+        50,
+        73
+      ],
+      "rgba": [
+        51,
+        50,
+        73,
+        255
+      ],
+      "count": 8,
+      "ratio": 0.014679,
+      "h": 0.673913,
+      "s": 0.315068,
+      "v": 0.286275,
+      "brightness": 51.873,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        33,
+        29,
+        33
+      ],
+      "rgba": [
+        33,
+        29,
+        33,
+        255
+      ],
+      "count": 8,
+      "ratio": 0.014679,
+      "h": 0.833333,
+      "s": 0.121212,
+      "v": 0.129412,
+      "brightness": 30.139,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        255,
+        235,
+        211
+      ],
+      "rgba": [
+        255,
+        235,
+        211,
+        255
+      ],
+      "count": 8,
+      "ratio": 0.014679,
+      "h": 0.090909,
+      "s": 0.172549,
+      "v": 1.0,
+      "brightness": 237.519,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        248,
+        248,
+        248
+      ],
+      "rgba": [
+        248,
+        248,
+        248,
+        255
+      ],
+      "count": 8,
+      "ratio": 0.014679,
+      "h": 0.0,
+      "s": 0.0,
+      "v": 0.972549,
+      "brightness": 248.0,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        36,
+        39,
+        53
+      ],
+      "rgba": [
+        36,
+        39,
+        53,
+        255
+      ],
+      "count": 7,
+      "ratio": 0.012844,
+      "h": 0.637255,
+      "s": 0.320755,
+      "v": 0.207843,
+      "brightness": 39.373,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        252,
+        227,
+        204
+      ],
+      "rgba": [
+        252,
+        227,
+        204,
+        255
+      ],
+      "count": 7,
+      "ratio": 0.012844,
+      "h": 0.079861,
+      "s": 0.190476,
+      "v": 0.988235,
+      "brightness": 230.654,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        166,
+        167,
+        167
+      ],
+      "rgba": [
+        166,
+        167,
+        167,
+        255
+      ],
+      "count": 7,
+      "ratio": 0.012844,
+      "h": 0.5,
+      "s": 0.005988,
+      "v": 0.654902,
+      "brightness": 166.787,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        77,
+        80,
+        115
+      ],
+      "rgba": [
+        77,
+        80,
+        115,
+        255
+      ],
+      "count": 6,
+      "ratio": 0.011009,
+      "h": 0.653509,
+      "s": 0.330435,
+      "v": 0.45098,
+      "brightness": 81.889,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        12,
+        12,
+        20
+      ],
+      "rgba": [
+        12,
+        12,
+        20,
+        255
+      ],
+      "count": 6,
+      "ratio": 0.011009,
+      "h": 0.666667,
+      "s": 0.4,
+      "v": 0.078431,
+      "brightness": 12.578,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        149,
+        144,
+        141
+      ],
+      "rgba": [
+        149,
+        144,
+        141,
+        255
+      ],
+      "count": 6,
+      "ratio": 0.011009,
+      "h": 0.0625,
+      "s": 0.053691,
+      "v": 0.584314,
+      "brightness": 144.846,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        235,
+        199,
+        180
+      ],
+      "rgba": [
+        235,
+        199,
+        180,
+        255
+      ],
+      "count": 6,
+      "ratio": 0.011009,
+      "h": 0.057576,
+      "s": 0.234043,
+      "v": 0.921569,
+      "brightness": 205.282,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        88,
+        91,
+        134
+      ],
+      "rgba": [
+        88,
+        91,
+        134,
+        255
+      ],
+      "count": 5,
+      "ratio": 0.009174,
+      "h": 0.655797,
+      "s": 0.343284,
+      "v": 0.52549,
+      "brightness": 93.467,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        84,
+        86,
+        122
+      ],
+      "rgba": [
+        84,
+        86,
+        122,
+        255
+      ],
+      "count": 5,
+      "ratio": 0.009174,
+      "h": 0.657895,
+      "s": 0.311475,
+      "v": 0.478431,
+      "brightness": 88.174,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        74,
+        76,
+        113
+      ],
+      "rgba": [
+        74,
+        76,
+        113,
+        255
+      ],
+      "count": 5,
+      "ratio": 0.009174,
+      "h": 0.65812,
+      "s": 0.345133,
+      "v": 0.443137,
+      "brightness": 78.246,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        150,
+        150,
+        151
+      ],
+      "rgba": [
+        150,
+        150,
+        151,
+        255
+      ],
+      "count": 5,
+      "ratio": 0.009174,
+      "h": 0.666667,
+      "s": 0.006623,
+      "v": 0.592157,
+      "brightness": 150.072,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        42,
+        44,
+        67
+      ],
+      "rgba": [
+        42,
+        44,
+        67,
+        255
+      ],
+      "count": 4,
+      "ratio": 0.007339,
+      "h": 0.653333,
+      "s": 0.373134,
+      "v": 0.262745,
+      "brightness": 45.235,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        95,
+        99,
+        143
+      ],
+      "rgba": [
+        95,
+        99,
+        143,
+        255
+      ],
+      "count": 4,
+      "ratio": 0.007339,
+      "h": 0.652778,
+      "s": 0.335664,
+      "v": 0.560784,
+      "brightness": 101.326,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        181,
+        182,
+        184
+      ],
+      "rgba": [
+        181,
+        182,
+        184,
+        255
+      ],
+      "count": 4,
+      "ratio": 0.007339,
+      "h": 0.611111,
+      "s": 0.016304,
+      "v": 0.721569,
+      "brightness": 181.932,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        203,
+        204,
+        214
+      ],
+      "rgba": [
+        203,
+        204,
+        214,
+        255
+      ],
+      "count": 4,
+      "ratio": 0.007339,
+      "h": 0.651515,
+      "s": 0.051402,
+      "v": 0.839216,
+      "brightness": 204.509,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        87,
+        87,
+        87
+      ],
+      "rgba": [
+        87,
+        87,
+        87,
+        255
+      ],
+      "count": 4,
+      "ratio": 0.007339,
+      "h": 0.0,
+      "s": 0.0,
+      "v": 0.341176,
+      "brightness": 87.0,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        54,
+        49,
+        44
+      ],
+      "rgba": [
+        54,
+        49,
+        44,
+        255
+      ],
+      "count": 4,
+      "ratio": 0.007339,
+      "h": 0.083333,
+      "s": 0.185185,
+      "v": 0.211765,
+      "brightness": 49.702,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        200,
+        200,
+        200
+      ],
+      "rgba": [
+        200,
+        200,
+        200,
+        255
+      ],
+      "count": 4,
+      "ratio": 0.007339,
+      "h": 0.0,
+      "s": 0.0,
+      "v": 0.784314,
+      "brightness": 200.0,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        230,
+        230,
+        230
+      ],
+      "rgba": [
+        230,
+        230,
+        230,
+        255
+      ],
+      "count": 4,
+      "ratio": 0.007339,
+      "h": 0.0,
+      "s": 0.0,
+      "v": 0.901961,
+      "brightness": 230.0,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        115,
+        101,
+        155
+      ],
+      "rgba": [
+        115,
+        101,
+        155,
+        255
+      ],
+      "count": 4,
+      "ratio": 0.007339,
+      "h": 0.709877,
+      "s": 0.348387,
+      "v": 0.607843,
+      "brightness": 107.875,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        105,
+        110,
+        157
+      ],
+      "rgba": [
+        105,
+        110,
+        157,
+        255
+      ],
+      "count": 4,
+      "ratio": 0.007339,
+      "h": 0.650641,
+      "s": 0.33121,
+      "v": 0.615686,
+      "brightness": 112.33,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        43,
+        51,
+        74
+      ],
+      "rgba": [
+        43,
+        51,
+        74,
+        255
+      ],
+      "count": 3,
+      "ratio": 0.005505,
+      "h": 0.623656,
+      "s": 0.418919,
+      "v": 0.290196,
+      "brightness": 50.96,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        66,
+        67,
+        94
+      ],
+      "rgba": [
+        66,
+        67,
+        94,
+        255
+      ],
+      "count": 3,
+      "ratio": 0.005505,
+      "h": 0.660714,
+      "s": 0.297872,
+      "v": 0.368627,
+      "brightness": 68.737,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        15,
+        16,
+        22
+      ],
+      "rgba": [
+        15,
+        16,
+        22,
+        255
+      ],
+      "count": 3,
+      "ratio": 0.005505,
+      "h": 0.642857,
+      "s": 0.318182,
+      "v": 0.086275,
+      "brightness": 16.221,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        170,
+        171,
+        183
+      ],
+      "rgba": [
+        170,
+        171,
+        183,
+        255
+      ],
+      "count": 3,
+      "ratio": 0.005505,
+      "h": 0.653846,
+      "s": 0.071038,
+      "v": 0.717647,
+      "brightness": 171.654,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        227,
+        224,
+        219
+      ],
+      "rgba": [
+        227,
+        224,
+        219,
+        255
+      ],
+      "count": 3,
+      "ratio": 0.005505,
+      "h": 0.104167,
+      "s": 0.035242,
+      "v": 0.890196,
+      "brightness": 224.277,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        43,
+        25,
+        23
+      ],
+      "rgba": [
+        43,
+        25,
+        23,
+        255
+      ],
+      "count": 3,
+      "ratio": 0.005505,
+      "h": 0.016667,
+      "s": 0.465116,
+      "v": 0.168627,
+      "brightness": 28.682,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        30,
+        33,
+        41
+      ],
+      "rgba": [
+        30,
+        33,
+        41,
+        255
+      ],
+      "count": 3,
+      "ratio": 0.005505,
+      "h": 0.621212,
+      "s": 0.268293,
+      "v": 0.160784,
+      "brightness": 32.94,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        199,
+        123,
+        113
+      ],
+      "rgba": [
+        199,
+        123,
+        113,
+        255
+      ],
+      "count": 3,
+      "ratio": 0.005505,
+      "h": 0.01938,
+      "s": 0.432161,
+      "v": 0.780392,
+      "brightness": 138.436,
+      "is_skin_like": true,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        52,
+        33,
+        29
+      ],
+      "rgba": [
+        52,
+        33,
+        29,
+        255
+      ],
+      "count": 3,
+      "ratio": 0.005505,
+      "h": 0.028986,
+      "s": 0.442308,
+      "v": 0.203922,
+      "brightness": 36.751,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        52,
+        39,
+        70
+      ],
+      "rgba": [
+        52,
+        39,
+        70,
+        255
+      ],
+      "count": 3,
+      "ratio": 0.005505,
+      "h": 0.736559,
+      "s": 0.442857,
+      "v": 0.27451,
+      "brightness": 44.002,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        84,
+        73,
+        116
+      ],
+      "rgba": [
+        84,
+        73,
+        116,
+        255
+      ],
+      "count": 3,
+      "ratio": 0.005505,
+      "h": 0.709302,
+      "s": 0.37069,
+      "v": 0.454902,
+      "brightness": 78.443,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        56,
+        64,
+        89
+      ],
+      "rgba": [
+        56,
+        64,
+        89,
+        255
+      ],
+      "count": 2,
+      "ratio": 0.00367,
+      "h": 0.626263,
+      "s": 0.370787,
+      "v": 0.34902,
+      "brightness": 64.104,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        159,
+        98,
+        90
+      ],
+      "rgba": [
+        159,
+        98,
+        90,
+        255
+      ],
+      "count": 2,
+      "ratio": 0.00367,
+      "h": 0.019324,
+      "s": 0.433962,
+      "v": 0.623529,
+      "brightness": 110.391,
+      "is_skin_like": true,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        205,
+        132,
+        121
+      ],
+      "rgba": [
+        205,
+        132,
+        121,
+        255
+      ],
+      "count": 2,
+      "ratio": 0.00367,
+      "h": 0.021825,
+      "s": 0.409756,
+      "v": 0.803922,
+      "brightness": 146.726,
+      "is_skin_like": true,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        69,
+        67,
+        62
+      ],
+      "rgba": [
+        69,
+        67,
+        62,
+        255
+      ],
+      "count": 2,
+      "ratio": 0.00367,
+      "h": 0.119048,
+      "s": 0.101449,
+      "v": 0.270588,
+      "brightness": 67.064,
+      "is_skin_like": false,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        150,
+        135,
+        121
+      ],
+      "rgba": [
+        150,
+        135,
+        121,
+        255
+      ],
+      "count": 2,
+      "ratio": 0.00367,
+      "h": 0.08046,
+      "s": 0.193333,
+      "v": 0.588235,
+      "brightness": 137.178,
+      "is_skin_like": true,
+      "is_chromatic": false
+    },
+    {
+      "rgb": [
+        73,
+        53,
+        54
+      ],
+      "rgba": [
+        73,
+        53,
+        54,
+        255
+      ],
+      "count": 1,
+      "ratio": 0.001835,
+      "h": 0.991667,
+      "s": 0.273973,
+      "v": 0.286275,
+      "brightness": 57.324,
+      "is_skin_like": false,
+      "is_chromatic": true
+    },
+    {
+      "rgb": [
+        65,
+        56,
+        91
+      ],
+      "rgba": [
+        65,
+        56,
+        91,
+        255
+      ],
+      "count": 1,
+      "ratio": 0.001835,
+      "h": 0.709524,
+      "s": 0.384615,
+      "v": 0.356863,
+      "brightness": 60.44,
+      "is_skin_like": false,
+      "is_chromatic": true
+    }
+  ],
+  "manual_palette_config": {
+    "skin_tones": {
+      "light": [
+        252,
+        201,
+        162,
+        255
+      ],
+      "mid": [
+        204,
+        154,
+        106,
+        255
+      ],
+      "dark": [
+        142,
+        97,
+        66,
+        255
+      ]
+    },
+    "shirt_tones": {
+      "dark": [
+        54,
+        58,
+        83,
+        255
+      ],
+      "mid": [
+        101,
+        122,
+        183,
+        255
+      ],
+      "light": [
+        187,
+        201,
+        239,
+        255
+      ]
+    }
+  },
+  "resolved_swaps": {
+    "skin_tones": {
+      "light": [
+        252,
+        201,
+        162,
+        255
+      ],
+      "mid": [
+        204,
+        154,
+        106,
+        255
+      ],
+      "dark": [
+        142,
+        97,
+        66,
+        255
+      ]
+    },
+    "shirt_tones": {
+      "dark": [
+        54,
+        58,
+        83,
+        255
+      ],
+      "mid": [
+        101,
+        122,
+        183,
+        255
+      ],
+      "light": [
+        187,
+        201,
+        239,
+        255
+      ]
+    },
+    "headcloth_tones": {},
+    "guan_hat_colors": [
+      [
+        55,
+        148,
+        110,
+        255
+      ],
+      [
+        251,
+        242,
+        54,
+        255
+      ]
+    ],
+    "headscarf_colors": [
+      [
+        223,
+        113,
+        38,
+        255
+      ],
+      [
+        251,
+        242,
+        54,
+        255
+      ]
+    ],
+    "bg_gradient": {
+      "top": [
+        118,
+        126,
+        148
+      ],
+      "bottom": [
+        72,
+        80,
+        104
+      ]
+    }
+  }
+}
