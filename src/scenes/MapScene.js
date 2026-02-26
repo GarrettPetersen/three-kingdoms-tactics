@@ -1105,10 +1105,6 @@ export class MapScene extends BaseScene {
                     partyY: 55
                 });
             },
-            onChoiceFight: () => {
-                // Battle path - start fight in the same map (handled by TacticsScene)
-                // TacticsScene.startFight() will be called instead
-            },
             onFightVictory: () => {
                 // Called when cage is broken and Lu Zhi is freed
                 this.manager.gameState.setStoryChoice('luzhi_outcome', 'freed');
