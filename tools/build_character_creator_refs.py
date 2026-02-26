@@ -325,6 +325,47 @@ def _char_specs() -> Dict[str, dict]:
                 ]
             },
         },
+        "caocao": {
+            "source_sprite": "assets/characters/031_caocao.png",
+            "bg_gradient": {
+                "top": [120, 108, 152],
+                "bottom": [64, 54, 96],
+            },
+            "layers": [
+                (
+                    "head_normal.png",
+                    {
+                        SKIN_LIGHT: (255, 233, 210, 255),
+                        SKIN_MID: (205, 168, 152, 255),
+                        SKIN_DARK: (159, 107, 95, 255),
+                    },
+                ),
+                ("shirt_robe.png", {}),
+                ("hair_short_bun.png", {
+                    (0, 0, 0, 255): (72, 72, 71, 255),
+                }),
+                ("eyebrows_thick.png", {}),
+                ("moustache_fu_manchu.png", {}),
+                ("beard_pointy.png", {}),
+                ("hat_guan.png", {}),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [255, 233, 210, 255],
+                    "mid": [205, 168, 152, 255],
+                    "dark": [159, 107, 95, 255]
+                },
+                "shirt_tones": {
+                    "dark": [20, 10, 26, 255],
+                    "mid": [84, 44, 104, 255],
+                    "light": [131, 88, 133, 255]
+                },
+                "guan_hat_colors": [
+                    [174, 96, 34, 255],
+                    [225, 157, 52, 255]
+                ]
+            },
+        },
         "guanyu": {
             "source_sprite": "assets/characters/049_guanyu.png",
             "bg_gradient": {
