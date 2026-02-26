@@ -468,7 +468,7 @@ async function init() {
         await Promise.all([
             assets.loadPortraits(portraitNames),
             assets.loadPalettes({
-                vinik24: 'assets/palettes/vinik24.txt'
+                'fairytale-forest': 'assets/palettes/fairytale-forest.txt'
             }),
             assets.loadImages({
                 title_en: 'assets/misc/three_kingdoms_stratagem_title.png',
@@ -724,7 +724,7 @@ async function init() {
         });
 
         // Apply palette to terrain assets
-        assets.palettizeKeys(TERRAIN_TYPES, 'vinik24');
+        assets.palettizeKeys(TERRAIN_TYPES, 'fairytale-forest');
 
         // Imperial camp tents: recolor yellow tent art to a pale white canvas variant.
         const baseTent = assets.getImage('tent');

@@ -50,6 +50,8 @@ export class Unit {
         this.visualOffsetY = 0;
         this.shakeTimer = 0;
         this.shakeDir = { x: 0, y: 0 };
+        this.damageFlashTimer = 0;
+        this.damageFlashDuration = 80;
         this.pushData = null; // { startX, startY, targetX, targetY, progress, isBounce }
         this.isDrowning = config.isDrowning || false;
         this.isGone = config.isGone || false;
@@ -88,6 +90,10 @@ export class Unit {
     }
 
     update(dt, getPixelPos, shouldAnimate = true, terrainType = 'grass_01') {
+        if (this.damageFlashTimer > 0) {
+            this.damageFlashTimer = Math.max(0, this.damageFlashTimer - dt);
+        }
+
         if (this.hp > 0 && this.deathSoundPlayed) {
             this.deathSoundPlayed = false;
         }
@@ -302,6 +308,11 @@ export class Unit {
         const dist = Math.sqrt(dx*dx + dy*dy) || 1;
         this.shakeDir = { x: dx / dist, y: dy / dist };
         this.shakeTimer = 200;
+    }
+
+    triggerDamageFlash(durationMs = 80) {
+        this.damageFlashDuration = durationMs;
+        this.damageFlashTimer = durationMs;
     }
 
     playStepSound(terrainType) {

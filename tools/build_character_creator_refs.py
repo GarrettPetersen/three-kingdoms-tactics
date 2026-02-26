@@ -714,6 +714,37 @@ def _char_specs() -> Dict[str, dict]:
                 }
             },
         },
+        "yellowturban": {
+            "source_sprite": "assets/characters/097_yellowturban.png",
+            "bg_gradient": {
+                "top": [142, 124, 86],
+                "bottom": [86, 70, 42],
+            },
+            "layers": [
+                ("head_normal.png", {}),
+                ("shirt_robe.png", {}),
+                ("hair_long.png", {}),
+                ("eyebrows_thin.png", {}),
+                ("hat_headcloth.png", {}),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [255, 203, 164, 255],
+                    "mid": [208, 154, 105, 255],
+                    "dark": [144, 99, 64, 255]
+                },
+                "shirt_tones": {
+                    "dark": [68, 56, 42, 255],
+                    "mid": [124, 98, 72, 255],
+                    "light": [196, 168, 128, 255]
+                },
+                "headcloth_tones": {
+                    "dark": [156, 112, 24, 255],
+                    "mid": [215, 160, 42, 255],
+                    "light": [246, 210, 92, 255]
+                }
+            },
+        },
         "zhangjiao": {
             "source_sprite": "assets/characters/005_zhangjiao.png",
             "bg_gradient": {

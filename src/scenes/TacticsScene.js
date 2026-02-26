@@ -32,6 +32,7 @@ export class TacticsScene extends BaseScene {
         this.hoveredCell = null;
         this.hoveredMountedAttackRegions = null;
         this.damageNumbers = []; // { x, y, value, timer, maxTime }
+        this.hexDamageWaves = new Map(); // key "r,q" -> { elapsedMs, durationMs, amplitudePx }
         this.projectiles = []; // { startX, startY, targetX, targetY, progress, type, duration }
         this.particles = []; // { x, y, r, type, vx, vy, life, targetY }
         this.fireSmokeParticles = []; // { x, y, r, life, maxLife, vx, vy, alpha, driftTimer, size }
@@ -282,6 +283,7 @@ export class TacticsScene extends BaseScene {
         this.particles = [];
         this.fireSmokeParticles = [];
         this.damageNumbers = [];
+        this.hexDamageWaves = new Map();
         this.ambushTriggered = false;
         this.reachedFlag = false;
         this.isProcessingTurn = false;
@@ -543,6 +545,8 @@ export class TacticsScene extends BaseScene {
         this.cutsceneCombatComplete = false; // Flag to track when combat is done
         
         // Reset all units for combat
+        this.updateHexDamageWaves(dt);
+
         this.units.forEach(u => {
             u.hasMoved = false;
             u.hasAttacked = false;
@@ -4085,9 +4089,42 @@ export class TacticsScene extends BaseScene {
         });
     }
 
+    triggerHexDamageWave(r, q, amplitudePx = 2.4, durationMs = 420) {
+        const key = `${r},${q}`;
+        this.hexDamageWaves.set(key, {
+            elapsedMs: 0,
+            durationMs,
+            amplitudePx
+        });
+    }
+
+    updateHexDamageWaves(dt) {
+        if (!this.hexDamageWaves || this.hexDamageWaves.size === 0) return;
+        for (const [key, wave] of this.hexDamageWaves.entries()) {
+            wave.elapsedMs += dt;
+            if (wave.elapsedMs >= wave.durationMs) {
+                this.hexDamageWaves.delete(key);
+            }
+        }
+    }
+
+    getHexDamageYOffset(r, q) {
+        if (!this.hexDamageWaves || this.hexDamageWaves.size === 0) return 0;
+        const wave = this.hexDamageWaves.get(`${r},${q}`);
+        if (!wave) return 0;
+
+        // Starts with a downward dip, then springs upward/downward with damping.
+        const t = wave.elapsedMs / 1000;
+        const damping = Math.exp(-8.0 * t);
+        const oscillation = Math.cos(32.0 * t);
+        return wave.amplitudePx * damping * oscillation;
+    }
+
     damageCell(r, q) {
         const cell = this.tacticsMap.getCell(r, q);
         if (!cell) return;
+
+        this.triggerHexDamageWave(r, q);
 
         if (cell.terrain === 'house_01') {
             cell.terrain = 'house_damaged_01';
@@ -4627,6 +4664,9 @@ export class TacticsScene extends BaseScene {
         if (wasAlive && this.isImmortalUnit(victim) && victim.hp - finalDamage <= triggerHp) {
             finalDamage = Math.max(0, victim.hp - triggerHp);
             victim.hp = triggerHp;
+            if (finalDamage > 0 && typeof victim.triggerDamageFlash === 'function') {
+                victim.triggerDamageFlash();
+            }
             victim.intent = null;
             victim.isGone = false;
             if (victim.name !== 'Boulder') {
@@ -4637,6 +4677,9 @@ export class TacticsScene extends BaseScene {
             return finalDamage;
         }
         victim.hp -= finalDamage;
+        if (finalDamage > 0 && typeof victim.triggerDamageFlash === 'function') {
+            victim.triggerDamageFlash();
+        }
 
         if (victim.hp <= 0 && wasAlive) {
             victim.hp = 0;
@@ -5214,9 +5257,10 @@ export class TacticsScene extends BaseScene {
 
     getPixelPos(r, q) {
         const xOffset = (Math.abs(r) % 2 === 1) ? this.manager.config.horizontalSpacing / 2 : 0;
+        const quakeOffsetY = this.getHexDamageYOffset(r, q);
         return {
             x: this.startX + q * this.manager.config.horizontalSpacing + xOffset,
-            y: this.startY + r * this.manager.config.verticalSpacing - (this.tacticsMap.getCell(r, q)?.elevation || 0)
+            y: this.startY + r * this.manager.config.verticalSpacing - (this.tacticsMap.getCell(r, q)?.elevation || 0) + quakeOffsetY
         };
     }
 
@@ -6489,7 +6533,11 @@ export class TacticsScene extends BaseScene {
                     drawOptions.hideBottom = 27;
                 }
 
-                if (targetedUnits.has(u)) {
+                if (u.damageFlashTimer > 0) {
+                    const flashRatio = Math.max(0, Math.min(1, u.damageFlashTimer / Math.max(1, u.damageFlashDuration || 1)));
+                    const flashAlpha = 0.35 + (0.65 * flashRatio);
+                    drawOptions.tint = `rgba(255, 255, 255, ${flashAlpha.toFixed(3)})`;
+                } else if (targetedUnits.has(u)) {
                     drawOptions.tint = 'rgba(255, 0, 0, 0.3)';
                 }
 

@@ -18,6 +18,19 @@ const LIUBEI_LOCATIONS = {
         unlockCondition: (gs) => !(gs.hasReachedStoryNode('daxing', 'liubei') || gs.hasMilestone('daxing')),
         isCompleted: (gs) => gs.hasReachedStoryNode('daxing', 'liubei') || gs.hasMilestone('daxing')
     },
+    magistrate_return: {
+        id: 'magistrate_return',
+        x: 182,
+        y: 85,
+        name: 'Magistrate Zhou Jing',
+        imgKey: 'camp_tent',
+        battleId: 'qingzhou_cleanup',
+        // After Qingzhou siege, the player should return here for the follow-up scene.
+        unlockCondition: (gs) =>
+            (gs.hasReachedStoryNode('qingzhou_siege', 'liubei') || gs.hasMilestone('qingzhou_siege')) &&
+            !(gs.hasReachedStoryNode('qingzhou_cleanup', 'liubei') || gs.hasMilestone('qingzhou_cleanup')),
+        isCompleted: (gs) => gs.hasReachedStoryNode('qingzhou_cleanup', 'liubei') || gs.hasMilestone('qingzhou_cleanup')
+    },
     qingzhou: {
         id: 'qingzhou',
         x: 220,
@@ -785,6 +798,7 @@ export class MapScene extends BaseScene {
                 this.heroMoveTo(loc.x, loc.y, () => {
                     if (loc.battleId === 'daxing') this.startBriefing();
                     else if (loc.battleId === 'qingzhou_siege') this.startQingzhouBriefing();
+                    else if (loc.battleId === 'qingzhou_cleanup') this.startQingzhouCleanup();
                     else if (loc.battleId === 'guangzong_camp') this.startGuangzongCamp();
                     else if (loc.battleId === 'yingchuan_aftermath') this.startYingchuanAftermath();
                     else if (loc.battleId === 'guangzong_encounter') this.startGuangzongBriefing();
@@ -936,6 +950,7 @@ export class MapScene extends BaseScene {
                     this.heroMoveTo(loc.x, loc.y, () => {
                         if (loc.battleId === 'daxing') this.startBriefing();
                         else if (loc.battleId === 'qingzhou_siege') this.startQingzhouBriefing();
+                        else if (loc.battleId === 'qingzhou_cleanup') this.startQingzhouCleanup();
                         else if (loc.battleId === 'guangzong_camp') this.startGuangzongCamp();
                         else if (loc.battleId === 'yingchuan_aftermath') this.startYingchuanAftermath();
                         else if (loc.battleId === 'guangzong_encounter') this.startGuangzongBriefing();
@@ -1020,6 +1035,12 @@ export class MapScene extends BaseScene {
                 riverDensity: 0.0,
                 houseDensity: 0.2
             }
+        });
+    }
+
+    startQingzhouCleanup() {
+        this.manager.switchTo('tactics', {
+            battleId: 'qingzhou_cleanup'
         });
     }
 
