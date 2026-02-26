@@ -61,14 +61,14 @@ const LIBRARY_LOGO_SIZE = { width: 1280, height: 720 }; // Aspect ratio maintain
 const SHORTCUT_ICON_SIZE = { width: 256, height: 256, name: 'shortcut_icon' };
 
 /**
- * Process title image to add red color and black outline (matching TitleScene.js)
+ * Process title image to solid white text with no outline.
  */
 function processTitleImage(titleImg) {
-    const tempCanvas = createCanvas(titleImg.width + 4, titleImg.height + 4);
+    const tempCanvas = createCanvas(titleImg.width, titleImg.height);
     const tempCtx = tempCanvas.getContext('2d');
     tempCtx.imageSmoothingEnabled = false;
-    
-    // 1. Create the red title version
+
+    // Create white text version from dark pixels only.
     const spriteCanvas = createCanvas(titleImg.width, titleImg.height);
     const sctx = spriteCanvas.getContext('2d');
     sctx.imageSmoothingEnabled = false;
@@ -79,39 +79,14 @@ function processTitleImage(titleImg) {
     for (let i = 0; i < data.length; i += 4) {
         const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
         if (avg < 128) {
-            // Set to red (139, 0, 0)
-            data[i] = 139; data[i+1] = 0; data[i+2] = 0; data[i+3] = 255;
+            // Set to solid white with full alpha.
+            data[i] = 255; data[i+1] = 255; data[i+2] = 255; data[i+3] = 255;
         } else {
             data[i+3] = 0;
         }
     }
     sctx.putImageData(imageData, 0, 0);
-
-    // 2. Create a black mask version for the outline
-    const maskCanvas = createCanvas(titleImg.width, titleImg.height);
-    const mctx = maskCanvas.getContext('2d');
-    mctx.imageSmoothingEnabled = false;
-    mctx.drawImage(spriteCanvas, 0, 0);
-    const maskData = mctx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
-    const mPixels = maskData.data;
-    for (let i = 0; i < mPixels.length; i += 4) {
-        if (mPixels[i+3] > 0) {
-            mPixels[i] = 0; mPixels[i+1] = 0; mPixels[i+2] = 0; // Black
-        }
-    }
-    mctx.putImageData(maskData, 0, 0);
-
-    // 3. Draw black outline by drawing shifted versions of the mask
-    for (let dy = -1; dy <= 1; dy++) {
-        for (let dx = -1; dx <= 1; dx++) {
-            if (dx === 0 && dy === 0) continue;
-            tempCtx.drawImage(maskCanvas, 2 + dx, 2 + dy);
-        }
-    }
-
-    // 4. Draw the red title on top
-    tempCtx.drawImage(spriteCanvas, 2, 2);
-    
+    tempCtx.drawImage(spriteCanvas, 0, 0);
     return tempCanvas;
 }
 
@@ -306,6 +281,25 @@ async function scaleImage(buffer, targetWidth, targetHeight) {
 }
 
 /**
+ * Compute scaled title dimensions while preserving the source aspect ratio.
+ * Optionally clamps to max width/height bounds.
+ */
+function getTitleDimensions(titleCanvas, scaleFactor, maxWidth = null, maxHeight = null) {
+    let width = Math.max(1, Math.floor(titleCanvas.width * scaleFactor));
+    let height = Math.max(1, Math.floor(titleCanvas.height * scaleFactor));
+
+    if (maxWidth !== null || maxHeight !== null) {
+        const widthFactor = maxWidth ? (maxWidth / width) : 1;
+        const heightFactor = maxHeight ? (maxHeight / height) : 1;
+        const fitFactor = Math.min(widthFactor, heightFactor, 1);
+        width = Math.max(1, Math.floor(width * fitFactor));
+        height = Math.max(1, Math.floor(height * fitFactor));
+    }
+
+    return { width, height };
+}
+
+/**
  * Convert canvas to buffer
  */
 function canvasToBuffer(canvas) {
@@ -377,16 +371,18 @@ async function generateCapsules() {
             titleScale *= 0.8; // Scale down for vertical to ensure it fits
         }
         
-        const titleWidth = Math.floor(processedTitleEn.width * titleScale);
-        const titleHeight = Math.floor(processedTitleEn.height * titleScale);
-        
-        // Scale titles
+        // Scale each language title independently to preserve aspect ratio.
+        const maxTitleWidth = Math.floor(size.width * 0.95);
+        const maxTitleHeight = Math.floor(size.height * 0.95);
+        const titleEnDims = getTitleDimensions(processedTitleEn, titleScale, maxTitleWidth, maxTitleHeight);
+        const titleZhDims = getTitleDimensions(processedTitleZh, titleScale, maxTitleWidth, maxTitleHeight);
+
         const titleEnBuffer = canvasToBuffer(processedTitleEn);
-        const scaledTitleEnBuffer = await scaleImage(titleEnBuffer, titleWidth, titleHeight);
+        const scaledTitleEnBuffer = await scaleImage(titleEnBuffer, titleEnDims.width, titleEnDims.height);
         const scaledTitleEn = await loadImage(scaledTitleEnBuffer);
         
         const titleZhBuffer = canvasToBuffer(processedTitleZh);
-        const scaledTitleZhBuffer = await scaleImage(titleZhBuffer, titleWidth, titleHeight);
+        const scaledTitleZhBuffer = await scaleImage(titleZhBuffer, titleZhDims.width, titleZhDims.height);
         const scaledTitleZh = await loadImage(scaledTitleZhBuffer);
         
         // Create base canvas for this size with adjusted grass
@@ -500,11 +496,19 @@ async function generateCapsules() {
         libCapsuleTitleScale *= fitScaleFactor;
     }
     
-    const libCapsuleTitleWidth = Math.floor(processedTitleEn.width * libCapsuleTitleScale);
-    const libCapsuleTitleHeight = Math.floor(processedTitleEn.height * libCapsuleTitleScale);
-    const libCapsuleTitleEnBuffer = await scaleImage(canvasToBuffer(processedTitleEn), libCapsuleTitleWidth, libCapsuleTitleHeight);
+    const libCapsuleTitleEnDims = getTitleDimensions(processedTitleEn, libCapsuleTitleScale);
+    const libCapsuleTitleZhDims = getTitleDimensions(processedTitleZh, libCapsuleTitleScale);
+    const libCapsuleTitleEnBuffer = await scaleImage(
+        canvasToBuffer(processedTitleEn),
+        libCapsuleTitleEnDims.width,
+        libCapsuleTitleEnDims.height
+    );
     const libCapsuleTitleEn = await loadImage(libCapsuleTitleEnBuffer);
-    const libCapsuleTitleZhBuffer = await scaleImage(canvasToBuffer(processedTitleZh), libCapsuleTitleWidth, libCapsuleTitleHeight);
+    const libCapsuleTitleZhBuffer = await scaleImage(
+        canvasToBuffer(processedTitleZh),
+        libCapsuleTitleZhDims.width,
+        libCapsuleTitleZhDims.height
+    );
     const libCapsuleTitleZh = await loadImage(libCapsuleTitleZhBuffer);
     
     // Create base for library capsule with grass
@@ -560,11 +564,19 @@ async function generateCapsules() {
     const headerScale = Math.max(headerScaleX, headerScaleY);
     const headerTitleScale = headerScale * 2; // Double the size for better readability
     
-    const headerTitleWidth = Math.floor(processedTitleEn.width * headerTitleScale);
-    const headerTitleHeight = Math.floor(processedTitleEn.height * headerTitleScale);
-    const headerTitleEnBuffer = await scaleImage(canvasToBuffer(processedTitleEn), headerTitleWidth, headerTitleHeight);
+    const headerTitleEnDims = getTitleDimensions(processedTitleEn, headerTitleScale);
+    const headerTitleZhDims = getTitleDimensions(processedTitleZh, headerTitleScale);
+    const headerTitleEnBuffer = await scaleImage(
+        canvasToBuffer(processedTitleEn),
+        headerTitleEnDims.width,
+        headerTitleEnDims.height
+    );
     const headerTitleEn = await loadImage(headerTitleEnBuffer);
-    const headerTitleZhBuffer = await scaleImage(canvasToBuffer(processedTitleZh), headerTitleWidth, headerTitleHeight);
+    const headerTitleZhBuffer = await scaleImage(
+        canvasToBuffer(processedTitleZh),
+        headerTitleZhDims.width,
+        headerTitleZhDims.height
+    );
     const headerTitleZh = await loadImage(headerTitleZhBuffer);
     
     // Reuse the base canvas we already created for header

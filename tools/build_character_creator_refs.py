@@ -457,6 +457,79 @@ def _char_specs() -> Dict[str, dict]:
                 }
             },
         },
+        "chengyuanzhi": {
+            "source_sprite": "assets/characters/027_chengpu.png",
+            "bg_gradient": {
+                "top": [126, 118, 96],
+                "bottom": [74, 62, 44],
+            },
+            "layers": [
+                ("head_chubby.png", {}),
+                ("shirt_armour.png", {}),
+                ("eyebrows_thick.png", {
+                    (0, 0, 0, 255): (132, 132, 132, 255),
+                }),
+                ("beard_long.png", {
+                    (0, 0, 0, 255): (128, 128, 128, 255),
+                }),
+                (
+                    "helmet.png",
+                    {
+                        # Bronze helmet body (former silver areas).
+                        (142, 142, 142, 255): (176, 128, 66, 255),
+                        (103, 103, 103, 255): (122, 84, 44, 255),
+                        # Leave plume reds unchanged.
+                    },
+                ),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [220, 154, 102, 255],
+                    "mid": [167, 119, 70, 255],
+                    "dark": [103, 72, 42, 255]
+                },
+                "shirt_tones": {
+                    "dark": [54, 37, 24, 255],
+                    "mid": [87, 37, 20, 255],
+                    "light": [154, 44, 25, 255]
+                }
+            },
+        },
+        "dengmao": {
+            "source_sprite": "assets/characters/028_xusheng.png",
+            "bg_gradient": {
+                "top": [122, 114, 98],
+                "bottom": [74, 62, 46],
+            },
+            "layers": [
+                ("head_normal.png", {}),
+                ("shirt_armour.png", {}),
+                ("eyebrows_thick.png", {}),
+                (
+                    "helmet.png",
+                    {
+                        # Helmet body: silver -> bronze
+                        (142, 142, 142, 255): (176, 128, 66, 255),
+                        (103, 103, 103, 255): (122, 84, 44, 255),
+                        # Plume: red -> white/silver
+                        (168, 64, 32, 255): (230, 230, 230, 255),
+                        (142, 54, 27, 255): (176, 176, 176, 255),
+                    },
+                ),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [253, 184, 138, 255],
+                    "mid": [216, 156, 102, 255],
+                    "dark": [151, 94, 83, 255]
+                },
+                "shirt_tones": {
+                    "dark": [23, 6, 6, 255],
+                    "mid": [94, 35, 25, 255],
+                    "light": [148, 37, 31, 255]
+                }
+            },
+        },
         "soldier": {
             "source_sprite": "assets/characters/081_shibing001.png",
             "bg_gradient": {
