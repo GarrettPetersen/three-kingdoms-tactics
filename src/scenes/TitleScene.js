@@ -59,55 +59,23 @@ export class TitleScene extends BaseScene {
         if (!titleImg) return;
         
         const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = titleImg.width + 4; // Extra space for outline
-        tempCanvas.height = titleImg.height + 4;
-        const tempCtx = tempCanvas.getContext('2d');
-        
-        // 1. Create the red title version
-        const spriteCanvas = document.createElement('canvas');
-        spriteCanvas.width = titleImg.width;
-        spriteCanvas.height = titleImg.height;
-        const sctx = spriteCanvas.getContext('2d');
+        tempCanvas.width = titleImg.width;
+        tempCanvas.height = titleImg.height;
+
+        // Create a white title mask with transparent background.
+        const sctx = tempCanvas.getContext('2d');
         sctx.drawImage(titleImg, 0, 0);
-        const imageData = sctx.getImageData(0, 0, spriteCanvas.width, spriteCanvas.height);
+        const imageData = sctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
         const data = imageData.data;
-        
         for (let i = 0; i < data.length; i += 4) {
             const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
             if (avg < 128) {
-                // Set to red (139, 0, 0)
-                data[i] = 139; data[i+1] = 0; data[i+2] = 0; data[i+3] = 255;
+                data[i] = 255; data[i + 1] = 255; data[i + 2] = 255; data[i + 3] = 255;
             } else {
-                data[i+3] = 0;
+                data[i + 3] = 0;
             }
         }
         sctx.putImageData(imageData, 0, 0);
-
-        // 2. Create a black mask version for the outline
-        const maskCanvas = document.createElement('canvas');
-        maskCanvas.width = titleImg.width;
-        maskCanvas.height = titleImg.height;
-        const mctx = maskCanvas.getContext('2d');
-        mctx.drawImage(spriteCanvas, 0, 0);
-        const maskData = mctx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
-        const mPixels = maskData.data;
-        for (let i = 0; i < mPixels.length; i += 4) {
-            if (mPixels[i+3] > 0) {
-                mPixels[i] = 0; mPixels[i+1] = 0; mPixels[i+2] = 0; // Black
-            }
-        }
-        mctx.putImageData(maskData, 0, 0);
-
-        // 3. Draw black outline by drawing shifted versions of the mask
-        for (let dy = -1; dy <= 1; dy++) {
-            for (let dx = -1; dx <= 1; dx++) {
-                if (dx === 0 && dy === 0) continue;
-                tempCtx.drawImage(maskCanvas, 2 + dx, 2 + dy);
-            }
-        }
-
-        // 4. Draw the red title on top
-        tempCtx.drawImage(spriteCanvas, 2, 2);
         
         this.processedTitleCanvas = tempCanvas;
     }
@@ -292,7 +260,7 @@ export class TitleScene extends BaseScene {
             ctx.save();
             ctx.globalAlpha = this.titleAlpha;
             const x = Math.floor((canvas.width - this.processedTitleCanvas.width) / 2);
-            const y = 38; // Slightly higher due to outline
+            const y = 40;
             ctx.drawImage(this.processedTitleCanvas, x, y);
             ctx.restore();
         }
