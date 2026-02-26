@@ -804,6 +804,48 @@ export class NarrativeScene extends BaseScene {
         
         this.processStep();
     }
+
+    debugFastSkip() {
+        if (!this.script || this.script.length === 0) return false;
+
+        const isChoiceStep = (step) => {
+            if (!step) return false;
+            return step.type === 'choice' || step.type === 'interactive' || step.type === 'prompt';
+        };
+
+        // If we're already at a player decision point, keep it there.
+        if (isChoiceStep(this.script[this.currentStep])) {
+            return true;
+        }
+
+        // Fast-forward through the script while preserving command side effects.
+        const maxIterations = Math.max(1, this.script.length * 4);
+        for (let i = 0; i < maxIterations; i++) {
+            if (this.currentStep >= this.script.length) {
+                return true; // nextStep() already handled completion transition.
+            }
+
+            const step = this.script[this.currentStep];
+            if (isChoiceStep(step)) {
+                this.processStep();
+                this.saveNarrativeState();
+                return true;
+            }
+
+            this.isWaiting = false;
+            this.waitingForActorId = null;
+            this.timer = 0;
+            this.elapsedInStep = 9999;
+            this.hasNextChunk = false;
+            this.nextStep();
+
+            if (this.currentStep >= this.script.length) {
+                return true;
+            }
+        }
+
+        return true;
+    }
     
     saveNarrativeState() {
         // Save narrative state whenever it changes (for page refresh recovery)

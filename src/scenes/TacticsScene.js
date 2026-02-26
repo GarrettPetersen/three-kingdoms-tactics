@@ -106,6 +106,120 @@ export class TacticsScene extends BaseScene {
         return null;
     }
 
+    _debugSkipCompleteCutscene() {
+        const battleDef = BATTLES[this.battleId];
+        if (battleDef && battleDef.nextScene) {
+            if (this.battleId === 'yellow_turban_rout') {
+                this.manager.switchTo('narrative', {
+                    scriptId: 'noticeboard',
+                    onComplete: () => {
+                        this.manager.switchTo('narrative', {
+                            scriptId: 'inn',
+                            onComplete: () => {
+                                this.manager.gameState.addMilestone('prologue_complete');
+                                this.manager.switchTo('map');
+                            }
+                        });
+                    }
+                });
+                return true;
+            }
+
+            if (!this.isCustom) {
+                const gs = this.manager.gameState;
+                gs.addMilestone(this.battleId);
+                gs.setStoryCursor(this.battleId);
+            }
+            this.manager.switchTo(battleDef.nextScene, battleDef.nextParams);
+            return true;
+        }
+
+        if (!this.isGameOver) this.endBattle(true);
+        return true;
+    }
+
+    debugFastSkip() {
+        if (this.isGameOver) return true;
+
+        const canShowBattleChoice = !!(
+            this.hasChoice
+            && (this.onChoiceRestrain || this.onChoiceFight || this.battleId === 'guangzong_encounter'
+                || (Array.isArray(this.battleDef?.choiceOptions) && this.battleDef.choiceOptions.length > 0))
+        );
+
+        if (this.isChoiceActive) return true;
+
+        const activeScript = this.getActiveDialogueScript();
+        if (activeScript && this.dialogueStep < activeScript.length) {
+            for (let i = this.dialogueStep; i < activeScript.length; i++) {
+                const step = activeScript[i];
+                if (step && step.type === 'choice' && Array.isArray(step.options) && step.options.length > 0) {
+                    this.dialogueStep = i;
+                    this.subStep = 0;
+                    this.dialogueElapsed = 9999;
+                    this.isChoiceActive = true;
+                    return true;
+                }
+            }
+        }
+
+        if (this.isIntroDialogueActive || this.isVictoryDialogueActive) {
+            if (this.isIntroDialogueActive) {
+                this.isIntroDialogueActive = false;
+                this.dialogueStep = 0;
+                this.subStep = 0;
+                this.dialogueElapsed = 0;
+
+                if (canShowBattleChoice) {
+                    this.isChoiceActive = true;
+                    return true;
+                }
+                if (this.isCutscene) {
+                    return this._debugSkipCompleteCutscene();
+                }
+                this.startNpcPhase();
+                return true;
+            }
+
+            this.isVictoryDialogueActive = false;
+            this.isChoiceActive = false;
+            if (this.victoryOnComplete) this.victoryOnComplete();
+            return true;
+        }
+
+        if (this.isCleanupDialogueActive) {
+            this.isCleanupDialogueActive = false;
+            this.cleanupDialogueStep = this.cleanupDialogueScript ? this.cleanupDialogueScript.length : 0;
+            if (this.cleanupDialogueOnComplete) {
+                this.cleanupDialogueOnComplete();
+                this.cleanupDialogueOnComplete = null;
+            } else {
+                this.manager.gameState.addMilestone('qingzhou_cleanup');
+                this.manager.gameState.setStoryCursor('qingzhou_cleanup', 'liubei');
+                this.manager.switchTo('map', { campaignId: 'liubei' });
+            }
+            return true;
+        }
+
+        if (this.activeDialogue) {
+            if (this.isLockedActiveDialogue()) return false;
+            if (this.activeDialogue.unit) {
+                this.activeDialogue.unit.dialogue = "";
+                this.activeDialogue.unit.voiceId = null;
+            }
+            this.activeDialogue = null;
+            this.dialogueElapsed = 0;
+            return true;
+        }
+
+        if (this.isCutscene) {
+            return this._debugSkipCompleteCutscene();
+        }
+
+        this.endBattle(true);
+        return true;
+    }
+
     enter(params = {}) {
         const gs = this.manager.gameState;
         

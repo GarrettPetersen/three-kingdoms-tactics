@@ -363,7 +363,7 @@ export const NARRATIVE_SCRIPTS = {
                     onClick: [
                         {
                             type: 'dialogue',
-                            portraitKey: 'soldier',
+                            portraitKey: 'soldier-v1',
                             name: 'Guard',
                             position: 'top',
                             voiceId: 'daxing_int_guard1_01',
@@ -379,7 +379,7 @@ export const NARRATIVE_SCRIPTS = {
                     onClick: [
                         {
                             type: 'dialogue',
-                            portraitKey: 'soldier',
+                            portraitKey: 'soldier-v2',
                             name: 'Guard',
                             position: 'top',
                             voiceId: 'daxing_int_guard2_01',
@@ -395,7 +395,7 @@ export const NARRATIVE_SCRIPTS = {
                     onClick: [
                         {
                             type: 'dialogue',
-                            portraitKey: 'soldier',
+                            portraitKey: 'soldier-v3',
                             name: 'Soldier',
                             position: 'top',
                             voiceId: 'daxing_int_soldier3_01',
@@ -411,7 +411,7 @@ export const NARRATIVE_SCRIPTS = {
                     onClick: [
                         {
                             type: 'dialogue',
-                            portraitKey: 'soldier',
+                            portraitKey: 'soldier-v4',
                             name: 'Soldier',
                             position: 'top',
                             voiceId: 'daxing_int_soldier4_01',
@@ -459,7 +459,7 @@ export const NARRATIVE_SCRIPTS = {
                     onClick: [
                         {
                             type: 'dialogue',
-                            portraitKey: 'soldier',
+                            portraitKey: 'soldier-v5',
                             name: 'Volunteer',
                             position: 'top',
                             voiceId: 'daxing_int_volunteer1_01',
@@ -475,7 +475,7 @@ export const NARRATIVE_SCRIPTS = {
                     onClick: [
                         {
                             type: 'dialogue',
-                            portraitKey: 'soldier',
+                            portraitKey: 'soldier-v1',
                             name: 'Volunteer',
                             position: 'top',
                             voiceId: 'daxing_int_volunteer2_01',
@@ -862,7 +862,7 @@ export const NARRATIVE_SCRIPTS = {
                 onClick: [
                     {
                         type: 'dialogue',
-                        portraitKey: 'farmer',
+                        portraitKey: 'farmer-v1',
                         position: 'top',
                         name: 'Villager',
                         voiceId: 'pro_farmer_01',
@@ -1136,7 +1136,7 @@ export const NARRATIVE_SCRIPTS = {
                 onClick: [
                     {
                         type: 'dialogue',
-                        portraitKey: 'farmer',
+                        portraitKey: 'farmer-v2',
                         position: 'top',
                         name: 'Villager',
                         voiceId: 'inn_farmer_01',
@@ -1591,7 +1591,7 @@ export const NARRATIVE_SCRIPTS = {
 
         {
             type: 'dialogue',
-            portraitKey: 'soldier',
+            portraitKey: 'soldier-v2',
             position: 'top',
             name: 'Volunteer',
             voiceId: 'rec_vol_01',
@@ -1727,7 +1727,7 @@ export const NARRATIVE_SCRIPTS = {
                         {
                             type: 'dialogue',
                             name: 'Military Attendant',
-                            portraitKey: 'soldier',
+                            portraitKey: 'soldier-v3',
                             voiceId: 'cc_dq_att_01',
                             position: 'top',
                             bg: 'urban_street',
@@ -1768,7 +1768,7 @@ export const NARRATIVE_SCRIPTS = {
                         {
                             type: 'dialogue',
                             name: 'Military Attendant',
-                            portraitKey: 'soldier',
+                            portraitKey: 'soldier-v3',
                             voiceId: 'cc_dq_att_02',
                             position: 'top',
                             bg: 'urban_street',

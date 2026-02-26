@@ -209,6 +209,17 @@ async function init() {
 
     let inputBuffer = "";
     window.addEventListener('keydown', (e) => {
+        const isFastSkipCombo = (e.shiftKey && (e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K'));
+        if (isFastSkipCombo) {
+            e.preventDefault();
+            inputBuffer = "";
+            const scene = sceneManager.currentScene;
+            if (scene && typeof scene.debugFastSkip === 'function') {
+                scene.debugFastSkip();
+            }
+            return;
+        }
+
         // Allow scenes to handle specific keys (like Enter to advance text)
         sceneManager.handleKeyDown(e);
 
@@ -435,7 +446,17 @@ async function init() {
             'Dong-Zhuo', 'Zhang-Jiao', 'Zhang-Bao',
             'Huangfu-Song-generic', 'Zhu-Jun-generic',
             'farmer',
+            'farmer-v1',
+            'farmer-v2',
+            'farmer-v3',
+            'farmer-v4',
+            'farmer-v5',
             'soldier',
+            'soldier-v1',
+            'soldier-v2',
+            'soldier-v3',
+            'soldier-v4',
+            'soldier-v5',
             'Zhang-Liang',
             'Gong-Jing',
             'Lu-Zhi'
