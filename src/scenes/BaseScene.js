@@ -676,14 +676,6 @@ export class BaseScene {
         ctx.lineWidth = 1;
         ctx.strokeRect(portraitX - 0.5, portraitY - 0.5, portraitW + 1, portraitH + 1);
 
-        const isNoticeboard = step.portraitKey === 'noticeboard' || (step.name && step.name.toLowerCase().includes('noticeboard'));
-        let isNarrator = step.portraitKey === 'narrator' || !step.name || step.name.toLowerCase() === 'narrator';
-        
-        // Force Narrator name if not set
-        if (isNarrator && (!step.name || step.name.toLowerCase() === 'narrator')) {
-            step.name = "Narrator";
-        }
-
         const speakerToPortraitKey = {
             liubei: 'liu-bei',
             guanyu: 'guan-yu',
@@ -694,8 +686,8 @@ export class BaseScene {
             zhangjue: 'zhang-jiao',
             zhangliang: 'zhang-liang',
             zhangbao: 'zhang-bao',
-            dengmao: 'dengmao',
-            chengyuanzhi: 'chengyuanzhi',
+            dengmao: 'deng-mao',
+            chengyuanzhi: 'cheng-yuanzhi',
             huangfusong: 'huangfu-song-generic',
             zhujun: 'zhu-jun-generic',
             luzhi: 'lu-zhi',
@@ -721,8 +713,8 @@ export class BaseScene {
             'zhang jue': 'zhang-jiao',
             'zhang liang': 'zhang-liang',
             'zhang bao': 'zhang-bao',
-            'deng mao': 'dengmao',
-            'cheng yuanzhi': 'chengyuanzhi',
+            'deng mao': 'deng-mao',
+            'cheng yuanzhi': 'cheng-yuanzhi',
             'huangfu song': 'huangfu-song-generic',
             'zhu jun': 'zhu-jun-generic',
             'lu zhi': 'lu-zhi',
@@ -735,23 +727,64 @@ export class BaseScene {
             blacksmith: 'blacksmith',
             narrator: 'narrator'
         };
+        const legacyPortraitAliases = {
+            dengmao: 'deng-mao',
+            chengyuanzhi: 'cheng-yuanzhi',
+            zhoujing: 'zhou-jing',
+            yellowturban: 'yellow-turban'
+        };
+        const portraitAssetKeyById = {
+            'liu-bei': 'Liu-Bei',
+            'guan-yu': 'Guan-Yu',
+            'zhang-fei': 'Zhang-Fei',
+            'cao-cao': 'Cao-Cao',
+            'cao-ren': 'Cao-Ren',
+            'zhou-jing': 'Zhou-Jing',
+            'deng-mao': 'Deng-Mao',
+            'cheng-yuanzhi': 'Cheng-Yuanzhi',
+            'dong-zhuo': 'Dong-Zhuo',
+            'zhang-jiao': 'Zhang-Jiao',
+            'zhang-bao': 'Zhang-Bao',
+            'zhang-liang': 'Zhang-Liang',
+            'huangfu-song-generic': 'Huangfu-Song-generic',
+            'zhu-jun-generic': 'Zhu-Jun-generic',
+            'farmer': 'farmer',
+            'soldier': 'soldier',
+            'gong-jing': 'Gong-Jing',
+            'lu-zhi': 'Lu-Zhi',
+            'yellow-turban': 'Yellow-Turban'
+        };
 
         // Try to find a dedicated portrait first
         let portraitImg = null;
-        if (!step.portraitKey) {
-            const rawSpeaker = (step.speaker || '').trim();
-            const speakerKey = rawSpeaker.toLowerCase();
-            const nameKey = (step.name || '').trim().toLowerCase();
-            step.portraitKey =
-                speakerToPortraitKey[speakerKey] ||
-                nameToPortraitKey[nameKey] ||
-                (rawSpeaker || null);
-        }
+        const rawSpeaker = (step.speaker || '').trim();
+        const speakerKey = rawSpeaker.toLowerCase();
+        const nameKey = (step.name || '').trim().toLowerCase();
+        const rawPortraitId =
+            ((step.portraitKey && String(step.portraitKey)) ||
+            speakerToPortraitKey[speakerKey] ||
+            nameToPortraitKey[nameKey] ||
+            rawSpeaker ||
+            '')
+                .trim()
+                .toLowerCase();
+        let resolvedPortraitId = legacyPortraitAliases[rawPortraitId] || rawPortraitId || null;
+
         const genericName = (step.name || '').trim().toLowerCase();
         if (genericName === 'yellow turban' || step.speaker === 'yellowturban') {
             // Non-named rebels should use the generic battlefield sprite portrait.
-            step.portraitKey = 'yellowturban';
+            resolvedPortraitId = 'yellow-turban';
         }
+        step.portraitKey = resolvedPortraitId;
+
+        const isNoticeboard = resolvedPortraitId === 'noticeboard' || (step.name && step.name.toLowerCase().includes('noticeboard'));
+        const isNarrator = resolvedPortraitId === 'narrator' || !step.name || step.name.toLowerCase() === 'narrator';
+
+        // Force Narrator name if not set
+        if (isNarrator && (!step.name || step.name.toLowerCase() === 'narrator')) {
+            step.name = 'Narrator';
+        }
+
         const portraitToSpriteKey = {
             'liu-bei': 'liubei',
             'guan-yu': 'guanyu',
@@ -766,7 +799,8 @@ export class BaseScene {
             'gong-jing': 'gongjing_sprite',
             'lu-zhi': 'zhoujing',
             'huangfu-song-generic': 'huangfusong_sprite',
-            'zhu-jun-generic': 'zhujun_sprite'
+            'zhu-jun-generic': 'zhujun_sprite',
+            'yellow-turban': 'yellowturban'
         };
         if (isNoticeboard || isNarrator) {
             let useBg = bgImg;
@@ -784,26 +818,15 @@ export class BaseScene {
                 ctx.drawImage(useBg, cropX, cropY, portraitW, portraitH, portraitX, portraitY, portraitW, portraitH);
             }
             // If no bgImg, it just stays black (narrator/noticeboard default)
-        } else if (step.portraitKey) {
-            // 1. Try formatted name first (e.g. "portrait_Liu-Bei")
-            const formattedName = step.name ? step.name.replace(/ /g, '-') : '';
-            portraitImg = assets.getImage(`portrait_${formattedName}`);
-            
-            // 2. If name-based failed (e.g. name is "???"), try the portraitKey itself (e.g. "portrait_zhangfei")
-            if (!portraitImg) {
-                portraitImg = assets.getImage(`portrait_${step.portraitKey}`);
+        } else if (resolvedPortraitId) {
+            const dedicatedPortraitKey = portraitAssetKeyById[resolvedPortraitId];
+            if (dedicatedPortraitKey) {
+                portraitImg = assets.getImage(`portrait_${dedicatedPortraitKey}`);
             }
 
-            // 3. Special case for common variations
-            if (!portraitImg) {
-                // Try title case portraitKey (e.g. "portrait_Zhang-Fei")
-                const titleKey = step.portraitKey.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('-');
-                portraitImg = assets.getImage(`portrait_${titleKey}`);
-            }
-            
             if (!portraitImg) {
                 // Universal fallback: zoomed sprite portrait from the actor sheet.
-                const rawKey = step.portraitKey || '';
+                const rawKey = resolvedPortraitId || '';
                 const normalizedKey = rawKey.replace(/-/g, '').toLowerCase();
                 const mappedKey = portraitToSpriteKey[rawKey] || portraitToSpriteKey[normalizedKey] || null;
                 const spriteImg =
