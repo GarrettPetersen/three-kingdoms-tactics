@@ -422,12 +422,14 @@ def _char_specs() -> Dict[str, dict]:
                     },
                 ),
                 ("shirt_armour.png", {}),
-                ("hair_short_bun.png", {}),
+                ("hair_long.png", {}),
+                ("hair_long_bun.png", {}),
                 ("eyebrows_thick.png", {}),
                 ("big_nose.png", {}),
                 ("moustache_thick.png", {}),
                 ("beard_bushy.png", {}),
                 ("hat_headscarf.png", {}),
+                ("short_bangs.png", {}),
             ],
             "manual_palette": {
                 "skin_tones": {

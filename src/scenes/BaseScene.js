@@ -316,7 +316,7 @@ export class BaseScene {
 
     checkCharacterHit(img, action, frame, x, y, clickX, clickY, options = {}) {
         if (!img) return false;
-        const { flip = false, sinkOffset = 0, isProp = false } = options;
+        const { flip = false, sinkOffset = 0, isProp = false, alphaThreshold = 254 } = options;
         const sourceSize = 72;
 
         if (isProp) {
@@ -344,7 +344,7 @@ export class BaseScene {
             hctx.drawImage(img, 0, 0);
             hctx.restore();
             const alpha = hctx.getImageData(0, 0, 1, 1).data[3];
-            return alpha > 10;
+            return alpha > alphaThreshold;
         }
 
         const anim = ANIMATIONS[action] || ANIMATIONS.standby;
@@ -388,7 +388,7 @@ export class BaseScene {
         hctx.restore();
 
         const alpha = hctx.getImageData(0, 0, 1, 1).data[3];
-        return alpha > 10; // Threshold for hit
+        return alpha > alphaThreshold;
     }
 
     /**
@@ -408,7 +408,7 @@ export class BaseScene {
      */
     checkImageFrameHit(img, srcX, srcY, srcW, srcH, destX, destY, clickX, clickY, options = {}) {
         if (!img) return false;
-        const { flip = false, alphaThreshold = 10 } = options;
+        const { flip = false, alphaThreshold = 254 } = options;
 
         if (clickX < destX || clickX > destX + srcW || clickY < destY || clickY > destY + srcH) {
             return false;
@@ -438,7 +438,7 @@ export class BaseScene {
 
     drawCharacterPixelOutline(ctx, img, action, frame, x, y, options = {}) {
         if (!img) return;
-        const { flip = false, sinkOffset = 0, color = '#ffd700', alphaThreshold = 10 } = options;
+        const { flip = false, sinkOffset = 0, color = '#ffd700', alphaThreshold = 254 } = options;
         const sourceSize = 72;
         const feetY = -44;
 
@@ -512,7 +512,7 @@ export class BaseScene {
 
     drawImageFramePixelOutline(ctx, img, srcX, srcY, srcW, srcH, destX, destY, options = {}) {
         if (!img) return;
-        const { flip = false, color = '#ffd700', alphaThreshold = 10 } = options;
+        const { flip = false, color = '#ffd700', alphaThreshold = 254 } = options;
         if (srcW <= 0 || srcH <= 0) return;
 
         if (

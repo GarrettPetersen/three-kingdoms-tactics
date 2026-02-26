@@ -545,8 +545,6 @@ export class TacticsScene extends BaseScene {
         this.cutsceneCombatComplete = false; // Flag to track when combat is done
         
         // Reset all units for combat
-        this.updateHexDamageWaves(dt);
-
         this.units.forEach(u => {
             u.hasMoved = false;
             u.hasAttacked = false;
@@ -4089,7 +4087,7 @@ export class TacticsScene extends BaseScene {
         });
     }
 
-    triggerHexDamageWave(r, q, amplitudePx = 2.4, durationMs = 420) {
+    triggerHexDamageWave(r, q, amplitudePx = 3.2, durationMs = 760) {
         const key = `${r},${q}`;
         this.hexDamageWaves.set(key, {
             elapsedMs: 0,
@@ -4113,10 +4111,10 @@ export class TacticsScene extends BaseScene {
         const wave = this.hexDamageWaves.get(`${r},${q}`);
         if (!wave) return 0;
 
-        // Starts with a downward dip, then springs upward/downward with damping.
+        // Starts with a downward dip, then springs upward/downward with a slower damping curve.
         const t = wave.elapsedMs / 1000;
-        const damping = Math.exp(-8.0 * t);
-        const oscillation = Math.cos(32.0 * t);
+        const damping = Math.exp(-3.8 * t);
+        const oscillation = Math.cos(17.0 * t);
         return wave.amplitudePx * damping * oscillation;
     }
 
@@ -5731,6 +5729,7 @@ export class TacticsScene extends BaseScene {
     update(timestamp) {
         const dt = timestamp - (this.lastTime || timestamp);
             this.lastTime = timestamp;
+        this.updateHexDamageWaves(dt);
 
         // Periodic state saving for crash recovery (only for active campaign battles).
         // Never re-save during/after game over or victory-dialogue transitions.
@@ -6344,15 +6343,13 @@ export class TacticsScene extends BaseScene {
 
         // 1. Collect hexes
         for (let r = 0; r < config.mapHeight; r++) {
-            const xOffset = (Math.abs(r) % 2 === 1) ? config.horizontalSpacing / 2 : 0;
             for (let q = 0; q < config.mapWidth; q++) {
-                const x = this.startX + q * config.horizontalSpacing + xOffset;
-                const y = this.startY + r * config.verticalSpacing;
+                const pos = this.getPixelPos(r, q);
                 const cell = this.tacticsMap.getCell(r, q);
                 
                 drawCalls.push({
                     type: 'hex',
-                    r, q, x, y, priority: 0,
+                    r, q, x: pos.x, y: pos.y + (cell.elevation || 0), priority: 0,
                     terrain: cell.terrain,
                     layer: this.getTerrainLayer(cell.terrain),
                     elevation: cell.elevation || 0,

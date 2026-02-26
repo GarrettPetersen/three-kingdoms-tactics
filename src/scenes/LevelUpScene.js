@@ -95,7 +95,7 @@ export class LevelUpScene extends BaseScene {
             // Victory animation: prepared -> jump -> land -> pose
             // Let's make it 1 jump per 1.5 seconds
             const frame = (this.timer * 0.002);
-            this.drawCharacter(ctx, img, 'victory', frame, cx, 120, { scale: 1.5 });
+            this.drawCharacter(ctx, img, 'victory', frame, cx, 120);
         }
 
         // Text

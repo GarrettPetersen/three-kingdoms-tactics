@@ -52,7 +52,7 @@ ELDERLY_CHARS = [
 CHAR_FEATURES = {
     "liu-bei": "long earlobes, virtuous expression",
     "guan-yu": "long flowing beard, majestic phoenix eyes",
-    "zhang-fei": "bristly beard, wide round eyes",
+    "zhang-fei": "bristly beard, wide round eyes, fierce and wild",
     "diaochan": "incredibly beautiful, elegant features",
     "lu-bu": "handsome, powerful, ornate feathered headgear",
     "zhuge-liang": "refined scholar, holding feather fan",
