@@ -1221,7 +1221,6 @@ export class MapScene extends BaseScene {
                 // Lu Zhi thanks them but warns of consequences
                 {
                     type: 'dialogue',
-                    portraitKey: 'custom-male-22',
                     speaker: 'luzhi',
                     name: 'Commander Lu Zhi',
                     position: 'top',
@@ -1230,7 +1229,6 @@ export class MapScene extends BaseScene {
                 },
                 {
                     type: 'dialogue',
-                    portraitKey: 'liu-bei',
                     speaker: 'liubei',
                     name: 'Liu Bei',
                     position: 'top',
@@ -1239,7 +1237,6 @@ export class MapScene extends BaseScene {
                 },
                 {
                     type: 'dialogue',
-                    portraitKey: 'custom-male-22',
                     speaker: 'luzhi',
                     name: 'Commander Lu Zhi',
                     position: 'top',
@@ -1248,7 +1245,6 @@ export class MapScene extends BaseScene {
                 },
                 {
                     type: 'dialogue',
-                    portraitKey: 'guan-yu',
                     speaker: 'guanyu',
                     name: 'Guan Yu',
                     position: 'top',

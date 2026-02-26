@@ -435,11 +435,10 @@ async function init() {
             'Dong-Zhuo', 'Zhang-Jiao', 'Zhang-Bao',
             'Huangfu-Song-generic', 'Zhu-Jun-generic',
             'farmer',
-            // Custom portraits for NPCs
-            'Custom-Male-10',  // Zhang Jue (Lord of Heaven)
-            'Custom-Male-12',  // Zhang Liang (Lord of Human)
-            'Custom-Male-17',  // Gong Jing (Imperial Protector)
-            'Custom-Male-22'   // Lu Zhi (Commander)
+            'soldier',
+            'Zhang-Liang',
+            'Gong-Jing',
+            'Lu-Zhi'
         ];
 
         await Promise.all([

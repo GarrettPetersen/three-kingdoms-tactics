@@ -6714,7 +6714,7 @@ export class TacticsScene extends BaseScene {
                     'guanyu': 'guan-yu',
                     'zhangfei': 'zhang-fei',
                     'dongzhuo': 'dong-zhuo',
-                    'gongjing': 'custom-male-17'  // Older official portrait for Imperial Protector
+                    'gongjing': 'gong-jing'  // Official portrait for Imperial Protector
                 };
                 this.renderDialogueBox(ctx, canvas, {
                     portraitKey: step.portraitKey || portraitMap[step.speaker] || step.speaker,
@@ -9107,7 +9107,7 @@ export class TacticsScene extends BaseScene {
                 'guanyu': 'guan-yu',
                 'zhangfei': 'zhang-fei',
                 'dongzhuo': 'dong-zhuo',
-                'gongjing': 'custom-male-17'  // Older official portrait for Imperial Protector
+                'gongjing': 'gong-jing'  // Official portrait for Imperial Protector
             };
             
             const status = this.renderDialogueBox(this.manager.ctx, this.manager.canvas, {

@@ -345,7 +345,7 @@ def _char_specs() -> Dict[str, dict]:
                 ("eyebrows_spock.png", {}),
                 ("moustache_thick.png", {}),
                 ("beard_long.png", {}),
-                ("hat_headcloth.png", {}),
+                ("hat_headscarf.png", {}),
             ],
             "manual_palette": {
                 "skin_tones": {
@@ -455,6 +455,142 @@ def _char_specs() -> Dict[str, dict]:
                     "mid": [154, 100, 34, 255],
                     "light": [221, 161, 43, 255]
                 }
+            },
+        },
+        "soldier": {
+            "source_sprite": "assets/characters/081_shibing001.png",
+            "bg_gradient": {
+                "top": [108, 120, 138],
+                "bottom": [62, 74, 92],
+            },
+            "layers": [
+                ("head_normal.png", {}),
+                ("shirt_armour.png", {}),
+                ("eyebrows_thin.png", {}),
+                (
+                    "helmet.png",
+                    {
+                        (142, 142, 142, 255): (173, 173, 173, 255),
+                        (103, 103, 103, 255): (98, 98, 98, 255),
+                        (168, 64, 32, 255): (152, 52, 49, 255),
+                        (142, 54, 27, 255): (121, 46, 38, 255),
+                    },
+                ),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [255, 194, 148, 255],
+                    "mid": [249, 173, 126, 255],
+                    "dark": [149, 98, 66, 255]
+                },
+                "shirt_tones": {
+                    "dark": [32, 32, 32, 255],
+                    "mid": [98, 98, 98, 255],
+                    "light": [173, 173, 173, 255]
+                }
+            },
+        },
+        "zhangjiao": {
+            "source_sprite": "assets/characters/005_zhangjiao.png",
+            "bg_gradient": {
+                "top": [132, 116, 86],
+                "bottom": [78, 66, 44],
+            },
+            "layers": [
+                ("head_normal.png", {}),
+                ("shirt_robe.png", {}),
+                ("hair_long.png", {}),
+                ("hair_long_bun.png", {}),
+                ("eyebrows_thin.png", {}),
+                ("moustache_thick.png", {}),
+                ("beard_long.png", {}),
+                ("hat_headscarf.png", {}),
+                ("hat_guan.png", {}),
+                ("long_bangs.png", {}),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [234, 158, 111, 255],
+                    "mid": [178, 112, 72, 255],
+                    "dark": [124, 71, 38, 255]
+                },
+                "shirt_tones": {
+                    "dark": [58, 36, 17, 255],
+                    "mid": [130, 80, 6, 255],
+                    "light": [210, 143, 42, 255]
+                },
+                "headscarf_colors": [
+                    [130, 80, 6, 255],
+                    [210, 143, 42, 255]
+                ],
+                "guan_hat_colors": [
+                    [104, 68, 5, 255],
+                    [210, 143, 42, 255]
+                ]
+            },
+        },
+        "zhangbao": {
+            "source_sprite": "assets/characters/006_zhangbao.png",
+            "bg_gradient": {
+                "top": [140, 124, 90],
+                "bottom": [84, 70, 46],
+            },
+            "layers": [
+                ("head_chubby.png", {}),
+                ("shirt_high_collar.png", {}),
+                ("hair_male_pattern_baldness.png", {}),
+                ("eyebrows_thick.png", {}),
+                ("moustache_thick.png", {}),
+                ("beard_bushy.png", {}),
+                ("hat_headscarf.png", {}),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [255, 216, 194, 255],
+                    "mid": [220, 198, 179, 255],
+                    "dark": [143, 89, 86, 255]
+                },
+                "shirt_tones": {
+                    "dark": [51, 51, 51, 255],
+                    "mid": [110, 110, 110, 255],
+                    "light": [202, 202, 202, 255]
+                },
+                "headscarf_colors": [
+                    [168, 125, 14, 255],
+                    [252, 166, 13, 255]
+                ]
+            },
+        },
+        "zhangliang": {
+            "source_sprite": "assets/characters/007_zhangliang.png",
+            "bg_gradient": {
+                "top": [124, 118, 104],
+                "bottom": [74, 68, 54],
+            },
+            "layers": [
+                ("head_normal.png", {}),
+                ("shirt_robe.png", {}),
+                ("hair_short_bun.png", {}),
+                ("eyebrows_thin.png", {}),
+                ("moustache_thin.png", {}),
+                ("beard_pointy.png", {}),
+                ("hat_headscarf.png", {}),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [245, 164, 115, 255],
+                    "mid": [133, 109, 91, 255],
+                    "dark": [82, 68, 53, 255]
+                },
+                "shirt_tones": {
+                    "dark": [53, 52, 51, 255],
+                    "mid": [107, 89, 71, 255],
+                    "light": [163, 151, 141, 255]
+                },
+                "headscarf_colors": [
+                    [99, 77, 24, 255],
+                    [245, 204, 104, 255]
+                ]
             },
         },
     }

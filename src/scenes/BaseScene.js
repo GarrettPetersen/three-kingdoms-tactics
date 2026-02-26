@@ -684,11 +684,68 @@ export class BaseScene {
             step.name = "Narrator";
         }
 
+        const speakerToPortraitKey = {
+            liubei: 'liu-bei',
+            guanyu: 'guan-yu',
+            zhangfei: 'zhang-fei',
+            caocao: 'cao-cao',
+            caoren: 'cao-ren',
+            dongzhuo: 'dong-zhuo',
+            zhangjue: 'zhang-jiao',
+            zhangliang: 'zhang-liang',
+            zhangbao: 'zhang-bao',
+            dengmao: 'dengmao',
+            chengyuanzhi: 'chengyuanzhi',
+            huangfusong: 'huangfu-song-generic',
+            zhujun: 'zhu-jun-generic',
+            luzhi: 'lu-zhi',
+            gongjing: 'gong-jing',
+            zhoujing: 'zhou-jing',
+            soldier: 'soldier',
+            farmer: 'farmer',
+            farmer2: 'farmer2',
+            merchant: 'merchant',
+            blacksmith: 'blacksmith',
+            xiaoer: 'xiaoer',
+            yellowturban: 'yellowturban',
+            narrator: 'narrator',
+            noticeboard: 'noticeboard'
+        };
+        const nameToPortraitKey = {
+            'liu bei': 'liu-bei',
+            'guan yu': 'guan-yu',
+            'zhang fei': 'zhang-fei',
+            'cao cao': 'cao-cao',
+            'cao ren': 'cao-ren',
+            'dong zhuo': 'dong-zhuo',
+            'zhang jue': 'zhang-jiao',
+            'zhang liang': 'zhang-liang',
+            'zhang bao': 'zhang-bao',
+            'deng mao': 'dengmao',
+            'cheng yuanzhi': 'chengyuanzhi',
+            'huangfu song': 'huangfu-song-generic',
+            'zhu jun': 'zhu-jun-generic',
+            'lu zhi': 'lu-zhi',
+            'commander lu zhi': 'lu-zhi',
+            'gong jing': 'gong-jing',
+            'zhou jing': 'zhou-jing',
+            villager: 'farmer',
+            farmer: 'farmer',
+            merchant: 'merchant',
+            blacksmith: 'blacksmith',
+            narrator: 'narrator'
+        };
+
         // Try to find a dedicated portrait first
         let portraitImg = null;
-        if (!step.portraitKey && step.speaker) {
-            // Let speaker key drive portrait lookup when scripts omit portraitKey.
-            step.portraitKey = step.speaker;
+        if (!step.portraitKey) {
+            const rawSpeaker = (step.speaker || '').trim();
+            const speakerKey = rawSpeaker.toLowerCase();
+            const nameKey = (step.name || '').trim().toLowerCase();
+            step.portraitKey =
+                speakerToPortraitKey[speakerKey] ||
+                nameToPortraitKey[nameKey] ||
+                (rawSpeaker || null);
         }
         const genericName = (step.name || '').trim().toLowerCase();
         if (genericName === 'yellow turban' || step.speaker === 'yellowturban') {
@@ -705,10 +762,9 @@ export class BaseScene {
             'dong-zhuo': 'dongzhuo',
             'zhang-bao': 'zhangbao',
             'zhang-jiao': 'zhangjiao',
-            'custom-male-10': 'zhangjiao',
-            'custom-male-12': 'zhangliang',
-            'custom-male-17': 'gongjing_sprite',
-            'custom-male-22': 'zhoujing',
+            'zhang-liang': 'zhangliang',
+            'gong-jing': 'gongjing_sprite',
+            'lu-zhi': 'zhoujing',
             'huangfu-song-generic': 'huangfusong_sprite',
             'zhu-jun-generic': 'zhujun_sprite'
         };

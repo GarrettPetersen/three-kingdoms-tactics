@@ -687,7 +687,7 @@ export const NARRATIVE_SCRIPTS = {
     'qingzhou_gate_return': [
         {
             type: 'dialogue',
-            portraitKey: 'custom-male-17',
+            portraitKey: 'gong-jing',
             name: 'Protector Gong Jing',
             voiceId: 'qz_ret_gj_01',
             position: 'top',
@@ -722,7 +722,7 @@ export const NARRATIVE_SCRIPTS = {
                     result: [
                         {
                             type: 'dialogue',
-                            portraitKey: 'custom-male-17',
+                            portraitKey: 'gong-jing',
                             name: 'Protector Gong Jing',
                             position: 'top',
                             voiceId: 'qz_ret_gj_choice_01',
@@ -737,7 +737,7 @@ export const NARRATIVE_SCRIPTS = {
         },
         {
             type: 'dialogue',
-            portraitKey: 'custom-male-17',
+            portraitKey: 'gong-jing',
             name: 'Protector Gong Jing',
             voiceId: 'qz_ret_gj_02',
             position: 'top',
