@@ -156,10 +156,17 @@ export class AssetLoader {
         return Promise.all(promises);
     }
 
-    palettizeImage(img, paletteKey) {
+    palettizeImage(img, paletteKey, options = {}) {
         if (!img) return null;
         const palette = this.palettes[paletteKey];
         if (!palette) return img;
+
+        const {
+            ditherMix = false,
+            flatThreshold = 42,
+            mixImprovement = 0.9,
+            pattern = 'bayer4'
+        } = options;
 
         const canvas = document.createElement('canvas');
         canvas.width = img.width;
@@ -169,46 +176,127 @@ export class AssetLoader {
 
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imageData.data;
+        const src = new Uint8ClampedArray(data); // keep source stable for flat-area checks
+        const w = canvas.width;
+        const h = canvas.height;
 
-        for (let i = 0; i < data.length; i += 4) {
-            const a = data[i + 3];
-            if (a < 10) continue; // Skip transparent pixels
-
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
-
-            // Find nearest color in palette
-            let bestColor = palette[0];
-            let minDist = Infinity;
-
-            for (const color of palette) {
-                // simple Euclidean distance in RGB space
-                const dr = r - color.r;
-                const dg = g - color.g;
-                const db = b - color.b;
-                const dist = dr * dr + dg * dg + db * db;
-                
-                if (dist < minDist) {
-                    minDist = dist;
-                    bestColor = color;
-                }
+        const distSq = (r1, g1, b1, r2, g2, b2) => {
+            const dr = r1 - r2;
+            const dg = g1 - g2;
+            const db = b1 - b2;
+            return dr * dr + dg * dg + db * db;
+        };
+        const flatnessAt = (x, y) => {
+            const idx = (y * w + x) * 4;
+            const r = src[idx];
+            const g = src[idx + 1];
+            const b = src[idx + 2];
+            let total = 0;
+            let count = 0;
+            const neighbors = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+            for (const [dx, dy] of neighbors) {
+                const nx = x + dx;
+                const ny = y + dy;
+                if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
+                const nIdx = (ny * w + nx) * 4;
+                if (src[nIdx + 3] < 10) continue;
+                total += Math.abs(r - src[nIdx]) + Math.abs(g - src[nIdx + 1]) + Math.abs(b - src[nIdx + 2]);
+                count++;
             }
+            if (!count) return 0;
+            return total / (count * 3);
+        };
+        const bayer4 = [
+            [0, 8, 2, 10],
+            [12, 4, 14, 6],
+            [3, 11, 1, 9],
+            [15, 7, 13, 5]
+        ];
+        const bayer8 = [
+            [0, 48, 12, 60, 3, 51, 15, 63],
+            [32, 16, 44, 28, 35, 19, 47, 31],
+            [8, 56, 4, 52, 11, 59, 7, 55],
+            [40, 24, 36, 20, 43, 27, 39, 23],
+            [2, 50, 14, 62, 1, 49, 13, 61],
+            [34, 18, 46, 30, 33, 17, 45, 29],
+            [10, 58, 6, 54, 9, 57, 5, 53],
+            [42, 26, 38, 22, 41, 25, 37, 21]
+        ];
+        const thresholdAt = (x, y) => {
+            if (pattern === 'checker') return ((x + y) % 2) * 0.5 + 0.25;
+            if (pattern === 'bayer8') return (bayer8[y % 8][x % 8] + 0.5) / 64;
+            return (bayer4[y % 4][x % 4] + 0.5) / 16;
+        };
 
-            data[i] = bestColor.r;
-            data[i + 1] = bestColor.g;
-            data[i + 2] = bestColor.b;
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                const i = (y * w + x) * 4;
+                const a = src[i + 3];
+                if (a < 10) continue; // Skip transparent pixels
+
+                const r = src[i];
+                const g = src[i + 1];
+                const b = src[i + 2];
+
+                // Find nearest and second-nearest colors in palette
+                let bestColor = palette[0];
+                let secondColor = palette[0];
+                let minDist = Infinity;
+                let secondDist = Infinity;
+                for (const color of palette) {
+                    const d = distSq(r, g, b, color.r, color.g, color.b);
+                    if (d < minDist) {
+                        secondDist = minDist;
+                        secondColor = bestColor;
+                        minDist = d;
+                        bestColor = color;
+                    } else if (d < secondDist) {
+                        secondDist = d;
+                        secondColor = color;
+                    }
+                }
+
+                let out = bestColor;
+                if (ditherMix && secondColor !== bestColor && flatnessAt(x, y) <= flatThreshold) {
+                    // Project source onto segment [best, second] to estimate two-color mix amount.
+                    const abR = secondColor.r - bestColor.r;
+                    const abG = secondColor.g - bestColor.g;
+                    const abB = secondColor.b - bestColor.b;
+                    const abLenSq = abR * abR + abG * abG + abB * abB;
+                    let t = 0;
+                    if (abLenSq > 0) {
+                        const apR = r - bestColor.r;
+                        const apG = g - bestColor.g;
+                        const apB = b - bestColor.b;
+                        t = (apR * abR + apG * abG + apB * abB) / abLenSq;
+                    }
+                    t = Math.max(0, Math.min(1, t));
+
+                    const mixR = bestColor.r + abR * t;
+                    const mixG = bestColor.g + abG * t;
+                    const mixB = bestColor.b + abB * t;
+                    const mixErr = distSq(r, g, b, mixR, mixG, mixB);
+                    const improves = mixErr < (minDist * mixImprovement);
+                    if (improves && t > 0.03 && t < 0.97) {
+                        out = (t > thresholdAt(x, y)) ? secondColor : bestColor;
+                    }
+                }
+
+                data[i] = out.r;
+                data[i + 1] = out.g;
+                data[i + 2] = out.b;
+            }
         }
 
         ctx.putImageData(imageData, 0, 0);
         return canvas;
     }
 
-    palettizeKeys(keys, paletteKey) {
+    palettizeKeys(keys, paletteKey, options = {}) {
         keys.forEach(key => {
             const original = this.getImage(key);
             if (original) {
-                const palettized = this.palettizeImage(original, paletteKey);
+                const palettized = this.palettizeImage(original, paletteKey, options);
                 // Re-attach or re-calculate silhouette for the new palettized canvas
                 palettized.silhouette = original.silhouette || this.analyzeSilhouette(palettized);
                 this.images[key] = palettized;

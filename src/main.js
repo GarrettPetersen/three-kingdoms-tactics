@@ -736,7 +736,12 @@ async function init() {
         });
 
         // Apply palette to terrain assets
-        assets.palettizeKeys(TERRAIN_TYPES, 'vinik24');
+        assets.palettizeKeys(TERRAIN_TYPES, 'vinik24', {
+            ditherMix: true,
+            flatThreshold: 38,
+            mixImprovement: 0.92,
+            pattern: 'bayer4'
+        });
 
         // Imperial camp tents: recolor yellow tent art to a pale white canvas variant.
         const baseTent = assets.getImage('tent');
