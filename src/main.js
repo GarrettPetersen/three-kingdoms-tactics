@@ -480,7 +480,11 @@ async function init() {
                 'fantasy-24': 'assets/palettes/fantasy-24.txt',
                 'pinkgreen': 'assets/palettes/pinkgreen.txt',
                 'resurrect-64': 'assets/palettes/resurrect-64.txt',
-                'slso8': 'assets/palettes/slso8.txt'
+                'slso8': 'assets/palettes/slso8.txt',
+                'steam-lords': 'assets/palettes/steam-lords.txt',
+                'cl8uds': 'assets/palettes/cl8uds.txt',
+                'pico-8': 'assets/palettes/pico-8.txt',
+                'hollow': 'assets/palettes/hollow.txt'
             }),
             assets.loadImages({
                 title_en: 'assets/misc/three_kingdoms_stratagem_title.png',
