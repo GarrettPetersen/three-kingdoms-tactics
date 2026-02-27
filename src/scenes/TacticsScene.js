@@ -2355,9 +2355,9 @@ export class TacticsScene extends BaseScene {
     }
 
     moveNpcAndTelegraph(unit, onComplete) {
-        const attackKey = unit.attacks[0] || 'stab';
-        const { minRange, maxRange } = this.getEffectiveAttackRange(unit, attackKey);
-        const isSpearAttack = this.isLineAttack(attackKey);
+        const attackOptions = Array.from(new Set((unit.attacks && unit.attacks.length > 0 ? unit.attacks : ['stab'])))
+            .filter(k => ATTACKS[k]?.type !== 'command');
+        if (attackOptions.length === 0) attackOptions.push('stab');
 
         // Determine valid targets based on faction
         // - Enemies target player and allied units, but NOT caged allies (they're protecting the cage)
@@ -2381,6 +2381,7 @@ export class TacticsScene extends BaseScene {
         let bestTile = { r: unit.r, q: unit.q };
         let chosenTargetPos = null;
         let chosenTargetId = null;
+        let chosenAttackKey = null;
 
         // Filter reachable hexes to those that aren't occupied (can't end on a unit)
         const validDestinations = new Map();
@@ -2421,27 +2422,33 @@ export class TacticsScene extends BaseScene {
         let unitAttackTiles = [];
         validDestinations.forEach((data, key) => {
             const [r, q] = key.split(',').map(Number);
-            
-            // Look for targets within range from this tile
-            unitTargets.forEach(t => {
-                const dist = this.tacticsMap.getDistance(r, q, t.r, t.q);
-                const inRange = dist >= minRange && dist <= maxRange;
-                const candidateOrigins = [{ r, q }];
-                const isAxial = !isSpearAttack || candidateOrigins.some(o => !!this.getAxialDirectionToTarget(o.r, o.q, t.r, t.q));
-                if (inRange && isAxial) {
-                    unitAttackTiles.push({ r, q, target: t });
-                }
+            attackOptions.forEach(attackKey => {
+                const { minRange, maxRange } = this.getEffectiveAttackRange(unit, attackKey);
+                const isLineAttack = this.isLineAttack(attackKey);
+                // Look for targets within range from this tile
+                unitTargets.forEach(t => {
+                    const dist = this.tacticsMap.getDistance(r, q, t.r, t.q);
+                    const inRange = dist >= minRange && dist <= maxRange;
+                    const candidateOrigins = [{ r, q }];
+                    const isAxial = !isLineAttack || candidateOrigins.some(o => !!this.getAxialDirectionToTarget(o.r, o.q, t.r, t.q));
+                    if (inRange && isAxial) {
+                        unitAttackTiles.push({ r, q, target: t, attackKey });
+                    }
+                });
             });
         });
 
         if (unitAttackTiles.length > 0) {
             // Rank attacks by AOE value first (maximize desired hits, minimize friendly fire),
             // then apply softer distance/dog-pile preferences.
-            const isRanged = maxRange > 1;
             const scored = unitAttackTiles.map(c => {
-                const aoe = this.evaluateNpcAttackAt(unit, attackKey, c.r, c.q, c.target.r, c.target.q);
+                const aoe = this.evaluateNpcAttackAt(unit, c.attackKey, c.r, c.q, c.target.r, c.target.q);
                 const dist = this.tacticsMap.getDistance(c.r, c.q, c.target.r, c.target.q);
+                const { maxRange } = this.getEffectiveAttackRange(unit, c.attackKey);
+                const isRanged = maxRange > 1;
                 let score = aoe.score + (isRanged ? dist * 0.5 : (10 - dist) * 0.5);
+                // Tie-breaker: if tactical value is close, staying farther away is safer.
+                score += isRanged ? (dist * 0.15) : 0;
                 const targeters = this.units.filter(u => u !== unit && u.faction === unit.faction && u.intent && u.intent.targetId === c.target.id).length;
                 score -= targeters * 2.5;
                 if (unit.faction === 'enemy' && c.target.id === 'dongzhuo') score += 3;
@@ -2452,6 +2459,7 @@ export class TacticsScene extends BaseScene {
             bestTile = scored[0];
             chosenTargetPos = { r: bestTile.target.r, q: bestTile.target.q };
             chosenTargetId = bestTile.target.id || null;
+            chosenAttackKey = bestTile.attackKey || null;
         } 
         // 2. If no units reachable, check if enemy can reach a house
         else if (unit.faction === 'enemy') {
@@ -2493,6 +2501,8 @@ export class TacticsScene extends BaseScene {
                 bestTile = bestHorse;
             }
         }
+
+        unit.npcPreferredAttackKey = chosenAttackKey || null;
 
         // 3. If no immediate attacks possible, move towards the nearest unit (or house)
         if (!chosenTargetPos) {
@@ -2662,9 +2672,12 @@ export class TacticsScene extends BaseScene {
     }
 
     telegraphSingleNpc(unit) {
-        const attackKey = unit.attacks[0] || 'stab';
-        const { minRange, maxRange } = this.getEffectiveAttackRange(unit, attackKey);
-        const isSpearAttack = this.isLineAttack(attackKey);
+        const preferred = unit.npcPreferredAttackKey || null;
+        const attackOptions = Array.from(new Set([
+            ...(preferred ? [preferred] : []),
+            ...((unit.attacks && unit.attacks.length > 0) ? unit.attacks : ['stab'])
+        ])).filter(k => ATTACKS[k]?.type !== 'command');
+        if (attackOptions.length === 0) attackOptions.push('stab');
         
         // Same targeting logic as moveNpcAndTelegraph:
         // - Enemies target player and allied units, but NOT caged allies
@@ -2682,37 +2695,44 @@ export class TacticsScene extends BaseScene {
             }
         });
         
-        const candidates = unitTargets.filter(t => {
-            const origins = this.getAttackOrigins(unit);
-            return origins.some(o => {
-                const dist = this.tacticsMap.getDistance(o.r, o.q, t.r, t.q);
-                const inRange = dist >= minRange && dist <= maxRange;
-                const isAxial = !isSpearAttack || !!this.getAxialDirectionToTarget(o.r, o.q, t.r, t.q);
-                return inRange && isAxial;
+        const candidatePlans = [];
+        const origins = this.getAttackOrigins(unit);
+        attackOptions.forEach(attackKey => {
+            const { minRange, maxRange } = this.getEffectiveAttackRange(unit, attackKey);
+            const isLineAttack = this.isLineAttack(attackKey);
+            unitTargets.forEach(t => {
+                const canHit = origins.some(o => {
+                    const dist = this.tacticsMap.getDistance(o.r, o.q, t.r, t.q);
+                    const inRange = dist >= minRange && dist <= maxRange;
+                    const isAxial = !isLineAttack || !!this.getAxialDirectionToTarget(o.r, o.q, t.r, t.q);
+                    return inRange && isAxial;
+                });
+                if (!canHit) return;
+                let dist = Infinity;
+                origins.forEach(o => {
+                    dist = Math.min(dist, this.tacticsMap.getDistance(o.r, o.q, t.r, t.q));
+                });
+                const aoe = this.evaluateNpcAttackAt(unit, attackKey, unit.r, unit.q, t.r, t.q);
+                const isRanged = maxRange > 1;
+                let score = aoe.score + (isRanged ? dist * 0.5 : (10 - dist) * 0.5);
+                // Tie-breaker toward safer spacing for ranged options.
+                score += isRanged ? (dist * 0.15) : 0;
+                const targeters = this.units.filter(u => u !== unit && u.faction === unit.faction && u.intent && u.intent.targetId === t.id).length;
+                score -= targeters * 2.5;
+                if (unit.faction === 'enemy' && t.id === 'dongzhuo') score += 3;
+                score += Math.random() * 1.0;
+                candidatePlans.push({ t, attackKey, score });
             });
         });
         
         let targetPos = null;
         let targetId = null;
-        if (candidates.length > 0) {
-            const isRanged = maxRange > 1;
-            const scored = candidates.map(t => {
-                const aoe = this.evaluateNpcAttackAt(unit, attackKey, unit.r, unit.q, t.r, t.q);
-                const origins = this.getAttackOrigins(unit);
-                let dist = Infinity;
-                origins.forEach(o => {
-                    dist = Math.min(dist, this.tacticsMap.getDistance(o.r, o.q, t.r, t.q));
-                });
-                let score = aoe.score + (isRanged ? dist * 0.5 : (10 - dist) * 0.5);
-                const targeters = this.units.filter(u => u !== unit && u.faction === unit.faction && u.intent && u.intent.targetId === t.id).length;
-                score -= targeters * 2.5;
-                if (unit.faction === 'enemy' && t.id === 'dongzhuo') score += 3;
-                score += Math.random() * 1.0;
-                return { t, score };
-            }).sort((a, b) => b.score - a.score);
-
-            targetPos = { r: scored[0].t.r, q: scored[0].t.q };
-            targetId = scored[0].t.id || null;
+        let chosenAttackKey = attackOptions[0] || 'stab';
+        if (candidatePlans.length > 0) {
+            candidatePlans.sort((a, b) => b.score - a.score);
+            targetPos = { r: candidatePlans[0].t.r, q: candidatePlans[0].t.q };
+            targetId = candidatePlans[0].t.id || null;
+            chosenAttackKey = candidatePlans[0].attackKey || chosenAttackKey;
         } else if (unit.faction === 'enemy') {
             // Enemies look for adjacent houses if no units are nearby
             const neighbors = this.tacticsMap.getNeighbors(unit.r, unit.q);
@@ -2745,12 +2765,13 @@ export class TacticsScene extends BaseScene {
                 relX: toCube.x - fromCube.x,
                 relY: toCube.y - fromCube.y,
                 relZ: toCube.z - fromCube.z,
-                attackKey,
+                attackKey: chosenAttackKey,
                 targetId: targetId || null
             };
         } else {
             unit.intent = null;
         }
+        unit.npcPreferredAttackKey = null;
     }
 
     saveBattleState() {
@@ -2809,6 +2830,7 @@ export class TacticsScene extends BaseScene {
                 hasMoved: u.hasMoved,
                 hasAttacked: u.hasAttacked,
                 hasActed: u.hasActed,
+                attackOrder: Number.isFinite(u.attackOrder) ? u.attackOrder : null,
                 attacks: u.attacks,
                 intent: u.intent ? { ...u.intent } : null,
                 action: u.action,
@@ -2962,6 +2984,7 @@ export class TacticsScene extends BaseScene {
                     hasMoved: !!uData.hasMoved,
                     hasAttacked: !!uData.hasAttacked,
                     hasActed: !!uData.hasActed,
+                    attackOrder: Number.isFinite(uData.attackOrder) ? uData.attackOrder : null,
                     attacks: uData.attacks || [],
                     intent: uData.intent ? { ...uData.intent } : null,
                     action: uData.action || 'standby',
@@ -2998,6 +3021,7 @@ export class TacticsScene extends BaseScene {
             u.hasMoved = uData.hasMoved;
             u.hasAttacked = uData.hasAttacked;
             u.hasActed = uData.hasActed;
+            u.attackOrder = Number.isFinite(uData.attackOrder) ? uData.attackOrder : null;
             // Defensive: If an NPC has moved, they should have acted
             if (u.faction !== 'player' && u.hasMoved && !u.hasActed) {
                 u.hasActed = true;
@@ -3365,6 +3389,7 @@ export class TacticsScene extends BaseScene {
             u.hasMoved = uData.hasMoved;
             u.hasAttacked = uData.hasAttacked;
             u.hasActed = uData.hasActed;
+            u.attackOrder = Number.isFinite(uData.attackOrder) ? uData.attackOrder : null;
             u.intent = uData.intent ? { ...uData.intent } : null;
             u.action = uData.action || 'standby';
             u.isDrowning = uData.isDrowning || false;
@@ -7085,13 +7110,12 @@ export class TacticsScene extends BaseScene {
         if (this.controllerNavIndex < 0 || this.controllerNavIndex >= this.controllerNavTargets.length) return;
         const t = this.controllerNavTargets[this.controllerNavIndex];
         const isAttackTargetingMode = !!(this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack);
+        const focusColor = '#ffd700';
         ctx.save();
-        ctx.strokeStyle = '#ffd700';
-        ctx.lineWidth = 1;
         if ((t.type === 'move_cell' || t.type === 'attack_cell') && t.r !== undefined && t.q !== undefined) {
             const pos = this.getPixelPos(t.r, t.q);
             this.drawHexOutline(ctx, pos.x, pos.y, t.type === 'attack_cell' ? '#ff3333' : '#ffd700');
-        } else if (t.type === 'unit' && t.unit && t.unit.img && t.unit.name !== 'Boulder') {
+        } else if (t.type === 'unit' && t.unit && t.unit.img) {
             const u = t.unit;
             const mountedRegions = (isAttackTargetingMode && u.onHorse) ? this.getMountedAttackRegions(u) : null;
             const canAttackThisUnit = isAttackTargetingMode && (
@@ -7106,15 +7130,22 @@ export class TacticsScene extends BaseScene {
             } else if (u.onHorse) {
                 this.drawMountedSpriteOutline(ctx, u, u.visualY, timestamp, '#ffd700');
             }
-            this.drawCharacterPixelOutline(
-                ctx,
-                u.img,
-                u.currentAnimAction || u.action,
-                u.frame,
-                u.visualX,
-                u.visualY,
-                { flip: u.flip, color: canAttackThisUnit ? '#ff3333' : '#ffd700' }
-            );
+            if (u.name === 'Boulder') {
+                const color = canAttackThisUnit ? '#ff3333' : '#ffd700';
+                const bx = Math.floor(u.visualX - (u.img.width / 2));
+                const by = Math.floor(u.visualY - (u.img.height - 5));
+                this.drawImageFramePixelOutline(ctx, u.img, 0, 0, u.img.width, u.img.height, bx, by, { color });
+            } else {
+                this.drawCharacterPixelOutline(
+                    ctx,
+                    u.img,
+                    u.currentAnimAction || u.action,
+                    u.frame,
+                    u.visualX,
+                    u.visualY,
+                    { flip: u.flip, color: canAttackThisUnit ? '#ff3333' : '#ffd700' }
+                );
+            }
         } else if (t.type === 'unit_region' && t.unit && t.r !== undefined && t.q !== undefined) {
             const pos = this.getPixelPos(t.r, t.q);
             this.drawHexOutline(ctx, pos.x, pos.y, t.canAttack ? '#ff3333' : '#ffd700');
@@ -7122,30 +7153,55 @@ export class TacticsScene extends BaseScene {
                 this.drawMountedSpriteOutline(ctx, t.unit, t.unit.visualY, timestamp, t.canAttack ? '#ff3333' : '#ffd700', t.role);
             }
         } else if (t.rect) {
-            ctx.strokeRect(Math.floor(t.rect.x) - 1.5, Math.floor(t.rect.y) - 1.5, Math.floor(t.rect.w) + 2, Math.floor(t.rect.h) + 2);
+            this.drawPixelRectOutline(
+                ctx,
+                Math.floor(t.rect.x) - 1,
+                Math.floor(t.rect.y) - 1,
+                Math.floor(t.rect.w) + 2,
+                Math.floor(t.rect.h) + 2,
+                focusColor
+            );
         } else {
             const size = (t.type === 'unit') ? 16 : 14;
-            ctx.strokeRect(Math.floor(t.x - size / 2) - 0.5, Math.floor(t.y - size / 2) - 0.5, size, size);
+            this.drawPixelRectOutline(
+                ctx,
+                Math.floor(t.x - size / 2),
+                Math.floor(t.y - size / 2),
+                size,
+                size,
+                focusColor
+            );
         }
         ctx.restore();
     }
 
     drawHexOutline(ctx, x, y, color = '#ffd700') {
-        ctx.save();
-        ctx.translate(Math.floor(x), Math.floor(y));
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        // Pointy-top hex shape to match the tile highlight footprint.
-        ctx.moveTo(0, -12);
-        ctx.lineTo(12, -6);
-        ctx.lineTo(12, 6);
-        ctx.lineTo(0, 12);
-        ctx.lineTo(-12, 6);
-        ctx.lineTo(-12, -6);
-        ctx.closePath();
-        ctx.stroke();
-        ctx.restore();
+        const cx = Math.floor(x);
+        const cy = Math.floor(y);
+        const pts = [
+            { x: cx, y: cy - 12 },
+            { x: cx + 12, y: cy - 6 },
+            { x: cx + 12, y: cy + 6 },
+            { x: cx, y: cy + 12 },
+            { x: cx - 12, y: cy + 6 },
+            { x: cx - 12, y: cy - 6 }
+        ];
+        for (let i = 0; i < pts.length; i++) {
+            const a = pts[i];
+            const b = pts[(i + 1) % pts.length];
+            this.drawPixelLine(ctx, a.x, a.y, b.x, b.y, color);
+        }
+    }
+
+    drawPixelRectOutline(ctx, x, y, w, h, color = '#ffd700') {
+        const x0 = Math.floor(x);
+        const y0 = Math.floor(y);
+        const x1 = x0 + Math.max(0, Math.floor(w) - 1);
+        const y1 = y0 + Math.max(0, Math.floor(h) - 1);
+        this.drawPixelLine(ctx, x0, y0, x1, y0, color);
+        this.drawPixelLine(ctx, x1, y0, x1, y1, color);
+        this.drawPixelLine(ctx, x1, y1, x0, y1, color);
+        this.drawPixelLine(ctx, x0, y1, x0, y0, color);
     }
 
     moveControllerSelection(dirX, dirY) {
@@ -7568,37 +7624,82 @@ export class TacticsScene extends BaseScene {
         
         // Start arrow slightly away from attacker center
         const offset = 10;
-        const sx = startX + (dx / dist) * offset;
-        const sy = startY + (dy / dist) * offset;
+        const sx = Math.round(startX + (dx / dist) * offset);
+        const sy = Math.round(startY + (dy / dist) * offset);
         
         // End arrow slightly before target center
-        const ex = targetPos.x - (dx / dist) * 5;
-        const ey = targetPos.y - (dy / dist) * 5;
+        const ex = Math.round(targetPos.x - (dx / dist) * 5);
+        const ey = Math.round(targetPos.y - (dy / dist) * 5);
+        const color = `rgba(255, 0, 0, ${0.6 + glow})`;
 
-        ctx.strokeStyle = `rgba(255, 0, 0, ${0.6 + glow})`;
-        ctx.fillStyle = `rgba(255, 0, 0, ${0.6 + glow})`;
-        ctx.lineWidth = 2;
-        ctx.setLineDash([4, 2]); // Dashed line for intent
-        
-        ctx.beginPath();
-        ctx.moveTo(sx, sy);
-        ctx.lineTo(ex, ey);
-        ctx.stroke();
-        
-        // Arrow head
+        // Pixel-plotted dashed line + chevron head (no canvas stroke AA).
+        this.drawPixelLine(ctx, sx, sy, ex, ey, color, [4, 2]);
         const angle = Math.atan2(dy, dx);
-        ctx.save();
-        ctx.translate(ex, ey);
-        ctx.rotate(angle);
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(-6, -4);
-        ctx.lineTo(-6, 4);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
+        this.drawPixelArrowHead(ctx, ex, ey, angle, color, 5);
 
         ctx.restore();
+    }
+
+    drawPixelLine(ctx, x0, y0, x1, y1, color = '#fff', dashPattern = null) {
+        let ix0 = Math.round(x0);
+        let iy0 = Math.round(y0);
+        const ix1 = Math.round(x1);
+        const iy1 = Math.round(y1);
+
+        const dx = Math.abs(ix1 - ix0);
+        const dy = Math.abs(iy1 - iy0);
+        const sx = ix0 < ix1 ? 1 : -1;
+        const sy = iy0 < iy1 ? 1 : -1;
+        let err = dx - dy;
+
+        let dashIndex = 0;
+        let dashRemaining = dashPattern ? Math.max(1, dashPattern[0]) : 0;
+        let drawing = !dashPattern || dashPattern.length === 0 ? true : true;
+
+        ctx.fillStyle = color;
+        while (true) {
+            if (drawing) ctx.fillRect(ix0, iy0, 1, 1);
+            if (ix0 === ix1 && iy0 === iy1) break;
+
+            if (dashPattern && dashPattern.length > 0) {
+                dashRemaining--;
+                if (dashRemaining <= 0) {
+                    dashIndex = (dashIndex + 1) % dashPattern.length;
+                    dashRemaining = Math.max(1, dashPattern[dashIndex]);
+                    drawing = (dashIndex % 2) === 0;
+                }
+            }
+
+            const e2 = 2 * err;
+            if (e2 > -dy) { err -= dy; ix0 += sx; }
+            if (e2 < dx) { err += dx; iy0 += sy; }
+        }
+    }
+
+    drawPixelArrowHead(ctx, tipX, tipY, angle, color = '#fff', size = 4) {
+        const backLeftX = Math.round(tipX - Math.cos(angle) * size - Math.sin(angle) * Math.floor(size * 0.6));
+        const backLeftY = Math.round(tipY - Math.sin(angle) * size + Math.cos(angle) * Math.floor(size * 0.6));
+        const backRightX = Math.round(tipX - Math.cos(angle) * size + Math.sin(angle) * Math.floor(size * 0.6));
+        const backRightY = Math.round(tipY - Math.sin(angle) * size - Math.cos(angle) * Math.floor(size * 0.6));
+
+        this.drawPixelLine(ctx, tipX, tipY, backLeftX, backLeftY, color);
+        this.drawPixelLine(ctx, tipX, tipY, backRightX, backRightY, color);
+    }
+
+    drawPixelImpactMarker(ctx, x, y, angle, color = '#ff6666') {
+        const cx = Math.round(x);
+        const cy = Math.round(y);
+        const perpX = Math.round(-Math.sin(angle));
+        const perpY = Math.round(Math.cos(angle));
+
+        // Draw a tiny perpendicular "wall" bar where the push stops.
+        this.drawPixelLine(ctx, cx - perpX * 3, cy - perpY * 3, cx + perpX * 3, cy + perpY * 3, color);
+
+        // Add a small impact spark (X) to read as bump damage.
+        this.drawPixelLine(ctx, cx - 2, cy - 2, cx + 2, cy + 2, color);
+        this.drawPixelLine(ctx, cx - 2, cy + 2, cx + 2, cy - 2, color);
+        ctx.fillStyle = color;
+        ctx.fillRect(cx, cy, 1, 1);
     }
 
     drawHighlight(ctx, x, y, color) {
@@ -7634,54 +7735,57 @@ export class TacticsScene extends BaseScene {
 
         const fromCell = this.tacticsMap.getCell(fromR, fromQ);
         const targetCell = this.tacticsMap.getCell(targetR, targetQ);
+        if (!targetCell) {
+            // Off-map destinations are not pushable; do not preview a push result.
+            return;
+        }
         const levelDiff = (targetCell?.level || 0) - (fromCell?.level || 0);
         const isCliffDrop = levelDiff < -1;
+        const isDeepWater = !!(targetCell && targetCell.terrain && targetCell.terrain.includes('water_deep'));
+        const isFallArc = isCliffDrop || isDeepWater;
+        const isHighCliff = levelDiff > 1;
+        const isImpassable = !!(targetCell && targetCell.impassable) && !isDeepWater;
+        const isOccupiedByLiving = !!this.getLivingUnitOccupyingCell(targetR, targetQ);
+        const isOccupiedByHorse = !!targetCell?.horse;
+        const isBumpDamage = !!targetCell && (isHighCliff || isImpassable || isOccupiedByLiving || isOccupiedByHorse);
         
         const dx = targetPos.x - fromPos.x;
         const dy = targetPos.y - fromPos.y;
         
         ctx.save();
-        // Snap to pixels
-        const sx = Math.floor(fromPos.x);
-        const sy = Math.floor(fromPos.y);
-        const ex = Math.floor(fromPos.x + dx * 0.6);
-        const ey = Math.floor(fromPos.y + dy * 0.6);
-        
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-        ctx.shadowBlur = 0; // No blur for pixel perfect
-        ctx.shadowOffsetY = 1;
-        
-        ctx.strokeStyle = isCliffDrop ? '#ffcc66' : '#fff';
-        ctx.fillStyle = isCliffDrop ? '#ffcc66' : '#fff';
-        ctx.lineWidth = 1; // Thinner
+        const sx = Math.round(fromPos.x);
+        const sy = Math.round(fromPos.y);
+        const ex = Math.round(fromPos.x + dx * 0.6);
+        const ey = Math.round(fromPos.y + dy * 0.6);
+        const color = '#fff';
 
         let angle = Math.atan2(dy, dx);
-        if (isCliffDrop) {
-            // Curved "fall" arrow to telegraph knock-off-cliff pushes.
-            const midX = (sx + ex) / 2;
-            const midY = (sy + ey) / 2;
-            const controlX = Math.floor(midX);
-            const controlY = Math.floor(midY + 8);
-            ctx.beginPath();
-            ctx.moveTo(sx, sy);
-            ctx.quadraticCurveTo(controlX, controlY, ex, ey);
-            ctx.stroke();
+        if (isFallArc) {
+            // Jump-style arc (up then down), used for cliff drops and deep-water pushes.
+            const controlX = Math.round((sx + ex) / 2);
+            const controlY = Math.round((sy + ey) / 2 - 12);
+            let prevX = sx;
+            let prevY = sy;
+            const segments = 10;
+            for (let i = 1; i <= segments; i++) {
+                const t = i / segments;
+                const omt = 1 - t;
+                const cx = Math.round(omt * omt * sx + 2 * omt * t * controlX + t * t * ex);
+                const cy = Math.round(omt * omt * sy + 2 * omt * t * controlY + t * t * ey);
+                this.drawPixelLine(ctx, prevX, prevY, cx, cy, color);
+                prevX = cx;
+                prevY = cy;
+            }
             angle = Math.atan2(ey - controlY, ex - controlX);
         } else {
-            ctx.beginPath();
-            ctx.moveTo(sx, sy);
-            ctx.lineTo(ex, ey);
-            ctx.stroke();
+            this.drawPixelLine(ctx, sx, sy, ex, ey, color);
         }
 
-        ctx.translate(ex, ey);
-        ctx.rotate(angle);
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(-4, -2.5); // Smaller head
-        ctx.lineTo(-4, 2.5);
-        ctx.closePath();
-        ctx.fill();
+        if (isBumpDamage) {
+            this.drawPixelImpactMarker(ctx, ex, ey, angle, '#fff');
+        } else {
+            this.drawPixelArrowHead(ctx, ex, ey, angle, color, 4);
+        }
         
         ctx.restore();
     }

@@ -422,11 +422,9 @@ export const UPGRADE_PATHS = {
         5: { attack: 'blade_sweep_4', text: { en: 'Sweep damage increased to 2', zh: '横扫伤害提升至 2' } }
     },
     'soldier': {
-        2: { secondaryAttack: 'polearm_sweep_2', text: { en: 'Learned a broader polearm sweep', zh: '学会更宽范围的长柄横扫' } },
-        3: { attack: 'slash_2', text: { en: 'Damage increased to 2', zh: '伤害提升至 2' } },
-        4: { secondaryAttack: 'polearm_sweep_3', text: { en: 'Polearm sweep range increased to 3', zh: '长柄横扫射程提升至 3' } },
-        5: { attack: 'slash_3', text: { en: 'Gained Push effect', zh: '获得击退效果' } },
-        7: { secondaryAttack: 'polearm_sweep_4', text: { en: 'Polearm sweep damage increased to 2', zh: '长柄横扫伤害提升至 2' } }
+        2: { attack: 'polearm_sweep_2', text: { en: 'Sweep length increased to 2', zh: '横扫长度提升至 2' } },
+        4: { attack: 'polearm_sweep_3', text: { en: 'Range increased to 3', zh: '射程提升至 3' } },
+        7: { attack: 'polearm_sweep_4', text: { en: 'Damage increased to 2', zh: '伤害提升至 2' } }
     },
     'archer': {
         4: { attack: 'arrow_shot_2', text: { en: 'Range increased to 5', zh: '射程提升至 5' } },

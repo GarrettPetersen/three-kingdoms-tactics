@@ -18,6 +18,26 @@ export class LevelUpScene extends BaseScene {
     }
 
     enter(params) {
+        const gs = this.manager.gameState;
+        const isResume = !!params.isResume;
+        const savedState = isResume ? gs.getSceneState('levelup') : null;
+
+        if (savedState && Array.isArray(savedState.levelUps) && savedState.levelUps.length > 0) {
+            this.levelUps = savedState.levelUps.map(lu => ({ ...lu }));
+            this.onComplete = null; // Functions are not serializable across sessions.
+            this.isEndGame = !!savedState.isEndGame;
+            this.isCustom = !!savedState.isCustom;
+            this.battleId = savedState.battleId || null;
+            this.currentIndex = Math.max(0, Math.min(savedState.currentIndex || 0, this.levelUps.length - 1));
+            this.timer = Math.max(0, savedState.timer || 0);
+            this.lastTime = 0;
+            this.showBonuses = !!savedState.showBonuses;
+            this.isPromoting = !!savedState.isPromoting;
+            this.promotionChoice = savedState.promotionChoice || null;
+            this.chosenClass = savedState.chosenClass || null;
+            return;
+        }
+
         this.levelUps = params.levelUps || [];
         this.onComplete = params.onComplete || null;
         this.isEndGame = params.isEndGame || false;
@@ -30,11 +50,28 @@ export class LevelUpScene extends BaseScene {
         this.isPromoting = false;
         this.promotionChoice = null;
         this.chosenClass = null;
-        
+
         if (this.levelUps.length > 0) {
             assets.playSound('victory', 0.5);
             this.checkPromotion();
         }
+    }
+
+    saveState() {
+        if (!this.levelUps || this.levelUps.length === 0) return;
+        const gs = this.manager.gameState;
+        gs.setSceneState('levelup', {
+            levelUps: this.levelUps.map(lu => ({ ...lu })),
+            currentIndex: this.currentIndex,
+            timer: this.timer,
+            showBonuses: this.showBonuses,
+            isPromoting: this.isPromoting,
+            promotionChoice: this.promotionChoice,
+            chosenClass: this.chosenClass,
+            isEndGame: this.isEndGame,
+            isCustom: this.isCustom,
+            battleId: this.battleId
+        });
     }
 
     checkPromotion() {
@@ -125,8 +162,10 @@ export class LevelUpScene extends BaseScene {
 
         if (this.showBonuses) {
             let by = 185;
+            const promotionY = 176;
+            const reserveForPromotion = this.isPromoting && !this.chosenClass;
             
-            // 1. Stat Bonuses
+            // 1) Always-known stat bonuses first.
             const bonuses = [
                 getLocalizedText({ en: "Increased Critical Chance", zh: "暴击率提升" }),
                 getLocalizedText({ en: "Increased Damage Resistance", zh: "减伤能力提升" })
@@ -142,47 +181,49 @@ export class LevelUpScene extends BaseScene {
                 }));
             }
 
-            // 2. Weapon Upgrades
-            const gs = this.manager.gameState;
-            const unitClasses = gs.getCampaignVar('unitClasses') || {};
-            const unitClass = this.chosenClass || unitClasses[current.id] || (current.id.startsWith('ally') ? 'soldier' : current.id);
-            const path = UPGRADE_PATHS[unitClass];
-            if (path && path[current.newLevel]) {
-                const upgrade = path[current.newLevel];
-                const upgradedAttackKey = upgrade.attack || upgrade.secondaryAttack;
-                const attackName = getLocalizedText(ATTACKS[upgradedAttackKey]?.name || { en: "New Technique", zh: "新招式" });
-                const upgradeText = getLocalizedText(upgrade.text || '');
-                bonuses.push(getLocalizedText({
-                    en: `Learned ${attackName}: ${upgradeText}`,
-                    zh: `习得 ${attackName}：${upgradeText}`
-                }));
-            }
+            // 2) Show promotion choice before class-dependent upgrades.
+            if (reserveForPromotion) {
+                this.renderPromotionUI(ctx, canvas, cx, promotionY);
+            } else {
+                // 3) Only show class/weapon upgrades once class is known.
+                const gs = this.manager.gameState;
+                const unitClasses = gs.getCampaignVar('unitClasses') || {};
+                const unitClass = this.chosenClass || unitClasses[current.id] || (current.id.startsWith('ally') ? 'soldier' : current.id);
+                const path = UPGRADE_PATHS[unitClass];
+                if (path && path[current.newLevel]) {
+                    const upgrade = path[current.newLevel];
+                    const upgradedAttackKey = upgrade.attack || upgrade.secondaryAttack;
+                    const attackName = getLocalizedText(ATTACKS[upgradedAttackKey]?.name || { en: "New Technique", zh: "新招式" });
+                    const upgradeText = getLocalizedText(upgrade.text || '');
+                    bonuses.push(getLocalizedText({
+                        en: `Learned ${attackName}: ${upgradeText}`,
+                        zh: `习得 ${attackName}：${upgradeText}`
+                    }));
+                }
 
-            // 3. Class specific bonuses added AFTER selection
-            if (this.chosenClass === 'soldier') {
-                bonuses.push(getLocalizedText({ en: "+ Melee Attack", zh: "+ 近战攻击" }));
-                bonuses.push(getLocalizedText({ en: "+ 1 HP", zh: "+ 1 生命" }));
-            } else if (this.chosenClass === 'archer') {
-                bonuses.push(getLocalizedText({ en: "+ Ranged Attack", zh: "+ 远程攻击" }));
-                bonuses.push(getLocalizedText({ en: "+ Range 2", zh: "+ 射程 2" }));
+                if (this.chosenClass === 'soldier') {
+                    bonuses.push(getLocalizedText({ en: "+ Melee Attack", zh: "+ 近战攻击" }));
+                    bonuses.push(getLocalizedText({ en: "+ 1 HP", zh: "+ 1 生命" }));
+                } else if (this.chosenClass === 'archer') {
+                    bonuses.push(getLocalizedText({ en: "+ Ranged Attack", zh: "+ 远程攻击" }));
+                    bonuses.push(getLocalizedText({ en: "+ Range 2", zh: "+ 射程 2" }));
+                }
             }
 
             bonuses.forEach(b => {
-                const lines = this.wrapText(ctx, `+ ${b}`, 200, '8px Tiny5');
+                const lines = this.wrapText(ctx, `+ ${b}`, 182, '8px Tiny5');
                 lines.forEach(line => {
+                    // Avoid pushing UI below the viewport, especially during promotion choice.
+                    const maxY = reserveForPromotion ? (promotionY - 8) : 225;
+                    if (by > maxY) return;
                     this.drawPixelText(ctx, line, cx, by, { 
                         color: '#4f4', 
                         font: '8px Tiny5', 
                         align: 'center' 
                     });
-                    by += 10;
+                    by += 9;
                 });
             });
-
-            // 3. Promotion UI
-            if (this.isPromoting) {
-                this.renderPromotionUI(ctx, canvas, cx, by + 5);
-            }
         }
 
         // Prompt
@@ -207,29 +248,29 @@ export class LevelUpScene extends BaseScene {
     renderPromotionUI(ctx, canvas, cx, y) {
         this.drawPixelText(ctx, getLocalizedText({ en: "CHOOSE PROMOTION:", zh: "选择晋升：" }), cx, y, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
         
-        const bw = 80;
-        const bh = 40; // Taller to fit bonuses
+        const bw = 72;
+        const bh = 30;
         
         // Soldier Button
         const sx = cx - bw - 10;
-        const sy = y + 15;
+        const sy = y + 11;
         ctx.fillStyle = '#222';
         ctx.strokeStyle = this.promotionChoice === 'soldier' ? '#ffd700' : '#888';
         ctx.lineWidth = 2;
         ctx.fillRect(sx, sy, bw, bh);
         ctx.strokeRect(sx + 1, sy + 1, bw - 2, bh - 2);
-        this.drawPixelText(ctx, getLocalizedText({ en: "SOLDIER", zh: "步兵" }), sx + bw/2, sy + bh/2 - 4, { color: '#fff', font: '8px Tiny5', align: 'center' });
+        this.drawPixelText(ctx, getLocalizedText({ en: "SOLDIER", zh: "步兵" }), sx + bw/2, sy + bh/2 - 3, { color: '#fff', font: '8px Tiny5', align: 'center' });
         this.soldierRect = { x: sx, y: sy, w: bw, h: bh };
 
         // Archer Button
         const ax = cx + 10;
-        const ay = y + 15;
+        const ay = y + 11;
         ctx.fillStyle = '#222';
         ctx.strokeStyle = this.promotionChoice === 'archer' ? '#ffd700' : '#888';
         ctx.lineWidth = 2;
         ctx.fillRect(ax, ay, bw, bh);
         ctx.strokeRect(ax + 1, ay + 1, bw - 2, bh - 2);
-        this.drawPixelText(ctx, getLocalizedText({ en: "ARCHER", zh: "弓兵" }), ax + bw/2, ay + bh/2 - 4, { color: '#fff', font: '8px Tiny5', align: 'center' });
+        this.drawPixelText(ctx, getLocalizedText({ en: "ARCHER", zh: "弓兵" }), ax + bw/2, ay + bh/2 - 3, { color: '#fff', font: '8px Tiny5', align: 'center' });
         this.archerRect = { x: ax, y: ay, w: bw, h: bh };
     }
 
@@ -288,6 +329,7 @@ export class LevelUpScene extends BaseScene {
 
         this.currentIndex++;
         if (this.currentIndex >= this.levelUps.length) {
+            this.manager.gameState.clearSceneState('levelup');
             if (this.onComplete) {
                 this.onComplete();
                 return;

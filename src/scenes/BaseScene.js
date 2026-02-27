@@ -438,7 +438,7 @@ export class BaseScene {
 
     drawCharacterPixelOutline(ctx, img, action, frame, x, y, options = {}) {
         if (!img) return;
-        const { flip = false, sinkOffset = 0, color = '#ffd700', alphaThreshold = 254 } = options;
+        const { flip = false, sinkOffset = 0, color = '#ffd700', alphaThreshold = 178 } = options;
         const sourceSize = 72;
         const feetY = -44;
 
@@ -512,7 +512,7 @@ export class BaseScene {
 
     drawImageFramePixelOutline(ctx, img, srcX, srcY, srcW, srcH, destX, destY, options = {}) {
         if (!img) return;
-        const { flip = false, color = '#ffd700', alphaThreshold = 254 } = options;
+        const { flip = false, color = '#ffd700', alphaThreshold = 178 } = options;
         if (srcW <= 0 || srcH <= 0) return;
 
         if (

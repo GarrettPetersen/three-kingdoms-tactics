@@ -284,7 +284,7 @@ export class GameState {
     resolveContinueTarget(options = {}) {
         const {
             validateNarrativeState = () => true,
-            excludedScenes = ['title', 'custom_battle', 'summary', 'levelup', 'recovery']
+            excludedScenes = ['title', 'custom_battle', 'summary', 'recovery']
         } = options;
 
         const campaignId = this.getCurrentCampaign();
@@ -292,6 +292,7 @@ export class GameState {
         const narrativeState = this.getSceneState('narrative');
         const battleState = this.getSceneState('tactics');
         const mapState = this.getSceneState('map');
+        const levelUpState = this.getSceneState('levelup');
 
         // Completed campaign stories should resume at story selection, not stale in-campaign states.
         if (this.isCampaignComplete(campaignId)) {
@@ -314,6 +315,9 @@ export class GameState {
         if (lastScene === 'narrative' && hasValidNarrativeState) {
             return { scene: 'narrative', params: { isResume: true } };
         }
+        if (lastScene === 'levelup' && levelUpState) {
+            return { scene: 'levelup', params: { isResume: true } };
+        }
 
         // 2) Fallback to any valid saved state.
         if (hasValidNarrativeState) {
@@ -324,6 +328,9 @@ export class GameState {
         }
         if (battleState) {
             return { scene: 'tactics', params: { isResume: true } };
+        }
+        if (levelUpState) {
+            return { scene: 'levelup', params: { isResume: true } };
         }
 
         // 3) Final fallback to lastScene.

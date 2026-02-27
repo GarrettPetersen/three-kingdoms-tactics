@@ -762,7 +762,7 @@ const SOLDIER_BASE = {
     templateId: 'soldier',
     imgKey: 'soldier',
     moveRange: 3,
-    attacks: ['slash', 'polearm_sweep']
+    attacks: ['polearm_sweep']
 };
 
 const SOLDIER_VARIANTS = {
