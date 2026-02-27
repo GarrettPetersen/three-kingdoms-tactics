@@ -877,7 +877,7 @@ export const NARRATIVE_SCRIPTS = {
                 onClick: [
                     {
                         type: 'dialogue',
-                        portraitKey: 'farmer2',
+                        portraitKey: 'farmer-female',
                         position: 'top',
                         name: 'Villager',
                         voiceId: 'pro_farmer2_01',

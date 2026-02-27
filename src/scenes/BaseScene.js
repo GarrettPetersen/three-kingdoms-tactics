@@ -765,6 +765,7 @@ export class BaseScene {
             'farmer-v3': 'farmer-v3',
             'farmer-v4': 'farmer-v4',
             'farmer-v5': 'farmer-v5',
+            'farmer-female': 'farmer-female',
             'merchant': 'merchant',
             'blacksmith': 'blacksmith',
             'xiaoer': 'xiaoer',

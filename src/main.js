@@ -451,6 +451,7 @@ async function init() {
             'farmer-v3',
             'farmer-v4',
             'farmer-v5',
+            'farmer-female',
             'merchant',
             'blacksmith',
             'xiaoer',

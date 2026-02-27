@@ -15,6 +15,7 @@ from PIL import Image
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PARTS_DIR = PROJECT_ROOT / "assets" / "portraits" / "character_creator"
+FEMALE_PARTS_DIR = PROJECT_ROOT / "public" / "assets" / "portraits" / "female_character_creator"
 OUT_DIR = PROJECT_ROOT / "assets" / "portraits" / "img2img_refs" / "creator_refs"
 
 BASE_W = 40
@@ -48,8 +49,8 @@ def _make_vertical_gradient(width: int, height: int, top_rgb: RGB, bottom_rgb: R
     return base
 
 
-def _load_rgba(name: str) -> Image.Image:
-    p = PARTS_DIR / name
+def _load_rgba(name: str, parts_dir: Optional[Path] = None) -> Image.Image:
+    p = (parts_dir or PARTS_DIR) / name
     if not p.exists():
         raise FileNotFoundError(f"Missing layer part: {p}")
     return Image.open(p).convert("RGBA")
@@ -500,6 +501,37 @@ def _char_specs() -> Dict[str, dict]:
                 }
             },
         },
+        "farmer_female": {
+            "source_sprite": "assets/characters/084_nongfu02.png",
+            "parts_dir": "public/assets/portraits/female_character_creator",
+            "bg_gradient": {
+                "top": [164, 148, 124],
+                "bottom": [104, 88, 66],
+            },
+            "layers": [
+                ("head_normal.png", {}),
+                (
+                    "robe.png",
+                    {
+                        (168, 64, 32, 255): (86, 54, 30, 255),
+                        (200, 136, 32, 255): (126, 86, 48, 255),
+                        (221, 90, 50, 255): (110, 70, 40, 255),
+                        (232, 200, 136, 255): (172, 132, 86, 255),
+                    },
+                ),
+                ("long_hair.png", {(0, 0, 0, 255): (72, 56, 43, 255)}),
+                ("hair_bun.png", {(0, 0, 0, 255): (72, 56, 43, 255)}),
+                ("eyebrows_thin.png", {(0, 0, 0, 255): (72, 56, 43, 255)}),
+                ("bangs_strands.png", {(0, 0, 0, 255): (72, 56, 43, 255)}),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [225, 163, 147, 255],
+                    "mid": [197, 118, 107, 255],
+                    "dark": [154, 102, 93, 255]
+                }
+            },
+        },
         "xiaoer": {
             "source_sprite": "assets/characters/086_xiaoer01.png",
             "bg_gradient": {
@@ -855,6 +887,7 @@ def _char_specs() -> Dict[str, dict]:
 
 def build_reference(char_id: str, spec: dict) -> Tuple[Path, Path]:
     palette = _extract_full_palette(spec["source_sprite"]) if spec.get("source_sprite") else []
+    parts_dir = PROJECT_ROOT / spec["parts_dir"] if spec.get("parts_dir") else PARTS_DIR
     manual_cfg = spec.get("manual_palette", {})
     skin_tones: Dict[str, RGBA] = {}
     shirt_tones: Dict[str, RGBA] = {}
@@ -877,7 +910,7 @@ def build_reference(char_id: str, spec: dict) -> Tuple[Path, Path]:
 
     layers: List[Image.Image] = []
     for part_name, swap_map in spec["layers"]:
-        layer = _load_rgba(part_name)
+        layer = _load_rgba(part_name, parts_dir=parts_dir)
         local_swap_map = dict(swap_map)
         # Smart manual mapping using full extracted palette + role hints.
         if skin_tones and part_name in SKIN_LAYER_PARTS:
