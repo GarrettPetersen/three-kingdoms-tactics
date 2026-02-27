@@ -65,6 +65,12 @@ export class TacticsScene extends BaseScene {
         this.commandTutorialStep = null;
         this.commandTutorialTargetId = null;
         this.commandTutorialCompleted = false;
+        this.battlePaletteKeys = [];
+        this.activeBattlePaletteIndex = 0;
+        this.paletteToastText = '';
+        this.paletteToastUntil = 0;
+        this.environmentPaletteImageKeys = [];
+        this.environmentPaletteBaseImages = new Map();
     }
 
     cloneScriptSteps(steps) {
@@ -325,6 +331,12 @@ export class TacticsScene extends BaseScene {
         this.commandTutorialStep = null;
         this.commandTutorialTargetId = null;
         this.commandTutorialCompleted = false;
+        this.battlePaletteKeys = ['off', ...Object.keys(assets.palettes || {}).sort()];
+        this.activeBattlePaletteIndex = Math.max(0, this.battlePaletteKeys.indexOf('vinik24'));
+        this.paletteToastText = '';
+        this.paletteToastUntil = 0;
+        this.environmentPaletteImageKeys = [];
+        this.environmentPaletteBaseImages = new Map();
         assets.stopLoopingSound('horse_gallop_loop', 0);
         this.fireCrackleSfxActive = false;
         assets.stopLoopingSound('fire_crackle_loop', 0);
@@ -2370,9 +2382,8 @@ export class TacticsScene extends BaseScene {
 
     moveNpcAndTelegraph(unit, onComplete) {
         const attackKey = unit.attacks[0] || 'stab';
-        const attackConfig = ATTACKS[attackKey] || ATTACKS.stab;
-        const minRange = attackConfig.minRange || 1;
-        const maxRange = attackConfig.range || 1;
+        const { minRange, maxRange } = this.getEffectiveAttackRange(unit, attackKey);
+        const isSpearAttack = attackKey.startsWith('serpent_spear') || attackKey.startsWith('caoren_spear');
 
         // Determine valid targets based on faction
         // - Enemies target player and allied units, but NOT caged allies (they're protecting the cage)
@@ -2450,7 +2461,14 @@ export class TacticsScene extends BaseScene {
                         dist = Math.min(dist, headDist);
                     }
                 }
-                if (dist >= minRange && dist <= maxRange) {
+                const inRange = dist >= minRange && dist <= maxRange;
+                const candidateOrigins = [{ r, q }];
+                if (unit.onHorse) {
+                    const headCell = this.getMountedHeadCellFor(unit, r, q);
+                    if (headCell) candidateOrigins.push({ r: headCell.r, q: headCell.q });
+                }
+                const isAxial = !isSpearAttack || candidateOrigins.some(o => !!this.getAxialDirectionToTarget(o.r, o.q, t.r, t.q));
+                if (inRange && isAxial) {
                     unitAttackTiles.push({ r, q, target: t });
                 }
             });
@@ -2692,9 +2710,8 @@ export class TacticsScene extends BaseScene {
 
     telegraphSingleNpc(unit) {
         const attackKey = unit.attacks[0] || 'stab';
-        const attackConfig = ATTACKS[attackKey] || ATTACKS.stab;
-        const minRange = attackConfig.minRange || 1;
-        const maxRange = attackConfig.range || 1;
+        const { minRange, maxRange } = this.getEffectiveAttackRange(unit, attackKey);
+        const isSpearAttack = attackKey.startsWith('serpent_spear') || attackKey.startsWith('caoren_spear');
         
         // Same targeting logic as moveNpcAndTelegraph:
         // - Enemies target player and allied units, but NOT caged allies
@@ -2716,7 +2733,9 @@ export class TacticsScene extends BaseScene {
             const origins = this.getAttackOrigins(unit);
             return origins.some(o => {
                 const dist = this.tacticsMap.getDistance(o.r, o.q, t.r, t.q);
-                return dist >= minRange && dist <= maxRange;
+                const inRange = dist >= minRange && dist <= maxRange;
+                const isAxial = !isSpearAttack || !!this.getAxialDirectionToTarget(o.r, o.q, t.r, t.q);
+                return inRange && isAxial;
             });
         });
         
@@ -6119,12 +6138,14 @@ export class TacticsScene extends BaseScene {
         const attack = ATTACKS[attackKey];
 
         if (attackKey.startsWith('serpent_spear') || attackKey.startsWith('caoren_spear')) {
-            // Hits every hex on the line from origin to target (excluding origin).
-            // Use the map's canonical line helper to avoid occasional interpolation drift.
-            const line = this.tacticsMap.getLine(origin.r, origin.q, targetR, targetQ) || [];
-            for (let i = 1; i < line.length; i++) {
-                const t = line[i];
-                affected.push({ r: t.r, q: t.q });
+            // Spear attacks only travel in one of 6 strict axial directions.
+            const axial = this.getAxialDirectionToTarget(origin.r, origin.q, targetR, targetQ);
+            if (axial) {
+                for (let step = 1; step <= axial.distance; step++) {
+                    const t = this.tacticsMap.getCellAtDirectionDistance(origin.r, origin.q, axial.dir, step);
+                    if (!t) break;
+                    affected.push({ r: t.r, q: t.q });
+                }
             }
         } else if (attackKey.startsWith('green_dragon_slash') || attackKey === 'tyrant_sweep') {
             // 3-hex arc.
@@ -6918,6 +6939,96 @@ export class TacticsScene extends BaseScene {
                 this.drawPixelText(ctx, getLocalizedText({ en: "The Yellow Turbans scatter!", zh: "黄巾军溃散了！" }), canvas.width / 2, canvas.height / 2 + 15, { color: '#aaa', font: '8px Tiny5', align: 'center' });
             }
         }
+
+        this.drawPaletteToast(ctx, timestamp);
+    }
+
+    collectEnvironmentPaletteKeys() {
+        if (!this.tacticsMap?.grid) return [];
+        const keys = new Set();
+        for (const row of this.tacticsMap.grid) {
+            for (const cell of row) {
+                const terrain = cell?.terrain;
+                if (!terrain) continue;
+                const baseTerrain = terrain === 'tent_white_burning'
+                    ? 'tent_white'
+                    : (terrain === 'tent_burning' ? 'tent' : terrain);
+                keys.add(baseTerrain);
+                if (baseTerrain === 'water_shallow_01' || baseTerrain === 'water_shallow_02') {
+                    keys.add('water_shallow_01');
+                    keys.add('water_shallow_02');
+                } else if (baseTerrain.startsWith('water_deep_01')) {
+                    keys.add('water_deep_01_01');
+                    keys.add('water_deep_01_02');
+                } else if (baseTerrain.startsWith('water_deep_02')) {
+                    keys.add('water_deep_02_01');
+                    keys.add('water_deep_02_02');
+                }
+            }
+        }
+        return [...keys];
+    }
+
+    ensureEnvironmentPaletteBaseImages() {
+        if (this.environmentPaletteImageKeys.length > 0 && this.environmentPaletteBaseImages.size > 0) return;
+        const keys = this.collectEnvironmentPaletteKeys();
+        this.environmentPaletteImageKeys = keys;
+        for (const key of keys) {
+            const img = assets.originalImages?.[key] || assets.getImage(key);
+            if (img) this.environmentPaletteBaseImages.set(key, img);
+        }
+    }
+
+    applyBattleEnvironmentPalette(paletteKey) {
+        this.ensureEnvironmentPaletteBaseImages();
+        if (!paletteKey || paletteKey === 'off') {
+            for (const key of this.environmentPaletteImageKeys) {
+                const baseImg = this.environmentPaletteBaseImages.get(key);
+                if (baseImg) assets.images[key] = baseImg;
+            }
+            return;
+        }
+        if (!assets.palettes[paletteKey]) return;
+        for (const key of this.environmentPaletteImageKeys) {
+            const baseImg = this.environmentPaletteBaseImages.get(key);
+            if (!baseImg) continue;
+            const palettized = assets.palettizeImage(baseImg, paletteKey);
+            palettized.silhouette = baseImg.silhouette || assets.analyzeSilhouette(baseImg);
+            assets.images[key] = palettized;
+        }
+    }
+
+    cycleBattlePaletteForward() {
+        if (!this.battlePaletteKeys || this.battlePaletteKeys.length === 0) return false;
+        const total = this.battlePaletteKeys.length;
+        this.activeBattlePaletteIndex = (this.activeBattlePaletteIndex + 1) % total;
+        const key = this.battlePaletteKeys[this.activeBattlePaletteIndex];
+        this.applyBattleEnvironmentPalette(key);
+        this.paletteToastText = key === 'off'
+            ? getLocalizedText({ en: 'Palette: OFF', zh: '调色板：关闭' })
+            : getLocalizedText({ en: `Palette: ${key}`, zh: `调色板：${key}` });
+        this.paletteToastUntil = performance.now() + 5000;
+        assets.playSound('ui_click', 0.4);
+        return true;
+    }
+
+    drawPaletteToast(ctx, timestamp) {
+        if (!this.paletteToastText || timestamp > this.paletteToastUntil) return;
+        const { canvas } = this.manager;
+        const message = this.paletteToastText;
+        const boxW = Math.max(120, message.length * 6 + 12);
+        const boxH = 18;
+        const boxX = Math.floor((canvas.width - boxW) / 2);
+        const boxY = 8;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(boxX, boxY, boxW, boxH);
+        ctx.strokeStyle = '#ffd700';
+        ctx.strokeRect(boxX + 0.5, boxY + 0.5, boxW - 1, boxH - 1);
+        this.drawPixelText(ctx, message, canvas.width / 2, boxY + 6, {
+            color: '#ffd700',
+            font: '8px Silkscreen',
+            align: 'center'
+        });
     }
 
     drawChoiceUI() {
@@ -9022,6 +9133,40 @@ export class TacticsScene extends BaseScene {
         }
     }
 
+    getEffectiveAttackRange(unit, attackKey) {
+        const attackConfig = ATTACKS[attackKey] || ATTACKS.stab;
+        let minRange = attackConfig.minRange || 0;
+        const maxRange = attackConfig.range || 1;
+        // Archers should never be able to attack adjacent targets.
+        if ((attackKey || '').startsWith('arrow_shot') || unit?.imgKey === 'archer') {
+            minRange = Math.max(minRange, 2);
+        }
+        return { minRange, maxRange };
+    }
+
+    getAxialDirectionToTarget(fromR, fromQ, toR, toQ) {
+        for (let dir = 0; dir < 6; dir++) {
+            for (let step = 1; step <= 12; step++) {
+                const next = this.tacticsMap.getCellAtDirectionDistance(fromR, fromQ, dir, step);
+                if (!next) break;
+                if (next.r === toR && next.q === toQ) return { dir, distance: step };
+            }
+        }
+        return null;
+    }
+
+    getLinearSpearTargetsFromOrigin(originR, originQ, minRange, maxRange) {
+        const tiles = [];
+        for (let dir = 0; dir < 6; dir++) {
+            for (let dist = Math.max(1, minRange); dist <= maxRange; dist++) {
+                const cell = this.tacticsMap.getCellAtDirectionDistance(originR, originQ, dir, dist);
+                if (!cell) break;
+                tiles.push(cell);
+            }
+        }
+        return tiles;
+    }
+
     selectAttack(attackKey) {
         if (!this.selectedUnit || this.selectedUnit.faction !== 'player' || this.selectedUnit.hasAttacked) return;
         
@@ -9045,10 +9190,21 @@ export class TacticsScene extends BaseScene {
             });
             return;
         }
-        const range = attack.range || 1;
-        const minRange = attack.minRange || 0;
+        const { minRange, maxRange: range } = this.getEffectiveAttackRange(this.selectedUnit, this.selectedAttack);
         const origins = this.getAttackOrigins(this.selectedUnit);
         const originKeys = new Set(origins.map(o => `${o.r},${o.q}`));
+
+        if (this.selectedAttack.startsWith('serpent_spear') || this.selectedAttack.startsWith('caoren_spear')) {
+            origins.forEach(o => {
+                const tiles = this.getLinearSpearTargetsFromOrigin(o.r, o.q, minRange, range);
+                tiles.forEach(t => {
+                    const k = `${t.r},${t.q}`;
+                    if (originKeys.has(k)) return;
+                    this.attackTiles.set(k, true);
+                });
+            });
+            return;
+        }
         
         if (range === 1 && minRange === 0) {
             origins.forEach(o => {
@@ -9715,6 +9871,14 @@ export class TacticsScene extends BaseScene {
     }
 
     handleKeyDown(e) {
+        if ((e.key === 'p' || e.key === 'P') && e.metaKey && e.shiftKey) {
+            e.preventDefault();
+            this.onNonMouseInput();
+            this.controllerNavMouseEnabled = false;
+            this.cycleBattlePaletteForward();
+            return;
+        }
+
         if (e.key === 'Escape') {
             e.preventDefault();
             this.onNonMouseInput();

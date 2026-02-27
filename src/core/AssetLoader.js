@@ -3,6 +3,7 @@ import { getCurrentLanguage } from './Language.js';
 export class AssetLoader {
     constructor() {
         this.images = {};
+        this.originalImages = {};
         this.sounds = {};
         this.music = {};
         this.palettes = {};
@@ -221,6 +222,8 @@ export class AssetLoader {
                 const img = new Image();
                 img.onload = () => {
                     this.images[key] = img;
+                    // Keep pristine originals so palette switching can restore true base colors.
+                    if (!this.originalImages[key]) this.originalImages[key] = img;
                     // Pre-analyze silhouette for impassable edge highlighting
                     img.silhouette = this.analyzeSilhouette(img);
                     resolve(img);

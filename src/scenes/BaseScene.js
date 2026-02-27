@@ -916,39 +916,97 @@ export class BaseScene {
         if (!localizedText) {
             console.error('renderDialogueBox: getLocalizedText returned empty string for step:', step, 'Current language:', LANGUAGE.current);
         }
-        let lines = this.wrapText(ctx, localizedText || '', maxWidth, '8px Dogica');
-        
         // Chinese: limit to 2 lines max, English: 3 lines max
         const maxLines = LANGUAGE.current === 'zh' ? 2 : 3;
-        
-        // Calculate chunking BEFORE any truncation - keep full lines array for hasNextChunk calculation
-        const start = subStep * maxLines;
-        const hasNextChunk = (subStep + 1) * maxLines < lines.length;
-        
-        // Get the lines to display for this chunk
-        let displayLines = lines.slice(start, start + maxLines);
-        
-        // Add ellipsis to the last displayed line when there's more text to show
-        if (hasNextChunk && displayLines.length > 0) {
-            ctx.save();
-            ctx.font = getFontForLanguage('8px Dogica');
-            const lastLine = displayLines[displayLines.length - 1];
-            const ellipsis = LANGUAGE.current === 'zh' ? '…' : '...';
-            const lastLineWidth = ctx.measureText(lastLine).width;
-            const ellipsisWidth = ctx.measureText(ellipsis).width;
-            
-            if (lastLineWidth + ellipsisWidth <= maxWidth) {
-                displayLines[displayLines.length - 1] = lastLine + ellipsis;
-            } else {
-                // Replace last few characters with ellipsis if needed
-                let shortened = lastLine;
-                while (ctx.measureText(shortened + ellipsis).width > maxWidth && shortened.length > 0) {
-                    shortened = shortened.slice(0, -1);
-                }
-                displayLines[displayLines.length - 1] = shortened + ellipsis;
+        const ellipsis = LANGUAGE.current === 'zh' ? '…' : '...';
+        const fullText = localizedText || '';
+        const hasChinese = /[\u4e00-\u9fff]/.test(fullText);
+        let displayLines = [];
+        let hasNextChunk = false;
+        let totalLines = 0;
+
+        ctx.save();
+        ctx.font = getFontForLanguage('8px Dogica');
+
+        if (!hasChinese) {
+            // Build English chunks by consumed word ranges so we never lose partial words between pages.
+            const words = [];
+            const wordRegex = /\S+/g;
+            let match;
+            while ((match = wordRegex.exec(fullText)) !== null) {
+                words.push({ text: match[0], start: match.index, end: match.index + match[0].length });
             }
-            ctx.restore();
+
+            const wrapWordRanges = (startWordIdx = 0) => {
+                const wrapped = [];
+                let i = startWordIdx;
+                while (i < words.length) {
+                    const lineStart = i;
+                    let lineText = words[i].text;
+                    i++;
+                    while (i < words.length) {
+                        const candidate = `${lineText} ${words[i].text}`;
+                        if (ctx.measureText(candidate).width > maxWidth - 4) break;
+                        lineText = candidate;
+                        i++;
+                    }
+                    wrapped.push({ text: lineText, startWord: lineStart, endWord: i - 1 });
+                }
+                return wrapped;
+            };
+
+            const chunks = [];
+            let cursorWord = 0;
+            while (cursorWord < words.length) {
+                const wrapped = wrapWordRanges(cursorWord);
+                totalLines += wrapped.length;
+                if (wrapped.length <= maxLines) {
+                    chunks.push({ lines: wrapped.map(l => l.text), hasNext: false });
+                    break;
+                }
+
+                const page = wrapped.slice(0, maxLines);
+                let lastLine = page[page.length - 1].text;
+                let endWord = page[page.length - 1].endWord;
+
+                // Ensure ellipsis still ends on a full word boundary.
+                while (endWord > page[page.length - 1].startWord && ctx.measureText(`${lastLine}${ellipsis}`).width > maxWidth) {
+                    endWord--;
+                    const wordsSlice = words.slice(page[page.length - 1].startWord, endWord + 1).map(w => w.text);
+                    lastLine = wordsSlice.join(' ');
+                }
+
+                const pageLines = page.map(l => l.text);
+                pageLines[pageLines.length - 1] = `${lastLine}${ellipsis}`;
+                chunks.push({ lines: pageLines, hasNext: true });
+                cursorWord = endWord + 1;
+            }
+
+            const safeSubStep = Math.max(0, Math.min(subStep, Math.max(0, chunks.length - 1)));
+            const chunk = chunks[safeSubStep] || { lines: [], hasNext: false };
+            displayLines = chunk.lines;
+            hasNextChunk = chunk.hasNext;
+        } else {
+            // Keep Chinese wrapping behavior; char-level wrapping is expected for CJK text.
+            const lines = this.wrapText(ctx, fullText, maxWidth, '8px Dogica');
+            totalLines = lines.length;
+            const start = subStep * maxLines;
+            hasNextChunk = (subStep + 1) * maxLines < lines.length;
+            displayLines = lines.slice(start, start + maxLines);
+            if (hasNextChunk && displayLines.length > 0) {
+                const lastLine = displayLines[displayLines.length - 1];
+                if (ctx.measureText(`${lastLine}${ellipsis}`).width <= maxWidth) {
+                    displayLines[displayLines.length - 1] = `${lastLine}${ellipsis}`;
+                } else {
+                    let shortened = lastLine;
+                    while (ctx.measureText(`${shortened}${ellipsis}`).width > maxWidth && shortened.length > 0) {
+                        shortened = shortened.slice(0, -1);
+                    }
+                    displayLines[displayLines.length - 1] = `${shortened}${ellipsis}`;
+                }
+            }
         }
+        ctx.restore();
         
         // Adjust line spacing for Chinese (larger font) - but keep panel same size
         const lineSpacing = LANGUAGE.current === 'zh' ? 16 : 12;
@@ -993,7 +1051,7 @@ export class BaseScene {
         }
         ctx.globalAlpha = 1.0;
 
-        return { hasNextChunk, totalLines: lines.length };
+        return { hasNextChunk, totalLines };
     }
 
     drawPixelText(ctx, text, x, y, options = {}) {

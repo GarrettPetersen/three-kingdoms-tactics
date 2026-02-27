@@ -1,0 +1,21 @@
+;paint.net Palette File
+;Downloaded from Lospec.com/palette-list
+;Palette Name: csc16
+;Description: The midtones are interchangeable so have fun with it. Made for&nbsp;<a href="https://lospec.com/thewaronchristmas" target="_blank">The War on Christmas</a>&nbsp;to do baroque stuff but if you are really gonna do that then you'll probably need to add or change some shadow tones to match the subject. Fortunately you have many midtone slots to make that exchange&nbsp;
+;Colors: 16
+FF011007
+FF331d13
+FF3c353f
+FF72381b
+FF594839
+FF754848
+FF50756d
+FF516778
+FF9b3d39
+FFb16a18
+FF8f6440
+FF7e9055
+FFc4961e
+FFbaa58d
+FFe4c486
+FFf6f3e8
