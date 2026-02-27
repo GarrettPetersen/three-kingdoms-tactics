@@ -482,10 +482,15 @@ async function init() {
                 'resurrect-64': 'assets/palettes/resurrect-64.txt',
                 'slso8': 'assets/palettes/slso8.txt',
                 'steam-lords': 'assets/palettes/steam-lords.txt',
-                'cl8uds': 'assets/palettes/cl8uds.txt',
                 'pico-8': 'assets/palettes/pico-8.txt',
                 'hollow': 'assets/palettes/hollow.txt',
-                'dusty-plain': 'assets/palettes/dustyplain.hex'
+                'dusty-plain': 'assets/palettes/dustyplain.hex',
+                '31': 'assets/palettes/31.txt',
+                'midnight-epipelagic': 'assets/palettes/midnight-epipelagic.txt',
+                'midnight-ablaze': 'assets/palettes/midnight-ablaze.txt',
+                'apollo': 'assets/palettes/apollo.txt',
+                'goldrush': 'assets/palettes/goldrush.txt',
+                'twilight-5': 'assets/palettes/twilight-5.txt'
             }),
             assets.loadImages({
                 title_en: 'assets/misc/three_kingdoms_stratagem_title.png',

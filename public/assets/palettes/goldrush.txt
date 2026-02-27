@@ -1,0 +1,10 @@
+;paint.net Palette File
+;Downloaded from Lospec.com/palette-list
+;Palette Name: Goldrush
+;Description: 
+;Colors: 5
+FFfcefb0
+FFe6c45b
+FFca9a2b
+FF8f5132
+FF521931
