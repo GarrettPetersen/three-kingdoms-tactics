@@ -1,9 +1,10 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
-import { ANIMATIONS, ATTACKS, UPGRADE_PATHS } from '../core/Constants.js';
+import { ANIMATIONS, ATTACKS } from '../core/Constants.js';
 import { TacticsMap } from '../core/TacticsMap.js';
 import { Unit } from '../entities/Unit.js';
-import { BATTLES, UNIT_TEMPLATES } from '../data/Battles.js';
+import { BATTLES } from '../data/Battles.js';
+import { applyLevelAttackUpgrades, getLevelFromXP, getMaxHpForLevel, resolveUnitTemplate } from '../data/UnitRules.js';
 import { NARRATIVE_SCRIPTS } from '../data/NarrativeScripts.js';
 import { getLocalizedText, getFontForLanguage, getTextContainerSize, LANGUAGE } from '../core/Language.js';
 import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
@@ -1208,34 +1209,13 @@ export class TacticsScene extends BaseScene {
         
         // Continuity: Check for promoted class (e.g. Soldier -> Archer)
         let finalImgKey = imgKey;
-        let finalAttacks = [...attacks];
         const unitClass = unitClasses[id] || (id.startsWith('ally') ? 'soldier' : id);
-        
-        if (unitClass === 'archer') {
-            finalImgKey = 'archer';
-            finalAttacks = ['arrow_shot'];
-        }
-
-        // Apply weapon upgrades based on level
-        const path = UPGRADE_PATHS[unitClass];
-        if (path) {
-            Object.keys(path).forEach(lvl => {
-                if (level >= parseInt(lvl)) {
-                    const upgrade = path[lvl];
-                    if (upgrade.attack) {
-                        finalAttacks[0] = upgrade.attack;
-                    }
-                    if (upgrade.secondaryAttack) {
-                        if (finalAttacks.length < 2) finalAttacks.push(upgrade.secondaryAttack);
-                        else finalAttacks[1] = upgrade.secondaryAttack;
-                    }
-                }
-            });
-        }
+        const isArcher = unitClass === 'archer';
+        if (isArcher) finalImgKey = 'archer';
+        const finalAttacks = applyLevelAttackUpgrades(attacks, unitClass, level, isArcher);
 
         const faction = (id === 'liubei' || id === 'guanyu' || id === 'zhangfei') ? 'player' : 'allied';
         // Heroes have 4 base HP, soldiers gain +1 HP at level 2+, archers stay at 2
-        const isArcher = unitClass === 'archer';
         let baseHp = 4;
         if (faction !== 'player') {
             baseHp = isArcher ? 2 : (level >= 2 ? 3 : 2);
@@ -2377,7 +2357,7 @@ export class TacticsScene extends BaseScene {
     moveNpcAndTelegraph(unit, onComplete) {
         const attackKey = unit.attacks[0] || 'stab';
         const { minRange, maxRange } = this.getEffectiveAttackRange(unit, attackKey);
-        const isSpearAttack = attackKey.startsWith('serpent_spear') || attackKey.startsWith('caoren_spear');
+        const isSpearAttack = this.isLineAttack(attackKey);
 
         // Determine valid targets based on faction
         // - Enemies target player and allied units, but NOT caged allies (they're protecting the cage)
@@ -2684,7 +2664,7 @@ export class TacticsScene extends BaseScene {
     telegraphSingleNpc(unit) {
         const attackKey = unit.attacks[0] || 'stab';
         const { minRange, maxRange } = this.getEffectiveAttackRange(unit, attackKey);
-        const isSpearAttack = attackKey.startsWith('serpent_spear') || attackKey.startsWith('caoren_spear');
+        const isSpearAttack = this.isLineAttack(attackKey);
         
         // Same targeting logic as moveNpcAndTelegraph:
         // - Enemies target player and allied units, but NOT caged allies
@@ -4175,11 +4155,13 @@ export class TacticsScene extends BaseScene {
         const targetCell = this.tacticsMap.getCell(targetR, targetQ);
         const victim = targetCell ? this.getRiderUnitFromCell(targetCell) : null;
         const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('tent') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
+        const isLineAttack = this.isLineAttack(attackKey);
+        const isSweepAttack = this.isSweepAttack(attackKey);
 
         // Play attack sound
-        if (attackKey.startsWith('serpent_spear') || attackKey.startsWith('caoren_spear')) assets.playSound('stab');
+        if (isLineAttack) assets.playSound('stab');
         else if (attackKey.startsWith('green_dragon_slash')) assets.playSound('green_dragon');
-        else if (attackKey === 'tyrant_sweep') assets.playSound('green_dragon');  // Same sound as green dragon
+        else if (isSweepAttack) assets.playSound('green_dragon');
         else if (attackKey === 'double_blades') assets.playSound('double_blades');
         else if (attackKey === 'bash') assets.playSound('bash');
         else if (attackKey.startsWith('slash')) assets.playSound('slash');
@@ -4208,9 +4190,9 @@ export class TacticsScene extends BaseScene {
 
         if (attackKey === 'double_blades') {
             this.executeDoubleBlades(attacker, targetR, targetQ, wrappedOnComplete);
-        } else if (attackKey.startsWith('green_dragon_slash') || attackKey === 'tyrant_sweep') {
+        } else if (attackKey.startsWith('green_dragon_slash') || isSweepAttack) {
             this.executeGreenDragonSlash(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
-        } else if (attackKey.startsWith('serpent_spear') || attackKey.startsWith('caoren_spear')) {
+        } else if (isLineAttack) {
             this.executeSerpentSpear(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
         } else {
             // Standard single-target attack (Bash, etc.)
@@ -4305,20 +4287,6 @@ export class TacticsScene extends BaseScene {
                             [{ r: targetR, q: targetQ }],
                             startPos, 'slash',
                             { maxWidth: 6, duration: 120 }
-                        );
-                    } else if (attackKey === 'whirlwind') {
-                        // Spinning strike — wide sweeping slash
-                        this.spawnSwish(
-                            [{ r: targetR, q: targetQ }],
-                            startPos, 'slash',
-                            { maxWidth: 10, duration: 150 }
-                        );
-                    } else if (attackKey === 'heavy_thrust') {
-                        // Thrust with a polearm — thin needle stab
-                        this.spawnSwish(
-                            [{ r: targetR, q: targetQ }],
-                            startPos, 'stab',
-                            { maxWidth: 3, duration: 140 }
                         );
                     }
 
@@ -4541,8 +4509,14 @@ export class TacticsScene extends BaseScene {
                     if (victim && !hitVictimsSS.has(victim)) {
                         hitVictimsSS.add(victim);
                         const victimPos = this.getPixelPos(cell.r, cell.q);
+                        const furthestBonus = (attack.furthestBonusDamage && pos.r === targetR && pos.q === targetQ)
+                            ? attack.furthestBonusDamage
+                            : 0;
+                        const attackForCell = furthestBonus > 0
+                            ? { ...attack, damage: (attack.damage || 0) + furthestBonus }
+                            : attack;
                         // Apply damage on the actual struck hex; keep push decision anchored to clicked hex.
-                        this.applyDamageAndPush(attacker, victim, attack, pos.r, pos.q, startPos, victimPos, targetR, targetQ);
+                        this.applyDamageAndPush(attacker, victim, attackForCell, pos.r, pos.q, startPos, victimPos, targetR, targetQ);
                         hitAnything = true;
                     }
                 }
@@ -4894,18 +4868,11 @@ export class TacticsScene extends BaseScene {
     }
 
     getLevelFromXP(xp) {
-        if (xp < 10) return 1;
-        // Formula: TotalXP(L) = 2.5*L^2 + 2.5*L - 5
-        // Level 2 at 10 XP, Level 3 at 25 XP, Level 4 at 45 XP, etc.
-        // Solving for L: L = (-1 + sqrt(9 + 1.6*xp)) / 2
-        return Math.floor((-1 + Math.sqrt(9 + 1.6 * xp)) / 2);
+        return getLevelFromXP(xp);
     }
 
     getMaxHpForLevel(level, baseHp = 4) {
-        // Bonus: floor(6 * (level - 1) / (level + 5))
-        // Max bonus is 6 (at level=inf), so 4 + 6 = 10.
-        const bonus = Math.floor(6 * (level - 1) / (level + 5));
-        return Math.min(10, baseHp + bonus);
+        return getMaxHpForLevel(level, baseHp);
     }
 
     cheatWin() {
@@ -5004,19 +4971,12 @@ export class TacticsScene extends BaseScene {
             const battleDef = BATTLES[this.battleId];
             if (battleDef && battleDef.units) {
                 unitsToPlace = battleDef.units.map(uDef => {
-                    const typeTemplates = UNIT_TEMPLATES[uDef.type];
-                    if (!typeTemplates) {
-                        console.warn(`No templates found for type: ${uDef.type}`);
-                        return null;
-                    }
-                    
-                    const baseId = uDef.id.replace(/\d+$/, ''); // Strip trailing digits (e.g., ally1 -> ally)
-                    const template = typeTemplates[uDef.id] || typeTemplates[uDef.id.split('_')[0]] || typeTemplates[baseId];
-                    
+                    const template = resolveUnitTemplate(uDef.type, uDef.templateId || uDef.id);
                     if (!template) {
-                        console.warn(`No template found for unit: ${uDef.id} (type: ${uDef.type}, baseId: ${baseId})`);
+                        console.warn(`No template found for unit ${uDef.id} (type: ${uDef.type})`);
                         return null;
                     }
+
                     return {
                         ...template,
                         id: uDef.id,
@@ -5038,11 +4998,11 @@ export class TacticsScene extends BaseScene {
             } else {
                 // Default fallback
             unitsToPlace = [
-                { id: 'liubei', name: 'Liu Bei', imgKey: 'liubei', r: 2, q: 4, moveRange: 4, hp: 4, faction: 'player', attacks: ['double_blades'] },
-                { id: 'guanyu', name: 'Guan Yu', imgKey: 'guanyu', r: 3, q: 3, moveRange: 5, hp: 4, faction: 'player', attacks: ['green_dragon_slash'] },
-                { id: 'zhangfei', name: 'Zhang Fei', imgKey: 'zhangfei', r: 3, q: 5, moveRange: 4, hp: 4, faction: 'player', attacks: ['serpent_spear'] },
-                { id: 'rebel1', name: 'Yellow Turban', imgKey: 'yellowturban', r: 7, q: 4, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] },
-                { id: 'rebel2', name: 'Yellow Turban', imgKey: 'yellowturban', r: 8, q: 5, moveRange: 3, hp: 3, faction: 'enemy', attacks: ['bash'] }
+                { id: 'liubei', type: 'hero_force', templateId: 'liubei', r: 2, q: 4 },
+                { id: 'guanyu', type: 'hero_force', templateId: 'guanyu', r: 3, q: 3 },
+                { id: 'zhangfei', type: 'hero_force', templateId: 'zhangfei', r: 3, q: 5 },
+                { id: 'rebel1', type: 'yellow_turban', templateId: 'rebel', r: 7, q: 4 },
+                { id: 'rebel2', type: 'yellow_turban', templateId: 'rebel', r: 8, q: 5 }
             ];
             }
         }
@@ -5083,7 +5043,14 @@ export class TacticsScene extends BaseScene {
                 }
 
                 let level = u.level;
-                if (!this.isCustom || !level) {
+                if (!this.isCustom) {
+                    const hasTrackedXP = Object.prototype.hasOwnProperty.call(unitXP, u.id);
+                    if (hasTrackedXP) {
+                        level = this.getLevelFromXP(unitXP[u.id] || 0);
+                    } else {
+                        level = level || 1;
+                    }
+                } else if (!level) {
                     const xp = unitXP[u.id] || 0;
                     level = this.getLevelFromXP(xp);
                 }
@@ -5121,33 +5088,21 @@ export class TacticsScene extends BaseScene {
                     attacks = ['arrow_shot'];
                 }
 
-                // Apply template if missing data (for custom roster)
-                if (this.isCustom && !u.hp) {
-                    const typeTemplates = UNIT_TEMPLATES[u.type];
-                    const template = typeTemplates ? (typeTemplates[u.templateId] || Object.values(typeTemplates)[0]) : null;
-                    if (template) {
-                        if (!attacks.length) attacks = [...template.attacks];
-                        if (!u.moveRange) u.moveRange = template.moveRange;
+                // Apply canonical unit template when roster row references one.
+                const template = resolveUnitTemplate(u.type, u.templateId || u.id);
+                if (template) {
+                    if (!attacks.length) attacks = [...template.attacks];
+                    if (!u.moveRange) u.moveRange = template.moveRange;
+                    if (!imgKey) imgKey = template.imgKey;
+                    if (!u.name) u.name = template.name;
+                    if (!u.faction) u.faction = template.faction;
+                    if (!u.maxHp && !u.hp && template.hp !== undefined) {
+                        u.maxHp = template.hp;
+                        u.hp = template.hp;
                     }
                 }
 
-                // Apply weapon upgrades based on level
-                const path = UPGRADE_PATHS[unitClass];
-                if (path) {
-                    Object.keys(path).forEach(lvl => {
-                        if (level >= parseInt(lvl)) {
-                            const upgrade = path[lvl];
-                            if (upgrade.attack) {
-                                // Replace the primary attack with the upgraded version
-                                attacks[0] = upgrade.attack;
-                            }
-                            if (upgrade.secondaryAttack) {
-                                if (attacks.length < 2) attacks.push(upgrade.secondaryAttack);
-                                else attacks[1] = upgrade.secondaryAttack;
-                            }
-                        }
-                    });
-            }
+                attacks = applyLevelAttackUpgrades(attacks, unitClass, level, unitClass === 'archer');
 
             const unit = new Unit(u.id, {
                 ...u,
@@ -6026,7 +5981,7 @@ export class TacticsScene extends BaseScene {
         const dist = this.tacticsMap.getDistance(origin.r, origin.q, targetR, targetQ);
         const attack = ATTACKS[attackKey];
 
-        if (attackKey.startsWith('serpent_spear') || attackKey.startsWith('caoren_spear')) {
+        if (this.isLineAttack(attackKey)) {
             // Spear attacks only travel in one of 6 strict axial directions.
             const axial = this.getAxialDirectionToTarget(origin.r, origin.q, targetR, targetQ);
             if (axial) {
@@ -6036,11 +5991,12 @@ export class TacticsScene extends BaseScene {
                     affected.push({ r: t.r, q: t.q });
                 }
             }
-        } else if (attackKey.startsWith('green_dragon_slash') || attackKey === 'tyrant_sweep') {
+        } else if (this.isSweepAttack(attackKey) || attackKey.startsWith('green_dragon_slash')) {
             // 3-hex arc.
             // Never include the attacker's own occupied hex.
             // Special case: if targeting "above/below" the horse at melee range, slice 3-in-a-row horizontally.
             const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, targetR, targetQ);
+            const sweepLength = this.getSweepLength(attackKey);
 
             const isMounted = !!attacker.onHorse;
             const isEastWest = (dirIndex === 1 || dirIndex === 4);
@@ -6052,17 +6008,24 @@ export class TacticsScene extends BaseScene {
                 affected.push({ r: targetR, q: targetQ });
                 const east = this.tacticsMap.getNeighborInDirection(targetR, targetQ, 1);
                 const west = this.tacticsMap.getNeighborInDirection(targetR, targetQ, 4);
-                if (east) affected.push({ r: east.r, q: east.q });
-                if (west) affected.push({ r: west.r, q: west.q });
+                if (sweepLength >= 2 && east) affected.push({ r: east.r, q: east.q });
+                if (sweepLength >= 3 && west) affected.push({ r: west.r, q: west.q });
             } else {
                 // Default: fan on the SAME distance ring from the attacker.
                 // Always include the targeted hex, then include immediate neighboring ring hexes.
                 // At map edges, this naturally degrades to 2 tiles (or 1) by skipping off-map neighbors.
                 affected.push({ r: targetR, q: targetQ });
-                if (dirIndex !== -1 && dist > 0) {
+                if (dirIndex !== -1 && dist > 0 && sweepLength > 1) {
                     const neighbors = this.tacticsMap.getNeighbors(targetR, targetQ) || [];
                     const sameRing = neighbors.filter(n => this.tacticsMap.getDistance(origin.r, origin.q, n.r, n.q) === dist);
-                    for (let i = 0; i < Math.min(2, sameRing.length); i++) {
+                    sameRing.sort((a, b) => {
+                        const dirA = this.tacticsMap.getDirectionIndex(targetR, targetQ, a.r, a.q);
+                        const dirB = this.tacticsMap.getDirectionIndex(targetR, targetQ, b.r, b.q);
+                        const deltaA = Math.min(Math.abs(dirA - dirIndex), 6 - Math.abs(dirA - dirIndex));
+                        const deltaB = Math.min(Math.abs(dirB - dirIndex), 6 - Math.abs(dirB - dirIndex));
+                        return deltaA - deltaB;
+                    });
+                    for (let i = 0; i < Math.min(sweepLength - 1, sameRing.length); i++) {
                         affected.push({ r: sameRing[i].r, q: sameRing[i].q });
                     }
                 }
@@ -6713,7 +6676,7 @@ export class TacticsScene extends BaseScene {
                             this.drawPushArrow(ctx, backCell.r, backCell.q, oppositeDir);
                         }
                     }
-                } else if (this.selectedAttack && (this.selectedAttack.startsWith('serpent_spear') || this.selectedAttack.startsWith('caoren_spear'))) {
+                } else if (this.selectedAttack && this.isLineAttack(this.selectedAttack)) {
                     // Serpent Spear: Push the further target
                     const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, this.hoveredCell.r, this.hoveredCell.q);
                     if (dirIndex !== -1) {
@@ -8581,7 +8544,7 @@ export class TacticsScene extends BaseScene {
             if (u.hp > 0 && u.intent && u.intent.type === 'attack') {
                 const attack = ATTACKS[u.intent.attackKey];
                 if (attack) {
-                    const actionName = getLocalizedText(UI_TEXT[attack.name]) || attack.name;
+                    const actionName = getLocalizedText(attack.name || { en: 'Unknown', zh: '未知' });
                     const intentLabel = getLocalizedText(UI_TEXT['INTENT:']);
                     actionText = `${intentLabel} ${actionName}`;
                 } else {
@@ -8954,7 +8917,7 @@ export class TacticsScene extends BaseScene {
             ctx.strokeStyle = isSelected ? '#ffd700' : (isDisabled ? '#333' : '#888');
             ctx.strokeRect(ax + 0.5, ay + 0.5, aw - 1, ah - 1);
 
-            const attackName = getLocalizedText(UI_TEXT[attack.name] || attack.name || { en: 'Attack', zh: '攻击' });
+            const attackName = getLocalizedText(attack?.name || { en: 'Attack', zh: '攻击' });
             this.drawPixelText(ctx, attackName, ax + aw / 2, ay + 3, { 
                 color: isDisabled ? '#555' : '#eee', 
                 font: '8px Tiny5',
@@ -9031,6 +8994,19 @@ export class TacticsScene extends BaseScene {
         return tiles;
     }
 
+    isLineAttack(attackKey) {
+        return !!ATTACKS[attackKey]?.line;
+    }
+
+    isSweepAttack(attackKey) {
+        return ATTACKS[attackKey]?.shape === 'sweep';
+    }
+
+    getSweepLength(attackKey) {
+        const len = ATTACKS[attackKey]?.sweepLength;
+        return Math.max(1, Number.isFinite(len) ? len : 1);
+    }
+
     selectAttack(attackKey) {
         if (!this.selectedUnit || this.selectedUnit.faction !== 'player' || this.selectedUnit.hasAttacked) return;
         
@@ -9054,7 +9030,7 @@ export class TacticsScene extends BaseScene {
         const origins = this.getAttackOrigins(this.selectedUnit);
         const originKeys = new Set(origins.map(o => `${o.r},${o.q}`));
 
-        if (this.selectedAttack.startsWith('serpent_spear') || this.selectedAttack.startsWith('caoren_spear')) {
+        if (this.isLineAttack(this.selectedAttack)) {
             origins.forEach(o => {
                 const tiles = this.getLinearSpearTargetsFromOrigin(o.r, o.q, minRange, range);
                 tiles.forEach(t => {

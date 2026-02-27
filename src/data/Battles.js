@@ -759,9 +759,10 @@ export const BATTLES = {
 };
 
 const SOLDIER_BASE = {
+    templateId: 'soldier',
     imgKey: 'soldier',
     moveRange: 3,
-    attacks: ['slash']
+    attacks: ['slash', 'polearm_sweep']
 };
 
 const SOLDIER_VARIANTS = {
@@ -801,9 +802,9 @@ export const UNIT_TEMPLATES = {
         'soldier': { ...SOLDIER_VARIANTS.generic }
     },
     'enemy_captain': {
-        'dengmao': { name: 'Deng Mao', imgKey: 'dengmao', hp: 5, moveRange: 3, attacks: ['heavy_thrust'], faction: 'enemy' },
-        'chengyuanzhi': { name: 'Cheng Yuanzhi', imgKey: 'chengyuanzhi', hp: 5, moveRange: 3, attacks: ['whirlwind'], faction: 'enemy' },
-        'zhang_jue_captain': { name: 'Yellow Turban Captain', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['whirlwind'], faction: 'enemy' }
+        'dengmao': { name: 'Deng Mao', imgKey: 'dengmao', hp: 5, moveRange: 3, attacks: ['generic_spear'], faction: 'enemy', level: 1 },
+        'chengyuanzhi': { name: 'Cheng Yuanzhi', imgKey: 'chengyuanzhi', hp: 5, moveRange: 3, attacks: ['polearm_sweep'], faction: 'enemy', level: 2 },
+        'zhang_jue_captain': { name: 'Yellow Turban Captain', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['bash'], faction: 'enemy' }
     },
     'commander': {
         'gongjing': { name: 'Gong Jing', imgKey: 'gongjing_sprite', hp: 5, moveRange: 3, attacks: ['slash'], faction: 'allied' },
@@ -812,7 +813,7 @@ export const UNIT_TEMPLATES = {
         'zhujun': { name: 'Zhu Jun', imgKey: 'zhujun_sprite', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' }
     },
     'warlord': {
-        'dongzhuo': { name: 'Dong Zhuo', imgKey: 'dongzhuo', hp: 9, moveRange: 3, attacks: ['tyrant_sweep'], faction: 'allied' }
+        'dongzhuo': { name: 'Dong Zhuo', imgKey: 'dongzhuo', hp: 9, moveRange: 3, attacks: ['blade_sweep_4'], faction: 'allied' }
     },
     'caocao_force': {
         'caocao': { name: 'Cao Cao', imgKey: 'caocao', hp: 6, moveRange: 4, attacks: ['slash_cao', 'command'], faction: 'player' },
@@ -829,13 +830,13 @@ export const UNIT_TEMPLATES = {
         'rider': { name: 'Cavalry', imgKey: 'soldier', hp: 4, moveRange: 4, attacks: ['slash'], faction: 'allied', templateId: 'soldier' }
     },
     'zhang_jue': {
-        'zhangjue': { name: 'Zhang Jue', imgKey: 'zhangjiao', hp: 8, moveRange: 4, attacks: ['whirlwind'], faction: 'enemy' }
+        'zhangjue': { name: 'Zhang Jue', imgKey: 'zhangjiao', hp: 8, moveRange: 4, attacks: ['bash_3'], faction: 'enemy' }
     },
     'zhang_bao': {
-        'zhangbao': { name: 'Zhang Bao', imgKey: 'zhangbao', hp: 7, moveRange: 4, attacks: ['heavy_thrust'], faction: 'enemy' }
+        'zhangbao': { name: 'Zhang Bao', imgKey: 'zhangbao', hp: 7, moveRange: 4, attacks: ['slash'], faction: 'enemy' }
     },
     'zhang_liang': {
-        'zhangliang': { name: 'Zhang Liang', imgKey: 'zhangliang', hp: 7, moveRange: 4, attacks: ['heavy_thrust'], faction: 'enemy' }
+        'zhangliang': { name: 'Zhang Liang', imgKey: 'zhangliang', hp: 7, moveRange: 4, attacks: ['blade_sweep_2'], faction: 'enemy' }
     },
     'prop': {
         'boulder': { name: 'Boulder', imgKey: 'boulder', hp: 2, moveRange: 0, attacks: [], faction: 'neutral' }

@@ -469,28 +469,28 @@ async function init() {
         await Promise.all([
             assets.loadPortraits(portraitNames),
             assets.loadPalettes({
-                'fairytale-forest': 'assets/palettes/fairytale-forest.txt',
-                'vinik24': 'assets/palettes/vinik24.txt',
-                'pastel-qt': 'assets/palettes/pastel-qt.txt',
-                'japanese-woodblock': 'assets/palettes/japanese-woodblock.txt',
-                'lost-century': 'assets/palettes/lost-century.txt',
-                'retrocal-8': 'assets/palettes/retrocal-8.txt',
-                'csc16': 'assets/palettes/csc16.txt',
-                'cotten-candy-5': 'assets/palettes/cotten-candy-5.txt',
-                'fantasy-24': 'assets/palettes/fantasy-24.txt',
-                'pinkgreen': 'assets/palettes/pinkgreen.txt',
-                'resurrect-64': 'assets/palettes/resurrect-64.txt',
-                'slso8': 'assets/palettes/slso8.txt',
-                'steam-lords': 'assets/palettes/steam-lords.txt',
-                'pico-8': 'assets/palettes/pico-8.txt',
-                'hollow': 'assets/palettes/hollow.txt',
+                'fairytale-forest': 'assets/palettes/fairytale-forest.hex',
+                'vinik24': 'assets/palettes/vinik24.hex',
+                'pastel-qt': 'assets/palettes/pastel-qt.hex',
+                'japanese-woodblock': 'assets/palettes/japanese-woodblock.hex',
+                'lost-century': 'assets/palettes/lost-century.hex',
+                'retrocal-8': 'assets/palettes/retrocal-8.hex',
+                'csc16': 'assets/palettes/csc16.hex',
+                'cotten-candy-5': 'assets/palettes/cotten-candy-5.hex',
+                'fantasy-24': 'assets/palettes/fantasy-24.hex',
+                'pinkgreen': 'assets/palettes/pinkgreen.hex',
+                'resurrect-64': 'assets/palettes/resurrect-64.hex',
+                'slso8': 'assets/palettes/slso8.hex',
+                'steam-lords': 'assets/palettes/steam-lords.hex',
+                'pico-8': 'assets/palettes/pico-8.hex',
+                'hollow': 'assets/palettes/hollow.hex',
                 'dusty-plain': 'assets/palettes/dustyplain.hex',
-                '31': 'assets/palettes/31.txt',
-                'midnight-epipelagic': 'assets/palettes/midnight-epipelagic.txt',
-                'midnight-ablaze': 'assets/palettes/midnight-ablaze.txt',
-                'apollo': 'assets/palettes/apollo.txt',
-                'goldrush': 'assets/palettes/goldrush.txt',
-                'twilight-5': 'assets/palettes/twilight-5.txt',
+                '31': 'assets/palettes/31.hex',
+                'midnight-epipelagic': 'assets/palettes/midnight-epipelagic.hex',
+                'midnight-ablaze': 'assets/palettes/midnight-ablaze.hex',
+                'apollo': 'assets/palettes/apollo.hex',
+                'goldrush': 'assets/palettes/goldrush.hex',
+                'twilight-5': 'assets/palettes/twilight-5.hex',
                 'tiffany-lamp': 'assets/palettes/tiffany-lamp.hex',
                 'gold-and-blue': 'assets/palettes/gold-and-blue.hex',
                 'funkyfuture-8': 'assets/palettes/funkyfuture-8.hex'
@@ -748,13 +748,7 @@ async function init() {
             ]);
         });
 
-        // Apply palette to terrain assets
-        assets.palettizeKeys(TERRAIN_TYPES, 'vinik24', {
-            ditherMix: true,
-            flatThreshold: 38,
-            mixImprovement: 0.92,
-            pattern: 'bayer4'
-        });
+        // Default terrain colors: no global palette remap.
 
         // Imperial camp tents: recolor yellow tent art to a pale white canvas variant.
         const baseTent = assets.getImage('tent');

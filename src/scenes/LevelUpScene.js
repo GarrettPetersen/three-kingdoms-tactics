@@ -3,6 +3,7 @@ import { assets } from '../core/AssetLoader.js';
 import { UPGRADE_PATHS, ATTACKS } from '../core/Constants.js';
 import { getLocalizedText } from '../core/Language.js';
 import { UI_TEXT } from '../data/Translations.js';
+import { getMaxHpForLevel as getUnitMaxHpForLevel } from '../data/UnitRules.js';
 
 export class LevelUpScene extends BaseScene {
     constructor() {
@@ -200,8 +201,7 @@ export class LevelUpScene extends BaseScene {
     }
 
     getMaxHpForLevel(level, baseHp = 4) {
-        const bonus = Math.floor(6 * (level - 1) / (level + 5));
-        return Math.min(10, baseHp + bonus);
+        return getUnitMaxHpForLevel(level, baseHp);
     }
 
     renderPromotionUI(ctx, canvas, cx, y) {

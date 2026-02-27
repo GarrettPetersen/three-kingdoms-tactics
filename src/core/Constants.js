@@ -16,6 +16,7 @@ export const ATTACKS = {
         name: { en: 'Serpent Spear', zh: '蛇矛' },
         damage: 1,
         range: 2,
+        line: true,
         push: 'furthest', // Special: only push the furthest
         animation: 'attack_2',
         description: { en: 'Strikes in a line. Pushes the further target.', zh: '沿直线突刺，并击退最远目标。' }
@@ -24,6 +25,7 @@ export const ATTACKS = {
         name: { en: 'Serpent Spear II', zh: '蛇矛 II' },
         damage: 1,
         range: 3,
+        line: true,
         push: 'furthest',
         animation: 'attack_2',
         description: { en: 'Extended reach. Pushes the furthest target.', zh: '延长攻击距离，并击退最远目标。' }
@@ -32,6 +34,7 @@ export const ATTACKS = {
         name: { en: 'Serpent Spear III', zh: '蛇矛 III' },
         damage: 2,
         range: 3,
+        line: true,
         push: 'furthest',
         animation: 'attack_2',
         description: { en: 'Heavy strike. Pushes the furthest target.', zh: '重击突刺，并击退最远目标。' }
@@ -40,6 +43,7 @@ export const ATTACKS = {
         name: { en: 'Serpent Spear IV', zh: '蛇矛 IV' },
         damage: 2,
         range: 3,
+        line: true,
         push: true, // All hexes
         animation: 'attack_2',
         description: { en: 'Ultimate strike. Pushes all targets in line.', zh: '极限突刺，击退直线上的全部目标。' }
@@ -48,6 +52,7 @@ export const ATTACKS = {
         name: { en: 'Long Spear', zh: '长矛' },
         damage: 1,
         range: 2,
+        line: true,
         push: 'furthest', // Special: only push the furthest
         animation: 'attack_2',
         description: { en: 'Line thrust from behind the shield. Pushes the furthest target.', zh: '持盾前压后以长矛突刺，击退最远目标。' }
@@ -56,6 +61,7 @@ export const ATTACKS = {
         name: { en: 'Long Spear II', zh: '长矛 II' },
         damage: 1,
         range: 3,
+        line: true,
         push: 'furthest',
         animation: 'attack_2',
         description: { en: 'Extended reach. Pushes the furthest target.', zh: '延长攻击距离，并击退最远目标。' }
@@ -64,6 +70,7 @@ export const ATTACKS = {
         name: { en: 'Long Spear III', zh: '长矛 III' },
         damage: 2,
         range: 3,
+        line: true,
         push: 'furthest',
         animation: 'attack_2',
         description: { en: 'Heavy strike. Pushes the furthest target.', zh: '重击突刺，并击退最远目标。' }
@@ -72,14 +79,43 @@ export const ATTACKS = {
         name: { en: 'Long Spear IV', zh: '长矛 IV' },
         damage: 2,
         range: 3,
+        line: true,
         push: true, // All hexes
         animation: 'attack_2',
         description: { en: 'Ultimate strike. Pushes all targets in line.', zh: '极限突刺，击退直线上的全部目标。' }
+    },
+    generic_spear: {
+        name: { en: 'Spear Thrust', zh: '长枪突刺' },
+        damage: 1,
+        range: 2,
+        line: true,
+        animation: 'attack_2',
+        description: { en: 'Linear spear thrust along one of 6 rays.', zh: '沿六向射线之一发起直线突刺。' }
+    },
+    generic_spear_2: {
+        name: { en: 'Spear Thrust II', zh: '长枪突刺 II' },
+        damage: 1,
+        range: 2,
+        line: true,
+        furthestBonusDamage: 1,
+        animation: 'attack_2',
+        description: { en: 'Furthest target in line takes +1 damage.', zh: '直线最远目标额外受到 +1 伤害。' }
+    },
+    generic_spear_3: {
+        name: { en: 'Spear Thrust III', zh: '长枪突刺 III' },
+        damage: 1,
+        range: 3,
+        line: true,
+        furthestBonusDamage: 1,
+        animation: 'attack_2',
+        description: { en: 'Extended line range. Furthest target takes +1 damage.', zh: '攻击距离提升，最远目标额外受到 +1 伤害。' }
     },
     green_dragon_slash: {
         name: { en: 'Green Dragon', zh: '青龙斩' },
         damage: 1,
         range: 2,
+        shape: 'sweep',
+        sweepLength: 3,
         animation: 'attack_1',
         description: { en: 'A massive sweeping arc.', zh: '大范围横扫。' }
     },
@@ -87,6 +123,8 @@ export const ATTACKS = {
         name: { en: 'Green Dragon II', zh: '青龙斩 II' },
         damage: 2,
         range: 2,
+        shape: 'sweep',
+        sweepLength: 3,
         animation: 'attack_1',
         description: { en: 'Enhanced sweeping strike.', zh: '强化横扫一击。' }
     },
@@ -94,6 +132,8 @@ export const ATTACKS = {
         name: { en: 'Green Dragon III', zh: '青龙斩 III' },
         damage: 2,
         range: 2,
+        shape: 'sweep',
+        sweepLength: 3,
         push: true,
         animation: 'attack_1',
         description: { en: 'Sweeping arc that pushes all targets.', zh: '横扫弧斩并击退全部目标。' }
@@ -102,9 +142,47 @@ export const ATTACKS = {
         name: { en: 'Green Dragon IV', zh: '青龙斩 IV' },
         damage: 3,
         range: 2,
+        shape: 'sweep',
+        sweepLength: 3,
         push: true,
         animation: 'attack_1',
         description: { en: 'Devastating sweep that pushes all targets.', zh: '毁灭性横扫，击退全部目标。' }
+    },
+    polearm_sweep: {
+        name: { en: 'Polearm Sweep', zh: '长柄横扫' },
+        damage: 1,
+        range: 2,
+        shape: 'sweep',
+        sweepLength: 1,
+        animation: 'attack_1',
+        description: { en: 'A focused polearm sweep that hits one target.', zh: '集中横扫，命中单个目标。' }
+    },
+    polearm_sweep_2: {
+        name: { en: 'Polearm Sweep II', zh: '长柄横扫 II' },
+        damage: 1,
+        range: 2,
+        shape: 'sweep',
+        sweepLength: 2,
+        animation: 'attack_1',
+        description: { en: 'Broader sweep that can hit two foes.', zh: '横扫范围扩大，可打击两个目标。' }
+    },
+    polearm_sweep_3: {
+        name: { en: 'Polearm Sweep III', zh: '长柄横扫 III' },
+        damage: 1,
+        range: 3,
+        shape: 'sweep',
+        sweepLength: 2,
+        animation: 'attack_1',
+        description: { en: 'Extended reach while keeping a broad sweep.', zh: '攻击距离提升，同时保持横扫范围。' }
+    },
+    polearm_sweep_4: {
+        name: { en: 'Polearm Sweep IV', zh: '长柄横扫 IV' },
+        damage: 2,
+        range: 3,
+        shape: 'sweep',
+        sweepLength: 2,
+        animation: 'attack_1',
+        description: { en: 'A heavy sweep with higher damage.', zh: '高伤害重型横扫。' }
     },
     double_blades: {
         name: { en: 'Double Blades', zh: '双股剑' },
@@ -121,6 +199,22 @@ export const ATTACKS = {
         push: 1,
         animation: 'attack_1',
         description: { en: 'A heavy strike that knocks the target back.', zh: '沉重打击并击退目标。' }
+    },
+    bash_2: {
+        name: { en: 'Bash II', zh: '猛击 II' },
+        damage: 2,
+        range: 1,
+        push: 1,
+        animation: 'attack_1',
+        description: { en: 'A stronger bash with increased damage.', zh: '更强力的猛击，伤害提升。' }
+    },
+    bash_3: {
+        name: { en: 'Bash III', zh: '猛击 III' },
+        damage: 3,
+        range: 1,
+        push: 1,
+        animation: 'attack_1',
+        description: { en: 'A crushing bash with high damage.', zh: '毁灭性猛击，造成高伤害。' }
     },
     slash: {
         name: { en: 'Slash', zh: '斩击' },
@@ -239,30 +333,43 @@ export const ATTACKS = {
         animation: 'attack_1',
         description: { en: 'Powerful heavy arrow.', zh: '威力更强的重箭。' }
     },
-    whirlwind: {
-        name: { en: 'Whirlwind', zh: '旋风斩' },
-        damage: 2,
+    blade_sweep_1: {
+        name: { en: 'Blade Sweep I', zh: '刀锋横扫 I' },
+        damage: 1,
         range: 1,
+        shape: 'sweep',
+        sweepLength: 1,
+        animation: 'attack_1',
+        description: { en: 'A short cleaving swing.', zh: '短距劈砍横扫。' }
+    },
+    blade_sweep_2: {
+        name: { en: 'Blade Sweep II', zh: '刀锋横扫 II' },
+        damage: 1,
+        range: 1,
+        shape: 'sweep',
+        sweepLength: 2,
+        animation: 'attack_1',
+        description: { en: 'A broader two-target sweep.', zh: '更宽的双目标横扫。' }
+    },
+    blade_sweep_3: {
+        name: { en: 'Blade Sweep III', zh: '刀锋横扫 III' },
+        damage: 1,
+        range: 1,
+        shape: 'sweep',
+        sweepLength: 3,
         push: true,
         animation: 'attack_1',
-        description: { en: 'A fierce spinning strike that hits and pushes.', zh: '凶猛回旋斩，命中并击退。' }
+        description: { en: 'A full sweep that pushes all hit targets.', zh: '完整横扫并击退命中目标。' }
     },
-    tyrant_sweep: {
-        name: { en: 'Tyrant Sweep', zh: '暴君横扫' },
+    blade_sweep_4: {
+        name: { en: 'Blade Sweep IV', zh: '刀锋横扫 IV' },
         damage: 2,
         range: 1,
-        arc: 3,  // Hits 3 adjacent hexes in a wide arc
-        push: true,  // Pushes all 3 targets
-        animation: 'attack_1',
-        description: { en: 'A brutal sweep that strikes 3 adjacent foes and sends them flying.', zh: '凶暴横扫，打击3个相邻敌人并将其击飞。' }
-    },
-    heavy_thrust: {
-        name: { en: 'Heavy Thrust', zh: '重突刺' },
-        damage: 2,
-        range: 1,
+        shape: 'sweep',
+        sweepLength: 3,
         push: true,
-        animation: 'attack_2',
-        description: { en: 'A powerful lunge that deals heavy damage and push.', zh: '强力突刺，造成高伤并击退。' }
+        animation: 'attack_1',
+        description: { en: 'A crushing full-power sweep.', zh: '全力重型横扫。' }
     }
 };
 
@@ -285,6 +392,15 @@ export const UPGRADE_PATHS = {
         5: { attack: 'caoren_spear_3', text: { en: 'Damage increased to 2', zh: '伤害提升至 2' } },
         8: { attack: 'caoren_spear_4', text: { en: 'Push affects all targets in line', zh: '击退影响直线上的全部目标' } }
     },
+    'dengmao': {
+        2: { attack: 'generic_spear_2', text: { en: 'Furthest target in line now takes +1 damage', zh: '直线最远目标额外受到 +1 伤害' } },
+        4: { attack: 'generic_spear_3', text: { en: 'Range increased to 3', zh: '射程提升至 3' } }
+    },
+    'chengyuanzhi': {
+        2: { attack: 'polearm_sweep_2', text: { en: 'Sweep length increased to 2', zh: '横扫长度提升至 2' } },
+        4: { attack: 'polearm_sweep_3', text: { en: 'Range increased to 3', zh: '射程提升至 3' } },
+        6: { attack: 'polearm_sweep_4', text: { en: 'Damage increased to 2', zh: '伤害提升至 2' } }
+    },
     'caocao': {
         3: { attack: 'slash_cao_2', text: { en: 'Damage increased to 3', zh: '伤害提升至 3' } },
         4: { secondaryAttack: 'command_2', text: { en: 'Command now grants +1 movement', zh: '号令现可提供 +1 移动力' } },
@@ -292,9 +408,25 @@ export const UPGRADE_PATHS = {
         7: { secondaryAttack: 'command_3', text: { en: 'Command now grants +1 damage', zh: '号令现可提供 +1 伤害' } },
         9: { secondaryAttack: 'command_4', text: { en: 'Command can now target enemies', zh: '号令现可作用于敌方单位' } }
     },
+    'rebel': {
+        3: { attack: 'bash_2', text: { en: 'Bash damage increased to 2', zh: '猛击伤害提升至 2' } },
+        6: { attack: 'bash_3', text: { en: 'Bash damage increased to 3', zh: '猛击伤害提升至 3' } }
+    },
+    'dongzhuo': {
+        2: { attack: 'blade_sweep_2', text: { en: 'Sweep length increased to 2', zh: '横扫长度提升至 2' } },
+        3: { attack: 'blade_sweep_3', text: { en: 'Gained push on full sweep', zh: '完整横扫获得击退效果' } },
+        5: { attack: 'blade_sweep_4', text: { en: 'Damage increased to 2', zh: '伤害提升至 2' } }
+    },
+    'zhangliang': {
+        3: { attack: 'blade_sweep_3', text: { en: 'Sweep now pushes all hit targets', zh: '横扫现可击退所有命中目标' } },
+        5: { attack: 'blade_sweep_4', text: { en: 'Sweep damage increased to 2', zh: '横扫伤害提升至 2' } }
+    },
     'soldier': {
+        2: { secondaryAttack: 'polearm_sweep_2', text: { en: 'Learned a broader polearm sweep', zh: '学会更宽范围的长柄横扫' } },
         3: { attack: 'slash_2', text: { en: 'Damage increased to 2', zh: '伤害提升至 2' } },
-        5: { attack: 'slash_3', text: { en: 'Gained Push effect', zh: '获得击退效果' } }
+        4: { secondaryAttack: 'polearm_sweep_3', text: { en: 'Polearm sweep range increased to 3', zh: '长柄横扫射程提升至 3' } },
+        5: { attack: 'slash_3', text: { en: 'Gained Push effect', zh: '获得击退效果' } },
+        7: { secondaryAttack: 'polearm_sweep_4', text: { en: 'Polearm sweep damage increased to 2', zh: '长柄横扫伤害提升至 2' } }
     },
     'archer': {
         4: { attack: 'arrow_shot_2', text: { en: 'Range increased to 5', zh: '射程提升至 5' } },

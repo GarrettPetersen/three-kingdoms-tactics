@@ -1,9 +1,0 @@
-;paint.net Palette File
-;Downloaded from Lospec.com/palette-list
-;Palette Name: Hollow
-;Description: 2bit palette based on the colors from Hollow Knight. I won't take full credit as I just pulled the ones from the game that I thought worked as a 4 color palette
-;Colors: 4
-FF0f0f1b
-FF565a75
-FFc6b7be
-FFfafbf6

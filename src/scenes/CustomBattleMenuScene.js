@@ -1,6 +1,5 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
-import { UNIT_TEMPLATES } from '../data/Battles.js';
 import { getLocalizedText, LANGUAGE, getFontForLanguage, getTextContainerSize } from '../core/Language.js';
 import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
 
@@ -67,7 +66,16 @@ export class CustomBattleMenuScene extends BaseScene {
             this.options.roster = [
                 { type: 'hero', templateId: 'liubei', faction: 'player', level: 1, name: 'Liu Bei', imgKey: 'liubei' },
                 { type: 'hero', templateId: 'guanyu', faction: 'player', level: 1, name: 'Guan Yu', imgKey: 'guanyu' },
-                { type: 'hero', templateId: 'zhangfei', faction: 'player', level: 1, name: 'Zhang Fei', imgKey: 'zhangfei' }
+                { type: 'hero', templateId: 'zhangfei', faction: 'player', level: 1, name: 'Zhang Fei', imgKey: 'zhangfei' },
+                { type: 'soldier', templateId: 'soldier', faction: 'allied', level: 1, name: 'Soldier', imgKey: 'soldier' },
+                { type: 'soldier', templateId: 'soldier', faction: 'allied', level: 1, name: 'Soldier', imgKey: 'soldier' },
+                { type: 'soldier', templateId: 'soldier', faction: 'allied', level: 1, name: 'Soldier', imgKey: 'soldier' },
+                { type: 'caocao_force', templateId: 'caocao', faction: 'enemy', level: 1, name: 'Cao Cao', imgKey: 'caocao' },
+                { type: 'caocao_force', templateId: 'caoren', faction: 'enemy', level: 1, name: 'Cao Ren', imgKey: 'caoren' },
+                { type: 'soldier', templateId: 'soldier', faction: 'enemy', level: 1, name: 'Soldier', imgKey: 'soldier' },
+                { type: 'soldier', templateId: 'soldier', faction: 'enemy', level: 1, name: 'Soldier', imgKey: 'soldier' },
+                { type: 'soldier', templateId: 'soldier', faction: 'enemy', level: 1, name: 'Soldier', imgKey: 'soldier' },
+                { type: 'soldier', templateId: 'soldier', faction: 'enemy', level: 1, name: 'Soldier', imgKey: 'soldier' }
             ];
         }
 
