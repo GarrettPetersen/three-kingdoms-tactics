@@ -332,7 +332,7 @@ export class TacticsScene extends BaseScene {
         this.commandTutorialTargetId = null;
         this.commandTutorialCompleted = false;
         this.battlePaletteKeys = ['off', ...Object.keys(assets.palettes || {}).sort()];
-        this.activeBattlePaletteIndex = Math.max(0, this.battlePaletteKeys.indexOf('vinik24'));
+        this.activeBattlePaletteIndex = Math.max(0, this.battlePaletteKeys.indexOf('off'));
         this.paletteToastText = '';
         this.paletteToastUntil = 0;
         this.environmentPaletteImageKeys = [];

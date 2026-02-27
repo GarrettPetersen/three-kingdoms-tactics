@@ -136,17 +136,20 @@ export class AssetLoader {
                     lines.forEach(line => {
                         const trimmed = line.trim();
                         if (!trimmed || trimmed.startsWith(';')) return;
-                        
-                        // Handle FFRRGGBB format (paint.net)
-                        let hex = trimmed;
-                        if (hex.length === 8) {
-                            // Strip the FF alpha if present
-                            hex = hex.substring(2);
-                        }
-                        
-                        const r = parseInt(hex.substring(0, 2), 16);
-                        const g = parseInt(hex.substring(2, 4), 16);
-                        const b = parseInt(hex.substring(4, 6), 16);
+
+                        // Support common palette line formats:
+                        // - RRGGBB (Lospec .hex)
+                        // - #RRGGBB
+                        // - AARRGGBB (paint.net .txt)
+                        // - #AARRGGBB
+                        let hex = trimmed.replace(/^#/, '');
+                        if (!/^[0-9a-fA-F]{6}$|^[0-9a-fA-F]{8}$/.test(hex)) return;
+                        if (hex.length === 8) hex = hex.substring(2); // Drop AA from AARRGGBB
+
+                        const r = parseInt(hex.slice(0, 2), 16);
+                        const g = parseInt(hex.slice(2, 4), 16);
+                        const b = parseInt(hex.slice(4, 6), 16);
+                        if (![r, g, b].every(Number.isFinite)) return;
                         colors.push({ r, g, b });
                     });
                     this.palettes[key] = colors;

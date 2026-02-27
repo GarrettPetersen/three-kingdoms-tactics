@@ -484,7 +484,8 @@ async function init() {
                 'steam-lords': 'assets/palettes/steam-lords.txt',
                 'cl8uds': 'assets/palettes/cl8uds.txt',
                 'pico-8': 'assets/palettes/pico-8.txt',
-                'hollow': 'assets/palettes/hollow.txt'
+                'hollow': 'assets/palettes/hollow.txt',
+                'dusty-plain': 'assets/palettes/dustyplain.hex'
             }),
             assets.loadImages({
                 title_en: 'assets/misc/three_kingdoms_stratagem_title.png',
