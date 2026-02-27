@@ -492,7 +492,8 @@ async function init() {
                 'goldrush': 'assets/palettes/goldrush.txt',
                 'twilight-5': 'assets/palettes/twilight-5.txt',
                 'tiffany-lamp': 'assets/palettes/tiffany-lamp.hex',
-                'gold-and-blue': 'assets/palettes/gold-and-blue.hex'
+                'gold-and-blue': 'assets/palettes/gold-and-blue.hex',
+                'funkyfuture-8': 'assets/palettes/funkyfuture-8.hex'
             }),
             assets.loadImages({
                 title_en: 'assets/misc/three_kingdoms_stratagem_title.png',
