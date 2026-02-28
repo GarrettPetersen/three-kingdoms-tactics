@@ -565,6 +565,7 @@ export class TacticsMap {
         }
     }
 
+    /** Flood fill from (startR, startQ) by passability only. Used to check map connectivity; unit movement uses getReachableData (which enforces level rule). */
     getReachableSet(startR, startQ) {
         const reachable = new Set();
         const startCell = this.getCell(startR, startQ);
@@ -578,13 +579,6 @@ export class TacticsMap {
             const neighbors = this.getNeighbors(current.r, current.q);
             for (const n of neighbors) {
                 if (n.impassable) continue;
-                
-                // Climbing rule check
-                const currentCell = this.getCell(current.r, current.q);
-                const nLevel = (n.level !== undefined) ? n.level : 0;
-                const cLevel = (currentCell.level !== undefined) ? currentCell.level : 0;
-                if (Math.abs(nLevel - cLevel) > 1) continue;
-
                 const key = `${n.r},${n.q}`;
                 if (!reachable.has(key)) {
                     reachable.add(key);
@@ -614,55 +608,62 @@ export class TacticsMap {
 
         while (attempts < maxAttempts) {
             const reachable = this.getReachableSet(startR, startQ);
-            
-            // Find all intended-to-be-passable cells that were NOT reached
-            let nearestIsolated = null;
-            let nearestToMain = null;
-            let minDist = Infinity;
+            const reachableList = [...reachable];
 
+            // Find all isolated passable cells with their nearest reachable cell and distance
+            const isolated = [];
+            let minDist = Infinity;
             for (let r = 0; r < this.height; r++) {
                 for (let q = 0; q < this.width; q++) {
                     const cell = this.grid[r][q];
                     if (cell.impassable || reachable.has(`${r},${q}`)) continue;
-
-                    // This is an isolated passable cell. Find its closest reachable cell.
-                    for (const reachKey of reachable) {
+                    let bestDist = Infinity;
+                    let bestReach = null;
+                    for (const reachKey of reachableList) {
                         const [rr, rq] = reachKey.split(',').map(Number);
                         const dist = this.getDistance(r, q, rr, rq);
-                        if (dist < minDist) {
-                            minDist = dist;
-                            nearestIsolated = { r, q };
-                            nearestToMain = { r: rr, q: rq };
+                        if (dist < bestDist) {
+                            bestDist = dist;
+                            bestReach = { r: rr, q: rq };
                         }
+                    }
+                    if (bestReach !== null) {
+                        isolated.push({ r, q, nearestToMain: bestReach, dist: bestDist });
+                        if (bestDist < minDist) minDist = bestDist;
                     }
                 }
             }
 
-            // If no isolated cells, we are done!
-            if (!nearestIsolated) break;
+            if (isolated.length === 0) break;
 
-            // Connect this isolated cell to the main area by fixing the path between them.
-            // We only need to do this once per loop.
-            const path = this.getLine(nearestIsolated.r, nearestIsolated.q, nearestToMain.r, nearestToMain.q);
-            let lastLevel = this.getCell(nearestToMain.r, nearestToMain.q).level;
-            
+            // Randomize: pick among isolated cells within 1.5x of minimum distance (so paths aren't always same-y)
+            const maxDist = minDist * 1.5;
+            const candidates = isolated.filter((c) => c.dist <= maxDist);
+            const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+
+            // Randomize ramp target: among reachable cells within 1.3x of this isolated's min dist, pick one at random
+            const maxTargetDist = chosen.dist * 1.3;
+            const targetCandidates = reachableList.filter((reachKey) => {
+                const [rr, rq] = reachKey.split(',').map(Number);
+                return this.getDistance(chosen.r, chosen.q, rr, rq) <= maxTargetDist;
+            });
+            const targetKey = targetCandidates.length > 0
+                ? targetCandidates[Math.floor(Math.random() * targetCandidates.length)]
+                : `${chosen.nearestToMain.r},${chosen.nearestToMain.q}`;
+            const [tr, tq] = targetKey.split(',').map(Number);
+
+            // Connect this isolated cell to the chosen target on the main area
+            const path = this.getLine(chosen.r, chosen.q, tr, tq);
             for (const step of path) {
                 const stepCell = this.getCell(step.r, step.q);
                 if (!stepCell) continue;
-                
                 stepCell.impassable = false;
-                // Smoothly adjust level if diff > 1
-                if (Math.abs(stepCell.level - lastLevel) > 1) {
-                    stepCell.level = lastLevel > stepCell.level ? lastLevel - 1 : lastLevel + 1;
-                }
-                // Clear blocking terrain on the ramp
                 if (stepCell.terrain.includes('mountain') || stepCell.terrain.includes('wall') || stepCell.terrain.includes('house') || stepCell.terrain.includes('tent')) {
                     stepCell.terrain = this.getDefaultGrass();
                 }
                 if (stepCell.terrain.includes('water_deep')) {
-                    stepCell.terrain = 'water_shallow_01'; 
+                    stepCell.terrain = 'water_shallow_01';
                 }
-                lastLevel = stepCell.level;
             }
             
             attempts++;

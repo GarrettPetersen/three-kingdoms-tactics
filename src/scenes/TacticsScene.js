@@ -1223,26 +1223,9 @@ export class TacticsScene extends BaseScene {
         }
         const finalMaxHp = this.getMaxHpForLevel(level, baseHp);
 
-        // AMBUSH SPECIAL: Force the target cell to be passable so they can appear on mountains
+        // AMBUSH SPECIAL: Force the spawn cell passable so units can appear on mountains (flood fill handles reachability)
         const targetCell = this.tacticsMap.getCell(r, q);
-        if (targetCell) {
-            targetCell.impassable = false;
-            // Carve a ramp to ensure they can reach level 0/1
-            // We'll find a path to the center and ensure level diffs are <= 1
-            const centerR = Math.floor(this.manager.config.mapHeight / 2);
-            const centerQ = Math.floor(this.manager.config.mapWidth / 2);
-            const path = this.tacticsMap.getLine(r, q, centerR, centerQ);
-            let lastLevel = targetCell.level;
-            for (const step of path) {
-                const cell = this.tacticsMap.getCell(step.r, step.q);
-                if (!cell) continue;
-                cell.impassable = false;
-                if (Math.abs(cell.level - lastLevel) > 1) {
-                    cell.level = lastLevel > cell.level ? lastLevel - 1 : lastLevel + 1;
-                }
-                lastLevel = cell.level;
-            }
-        }
+        if (targetCell) targetCell.impassable = false;
 
         // Find closest free spot if r,q is taken
         const finalCell = this.findNearestFreeCell(r, q, 5);
