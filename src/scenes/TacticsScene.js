@@ -5778,7 +5778,7 @@ export class TacticsScene extends BaseScene {
         const horse = cell?.horse;
         if (!horse) return false;
         if (unit?.horseId && horse.id === unit.horseId) return false;
-        if (allowRiderlessForAutoMount && !horse.riderId && !unit?.onHorse) return false;
+        if (allowRiderlessForAutoMount && !horse.riderId) return false;
         return true;
     }
 
