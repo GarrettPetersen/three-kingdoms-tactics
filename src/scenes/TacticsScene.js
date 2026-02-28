@@ -202,7 +202,7 @@ export class TacticsScene extends BaseScene {
             if (this.cleanupDialogueOnComplete) {
                 this.cleanupDialogueOnComplete();
                 this.cleanupDialogueOnComplete = null;
-            } else {
+            } else if (this.battleId === 'qingzhou_cleanup') {
                 this.manager.gameState.addMilestone('qingzhou_cleanup');
                 this.manager.gameState.setStoryCursor('qingzhou_cleanup', 'liubei');
                 this.manager.switchTo('map', { campaignId: 'liubei' });
@@ -920,6 +920,8 @@ export class TacticsScene extends BaseScene {
             }
 
             if (victoryType === 'defeat_captains') {
+                // Only trigger victory once the player turn has been reached (prevents battle ending right after intro dialogue)
+                if (this.turn !== 'player' || this.isIntroAnimating) return;
                 const captains = enemyUnits.filter(u => vc.captains.includes(u.id));
                 if (captains.length === 0 && !this.isRetreating) {
                     this.startRetreatPhase();
@@ -9740,16 +9742,17 @@ export class TacticsScene extends BaseScene {
                 if (this.cleanupDialogueStep >= this.cleanupDialogueScript.length) {
                     this.isCleanupDialogueActive = false;
                     
-                    // Call completion callback if set, otherwise use default behavior
+                    // Call completion callback if set; otherwise only transition to map for qingzhou_cleanup
                     if (this.cleanupDialogueOnComplete) {
                         this.cleanupDialogueOnComplete();
                         this.cleanupDialogueOnComplete = null;
-                    } else {
-                        // Default: Go to the map after Qingzhou cleanup
+                    } else if (this.battleId === 'qingzhou_cleanup') {
+                        // Qingzhou cleanup: go to map when its post-dialogue ends
                         this.manager.gameState.addMilestone('qingzhou_cleanup');
                         this.manager.gameState.setStoryCursor('qingzhou_cleanup', 'liubei');
                         this.manager.switchTo('map', { campaignId: 'liubei' });
                     }
+                    // Else: mid-battle dialogue (e.g. Daxing "They keep coming!") — just close and continue
                 } else {
                     // Play voice for next step
                     const nextStep = this.cleanupDialogueScript[this.cleanupDialogueStep];
