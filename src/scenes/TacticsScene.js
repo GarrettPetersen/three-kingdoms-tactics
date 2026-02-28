@@ -3404,6 +3404,7 @@ export class TacticsScene extends BaseScene {
             u.q = uData.q;
             u.hp = uData.hp;
             u.maxHp = uData.maxHp;
+            u.faction = uData.faction || u.faction;
             u.moveRange = uData.moveRange !== undefined ? uData.moveRange : u.moveRange;
             u.baseMoveRange = uData.baseMoveRange !== undefined ? uData.baseMoveRange : (u.baseMoveRange !== undefined ? u.baseMoveRange : u.moveRange);
             u.onHorse = !!uData.onHorse;
@@ -3411,6 +3412,7 @@ export class TacticsScene extends BaseScene {
             u.horseType = uData.horseType || u.horseType || 'brown';
             u.imgKey = uData.imgKey;
             u.img = assets.getImage(uData.imgKey);
+            u.attacks = Array.isArray(uData.attacks) ? [...uData.attacks] : u.attacks;
             u.hasMoved = uData.hasMoved;
             u.hasAttacked = uData.hasAttacked;
             u.hasActed = uData.hasActed;
@@ -3438,6 +3440,10 @@ export class TacticsScene extends BaseScene {
             u.caged = uData.caged || false;
             u.cageHp = uData.cageHp;
             u.cageSprite = uData.cageSprite;
+            u.commandSourceId = uData.commandSourceId || null;
+            u.commandOriginalFaction = uData.commandOriginalFaction || null;
+            u.commandOriginalMoveRange = Number.isFinite(uData.commandOriginalMoveRange) ? uData.commandOriginalMoveRange : null;
+            u.commandDamageBonus = Number.isFinite(uData.commandDamageBonus) ? uData.commandDamageBonus : 0;
 
             // Clear animation states
             u.frame = 0;
@@ -3686,6 +3692,93 @@ export class TacticsScene extends BaseScene {
         });
     }
 
+    drawCommandTargetDimming(ctx, canvas, timestamp = Date.now()) {
+        const attackDef = this.selectedAttack ? ATTACKS[this.selectedAttack] : null;
+        if (!this.selectedUnit || this.selectedUnit.faction !== 'player' || !attackDef || attackDef.type !== 'command') return;
+        const eligible = this.units.filter(u =>
+            u &&
+            u.hp > 0 &&
+            !u.isGone &&
+            (u.faction === 'player' || u.faction === 'allied') &&
+            this.canCommandTarget(this.selectedUnit, u, attackDef)
+        );
+        if (eligible.length === 0) return;
+
+        if (!this._commandDimCanvas || this._commandDimCanvas.width !== canvas.width || this._commandDimCanvas.height !== canvas.height) {
+            this._commandDimCanvas = document.createElement('canvas');
+            this._commandDimCanvas.width = canvas.width;
+            this._commandDimCanvas.height = canvas.height;
+            this._commandDimCtx = this._commandDimCanvas.getContext('2d');
+        }
+
+        const dctx = this._commandDimCtx;
+        dctx.clearRect(0, 0, canvas.width, canvas.height);
+        dctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+        dctx.fillRect(0, 0, canvas.width, canvas.height);
+        dctx.save();
+        dctx.globalCompositeOperation = 'destination-out';
+        eligible.forEach(u => {
+            // Clear only drawn sprite pixels, so the highlight follows alpha exactly.
+            const action = u.currentAnimAction || u.action || 'standby';
+            const anim = ANIMATIONS[action] || ANIMATIONS.standby;
+            const frame = Math.floor(u.frame || 0);
+            const f = Math.max(0, frame % anim.length);
+            const frameIdx = anim.start + f;
+            const sourceSize = 72;
+            const sx = (frameIdx % 8) * sourceSize;
+            const sy = Math.floor(frameIdx / 8) * sourceSize;
+
+            if (u.onHorse) {
+                const riderX = Math.floor(u.visualX + (u.visualOffsetX || 0));
+                const riderY = Math.floor(u.visualY + (u.visualOffsetY || 0) - 14);
+                dctx.save();
+                if (u.flip) {
+                    dctx.translate(riderX, 0);
+                    dctx.scale(-1, 1);
+                    dctx.translate(-riderX, 0);
+                }
+                dctx.drawImage(u.img, sx, sy, sourceSize, sourceSize, riderX - 36, riderY - 44, sourceSize, sourceSize);
+                dctx.restore();
+
+                const keys = this.getHorseSpriteKeys(u.horseType || 'brown');
+                const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
+                const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
+                const isRunning = (u.isMoving || u.action === 'walk') && horseRun;
+                const horseImg = isRunning ? horseRun : horseStand;
+                if (horseImg) {
+                    const frameW = 48;
+                    const frameH = 48;
+                    const frameCount = isRunning ? Math.max(1, Math.floor((horseImg.width || frameW) / frameW)) : 1;
+                    const hf = isRunning ? (Math.floor(timestamp / 70) % frameCount) : 0;
+                    const horseSx = hf * frameW;
+                    const horseX = riderX - Math.floor(frameW / 2);
+                    const horseY = Math.floor(u.visualY + (u.visualOffsetY || 0) - 36);
+                    dctx.save();
+                    if (u.flip) {
+                        dctx.translate(riderX, 0);
+                        dctx.scale(-1, 1);
+                        dctx.translate(-riderX, 0);
+                    }
+                    dctx.drawImage(horseImg, horseSx, 0, frameW, frameH, horseX, horseY, frameW, frameH);
+                    dctx.restore();
+                }
+            } else {
+                const unitX = Math.floor(u.visualX);
+                dctx.save();
+                if (u.flip) {
+                    dctx.translate(unitX, 0);
+                    dctx.scale(-1, 1);
+                    dctx.translate(-unitX, 0);
+                }
+                dctx.drawImage(u.img, sx, sy, sourceSize, sourceSize, unitX - 36, Math.floor(u.visualY - 44), sourceSize, sourceSize);
+                dctx.restore();
+            }
+        });
+        dctx.restore();
+
+        ctx.drawImage(this._commandDimCanvas, 0, 0);
+    }
+
     beginCommandTutorial(targetUnitId) {
         // Start with guidance dialogue first; tutorial constraints/highlights begin after it is dismissed.
         this.commandTutorialActive = false;
@@ -3693,6 +3786,9 @@ export class TacticsScene extends BaseScene {
         this.commandTutorialStep = 'ability';
         this.commandTutorialTargetId = targetUnitId || null;
         this.commandTutorialCompleted = false;
+        if (!this.isCustom) {
+            this.manager.gameState.setCampaignVar('ccCommandTutorialShown', true);
+        }
         const caocao = this.units.find(u => u.id === 'caocao' && u.hp > 0 && !u.isGone);
         if (caocao) {
             this.selectTargetUnit(caocao);
@@ -3767,6 +3863,7 @@ export class TacticsScene extends BaseScene {
         if (this.commandTutorialCompleted || this.commandTutorialActive || this.commandTutorialPendingStart) return;
         if (this.battleId !== 'caocao_yingchuan_intercept') return;
         if (this.turn !== 'player' || this.isProcessingTurn || this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCleanupDialogueActive) return;
+        if (!this.isCustom && this.manager.gameState.getCampaignVar('ccCommandTutorialShown')) return;
 
         const pressure = new Map();
         this.units.forEach(u => {
@@ -6449,6 +6546,14 @@ export class TacticsScene extends BaseScene {
                 const u = call.unit;
                 const cell = this.tacticsMap.getCell(u.r, u.q);
                 let surfaceY = u.visualY + effect.yOffset; 
+                const selectedAttackDef = this.selectedAttack ? ATTACKS[this.selectedAttack] : null;
+                const isCommandTargeting = !!(
+                    this.selectedUnit &&
+                    this.selectedUnit.faction === 'player' &&
+                    selectedAttackDef &&
+                    selectedAttackDef.type === 'command'
+                );
+                const isCommandEligible = isCommandTargeting && this.canCommandTarget(this.selectedUnit, u, selectedAttackDef);
                 
                 let drawOptions = { 
                     flip: u.flip,
@@ -6488,6 +6593,8 @@ export class TacticsScene extends BaseScene {
                     drawOptions.tint = `rgba(255, 255, 255, ${flashAlpha.toFixed(3)})`;
                 } else if (targetedUnits.has(u)) {
                     drawOptions.tint = 'rgba(255, 0, 0, 0.3)';
+                } else if (isCommandEligible) {
+                    drawOptions.tint = 'rgba(96, 184, 255, 0.28)';
                 }
 
                 const isSelected = this.selectedUnit === u;
@@ -6496,6 +6603,12 @@ export class TacticsScene extends BaseScene {
                         this.drawMountedSpriteOutline(ctx, u, surfaceY, timestamp, '#ffffff');
                     } else {
                         this.drawHighlight(ctx, u.visualX, surfaceY, 'rgba(255, 255, 255, 0.4)');
+                    }
+                } else if (isCommandEligible) {
+                    if (u.onHorse) {
+                        this.drawMountedSpriteOutline(ctx, u, surfaceY, timestamp, '#66ccff');
+                    } else {
+                        this.drawHighlight(ctx, u.visualX, surfaceY, 'rgba(96, 184, 255, 0.35)');
                     }
                 }
 
@@ -6713,6 +6826,8 @@ export class TacticsScene extends BaseScene {
                 }
             });
         }
+
+        this.drawCommandTargetDimming(ctx, this.manager.canvas, timestamp);
 
         this.drawUI();
         this.rebuildControllerNavTargets();
