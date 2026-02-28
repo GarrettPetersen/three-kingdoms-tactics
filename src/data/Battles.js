@@ -520,64 +520,9 @@ export const BATTLES = {
             { id: 'imperial_dead1', r: 5, q: 3, type: 'allied_soldier', isDead: true },
             { id: 'imperial_dead2', r: 8, q: 3, type: 'allied_soldier', isDead: true },
 
-            // Retreating Yellow Turban force enters from the left.
-            {
-                id: 'zhangbao',
-                r: 6,
-                q: 1,
-                type: 'zhang_bao',
-                immortal: {
-                    enabled: true,
-                    triggerHp: 2,
-                    onNearDeath: {
-                        say: {
-                            speaker: 'zhangbao',
-                            text: {
-                                en: "Brother Liang, break away! We will settle this at Guangzong!",
-                                zh: "梁弟，速突围！回广宗再与官军算账！"
-                            },
-                            voiceId: 'cc_yc_zb_retreat_01',
-                            durationMs: 2100,
-                            lockSkips: true
-                        },
-                        flee: {
-                            edge: 'left',
-                            delayMs: 1700,
-                            durationMs: 900,
-                            extraTiles: 5
-                        }
-                    }
-                }
-            },
-            {
-                id: 'zhangliang',
-                r: 5,
-                q: 1,
-                type: 'zhang_liang',
-                immortal: {
-                    enabled: true,
-                    triggerHp: 2,
-                    onNearDeath: {
-                        say: {
-                            speaker: 'zhangliang',
-                            portraitKey: 'zhang-liang',
-                            text: {
-                                en: "To Guangzong! Rejoin the elder brother!",
-                                zh: "退往广宗！与兄长会合！"
-                            },
-                            voiceId: 'cc_yc_zl_retreat_01',
-                            durationMs: 1900,
-                            lockSkips: true
-                        },
-                        flee: {
-                            edge: 'left',
-                            delayMs: 1500,
-                            durationMs: 850,
-                            extraTiles: 5
-                        }
-                    }
-                }
-            },
+            // In this battle, Zhang Bao and Zhang Liang are normal enemies and must be defeated.
+            { id: 'zhangbao', r: 6, q: 1, type: 'zhang_bao' },
+            { id: 'zhangliang', r: 5, q: 1, type: 'zhang_liang' },
             { id: 'rebel1', r: 7, q: 2, type: 'enemy_soldier' },
             { id: 'rebel2', r: 6, q: 2, type: 'enemy_soldier' },
             { id: 'rebel3', r: 5, q: 2, type: 'enemy_soldier' }
