@@ -3756,8 +3756,9 @@ export class TacticsScene extends BaseScene {
             const sy = Math.floor(frameIdx / 8) * sourceSize;
 
             if (u.onHorse) {
+                const mountedYOffset = 10;
                 const riderX = Math.floor(u.visualX + (u.visualOffsetX || 0));
-                const riderY = Math.floor(u.visualY + (u.visualOffsetY || 0) - 14);
+                const riderY = Math.floor(u.visualY + (u.visualOffsetY || 0) + mountedYOffset - 14);
                 dctx.save();
                 if (u.flip) {
                     dctx.translate(riderX, 0);
@@ -3779,7 +3780,7 @@ export class TacticsScene extends BaseScene {
                     const hf = isRunning ? (Math.floor(timestamp / 70) % frameCount) : 0;
                     const horseSx = hf * frameW;
                     const horseX = riderX - Math.floor(frameW / 2);
-                    const horseY = Math.floor(u.visualY + (u.visualOffsetY || 0) - 36);
+                    const horseY = Math.floor(u.visualY + (u.visualOffsetY || 0) + mountedYOffset - 36);
                     dctx.save();
                     if (u.flip) {
                         dctx.translate(riderX, 0);
@@ -6031,7 +6032,7 @@ export class TacticsScene extends BaseScene {
             
             for (let u of activeUnits) {
                 const ux = u.visualX;
-                const uy = u.visualY;
+                const uy = u.visualY + (u.onHorse ? 10 : 0);
                 let sinkOffset = 0;
                 if (u.isDrowning) sinkOffset = Math.min(1, u.drownTimer / 2000) * 40;
                 else {
@@ -6642,7 +6643,12 @@ export class TacticsScene extends BaseScene {
                         surfaceY -= 4; // Standing on top of the body
                     }
                 }
-                
+
+                // Shift mounted units (horse + rider) down so they are easier to see behind
+                if (u.onHorse) {
+                    surfaceY += 10;
+                }
+
                 // Check for water effects
                 if (u.isDrowning) {
                     // Drowning: sink down over 2 seconds
@@ -6886,7 +6892,7 @@ export class TacticsScene extends BaseScene {
             this.units.forEach(u => {
                 if (u.hp <= 0) return;
                 
-                const surfaceY = u.visualY; 
+                const surfaceY = u.visualY + (u.onHorse ? 10 : 0);
                 let uiX = u.visualX;
                 if (u.onHorse) uiX = Math.floor(u.visualX);
                 
@@ -7026,7 +7032,7 @@ export class TacticsScene extends BaseScene {
             this.units.forEach(u => {
                 if (u.hp > 0 && u.attackOrder && !u.isGone) {
                     const ux = u.visualX;
-                    const uy = u.visualY;
+                    const uy = u.visualY + (u.onHorse ? 10 : 0);
                     let surfaceY = uy;
                     const cell = this.tacticsMap.getCell(u.r, u.q);
                     if (cell && cell.terrain.includes('water_shallow')) surfaceY += 4;
@@ -7321,7 +7327,7 @@ export class TacticsScene extends BaseScene {
                     id: `unit:${u.id}`,
                     type: 'unit',
                     x: u.visualX,
-                    y: u.visualY,
+                    y: u.visualY + (u.onHorse ? 10 : 0),
                     r: u.r,
                     q: u.q,
                     unit: u
@@ -7382,7 +7388,7 @@ export class TacticsScene extends BaseScene {
                     this.drawHexOutline(ctx, pos.x, pos.y, region.canAttack ? '#ff3333' : '#ffd700');
                 });
             } else if (u.onHorse) {
-                this.drawMountedSpriteOutline(ctx, u, u.visualY, timestamp, '#ffd700');
+                this.drawMountedSpriteOutline(ctx, u, u.visualY + 10, timestamp, '#ffd700');
             }
             if (u.name === 'Boulder') {
                 const color = canAttackThisUnit ? '#ff3333' : '#ffd700';
@@ -7390,13 +7396,14 @@ export class TacticsScene extends BaseScene {
                 const by = Math.floor(u.visualY - (u.img.height - 5));
                 this.drawImageFramePixelOutline(ctx, u.img, 0, 0, u.img.width, u.img.height, bx, by, { color });
             } else {
+                const outlineY = u.visualY + (u.onHorse ? 10 : 0);
                 this.drawCharacterPixelOutline(
                     ctx,
                     u.img,
                     u.currentAnimAction || u.action,
                     u.frame,
                     u.visualX,
-                    u.visualY,
+                    outlineY,
                     { flip: u.flip, color: canAttackThisUnit ? '#ff3333' : '#ffd700' }
                 );
             }
@@ -7404,7 +7411,7 @@ export class TacticsScene extends BaseScene {
             const pos = this.getPixelPos(t.r, t.q);
             this.drawHexOutline(ctx, pos.x, pos.y, t.canAttack ? '#ff3333' : '#ffd700');
             if (t.unit.onHorse) {
-                this.drawMountedSpriteOutline(ctx, t.unit, t.unit.visualY, timestamp, t.canAttack ? '#ff3333' : '#ffd700', t.role);
+                this.drawMountedSpriteOutline(ctx, t.unit, t.unit.visualY + 10, timestamp, t.canAttack ? '#ff3333' : '#ffd700', t.role);
             }
         } else if (t.rect) {
             this.drawPixelRectOutline(
