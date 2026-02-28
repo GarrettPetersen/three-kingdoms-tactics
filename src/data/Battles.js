@@ -580,10 +580,7 @@ export const BATTLES = {
             },
             { id: 'rebel1', r: 7, q: 2, type: 'enemy_soldier' },
             { id: 'rebel2', r: 6, q: 2, type: 'enemy_soldier' },
-            { id: 'rebel3', r: 5, q: 2, type: 'enemy_soldier' },
-            { id: 'rebel4', r: 7, q: 1, type: 'enemy_soldier' },
-            { id: 'rebel5', r: 4, q: 1, type: 'enemy_soldier_weak' },
-            { id: 'rebel6', r: 6, q: 3, type: 'enemy_soldier_weak' }
+            { id: 'rebel3', r: 5, q: 2, type: 'enemy_soldier' }
         ],
         victoryCondition: {
             type: 'defeat_all_enemies',

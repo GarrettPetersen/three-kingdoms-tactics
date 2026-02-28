@@ -27,6 +27,7 @@ export class TacticsScene extends BaseScene {
         
         this.turn = 'player'; // 'player', 'enemy'
         this.turnNumber = 1;
+        this.caocaoSecondWaveSpawned = false;
         this.isProcessingTurn = false;
         
         this.hoveredCell = null;
@@ -286,6 +287,7 @@ export class TacticsScene extends BaseScene {
         this.turnNumber = 1;
         this.turn = 'player';
         this.baseXP = 5; // Baseline XP for victory
+        this.caocaoSecondWaveSpawned = false;
         this.dialogueElapsed = 0;
         this.dialogueStep = 0;
         this.subStep = 0;
@@ -2230,6 +2232,8 @@ export class TacticsScene extends BaseScene {
                     this.checkDaxingReinforcements();
                 } else if (this.battleId === 'qingzhou_siege') {
                     this.checkQingzhouReinforcements();
+                } else if (this.battleId === 'caocao_yingchuan_intercept') {
+                    this.checkCaocaoYingchuanSecondWave();
                 }
                 setTimeout(() => {
                     executeMoves(enemies, 0, () => {
@@ -2787,6 +2791,7 @@ export class TacticsScene extends BaseScene {
             battleId: this.battleId,
             turn: this.turn,
             turnNumber: this.turnNumber,
+            caocaoSecondWaveSpawned: !!this.caocaoSecondWaveSpawned,
             ambushTriggered: !!this.ambushTriggered,
             reachedFlag: !!this.reachedFlag,
             weatherType: this.weatherType,
@@ -2936,6 +2941,7 @@ export class TacticsScene extends BaseScene {
         
         this.turn = state.turn;
         this.turnNumber = state.turnNumber;
+        this.caocaoSecondWaveSpawned = !!state.caocaoSecondWaveSpawned;
         this.ambushTriggered = !!state.ambushTriggered;
         this.reachedFlag = !!state.reachedFlag;
         this.weatherType = state.weatherType;
@@ -3115,15 +3121,22 @@ export class TacticsScene extends BaseScene {
         this.cleanupDialogueOnComplete = this.cleanupDialogueTransition
             ? (() => this.runCleanupTransition(this.cleanupDialogueTransition))
             : null;
-        this.isChoiceActive = !!state.isChoiceActive;
-        this.isFightMode = !!state.isFightMode;
-        this.isCleanupDialogueActive = !!state.isCleanupDialogueActive;
-        this.cleanupDialogueScript = Array.isArray(state.cleanupDialogueScript) ? this.cloneScriptSteps(state.cleanupDialogueScript) : null;
-        this.cleanupDialogueStep = state.cleanupDialogueStep || 0;
-        this.cleanupDialogueTransition = state.cleanupDialogueTransition || null;
-        this.cleanupDialogueOnComplete = this.cleanupDialogueTransition
-            ? (() => this.runCleanupTransition(this.cleanupDialogueTransition))
-            : null;
+
+        // Resume-safe callback wiring for command tutorial prompt dialogue.
+        if (this.commandTutorialPendingStart && this.isCleanupDialogueActive && !this.cleanupDialogueOnComplete) {
+            this.cleanupDialogueOnComplete = () => this.activatePendingCommandTutorial();
+        }
+        // Guard against broken/incomplete save payloads causing a non-interactive state.
+        if (this.isCleanupDialogueActive && !Array.isArray(this.cleanupDialogueScript)) {
+            this.isCleanupDialogueActive = false;
+            if (this.commandTutorialPendingStart) {
+                this.activatePendingCommandTutorial();
+            }
+        }
+        if (this.commandTutorialActive && this.commandTutorialStep === 'ability') {
+            const caocao = this.units.find(u => u.id === 'caocao' && u.hp > 0 && !u.isGone);
+            if (caocao) this.selectTargetUnit(caocao);
+        }
 
         // Recovery for older saves: encounter cutscene may resume after intro with choice state lost.
         if (this.battleId === 'guangzong_encounter' && this.hasChoice && this.isCutscene && !this.isFightMode
@@ -3368,6 +3381,7 @@ export class TacticsScene extends BaseScene {
         
         this.turn = state.turn;
         this.turnNumber = state.turnNumber;
+        this.caocaoSecondWaveSpawned = !!state.caocaoSecondWaveSpawned;
         this.weatherType = state.weatherType;
         this.horses = [];
         
@@ -3481,6 +3495,19 @@ export class TacticsScene extends BaseScene {
         this.commandTutorialStep = state.commandTutorialStep || null;
         this.commandTutorialTargetId = state.commandTutorialTargetId || null;
         this.commandTutorialCompleted = !!state.commandTutorialCompleted;
+        if (this.commandTutorialPendingStart && this.isCleanupDialogueActive && !this.cleanupDialogueOnComplete) {
+            this.cleanupDialogueOnComplete = () => this.activatePendingCommandTutorial();
+        }
+        if (this.isCleanupDialogueActive && !Array.isArray(this.cleanupDialogueScript)) {
+            this.isCleanupDialogueActive = false;
+            if (this.commandTutorialPendingStart) {
+                this.activatePendingCommandTutorial();
+            }
+        }
+        if (this.commandTutorialActive && this.commandTutorialStep === 'ability') {
+            const caocao = this.units.find(u => u.id === 'caocao' && u.hp > 0 && !u.isGone);
+            if (caocao) this.selectTargetUnit(caocao);
+        }
     }
 
     undo() {
@@ -3820,6 +3847,8 @@ export class TacticsScene extends BaseScene {
         this.commandTutorialPendingStart = false;
         this.commandTutorialActive = true;
         if (!this.commandTutorialStep) this.commandTutorialStep = 'ability';
+        const caocao = this.units.find(u => u.id === 'caocao' && u.hp > 0 && !u.isGone);
+        if (caocao) this.selectTargetUnit(caocao);
         this.ensureCommandTutorialNonMouseAutoFocus();
     }
 
@@ -4113,6 +4142,52 @@ export class TacticsScene extends BaseScene {
             if (spawns > 0) {
                 this.addDamageNumber(this.manager.canvas.width / 2, 50, getLocalizedText({ en: "REBEL ADVANCE!", zh: "叛军推进！" }));
             }
+        }
+    }
+
+    checkCaocaoYingchuanSecondWave() {
+        if (this.caocaoSecondWaveSpawned) return;
+        if (this.battleId !== 'caocao_yingchuan_intercept') return;
+
+        const aliveMainThreats = this.units.filter(u =>
+            u &&
+            u.hp > 0 &&
+            !u.isGone &&
+            (u.id === 'zhangbao' || u.id === 'zhangliang' || u.id.startsWith('rebel'))
+        );
+        // Trigger when first wave is mostly defeated.
+        if (aliveMainThreats.length > 2) return;
+
+        const spawnSpots = [
+            { r: 4, q: 1 },
+            { r: 6, q: 1 },
+            { r: 8, q: 1 }
+        ];
+        let spawns = 0;
+        spawnSpots.forEach((spot, i) => {
+            const cell = this.findNearestFreeCell(spot.r, spot.q, 4);
+            if (!cell) return;
+            const config = {
+                name: "Yellow Turban",
+                imgKey: 'yellowturban',
+                faction: 'enemy',
+                hp: i === 1 ? 3 : 2,
+                maxHp: i === 1 ? 3 : 2,
+                level: i === 1 ? 2 : 1,
+                attacks: ['bash'],
+                r: cell.r,
+                q: cell.q
+            };
+            const unit = new Unit(`rebel_wave2_${i + 1}`, config);
+            unit.img = assets.getImage('yellowturban');
+            this.units.push(unit);
+            cell.unit = unit;
+            spawns++;
+        });
+
+        if (spawns > 0) {
+            this.caocaoSecondWaveSpawned = true;
+            this.addDamageNumber(this.manager.canvas.width / 2, 50, getLocalizedText({ en: "REBEL REINFORCEMENTS!", zh: "叛军援军到达！" }));
         }
     }
 
@@ -9615,7 +9690,22 @@ export class TacticsScene extends BaseScene {
 
         if (this.isCleanupDialogueActive) {
             if (this.dialogueElapsed < 250) return;
+            if (!Array.isArray(this.cleanupDialogueScript)) {
+                this.isCleanupDialogueActive = false;
+                if (this.commandTutorialPendingStart) this.activatePendingCommandTutorial();
+                return;
+            }
             const step = this.cleanupDialogueScript[this.cleanupDialogueStep];
+            if (!step) {
+                this.isCleanupDialogueActive = false;
+                if (this.cleanupDialogueOnComplete) {
+                    this.cleanupDialogueOnComplete();
+                    this.cleanupDialogueOnComplete = null;
+                } else if (this.commandTutorialPendingStart) {
+                    this.activatePendingCommandTutorial();
+                }
+                return;
+            }
             
             // Map speaker to portrait key
             const portraitMap = {
