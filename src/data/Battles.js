@@ -827,7 +827,7 @@ export const UNIT_TEMPLATES = {
             shieldResistBase: 0.2,
             shieldResistPerLevel: 0.05
         },
-        'rider': { name: 'Cavalry', imgKey: 'soldier', hp: 4, moveRange: 4, attacks: ['slash'], faction: 'allied', templateId: 'soldier' }
+        'rider': { name: 'Cavalry', imgKey: 'soldier', hp: 4, moveRange: 4, attacks: ['polearm_sweep'], faction: 'allied', templateId: 'soldier' }
     },
     'zhang_jue': {
         'zhangjue': { name: 'Zhang Jue', imgKey: 'zhangjiao', hp: 8, moveRange: 4, attacks: ['bash_3'], faction: 'enemy' }

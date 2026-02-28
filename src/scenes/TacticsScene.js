@@ -29,7 +29,6 @@ export class TacticsScene extends BaseScene {
         this.turnNumber = 1;
         this.isProcessingTurn = false;
         
-        this.activeDialogue = null;
         this.hoveredCell = null;
         this.hoveredMountedAttackRegions = null;
         this.damageNumbers = []; // { x, y, value, timer, maxTime }
@@ -63,6 +62,7 @@ export class TacticsScene extends BaseScene {
         this.horseRunCycleIndex = -1;
         this.horseRunCues = { snortA: false, neigh: false, snortB: false };
         this.commandTutorialActive = false;
+        this.commandTutorialPendingStart = false;
         this.commandTutorialStep = null;
         this.commandTutorialTargetId = null;
         this.commandTutorialCompleted = false;
@@ -209,17 +209,6 @@ export class TacticsScene extends BaseScene {
             return true;
         }
 
-        if (this.activeDialogue) {
-            if (this.isLockedActiveDialogue()) return false;
-            if (this.activeDialogue.unit) {
-                this.activeDialogue.unit.dialogue = "";
-                this.activeDialogue.unit.voiceId = null;
-            }
-            this.activeDialogue = null;
-            this.dialogueElapsed = 0;
-            return true;
-        }
-
         if (this.isCutscene) {
             return this._debugSkipCompleteCutscene();
         }
@@ -281,7 +270,6 @@ export class TacticsScene extends BaseScene {
         this.selectedAttack = null;
         this.hoveredCell = null;
         this.hoveredMountedAttackRegions = null;
-        this.activeDialogue = null;
         this.introScript = null; // Fix dialogue flicker
         this.isPostCombatDialogue = false; // Track if we're in post-combat dialogue
         this.reachableTiles = new Map();
@@ -310,6 +298,7 @@ export class TacticsScene extends BaseScene {
         this.cleanupDialogueScript = null;
         this.cleanupDialogueStep = 0;
         this.cleanupDialogueOnComplete = null;
+        this.cleanupDialogueTransition = null;
         this.enemiesKilled = 0;
         this.isIntroAnimating = true;
         this.introTimer = 0;
@@ -329,6 +318,7 @@ export class TacticsScene extends BaseScene {
         this.horseRunCycleIndex = -1;
         this.horseRunCues = { snortA: false, neigh: false, snortB: false };
         this.commandTutorialActive = false;
+        this.commandTutorialPendingStart = false;
         this.commandTutorialStep = null;
         this.commandTutorialTargetId = null;
         this.commandTutorialCompleted = false;
@@ -856,17 +846,12 @@ export class TacticsScene extends BaseScene {
         const sayCfg = nearDeathCfg.say || immortalCfg.say;
         const sayDuration = Number.isFinite(sayCfg?.durationMs) ? sayCfg.durationMs : 2200;
         if (sayCfg?.text) {
-            unit.dialogue = getLocalizedText(sayCfg.text);
-            if (sayCfg.voiceId) {
-                unit.voiceId = sayCfg.voiceId;
-                assets.playVoice(sayCfg.voiceId);
-            }
-            this.activeDialogue = {
-                unit,
+            this.startBattleEndDialogue([{
                 portraitKey: sayCfg.portraitKey || unit.imgKey,
-                timer: sayDuration,
-                lockSkips: !!sayCfg.lockSkips
-            };
+                name: unit.name,
+                text: sayCfg.text,
+                voiceId: sayCfg.voiceId
+            }]);
         }
 
         const fleeCfg = nearDeathCfg.flee || immortalCfg.flee;
@@ -951,8 +936,6 @@ export class TacticsScene extends BaseScene {
                 if (!this.reachedFlag && liubei && !liubei.isMoving && this.flagPos && liubei.r === this.flagPos.r && liubei.q === this.flagPos.q) {
                     this.reachedFlag = true;
                     this.isProcessingTurn = true;
-                    this.activeDialogue = null;
-                    
                     try {
                         this.triggerAmbush();
                     } catch (e) {
@@ -1130,37 +1113,51 @@ export class TacticsScene extends BaseScene {
         
         if (surprised) {
             if (liubei) {
-                liubei.dialogue = "I... I think I've taken care of them already.";
-                this.activeDialogue = { unit: liubei, timer: 3000 };
-            }
-            
-            setTimeout(() => {
-                try {
-                    this.addAmbushUnit('zhangfei', 'Zhang Fei', 'zhangfei', 10, 1, ['serpent_spear'], false);
-                    this.addAmbushUnit('guanyu', 'Guan Yu', 'guanyu', 10, 8, ['green_dragon_slash'], true);
-                    
-                    if (guanyu) {
-                        guanyu.dialogue = "Brother! We heard the signal was... oh. They are all fallen.";
-                        this.activeDialogue = { unit: guanyu, timer: 3000 };
-                        assets.playVoice('qz_gy_surp_01');
-                    }
-                    
+                this.startBattleEndDialogue([{
+                    portraitKey: 'liu-bei',
+                    name: 'Liu Bei',
+                    text: {
+                        en: "I... I think I've taken care of them already.",
+                        zh: "我... 我想我已经把他们都处理掉了。"
+                    },
+                    voiceId: 'qz_lb_surp_01'
+                }], () => {
                     setTimeout(() => {
-                        this.endBattle(true);
-                    }, 3000);
-                } catch (e) {
-                    console.error("Surprised ambush failed:", e);
-                    this.isProcessingTurn = false;
-                }
-            }, 1000);
+                        try {
+                            this.addAmbushUnit('zhangfei', 'Zhang Fei', 'zhangfei', 10, 1, ['serpent_spear'], false);
+                            this.addAmbushUnit('guanyu', 'Guan Yu', 'guanyu', 10, 8, ['green_dragon_slash'], true);
+                            
+                            if (guanyu) {
+                                this.startBattleEndDialogue([{
+                                    portraitKey: 'guan-yu',
+                                    name: 'Guan Yu',
+                                    text: {
+                                        en: "Brother! We heard the signal was... oh. They are all fallen.",
+                                        zh: "兄长！我们听到信号还以为... 哦，他们已经都倒下了。"
+                                    },
+                                    voiceId: 'qz_gy_surp_01'
+                                }], () => this.endBattle(true));
+                            }
+                        } catch (e) {
+                            console.error("Surprised ambush failed:", e);
+                            this.isProcessingTurn = false;
+                        }
+                    }, 1000);
+                });
+            }
             return;
         }
 
         if (liubei) {
-            liubei.dialogue = "BEAT THE GONGS! Brothers, strike now!";
-            liubei.voiceId = 'qz_lb_amb_01';
-            this.activeDialogue = { unit: liubei, timer: 1500 };
-            assets.playVoice(liubei.voiceId);
+            this.startBattleEndDialogue([{
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                text: {
+                    en: "BEAT THE GONGS! Brothers, strike now!",
+                    zh: "击鼓！兄弟们，立刻出击！"
+                },
+                voiceId: 'qz_lb_amb_01'
+            }]);
             assets.playSound('gong', 1.0);
         }
 
@@ -1273,52 +1270,50 @@ export class TacticsScene extends BaseScene {
 
         const liubei = this.units.find(u => u.id === 'liubei');
         if (liubei && liubei.hp > 0) {
-            liubei.dialogue = getLocalizedText({
-                en: "We have scattered their vanguard, but there are too many! We must retreat!",
-                zh: "我们击溃了他们的前锋，但敌人太多！必须撤退！"
-            });
-            liubei.voiceId = 'gz_lb_ret_01';
-            this.activeDialogue = { unit: liubei, timer: 3000 };
-            assets.playVoice(liubei.voiceId);
-        }
+            this.startBattleEndDialogue([{
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                text: {
+                    en: "We have scattered their vanguard, but there are too many! We must retreat!",
+                    zh: "我们击溃了他们的前锋，但敌人太多！必须撤退！"
+                },
+                voiceId: 'gz_lb_ret_01'
+            }], () => {
+                const playerUnits = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp > 0);
+                let movingCount = 0;
+                playerUnits.forEach(u => {
+                    // Find path to right of map (retreat away from the wall on the left)
+                    const targetQ = this.manager.config.mapWidth - 1;
+                    const targetR = u.r; 
+                    
+                    const path = this.tacticsMap.getPath(u.r, u.q, targetR, targetQ, 20, u);
+                    if (path) {
+                        const oldCell = this.tacticsMap.getCell(u.r, u.q);
+                        if (oldCell) oldCell.unit = null;
+                        u.startPath(path);
+                        movingCount++;
+                    } else {
+                        u.isGone = true;
+                    }
+                });
 
-        setTimeout(() => {
-            this.activeDialogue = null;
-            
-            const playerUnits = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp > 0);
-            let movingCount = 0;
-            playerUnits.forEach(u => {
-                // Find path to right of map (retreat away from the wall on the left)
-                const targetQ = this.manager.config.mapWidth - 1;
-                const targetR = u.r; 
+                const checkRetreatDone = () => {
+                    const stillMoving = playerUnits.some(u => u.isMoving);
+                    if (!stillMoving) {
+                        playerUnits.forEach(u => u.isGone = true);
+                        this.endBattle(true);
+                    } else {
+                        setTimeout(checkRetreatDone, 100);
+                    }
+                };
                 
-                const path = this.tacticsMap.getPath(u.r, u.q, targetR, targetQ, 20, u);
-                if (path) {
-                    const oldCell = this.tacticsMap.getCell(u.r, u.q);
-                    if (oldCell) oldCell.unit = null;
-                    u.startPath(path);
-                    movingCount++;
+                if (movingCount > 0) {
+                    checkRetreatDone();
                 } else {
-                    u.isGone = true;
+                    this.endBattle(true);
                 }
             });
-
-            const checkRetreatDone = () => {
-                const stillMoving = playerUnits.some(u => u.isMoving);
-                if (!stillMoving) {
-                    playerUnits.forEach(u => u.isGone = true);
-                    this.endBattle(true);
-                } else {
-                    setTimeout(checkRetreatDone, 100);
-                }
-            };
-            
-            if (movingCount > 0) {
-                checkRetreatDone();
-            } else {
-                this.endBattle(true);
-            }
-        }, 3000);
+        }
     }
 
     endBattle(won) {
@@ -1468,74 +1463,73 @@ export class TacticsScene extends BaseScene {
         this.cleanupDialogueStep = 0;
         this.dialogueElapsed = 0;
         this.isCleanupDialogueActive = true;
+        this.cleanupDialogueTransition = 'guangzong_fight';
         
         // Store the callback to call when dialogue ends
         this.cleanupDialogueOnComplete = () => {
-            this.isCleanupDialogueActive = false;
-            // Transition from encounter cutscene to actual battle
-            // Keep the same map, units in same positions
-            
-            // Switch to battle music
-            assets.playMusic('battle', 0.4);
-            
-            // Disable cutscene mode
-            this.isCutscene = false;
-            this.isFightMode = true;
-            
-            // Add the 3 existing campaign soldiers with their XP
-            const gs = this.manager.gameState;
-            const unitXP = gs.getCampaignVar('unitXP') || {};
-            const unitClasses = gs.getCampaignVar('unitClasses') || {};
-            
-            const allyPositions = [
-                { id: 'ally1', r: 5, q: 0 },
-                { id: 'ally2', r: 7, q: 0 },
-                { id: 'ally3', r: 4, q: 2 }
-            ];
-            
-            allyPositions.forEach((allyDef) => {
-                // Only add if not already present
-                if (this.units.find(u => u.id === allyDef.id)) return;
-
-                const cell = this.findNearestFreeCell(allyDef.r, allyDef.q, 3);
-                if (cell) {
-                    const xp = unitXP[allyDef.id] || 0;
-                    const level = this.getLevelFromXP(xp);
-                    const unitClass = unitClasses[allyDef.id] || 'soldier';
-                    
-                    const isArcher = unitClass === 'archer';
-                    // Soldiers gain +1 HP at level 2+, archers stay at 2 base HP
-                    const baseHp = isArcher ? 2 : (level >= 2 ? 3 : 2);
-                    const finalMaxHp = this.getMaxHpForLevel(level, baseHp);
-                    
-                    const ally = new Unit(allyDef.id, {
-                        name: 'Volunteer',
-                        imgKey: isArcher ? 'archer' : 'soldier',
-                        img: assets.getImage(isArcher ? 'archer' : 'soldier'),
-                        faction: 'allied',
-                        hp: finalMaxHp,
-                        maxHp: finalMaxHp,
-                        moveRange: 3,
-                        attacks: isArcher ? ['arrow_shot'] : ['slash'],
-                        r: cell.r,
-                        q: cell.q,
-                        level: level
-                    });
-                    this.units.push(ally);
-                    cell.unit = ally;
-                }
-            });
-            
-            // Show objective
-            this.addDamageNumber(this.manager.canvas.width / 2, 40, getLocalizedText({ en: "BREAK THE CAGE!", zh: "打破牢笼！" }), '#ffd700');
-            
-            // Start with NPC phase so enemies get their first turn to move and telegraph
-            this.startNpcPhase();
+            this.runCleanupTransition(this.cleanupDialogueTransition);
         };
         
         // Play first voice line
         const firstStep = this.cleanupDialogueScript[0];
         if (firstStep.voiceId) assets.playVoice(firstStep.voiceId);
+    }
+
+    runCleanupTransition(transitionKey) {
+        if (!transitionKey) return;
+        if (transitionKey === 'guangzong_restrain') {
+            this.cleanupDialogueTransition = null;
+            this.isCleanupDialogueActive = false;
+            if (this.onChoiceRestrain) this.onChoiceRestrain();
+            return;
+        }
+        if (transitionKey !== 'guangzong_fight') return;
+
+        this.cleanupDialogueTransition = null;
+        this.isCleanupDialogueActive = false;
+
+        assets.playMusic('battle', 0.4);
+        this.isCutscene = false;
+        this.isFightMode = true;
+
+        const gs = this.manager.gameState;
+        const unitXP = gs.getCampaignVar('unitXP') || {};
+        const unitClasses = gs.getCampaignVar('unitClasses') || {};
+        const allyPositions = [
+            { id: 'ally1', r: 5, q: 0 },
+            { id: 'ally2', r: 7, q: 0 },
+            { id: 'ally3', r: 4, q: 2 }
+        ];
+
+        allyPositions.forEach((allyDef) => {
+            if (this.units.find(u => u.id === allyDef.id)) return;
+            const cell = this.findNearestFreeCell(allyDef.r, allyDef.q, 3);
+            if (!cell) return;
+            const xp = unitXP[allyDef.id] || 0;
+            const level = this.getLevelFromXP(xp);
+            const unitClass = unitClasses[allyDef.id] || 'soldier';
+            const isArcher = unitClass === 'archer';
+            const baseHp = isArcher ? 2 : (level >= 2 ? 3 : 2);
+            const finalMaxHp = this.getMaxHpForLevel(level, baseHp);
+            const ally = new Unit(allyDef.id, {
+                name: 'Volunteer',
+                imgKey: isArcher ? 'archer' : 'soldier',
+                img: assets.getImage(isArcher ? 'archer' : 'soldier'),
+                faction: 'allied',
+                hp: finalMaxHp,
+                maxHp: finalMaxHp,
+                moveRange: 3,
+                attacks: isArcher ? ['arrow_shot'] : ['slash'],
+                r: cell.r,
+                q: cell.q,
+                level: level
+            });
+            this.units.push(ally);
+            cell.unit = ally;
+        });
+
+        this.addDamageNumber(this.manager.canvas.width / 2, 40, getLocalizedText({ en: "BREAK THE CAGE!", zh: "打破牢笼！" }), '#ffd700');
+        this.startNpcPhase();
     }
 
     startRestrainDialogue() {
@@ -1581,12 +1575,11 @@ export class TacticsScene extends BaseScene {
         this.cleanupDialogueStep = 0;
         this.dialogueElapsed = 0;
         this.isCleanupDialogueActive = true;
+        this.cleanupDialogueTransition = 'guangzong_restrain';
         
         // Store the callback to call when dialogue ends
         this.cleanupDialogueOnComplete = () => {
-            if (this.onChoiceRestrain) {
-                this.onChoiceRestrain();
-            }
+            this.runCleanupTransition(this.cleanupDialogueTransition);
         };
         
         // Play first voice line
@@ -1714,11 +1707,14 @@ export class TacticsScene extends BaseScene {
             if (reinforcements.length > 0) {
                 this.addDamageNumber(this.manager.canvas.width / 2, 56, getLocalizedText({ en: "REINFORCEMENTS!", zh: "援军到达！" }), '#ffcc66');
                 const speaker = reinforcements[0];
-                speaker.dialogue = getLocalizedText({
-                    en: "General Dong Zhuo! Imperial cavalry rides to your aid!",
-                    zh: "董将军！朝廷骑兵前来助阵！"
-                });
-                this.activeDialogue = { unit: speaker, timer: 2200 };
+                this.startBattleEndDialogue([{
+                    portraitKey: 'dong-zhuo',
+                    name: speaker.name,
+                    text: {
+                        en: "General Dong Zhuo! Imperial cavalry rides to your aid!",
+                        zh: "董将军！朝廷骑兵前来助阵！"
+                    }
+                }]);
             }
 
             const beginPlayerTurnWhenReady = () => {
@@ -1861,15 +1857,16 @@ export class TacticsScene extends BaseScene {
 
         let currentCell = this.tacticsMap.getCell(dongzhuo.r, dongzhuo.q);
         const beginRunAway = () => {
-            dongzhuo.dialogue = getLocalizedText(fromDrowning
+            const fleeText = fromDrowning
                 ? { en: "I refuse to die in this mud! Out of my way!", zh: "我岂能死在这泥水里！都给我滚开！" }
-                : { en: "You dogs got lucky today! I will not waste my life on peasants!", zh: "你们这些狗东西今日走运！我才不会把命丢在一群草民手里！" });
-            dongzhuo.voiceId = fromDrowning ? 'ch2_oath_dz_flee_water_01' : 'ch2_oath_dz_flee_01';
-            this.activeDialogue = { unit: dongzhuo, timer: 2400, lockSkips: true };
-            assets.playVoice(dongzhuo.voiceId);
-
-            // Give him time to say the line BEFORE he runs.
-            setTimeout(() => {
+                : { en: "You dogs got lucky today! I will not waste my life on peasants!", zh: "你们这些狗东西今日走运！我才不会把命丢在一群草民手里！" };
+            const fleeVoiceId = fromDrowning ? 'ch2_oath_dz_flee_water_01' : 'ch2_oath_dz_flee_01';
+            this.startBattleEndDialogue([{
+                portraitKey: 'dong-zhuo',
+                name: dongzhuo.name,
+                text: fleeText,
+                voiceId: fleeVoiceId
+            }], () => {
                 const mapHeight = this.manager.config.mapHeight;
                 const edgeQ = this.manager.config.mapWidth - 1;
 
@@ -1918,7 +1915,6 @@ export class TacticsScene extends BaseScene {
                         const oldCell = this.tacticsMap.getCell(dongzhuo.r, dongzhuo.q);
                         if (oldCell && oldCell.unit === dongzhuo) oldCell.unit = null;
                         dongzhuo.isGone = true;
-                        this.activeDialogue = null;
                         this.chapter2DongZhuoFightActive = false;
                         this.startChapter2DongZhuoPostFightDialogue();
                     };
@@ -1949,7 +1945,7 @@ export class TacticsScene extends BaseScene {
                     finishOffscreen();
                 };
                 setTimeout(waitForPath, 80);
-            }, 2100);
+            });
         };
 
         if (fromDrowning) {
@@ -2021,10 +2017,6 @@ export class TacticsScene extends BaseScene {
         }
 
         beginRunAway();
-    }
-
-    isLockedActiveDialogue() {
-        return !!(this.activeDialogue && this.activeDialogue.timer !== undefined && this.activeDialogue.lockSkips);
     }
 
     startChapter2DongZhuoPostFightDialogue() {
@@ -2170,6 +2162,7 @@ export class TacticsScene extends BaseScene {
     startNpcPhase() {
         this.clearTemporaryCommands({ markNpcActed: true });
         this.commandTutorialActive = false;
+        this.commandTutorialPendingStart = false;
         this.commandTutorialStep = null;
         this.commandTutorialTargetId = null;
         // For yellow_turban_rout cutscene, alternate between enemy and allied phases
@@ -2857,6 +2850,12 @@ export class TacticsScene extends BaseScene {
             dialogueElapsed: this.dialogueElapsed,
             isIntroAnimating: this.isIntroAnimating,
             introTimer: this.introTimer,
+            isChoiceActive: !!this.isChoiceActive,
+            isFightMode: !!this.isFightMode,
+            isCleanupDialogueActive: !!this.isCleanupDialogueActive,
+            cleanupDialogueScript: this.cleanupDialogueScript ? this.cloneScriptSteps(this.cleanupDialogueScript) : null,
+            cleanupDialogueStep: this.cleanupDialogueStep || 0,
+            cleanupDialogueTransition: this.cleanupDialogueTransition || null,
             // Track if we're in post-combat dialogue (uses introScript but different source)
             isPostCombatDialogue: this.isPostCombatDialogue || false,
             // Save combat state
@@ -2864,6 +2863,7 @@ export class TacticsScene extends BaseScene {
             // Save cutscene combat complete flag for yellow_turban_rout
             cutsceneCombatComplete: this.cutsceneCombatComplete,
             commandTutorialActive: !!this.commandTutorialActive,
+            commandTutorialPendingStart: !!this.commandTutorialPendingStart,
             commandTutorialStep: this.commandTutorialStep || null,
             commandTutorialTargetId: this.commandTutorialTargetId || null,
             commandTutorialCompleted: !!this.commandTutorialCompleted
@@ -3091,7 +3091,6 @@ export class TacticsScene extends BaseScene {
         this.reachableTiles.clear();
         this.attackTiles.clear();
         this.attackRects = [];
-        this.activeDialogue = null;
         
         // Restore intro/post-combat dialogue state
         this.isIntroDialogueActive = state.isIntroDialogueActive || false;
@@ -3103,9 +3102,35 @@ export class TacticsScene extends BaseScene {
         this.isPostCombatDialogue = state.isPostCombatDialogue || false;
         this.cutsceneCombatComplete = state.cutsceneCombatComplete;
         this.commandTutorialActive = !!state.commandTutorialActive;
+        this.commandTutorialPendingStart = !!state.commandTutorialPendingStart;
         this.commandTutorialStep = state.commandTutorialStep || null;
         this.commandTutorialTargetId = state.commandTutorialTargetId || null;
         this.commandTutorialCompleted = !!state.commandTutorialCompleted;
+        this.isChoiceActive = !!state.isChoiceActive;
+        this.isFightMode = !!state.isFightMode;
+        this.isCleanupDialogueActive = !!state.isCleanupDialogueActive;
+        this.cleanupDialogueScript = Array.isArray(state.cleanupDialogueScript) ? this.cloneScriptSteps(state.cleanupDialogueScript) : null;
+        this.cleanupDialogueStep = state.cleanupDialogueStep || 0;
+        this.cleanupDialogueTransition = state.cleanupDialogueTransition || null;
+        this.cleanupDialogueOnComplete = this.cleanupDialogueTransition
+            ? (() => this.runCleanupTransition(this.cleanupDialogueTransition))
+            : null;
+        this.isChoiceActive = !!state.isChoiceActive;
+        this.isFightMode = !!state.isFightMode;
+        this.isCleanupDialogueActive = !!state.isCleanupDialogueActive;
+        this.cleanupDialogueScript = Array.isArray(state.cleanupDialogueScript) ? this.cloneScriptSteps(state.cleanupDialogueScript) : null;
+        this.cleanupDialogueStep = state.cleanupDialogueStep || 0;
+        this.cleanupDialogueTransition = state.cleanupDialogueTransition || null;
+        this.cleanupDialogueOnComplete = this.cleanupDialogueTransition
+            ? (() => this.runCleanupTransition(this.cleanupDialogueTransition))
+            : null;
+
+        // Recovery for older saves: encounter cutscene may resume after intro with choice state lost.
+        if (this.battleId === 'guangzong_encounter' && this.hasChoice && this.isCutscene && !this.isFightMode
+            && !this.isChoiceActive && !this.isIntroDialogueActive && !this.isVictoryDialogueActive
+            && !this.isCleanupDialogueActive) {
+            this.isChoiceActive = true;
+        }
         
         // Restore intro or post-combat script from battle definition if dialogue is active
         if (this.isIntroDialogueActive) {
@@ -3444,9 +3469,9 @@ export class TacticsScene extends BaseScene {
         this.reachableTiles.clear();
         this.attackTiles.clear();
         this.attackRects = [];
-        this.activeDialogue = null;
         this.mountedMovePlans = null;
         this.commandTutorialActive = !!state.commandTutorialActive;
+        this.commandTutorialPendingStart = !!state.commandTutorialPendingStart;
         this.commandTutorialStep = state.commandTutorialStep || null;
         this.commandTutorialTargetId = state.commandTutorialTargetId || null;
         this.commandTutorialCompleted = !!state.commandTutorialCompleted;
@@ -3662,7 +3687,9 @@ export class TacticsScene extends BaseScene {
     }
 
     beginCommandTutorial(targetUnitId) {
-        this.commandTutorialActive = true;
+        // Start with guidance dialogue first; tutorial constraints/highlights begin after it is dismissed.
+        this.commandTutorialActive = false;
+        this.commandTutorialPendingStart = true;
         this.commandTutorialStep = 'ability';
         this.commandTutorialTargetId = targetUnitId || null;
         this.commandTutorialCompleted = false;
@@ -3682,14 +3709,62 @@ export class TacticsScene extends BaseScene {
                     zh: "那名士兵有危险！立刻下令，让他脱险！"
                 }
             };
-            caoren.dialogue = getLocalizedText(tutorialPrompt.text);
-            caoren.voiceId = tutorialPrompt.voiceId;
-            this.activeDialogue = { unit: caoren, timer: 2600 };
+            this.startBattleEndDialogue([{
+                portraitKey: tutorialPrompt.portraitKey,
+                name: tutorialPrompt.name,
+                text: tutorialPrompt.text,
+                voiceId: tutorialPrompt.voiceId
+            }], () => this.activatePendingCommandTutorial());
+        }
+    }
+
+    activatePendingCommandTutorial() {
+        if (!this.commandTutorialPendingStart) return;
+        if (this.isCleanupDialogueActive) return;
+        this.commandTutorialPendingStart = false;
+        this.commandTutorialActive = true;
+        if (!this.commandTutorialStep) this.commandTutorialStep = 'ability';
+        this.ensureCommandTutorialNonMouseAutoFocus();
+    }
+
+    getCommandAttackKey(unit) {
+        if (!unit || !Array.isArray(unit.attacks)) return null;
+        return unit.attacks.find(key => ATTACKS[key]?.type === 'command') || null;
+    }
+
+    ensureCommandTutorialNonMouseAutoFocus() {
+        if (!this.commandTutorialActive || this.controllerNavMouseEnabled) return;
+        if (this.isCleanupDialogueActive) return;
+
+        if (this.commandTutorialStep === 'ability') {
+            let commander = this.selectedUnit;
+            if (!commander || commander.id !== 'caocao' || commander.hp <= 0 || commander.isGone) {
+                commander = this.units.find(u => u.id === 'caocao' && u.hp > 0 && !u.isGone) || null;
+                if (commander) this.selectTargetUnit(commander);
+            }
+            const commandKey = this.getCommandAttackKey(commander);
+            if (commandKey) {
+                this.selectAttack(commandKey);
+            }
+        }
+
+        if (this.commandTutorialStep === 'target' && this.commandTutorialTargetId) {
+            const target = this.units.find(u => u.id === this.commandTutorialTargetId && u.hp > 0 && !u.isGone);
+            if (target) {
+                this.hoveredCell = this.tacticsMap.getCell(target.r, target.q);
+            }
+        }
+
+        this.rebuildControllerNavTargets();
+        if (this.commandTutorialStep === 'target' && this.commandTutorialTargetId && this.controllerNavTargets?.length) {
+            const targetId = this.commandTutorialTargetId;
+            const idx = this.controllerNavTargets.findIndex(t => t.unit && t.unit.id === targetId);
+            if (idx >= 0) this.controllerNavIndex = idx;
         }
     }
 
     maybeStartCommandTutorial() {
-        if (this.commandTutorialCompleted || this.commandTutorialActive) return;
+        if (this.commandTutorialCompleted || this.commandTutorialActive || this.commandTutorialPendingStart) return;
         if (this.battleId !== 'caocao_yingchuan_intercept') return;
         if (this.turn !== 'player' || this.isProcessingTurn || this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCleanupDialogueActive) return;
 
@@ -3885,13 +3960,15 @@ export class TacticsScene extends BaseScene {
                 this.addDamageNumber(this.manager.canvas.width / 2, 50, getLocalizedText({ en: "REINFORCEMENTS!", zh: "援军到达！" }));
                 const liubei = this.units.find(u => u.id === 'liubei');
                 if (liubei && liubei.hp > 0) {
-                    liubei.dialogue = getLocalizedText({
-                        en: "They keep coming! We must defeat Deng Mao and Cheng Yuanzhi to break them!",
-                        zh: "敌人源源不断！我们必须击败邓茂和程远志才能击溃他们！"
-                    });
-                    liubei.voiceId = 'dx_lb_03';
-                    this.activeDialogue = { unit: liubei, timer: 2000 };
-                    assets.playVoice(liubei.voiceId);
+                    this.startBattleEndDialogue([{
+                        portraitKey: 'liu-bei',
+                        name: liubei.name,
+                        text: {
+                            en: "They keep coming! We must defeat Deng Mao and Cheng Yuanzhi to break them!",
+                            zh: "敌人源源不断！我们必须击败邓茂和程远志才能击溃他们！"
+                        },
+                        voiceId: 'dx_lb_03'
+                    }]);
                 }
             }
         }
@@ -4009,15 +4086,15 @@ export class TacticsScene extends BaseScene {
 
         // 1. One enemy speaks
         const speaker = enemies[0];
-        speaker.dialogue = "Our leaders are dead! Run!";
-        speaker.voiceId = 'dx_yt_01';
-        this.activeDialogue = { unit: speaker, timer: 2500 };
-        assets.playVoice(speaker.voiceId);
-
-        // 2. Wait for dialogue, then make them run
-        setTimeout(() => {
-            this.activeDialogue = null;
-            
+        this.startBattleEndDialogue([{
+            portraitKey: 'yellow-turban',
+            name: speaker.name,
+            text: {
+                en: "Our leaders are dead! Run!",
+                zh: "首领已死！快撤！"
+            },
+            voiceId: 'dx_yt_01'
+        }], () => {
             let movingCount = 0;
             enemies.forEach(u => {
                 // Find path to bottom of map (any spot on bottom row)
@@ -4051,7 +4128,7 @@ export class TacticsScene extends BaseScene {
             } else {
                 this.endBattle(true);
             }
-        }, 2000);
+        });
     }
 
     addDamageNumber(x, y, value, color = '#f00') {
@@ -5656,21 +5733,8 @@ export class TacticsScene extends BaseScene {
         this.updateFireCrackleAudio();
         this.updateFireSmoke(dt);
         
-        if (this.isIntroDialogueActive || this.activeDialogue || this.isVictoryDialogueActive || this.isCleanupDialogueActive || this.isCutscene) {
+        if (this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCleanupDialogueActive || this.isCutscene) {
             this.dialogueElapsed = (this.dialogueElapsed || 0) + dt;
-            
-            // Auto-clear activeDialogue after its timer expires
-            if (this.activeDialogue && this.activeDialogue.timer !== undefined) {
-                this.activeDialogue.timer -= dt;
-                if (this.activeDialogue.timer <= 0) {
-                    if (this.activeDialogue.unit) {
-                        this.activeDialogue.unit.dialogue = "";
-                        this.activeDialogue.unit.voiceId = null;
-                    }
-                    this.activeDialogue = null;
-                    this.dialogueElapsed = 0;
-                }
-            }
         } else {
             this.dialogueElapsed = 0;
         }
@@ -7358,6 +7422,7 @@ export class TacticsScene extends BaseScene {
 
         if (this.commandTutorialActive && this.commandTutorialStep === 'target') {
             this.commandTutorialActive = false;
+            this.commandTutorialPendingStart = false;
             this.commandTutorialStep = null;
             this.commandTutorialTargetId = null;
             this.commandTutorialCompleted = true;
@@ -7530,7 +7595,6 @@ export class TacticsScene extends BaseScene {
         this.reachableTiles.clear();
         this.attackTiles.clear();
         this.attackRects = [];
-        this.activeDialogue = null;
     }
 
     selectTargetUnit(targetUnit) {
@@ -7574,7 +7638,7 @@ export class TacticsScene extends BaseScene {
                 if (this.selectedUnit.attacks.length > 0) this.selectAttack(this.selectedUnit.attacks[0]);
             }
         } else this.reachableTiles.clear();
-        if (this.selectedUnit.dialogue) this.activeDialogue = { unit: this.selectedUnit, expires: Date.now() + 3000 };
+        // Selection no longer spawns a separate one-off bark dialogue path.
     }
 
     drawHpBar(ctx, unit, x, y) {
@@ -8940,7 +9004,9 @@ export class TacticsScene extends BaseScene {
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.turn === 'player' && !this.isProcessingTurn) {
             this.drawUnitAbilityUI(ctx, canvas, this.selectedUnit);
         }
+        this.renderCommandTutorialFocusOverlay(ctx, canvas);
         this.renderCommandTutorialArrows(ctx);
+        this.renderCommandTutorialPrompt(ctx, canvas);
 
         // End Turn Confirmation Dialog
         if (this.showEndTurnConfirm) {
@@ -8984,14 +9050,6 @@ export class TacticsScene extends BaseScene {
             ctx.strokeRect(nx + 0.5, ny + 0.5, bw - 1, bh - 1);
             this.drawPixelText(ctx, getLocalizedText({ en: "NO", zh: "否" }), nx + bw / 2, ny + 4, { color: '#fff', font: '8px Silkscreen', align: 'center' });
             this.confirmNoRect = { x: nx, y: ny, w: bw, h: bh };
-        }
-
-        if (this.activeDialogue) {
-            this.renderDialogueBox(ctx, canvas, {
-                portraitKey: this.activeDialogue.portraitKey || this.activeDialogue.unit.imgKey,
-                name: this.activeDialogue.unit.name,
-                text: this.activeDialogue.unit.dialogue
-            }, { subStep: this.activeDialogue.subStep || 0 });
         }
 
         if (this.isIntroAnimating) {
@@ -9049,6 +9107,7 @@ export class TacticsScene extends BaseScene {
 
     renderCommandTutorialArrows(ctx) {
         if (!this.commandTutorialActive) return;
+        if (this.isCleanupDialogueActive) return;
         if (this.commandTutorialStep === 'ability') {
             const commandBtn = (this.attackRects || []).find(r => ATTACKS[r.key]?.type === 'command');
             if (commandBtn) {
@@ -9062,6 +9121,93 @@ export class TacticsScene extends BaseScene {
                 this.drawBouncingArrow(ctx, target.visualX, target.visualY - 18, '#ff6666');
             }
         }
+    }
+
+    renderCommandTutorialFocusOverlay(ctx, canvas) {
+        if (!this.commandTutorialActive) return;
+        if (this.isCleanupDialogueActive) return;
+        let focusRect = null;
+
+        if (this.commandTutorialStep === 'ability') {
+            const commandBtn = (this.attackRects || []).find(r => ATTACKS[r.key]?.type === 'command');
+            if (commandBtn) {
+                const pad = 9;
+                focusRect = {
+                    x: Math.floor(commandBtn.x - pad),
+                    y: Math.floor(commandBtn.y - pad),
+                    w: Math.floor(commandBtn.w + pad * 2),
+                    h: Math.floor(commandBtn.h + pad * 2)
+                };
+            }
+        } else if (this.commandTutorialStep === 'target' && this.commandTutorialTargetId) {
+            const target = this.units.find(u => u.id === this.commandTutorialTargetId && u.hp > 0 && !u.isGone);
+            if (target) {
+                // Use rendered character footprint, not sprite-sheet dimensions.
+                // Character frames are 72x72 anchored at (x-36, y-44) in drawCharacter().
+                const targetW = 72;
+                const targetH = 72;
+                const anchorTopOffset = 44;
+                const pad = 6;
+                focusRect = {
+                    x: Math.floor(target.visualX - targetW / 2 - pad),
+                    y: Math.floor(target.visualY - anchorTopOffset - pad),
+                    w: Math.floor(targetW + pad * 2),
+                    h: Math.floor(targetH + pad * 2)
+                };
+            }
+        }
+
+        if (!focusRect) return;
+        const x0 = Math.max(0, Math.floor(focusRect.x));
+        const y0 = Math.max(0, Math.floor(focusRect.y));
+        const x1 = Math.min(canvas.width, Math.floor(focusRect.x + focusRect.w));
+        const y1 = Math.min(canvas.height, Math.floor(focusRect.y + focusRect.h));
+        if (x1 <= x0 || y1 <= y0) return;
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.38)';
+        // Dim everywhere except the focus rectangle (no compositing mode).
+        ctx.fillRect(0, 0, canvas.width, y0);
+        ctx.fillRect(0, y1, canvas.width, canvas.height - y1);
+        ctx.fillRect(0, y0, x0, y1 - y0);
+        ctx.fillRect(x1, y0, canvas.width - x1, y1 - y0);
+
+        // Reinforce highlight border for clarity.
+        this.drawPixelRectOutline(ctx, x0 - 1, y0 - 1, (x1 - x0) + 2, (y1 - y0) + 2, '#ffd700');
+        ctx.restore();
+    }
+
+    renderCommandTutorialPrompt(ctx, canvas) {
+        if (!this.commandTutorialActive) return;
+        if (this.isCleanupDialogueActive) return;
+        let textKey = null;
+        if (this.commandTutorialStep === 'ability') {
+            textKey = 'COMMAND TUTORIAL: USE COMMAND NOW';
+        } else if (this.commandTutorialStep === 'target') {
+            textKey = 'COMMAND TUTORIAL: SELECT TARGET UNIT';
+        }
+        if (!textKey || !UI_TEXT[textKey]) return;
+
+        const text = getLocalizedText(UI_TEXT[textKey]);
+        const boxW = Math.min(canvas.width - 16, 320);
+        const lines = this.wrapText(ctx, text, boxW - 14, '8px Tiny5');
+        const lineHeight = LANGUAGE.current === 'zh' ? 11 : 8;
+        const boxH = 10 + (lines.length * lineHeight) + 8;
+        const boxX = Math.floor((canvas.width - boxW) / 2);
+        const boxY = 16;
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(10, 10, 10, 0.9)';
+        ctx.fillRect(boxX, boxY, boxW, boxH);
+        ctx.strokeStyle = '#ffd700';
+        ctx.strokeRect(boxX + 0.5, boxY + 0.5, boxW - 1, boxH - 1);
+
+        let ty = boxY + 6;
+        lines.forEach(line => {
+            this.drawPixelText(ctx, line, boxX + boxW / 2, ty, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            ty += lineHeight;
+        });
+        ctx.restore();
     }
 
     getEffectiveAttackRange(unit, attackKey) {
@@ -9403,46 +9549,6 @@ export class TacticsScene extends BaseScene {
             return;
         }
 
-        if (this.activeDialogue) {
-            // Allow clicking to skip/advance dialogue if it's been visible for a moment
-            if (this.dialogueElapsed < 250) return;
-            
-            // If the dialogue has a timer (auto-clearing), clicking it should clear it immediately
-            if (this.activeDialogue.timer !== undefined) {
-                if (this.isLockedActiveDialogue()) {
-                    return;
-                }
-                if (this.activeDialogue.unit) {
-                    this.activeDialogue.unit.dialogue = "";
-                    this.activeDialogue.unit.voiceId = null;
-                }
-                this.activeDialogue = null;
-                this.dialogueElapsed = 0;
-                return;
-            }
-
-            // Check if there are more lines to show (for manual dialogue)
-            const result = this.renderDialogueBox(this.manager.ctx, this.manager.canvas, {
-                portraitKey: this.activeDialogue.portraitKey || this.activeDialogue.unit.imgKey,
-                name: this.activeDialogue.unit.name,
-                text: this.activeDialogue.unit.dialogue
-            }, { subStep: this.activeDialogue.subStep || 0 });
-
-            if (result.hasNextChunk) {
-                this.activeDialogue.subStep = (this.activeDialogue.subStep || 0) + 1;
-                this.dialogueElapsed = 0;
-            } else {
-                // Clear the unit's dialogue so it doesn't repeat on click
-                if (this.activeDialogue.unit) {
-                    this.activeDialogue.unit.dialogue = "";
-                    this.activeDialogue.unit.voiceId = null;
-                }
-                this.activeDialogue = null;
-                this.dialogueElapsed = 0;
-            }
-            return;
-        }
-
         if (x === -1000) return; // Remaining checks are mouse only
 
         if (this.isGameOver) {
@@ -9732,7 +9838,6 @@ export class TacticsScene extends BaseScene {
         this.reachableTiles.clear();
         this.attackTiles.clear();
         this.attackRects = [];
-        this.activeDialogue = null;
     }
 
     executePushCollision(victim, pushCell, victimPos, targetPos) {
@@ -9817,15 +9922,12 @@ export class TacticsScene extends BaseScene {
             if (this.commandTutorialActive) {
                 return;
             }
-            if (this.isLockedActiveDialogue()) {
-                return;
-            }
             if (this.showEndTurnConfirm) {
                 this.showEndTurnConfirm = false;
                 assets.playSound('ui_click', 0.5);
                 return;
             }
-            if (this.selectedUnit || this.selectedAttack || this.activeDialogue) {
+            if (this.selectedUnit || this.selectedAttack) {
                 this.clearBattleSelection();
                 assets.playSound('ui_click', 0.5);
                 return;
@@ -9843,7 +9945,7 @@ export class TacticsScene extends BaseScene {
                 return;
             }
             // Advance dialogue-like overlays first
-            if (this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCleanupDialogueActive || this.activeDialogue) {
+            if (this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCleanupDialogueActive) {
                 e.preventDefault();
                 this.onNonMouseInput();
                 this.controllerNavMouseEnabled = false;
@@ -9867,6 +9969,7 @@ export class TacticsScene extends BaseScene {
             e.preventDefault();
             this.onNonMouseInput();
             this.controllerNavMouseEnabled = false;
+            this.ensureCommandTutorialNonMouseAutoFocus();
             this.moveControllerSelection(0, -1);
             return;
         }
@@ -9874,6 +9977,7 @@ export class TacticsScene extends BaseScene {
             e.preventDefault();
             this.onNonMouseInput();
             this.controllerNavMouseEnabled = false;
+            this.ensureCommandTutorialNonMouseAutoFocus();
             this.moveControllerSelection(0, 1);
             return;
         }
@@ -9881,6 +9985,7 @@ export class TacticsScene extends BaseScene {
             e.preventDefault();
             this.onNonMouseInput();
             this.controllerNavMouseEnabled = false;
+            this.ensureCommandTutorialNonMouseAutoFocus();
             this.moveControllerSelection(-1, 0);
             return;
         }
@@ -9888,6 +9993,7 @@ export class TacticsScene extends BaseScene {
             e.preventDefault();
             this.onNonMouseInput();
             this.controllerNavMouseEnabled = false;
+            this.ensureCommandTutorialNonMouseAutoFocus();
             this.moveControllerSelection(1, 0);
             return;
         }
@@ -9895,6 +10001,7 @@ export class TacticsScene extends BaseScene {
             e.preventDefault();
             this.onNonMouseInput();
             this.controllerNavMouseEnabled = false;
+            this.ensureCommandTutorialNonMouseAutoFocus();
             this.activateControllerTarget();
         }
     }

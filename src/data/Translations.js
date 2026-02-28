@@ -68,6 +68,14 @@ export const UI_TEXT = {
         en: 'CLICK TO CONTINUE',
         zh: '点击继续'
     },
+    'COMMAND TUTORIAL: USE COMMAND NOW': {
+        en: "Cao Cao's command ability allows one allied unit to move and attack, even if it has already done so. Try it now.",
+        zh: '曹操的“号令”技能可使一名友军即使已行动，也能再次移动并攻击。现在试一试。'
+    },
+    'COMMAND TUTORIAL: SELECT TARGET UNIT': {
+        en: 'Select this unit to move it out of danger.',
+        zh: '选择该单位，让他脱离危险。'
+    },
     'START A NEW GAME?': {
         en: 'START A NEW GAME?',
         zh: '开始新游戏？'
