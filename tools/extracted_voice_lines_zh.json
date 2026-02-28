@@ -43,13 +43,13 @@
   },
   {
     "id": "cc_dq_att_01",
-    "char": "soldier",
+    "char": "soldierv3",
     "text": "谨遵县令之命。即刻开仓施粥，并维持秩序。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "cc_dq_att_02",
-    "char": "soldier",
+    "char": "soldierv3",
     "text": "明白，县令。末将即刻去闭城门。",
     "source": "NarrativeScripts.js"
   },
@@ -438,6 +438,18 @@
     "source": "Battles.js"
   },
   {
+    "id": "dx_lb_03",
+    "char": "liubei",
+    "text": "敌人源源不断！我们必须击败邓茂和程远志才能击溃他们！",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "dx_yt_01",
+    "char": "yellowturban",
+    "text": "首领已死！快撤！",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "dx_zf_01",
     "char": "zhangfei",
     "text": "让我来对付他们！我的丈八蛇矛渴饮叛军之血！",
@@ -588,6 +600,12 @@
     "source": "TacticsScene.js"
   },
   {
+    "id": "gz_lb_ret_01",
+    "char": "liubei",
+    "text": "我们击溃了他们的前锋，但敌人太多！必须撤退！",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "gz_lz_explain_01",
     "char": "luzhi",
     "text": "玄德！我已将叛军包围，正要击溃他们，张角却用妖术阻我胜利。",
@@ -679,7 +697,7 @@
   },
   {
     "id": "inn_farmer_01",
-    "char": "farmer",
+    "char": "farmerv2",
     "text": "这些黄巾叛军...我想借酒消愁，但忧虑总是回来。我们该怎么办？",
     "source": "NarrativeScripts.js"
   },
@@ -1045,13 +1063,13 @@
   },
   {
     "id": "pro_farmer2_01",
-    "char": "farmer2",
+    "char": "farmerfemale",
     "text": "我听说叛军已经到了邻县。他们对抵抗者毫不留情。我们必须做最坏的打算。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_farmer_01",
-    "char": "farmer",
+    "char": "farmerv1",
     "text": "黄巾军...听说他们会烧毁一切。我家世代住在这里。我们该怎么办？",
     "source": "NarrativeScripts.js"
   },
@@ -1182,6 +1200,12 @@
     "source": "Battles.js"
   },
   {
+    "id": "qz_gy_surp_01",
+    "char": "guanyu",
+    "text": "兄长！我们听到信号还以为... 哦，他们已经都倒下了。",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "qz_lb_01",
     "char": "liubei",
     "text": "我去。我们不能让青州百姓受苦。",
@@ -1200,10 +1224,22 @@
     "source": "Battles.js"
   },
   {
+    "id": "qz_lb_amb_01",
+    "char": "liubei",
+    "text": "击鼓！兄弟们，立刻出击！",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "qz_lb_choice_01",
     "char": "liubei",
     "text": "百姓呼唤援助。我们必须立即响应他们的呼唤。",
     "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_lb_surp_01",
+    "char": "liubei",
+    "text": "我... 我想我已经把他们都处理掉了。",
+    "source": "TacticsScene.js"
   },
   {
     "id": "qz_ms_01",
@@ -1333,7 +1369,7 @@
   },
   {
     "id": "rec_vol_01",
-    "char": "soldier",
+    "char": "soldierv2",
     "text": "我们听说了你们的结义！我们只是普通人，但我们会跟随你们至死！",
     "source": "NarrativeScripts.js"
   },

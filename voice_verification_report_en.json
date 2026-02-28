@@ -568,7 +568,7 @@
     },
     "en:inn_farmer_01": {
         "id": "inn_farmer_01",
-        "character": "farmer",
+        "character": "farmerv2",
         "original_text": "These Yellow Turban rebels... I try to drink away my worries, but they always return. What will become of us?",
         "stt_output": "",
         "wer": 0,
@@ -1108,7 +1108,7 @@
     },
     "en:pro_farmer2_01": {
         "id": "pro_farmer2_01",
-        "character": "farmer2",
+        "character": "farmerfemale",
         "original_text": "I've heard the rebels are already in the next county. They show no mercy to those who resist. We must prepare for the worst.",
         "stt_output": "",
         "wer": 0,
@@ -1117,7 +1117,7 @@
     },
     "en:pro_farmer_01": {
         "id": "pro_farmer_01",
-        "character": "farmer",
+        "character": "farmerv1",
         "original_text": "The Yellow Turbans... they say they'll burn everything in their path. My family has lived here for generations. What will become of us?",
         "stt_output": "",
         "wer": 0,
@@ -1353,8 +1353,8 @@
         "id": "qz_ms_01",
         "character": "volunteer",
         "original_text": "URGENT! Imperial Protector Gong Jing of Qingzhou Region is under siege! The city is near falling!",
-        "stt_output": "Urgent Imperial Protector Gong Jing of Qingzhou region is undersea the city is near falling",
-        "wer": 0.125,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1540,7 +1540,7 @@
     },
     "en:rec_vol_01": {
         "id": "rec_vol_01",
-        "character": "soldier",
+        "character": "soldierv2",
         "original_text": "We have heard of your brotherhood! We are but simple men, but we will follow you to the death!",
         "stt_output": "",
         "wer": 0,
@@ -1882,7 +1882,7 @@
     },
     "en:cc_dq_att_01": {
         "id": "cc_dq_att_01",
-        "character": "soldier",
+        "character": "soldierv3",
         "original_text": "At once, Magistrate. We will open the stores and keep order.",
         "stt_output": "",
         "wer": 0,
@@ -1891,7 +1891,7 @@
     },
     "en:cc_dq_att_02": {
         "id": "cc_dq_att_02",
-        "character": "soldier",
+        "character": "soldierv3",
         "original_text": "Understood, Magistrate. I will have the gates sealed at once.",
         "stt_output": "",
         "wer": 0,
@@ -2091,7 +2091,61 @@
         "id": "cc_yc_cr_cmd_tutorial_01",
         "character": "caoren",
         "original_text": "That soldier is in danger! Issue a command to get him to safety.",
-        "stt_output": "That soldier is in danger. Issue a command to get him to safety.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:dx_lb_03": {
+        "id": "dx_lb_03",
+        "character": "liubei",
+        "original_text": "They keep coming! We must defeat Deng Mao and Cheng Yuanzhi to break them!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:dx_yt_01": {
+        "id": "dx_yt_01",
+        "character": "yellowturban",
+        "original_text": "Our leaders are dead! Run!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:gz_lb_ret_01": {
+        "id": "gz_lb_ret_01",
+        "character": "liubei",
+        "original_text": "We have scattered their vanguard, but there are too many! We must retreat!",
+        "stt_output": "We have scattered their vanguard, but there are too many. We must retreat.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_gy_surp_01": {
+        "id": "qz_gy_surp_01",
+        "character": "guanyu",
+        "original_text": "Brother! We heard the signal was... oh. They are all fallen.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_lb_amb_01": {
+        "id": "qz_lb_amb_01",
+        "character": "liubei",
+        "original_text": "BEAT THE GONGS! Brothers, strike now!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_lb_surp_01": {
+        "id": "qz_lb_surp_01",
+        "character": "liubei",
+        "original_text": "I... I think I've taken care of them already.",
+        "stt_output": "I... I think I've taken care of them already.",
         "wer": 0.0,
         "is_bad": false,
         "language": "en"

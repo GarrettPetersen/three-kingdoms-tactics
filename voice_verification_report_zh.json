@@ -478,7 +478,7 @@
     },
     "zh:inn_farmer_01": {
         "id": "inn_farmer_01",
-        "character": "farmer",
+        "character": "farmerv2",
         "original_text": "这些黄巾叛军...我想借酒消愁，但忧虑总是回来。我们该怎么办？",
         "stt_output": "",
         "wer": 0,
@@ -1018,7 +1018,7 @@
     },
     "zh:pro_farmer2_01": {
         "id": "pro_farmer2_01",
-        "character": "farmer2",
+        "character": "farmerfemale",
         "original_text": "我听说叛军已经到了邻县。他们对抵抗者毫不留情。我们必须做最坏的打算。",
         "stt_output": "",
         "wer": 0,
@@ -1027,7 +1027,7 @@
     },
     "zh:pro_farmer_01": {
         "id": "pro_farmer_01",
-        "character": "farmer",
+        "character": "farmerv1",
         "original_text": "黄巾军...听说他们会烧毁一切。我家世代住在这里。我们该怎么办？",
         "stt_output": "",
         "wer": 0,
@@ -1450,7 +1450,7 @@
     },
     "zh:rec_vol_01": {
         "id": "rec_vol_01",
-        "character": "soldier",
+        "character": "soldierv2",
         "original_text": "我们听说了你们的结义！我们只是普通人，但我们会跟随你们至死！",
         "stt_output": "",
         "wer": 0,
@@ -1882,7 +1882,7 @@
     },
     "zh:cc_dq_att_01": {
         "id": "cc_dq_att_01",
-        "character": "soldier",
+        "character": "soldierv3",
         "original_text": "谨遵县令之命。即刻开仓施粥，并维持秩序。",
         "stt_output": "",
         "wer": 0,
@@ -1891,7 +1891,7 @@
     },
     "zh:cc_dq_att_02": {
         "id": "cc_dq_att_02",
-        "character": "soldier",
+        "character": "soldierv3",
         "original_text": "明白，县令。末将即刻去闭城门。",
         "stt_output": "",
         "wer": 0,
@@ -2091,7 +2091,61 @@
         "id": "cc_yc_cr_cmd_tutorial_01",
         "character": "caoren",
         "original_text": "那名士兵有危险！立刻下令，让他脱险！",
-        "stt_output": "那名士兵有威胁,立刻下令,让他拖血。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:dx_lb_03": {
+        "id": "dx_lb_03",
+        "character": "liubei",
+        "original_text": "敌人源源不断！我们必须击败邓茂和程远志才能击溃他们！",
+        "stt_output": "敌人源源不斷我們必須擊敗邓貿合成遠置才能機會他們",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:dx_yt_01": {
+        "id": "dx_yt_01",
+        "character": "yellowturban",
+        "original_text": "首领已死！快撤！",
+        "stt_output": "受令一死快撤",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:gz_lb_ret_01": {
+        "id": "gz_lb_ret_01",
+        "character": "liubei",
+        "original_text": "我们击溃了他们的前锋，但敌人太多！必须撤退！",
+        "stt_output": "我们机会了他们的前风,但敌人太多,必须撤退",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:qz_gy_surp_01": {
+        "id": "qz_gy_surp_01",
+        "character": "guanyu",
+        "original_text": "兄长！我们听到信号还以为... 哦，他们已经都倒下了。",
+        "stt_output": "兄長,我們聽到信號還以為,我,他們已經都倒下了。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:qz_lb_amb_01": {
+        "id": "qz_lb_amb_01",
+        "character": "liubei",
+        "original_text": "击鼓！兄弟们，立刻出击！",
+        "stt_output": "技術兄弟们立刻出几",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:qz_lb_surp_01": {
+        "id": "qz_lb_surp_01",
+        "character": "liubei",
+        "original_text": "我... 我想我已经把他们都处理掉了。",
+        "stt_output": "我,我想我已经把他们都处理掉了",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
