@@ -1215,14 +1215,16 @@ export class TacticsScene extends BaseScene {
         let finalImgKey = imgKey;
         const unitClass = unitClasses[id] || (id.startsWith('ally') ? 'soldier' : id);
         const isArcher = unitClass === 'archer';
+        const isCrossbowman = unitClass === 'crossbowman';
         if (isArcher) finalImgKey = 'archer';
-        const finalAttacks = applyLevelAttackUpgrades(attacks, unitClass, level, isArcher);
+        if (isCrossbowman) finalImgKey = 'crossbowman';
+        const finalAttacks = applyLevelAttackUpgrades(attacks, unitClass, level, isArcher, isCrossbowman);
 
         const faction = (id === 'liubei' || id === 'guanyu' || id === 'zhangfei') ? 'player' : 'allied';
-        // Heroes have 4 base HP, soldiers gain +1 HP at level 2+, archers stay at 2
+        // Heroes have 4 base HP, soldiers gain +1 HP at level 2+, ranged infantry stays at 2
         let baseHp = 4;
         if (faction !== 'player') {
-            baseHp = isArcher ? 2 : (level >= 2 ? 3 : 2);
+            baseHp = (isArcher || isCrossbowman) ? 2 : (level >= 2 ? 3 : 2);
         }
         const finalMaxHp = this.getMaxHpForLevel(level, baseHp);
 
@@ -2690,7 +2692,16 @@ export class TacticsScene extends BaseScene {
                     const dist = this.tacticsMap.getDistance(o.r, o.q, t.r, t.q);
                     const inRange = dist >= minRange && dist <= maxRange;
                     const isAxial = !isLineAttack || !!this.getAxialDirectionToTarget(o.r, o.q, t.r, t.q);
-                    return inRange && isAxial;
+                    if (!inRange || !isAxial) return false;
+
+                    // Directional bolt can only target the first impact endpoint on that ray.
+                    // Anything "behind" a blocker is not targetable.
+                    if (this.isDirectionalBoltAttack(attackKey)) {
+                        const boltPath = this.getDirectionalBoltPath(unit, t.r, t.q);
+                        const impact = boltPath?.impactCell;
+                        return !!(impact && impact.r === t.r && impact.q === t.q);
+                    }
+                    return true;
                 });
                 if (!canHit) return;
                 let dist = Infinity;
@@ -4647,9 +4658,12 @@ export class TacticsScene extends BaseScene {
         const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('tent') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
         const isLineAttack = this.isLineAttack(attackKey);
         const isSweepAttack = this.isSweepAttack(attackKey);
+        const isDirectionalBolt = this.isDirectionalBoltAttack(attackKey);
 
         // Play attack sound
-        if (isLineAttack) assets.playSound('stab');
+        if (isDirectionalBolt) {
+            // Fired on the release frame for better impact timing.
+        } else if (isLineAttack) assets.playSound('stab');
         else if (attackKey.startsWith('green_dragon_slash')) assets.playSound('green_dragon');
         else if (isSweepAttack) assets.playSound('green_dragon');
         else if (attackKey === 'double_blades') assets.playSound('double_blades');
@@ -4682,6 +4696,8 @@ export class TacticsScene extends BaseScene {
             this.executeDoubleBlades(attacker, targetR, targetQ, wrappedOnComplete);
         } else if (attackKey.startsWith('green_dragon_slash') || isSweepAttack) {
             this.executeGreenDragonSlash(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
+        } else if (isDirectionalBolt) {
+            this.executeDirectionalBolt(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
         } else if (isLineAttack) {
             this.executeSerpentSpear(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
         } else {
@@ -4800,6 +4816,70 @@ export class TacticsScene extends BaseScene {
             };
             setTimeout(checkSwing, 16);
         }
+    }
+
+    executeDirectionalBolt(attacker, attackKey, targetR, targetQ, onComplete) {
+        const attack = ATTACKS[attackKey] || ATTACKS.crossbow_bolt;
+        attacker.action = attack.animation || 'attack_1';
+        attacker.frame = 0;
+
+        const boltPath = this.getDirectionalBoltPath(attacker, targetR, targetQ);
+        const origin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
+        const startPos = this.getPixelPos(origin.r, origin.q);
+        const impactCell = boltPath?.impactCell || this.tacticsMap.getCell(targetR, targetQ);
+        const impactPos = impactCell ? this.getPixelPos(impactCell.r, impactCell.q) : this.getPixelPos(targetR, targetQ);
+
+        let fired = false;
+        const checkFire = () => {
+            if (fired) return;
+            if (attacker.action !== (attack.animation || 'attack_1')) return;
+            if (attacker.frame >= 2) {
+                fired = true;
+                assets.playSound('bow_fire', 0.6);
+                this.projectiles.push({
+                    startX: startPos.x,
+                    startY: startPos.y - 20,
+                    targetX: impactPos.x,
+                    targetY: impactPos.y - 15,
+                    progress: 0,
+                    type: 'bolt',
+                    duration: 380,
+                    onComplete: () => {
+                        const livePath = this.getDirectionalBoltPath(attacker, targetR, targetQ);
+                        const liveImpactCell = livePath?.impactCell || impactCell;
+                        if (!liveImpactCell) {
+                            assets.playSound('whiff', 0.4);
+                            return;
+                        }
+
+                        if (livePath?.impactType === 'unit') {
+                            const victim = this.getLivingUnitOccupyingCell(liveImpactCell.r, liveImpactCell.q);
+                            if (victim) {
+                                assets.playSound('arrow_hit', 0.7);
+                                const endPos = this.getPixelPos(liveImpactCell.r, liveImpactCell.q);
+                                this.applyDamageAndPush(attacker, victim, attack, liveImpactCell.r, liveImpactCell.q, startPos, endPos);
+                                return;
+                            }
+                        }
+
+                        if (livePath?.impactType === 'terrain') {
+                            this.damageCell(liveImpactCell.r, liveImpactCell.q);
+                            return;
+                        }
+
+                        assets.playSound('whiff', 0.4);
+                    }
+                });
+                return;
+            }
+            setTimeout(checkFire, 16);
+        };
+        setTimeout(checkFire, 16);
+
+        setTimeout(() => {
+            attacker.action = 'standby';
+            if (onComplete) onComplete();
+        }, 900);
     }
 
     executeDoubleBlades(attacker, targetR, targetQ, onComplete) {
@@ -5572,6 +5652,8 @@ export class TacticsScene extends BaseScene {
                 } else {
                     if (u.isArcher) {
                         unitClass = 'archer';
+                    } else if (u.isCrossbowman) {
+                        unitClass = 'crossbowman';
                     } else if (unitClass === 'ally' || unitClass === 'guard' || unitClass.includes('custom_ally') || unitClass.includes('custom_guard')) {
                         unitClass = 'soldier';
                     }
@@ -5584,15 +5666,19 @@ export class TacticsScene extends BaseScene {
                     || u.id.includes('custom_guard')
                     || (u.faction === 'allied' && unitClass === 'soldier');
                 const isArcher = unitClass === 'archer';
+                const isCrossbowman = unitClass === 'crossbowman';
                 let baseHp = u.maxHp || u.hp || 4;
                 if (isAlly) {
-                    baseHp = isArcher ? 2 : (level >= 2 ? 3 : 2);
+                    baseHp = (isArcher || isCrossbowman) ? 2 : (level >= 2 ? 3 : 2);
                 }
                 const finalMaxHp = this.getMaxHpForLevel(level, baseHp);
                 
                 if (unitClass === 'archer') {
                     imgKey = 'archer';
                     attacks = ['arrow_shot'];
+                } else if (unitClass === 'crossbowman') {
+                    imgKey = 'crossbowman';
+                    attacks = ['crossbow_bolt'];
                 }
 
                 // Apply canonical unit template when roster row references one.
@@ -5609,7 +5695,7 @@ export class TacticsScene extends BaseScene {
                     }
                 }
 
-                attacks = applyLevelAttackUpgrades(attacks, unitClass, level, unitClass === 'archer');
+                attacks = applyLevelAttackUpgrades(attacks, unitClass, level, unitClass === 'archer', unitClass === 'crossbowman');
 
             const unit = new Unit(u.id, {
                 ...u,
@@ -6513,7 +6599,12 @@ export class TacticsScene extends BaseScene {
         const dist = this.tacticsMap.getDistance(origin.r, origin.q, targetR, targetQ);
         const attack = ATTACKS[attackKey];
 
-        if (this.isLineAttack(attackKey)) {
+        if (this.isDirectionalBoltAttack(attackKey)) {
+            const boltPath = this.getDirectionalBoltPath(attacker, targetR, targetQ);
+            if (boltPath?.impactCell) {
+                affected.push({ r: boltPath.impactCell.r, q: boltPath.impactCell.q });
+            }
+        } else if (this.isLineAttack(attackKey)) {
             // Spear attacks only travel in one of 6 strict axial directions.
             const axial = this.getAxialDirectionToTarget(origin.r, origin.q, targetR, targetQ);
             if (axial) {
@@ -7200,13 +7291,17 @@ export class TacticsScene extends BaseScene {
                     const attack = ATTACKS[u.intent.attackKey];
                     if (attack && attack.push) {
                         const targetCell = this.getIntentTargetCell(u);
+                        const boltPath = (targetCell && this.isDirectionalBoltAttack(u.intent.attackKey))
+                            ? this.getDirectionalBoltPath(u, targetCell.r, targetCell.q)
+                            : null;
+                        const impactCell = boltPath?.impactCell || targetCell;
                         
                         // Only show arrow if there's a unit to be pushed
-                        if (targetCell && targetCell.unit) {
-                            const origin = this.getAttackOriginForTarget(u, targetCell.r, targetCell.q);
-                            const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, targetCell.r, targetCell.q);
+                        if (impactCell && impactCell.unit) {
+                            const origin = this.getAttackOriginForTarget(u, impactCell.r, impactCell.q);
+                            const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, impactCell.r, impactCell.q);
                             if (dirIndex !== -1) {
-                                this.drawPushArrow(ctx, targetCell.r, targetCell.q, dirIndex);
+                                this.drawPushArrow(ctx, impactCell.r, impactCell.q, dirIndex);
                             }
                         }
                     }
@@ -7234,12 +7329,21 @@ export class TacticsScene extends BaseScene {
                         }
                     }
                 } else if (this.selectedAttack && this.isLineAttack(this.selectedAttack)) {
-                    // Serpent Spear: Push the further target
-                    const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, this.hoveredCell.r, this.hoveredCell.q);
-                    if (dirIndex !== -1) {
-                        // Only show arrow if the hovered cell actually contains a unit
-                        if (this.hoveredCell.unit) {
-                            this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
+                    if (this.isDirectionalBoltAttack(this.selectedAttack)) {
+                        const boltPath = this.getDirectionalBoltPath(this.selectedUnit, this.hoveredCell.r, this.hoveredCell.q);
+                        const impactCell = boltPath?.impactCell || null;
+                        if (impactCell && impactCell.unit) {
+                            const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, impactCell.r, impactCell.q);
+                            if (dirIndex !== -1) this.drawPushArrow(ctx, impactCell.r, impactCell.q, dirIndex);
+                        }
+                    } else {
+                        // Serpent Spear: Push the further target
+                        const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, this.hoveredCell.r, this.hoveredCell.q);
+                        if (dirIndex !== -1) {
+                            // Only show arrow if the hovered cell actually contains a unit
+                            if (this.hoveredCell.unit) {
+                                this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
+                            }
                         }
                     }
                 } else {
@@ -8139,6 +8243,7 @@ export class TacticsScene extends BaseScene {
 
     drawIntent(ctx, unit, x, y) {
         if (!unit.intent) return;
+        const attack = ATTACKS[unit.intent.attackKey];
         
         const targetCell = this.getIntentTargetCell(unit);
         
@@ -8154,6 +8259,22 @@ export class TacticsScene extends BaseScene {
         // Is this unit currently selected?
         const isSelected = this.selectedUnit === unit;
         const glow = isSelected ? Math.abs(Math.sin(Date.now() / 200)) * 0.4 : 0;
+
+        if (attack?.type === 'directional_projectile') {
+            const boltPath = this.getDirectionalBoltPath(unit, targetCell.r, targetCell.q);
+            if (!boltPath || !boltPath.path || boltPath.path.length === 0) return;
+            ctx.save();
+            const alpha = 0.6 + glow;
+            const dotColor = `rgba(255, 48, 48, ${alpha})`;
+            boltPath.path.forEach((pos, idx) => {
+                const p = this.getPixelPos(pos.r, pos.q);
+                const size = (idx === boltPath.path.length - 1) ? 4 : 2;
+                ctx.fillStyle = dotColor;
+                ctx.fillRect(Math.round(p.x - Math.floor(size / 2)), Math.round(p.y - Math.floor(size / 2)), size, size);
+            });
+            ctx.restore();
+            return;
+        }
 
         ctx.save();
         
@@ -9282,6 +9403,26 @@ export class TacticsScene extends BaseScene {
                 ctx.lineTo(x + Math.cos(angle) * 4, y + Math.sin(angle) * 4);
                 ctx.stroke();
                 ctx.restore();
+            } else if (p.type === 'bolt') {
+                const dx = p.targetX - p.startX;
+                const dy = p.targetY - p.startY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const arcHeight = Math.min(8, dist * 0.06); // very flat arc (near-straight bolt)
+                const x = p.startX + p.progress * dx;
+                const y = p.startY + p.progress * dy - Math.sin(p.progress * Math.PI) * arcHeight;
+
+                const nextX = p.startX + (p.progress + 0.01) * dx;
+                const nextY = p.startY + (p.progress + 0.01) * dy - Math.sin((p.progress + 0.01) * Math.PI) * arcHeight;
+                const angle = Math.atan2(nextY - y, nextX - x);
+
+                ctx.save();
+                ctx.strokeStyle = '#ffcccc';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + Math.cos(angle) * 5, y + Math.sin(angle) * 5);
+                ctx.stroke();
+                ctx.restore();
             } else if (p.type === 'swipe_straight') {
                 this.drawStraightSwipe(ctx, p);
             } else if (p.type === 'swipe_arc') {
@@ -9752,6 +9893,69 @@ export class TacticsScene extends BaseScene {
         return tiles;
     }
 
+    isDirectionalBoltAttack(attackKey) {
+        return ATTACKS[attackKey]?.type === 'directional_projectile';
+    }
+
+    getDirectionalBoltPath(attacker, targetR, targetQ) {
+        const origin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
+        const axial = this.getAxialDirectionToTarget(origin.r, origin.q, targetR, targetQ);
+        if (!axial) return null;
+
+        const path = [];
+        let impactCell = null;
+        let impactType = 'edge';
+        let impactUnit = null;
+        let lastCell = null;
+        const maxSteps = Math.max(this.manager.config.mapWidth, this.manager.config.mapHeight) + 4;
+
+        for (let step = 1; step <= maxSteps; step++) {
+            const cell = this.tacticsMap.getCellAtDirectionDistance(origin.r, origin.q, axial.dir, step);
+            if (!cell) {
+                impactCell = lastCell;
+                impactType = 'edge';
+                break;
+            }
+            path.push({ r: cell.r, q: cell.q });
+            lastCell = cell;
+
+            const occupant = this.getLivingUnitOccupyingCell(cell.r, cell.q);
+            if (occupant && occupant !== attacker) {
+                impactCell = cell;
+                impactType = 'unit';
+                impactUnit = occupant;
+                break;
+            }
+
+            const terrain = cell.terrain || '';
+            const isStructure =
+                (terrain.includes('house') || terrain.includes('tent') || terrain.includes('ice'))
+                && !terrain.includes('destroyed')
+                && !terrain.includes('broken');
+            const isWall = terrain.includes('wall');
+            const isBoltStopTerrain = isStructure || isWall;
+            if (isBoltStopTerrain) {
+                impactCell = cell;
+                impactType = 'terrain';
+                break;
+            }
+        }
+
+        if (!impactCell && path.length > 0) {
+            impactCell = this.tacticsMap.getCell(path[path.length - 1].r, path[path.length - 1].q);
+            impactType = 'edge';
+        }
+
+        return {
+            origin,
+            dir: axial.dir,
+            path,
+            impactCell,
+            impactType,
+            impactUnit
+        };
+    }
+
     isLineAttack(attackKey) {
         return !!ATTACKS[attackKey]?.line;
     }
@@ -9789,6 +9993,29 @@ export class TacticsScene extends BaseScene {
         const originKeys = new Set(origins.map(o => `${o.r},${o.q}`));
 
         if (this.isLineAttack(this.selectedAttack)) {
+            if (this.isDirectionalBoltAttack(this.selectedAttack)) {
+                const endpointSeen = new Set();
+                origins.forEach(o => {
+                    for (let dir = 0; dir < 6; dir++) {
+                        const maxDist = Number.isFinite(range) ? range : 99;
+                        let candidate = null;
+                        for (let d = Math.max(1, minRange); d <= maxDist; d++) {
+                            const c = this.tacticsMap.getCellAtDirectionDistance(o.r, o.q, dir, d);
+                            if (!c) break;
+                            candidate = c;
+                        }
+                        if (!candidate) continue;
+                        const boltPath = this.getDirectionalBoltPath(this.selectedUnit, candidate.r, candidate.q);
+                        const impact = boltPath?.impactCell;
+                        if (!impact) continue;
+                        const k = `${impact.r},${impact.q}`;
+                        if (originKeys.has(k) || endpointSeen.has(k)) continue;
+                        endpointSeen.add(k);
+                        this.attackTiles.set(k, true);
+                    }
+                });
+                return;
+            }
             origins.forEach(o => {
                 const tiles = this.getLinearSpearTargetsFromOrigin(o.r, o.q, minRange, range);
                 tiles.forEach(t => {

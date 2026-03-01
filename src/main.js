@@ -544,6 +544,7 @@ async function init() {
                 bandit1: 'assets/characters/088_qiangdao01.png',
                 bandit2: 'assets/characters/089_qiangdao02.png',
                 archer: 'assets/characters/098_archer.png',
+                crossbowman: 'assets/characters/099_crossbowman.png',
                 zhangjiao: 'assets/characters/005_zhangjiao.png',
                 zhangbao: 'assets/characters/006_zhangbao.png',
                 zhangliang: 'assets/characters/007_zhangliang.png',

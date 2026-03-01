@@ -7,7 +7,41 @@ This doc explains how to create or update character portraits used in dialogue. 
 ## Prerequisites
 
 - **Project Python venv:** Use `./tools/venv_xtts/bin/python3` for all portrait-related scripts. The Makefile and existing tooling assume this venv (it has Pillow, torch, diffusers, and the SD model path config).
-- **Stable Diffusion model:** `generate_portraits.py` loads a model via `tools/model_paths.py` (e.g. RetroDiffusion). Ensure the model path is set up for your environment.
+- **Stable Diffusion model:** Only needed for **Stage 2** (img2img). The model path is resolved by `tools/model_paths.py` and can be overridden with environment variables so different machines can use different paths (see below).
+
+---
+
+## Different device or model path
+
+**Stage 1** (build refs) only needs the project venv and Pillow; it does **not** load any image model. It will work on any device that has the repo and the venv.
+
+**Stage 2** (img2img) loads a Stable Diffusion checkpoint (e.g. RetroDiffusion). If your model is on another path, set one of these **before** running `generate_portraits.py`:
+
+| Env var | Meaning |
+|--------|--------|
+| `TKT_SD_MODEL_PATH` | Full path to the `.safetensors` file (highest priority). |
+| `SD_MODEL_PATH` or `RETRODIFFUSION_MODEL_PATH` | Same: full path to the model file. |
+| `TKT_SD_MODELS_DIR` | Directory containing the model; script uses this dir + default filename. |
+| `SD_MODELS_DIR` or `RETRODIFFUSION_MODELS_DIR` | Same: directory only. |
+| `TKT_SD_MODEL_NAME` | Filename to use with a models-dir (default: `RetroDiffusion24x-64xModel.safetensors`). |
+
+If none of these are set, `tools/model_paths.py` tries (in order): `~/Image Gen Models`, `~/diffusion_models`, `~/Models`, `~/StableDiffusion`, then `PROJECT_ROOT/models` and `PROJECT_ROOT/.models`, using the default filename in each.
+
+Example on another machine (Unix):
+
+```bash
+export TKT_SD_MODEL_PATH="/path/on/this/machine/RetroDiffusion24x-64xModel.safetensors"
+./tools/venv_xtts/bin/python3 tools/generate_portraits.py --input-ref ... --output ...
+```
+
+Or with a directory:
+
+```bash
+export TKT_SD_MODELS_DIR="/path/on/this/machine"
+./tools/venv_xtts/bin/python3 tools/generate_portraits.py --input-ref ... --output ...
+```
+
+As long as a Python venv has the right dependencies (Pillow for Stage 1; torch, diffusers, etc. for Stage 2) and the model path is set or found in a fallback dir, an agent on a different device can run the full process. If `tools/venv_xtts` doesn’t exist on that machine (e.g. fresh clone), create a venv there and install the same deps, then use that venv’s `python3` instead of `./tools/venv_xtts/bin/python3` in the commands below.
 
 ---
 
@@ -110,4 +144,4 @@ make portraits   # regenerate all from source_raw
 | **Final portraits (game loads these)** | `public/assets/portraits/generated/` |
 | Source raw (for make portrait NAME=...) | `assets/portraits/source_raw/` |
 
-Always use **`./tools/venv_xtts/bin/python3`** (the project venv), not a different venv, so dependencies and model paths match.
+Use **`./tools/venv_xtts/bin/python3`** when that venv exists (e.g. on the main dev machine). On another device, use a venv that has the same dependencies (Pillow, torch, diffusers) and set the model path via the env vars above if the model lives elsewhere.

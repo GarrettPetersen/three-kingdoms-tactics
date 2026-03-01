@@ -333,6 +333,39 @@ export const ATTACKS = {
         animation: 'attack_1',
         description: { en: 'Powerful heavy arrow.', zh: '威力更强的重箭。' }
     },
+    crossbow_bolt: {
+        name: { en: 'Crossbow Bolt', zh: '弩矢' },
+        damage: 1,
+        minRange: 1,
+        range: 99,
+        line: true,
+        push: 1,
+        type: 'directional_projectile',
+        animation: 'attack_1',
+        description: { en: 'Fire in one of 6 directions until the bolt hits.', zh: '沿六向之一发射，直到弩矢命中目标。' }
+    },
+    crossbow_bolt_2: {
+        name: { en: 'Crossbow Bolt II', zh: '弩矢 II' },
+        damage: 2,
+        minRange: 1,
+        range: 99,
+        line: true,
+        push: 1,
+        type: 'directional_projectile',
+        animation: 'attack_1',
+        description: { en: 'Stronger bolt with 2 damage and push.', zh: '更强弩矢，造成 2 点伤害并击退。' }
+    },
+    crossbow_bolt_3: {
+        name: { en: 'Crossbow Bolt III', zh: '弩矢 III' },
+        damage: 3,
+        minRange: 1,
+        range: 99,
+        line: true,
+        push: 1,
+        type: 'directional_projectile',
+        animation: 'attack_1',
+        description: { en: 'Heavy bolt with 3 damage and push.', zh: '重弩矢，造成 3 点伤害并击退。' }
+    },
     blade_sweep_1: {
         name: { en: 'Blade Sweep I', zh: '刀锋横扫 I' },
         damage: 1,
@@ -429,6 +462,10 @@ export const UPGRADE_PATHS = {
     'archer': {
         4: { attack: 'arrow_shot_2', text: { en: 'Range increased to 5', zh: '射程提升至 5' } },
         6: { attack: 'arrow_shot_3', text: { en: 'Damage increased to 2', zh: '伤害提升至 2' } }
+    },
+    'crossbowman': {
+        2: { attack: 'crossbow_bolt_2', text: { en: 'Bolt damage increased to 2', zh: '弩矢伤害提升至 2' } },
+        3: { attack: 'crossbow_bolt_3', text: { en: 'Bolt damage increased to 3', zh: '弩矢伤害提升至 3' } }
     }
 };
 

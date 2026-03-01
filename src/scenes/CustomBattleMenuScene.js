@@ -46,6 +46,7 @@ export class CustomBattleMenuScene extends BaseScene {
             { name: 'Deng Mao', imgKey: 'dengmao', type: 'enemy_captain', templateId: 'dengmao' },
             { name: 'Cheng Yuanzhi', imgKey: 'chengyuanzhi', type: 'enemy_captain', templateId: 'chengyuanzhi' },
             { name: 'Archer', imgKey: 'archer', type: 'enemy_soldier', templateId: 'rebel', isArcher: true, hp: 2 },
+            { name: 'Crossbowman', imgKey: 'crossbowman', type: 'crossbowman', templateId: 'crossbowman', isCrossbowman: true, hp: 2 },
         ];
         
         // Initialize unit dropdown items
@@ -909,6 +910,7 @@ export class CustomBattleMenuScene extends BaseScene {
                     faction: u.faction,
                     level: u.level,
                     isArcher: u.isArcher || false,
+                    isCrossbowman: u.isCrossbowman || false,
                     onHorse: !!u.onHorse,
                     horseType: u.horseType || 'brown',
                     r, q

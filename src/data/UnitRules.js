@@ -12,10 +12,12 @@ export function getMaxHpForLevel(level, baseHp = 4) {
     return Math.min(10, baseHp + bonus);
 }
 
-export function applyLevelAttackUpgrades(baseAttacks, unitClass, level, isArcher = false) {
+export function applyLevelAttackUpgrades(baseAttacks, unitClass, level, isArcher = false, isCrossbowman = false) {
     let attacks = Array.isArray(baseAttacks) ? [...baseAttacks] : [];
     if (isArcher) {
         attacks = ['arrow_shot'];
+    } else if (isCrossbowman) {
+        attacks = ['crossbow_bolt'];
     }
 
     const path = UPGRADE_PATHS[unitClass];

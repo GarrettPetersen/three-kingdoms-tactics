@@ -207,6 +207,9 @@ export class LevelUpScene extends BaseScene {
                 } else if (this.chosenClass === 'archer') {
                     bonuses.push(getLocalizedText({ en: "+ Ranged Attack", zh: "+ 远程攻击" }));
                     bonuses.push(getLocalizedText({ en: "+ Range 2", zh: "+ 射程 2" }));
+                } else if (this.chosenClass === 'crossbowman') {
+                    bonuses.push(getLocalizedText({ en: "+ Crossbow Bolt", zh: "+ 弩矢攻击" }));
+                    bonuses.push(getLocalizedText({ en: "+ Push on hit", zh: "+ 命中可击退" }));
                 }
             }
 
@@ -248,11 +251,11 @@ export class LevelUpScene extends BaseScene {
     renderPromotionUI(ctx, canvas, cx, y) {
         this.drawPixelText(ctx, getLocalizedText({ en: "CHOOSE PROMOTION:", zh: "选择晋升：" }), cx, y, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
         
-        const bw = 72;
+        const bw = 60;
         const bh = 30;
         
         // Soldier Button
-        const sx = cx - bw - 10;
+        const sx = cx - (bw * 1.5) - 10;
         const sy = y + 11;
         ctx.fillStyle = '#222';
         ctx.strokeStyle = this.promotionChoice === 'soldier' ? '#ffd700' : '#888';
@@ -263,7 +266,7 @@ export class LevelUpScene extends BaseScene {
         this.soldierRect = { x: sx, y: sy, w: bw, h: bh };
 
         // Archer Button
-        const ax = cx + 10;
+        const ax = cx - bw / 2;
         const ay = y + 11;
         ctx.fillStyle = '#222';
         ctx.strokeStyle = this.promotionChoice === 'archer' ? '#ffd700' : '#888';
@@ -272,6 +275,17 @@ export class LevelUpScene extends BaseScene {
         ctx.strokeRect(ax + 1, ay + 1, bw - 2, bh - 2);
         this.drawPixelText(ctx, getLocalizedText({ en: "ARCHER", zh: "弓兵" }), ax + bw/2, ay + bh/2 - 3, { color: '#fff', font: '8px Tiny5', align: 'center' });
         this.archerRect = { x: ax, y: ay, w: bw, h: bh };
+
+        // Crossbowman Button
+        const cxb = cx + (bw / 2) + 10;
+        const cyb = y + 11;
+        ctx.fillStyle = '#222';
+        ctx.strokeStyle = this.promotionChoice === 'crossbowman' ? '#ffd700' : '#888';
+        ctx.lineWidth = 2;
+        ctx.fillRect(cxb, cyb, bw, bh);
+        ctx.strokeRect(cxb + 1, cyb + 1, bw - 2, bh - 2);
+        this.drawPixelText(ctx, getLocalizedText({ en: "XBOW", zh: "弩兵" }), cxb + bw/2, cyb + bh/2 - 3, { color: '#fff', font: '8px Tiny5', align: 'center' });
+        this.crossbowRect = { x: cxb, y: cyb, w: bw, h: bh };
     }
 
     handleInput(e) {
@@ -286,6 +300,11 @@ export class LevelUpScene extends BaseScene {
             if (this.archerRect && x >= this.archerRect.x && x <= this.archerRect.x + this.archerRect.w &&
                 y >= this.archerRect.y && y <= this.archerRect.y + this.archerRect.h) {
                 this.selectPromotion('archer');
+                return;
+            }
+            if (this.crossbowRect && x >= this.crossbowRect.x && x <= this.crossbowRect.x + this.crossbowRect.w &&
+                y >= this.crossbowRect.y && y <= this.crossbowRect.y + this.crossbowRect.h) {
+                this.selectPromotion('crossbowman');
                 return;
             }
             return;
@@ -314,6 +333,8 @@ export class LevelUpScene extends BaseScene {
         // Update current display info
         if (choice === 'archer') {
             current.imgKey = 'archer';
+        } else if (choice === 'crossbowman') {
+            current.imgKey = 'crossbowman';
         }
     }
 
