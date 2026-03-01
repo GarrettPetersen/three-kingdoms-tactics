@@ -16,6 +16,7 @@ release/
 
 # Python
 models/
+.venv/
 tools/venv/
 tools/venv_xtts/
 tools/venv_uvr/

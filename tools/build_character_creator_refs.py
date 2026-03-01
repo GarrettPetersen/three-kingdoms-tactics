@@ -764,7 +764,7 @@ def _char_specs() -> Dict[str, dict]:
                 ("shirt_robe.png", {}),
                 ("hair_long.png", {}),
                 ("eyebrows_thin.png", {}),
-                ("hat_headcloth.png", {}),
+                ("hat_headscarf.png", {}),
             ],
             "manual_palette": {
                 "skin_tones": {
@@ -777,11 +777,10 @@ def _char_specs() -> Dict[str, dict]:
                     "mid": [124, 98, 72, 255],
                     "light": [196, 168, 128, 255]
                 },
-                "headcloth_tones": {
-                    "dark": [156, 112, 24, 255],
-                    "mid": [215, 160, 42, 255],
-                    "light": [246, 210, 92, 255]
-                }
+                "headscarf_colors": [
+                    [156, 112, 24, 255],
+                    [246, 210, 92, 255]
+                ]
             },
         },
         "zhangjiao": {
