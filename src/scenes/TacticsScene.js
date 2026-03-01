@@ -24,6 +24,7 @@ export class TacticsScene extends BaseScene {
         this.lastTime = 0;
         this.lastSaveTime = 0; // Track when we last saved state
         this.saveInterval = 2000; // Save every 2 seconds
+        this.hitStopRemaining = 0; // Freeze frames when a weapon hit lands (ms)
         
         this.turn = 'player'; // 'player', 'enemy'
         this.turnNumber = 1;
@@ -307,6 +308,7 @@ export class TacticsScene extends BaseScene {
         this.isIntroAnimating = true;
         this.introTimer = 0;
         this.lastTime = 0;
+        this.hitStopRemaining = 0;
         this.onVictoryCallback = params.onVictory || null; // Custom callback for battle result
         this.onChoiceRestrain = params.onChoiceRestrain || null; // Callback for peaceful choice
         this.onChoiceFight = params.onChoiceFight || null; // Callback for fight choice
@@ -5225,6 +5227,7 @@ export class TacticsScene extends BaseScene {
         finalDamage = this.applyUnitDamage(victim, finalDamage, hitCell);
         if (finalDamage > 0) {
             victim.triggerShake(startPos.x, startPos.y, endPos.x, endPos.y);
+            this.hitStopRemaining = 80;
         }
 
         // Visual Feedback
@@ -6103,8 +6106,13 @@ export class TacticsScene extends BaseScene {
     }
 
     update(timestamp) {
-        const dt = timestamp - (this.lastTime || timestamp);
-            this.lastTime = timestamp;
+        let dt = timestamp - (this.lastTime || timestamp);
+        this.lastTime = timestamp;
+        if (this.hitStopRemaining > 0) {
+            const consume = Math.min(this.hitStopRemaining, dt);
+            this.hitStopRemaining -= consume;
+            dt = 0;
+        }
         this.updateHexDamageWaves(dt);
 
         // Periodic state saving for crash recovery (only for active campaign battles).
