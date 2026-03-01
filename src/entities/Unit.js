@@ -53,6 +53,7 @@ export class Unit {
         this.damageFlashTimer = 0;
         this.damageFlashDuration = 80;
         this.pushData = null; // { startX, startY, targetX, targetY, progress, isBounce }
+        this.rollData = null; // Boulder roll: { path, pathIndex, segmentProgress, rollAngle, dirIndex, segmentComplete, collisionAtSegmentEnd, overshootAmount, bounceBack?: { fromX, fromY, toX, toY, progress }, bouncePendingCollision?, bounceComplete? }
         this.isDrowning = config.isDrowning || false;
         this.isGone = config.isGone || false;
         this.drownTimer = 0;
@@ -200,8 +201,69 @@ export class Unit {
             }
         }
 
-        // Handle Push Animation
-        if (this.pushData) {
+        // Handle Boulder Roll Animation (roll angle + position along path; or bounce back)
+        if (this.rollData && this.name === 'Boulder') {
+            const roll = this.rollData;
+            if (roll.bounceBack) {
+                const bounce = roll.bounceBack;
+                const bounceSpeed = 0.006;
+                bounce.progress = Math.min(1, (bounce.progress || 0) + dt * bounceSpeed);
+                const p = bounce.progress;
+                this.visualX = bounce.fromX + (bounce.toX - bounce.fromX) * p;
+                this.visualY = bounce.fromY + (bounce.toY - bounce.fromY) * p;
+                this.currentSortR = this.r; // Z-order: we're returning to this hex
+                if (bounce.progress >= 1) {
+                    roll.bounceComplete = true;
+                }
+            } else if (roll.segmentComplete) {
+                // Keep visual at segment end until scene processes (avoid any flicker)
+                const path = roll.path;
+                const idx = roll.pathIndex ?? 0;
+                if (path && path.length > 1 && idx < path.length - 1) {
+                    const end = path[idx + 1];
+                    const endPos = getPixelPos(end.r, end.q);
+                    this.visualX = endPos.x;
+                    this.visualY = endPos.y;
+                    this.currentSortR = end.r;
+                }
+            } else {
+                const rollSpeed = 0.0022;
+                const maxP = roll.collisionAtSegmentEnd ? (roll.overshootAmount ?? 0.4) : 1;
+                roll.segmentProgress = Math.min(maxP, (roll.segmentProgress || 0) + dt * rollSpeed);
+                const path = roll.path;
+                const idx = roll.pathIndex || 0;
+                if (path && path.length > 1 && idx < path.length - 1) {
+                    const start = path[idx];
+                    const end = path[idx + 1];
+                    const startPos = getPixelPos(start.r, start.q);
+                    const endPos = getPixelPos(end.r, end.q);
+                    // Roll right when moving right, left when moving left (canvas: +angle = clockwise = right side down)
+                    const rollDir = endPos.x >= startPos.x ? 1 : -1;
+                    roll.rollAngle += rollDir * dt * 0.015;
+                    const p = roll.segmentProgress;
+                    this.visualX = startPos.x + (endPos.x - startPos.x) * p;
+                    this.visualY = startPos.y + (endPos.y - startPos.y) * p;
+                    // Z-order: when rolling "up" (toward smaller r), tip off the back = draw behind the hex we're leaving
+                    const tipThreshold = 0.35;
+                    const landThreshold = 0.65;
+                    if (p <= tipThreshold) {
+                        this.currentSortR = start.r;
+                    } else if (end.r < start.r) {
+                        // Rolling up: once tipping off the back, draw behind start hex; then switch to end hex as we land
+                        this.currentSortR = p < landThreshold ? start.r - 0.01 : end.r;
+                    } else {
+                        // Rolling down or same row: interpolate as before
+                        this.currentSortR = start.r + (end.r - start.r) * p;
+                    }
+                    // Small parabolic cliff fall (same style as unit push fall: little arc, land in hex)
+                    if (roll.segmentFallHeight > 0) {
+                        const arcPixels = 8; // Subtle dip, like unit fall arc height
+                        this.visualY += 4 * arcPixels * p * (1 - p);
+                    }
+                }
+                if (roll.segmentProgress >= maxP) roll.segmentComplete = true;
+            }
+        } else if (this.pushData) {
             if (this.name !== 'Boulder') {
             this.action = 'hit';
             }
@@ -278,8 +340,8 @@ export class Unit {
                 this.isMoving = false;
                 this.action = 'standby';
             }
-        } else if (!this.pushData) {
-            // Stationary update
+        } else if (!this.pushData && !this.rollData) {
+            // Stationary update (skip when rolling so we don't overwrite interpolated position)
             const pos = getPixelPos(this.r, this.q);
             this.visualX = pos.x;
             this.visualY = pos.y;

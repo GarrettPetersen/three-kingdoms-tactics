@@ -60,6 +60,8 @@ export class TacticsScene extends BaseScene {
         this.chapter2DongZhuoEscapedFromDrowning = false;
         this.horseRunSfxActive = false;
         this.horseRunElapsedMs = 0;
+        this.boulderRollSoundKey = null;
+        this.boulderRollStartTime = 0;
         this.horseRunCycleIndex = -1;
         this.horseRunCues = { snortA: false, neigh: false, snortB: false };
         this.commandTutorialActive = false;
@@ -317,6 +319,8 @@ export class TacticsScene extends BaseScene {
         this.chapter2DongZhuoEscapedFromDrowning = false;
         this.horseRunSfxActive = false;
         this.horseRunElapsedMs = 0;
+        this.boulderRollSoundKey = null;
+        this.boulderRollStartTime = 0;
         this.horseRunCycleIndex = -1;
         this.horseRunCues = { snortA: false, neigh: false, snortB: false };
         this.commandTutorialActive = false;
@@ -872,7 +876,8 @@ export class TacticsScene extends BaseScene {
     }
 
     checkWinLoss() {
-        if (this.isGameOver || this.isIntroAnimating || this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCleanupDialogueActive || this.isCutscene) return;
+        const cutsceneBlock = this.isCutscene && !(this.battleId === 'guangzong_encounter' && this.isFightMode);
+        if (this.isGameOver || this.isIntroAnimating || this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCleanupDialogueActive || cutsceneBlock) return;
 
         const battleDef = BATTLES[this.battleId];
         const playerUnits = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp > 0 && !u.isGone);
@@ -892,10 +897,6 @@ export class TacticsScene extends BaseScene {
             this.startVictoryDialogue('qingzhou_victory', () => {
                 this.endBattle(true);
             });
-            return;
-        }
-
-        if (this.isCutscene) {
             return;
         }
 
@@ -2831,7 +2832,8 @@ export class TacticsScene extends BaseScene {
                 commandSourceId: u.commandSourceId || null,
                 commandOriginalFaction: u.commandOriginalFaction || null,
                 commandOriginalMoveRange: Number.isFinite(u.commandOriginalMoveRange) ? u.commandOriginalMoveRange : null,
-                commandDamageBonus: Number.isFinite(u.commandDamageBonus) ? u.commandDamageBonus : 0
+                commandDamageBonus: Number.isFinite(u.commandDamageBonus) ? u.commandDamageBonus : 0,
+                isDestroyedBoulder: !!u.isDestroyedBoulder
             })),
             // Save intro/post-combat dialogue state
             isIntroDialogueActive: this.isIntroDialogueActive,
@@ -2841,6 +2843,7 @@ export class TacticsScene extends BaseScene {
             isIntroAnimating: this.isIntroAnimating,
             introTimer: this.introTimer,
             isChoiceActive: !!this.isChoiceActive,
+            isCutscene: !!this.isCutscene,
             isFightMode: !!this.isFightMode,
             isCleanupDialogueActive: !!this.isCleanupDialogueActive,
             cleanupDialogueScript: this.cleanupDialogueScript ? this.cloneScriptSteps(this.cleanupDialogueScript) : null,
@@ -3009,6 +3012,7 @@ export class TacticsScene extends BaseScene {
             u.horseType = uData.horseType || u.horseType || 'brown';
             u.imgKey = uData.imgKey;
             u.img = assets.getImage(uData.imgKey);
+            u.isDestroyedBoulder = !!(uData.isDestroyedBoulder || (u.name === 'Boulder' && uData.imgKey === 'boulder_destroyed'));
             u.hasMoved = uData.hasMoved;
             u.hasAttacked = uData.hasAttacked;
             u.hasActed = uData.hasActed;
@@ -3098,6 +3102,11 @@ export class TacticsScene extends BaseScene {
         this.commandTutorialTargetId = state.commandTutorialTargetId || null;
         this.commandTutorialCompleted = !!state.commandTutorialCompleted;
         this.isChoiceActive = !!state.isChoiceActive;
+        if (state.isCutscene !== undefined) {
+            this.isCutscene = !!state.isCutscene;
+        } else if (this.battleId === 'guangzong_encounter' && state.isFightMode) {
+            this.isCutscene = false;
+        }
         this.isFightMode = !!state.isFightMode;
         this.isCleanupDialogueActive = !!state.isCleanupDialogueActive;
         this.cleanupDialogueScript = Array.isArray(state.cleanupDialogueScript) ? this.cloneScriptSteps(state.cleanupDialogueScript) : null;
@@ -3411,6 +3420,7 @@ export class TacticsScene extends BaseScene {
             u.horseType = uData.horseType || u.horseType || 'brown';
             u.imgKey = uData.imgKey;
             u.img = assets.getImage(uData.imgKey);
+            u.isDestroyedBoulder = !!(uData.isDestroyedBoulder || (u.name === 'Boulder' && uData.imgKey === 'boulder_destroyed'));
             u.attacks = Array.isArray(uData.attacks) ? [...uData.attacks] : u.attacks;
             u.hasMoved = uData.hasMoved;
             u.hasAttacked = uData.hasAttacked;
@@ -4232,6 +4242,224 @@ export class TacticsScene extends BaseScene {
         if (cell) cell.unit = boulder;
     }
 
+    /** Compute the full roll path for a boulder pushed in dirIndex. Path includes start and every hex until stop (unit, boulder, cliff up, impassable, or edge). Down-cliff and deep water are included. */
+    getBoulderRollPath(fromR, fromQ, dirIndex) {
+        const path = [{ r: fromR, q: fromQ }];
+        let curR = fromR;
+        let curQ = fromQ;
+        let bumpAtEnd = false;
+        const directions = this.tacticsMap.getDirections(fromR);
+        if (dirIndex < 0 || dirIndex >= directions.length) return { path, bumpAtEnd };
+
+        while (true) {
+            const next = this.tacticsMap.getNeighborInDirection(curR, curQ, dirIndex);
+            if (!next) break;
+
+            const curCell = this.tacticsMap.getCell(curR, curQ);
+            const curLevel = (curCell && curCell.level !== undefined) ? curCell.level : 0;
+            const nextLevel = (next.level !== undefined) ? next.level : 0;
+            const levelDiff = nextLevel - curLevel;
+            const isDeepWater = next.terrain && next.terrain.includes('water_deep');
+
+            if (levelDiff > 1) {
+                bumpAtEnd = true;
+                break;
+            }
+            if (next.impassable && !isDeepWater) {
+                bumpAtEnd = true;
+                break;
+            }
+            const occupant = this.getLivingUnitOccupyingCell(next.r, next.q) || next.unit;
+            if (occupant && occupant.hp > 0) {
+                path.push({ r: next.r, q: next.q });
+                bumpAtEnd = true;
+                break;
+            }
+            if (next.unit && next.unit.name === 'Boulder' && !next.unit.isDestroyedBoulder) {
+                path.push({ r: next.r, q: next.q });
+                bumpAtEnd = true;
+                break;
+            }
+
+            path.push({ r: next.r, q: next.q });
+            curR = next.r;
+            curQ = next.q;
+        }
+        return { path, bumpAtEnd };
+    }
+
+    /** Number of levels the boulder drops on the segment from path[fromIndex] to path[fromIndex+1]. 0 if same or uphill. */
+    getSegmentFallLevels(path, fromIndex) {
+        if (!path || fromIndex + 1 >= path.length) return 0;
+        const from = path[fromIndex];
+        const to = path[fromIndex + 1];
+        const fromCell = this.tacticsMap.getCell(from.r, from.q);
+        const toCell = this.tacticsMap.getCell(to.r, to.q);
+        if (!fromCell || !toCell) return 0;
+        const fromLevel = fromCell.level !== undefined ? fromCell.level : 0;
+        const toLevel = toCell.level !== undefined ? toCell.level : 0;
+        return Math.max(0, fromLevel - toLevel);
+    }
+
+    /** True if rolling into path[toIndex] would cause a collision (so we can stop at partial entry and bounce). */
+    isSegmentEndBlocked(path, toIndex) {
+        if (!path || toIndex >= path.length || toIndex < 1) return false;
+        const from = path[toIndex - 1];
+        const to = path[toIndex];
+        const prevCell = this.tacticsMap.getCell(from.r, from.q);
+        const nextCell = this.tacticsMap.getCell(to.r, to.q);
+        if (!nextCell) return true;
+        const curLevel = (prevCell && prevCell.level !== undefined) ? prevCell.level : 0;
+        const nextLevel = (nextCell.level !== undefined) ? nextCell.level : 0;
+        const levelDiff = nextLevel - curLevel;
+        const isDeepWater = nextCell.terrain && nextCell.terrain.includes('water_deep');
+        if (levelDiff > 1) return true;
+        if (nextCell.impassable && !isDeepWater) return true;
+        const occupant = this.getLivingUnitOccupyingCell(to.r, to.q) || (nextCell.unit ? nextCell.unit : null);
+        if (occupant && occupant.hp > 0) return true;
+        if (nextCell.unit && nextCell.unit.name === 'Boulder' && !nextCell.unit.isDestroyedBoulder) return true;
+        return false;
+    }
+
+    /** Start a boulder rolling along the precomputed path. Caller must clear boulder from current cell. */
+    startBoulderRoll(boulder, path, dirIndex) {
+        if (!path || path.length < 2) return;
+        const start = path[0];
+        const cell = this.tacticsMap.getCell(start.r, start.q);
+        if (cell && cell.unit === boulder) cell.unit = null;
+        const collisionAtSegmentEnd = this.isSegmentEndBlocked(path, 1);
+        const segmentFallHeight = this.getSegmentFallLevels(path, 0);
+        boulder.rollData = {
+            path,
+            pathIndex: 0,
+            segmentProgress: 0,
+            rollAngle: 0,
+            dirIndex,
+            segmentComplete: false,
+            collisionAtSegmentEnd,
+            overshootAmount: 0.4,
+            segmentFallHeight
+        };
+        this.boulderRollSoundKey = 'boulder_roll';
+        this.boulderRollStartTime = Date.now();
+        assets.playLoopingSound('boulder_roll', 0.5, 300);
+    }
+
+    /** Stop rolling rock SFX if no boulder is currently rolling (not in bounce-back). */
+    stopBoulderRollSoundIfDone() {
+        const anyStillRolling = this.units.some(u => u.name === 'Boulder' && u.rollData && !u.rollData.bounceBack && !u.rollData.bounceComplete);
+        if (anyStillRolling) return;
+        if (this.boulderRollSoundKey) {
+            assets.stopLoopingSound(this.boulderRollSoundKey, 300);
+            this.boulderRollSoundKey = null;
+        }
+    }
+
+    /** Called after unit updates when a boulder has rollData.segmentComplete. Applies bump/crush/water and advances or clears roll. */
+    processBoulderRollSegment(boulder) {
+        const roll = boulder.rollData;
+        if (!roll || !roll.segmentComplete) return;
+        const path = roll.path;
+        const idx = roll.pathIndex;
+        if (!path || idx >= path.length - 1) {
+            boulder.rollData = null;
+            this.stopBoulderRollSoundIfDone();
+            return;
+        }
+        const nextCell = this.tacticsMap.getCell(path[idx + 1].r, path[idx + 1].q);
+        const prevCell = this.tacticsMap.getCell(path[idx].r, path[idx].q);
+        const curLevel = (prevCell && prevCell.level !== undefined) ? prevCell.level : 0;
+        const nextLevel = (nextCell && nextCell.level !== undefined) ? nextCell.level : 0;
+        const levelDiff = nextLevel - curLevel;
+        const isDeepWater = nextCell && nextCell.terrain && nextCell.terrain.includes('water_deep');
+        const victimPos = this.getPixelPos(path[idx].r, path[idx].q);
+        const targetPos = this.getPixelPos(path[idx + 1].r, path[idx + 1].q);
+
+        roll.segmentComplete = false;
+        roll.pathIndex = idx + 1;
+        roll.segmentProgress = 0;
+
+        const stayAtPrev = () => {
+            boulder.setPosition(path[idx].r, path[idx].q);
+            if (prevCell) prevCell.unit = boulder;
+            if (nextCell && nextCell.unit === boulder) nextCell.unit = null;
+        };
+
+        const startBounceBack = () => {
+            const overshoot = roll.overshootAmount ?? 0.4;
+            const fromX = victimPos.x + (targetPos.x - victimPos.x) * overshoot;
+            const fromY = victimPos.y + (targetPos.y - victimPos.y) * overshoot;
+            stayAtPrev();
+            roll.bounceBack = { fromX, fromY, toX: victimPos.x, toY: victimPos.y, progress: 0 };
+            roll.bouncePendingCollision = { nextCell, victimPos, targetPos };
+            roll.segmentComplete = false;
+            this.stopBoulderRollSoundIfDone();
+        };
+
+        const doCollision = () => {
+            this.executePushCollision(boulder, nextCell, victimPos, targetPos);
+            stayAtPrev();
+            boulder.rollData = null;
+            this.stopBoulderRollSoundIfDone();
+        };
+
+        if (!nextCell) {
+            if (roll.collisionAtSegmentEnd) startBounceBack();
+            else doCollision();
+            return;
+        }
+        if (levelDiff > 1) {
+            if (roll.collisionAtSegmentEnd) startBounceBack();
+            else doCollision();
+            return;
+        }
+        if (nextCell.impassable && !isDeepWater) {
+            if (roll.collisionAtSegmentEnd) startBounceBack();
+            else doCollision();
+            return;
+        }
+        const occupant = this.getLivingUnitOccupyingCell(path[idx + 1].r, path[idx + 1].q) || (nextCell.unit && nextCell.unit !== boulder ? nextCell.unit : null);
+        if (occupant && occupant.hp > 0) {
+            if (levelDiff < -1) {
+                if (prevCell && prevCell.unit === boulder) prevCell.unit = null;
+                this.handleCrushLanding(boulder, occupant, nextCell, levelDiff, targetPos);
+                boulder.rollData = null;
+                this.stopBoulderRollSoundIfDone();
+            } else {
+                if (roll.collisionAtSegmentEnd) startBounceBack();
+                else doCollision();
+            }
+            return;
+        }
+        if (nextCell.unit && nextCell.unit.name === 'Boulder' && !nextCell.unit.isDestroyedBoulder) {
+            if (roll.collisionAtSegmentEnd) startBounceBack();
+            else doCollision();
+            return;
+        }
+        boulder.setPosition(path[idx + 1].r, path[idx + 1].q);
+        if (prevCell && prevCell.unit === boulder) prevCell.unit = null;
+        nextCell.unit = boulder;
+
+        if (isDeepWater) {
+            setTimeout(() => {
+                assets.playSound('drown');
+                nextCell.terrain = 'water_shallow_01';
+                boulder.isGone = true;
+                nextCell.unit = null;
+            }, 250);
+            boulder.rollData = null;
+            this.stopBoulderRollSoundIfDone();
+            return;
+        }
+        if (roll.pathIndex >= path.length - 1) {
+            boulder.rollData = null;
+            this.stopBoulderRollSoundIfDone();
+            return;
+        }
+        roll.collisionAtSegmentEnd = roll.pathIndex + 1 < path.length && this.isSegmentEndBlocked(path, roll.pathIndex + 1);
+        roll.segmentFallHeight = this.getSegmentFallLevels(path, roll.pathIndex);
+    }
+
     startRetreatPhase() {
         this.isRetreating = true;
         this.isProcessingTurn = true;
@@ -4887,6 +5115,16 @@ export class TacticsScene extends BaseScene {
 
         if (victim.hp <= 0 && wasAlive) {
             victim.hp = 0;
+            // Cracked boulder: destroy (no roll, use boulder_destroyed sprite; doesn't block)
+            if (victim.name === 'Boulder' && victim.imgKey === 'boulder_cracked') {
+                victim.imgKey = 'boulder_destroyed';
+                victim.img = assets.getImage('boulder_destroyed');
+                victim.isDestroyedBoulder = true;
+                victim.rollData = null;
+                victim.isGone = false;
+                this.stopBoulderRollSoundIfDone();
+                return finalDamage;
+            }
             // If a mounted unit dies, it falls off and the horse remains (horse is immortal)
             if (victim.onHorse) {
                 this.dismountUnitLeaveHorse(victim);
@@ -5011,6 +5249,12 @@ export class TacticsScene extends BaseScene {
             const attackerOrigin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
             const dirIndex = this.tacticsMap.getDirectionIndex(attackerOrigin.r, attackerOrigin.q, targetR, targetQ);
             if (dirIndex === -1) return; // Cannot push if direction is undefined
+
+            if (victim.name === 'Boulder' && !victim.isDestroyedBoulder) {
+                const { path } = this.getBoulderRollPath(victim.r, victim.q, dirIndex);
+                this.startBoulderRoll(victim, path, dirIndex);
+                return;
+            }
 
             let victimPushR = victim.r;
             let victimPushQ = victim.q;
@@ -5550,6 +5794,15 @@ export class TacticsScene extends BaseScene {
                 if (cell) cell.unit = null;
             }
         }
+        // Place destroyed boulders on cells first (they don't block; pathfinding checks hp > 0)
+        for (const u of this.units) {
+            if (!u || u.isGone) continue;
+            if (u.name === 'Boulder' && (u.isDestroyedBoulder || u.imgKey === 'boulder_destroyed')) {
+                const anchorCell = this.tacticsMap.getCell(u.r, u.q);
+                if (anchorCell) anchorCell.unit = u;
+            }
+        }
+        // Living units overwrite (so a unit standing on destroyed boulder occupies the cell)
         for (const u of this.units) {
             if (!u || u.hp <= 0 || u.isGone) continue;
             const anchorCell = this.tacticsMap.getCell(u.r, u.q);
@@ -5933,6 +6186,30 @@ export class TacticsScene extends BaseScene {
                 this.triggerImmortalBehavior(u, cause);
             }
         });
+        this.units.forEach(u => {
+            if (u.name === 'Boulder' && u.rollData && u.rollData.bounceComplete) {
+                const roll = u.rollData;
+                const pending = roll.bouncePendingCollision;
+                if (pending) {
+                    this.executePushCollision(u, pending.nextCell, pending.victimPos, pending.targetPos);
+                }
+                u.rollData = null;
+                this.stopBoulderRollSoundIfDone();
+            }
+        });
+        this.units.forEach(u => {
+            if (u.name === 'Boulder' && u.rollData && u.rollData.segmentComplete) {
+                this.processBoulderRollSegment(u);
+            }
+        });
+        // Crossfade rolling rock SFX with itself if roll exceeds 6 seconds
+        if (this.boulderRollSoundKey && (Date.now() - this.boulderRollStartTime) >= 6000) {
+            const nextKey = this.boulderRollSoundKey === 'boulder_roll' ? 'boulder_roll_2' : 'boulder_roll';
+            assets.stopLoopingSound(this.boulderRollSoundKey, 1500);
+            assets.playLoopingSound(nextKey, 0.5, 1500);
+            this.boulderRollSoundKey = nextKey;
+            this.boulderRollStartTime = Date.now();
+        }
         this.updateMountedRunAudio(dt);
 
         // Update damage numbers
@@ -6754,6 +7031,8 @@ export class TacticsScene extends BaseScene {
 
                     // Rear-facing half goes in front of horse.
                     drawHalf(rearSide);
+                } else if (u.name === 'Boulder') {
+                    this.drawBoulder(ctx, u, surfaceY + u.visualOffsetY, drawOptions);
                 } else {
                     this.drawCharacter(ctx, u.img, u.currentAnimAction || u.action, u.frame, u.visualX + u.visualOffsetX, surfaceY + u.visualOffsetY, drawOptions);
                 }
@@ -6958,7 +7237,14 @@ export class TacticsScene extends BaseScene {
                 } else {
                     const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, this.hoveredCell.r, this.hoveredCell.q);
                     if (dirIndex !== -1 && this.hoveredCell.unit) {
-                        this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
+                        if (this.hoveredCell.unit.name === 'Boulder') {
+                            const { path, bumpAtEnd } = this.getBoulderRollPath(this.hoveredCell.unit.r, this.hoveredCell.unit.q, dirIndex);
+                            for (let i = 0; i < path.length - 1; i++) {
+                                this.drawPushArrow(ctx, path[i].r, path[i].q, dirIndex, i === path.length - 2 && bumpAtEnd);
+                            }
+                        } else {
+                            this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
+                        }
                     }
                 }
             }
@@ -7781,7 +8067,7 @@ export class TacticsScene extends BaseScene {
 
     selectTargetUnit(targetUnit) {
         if (!targetUnit) return;
-        if (!this.units.some(u => u.isMoving || u.pushData)) {
+        if (!this.units.some(u => u.isMoving || u.pushData || u.rollData)) {
             this.rebuildLivingUnitOccupancy();
         }
         this.selectedUnit = targetUnit;
@@ -7965,7 +8251,7 @@ export class TacticsScene extends BaseScene {
         ctx.restore();
     }
 
-    drawPushArrow(ctx, fromR, fromQ, dirIndex) {
+    drawPushArrow(ctx, fromR, fromQ, dirIndex, forceBump = false) {
         const fromPos = this.getPixelPos(fromR, fromQ);
         const directions = this.tacticsMap.getDirections(fromR);
         const d = directions[dirIndex];
@@ -7981,8 +8267,7 @@ export class TacticsScene extends BaseScene {
 
         const fromCell = this.tacticsMap.getCell(fromR, fromQ);
         const targetCell = this.tacticsMap.getCell(targetR, targetQ);
-        if (!targetCell) {
-            // Off-map destinations are not pushable; do not preview a push result.
+        if (!targetCell && !forceBump) {
             return;
         }
         const levelDiff = (targetCell?.level || 0) - (fromCell?.level || 0);
@@ -7993,7 +8278,7 @@ export class TacticsScene extends BaseScene {
         const isImpassable = !!(targetCell && targetCell.impassable) && !isDeepWater;
         const isOccupiedByLiving = !!this.getLivingUnitOccupyingCell(targetR, targetQ);
         const isOccupiedByHorse = !!targetCell?.horse;
-        const isBumpDamage = !!targetCell && (isHighCliff || isImpassable || isOccupiedByLiving || isOccupiedByHorse);
+        const isBumpDamage = forceBump || !!targetCell && (isHighCliff || isImpassable || isOccupiedByLiving || isOccupiedByHorse);
         
         const dx = targetPos.x - fromPos.x;
         const dy = targetPos.y - fromPos.y;
@@ -8034,6 +8319,38 @@ export class TacticsScene extends BaseScene {
         }
         
         ctx.restore();
+    }
+
+    /** Draw boulder (boulder, boulder_cracked, or boulder_destroyed). Roll rotation + boulder_shadow only for live boulders; destroyed has its own shadow in the sprite. */
+    drawBoulder(ctx, u, surfaceY, options = {}) {
+        const img = u.img;
+        if (!img) return;
+        const isDestroyed = !!(u.isDestroyedBoulder || u.imgKey === 'boulder_destroyed');
+        const shadowImg = isDestroyed ? null : assets.getImage('boulder_shadow');
+        const sinkOffset = options.sinkOffset || 0;
+        const x = Math.floor(u.visualX + (u.visualOffsetX || 0));
+        const y = Math.floor(surfaceY + sinkOffset);
+        const visibleHeight = img.height - 5;
+        const centerLocalY = -visibleHeight + img.height / 2;
+        const rollAngle = isDestroyed ? 0 : (u.rollData && typeof u.rollData.rollAngle === 'number') ? u.rollData.rollAngle : 0;
+
+        ctx.save();
+        ctx.translate(x, y);
+        if (u.flip) ctx.scale(-1, 1);
+        if (rollAngle !== 0) {
+            ctx.translate(0, centerLocalY);
+            ctx.rotate(rollAngle);
+            ctx.translate(0, -centerLocalY);
+        }
+        ctx.drawImage(img, -img.width / 2, -visibleHeight);
+        ctx.restore();
+
+        if (shadowImg) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.drawImage(shadowImg, -shadowImg.width / 2, -visibleHeight);
+            ctx.restore();
+        }
     }
 
     drawStraightSwipe(ctx, p) {
@@ -8803,7 +9120,8 @@ export class TacticsScene extends BaseScene {
             return;
         }
         
-        if (this.isCutscene) {
+        // Lu Zhi rescue: after choosing Fight we stay in guangzong_encounter but isFightMode is true — show normal battle UI, not cutscene prompt
+        if (this.isCutscene && !(this.battleId === 'guangzong_encounter' && this.isFightMode)) {
             const { ctx, canvas } = this.manager;
             if (this.isIntroAnimating || this.isProcessingTurn) return;
             
@@ -9523,7 +9841,8 @@ export class TacticsScene extends BaseScene {
 
         // Don't process cutscene clicks if cleanup dialogue is playing on the map
         // Also don't allow clicks during active combat - only when combat is truly complete
-        if (this.isCutscene && !this.isIntroAnimating && !this.isProcessingTurn && !this.isCleanupDialogueActive && !this.isIntroDialogueActive && !this.isVictoryDialogueActive) {
+        // Lu Zhi rescue: when isFightMode we're in the real battle — don't consume input as cutscene
+        if (this.isCutscene && !(this.battleId === 'guangzong_encounter' && this.isFightMode) && !this.isIntroAnimating && !this.isProcessingTurn && !this.isCleanupDialogueActive && !this.isIntroDialogueActive && !this.isVictoryDialogueActive) {
             // For view-only battles, check if combat is actually complete before allowing skip
             if (this.battleId === 'qingzhou_prelude') {
                 // Check if victory condition is met (all enemies defeated or turn limit reached)
@@ -10040,8 +10359,10 @@ export class TacticsScene extends BaseScene {
 
     executePushCollision(victim, pushCell, victimPos, targetPos) {
         setTimeout(() => {
-            assets.playSound('collision');
-            
+            const isBoulder = victim && victim.name === 'Boulder';
+            assets.playSound(isBoulder ? 'boulder_impact' : 'collision');
+            assets.playSound('bump_damage', 0.7);
+
             // Ice doesn't take damage from bumps
             if (!pushCell.terrain.includes('ice')) {
                 this.damageCell(pushCell.r, pushCell.q);
@@ -10049,7 +10370,7 @@ export class TacticsScene extends BaseScene {
 
             this.applyUnitDamage(victim, 1);
             this.addDamageNumber(victimPos.x, victimPos.y - 30, 1);
-            
+
             const bumpVictim = this.getLivingUnitOccupyingCell(pushCell.r, pushCell.q, victim);
             // Don't double-damage if we "collided" with ourselves.
             if (bumpVictim && bumpVictim !== victim && bumpVictim.hp > 0) { // Only damage if the unit is still alive
@@ -10062,7 +10383,8 @@ export class TacticsScene extends BaseScene {
 
     handleCrushLanding(faller, occupant, targetCell, levelDiff, targetPos) {
         setTimeout(() => {
-            assets.playSound('collision'); // Heavy impact
+            const isBoulder = faller && faller.name === 'Boulder';
+            assets.playSound(isBoulder ? 'boulder_impact' : 'collision');
             
             const fallDamage = Math.max(0, Math.abs(levelDiff) - 1);
             const crushDamage = fallDamage + 1; // Collision bonus
@@ -10151,7 +10473,8 @@ export class TacticsScene extends BaseScene {
                 return;
             }
             // In non-interactive cutscene states, Enter/Space should advance the same way as click.
-            if (this.isCutscene && !this.isIntroAnimating && !this.isProcessingTurn && !this.isCleanupDialogueActive && !this.isIntroDialogueActive && !this.isVictoryDialogueActive) {
+            const cutsceneBlock = this.isCutscene && !(this.battleId === 'guangzong_encounter' && this.isFightMode);
+            if (cutsceneBlock && !this.isIntroAnimating && !this.isProcessingTurn && !this.isCleanupDialogueActive && !this.isIntroDialogueActive && !this.isVictoryDialogueActive) {
                 e.preventDefault();
                 this.onNonMouseInput();
                 this.controllerNavMouseEnabled = false;

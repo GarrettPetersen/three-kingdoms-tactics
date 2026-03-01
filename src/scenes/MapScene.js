@@ -1181,28 +1181,10 @@ export class MapScene extends BaseScene {
     }
 
     continueAfterEscortBattle() {
-        // First show battle summary, then continue story (outlaw path)
-        // Get stats computed by TacticsScene.endBattle()
-        const stats = this.manager.gameState.get('lastBattleStats') || {
-            won: true,
-            battleId: 'guangzong_escort',
-            alliedCasualties: 0,
-            enemyCasualties: 0,
-            housesDestroyed: 0,
-            housesProtected: 0,
-            totalHouses: 0,
-            turnNumber: 1,
-            xpGained: 5,
-            recoveryInfo: [],
-            levelUps: []
-        };
-        
-        this.manager.switchTo('summary', {
-            ...stats,
-            onComplete: () => {
-                this.showOutlawStory();
-            }
-        });
+        // Summary and level-ups were already shown by TacticsScene -> BattleSummaryScene -> LevelUpScene.
+        // The victory callback (onFightVictory/onVictory) is passed as onComplete to summary, and levelup
+        // calls it when done. So we must not show summary again here—go straight to the outlaw story.
+        this.showOutlawStory();
     }
     
     showOutlawStory() {
