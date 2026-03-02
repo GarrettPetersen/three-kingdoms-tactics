@@ -135,16 +135,14 @@ export class LevelUpScene extends BaseScene {
 
         const cx = canvas.width / 2;
         
-        // Character Image
+        // Character Image (moved up to leave more room for text below, especially Chinese)
         const img = assets.getImage(current.imgKey);
         if (img) {
-            // Victory animation: prepared -> jump -> land -> pose
-            // Let's make it 1 jump per 1.5 seconds
             const frame = (this.timer * 0.002);
-            this.drawCharacter(ctx, img, 'victory', frame, cx, 120);
+            this.drawCharacter(ctx, img, 'victory', frame, cx, 82);
         }
 
-        // Text
+        // Text (all moved up for fit)
         const pulse = Math.abs(Math.sin(Date.now() / 300));
         this.drawPixelText(ctx, getLocalizedText({ en: "LEVEL UP!", zh: "升级！" }), cx, 40, { 
             color: `rgba(255, 215, 0, ${0.8 + pulse * 0.2})`, 
@@ -153,7 +151,7 @@ export class LevelUpScene extends BaseScene {
             outline: true
         });
 
-        this.drawPixelText(ctx, `${current.name}`, cx, 150, { 
+        this.drawPixelText(ctx, `${current.name}`, cx, 118, { 
             color: '#fff', 
             font: '10px Silkscreen', 
             align: 'center' 
@@ -162,15 +160,15 @@ export class LevelUpScene extends BaseScene {
         this.drawPixelText(ctx, getLocalizedText({
             en: `LEVEL ${current.oldLevel} -> ${current.newLevel}`,
             zh: `等级 ${current.oldLevel} -> ${current.newLevel}`
-        }), cx, 165, {
+        }), cx, 133, {
             color: '#ffd700', 
             font: '8px Silkscreen', 
             align: 'center' 
         });
 
         if (this.showBonuses) {
-            let by = 185;
-            const promotionY = 176;
+            let by = 148;
+            const promotionY = 138;
             const reserveForPromotion = this.isPromoting && !this.chosenClass;
             
             // 1) Always-known stat bonuses first.
@@ -222,17 +220,16 @@ export class LevelUpScene extends BaseScene {
             }
 
             bonuses.forEach(b => {
-                const lines = this.wrapText(ctx, `+ ${b}`, 182, '8px Tiny5');
+                const lines = this.wrapText(ctx, `+ ${b}`, 200, '8px Tiny5');
                 lines.forEach(line => {
-                    // Avoid pushing UI below the viewport, especially during promotion choice.
-                    const maxY = reserveForPromotion ? (promotionY - 8) : 225;
+                    const maxY = reserveForPromotion ? (promotionY - 8) : 218;
                     if (by > maxY) return;
                     this.drawPixelText(ctx, line, cx, by, { 
                         color: '#4f4', 
                         font: '8px Tiny5', 
                         align: 'center' 
                     });
-                    by += 9;
+                    by += 11;
                 });
             });
         }
@@ -243,7 +240,7 @@ export class LevelUpScene extends BaseScene {
             ctx.save();
             ctx.globalAlpha = 0.5 + pulse2 * 0.5;
             const continueText = getLocalizedText(UI_TEXT['CLICK TO CONTINUE']);
-            this.drawPixelText(ctx, continueText, cx, 235, {
+            this.drawPixelText(ctx, continueText, cx, 228, {
                 color: '#aaa',
                 font: '8px Silkscreen',
                 align: 'center'

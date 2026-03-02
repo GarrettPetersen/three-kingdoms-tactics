@@ -9,6 +9,9 @@ import { NARRATIVE_SCRIPTS } from '../data/NarrativeScripts.js';
 import { getLocalizedText, getFontForLanguage, getTextContainerSize, LANGUAGE } from '../core/Language.js';
 import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
 
+/** Vertical offset for drawing horse + rider (was 10; 6 moves them up 4px so they are not "underground"). */
+const MOUNTED_Y_OFFSET = 6;
+
 export class TacticsScene extends BaseScene {
     constructor() {
         super();
@@ -110,8 +113,8 @@ export class TacticsScene extends BaseScene {
             return {
                 kind: 'battle',
                 options: customBattleOptions || [
-                    { lines: ["Stay your hand,", "brother!"], color: '#88ff88', hoverColor: '#aaffaa' },
-                    { lines: ["Free him,", "brothers!"], color: '#ff8888', hoverColor: '#ffaaaa' }
+                    { lines: { en: ["Stay your hand,", "brother!"], zh: ["住手，", "兄弟！"] }, color: '#88ff88', hoverColor: '#aaffaa' },
+                    { lines: { en: ["Free him,", "brothers!"], zh: ["放了他，", "兄弟们！"] }, color: '#ff8888', hoverColor: '#ffaaaa' }
                 ]
             };
         }
@@ -3764,9 +3767,8 @@ export class TacticsScene extends BaseScene {
             const sy = Math.floor(frameIdx / 8) * sourceSize;
 
             if (u.onHorse) {
-                const mountedYOffset = 10;
                 const riderX = Math.floor(u.visualX + (u.visualOffsetX || 0));
-                const riderY = Math.floor(u.visualY + (u.visualOffsetY || 0) + mountedYOffset - 14);
+                const riderY = Math.floor(u.visualY + (u.visualOffsetY || 0) + MOUNTED_Y_OFFSET - 14);
                 dctx.save();
                 if (u.flip) {
                     dctx.translate(riderX, 0);
@@ -3788,7 +3790,7 @@ export class TacticsScene extends BaseScene {
                     const hf = isRunning ? (Math.floor(timestamp / 70) % frameCount) : 0;
                     const horseSx = hf * frameW;
                     const horseX = riderX - Math.floor(frameW / 2);
-                    const horseY = Math.floor(u.visualY + (u.visualOffsetY || 0) + mountedYOffset - 36);
+                    const horseY = Math.floor(u.visualY + (u.visualOffsetY || 0) + MOUNTED_Y_OFFSET - 36);
                     dctx.save();
                     if (u.flip) {
                         dctx.translate(riderX, 0);
@@ -4780,16 +4782,14 @@ export class TacticsScene extends BaseScene {
                 if (attacker.frame >= 1) {
                     struck = true;
 
-                    // Flash swish indicator at the strike moment
+                    // Flash swish indicator at the strike moment (all melee weapons use a swish)
                     if (attackKey.startsWith('slash')) {
-                        // Standard sword slash — medium perpendicular stroke
                         this.spawnSwish(
                             [{ r: targetR, q: targetQ }],
                             startPos, 'slash',
                             { maxWidth: 7, duration: 130 }
                         );
-                    } else if (attackKey === 'bash') {
-                        // Heavy blunt bash — shorter, chunkier slash stroke
+                    } else if (attackKey.startsWith('bash')) {
                         this.spawnSwish(
                             [{ r: targetR, q: targetQ }],
                             startPos, 'slash',
@@ -6390,7 +6390,7 @@ export class TacticsScene extends BaseScene {
             
             for (let u of activeUnits) {
                 const ux = u.visualX;
-                const uy = u.visualY + (u.onHorse ? 10 : 0);
+                const uy = u.visualY + (u.onHorse ? MOUNTED_Y_OFFSET : 0);
                 let sinkOffset = 0;
                 if (u.isDrowning) sinkOffset = Math.min(1, u.drownTimer / 2000) * 40;
                 else {
@@ -6405,10 +6405,10 @@ export class TacticsScene extends BaseScene {
                 }
                 // Mounted hover: match the mounted click logic (rider OR horse), but allow click-through on transparent pixels
                 if (u.onHorse) {
-                    const buttX = ux;
-                    const buttY = uy + sinkOffset;
-                    const midX = Math.floor(buttX);
-                    const midY = buttY;
+                    const anchorX = ux;
+                    const anchorY = uy + sinkOffset;
+                    const midX = Math.floor(anchorX);
+                    const midY = anchorY;
 
                     const riderX = midX;
                     const riderY = midY - 14;
@@ -7007,9 +7007,9 @@ export class TacticsScene extends BaseScene {
                     }
                 }
 
-                // Shift mounted units (horse + rider) down so they are easier to see behind
+                // Shift mounted units (horse + rider) so they sit above the hex; MOUNTED_Y_OFFSET tuned for visibility
                 if (u.onHorse) {
-                    surfaceY += 10;
+                    surfaceY += MOUNTED_Y_OFFSET;
                 }
 
                 // Check for water effects
@@ -7059,14 +7059,14 @@ export class TacticsScene extends BaseScene {
                 // Mounted rendering: single-hex horse with rider seated on the back.
                 if (u.onHorse) {
                     const riderAction = (u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action);
-                    const buttX = u.visualX + u.visualOffsetX;
+                    const anchorX = u.visualX + u.visualOffsetX;
                     const isHorseInShallow = !!(cell && cell.terrain?.includes('water_shallow'));
                     const terrainSink = Math.max(drawOptions.sinkOffset || 0, isHorseInShallow ? 4 : 0);
-                    const buttY = surfaceY + u.visualOffsetY + terrainSink;
+                    const anchorY = surfaceY + u.visualOffsetY + terrainSink;
                     const riderDrawOptions = { ...drawOptions, sinkOffset: 0, isSubmerged: false };
 
-                    const midX = Math.floor(buttX);
-                    const midY = Math.floor(buttY);
+                    const midX = Math.floor(anchorX);
+                    const midY = Math.floor(anchorY);
                     const horseFeetY = 12;
                     const riderX = midX;
                     const riderY = midY - 14;
@@ -7161,12 +7161,12 @@ export class TacticsScene extends BaseScene {
                 const horseImg = isRunning ? horseRun : horseStand;
 
                 if (horseImg) {
-                    const buttPos = { x: call.x, y: call.y };
-                    const midX = Math.floor(buttPos.x);
-                    const buttCell = this.tacticsMap.getCell(h.r, h.q);
-                    const isShallow = !!(buttCell && buttCell.terrain?.includes('water_shallow'));
+                    const pos = { x: call.x, y: call.y };
+                    const midX = Math.floor(pos.x);
+                    const hexCell = this.tacticsMap.getCell(h.r, h.q);
+                    const isShallow = !!(hexCell && hexCell.terrain?.includes('water_shallow'));
                     const sink = isShallow ? 4 : 0;
-                    const midY = Math.floor(buttPos.y) + effect.yOffset + sink;
+                    const midY = Math.floor(pos.y) + effect.yOffset + sink;
 
                     const frameW = 48;
                     const frameH = 48;
@@ -7257,7 +7257,7 @@ export class TacticsScene extends BaseScene {
             this.units.forEach(u => {
                 if (u.hp <= 0) return;
                 
-                const surfaceY = u.visualY + (u.onHorse ? 10 : 0);
+                const surfaceY = u.visualY + (u.onHorse ? MOUNTED_Y_OFFSET : 0);
                 let uiX = u.visualX;
                 if (u.onHorse) uiX = Math.floor(u.visualX);
                 
@@ -7426,7 +7426,7 @@ export class TacticsScene extends BaseScene {
             this.units.forEach(u => {
                 if (u.hp > 0 && u.attackOrder && !u.isGone) {
                     const ux = u.visualX;
-                    const uy = u.visualY + (u.onHorse ? 10 : 0);
+                    const uy = u.visualY + (u.onHorse ? MOUNTED_Y_OFFSET : 0);
                     let surfaceY = uy;
                     const cell = this.tacticsMap.getCell(u.r, u.q);
                     if (cell && cell.terrain.includes('water_shallow')) surfaceY += 4;
@@ -7613,10 +7613,13 @@ export class TacticsScene extends BaseScene {
             ctx.lineWidth = 1;
             ctx.strokeRect(ox + 0.5, optionY + 0.5, optionWidth - 1, optionHeight - 1);
             
-            // Draw text - two lines
+            // Draw text - two lines (resolve localized lines if opt.lines is { en: [...], zh: [...] })
             const lineHeight = 10;
             const textColor = isHovered ? opt.hoverColor : opt.color;
-            opt.lines.forEach((line, lineIdx) => {
+            const lines = (opt.lines && typeof opt.lines === 'object' && !Array.isArray(opt.lines))
+                ? (opt.lines[LANGUAGE.current] || opt.lines['en'] || [])
+                : (Array.isArray(opt.lines) ? opt.lines : []);
+            lines.forEach((line, lineIdx) => {
                 this.drawPixelText(ctx, line, ox + optionWidth / 2, optionY + 8 + lineIdx * lineHeight, {
                     color: textColor,
                     align: 'center',
@@ -7721,7 +7724,7 @@ export class TacticsScene extends BaseScene {
                     id: `unit:${u.id}`,
                     type: 'unit',
                     x: u.visualX,
-                    y: u.visualY + (u.onHorse ? 10 : 0),
+                    y: u.visualY + (u.onHorse ? MOUNTED_Y_OFFSET : 0),
                     r: u.r,
                     q: u.q,
                     unit: u
@@ -7790,7 +7793,7 @@ export class TacticsScene extends BaseScene {
                 const by = Math.floor(u.visualY - (u.img.height - 5));
                 this.drawImageFramePixelOutline(ctx, u.img, 0, 0, u.img.width, u.img.height, bx, by, { color });
             } else {
-                const outlineY = u.visualY + (u.onHorse ? 10 : 0);
+                const outlineY = u.visualY + (u.onHorse ? MOUNTED_Y_OFFSET : 0);
                 this.drawCharacterPixelOutline(
                     ctx,
                     u.img,
@@ -8357,29 +8360,12 @@ export class TacticsScene extends BaseScene {
             return;
         }
 
-        ctx.save();
-        
-        // Draw telegraphed attack arrow (Red, semi-transparent)
-        const dx = targetPos.x - startX;
-        const dy = targetPos.y - startY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        
-        // Start arrow slightly away from attacker center
-        const offset = 10;
-        const sx = Math.round(startX + (dx / dist) * offset);
-        const sy = Math.round(startY + (dy / dist) * offset);
-        
-        // End arrow slightly before target center
-        const ex = Math.round(targetPos.x - (dx / dist) * 5);
-        const ey = Math.round(targetPos.y - (dy / dist) * 5);
-        const color = `rgba(255, 0, 0, ${0.6 + glow})`;
-
-        // Pixel-plotted dashed line + chevron head (no canvas stroke AA).
-        this.drawPixelLine(ctx, sx, sy, ex, ey, color, [4, 2]);
-        const angle = Math.atan2(dy, dx);
-        this.drawPixelArrowHead(ctx, ex, ey, angle, color, 5);
-
-        ctx.restore();
+        // Melee: draw the swish that will happen in opaque red, with a line from unit to center of swish
+        const unitPos = { x: startX, y: startY };
+        const swishes = this.getMeleeTelegraphSwishes(unit, unit.intent.attackKey, targetCell.r, targetCell.q);
+        for (const spec of swishes) {
+            this.drawTelegraphSwish(ctx, spec, unitPos);
+        }
     }
 
     drawPixelLine(ctx, x0, y0, x1, y1, color = '#fff', dashPattern = null) {
@@ -8781,27 +8767,18 @@ export class TacticsScene extends BaseScene {
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * Spawn a swish indicator for any attack.
-     *
-     * @param {Array<{r,q}>} hexes      Affected hex grid coords (unordered OK for 'arc')
-     * @param {{x,y}}        originPos  Attacker pixel position (used for direction)
-     * @param {string}       style      'arc' | 'slash' | 'stab'
-     *   'arc'   – ribbon flows through hexes sorted perp to attack dir (sweeping arc)
-     *   'slash' – perpendicular lens stroke through the first (only) hex
-     *   'stab'  – thin needle from origin along the attack direction through hexes
-     * @param {Object}       [opts]
-     * @param {number}       [opts.maxWidth=8]   Peak half-width in px
-     * @param {string}       [opts.color='#fff']
-     * @param {number}       [opts.duration=160]
+     * Build the point sequence for a swish (used by both spawnSwish and telegraph drawing).
+     * @param {Array<{r,q}>} hexes   Affected hex grid coords
+     * @param {{x,y}}        originPos
+     * @param {string}       style   'arc' | 'slash' | 'stab'
+     * @param {Object}       [opts]  { maxWidth, swingDir }
+     * @returns {Array<{x,y}>|null}  Points for the ribbon, or null if no hexes.
      */
-    spawnSwish(hexes, originPos, style = 'arc', opts = {}) {
-        const { maxWidth = 8, color = '#fff', duration = 160, swingDir = 1 } = opts;
-
-        if (!hexes || hexes.length === 0) return;
+    getSwishPointsFromHexes(hexes, originPos, style = 'arc', opts = {}) {
+        const { maxWidth = 8, swingDir = 1 } = opts;
+        if (!hexes || hexes.length === 0) return null;
 
         const hexPixels = hexes.map(h => this.getPixelPos(h.r, h.q));
-
-        // Direction from origin toward the centroid of affected hexes
         const cX = hexPixels.reduce((s, p) => s + p.x, 0) / hexPixels.length;
         const cY = hexPixels.reduce((s, p) => s + p.y, 0) / hexPixels.length;
         const dxC = cX - originPos.x, dyC = cY - originPos.y;
@@ -8809,34 +8786,47 @@ export class TacticsScene extends BaseScene {
         const dirX = dxC / dC, dirY = dyC / dC;
         const perpX = -dirY, perpY = dirX;
 
-        let points;
-
         if (style === 'stab') {
-            // Thin ribbon from origin through hexes in attack-direction order
             const sorted = hexPixels.slice().sort(
                 (a, b) => (a.x * dirX + a.y * dirY) - (b.x * dirX + b.y * dirY)
             );
-            points = [originPos, ...sorted];
-
-        } else if (style === 'slash') {
-            // Perpendicular lens stroke through the target hex
+            return [originPos, ...sorted];
+        }
+        if (style === 'slash') {
             const tgt = hexPixels[0];
             const halfLen = Math.max(14, maxWidth * 1.8);
-            points = [
+            return [
                 { x: tgt.x - perpX * halfLen, y: tgt.y - perpY * halfLen },
                 tgt,
                 { x: tgt.x + perpX * halfLen, y: tgt.y + perpY * halfLen }
             ];
-
-        } else { // 'arc'
-            // Sort by screen-Y so the topmost hex is always the tail for a downward swing.
-            // This is correct for both east- and west-facing characters (the perp-direction
-            // sort would flip for west attacks, wrongly putting the tail at the bottom).
-            // swingDir = 1 → top-to-bottom (default, downward slash, clockwise for right / ccw for left)
-            // swingDir = -1 → bottom-to-top (upward swing, rare)
-            const sorted = hexPixels.slice().sort((a, b) => (a.y - b.y) * swingDir);
-            points = sorted;
         }
+        // 'arc' (sweep): need at least 2 points for the ribbon; single-hex = short arc across the hex, perpendicular to unit, staying inside the hex
+        const sorted = hexPixels.slice().sort((a, b) => (a.y - b.y) * swingDir);
+        if (sorted.length === 1) {
+            const tgt = sorted[0];
+            const hexRadius = Math.floor((this.manager?.config?.horizontalSpacing ?? 23) * 0.45);
+            const halfLen = Math.min(hexRadius, Math.max(6, maxWidth * 1.8));
+            return [
+                { x: tgt.x - perpX * halfLen, y: tgt.y - perpY * halfLen },
+                { x: tgt.x + perpX * halfLen, y: tgt.y + perpY * halfLen }
+            ];
+        }
+        return sorted;
+    }
+
+    /**
+     * Spawn a swish indicator for any attack.
+     *
+     * @param {Array<{r,q}>} hexes      Affected hex grid coords (unordered OK for 'arc')
+     * @param {{x,y}}        originPos  Attacker pixel position (used for direction)
+     * @param {string}       style      'arc' | 'slash' | 'stab'
+     * @param {Object}       [opts]     maxWidth, color, duration, swingDir
+     */
+    spawnSwish(hexes, originPos, style = 'arc', opts = {}) {
+        const { maxWidth = 8, color = '#fff', duration = 160, swingDir = 1 } = opts;
+        const points = this.getSwishPointsFromHexes(hexes, originPos, style, { maxWidth, swingDir });
+        if (!points) return;
 
         this.projectiles.push({
             type: 'swish',
@@ -8847,6 +8837,114 @@ export class TacticsScene extends BaseScene {
             progress: 0,
             duration,
         });
+    }
+
+    /** Thin maxWidth for telegraph swishes only; actual attack uses full-size swish. */
+    static get TELEGRAPH_SWISH_MAX_WIDTH() { return 1; }
+
+    /**
+     * Get swish geometry for melee telegraph: same shape as the attack, but drawn super thin.
+     * Actual attack execution still uses full-size swish via spawnSwish.
+     * @returns {Array<{ points, style, maxWidth, originPos }>}
+     */
+    getMeleeTelegraphSwishes(unit, attackKey, targetR, targetQ) {
+        const affected = this.getAffectedTiles(unit, attackKey, targetR, targetQ);
+        if (!affected || affected.length === 0) return [];
+
+        const origin = this.getAttackOriginForTarget(unit, targetR, targetQ);
+        const originPos = this.getPixelPos(origin.r, origin.q);
+        const thin = TacticsScene.TELEGRAPH_SWISH_MAX_WIDTH;
+        const out = [];
+
+        if (attackKey === 'double_blades') {
+            for (const h of affected) {
+                const points = this.getSwishPointsFromHexes([h], originPos, 'slash', { maxWidth: 7 });
+                if (points) out.push({ points, style: 'slash', maxWidth: thin, originPos, singleHex: true });
+            }
+            return out;
+        }
+        if (this.isSweepAttack(attackKey) || attackKey.startsWith('green_dragon_slash')) {
+            const points = this.getSwishPointsFromHexes(affected, originPos, 'arc', { maxWidth: 10 });
+            if (points) out.push({ points, style: 'arc', maxWidth: thin, originPos, singleHex: affected.length <= 1 });
+            return out;
+        }
+        if (this.isLineAttack(attackKey)) {
+            const points = this.getSwishPointsFromHexes(affected, originPos, 'stab', { maxWidth: 2.5 });
+            if (points) out.push({ points, style: 'stab', maxWidth: thin, originPos, singleHex: affected.length <= 1 });
+            return out;
+        }
+        // Standard melee: slash, bash (always one hex)
+        const points = this.getSwishPointsFromHexes(affected, originPos, 'slash', { maxWidth: 7 });
+        if (points) out.push({ points, style: 'slash', maxWidth: thin, originPos, singleHex: true });
+        return out;
+    }
+
+    /** Radius in pixels for single-hex telegraph circle. */
+    static get TELEGRAPH_SINGLE_HEX_CIRCLE_RADIUS() { return 3.5; }
+
+    /**
+     * Draw a telegraph swish: for single-hex attacks a small circle; for multi-hex a tapered ribbon.
+     * Connector line from unit to center in both cases.
+     */
+    drawTelegraphSwish(ctx, swishSpec, unitPos) {
+        if (!swishSpec.points || swishSpec.points.length < 2) return;
+
+        const { points, singleHex } = swishSpec;
+        const n = points.length;
+        const cx = points.reduce((s, p) => s + p.x, 0) / n;
+        const cy = points.reduce((s, p) => s + p.y, 0) / n;
+
+        this.drawPixelLine(ctx, unitPos.x, unitPos.y, cx, cy, 'rgb(255, 0, 0)', [4, 3]);
+
+        const ribbonColor = 'rgba(255, 0, 0, 0.7)';
+
+        if (singleHex) {
+            ctx.save();
+            ctx.fillStyle = ribbonColor;
+            ctx.beginPath();
+            ctx.arc(cx, cy, TacticsScene.TELEGRAPH_SINGLE_HEX_CIRCLE_RADIUS, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+            return;
+        }
+
+        const totalSamples = Math.max(24, points.length * 14);
+        const samples = this._catmullRomSample(points, totalSamples);
+        const taperMaxWidth = 2.5;
+
+        const left = [];
+        const right = [];
+        for (let i = 0; i < samples.length; i++) {
+            const t = i / (samples.length - 1);
+            const width = taperMaxWidth * Math.sin(t * Math.PI);
+            const prev = samples[Math.max(0, i - 1)];
+            const next = samples[Math.min(samples.length - 1, i + 1)];
+            const tx = next.x - prev.x;
+            const ty = next.y - prev.y;
+            const len = Math.sqrt(tx * tx + ty * ty) || 1;
+            const perpX = -ty / len;
+            const perpY = tx / len;
+            const s = samples[i];
+            left.push({ x: s.x - perpX * width, y: s.y - perpY * width });
+            right.push({ x: s.x + perpX * width, y: s.y + perpY * width });
+        }
+
+        ctx.save();
+        ctx.fillStyle = ribbonColor;
+        ctx.beginPath();
+        ctx.moveTo(left[0].x, left[0].y);
+        for (let i = 1; i < left.length; i++) ctx.lineTo(left[i].x, left[i].y);
+        for (let i = right.length - 1; i >= 0; i--) ctx.lineTo(right[i].x, right[i].y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+
+        for (let i = 0; i < left.length - 1; i++) {
+            this.drawPixelLine(ctx, left[i].x, left[i].y, left[i + 1].x, left[i + 1].y, ribbonColor);
+        }
+        for (let i = 0; i < right.length - 1; i++) {
+            this.drawPixelLine(ctx, right[i].x, right[i].y, right[i + 1].x, right[i + 1].y, ribbonColor);
+        }
     }
 
     /**
@@ -10446,7 +10544,7 @@ export class TacticsScene extends BaseScene {
         activeUnits.sort((a, b) => b.currentSortR - a.currentSortR);
         for (let u of activeUnits) {
             const ux = u.visualX;
-            const uy = u.visualY;
+            const uy = u.visualY + (u.onHorse ? MOUNTED_Y_OFFSET : 0);
             let sinkOffset = 0;
             if (u.isDrowning) sinkOffset = Math.min(1, u.drownTimer / 2000) * 40;
             else {
@@ -10462,10 +10560,10 @@ export class TacticsScene extends BaseScene {
 
             // Mounted selection: clicking rider OR horse should select
             if (u.onHorse) {
-                const buttX = ux;
-                const buttY = uy + sinkOffset;
-                const midX = Math.floor(buttX);
-                const midY = buttY;
+                const anchorX = ux;
+                const anchorY = uy + sinkOffset;
+                const midX = Math.floor(anchorX);
+                const midY = anchorY;
 
                 // Rider anchor must match render()
                 const riderX = midX;
@@ -10746,6 +10844,14 @@ export class TacticsScene extends BaseScene {
             this.onNonMouseInput();
             this.controllerNavMouseEnabled = false;
             this.cycleBattlePaletteForward();
+            return;
+        }
+
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z')) {
+            e.preventDefault();
+            if (this.history.length > 1) {
+                this.undo();
+            }
             return;
         }
 

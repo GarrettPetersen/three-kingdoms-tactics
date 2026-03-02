@@ -1,9 +1,12 @@
+const STORAGE_KEY = 'gameLanguage';
+
 /**
  * Language configuration for the game.
  * Controls which language is used for text and voice files.
+ * Persisted to localStorage so the choice is saved between sessions.
  */
 export const LANGUAGE = {
-    current: 'en', // Current language code (ISO 639-1)
+    current: (typeof localStorage !== 'undefined' && localStorage.getItem(STORAGE_KEY)) || 'en',
     supported: ['en', 'zh'], // List of supported language codes
     names: {
         'en': 'English',
@@ -19,11 +22,14 @@ export function getCurrentLanguage() {
 }
 
 /**
- * Set the current language (if supported)
+ * Set the current language (if supported). Saves to localStorage so it persists between sessions.
  */
 export function setLanguage(langCode) {
     if (LANGUAGE.supported.includes(langCode)) {
         LANGUAGE.current = langCode;
+        if (typeof localStorage !== 'undefined') {
+            localStorage.setItem(STORAGE_KEY, langCode);
+        }
         return true;
     }
     console.warn(`Language ${langCode} is not supported. Supported languages: ${LANGUAGE.supported.join(', ')}`);

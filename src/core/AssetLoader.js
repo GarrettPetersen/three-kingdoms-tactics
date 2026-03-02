@@ -44,7 +44,6 @@ export class AssetLoader {
             audio.volume = volume;
             this.currentVoice = audio;
 
-            // Duck music volume smoothly
             this.fadeMusicVolume(this.baseMusicVolume * 0.3, 200);
 
             audio.onended = () => {
