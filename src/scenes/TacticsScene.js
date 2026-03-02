@@ -4719,6 +4719,7 @@ export class TacticsScene extends BaseScene {
         const victim = targetCell ? this.getRiderUnitFromCell(targetCell) : null;
 
         if (attack.type === 'projectile') {
+            const bowPos = this.getRangedWeaponPosition(attacker);
             // Projectile timing: fires between frame 2 and 3
             let fired = false;
             const checkFire = () => {
@@ -4726,10 +4727,10 @@ export class TacticsScene extends BaseScene {
                 if (attacker.frame >= 2) {
                     fired = true;
                     assets.playSound('bow_fire', 0.6);
-                    // Fire projectile
+                    // Fire projectile from bow position (front of sprite)
                     this.projectiles.push({
-                        startX: startPos.x,
-                        startY: startPos.y - 20, // Fire from bow height
+                        startX: bowPos.x,
+                        startY: bowPos.y,
                         targetX: endPos.x,
                         targetY: victim ? endPos.y - 15 : endPos.y, // Target center mass if enemy exists
                         progress: 0,
@@ -4826,6 +4827,7 @@ export class TacticsScene extends BaseScene {
         const boltPath = this.getDirectionalBoltPath(attacker, targetR, targetQ);
         const origin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
         const startPos = this.getPixelPos(origin.r, origin.q);
+        const weaponPos = this.getRangedWeaponPosition(attacker);
         const impactCell = boltPath?.impactCell || this.tacticsMap.getCell(targetR, targetQ);
         const impactPos = impactCell ? this.getPixelPos(impactCell.r, impactCell.q) : this.getPixelPos(targetR, targetQ);
 
@@ -4837,8 +4839,8 @@ export class TacticsScene extends BaseScene {
                 fired = true;
                 assets.playSound('bow_fire', 0.6);
                 this.projectiles.push({
-                    startX: startPos.x,
-                    startY: startPos.y - 20,
+                    startX: weaponPos.x,
+                    startY: weaponPos.y,
                     targetX: impactPos.x,
                     targetY: impactPos.y - 15,
                     progress: 0,
@@ -7311,6 +7313,15 @@ export class TacticsScene extends BaseScene {
 
         if (this.selectedAttack && this.hoveredCell && this.attackTiles.has(`${this.hoveredCell.r},${this.hoveredCell.q}`)) {
             const attack = ATTACKS[this.selectedAttack];
+            if (attack && this.selectedUnit && this.isDirectionalBoltAttack(this.selectedAttack)) {
+                const boltPath = this.getDirectionalBoltPath(this.selectedUnit, this.hoveredCell.r, this.hoveredCell.q);
+                if (boltPath?.path?.length) this.drawDirectionalBoltPathDots(ctx, boltPath, 0.7, true);
+            }
+            if (attack && this.selectedUnit && attack.type === 'projectile') {
+                const bow = this.getRangedWeaponPosition(this.selectedUnit);
+                const endPos = this.getPixelPos(this.hoveredCell.r, this.hoveredCell.q);
+                this.drawArrowParabolaPath(ctx, bow.x, bow.y, endPos.x, endPos.y, 0.7);
+            }
             if (attack && attack.push && this.selectedUnit) {
                 const origin = this.getAttackOriginForTarget(this.selectedUnit, this.hoveredCell.r, this.hoveredCell.q);
                 if (this.selectedAttack === 'double_blades') {
@@ -8241,6 +8252,79 @@ export class TacticsScene extends BaseScene {
         }
     }
 
+    /**
+     * Draw red telegraph dots along a directional bolt path. Uses more frequent dots (with midpoints) and larger size.
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {{ path: Array<{r: number, q: number}> }} boltPath - from getDirectionalBoltPath
+     * @param {number} alpha - 0–1 opacity
+     * @param {boolean} isEndEmphasized - if true, last dot is larger
+     */
+    drawDirectionalBoltPathDots(ctx, boltPath, alpha, isEndEmphasized = true) {
+        if (!boltPath?.path?.length) return;
+        const path = boltPath.path;
+        const points = [];
+        for (let i = 0; i < path.length; i++) {
+            const p = this.getPixelPos(path[i].r, path[i].q);
+            points.push(p);
+            if (i < path.length - 1) {
+                const next = this.getPixelPos(path[i + 1].r, path[i + 1].q);
+                points.push({ x: (p.x + next.x) / 2, y: (p.y + next.y) / 2 });
+            }
+        }
+        ctx.save();
+        const dotColor = `rgba(255, 48, 48, ${alpha})`;
+        ctx.fillStyle = dotColor;
+        points.forEach((pos, idx) => {
+            const isLast = idx === points.length - 1;
+            const size = (isEndEmphasized && isLast) ? 6 : 4;
+            ctx.fillRect(Math.round(pos.x - size / 2), Math.round(pos.y - size / 2), size, size);
+        });
+        ctx.restore();
+    }
+
+    /**
+     * Pixel position where a unit's bow/crossbow is held (front center of sprite, chest height).
+     * @param {{ visualX: number, visualY: number, flip?: boolean }} unit
+     * @returns {{ x: number, y: number }}
+     */
+    getRangedWeaponPosition(unit) {
+        const forward = unit.flip ? -1 : 1;
+        return { x: unit.visualX + forward * 14, y: unit.visualY - 18 };
+    }
+
+    /**
+     * Draw a dashed red parabola matching the archer arrow flight path (same arc as projectile).
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} startX - pixel X at shooter (bow position)
+     * @param {number} startY - pixel Y at shooter (bow position)
+     * @param {number} targetX - pixel X at target
+     * @param {number} targetY - pixel Y at target
+     * @param {number} alpha - 0–1 opacity
+     */
+    drawArrowParabolaPath(ctx, startX, startY, targetX, targetY, alpha = 0.7) {
+        const dx = targetX - startX;
+        const dy = targetY - startY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const arcHeight = Math.min(100, dist * 0.5);
+        const points = [];
+        const steps = 32;
+        for (let i = 0; i <= steps; i++) {
+            const t = i / steps;
+            const x = startX + t * dx;
+            const y = startY + t * dy - Math.sin(t * Math.PI) * arcHeight;
+            points.push({ x, y });
+        }
+        ctx.save();
+        ctx.strokeStyle = `rgba(255, 0, 0, ${alpha})`;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+        ctx.stroke();
+        ctx.restore();
+    }
+
     drawIntent(ctx, unit, x, y) {
         if (!unit.intent) return;
         const attack = ATTACKS[unit.intent.attackKey];
@@ -8263,16 +8347,13 @@ export class TacticsScene extends BaseScene {
         if (attack?.type === 'directional_projectile') {
             const boltPath = this.getDirectionalBoltPath(unit, targetCell.r, targetCell.q);
             if (!boltPath || !boltPath.path || boltPath.path.length === 0) return;
-            ctx.save();
-            const alpha = 0.6 + glow;
-            const dotColor = `rgba(255, 48, 48, ${alpha})`;
-            boltPath.path.forEach((pos, idx) => {
-                const p = this.getPixelPos(pos.r, pos.q);
-                const size = (idx === boltPath.path.length - 1) ? 4 : 2;
-                ctx.fillStyle = dotColor;
-                ctx.fillRect(Math.round(p.x - Math.floor(size / 2)), Math.round(p.y - Math.floor(size / 2)), size, size);
-            });
-            ctx.restore();
+            this.drawDirectionalBoltPathDots(ctx, boltPath, 0.6 + glow, true);
+            return;
+        }
+
+        if (attack?.type === 'projectile') {
+            const bow = this.getRangedWeaponPosition(unit);
+            this.drawArrowParabolaPath(ctx, bow.x, bow.y, targetPos.x, targetPos.y, 0.6 + glow);
             return;
         }
 
@@ -9389,18 +9470,17 @@ export class TacticsScene extends BaseScene {
                 const x = p.startX + p.progress * dx;
                 const y = p.startY + p.progress * dy - Math.sin(p.progress * Math.PI) * arcHeight;
                 
-                // Draw arrow as a small white line segment (1px)
-                // Calculate angle for orientation
+                // Draw arrow (longer line so it reads as an arrow, not a dart)
                 const nextX = p.startX + (p.progress + 0.01) * dx;
                 const nextY = p.startY + (p.progress + 0.01) * dy - Math.sin((p.progress + 0.01) * Math.PI) * arcHeight;
                 const angle = Math.atan2(nextY - y, nextX - x);
-                
+                const arrowLen = 14;
                 ctx.save();
                 ctx.strokeStyle = '#fff';
                 ctx.lineWidth = 1;
                 ctx.beginPath();
                 ctx.moveTo(x, y);
-                ctx.lineTo(x + Math.cos(angle) * 4, y + Math.sin(angle) * 4);
+                ctx.lineTo(x + Math.cos(angle) * arrowLen, y + Math.sin(angle) * arrowLen);
                 ctx.stroke();
                 ctx.restore();
             } else if (p.type === 'bolt') {
@@ -9414,13 +9494,13 @@ export class TacticsScene extends BaseScene {
                 const nextX = p.startX + (p.progress + 0.01) * dx;
                 const nextY = p.startY + (p.progress + 0.01) * dy - Math.sin((p.progress + 0.01) * Math.PI) * arcHeight;
                 const angle = Math.atan2(nextY - y, nextX - x);
-
+                const boltLen = 14;
                 ctx.save();
                 ctx.strokeStyle = '#ffcccc';
                 ctx.lineWidth = 1;
                 ctx.beginPath();
                 ctx.moveTo(x, y);
-                ctx.lineTo(x + Math.cos(angle) * 5, y + Math.sin(angle) * 5);
+                ctx.lineTo(x + Math.cos(angle) * boltLen, y + Math.sin(angle) * boltLen);
                 ctx.stroke();
                 ctx.restore();
             } else if (p.type === 'swipe_straight') {
@@ -9994,7 +10074,6 @@ export class TacticsScene extends BaseScene {
 
         if (this.isLineAttack(this.selectedAttack)) {
             if (this.isDirectionalBoltAttack(this.selectedAttack)) {
-                const endpointSeen = new Set();
                 origins.forEach(o => {
                     for (let dir = 0; dir < 6; dir++) {
                         const maxDist = Number.isFinite(range) ? range : 99;
@@ -10006,12 +10085,12 @@ export class TacticsScene extends BaseScene {
                         }
                         if (!candidate) continue;
                         const boltPath = this.getDirectionalBoltPath(this.selectedUnit, candidate.r, candidate.q);
-                        const impact = boltPath?.impactCell;
-                        if (!impact) continue;
-                        const k = `${impact.r},${impact.q}`;
-                        if (originKeys.has(k) || endpointSeen.has(k)) continue;
-                        endpointSeen.add(k);
-                        this.attackTiles.set(k, true);
+                        if (!boltPath?.path?.length) continue;
+                        boltPath.path.forEach(cell => {
+                            const k = `${cell.r},${cell.q}`;
+                            if (originKeys.has(k)) return;
+                            this.attackTiles.set(k, true);
+                        });
                     }
                 });
                 return;

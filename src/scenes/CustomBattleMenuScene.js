@@ -62,21 +62,21 @@ export class CustomBattleMenuScene extends BaseScene {
         // Reset dropdowns
         for (const k in this.dropdowns) this.dropdowns[k].open = false;
 
-        // Initialize default roster if empty
+        // Initialize default roster if empty (3 heroes + 1 soldier + archer + crossbowman per side; enemy has 2 heroes + 2 soldiers + archer + crossbowman)
         if (this.options.roster.length === 0) {
             this.options.roster = [
                 { type: 'hero', templateId: 'liubei', faction: 'player', level: 1, name: 'Liu Bei', imgKey: 'liubei' },
                 { type: 'hero', templateId: 'guanyu', faction: 'player', level: 1, name: 'Guan Yu', imgKey: 'guanyu' },
                 { type: 'hero', templateId: 'zhangfei', faction: 'player', level: 1, name: 'Zhang Fei', imgKey: 'zhangfei' },
                 { type: 'soldier', templateId: 'soldier', faction: 'allied', level: 1, name: 'Soldier', imgKey: 'soldier' },
-                { type: 'soldier', templateId: 'soldier', faction: 'allied', level: 1, name: 'Soldier', imgKey: 'soldier' },
-                { type: 'soldier', templateId: 'soldier', faction: 'allied', level: 1, name: 'Soldier', imgKey: 'soldier' },
+                { type: 'soldier', templateId: 'soldier', faction: 'allied', level: 1, name: 'Archer', imgKey: 'archer', isArcher: true },
+                { type: 'crossbowman', templateId: 'crossbowman', faction: 'allied', level: 1, name: 'Crossbowman', imgKey: 'crossbowman', isCrossbowman: true },
                 { type: 'caocao_force', templateId: 'caocao', faction: 'enemy', level: 1, name: 'Cao Cao', imgKey: 'caocao' },
                 { type: 'caocao_force', templateId: 'caoren', faction: 'enemy', level: 1, name: 'Cao Ren', imgKey: 'caoren' },
                 { type: 'soldier', templateId: 'soldier', faction: 'enemy', level: 1, name: 'Soldier', imgKey: 'soldier' },
                 { type: 'soldier', templateId: 'soldier', faction: 'enemy', level: 1, name: 'Soldier', imgKey: 'soldier' },
-                { type: 'soldier', templateId: 'soldier', faction: 'enemy', level: 1, name: 'Soldier', imgKey: 'soldier' },
-                { type: 'soldier', templateId: 'soldier', faction: 'enemy', level: 1, name: 'Soldier', imgKey: 'soldier' }
+                { type: 'soldier', templateId: 'soldier', faction: 'enemy', level: 1, name: 'Archer', imgKey: 'archer', isArcher: true },
+                { type: 'crossbowman', templateId: 'crossbowman', faction: 'enemy', level: 1, name: 'Crossbowman', imgKey: 'crossbowman', isCrossbowman: true }
             ];
         }
 
@@ -349,12 +349,12 @@ export class CustomBattleMenuScene extends BaseScene {
         const sel = this.options.roster[this.selectedRosterIndex];
         this.drawPixelText(ctx, getLocalizedText(UI_TEXT['EDITING UNIT']), x, y, { color: '#ffd700', font: '8px Tiny5' });
         
-        // Large preview
+        // Large preview (scale 1:1)
         const charImg = assets.getImage(sel.imgKey);
         if (charImg) {
             ctx.save();
             ctx.translate(x + w/2, y + 50);
-            ctx.scale(1.2, 1.2);
+            ctx.scale(1, 1);
             this.drawCharacter(ctx, charImg, 'standby', Math.floor(Date.now()/150)%4, 0, 0);
             ctx.restore();
         }
@@ -488,7 +488,7 @@ export class CustomBattleMenuScene extends BaseScene {
                 ctx.strokeStyle = isSelected ? '#ffd700' : '#444';
                 ctx.strokeRect(Math.floor(itemRect.x) + 0.5, Math.floor(itemRect.y) + 0.5, Math.floor(itemRect.w) - 1, Math.floor(itemRect.h) - 1);
                 
-                // Show unit sprite
+                // Show unit sprite (small scale for list)
                 const charImg = assets.getImage(unit.imgKey);
                 if (charImg) {
                     ctx.save();

@@ -341,7 +341,7 @@ export const ATTACKS = {
         line: true,
         push: 1,
         type: 'directional_projectile',
-        animation: 'attack_1',
+        animation: 'attack_2',
         description: { en: 'Fire in one of 6 directions until the bolt hits.', zh: '沿六向之一发射，直到弩矢命中目标。' }
     },
     crossbow_bolt_2: {
@@ -352,7 +352,7 @@ export const ATTACKS = {
         line: true,
         push: 1,
         type: 'directional_projectile',
-        animation: 'attack_1',
+        animation: 'attack_2',
         description: { en: 'Stronger bolt with 2 damage and push.', zh: '更强弩矢，造成 2 点伤害并击退。' }
     },
     crossbow_bolt_3: {
@@ -363,7 +363,7 @@ export const ATTACKS = {
         line: true,
         push: 1,
         type: 'directional_projectile',
-        animation: 'attack_1',
+        animation: 'attack_2',
         description: { en: 'Heavy bolt with 3 damage and push.', zh: '重弩矢，造成 3 点伤害并击退。' }
     },
     blade_sweep_1: {

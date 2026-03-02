@@ -744,7 +744,7 @@ export const UNIT_TEMPLATES = {
         'soldier': { ...SOLDIER_VARIANTS.generic }
     },
     'crossbowman': {
-        'crossbowman': { name: 'Crossbowman', imgKey: 'crossbowman', hp: 2, moveRange: 3, attacks: ['crossbow_bolt'], faction: 'allied' }
+        'crossbowman': { name: 'Crossbowman', imgKey: 'crossbowman', hp: 2, moveRange: 4, attacks: ['crossbow_bolt'], faction: 'allied' }
     },
     'enemy_captain': {
         'dengmao': { name: 'Deng Mao', imgKey: 'dengmao', hp: 5, moveRange: 3, attacks: ['generic_spear'], faction: 'enemy', level: 1 },

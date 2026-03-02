@@ -15,6 +15,7 @@ export class LevelUpScene extends BaseScene {
         this.isPromoting = false;
         this.promotionChoice = null;
         this.chosenClass = null;
+        this.promotionType = null; // 'soldier_ranged' (level 2) | 'archer_crossbow' (level 3)
     }
 
     enter(params) {
@@ -35,6 +36,7 @@ export class LevelUpScene extends BaseScene {
             this.isPromoting = !!savedState.isPromoting;
             this.promotionChoice = savedState.promotionChoice || null;
             this.chosenClass = savedState.chosenClass || null;
+            this.promotionType = savedState.promotionType || null;
             return;
         }
 
@@ -50,6 +52,7 @@ export class LevelUpScene extends BaseScene {
         this.isPromoting = false;
         this.promotionChoice = null;
         this.chosenClass = null;
+        this.promotionType = null;
 
         if (this.levelUps.length > 0) {
             assets.playSound('victory', 0.5);
@@ -68,6 +71,7 @@ export class LevelUpScene extends BaseScene {
             isPromoting: this.isPromoting,
             promotionChoice: this.promotionChoice,
             chosenClass: this.chosenClass,
+            promotionType: this.promotionType,
             isEndGame: this.isEndGame,
             isCustom: this.isCustom,
             battleId: this.battleId
@@ -79,14 +83,18 @@ export class LevelUpScene extends BaseScene {
         if (current && current.id.startsWith('ally') && current.newLevel >= 2) {
             const gs = this.manager.gameState;
             const classes = gs.getCampaignVar('unitClasses') || {};
-            // Normal flow: prompt on level 2.
-            // Recovery flow: if class is still missing at higher levels, prompt again.
-            if (current.newLevel === 2) {
-                if (!classes[current.id] || classes[current.id] === 'soldier') {
-                    this.isPromoting = true;
-                }
-            } else if (!classes[current.id]) {
+            const currentClass = classes[current.id];
+            // Level 2: soldier -> choose Soldier or Archer
+            if (current.newLevel === 2 && (!currentClass || currentClass === 'soldier')) {
                 this.isPromoting = true;
+                this.promotionType = 'soldier_ranged';
+            } else if (current.newLevel === 3 && currentClass === 'archer') {
+                // Level 3: archer -> choose Archer or Crossbowman
+                this.isPromoting = true;
+                this.promotionType = 'archer_crossbow';
+            } else if (current.newLevel > 2 && !currentClass) {
+                this.isPromoting = true;
+                this.promotionType = 'soldier_ranged';
             }
         }
     }
@@ -253,39 +261,56 @@ export class LevelUpScene extends BaseScene {
         
         const bw = 60;
         const bh = 30;
-        
-        // Soldier Button
-        const sx = cx - (bw * 1.5) - 10;
-        const sy = y + 11;
-        ctx.fillStyle = '#222';
-        ctx.strokeStyle = this.promotionChoice === 'soldier' ? '#ffd700' : '#888';
-        ctx.lineWidth = 2;
-        ctx.fillRect(sx, sy, bw, bh);
-        ctx.strokeRect(sx + 1, sy + 1, bw - 2, bh - 2);
-        this.drawPixelText(ctx, getLocalizedText({ en: "SOLDIER", zh: "步兵" }), sx + bw/2, sy + bh/2 - 3, { color: '#fff', font: '8px Tiny5', align: 'center' });
-        this.soldierRect = { x: sx, y: sy, w: bw, h: bh };
+        const gap = 14;
+        const isArcherCrossbow = this.promotionType === 'archer_crossbow';
 
-        // Archer Button
-        const ax = cx - bw / 2;
-        const ay = y + 11;
-        ctx.fillStyle = '#222';
-        ctx.strokeStyle = this.promotionChoice === 'archer' ? '#ffd700' : '#888';
-        ctx.lineWidth = 2;
-        ctx.fillRect(ax, ay, bw, bh);
-        ctx.strokeRect(ax + 1, ay + 1, bw - 2, bh - 2);
-        this.drawPixelText(ctx, getLocalizedText({ en: "ARCHER", zh: "弓兵" }), ax + bw/2, ay + bh/2 - 3, { color: '#fff', font: '8px Tiny5', align: 'center' });
-        this.archerRect = { x: ax, y: ay, w: bw, h: bh };
+        this.soldierRect = null;
+        this.archerRect = null;
+        this.crossbowRect = null;
 
-        // Crossbowman Button
-        const cxb = cx + (bw / 2) + 10;
-        const cyb = y + 11;
-        ctx.fillStyle = '#222';
-        ctx.strokeStyle = this.promotionChoice === 'crossbowman' ? '#ffd700' : '#888';
-        ctx.lineWidth = 2;
-        ctx.fillRect(cxb, cyb, bw, bh);
-        ctx.strokeRect(cxb + 1, cyb + 1, bw - 2, bh - 2);
-        this.drawPixelText(ctx, getLocalizedText({ en: "XBOW", zh: "弩兵" }), cxb + bw/2, cyb + bh/2 - 3, { color: '#fff', font: '8px Tiny5', align: 'center' });
-        this.crossbowRect = { x: cxb, y: cyb, w: bw, h: bh };
+        if (isArcherCrossbow) {
+            // Level 3 archer: Archer | Crossbowman
+            const ax = cx - bw - gap / 2;
+            const ay = y + 11;
+            ctx.fillStyle = '#222';
+            ctx.strokeStyle = this.promotionChoice === 'archer' ? '#ffd700' : '#888';
+            ctx.lineWidth = 2;
+            ctx.fillRect(ax, ay, bw, bh);
+            ctx.strokeRect(ax + 1, ay + 1, bw - 2, bh - 2);
+            this.drawPixelText(ctx, getLocalizedText({ en: "ARCHER", zh: "弓兵" }), ax + bw/2, ay + bh/2 - 3, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.archerRect = { x: ax, y: ay, w: bw, h: bh };
+
+            const cxb = cx + gap / 2;
+            const cyb = y + 11;
+            ctx.fillStyle = '#222';
+            ctx.strokeStyle = this.promotionChoice === 'crossbowman' ? '#ffd700' : '#888';
+            ctx.lineWidth = 2;
+            ctx.fillRect(cxb, cyb, bw, bh);
+            ctx.strokeRect(cxb + 1, cyb + 1, bw - 2, bh - 2);
+            this.drawPixelText(ctx, getLocalizedText({ en: "XBOW", zh: "弩兵" }), cxb + bw/2, cyb + bh/2 - 3, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.crossbowRect = { x: cxb, y: cyb, w: bw, h: bh };
+        } else {
+            // Level 2 soldier: Soldier | Archer
+            const sx = cx - bw - gap / 2;
+            const sy = y + 11;
+            ctx.fillStyle = '#222';
+            ctx.strokeStyle = this.promotionChoice === 'soldier' ? '#ffd700' : '#888';
+            ctx.lineWidth = 2;
+            ctx.fillRect(sx, sy, bw, bh);
+            ctx.strokeRect(sx + 1, sy + 1, bw - 2, bh - 2);
+            this.drawPixelText(ctx, getLocalizedText({ en: "SOLDIER", zh: "步兵" }), sx + bw/2, sy + bh/2 - 3, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.soldierRect = { x: sx, y: sy, w: bw, h: bh };
+
+            const ax = cx + gap / 2;
+            const ay = y + 11;
+            ctx.fillStyle = '#222';
+            ctx.strokeStyle = this.promotionChoice === 'archer' ? '#ffd700' : '#888';
+            ctx.lineWidth = 2;
+            ctx.fillRect(ax, ay, bw, bh);
+            ctx.strokeRect(ax + 1, ay + 1, bw - 2, bh - 2);
+            this.drawPixelText(ctx, getLocalizedText({ en: "ARCHER", zh: "弓兵" }), ax + bw/2, ay + bh/2 - 3, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.archerRect = { x: ax, y: ay, w: bw, h: bh };
+        }
     }
 
     handleInput(e) {
@@ -377,6 +402,7 @@ export class LevelUpScene extends BaseScene {
             this.isPromoting = false;
             this.promotionChoice = null;
             this.chosenClass = null;
+            this.promotionType = null;
             assets.playSound('victory', 0.5);
             this.checkPromotion();
         }
