@@ -1,5 +1,6 @@
 import { assets } from './core/AssetLoader.js';
 import { SceneManager } from './core/SceneManager.js';
+import { LANGUAGE, setLanguage } from './core/Language.js';
 import { TitleScene } from './scenes/TitleScene.js';
 import { CustomBattleMenuScene } from './scenes/CustomBattleMenuScene.js';
 import { CampaignSelectionScene } from './scenes/CampaignSelectionScene.js';
@@ -61,9 +62,10 @@ function setupCanvas() {
 /**
  * Take 1920x1080 screenshots from the 256x256 canvas
  * Creates three 16:9 crops (top, middle, bottom) and one letterboxed version
- * Saves all screenshots in a single zip file
+ * Saves one set in the current language and one set in Chinese (filenames ending with _schinese)
+ * All screenshots are saved in a single zip file
  */
-async function takeScreenshots(ctx, canvas, config) {
+async function takeScreenshots(ctx, canvas, config, sceneManager) {
     const SOURCE_WIDTH = 256;
     const SOURCE_HEIGHT = 256;
     const CROP_HEIGHT = 144; // 16:9 aspect ratio: 256 * 9/16 = 144
@@ -92,9 +94,6 @@ async function takeScreenshots(ctx, canvas, config) {
     const sourceCtx = sourceCanvas.getContext('2d');
     sourceCtx.imageSmoothingEnabled = false;
     
-    // Copy current canvas to source
-    sourceCtx.drawImage(canvas, 0, 0);
-    
     // Create output canvas for scaling
     const outputCanvas = document.createElement('canvas');
     outputCanvas.width = TARGET_WIDTH;
@@ -102,61 +101,60 @@ async function takeScreenshots(ctx, canvas, config) {
     const outputCtx = outputCanvas.getContext('2d');
     outputCtx.imageSmoothingEnabled = false;
     
-    // Helper to generate a screenshot blob
-    function generateScreenshot(cropX, cropY, cropW, cropH) {
-        return new Promise((resolve) => {
-            // Clear output canvas
-            outputCtx.fillStyle = '#000';
-            outputCtx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
-            
-            // Draw cropped section scaled up (nearest-neighbor)
-            outputCtx.drawImage(
-                sourceCanvas,
-                cropX, cropY, cropW, cropH,  // Source crop
-                0, 0, TARGET_WIDTH, TARGET_HEIGHT  // Destination (full size)
-            );
-            
-            // Convert to blob
-            outputCanvas.toBlob((blob) => {
-                resolve(blob);
-            }, 'image/png');
-        });
-    }
-    
-    console.log('Generating screenshots...');
-    
-    // Generate all 4 screenshots
-    const screenshots = [];
-    
-    // Three 16:9 crops: top, middle, bottom
     const cropYPositions = [
         { y: 0, name: 'top' },
         { y: Math.floor((SOURCE_HEIGHT - CROP_HEIGHT) / 2), name: 'middle' },
         { y: SOURCE_HEIGHT - CROP_HEIGHT, name: 'bottom' }
     ];
     
-    for (const { y, name } of cropYPositions) {
-        const blob = await generateScreenshot(0, y, SOURCE_WIDTH, CROP_HEIGHT);
-        screenshots.push({ blob, filename: `screenshot_${name}_1920x1080.png` });
+    const letterboxScale = TARGET_HEIGHT / SOURCE_HEIGHT;
+    const letterboxWidth = Math.floor(SOURCE_WIDTH * letterboxScale);
+    const letterboxX = Math.floor((TARGET_WIDTH - letterboxWidth) / 2);
+    
+    /** Generate the 4 screenshot blobs from the current sourceCanvas; filenameSuffix is '' or '_schinese' */
+    async function captureSet(filenameSuffix) {
+        const list = [];
+        function generateScreenshot(cropX, cropY, cropW, cropH) {
+            return new Promise((resolve) => {
+                outputCtx.fillStyle = '#000';
+                outputCtx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+                outputCtx.drawImage(sourceCanvas, cropX, cropY, cropW, cropH, 0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+                outputCanvas.toBlob((blob) => resolve(blob), 'image/png');
+            });
+        }
+        for (const { y, name } of cropYPositions) {
+            const blob = await generateScreenshot(0, y, SOURCE_WIDTH, CROP_HEIGHT);
+            const base = `screenshot_${name}_1920x1080`;
+            list.push({ blob, filename: `${base}${filenameSuffix}.png` });
+        }
+        outputCtx.fillStyle = '#000';
+        outputCtx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+        outputCtx.drawImage(sourceCanvas, 0, 0, SOURCE_WIDTH, SOURCE_HEIGHT, letterboxX, 0, letterboxWidth, TARGET_HEIGHT);
+        const letterboxBlob = await new Promise((resolve) => outputCanvas.toBlob((blob) => resolve(blob), 'image/png'));
+        const letterboxBase = 'screenshot_letterbox_1920x1080';
+        list.push({ blob: letterboxBlob, filename: `${letterboxBase}${filenameSuffix}.png` });
+        return list;
     }
     
-    // Create letterboxed version (256x256 scaled up with black bars on sides)
-    const letterboxScale = TARGET_HEIGHT / SOURCE_HEIGHT; // 1080 / 256 = 4.21875
-    const letterboxWidth = Math.floor(SOURCE_WIDTH * letterboxScale); // 256 * 4.21875 = 1080
-    const letterboxX = Math.floor((TARGET_WIDTH - letterboxWidth) / 2); // Center horizontally
+    const screenshots = [];
+    const savedLang = LANGUAGE.current;
     
-    outputCtx.fillStyle = '#000';
-    outputCtx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
-    outputCtx.drawImage(
-        sourceCanvas,
-        0, 0, SOURCE_WIDTH, SOURCE_HEIGHT,
-        letterboxX, 0, letterboxWidth, TARGET_HEIGHT
-    );
+    // 1) English set (base filenames)
+    if (sceneManager) setLanguage('en');
+    if (sceneManager) sceneManager.render(Date.now());
+    sourceCtx.drawImage(canvas, 0, 0);
+    console.log('Generating screenshots (English)...');
+    screenshots.push(...(await captureSet('')));
     
-    const letterboxBlob = await new Promise((resolve) => {
-        outputCanvas.toBlob((blob) => resolve(blob), 'image/png');
-    });
-    screenshots.push({ blob: letterboxBlob, filename: 'screenshot_letterbox_1920x1080.png' });
+    // 2) Chinese set (filenames ending with _schinese)
+    if (sceneManager) setLanguage('zh');
+    if (sceneManager) sceneManager.render(Date.now());
+    sourceCtx.drawImage(canvas, 0, 0);
+    console.log('Generating screenshots (Chinese)...');
+    screenshots.push(...(await captureSet('_schinese')));
+    
+    if (sceneManager) setLanguage(savedLang);
+    if (sceneManager) sceneManager.render(Date.now());
     
     // Create zip file
     console.log('Creating zip file...');
@@ -165,11 +163,9 @@ async function takeScreenshots(ctx, canvas, config) {
         zip.file(filename, blob);
     }
     
-    // Generate zip blob
     const zipBlob = await zip.generateAsync({ type: 'blob' });
     const zipFilename = `screenshots_${timestamp}.zip`;
     
-    // Download the zip file (single dialog)
     const url = URL.createObjectURL(zipBlob);
     const a = document.createElement('a');
     a.href = url;
@@ -271,7 +267,7 @@ async function init() {
             }
             if (inputBuffer.endsWith('screenshot')) {
                 inputBuffer = "";
-                takeScreenshots(ctx, canvas, config).catch(err => {
+                takeScreenshots(ctx, canvas, config, sceneManager).catch(err => {
                     console.error('Screenshot error:', err);
                 });
             }

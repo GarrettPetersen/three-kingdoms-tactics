@@ -414,8 +414,8 @@ export class TitleScene extends BaseScene {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            const dialogW = 200;
-            const dialogH = 80;
+            const dialogW = 220;
+            const dialogH = 100;
             const dx = Math.floor((canvas.width - dialogW) / 2);
             const dy = Math.floor((canvas.height - dialogH) / 2);
 
@@ -428,52 +428,52 @@ export class TitleScene extends BaseScene {
 
             const newGameText = getLocalizedText(UI_TEXT['START A NEW GAME?']);
             const progressText = getLocalizedText(UI_TEXT['EXISTING PROGRESS WILL BE LOST']);
-            this.drawPixelText(ctx, newGameText, cx, dy + 20, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
-            this.drawPixelText(ctx, progressText, cx, dy + 35, { color: '#eee', font: '8px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, newGameText, cx, dy + 26, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+            this.drawPixelText(ctx, progressText, cx, dy + 42, { color: '#eee', font: '8px Tiny5', align: 'center' });
 
-            const btnY = dy + 55;
-            
-            // Initialize selection if not already done
+            const btnY = dy + 68;
+            const boxPadH = 14;
+            const boxPadV = 10;
+            const textHeight = 10;
+
             if (!this.confirmSelection) {
                 this.confirmSelection = {
-                    highlightedIndex: 0, // Start with YES (0)
+                    highlightedIndex: 0,
                     mouseoverEnabled: true,
                     lastMouseX: -1,
                     lastMouseY: -1,
                     totalOptions: 2
                 };
             }
-            
-            // Draw YES button with highlight if selected
-            const yesColor = this.confirmSelection.highlightedIndex === 0 ? '#ff0000' : '#888';
+
             const yesText = getLocalizedText(UI_TEXT['YES']);
-            const yesMetrics = this.drawPixelText(ctx, yesText, cx - 40, btnY, { color: yesColor, font: '8px Silkscreen', align: 'center' });
+            const yesColor = this.confirmSelection.highlightedIndex === 0 ? '#ff0000' : '#888';
+            this.drawPixelText(ctx, yesText, cx - 40, btnY, { color: yesColor, font: '8px Silkscreen', align: 'center' });
+            const yesW = Math.max(40, ctx.measureText(yesText).width + boxPadH * 2);
+            const yesH = textHeight + boxPadV * 2;
             this.confirmYesRect = {
-                x: Math.floor(cx - 40 - yesMetrics.width / 2 - 10),
-                y: btnY - 10,
-                w: Math.floor(yesMetrics.width + 20),
-                h: 20
+                x: Math.floor(cx - 40 - yesW / 2),
+                y: Math.floor(btnY - boxPadV),
+                w: Math.ceil(yesW),
+                h: yesH
             };
-            
-            // Draw highlight box for YES if selected
             if (this.confirmSelection.highlightedIndex === 0) {
                 ctx.strokeStyle = '#ff0000';
                 ctx.lineWidth = 1;
                 ctx.strokeRect(this.confirmYesRect.x, this.confirmYesRect.y, this.confirmYesRect.w, this.confirmYesRect.h);
             }
 
-            // Draw NO button with highlight if selected
-            const noColor = this.confirmSelection.highlightedIndex === 1 ? '#eee' : '#888';
             const noText = getLocalizedText(UI_TEXT['NO']);
-            const noMetrics = this.drawPixelText(ctx, noText, cx + 40, btnY, { color: noColor, font: '8px Silkscreen', align: 'center' });
+            const noColor = this.confirmSelection.highlightedIndex === 1 ? '#eee' : '#888';
+            this.drawPixelText(ctx, noText, cx + 40, btnY, { color: noColor, font: '8px Silkscreen', align: 'center' });
+            const noW = Math.max(40, ctx.measureText(noText).width + boxPadH * 2);
+            const noH = textHeight + boxPadV * 2;
             this.confirmNoRect = {
-                x: Math.floor(cx + 40 - noMetrics.width / 2 - 10),
-                y: btnY - 10,
-                w: Math.floor(noMetrics.width + 20),
-                h: 20
+                x: Math.floor(cx + 40 - noW / 2),
+                y: Math.floor(btnY - boxPadV),
+                w: Math.ceil(noW),
+                h: noH
             };
-            
-            // Draw highlight box for NO if selected
             if (this.confirmSelection.highlightedIndex === 1) {
                 ctx.strokeStyle = '#eee';
                 ctx.lineWidth = 1;

@@ -6947,6 +6947,7 @@ export class TacticsScene extends BaseScene {
             return a.r - b.r;
         });
 
+        this._telegraphPunchList = [];
         for (const call of drawCalls) {
             const effect = this.getIntroEffect(Math.floor(call.r), call.q || 0);
             if (effect.alpha <= 0 && call.type !== 'particle' && call.type !== 'fire_smoke') continue; // Particles have their own alpha check
@@ -7041,6 +7042,32 @@ export class TacticsScene extends BaseScene {
                     drawOptions.tint = 'rgba(96, 184, 255, 0.28)';
                 }
 
+                // Record telegraph for late pass (drawn on top, then punched out by this unit's sprite)
+                const unitPos = { x: u.visualX + (u.visualOffsetX || 0), y: surfaceY + (u.visualOffsetY || 0) };
+                const isThisUnitSelected = this.selectedUnit === u;
+                const hoverTarget = (isThisUnitSelected && this.selectedAttack && this.hoveredCell && this.attackTiles.has(`${this.hoveredCell.r},${this.hoveredCell.q}`)) ? this.hoveredCell : null;
+                const glow = isThisUnitSelected ? Math.abs(Math.sin(Date.now() / 200)) * 0.4 : 0;
+                let targetCellForTelegraph = null;
+                let hoverTargetForTelegraph = null;
+                let attackKeyForTelegraph = null;
+                if (u.intent && u.intent.type === 'attack') {
+                    const tc = this.getIntentTargetCell(u);
+                    if (ATTACKS[u.intent.attackKey] && tc) {
+                        targetCellForTelegraph = tc;
+                        attackKeyForTelegraph = u.intent.attackKey;
+                    }
+                } else if (hoverTarget && this.selectedUnit === u && ATTACKS[this.selectedAttack]) {
+                    hoverTargetForTelegraph = hoverTarget;
+                    attackKeyForTelegraph = this.selectedAttack;
+                }
+                if (attackKeyForTelegraph) {
+                    this._telegraphPunchList.push({
+                        unit: u, surfaceY, drawOptions, cell, timestamp,
+                        unitPos, targetCell: targetCellForTelegraph, hoverTarget: hoverTargetForTelegraph,
+                        attackKey: attackKeyForTelegraph, glow
+                    });
+                }
+
                 const isSelected = this.selectedUnit === u;
                 if (isSelected) {
                     if (u.onHorse) {
@@ -7056,102 +7083,7 @@ export class TacticsScene extends BaseScene {
                     }
                 }
 
-                // Mounted rendering: single-hex horse with rider seated on the back.
-                if (u.onHorse) {
-                    const riderAction = (u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action);
-                    const anchorX = u.visualX + u.visualOffsetX;
-                    const isHorseInShallow = !!(cell && cell.terrain?.includes('water_shallow'));
-                    const terrainSink = Math.max(drawOptions.sinkOffset || 0, isHorseInShallow ? 4 : 0);
-                    const anchorY = surfaceY + u.visualOffsetY + terrainSink;
-                    const riderDrawOptions = { ...drawOptions, sinkOffset: 0, isSubmerged: false };
-
-                    const midX = Math.floor(anchorX);
-                    const midY = Math.floor(anchorY);
-                    const horseFeetY = 12;
-                    const riderX = midX;
-                    const riderY = midY - 14;
-
-                    // Keep the classic "straddle" look:
-                    // rear half of rider in front of horse, front half behind horse.
-                    const rearSide = u.flip ? 'right' : 'left';
-                    const frontSide = rearSide === 'left' ? 'right' : 'left';
-                    const drawHalf = (side) => {
-                        ctx.save();
-                        const clipX = side === 'left' ? Math.floor(riderX - 36) : Math.floor(riderX);
-                        ctx.beginPath();
-                        ctx.rect(clipX, Math.floor(riderY - 100), 36, 140);
-                        ctx.clip();
-                        this.drawCharacter(ctx, u.img, riderAction, u.frame, riderX, riderY, riderDrawOptions);
-                        ctx.restore();
-                    };
-
-                    // Front-facing half goes behind horse.
-                    drawHalf(frontSide);
-
-                    const keys = this.getHorseSpriteKeys(u.horseType || 'brown');
-                    const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
-                    const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
-                    const isRunning = (u.isMoving || u.action === 'walk') && horseRun;
-                    const horseImg = isRunning ? horseRun : horseStand;
-                    if (horseImg) {
-                        const frameW = 48;
-                        const frameH = 48;
-                        const frameCount = isRunning ? Math.max(1, Math.floor(horseImg.width / frameW)) : 1;
-                        const f = isRunning ? (Math.floor(timestamp / 70) % frameCount) : 0;
-                        const sx = f * frameW;
-
-                        const dx = -frameW / 2;
-                        const dy = horseFeetY - frameH;
-
-                        const drawHorsePass = (alpha = 1.0, clipRect = null) => {
-                            ctx.save();
-                            if (clipRect) {
-                                ctx.beginPath();
-                                ctx.rect(clipRect.x, clipRect.y, clipRect.w, clipRect.h);
-                                ctx.clip();
-                            }
-                            ctx.globalAlpha *= alpha;
-                            ctx.translate(midX, midY);
-                            if (u.flip) ctx.scale(-1, 1);
-                            ctx.drawImage(horseImg, sx, 0, frameW, frameH, dx, dy, frameW, frameH);
-                            ctx.restore();
-                        };
-
-                        // Submerge horse legs in shallow water (similar to drawCharacter isSubmerged)
-                        if (isHorseInShallow) {
-                            const topY = midY + dy;
-                            const feetY = midY + horseFeetY;
-                            // Waterline is slightly above feet due to sink
-                            const waterlineY = feetY - terrainSink;
-                            drawHorsePass(1.0, { x: midX - 40, y: topY - 10, w: 80, h: Math.max(0, waterlineY - (topY - 10)) });
-                            drawHorsePass(0.4, { x: midX - 40, y: waterlineY, w: 80, h: Math.max(0, (feetY + 10) - waterlineY) });
-                        } else {
-                            drawHorsePass(1.0);
-                        }
-                    }
-
-                    // Rear-facing half goes in front of horse.
-                    drawHalf(rearSide);
-                } else if (u.name === 'Boulder') {
-                    this.drawBoulder(ctx, u, surfaceY + u.visualOffsetY, drawOptions);
-                } else {
-                    this.drawCharacter(ctx, u.img, u.currentAnimAction || u.action, u.frame, u.visualX + u.visualOffsetX, surfaceY + u.visualOffsetY, drawOptions);
-                }
-                
-                // Draw cage overlay if unit is caged
-                if (u.caged) {
-                    const cageKey = u.cageSprite || 'cage';
-                    const cageImg = assets.getImage(cageKey);
-                    if (cageImg) {
-                        // Center cage horizontally over the hex (cage is 36x72)
-                        const cageX = Math.floor(u.visualX - cageImg.width / 2);
-                        // Align cage bottom with hex bottom
-                        // Hex is 36x36 centered at surfaceY, so bottom is surfaceY + 18
-                        // Cage is 72 tall, so top should be at (surfaceY + 18) - 72 = surfaceY - 54
-                        const cageY = Math.floor(surfaceY - 54);
-                        ctx.drawImage(cageImg, cageX, cageY);
-                    }
-                }
+                this.drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp);
             } else if (call.type === 'horse') {
                 const h = call.horse;
                 const keys = this.getHorseSpriteKeys(h.type || 'brown');
@@ -7252,6 +7184,59 @@ export class TacticsScene extends BaseScene {
             ctx.restore();
         }
 
+        // Telegraph pass: draw telegraphs on an offscreen layer, punch out where the telegraphing unit's sprite is, then composite on top
+        if (!this.isIntroAnimating && this._telegraphPunchList && this._telegraphPunchList.length > 0) {
+            const cw = this.manager.canvas.width;
+            const ch = this.manager.canvas.height;
+            if (!this._telegraphLayerCanvas || this._telegraphLayerCanvas.width !== cw || this._telegraphLayerCanvas.height !== ch) {
+                this._telegraphLayerCanvas = document.createElement('canvas');
+                this._telegraphLayerCanvas.width = cw;
+                this._telegraphLayerCanvas.height = ch;
+                this._telegraphLayerCtx = this._telegraphLayerCanvas.getContext('2d');
+            }
+            const tctx = this._telegraphLayerCtx;
+            tctx.clearRect(0, 0, cw, ch);
+            for (const item of this._telegraphPunchList) {
+                const { unit: u, unitPos, targetCell, hoverTarget, attackKey, glow } = item;
+                const attack = ATTACKS[attackKey];
+                if (!attack) continue;
+                if (targetCell) {
+                    if (attack.type === 'directional_projectile') {
+                        const boltPath = this.getDirectionalBoltPath(u, targetCell.r, targetCell.q);
+                        if (boltPath?.path?.length) this.drawDirectionalBoltPathDots(tctx, boltPath, 0.6 + glow, true);
+                    } else if (attack.type === 'projectile') {
+                        const originY = unitPos.y - 8;
+                        const targetPos = this.getPixelPos(targetCell.r, targetCell.q);
+                        this.drawArrowParabolaPath(tctx, unitPos.x, originY, targetPos.x, targetPos.y, 0.6 + glow);
+                    } else {
+                        const swishes = this.getMeleeTelegraphSwishes(u, attackKey, targetCell.r, targetCell.q);
+                        for (const spec of swishes) this.drawTelegraphSwish(tctx, spec, unitPos);
+                    }
+                } else if (hoverTarget) {
+                    if (this.isDirectionalBoltAttack(attackKey)) {
+                        const boltPath = this.getDirectionalBoltPath(u, hoverTarget.r, hoverTarget.q);
+                        if (boltPath?.path?.length) this.drawDirectionalBoltPathDots(tctx, boltPath, 0.7, true);
+                    } else if (attack.type === 'projectile') {
+                        const originY = unitPos.y - 8;
+                        const endPos = this.getPixelPos(hoverTarget.r, hoverTarget.q);
+                        this.drawArrowParabolaPath(tctx, unitPos.x, originY, endPos.x, endPos.y, 0.7);
+                    } else {
+                        const swishes = this.getMeleeTelegraphSwishes(u, attackKey, hoverTarget.r, hoverTarget.q);
+                        if (swishes.length > 0) {
+                            for (const spec of swishes) this.drawTelegraphSwish(tctx, spec, unitPos);
+                        }
+                    }
+                }
+            }
+            for (const item of this._telegraphPunchList) {
+                tctx.save();
+                tctx.globalCompositeOperation = 'destination-out';
+                this.drawUnitSpriteOnly(tctx, item.unit, item.surfaceY, item.drawOptions, item.cell, item.timestamp);
+                tctx.restore();
+            }
+            ctx.drawImage(this._telegraphLayerCanvas, 0, 0);
+        }
+
         // 3. Info Pass: Draw health bars and intents above all terrain
         if (!this.isIntroAnimating) {
             this.units.forEach(u => {
@@ -7313,15 +7298,6 @@ export class TacticsScene extends BaseScene {
 
         if (this.selectedAttack && this.hoveredCell && this.attackTiles.has(`${this.hoveredCell.r},${this.hoveredCell.q}`)) {
             const attack = ATTACKS[this.selectedAttack];
-            if (attack && this.selectedUnit && this.isDirectionalBoltAttack(this.selectedAttack)) {
-                const boltPath = this.getDirectionalBoltPath(this.selectedUnit, this.hoveredCell.r, this.hoveredCell.q);
-                if (boltPath?.path?.length) this.drawDirectionalBoltPathDots(ctx, boltPath, 0.7, true);
-            }
-            if (attack && this.selectedUnit && attack.type === 'projectile') {
-                const bow = this.getRangedWeaponPosition(this.selectedUnit);
-                const endPos = this.getPixelPos(this.hoveredCell.r, this.hoveredCell.q);
-                this.drawArrowParabolaPath(ctx, bow.x, bow.y, endPos.x, endPos.y, 0.7);
-            }
             if (attack && attack.push && this.selectedUnit) {
                 const origin = this.getAttackOriginForTarget(this.selectedUnit, this.hoveredCell.r, this.hoveredCell.q);
                 if (this.selectedAttack === 'double_blades') {
@@ -7558,15 +7534,17 @@ export class TacticsScene extends BaseScene {
         const choiceState = this.getActiveChoiceState();
         const isNarrativeChoice = !!(choiceState && choiceState.kind === 'narrative');
         
-        // Semi-transparent overlay - taller to fit wrapped text
+        // Semi-transparent overlay - tall enough for prompt + choice boxes (extra space for Chinese)
+        const overlayH = 120;
         ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-        ctx.fillRect(0, canvas.height - 90, canvas.width, 90);
+        ctx.fillRect(0, canvas.height - overlayH, canvas.width, overlayH);
         
-        // Choice prompt
+        // Choice prompt (moved up so it doesn't overlap option boxes in Chinese)
+        const promptY = canvas.height - overlayH + 22;
         const promptText = isNarrativeChoice
             ? getLocalizedText({ en: 'Choose your reply', zh: '请选择回复' })
             : getLocalizedText({ en: "What will you do?", zh: "你要怎么做？" });
-        this.drawPixelText(ctx, promptText, canvas.width / 2, canvas.height - 82, {
+        this.drawPixelText(ctx, promptText, canvas.width / 2, promptY, {
             color: '#ffd700',
             align: 'center',
             font: '10px Silkscreen'
@@ -7595,7 +7573,7 @@ export class TacticsScene extends BaseScene {
         const optionHeight = 36;
         const spacing = 16;
         const startX = canvas.width / 2 - (options.length * optionWidth + (options.length - 1) * spacing) / 2;
-        const optionY = canvas.height - 68;
+        const optionY = canvas.height - 56;
         
         this.choiceRects = [];
         
@@ -8328,44 +8306,90 @@ export class TacticsScene extends BaseScene {
         ctx.restore();
     }
 
+    /**
+     * Draw only a unit's sprite (horse+rider, boulder, or character+cage). Used in main draw loop and for telegraph punch (destination-out).
+     */
+    drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp) {
+        if (u.onHorse) {
+            const riderAction = (u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action);
+            const anchorX = u.visualX + u.visualOffsetX;
+            const isHorseInShallow = !!(cell && cell.terrain?.includes('water_shallow'));
+            const terrainSink = Math.max(drawOptions.sinkOffset || 0, isHorseInShallow ? 4 : 0);
+            const anchorY = surfaceY + u.visualOffsetY + terrainSink;
+            const riderDrawOptions = { ...drawOptions, sinkOffset: 0, isSubmerged: false };
+            const midX = Math.floor(anchorX);
+            const midY = Math.floor(anchorY);
+            const horseFeetY = 12;
+            const riderX = midX;
+            const riderY = midY - 14;
+            const rearSide = u.flip ? 'right' : 'left';
+            const frontSide = rearSide === 'left' ? 'right' : 'left';
+            const drawHalf = (side) => {
+                ctx.save();
+                const clipX = side === 'left' ? Math.floor(riderX - 36) : Math.floor(riderX);
+                ctx.beginPath();
+                ctx.rect(clipX, Math.floor(riderY - 100), 36, 140);
+                ctx.clip();
+                this.drawCharacter(ctx, u.img, riderAction, u.frame, riderX, riderY, riderDrawOptions);
+                ctx.restore();
+            };
+            drawHalf(frontSide);
+            const keys = this.getHorseSpriteKeys(u.horseType || 'brown');
+            const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
+            const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
+            const isRunning = (u.isMoving || u.action === 'walk') && horseRun;
+            const horseImg = isRunning ? horseRun : horseStand;
+            if (horseImg) {
+                const frameW = 48;
+                const frameH = 48;
+                const frameCount = isRunning ? Math.max(1, Math.floor(horseImg.width / frameW)) : 1;
+                const f = isRunning ? (Math.floor(timestamp / 70) % frameCount) : 0;
+                const sx = f * frameW;
+                const dx = -frameW / 2;
+                const dy = horseFeetY - frameH;
+                const drawHorsePass = (alpha = 1.0, clipRect = null) => {
+                    ctx.save();
+                    if (clipRect) {
+                        ctx.beginPath();
+                        ctx.rect(clipRect.x, clipRect.y, clipRect.w, clipRect.h);
+                        ctx.clip();
+                    }
+                    ctx.globalAlpha *= alpha;
+                    ctx.translate(midX, midY);
+                    if (u.flip) ctx.scale(-1, 1);
+                    ctx.drawImage(horseImg, sx, 0, frameW, frameH, dx, dy, frameW, frameH);
+                    ctx.restore();
+                };
+                if (isHorseInShallow) {
+                    const topY = midY + dy;
+                    const feetY = midY + horseFeetY;
+                    const waterlineY = feetY - terrainSink;
+                    drawHorsePass(1.0, { x: midX - 40, y: topY - 10, w: 80, h: Math.max(0, waterlineY - (topY - 10)) });
+                    drawHorsePass(0.4, { x: midX - 40, y: waterlineY, w: 80, h: Math.max(0, (feetY + 10) - waterlineY) });
+                } else {
+                    drawHorsePass(1.0);
+                }
+            }
+            drawHalf(rearSide);
+        } else if (u.name === 'Boulder') {
+            this.drawBoulder(ctx, u, surfaceY + u.visualOffsetY, drawOptions);
+        } else {
+            this.drawCharacter(ctx, u.img, u.currentAnimAction || u.action, u.frame, u.visualX + u.visualOffsetX, surfaceY + u.visualOffsetY, drawOptions);
+        }
+        if (u.caged) {
+            const cageKey = u.cageSprite || 'cage';
+            const cageImg = assets.getImage(cageKey);
+            if (cageImg) {
+                const cageX = Math.floor(u.visualX - cageImg.width / 2);
+                const cageY = Math.floor(surfaceY - 54);
+                ctx.drawImage(cageImg, cageX, cageY);
+            }
+        }
+    }
+
     drawIntent(ctx, unit, x, y) {
+        // All attack telegraphs (melee swish, bolt path, arrow) are drawn in the telegraph pass and punched out by the unit sprite
         if (!unit.intent) return;
-        const attack = ATTACKS[unit.intent.attackKey];
-        
-        const targetCell = this.getIntentTargetCell(unit);
-        
-        if (!targetCell) return;
-
-        // Target pixel position
-        const targetPos = this.getPixelPos(targetCell.r, targetCell.q);
-        
-        // Attacker pixel position (current visual pos)
-        const startX = unit.visualX;
-        const startY = unit.visualY;
-
-        // Is this unit currently selected?
-        const isSelected = this.selectedUnit === unit;
-        const glow = isSelected ? Math.abs(Math.sin(Date.now() / 200)) * 0.4 : 0;
-
-        if (attack?.type === 'directional_projectile') {
-            const boltPath = this.getDirectionalBoltPath(unit, targetCell.r, targetCell.q);
-            if (!boltPath || !boltPath.path || boltPath.path.length === 0) return;
-            this.drawDirectionalBoltPathDots(ctx, boltPath, 0.6 + glow, true);
-            return;
-        }
-
-        if (attack?.type === 'projectile') {
-            const bow = this.getRangedWeaponPosition(unit);
-            this.drawArrowParabolaPath(ctx, bow.x, bow.y, targetPos.x, targetPos.y, 0.6 + glow);
-            return;
-        }
-
-        // Melee: draw the swish that will happen in opaque red, with a line from unit to center of swish
-        const unitPos = { x: startX, y: startY };
-        const swishes = this.getMeleeTelegraphSwishes(unit, unit.intent.attackKey, targetCell.r, targetCell.q);
-        for (const spec of swishes) {
-            this.drawTelegraphSwish(ctx, spec, unitPos);
-        }
     }
 
     drawPixelLine(ctx, x0, y0, x1, y1, color = '#fff', dashPattern = null) {
@@ -8801,8 +8825,9 @@ export class TacticsScene extends BaseScene {
                 { x: tgt.x + perpX * halfLen, y: tgt.y + perpY * halfLen }
             ];
         }
-        // 'arc' (sweep): need at least 2 points for the ribbon; single-hex = short arc across the hex, perpendicular to unit, staying inside the hex
-        const sorted = hexPixels.slice().sort((a, b) => (a.y - b.y) * swingDir);
+        // 'arc' (sweep): order points along the arc (perpendicular to unit->center) so the ribbon traces through each hex
+        const alongArc = (p) => (p.x - originPos.x) * perpX + (p.y - originPos.y) * perpY;
+        const sorted = hexPixels.slice().sort((a, b) => (alongArc(a) - alongArc(b)) * swingDir);
         if (sorted.length === 1) {
             const tgt = sorted[0];
             const hexRadius = Math.floor((this.manager?.config?.horizontalSpacing ?? 23) * 0.45);

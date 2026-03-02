@@ -1,7 +1,7 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 import { getLocalizedText } from '../core/Language.js';
-import { UI_TEXT } from '../data/Translations.js';
+import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
 
 const RECOVERY_DIALOGUE = {
     'liubei': {
@@ -107,8 +107,9 @@ export class RecoveryScene extends BaseScene {
             ctx.strokeRect(px - 0.5, py - 0.5, 41, 49);
         }
 
-        // Name
-        this.drawPixelText(ctx, current.name, cx, 125, { 
+        // Name (localized)
+        const displayName = getLocalizedCharacterName(current.name) || current.name;
+        this.drawPixelText(ctx, displayName, cx, 125, { 
             color: '#fff', 
             font: '10px Silkscreen', 
             align: 'center' 

@@ -73,13 +73,11 @@ export function getLocalizedText(text) {
  */
 export function getFontForLanguage(defaultFont = '8px Silkscreen') {
     if (LANGUAGE.current === 'zh') {
-        // For Chinese, always use 12px zpix (required for proper character display)
-        // Extract size from default font to maintain relative sizing, but minimum 12px
+        // For Chinese, use zpix only at its intended sizes (12px, 24px) so pixel font stays crisp.
         const sizeMatch = defaultFont.match(/(\d+)px/);
-        let size = sizeMatch ? parseInt(sizeMatch[1]) : 8;
-        // Scale up proportionally: 8px -> 12px, 10px -> 15px, etc.
-        size = Math.max(12, Math.round(size * 1.5));
-        return `${size}px zpix`;
+        const size = sizeMatch ? parseInt(sizeMatch[1]) : 8;
+        const zpixSize = size >= 16 ? 24 : 12;
+        return `${zpixSize}px zpix`;
     }
     return defaultFont;
 }

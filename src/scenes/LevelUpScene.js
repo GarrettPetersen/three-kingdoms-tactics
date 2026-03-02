@@ -2,7 +2,7 @@ import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 import { UPGRADE_PATHS, ATTACKS } from '../core/Constants.js';
 import { getLocalizedText } from '../core/Language.js';
-import { UI_TEXT } from '../data/Translations.js';
+import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
 import { getMaxHpForLevel as getUnitMaxHpForLevel } from '../data/UnitRules.js';
 
 export class LevelUpScene extends BaseScene {
@@ -135,23 +135,30 @@ export class LevelUpScene extends BaseScene {
 
         const cx = canvas.width / 2;
         
-        // Character Image (moved up to leave more room for text below, especially Chinese)
-        const img = assets.getImage(current.imgKey);
-        if (img) {
-            const frame = (this.timer * 0.002);
-            this.drawCharacter(ctx, img, 'victory', frame, cx, 82);
-        }
-
-        // Text (all moved up for fit)
+        // LEVEL UP title only above the character
         const pulse = Math.abs(Math.sin(Date.now() / 300));
-        this.drawPixelText(ctx, getLocalizedText({ en: "LEVEL UP!", zh: "升级！" }), cx, 40, { 
+        this.drawPixelText(ctx, getLocalizedText({ en: "LEVEL UP!", zh: "升级！" }), cx, 32, { 
             color: `rgba(255, 215, 0, ${0.8 + pulse * 0.2})`, 
             font: '16px Silkscreen', 
             align: 'center',
             outline: true
         });
 
-        this.drawPixelText(ctx, `${current.name}`, cx, 118, { 
+        // Draw order: title -> character -> name+level -> bonuses. Name/level must stay below
+        // the sprite (use spriteBottom) so they never overlap the character.
+        const characterY = 99;
+        const spriteBottom = characterY + 28;  // BaseScene draws sprite y-44..y+28
+        const img = assets.getImage(current.imgKey);
+        if (img) {
+            const frame = (this.timer * 0.002);
+            this.drawCharacter(ctx, img, 'victory', frame, cx, characterY);
+        }
+
+        // Name and level: just below sprite (minimal padding under sprite); name localized
+        const nameY = spriteBottom + 6;
+        const levelY = nameY + 14;
+        const displayName = getLocalizedCharacterName(current.name) || current.name;
+        this.drawPixelText(ctx, displayName, cx, nameY, { 
             color: '#fff', 
             font: '10px Silkscreen', 
             align: 'center' 
@@ -160,15 +167,16 @@ export class LevelUpScene extends BaseScene {
         this.drawPixelText(ctx, getLocalizedText({
             en: `LEVEL ${current.oldLevel} -> ${current.newLevel}`,
             zh: `等级 ${current.oldLevel} -> ${current.newLevel}`
-        }), cx, 133, {
+        }), cx, levelY, {
             color: '#ffd700', 
             font: '8px Silkscreen', 
             align: 'center' 
         });
 
+        const nameLevelBlockBottom = levelY + 14;
         if (this.showBonuses) {
-            let by = 148;
-            const promotionY = 138;
+            let by = nameLevelBlockBottom + 10;
+            const promotionY = nameLevelBlockBottom + 20;
             const reserveForPromotion = this.isPromoting && !this.chosenClass;
             
             // 1) Always-known stat bonuses first.
@@ -222,14 +230,14 @@ export class LevelUpScene extends BaseScene {
             bonuses.forEach(b => {
                 const lines = this.wrapText(ctx, `+ ${b}`, 200, '8px Tiny5');
                 lines.forEach(line => {
-                    const maxY = reserveForPromotion ? (promotionY - 8) : 218;
+                    const maxY = reserveForPromotion ? (promotionY - 8) : 222;
                     if (by > maxY) return;
                     this.drawPixelText(ctx, line, cx, by, { 
                         color: '#4f4', 
                         font: '8px Tiny5', 
                         align: 'center' 
                     });
-                    by += 11;
+                    by += 14;
                 });
             });
         }
@@ -240,7 +248,7 @@ export class LevelUpScene extends BaseScene {
             ctx.save();
             ctx.globalAlpha = 0.5 + pulse2 * 0.5;
             const continueText = getLocalizedText(UI_TEXT['CLICK TO CONTINUE']);
-            this.drawPixelText(ctx, continueText, cx, 228, {
+            this.drawPixelText(ctx, continueText, cx, 232, {
                 color: '#aaa',
                 font: '8px Silkscreen',
                 align: 'center'
