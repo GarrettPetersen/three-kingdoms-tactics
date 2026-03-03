@@ -628,6 +628,7 @@ export const CHARACTER_NAMES = {
     'Soldier': { en: 'Soldier', zh: '士兵' },
     'Cavalry': { en: 'Cavalry', zh: '骑兵' },
     'Yellow Turban': { en: 'Yellow Turban', zh: '黄巾军' },
+    'Yellow Turban Archer': { en: 'Yellow Turban Archer', zh: '黄巾弓手' },
     'Imperial Escort': { en: 'Imperial Escort', zh: '官军护卫' },
     'Qingzhou Guard': { en: 'Qingzhou Guard', zh: '青州守卫' },
     'Archer': { en: 'Archer', zh: '弓箭手' },

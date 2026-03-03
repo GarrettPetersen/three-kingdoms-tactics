@@ -17,10 +17,10 @@ export const BATTLES = {
             { id: 'rebel1', r: 3, q: 2, type: 'enemy_soldier' },
             { id: 'rebel2', r: 3, q: 3, type: 'enemy_soldier' },
             { id: 'rebel3', r: 3, q: 4, type: 'enemy_soldier' },
-            { id: 'rebel4', r: 3, q: 5, type: 'enemy_soldier' },
+            { id: 'rebel4', r: 3, q: 5, type: 'enemy_soldier', templateId: 'rebel_archer' },
             { id: 'rebel5', r: 3, q: 6, type: 'enemy_soldier' },
             { id: 'rebel6', r: 1, q: 3, type: 'enemy_soldier' },
-            { id: 'rebel7', r: 1, q: 4, type: 'enemy_soldier' },
+            { id: 'rebel7', r: 1, q: 4, type: 'enemy_soldier', templateId: 'rebel_archer' },
             { id: 'rebel8', r: 1, q: 5, type: 'enemy_soldier' },
             // Government soldiers (right side, retreating) - halved for faster combat
             { id: 'soldier1', r: 8, q: 3, type: 'imperial_soldier' },
@@ -67,7 +67,7 @@ export const BATTLES = {
             { id: 'ally3', r: 1, q: 5, type: 'allied_soldier' },
             { id: 'dengmao', r: 8, q: 4, type: 'enemy_captain' },
             { id: 'chengyuanzhi', r: 9, q: 5, type: 'enemy_captain' },
-            { id: 'rebel1', r: 7, q: 3, type: 'enemy_soldier_weak' },
+            { id: 'rebel1', r: 7, q: 3, type: 'enemy_soldier_weak', templateId: 'rebel_archer' },
             { id: 'rebel2', r: 7, q: 5, type: 'enemy_soldier' }
         ],
         victoryCondition: {
@@ -104,12 +104,13 @@ export const BATTLES = {
             { id: 'ally1', r: 2, q: 2, type: 'allied_soldier' },
             { id: 'ally2', r: 1, q: 0, type: 'allied_soldier' },
             { id: 'ally3', r: 0, q: 1, type: 'allied_soldier' },
-            // Generate 20 rebels - half weak (level 1, 2HP), half normal (level 2, 3HP)
+            // Generate 20 rebels - half weak, half normal; ~1/5 are archers (at least 1)
             ...Array.from({length: 20}, (_, i) => ({ 
                 id: `rebel_pre_${i}`, 
                 r: 6 + Math.floor(i / 5), 
                 q: 1 + (i % 8), 
-                type: i % 2 === 0 ? 'enemy_soldier_weak' : 'enemy_soldier' 
+                type: i % 2 === 0 ? 'enemy_soldier_weak' : 'enemy_soldier',
+                templateId: i % 5 === 0 ? 'rebel_archer' : 'rebel'
             }))
         ],
         victoryCondition: {
@@ -171,8 +172,8 @@ export const BATTLES = {
             { id: 'rebel_corpse2', r: 8, q: 6, type: 'enemy_soldier', isDead: true },
             { id: 'rebel_corpse3', r: 9, q: 4, type: 'enemy_soldier', isDead: true },
             { id: 'rebel_corpse4', r: 10, q: 5, type: 'enemy_soldier', isDead: true },
-            // Rebels that will be executed in the cutscene
-            { id: 'rebel_cleanup1', r: 7, q: 4, type: 'enemy_soldier' },
+            // Rebels that will be executed in the cutscene (one archer)
+            { id: 'rebel_cleanup1', r: 7, q: 4, type: 'enemy_soldier', templateId: 'rebel_archer' },
             { id: 'rebel_cleanup2', r: 7, q: 6, type: 'enemy_soldier' }
         ],
         isCutscene: true,
@@ -405,14 +406,14 @@ export const BATTLES = {
             { id: 'dead_guard1', r: 5, q: 8, type: 'allied_soldier', isDead: true, frame: 2 },
             { id: 'dead_guard2', r: 7, q: 8, type: 'allied_soldier', isDead: true, frame: 2 },
             { id: 'dead_guard3', r: 6, q: 9, type: 'allied_soldier', isDead: true, frame: 2 },
-            // Yellow Turbans attacking Dong Zhuo - Spread out more
+            // Yellow Turbans attacking Dong Zhuo - Spread out more (~1/5 archers)
             { id: 'rebel1', r: 4, q: 4, type: 'enemy_soldier_weak' },
-            { id: 'rebel2', r: 6, q: 3, type: 'enemy_soldier' },
+            { id: 'rebel2', r: 6, q: 3, type: 'enemy_soldier', templateId: 'rebel_archer' },
             { id: 'rebel3', r: 8, q: 4, type: 'enemy_soldier_weak' },
             { id: 'rebel4', r: 5, q: 6, type: 'enemy_soldier' },
             { id: 'rebel5', r: 3, q: 6, type: 'enemy_soldier_weak' },
             { id: 'rebel6', r: 9, q: 6, type: 'enemy_soldier' },
-            { id: 'rebel7', r: 4, q: 7, type: 'enemy_soldier' },
+            { id: 'rebel7', r: 4, q: 7, type: 'enemy_soldier', templateId: 'rebel_archer' },
             { id: 'rebel8', r: 8, q: 7, type: 'enemy_soldier_weak' },
             { id: 'rebel9', r: 3, q: 4, type: 'enemy_soldier' },
             { id: 'rebel10', r: 9, q: 4, type: 'enemy_soldier_weak' },
@@ -523,7 +524,7 @@ export const BATTLES = {
             // In this battle, Zhang Bao and Zhang Liang are normal enemies and must be defeated.
             { id: 'zhangbao', r: 6, q: 1, type: 'zhang_bao' },
             { id: 'zhangliang', r: 5, q: 1, type: 'zhang_liang' },
-            { id: 'rebel1', r: 7, q: 2, type: 'enemy_soldier' },
+            { id: 'rebel1', r: 7, q: 2, type: 'enemy_soldier', templateId: 'rebel_archer' },
             { id: 'rebel2', r: 6, q: 2, type: 'enemy_soldier' },
             { id: 'rebel3', r: 5, q: 2, type: 'enemy_soldier' }
         ],
@@ -730,10 +731,12 @@ export const UNIT_TEMPLATES = {
         'dead_guard': { ...SOLDIER_VARIANTS.imperial_guard_dead }
     },
     'enemy_soldier': {
-        'rebel': { name: 'Yellow Turban', imgKey: 'yellowturban', hp: 3, moveRange: 3, attacks: ['bash'], faction: 'enemy', level: 2 }
+        'rebel': { name: 'Yellow Turban', imgKey: 'yellowturban', hp: 3, moveRange: 3, attacks: ['bash'], faction: 'enemy', level: 2 },
+        'rebel_archer': { name: 'Yellow Turban Archer', imgKey: 'yellowturbanarcher', hp: 3, moveRange: 3, attacks: ['arrow_shot'], faction: 'enemy', level: 2 }
     },
     'enemy_soldier_weak': {
-        'rebel': { name: 'Yellow Turban', imgKey: 'yellowturban', hp: 2, moveRange: 3, attacks: ['bash'], faction: 'enemy', level: 1 }
+        'rebel': { name: 'Yellow Turban', imgKey: 'yellowturban', hp: 2, moveRange: 3, attacks: ['bash'], faction: 'enemy', level: 1 },
+        'rebel_archer': { name: 'Yellow Turban Archer', imgKey: 'yellowturbanarcher', hp: 2, moveRange: 3, attacks: ['arrow_shot'], faction: 'enemy', level: 1 }
     },
     'imperial_soldier': {
         'soldier': { ...SOLDIER_VARIANTS.imperial_soldier },
