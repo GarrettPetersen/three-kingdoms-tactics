@@ -4362,6 +4362,9 @@ export class TacticsScene extends BaseScene {
         if (cell && cell.unit === boulder) cell.unit = null;
         const collisionAtSegmentEnd = this.isSegmentEndBlocked(path, 1);
         const segmentFallHeight = this.getSegmentFallLevels(path, 0);
+        const firstSegmentCrush = path.length > 1 &&
+            this.getLivingUnitOccupyingCell(path[1].r, path[1].q) &&
+            segmentFallHeight > 1;
         boulder.rollData = {
             path,
             pathIndex: 0,
@@ -4370,6 +4373,7 @@ export class TacticsScene extends BaseScene {
             dirIndex,
             segmentComplete: false,
             collisionAtSegmentEnd,
+            crushAtSegmentEnd: firstSegmentCrush,
             overshootAmount: 0.4,
             segmentFallHeight
         };
@@ -4454,7 +4458,10 @@ export class TacticsScene extends BaseScene {
         const occupant = this.getLivingUnitOccupyingCell(path[idx + 1].r, path[idx + 1].q) || (nextCell.unit && nextCell.unit !== boulder ? nextCell.unit : null);
         if (occupant && occupant.hp > 0) {
             if (levelDiff < -1) {
+                // One motion: boulder has already rolled to target with parabolic fall (no overshoot). Set position/cell so no snap-back or teleport.
                 if (prevCell && prevCell.unit === boulder) prevCell.unit = null;
+                boulder.setPosition(path[idx + 1].r, path[idx + 1].q);
+                nextCell.unit = boulder;
                 this.handleCrushLanding(boulder, occupant, nextCell, levelDiff, targetPos);
                 boulder.rollData = null;
                 this.stopBoulderRollSoundIfDone();
@@ -4491,6 +4498,10 @@ export class TacticsScene extends BaseScene {
         }
         roll.collisionAtSegmentEnd = roll.pathIndex + 1 < path.length && this.isSegmentEndBlocked(path, roll.pathIndex + 1);
         roll.segmentFallHeight = this.getSegmentFallLevels(path, roll.pathIndex);
+        const nextEnd = path[roll.pathIndex + 2];
+        roll.crushAtSegmentEnd = nextEnd &&
+            this.getLivingUnitOccupyingCell(nextEnd.r, nextEnd.q) &&
+            this.getSegmentFallLevels(path, roll.pathIndex + 1) > 1;
     }
 
     startRetreatPhase() {
@@ -10846,6 +10857,8 @@ export class TacticsScene extends BaseScene {
     }
 
     handleCrushLanding(faller, occupant, targetCell, levelDiff, targetPos) {
+        // Short delay so impact sound plays as boulder lands (boulder roll already did parabolic fall in one motion)
+        const delayMs = (faller && faller.name === 'Boulder') ? 80 : 400;
         setTimeout(() => {
             const isBoulder = faller && faller.name === 'Boulder';
             assets.playSound(isBoulder ? 'boulder_impact' : 'collision');
@@ -10887,7 +10900,7 @@ export class TacticsScene extends BaseScene {
                     targetCell.unit = (faller.hp > 0) ? faller : null;
                 }
             }
-        }, 400); // Wait for fall animation
+        }, delayMs);
     }
 
     handleKeyDown(e) {

@@ -1,6 +1,6 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
-import { ANIMATIONS } from '../core/Constants.js';
+import { ANIMATIONS, IS_DEMO } from '../core/Constants.js';
 import { CHAPTERS } from '../data/Chapters.js';
 import { getLocalizedText, LANGUAGE, getFontForLanguage, getTextContainerSize } from '../core/Language.js';
 import { UI_TEXT } from '../data/Translations.js';
@@ -1138,45 +1138,54 @@ export class MapScene extends BaseScene {
     
     
     showChapter1End() {
-        // Show "End of Chapter 1" screen
+        const baseScript = [
+            { bg: 'black', type: 'command', action: 'clearActors' },
+            {
+                type: 'title',
+                text: { en: "CHAPTER 1 COMPLETE", zh: "第一章完成" },
+                subtext: { en: "The Oath in the Peach Garden", zh: "桃园结义" },
+                duration: 4000
+            },
+            {
+                type: 'dialogue',
+                portraitKey: 'narrator',
+                voiceId: 'gz_nar_poem_01',
+                text: { en: "As it was in olden time so it is today,\nThe simple wight may merit well,\nOfficialdom holds sway;\nZhang Fei, the blunt and hasty,\nWhere can you find his peer?", zh: "古往今来皆如此，\n布衣虽有功，\n官场仍当道；\n张飞，直率而急躁，\n何处可寻其匹？" }
+            },
+            {
+                type: 'dialogue',
+                portraitKey: 'narrator',
+                voiceId: 'ch1_end_01',
+                text: {
+                    en: "But slaying the ungrateful would\nMean many deaths a year.\n\nDong Zhuo's fate will be unrolled in later chapters...",
+                    zh: "若尽诛忘恩之徒，\n一年不知要杀多少人。\n\n董卓的命运，将在后续章节展开……"
+                }
+            },
+            {
+                type: 'title',
+                text: { en: "END OF CHAPTER 1", zh: "第一章终" },
+                subtext: { en: "Liu Bei's Story will continue...", zh: "刘备的故事仍将继续……" },
+                duration: 5000
+            }
+        ];
+        if (IS_DEMO) {
+            baseScript.push({
+                type: 'title',
+                text: { en: "The full version of Three Kingdoms Stratagem will release in 2026. Please wishlist it on Steam.", zh: "《三国玄机》完整版将于2026年发售。请在Steam上添加愿望单。" },
+                subtext: null,
+                duration: 6000
+            });
+        }
+        baseScript.push({ type: 'command', action: 'fade', target: 1, speed: 0.001 });
+
         this.manager.switchTo('narrative', {
             musicKey: 'oath',
             onComplete: () => {
                 this.manager.gameState.setStoryCursor('chapter1_complete', 'liubei');
                 this.manager.gameState.addMilestone('chapter1_complete');
-                this.manager.switchTo('campaign_selection'); // Back to story selection
+                this.manager.switchTo('campaign_selection');
             },
-            script: [
-                { bg: 'black', type: 'command', action: 'clearActors' },
-                {
-                    type: 'title',
-                    text: { en: "CHAPTER 1 COMPLETE", zh: "第一章完成" },
-                    subtext: { en: "The Oath in the Peach Garden", zh: "桃园结义" },
-                    duration: 4000
-                },
-                {
-                    type: 'dialogue',
-                    portraitKey: 'narrator',
-                    voiceId: 'gz_nar_poem_01',
-                    text: { en: "As it was in olden time so it is today,\nThe simple wight may merit well,\nOfficialdom holds sway;\nZhang Fei, the blunt and hasty,\nWhere can you find his peer?", zh: "古往今来皆如此，\n布衣虽有功，\n官场仍当道；\n张飞，直率而急躁，\n何处可寻其匹？" }
-                },
-                {
-                    type: 'dialogue',
-                    portraitKey: 'narrator',
-                    voiceId: 'ch1_end_01',
-                    text: {
-                        en: "But slaying the ungrateful would\nMean many deaths a year.\n\nDong Zhuo's fate will be unrolled in later chapters...",
-                        zh: "若尽诛忘恩之徒，\n一年不知要杀多少人。\n\n董卓的命运，将在后续章节展开……"
-                    }
-                },
-                { 
-                    type: 'title', 
-                    text: { en: "END OF CHAPTER 1", zh: "第一章终" }, 
-                    subtext: { en: "Liu Bei's Story will continue...", zh: "刘备的故事仍将继续……" },
-                    duration: 5000 
-                },
-                { type: 'command', action: 'fade', target: 1, speed: 0.001 }
-            ]
+            script: baseScript
         });
     }
 

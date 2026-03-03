@@ -1,3 +1,6 @@
+/** Set to true for the demo build; shows wishlist card after Chapter 1 (Dong Zhuo rescue). */
+export const IS_DEMO = false;
+
 export const ANIMATIONS = {
     standby:  { start: 0,  length: 4 },
     attack_1: { start: 4,  length: 4 },

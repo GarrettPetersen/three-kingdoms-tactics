@@ -88,13 +88,16 @@ export class LevelUpScene extends BaseScene {
             if (current.newLevel === 2 && (!currentClass || currentClass === 'soldier')) {
                 this.isPromoting = true;
                 this.promotionType = 'soldier_ranged';
+                this.promotionChoice = 'soldier'; // default for keyboard/controller
             } else if (current.newLevel === 3 && currentClass === 'archer') {
                 // Level 3: archer -> choose Archer or Crossbowman
                 this.isPromoting = true;
                 this.promotionType = 'archer_crossbow';
+                this.promotionChoice = 'archer'; // default for keyboard/controller
             } else if (current.newLevel > 2 && !currentClass) {
                 this.isPromoting = true;
                 this.promotionType = 'soldier_ranged';
+                this.promotionChoice = 'soldier';
             }
         }
     }
@@ -414,8 +417,33 @@ export class LevelUpScene extends BaseScene {
     }
 
     handleKeyDown(e) {
+        if (this.isPromoting && !this.chosenClass) {
+            // Keyboard/controller: select promotion option
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                if (this.promotionType === 'soldier_ranged') {
+                    this.promotionChoice = e.key === 'ArrowLeft' ? 'soldier' : 'archer';
+                } else {
+                    this.promotionChoice = e.key === 'ArrowLeft' ? 'archer' : 'crossbowman';
+                }
+                assets.playSound('ui_click', 0.5);
+                return;
+            }
+            if (e.key === 'Enter' || e.key === ' ') {
+                if (this.promotionChoice) {
+                    this.selectPromotion(this.promotionChoice);
+                }
+                return;
+            }
+            return;
+        }
+        // Not promoting: advance or speed up
         if (e.key === 'Enter' || e.key === ' ') {
-            this.handleInput(e);
+            if (this.timer > 1500) {
+                this.next();
+            } else {
+                this.timer = 1001;
+                this.showBonuses = true;
+            }
         }
     }
 }

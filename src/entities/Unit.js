@@ -228,7 +228,7 @@ export class Unit {
                 }
             } else {
                 const rollSpeed = 0.0022;
-                const maxP = roll.collisionAtSegmentEnd ? (roll.overshootAmount ?? 0.4) : 1;
+                const maxP = roll.crushAtSegmentEnd ? 1 : (roll.collisionAtSegmentEnd ? (roll.overshootAmount ?? 0.4) : 1);
                 roll.segmentProgress = Math.min(maxP, (roll.segmentProgress || 0) + dt * rollSpeed);
                 const path = roll.path;
                 const idx = roll.pathIndex || 0;
@@ -255,9 +255,9 @@ export class Unit {
                         // Rolling down or same row: interpolate as before
                         this.currentSortR = start.r + (end.r - start.r) * p;
                     }
-                    // Small parabolic cliff fall (same style as unit push fall: little arc, land in hex)
+                    // Parabolic cliff fall: drop in one motion (no overshoot when crushing)
                     if (roll.segmentFallHeight > 0) {
-                        const arcPixels = 8; // Subtle dip, like unit fall arc height
+                        const arcPixels = 12 * Math.max(1, roll.segmentFallHeight);
                         this.visualY += 4 * arcPixels * p * (1 - p);
                     }
                 }
