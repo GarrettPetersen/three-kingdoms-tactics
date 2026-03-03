@@ -23,6 +23,7 @@ export class AssetLoader {
         this.pendingMusic = null; // { key, targetVolume }
         this.onNextVoiceEnd = null; // one-time callback when current voice finishes (for action recording)
         this._voiceEndTimeout = null; // timeout for duration-based recorder stop
+        this.musicMutedByUser = false; // Cmd+Shift+M mute persists until toggled again or game restarted
     }
 
     async playVoice(voiceId, volume = 1.0) {
@@ -114,11 +115,13 @@ export class AssetLoader {
     }
 
     setMusicVolume(volume) {
-        if (this.currentIntro) this.currentIntro.volume = volume;
-        if (this.currentLoop) this.currentLoop.volume = volume;
+        const effective = this.musicMutedByUser ? 0 : volume;
+        if (this.currentIntro) this.currentIntro.volume = effective;
+        if (this.currentLoop) this.currentLoop.volume = effective;
     }
 
     fadeMusicVolume(targetVolume, duration = 200) {
+        const effectiveTarget = this.musicMutedByUser ? 0 : targetVolume;
         // Stop any existing ducking fade
         if (this.duckInterval) {
             clearInterval(this.duckInterval);
@@ -149,19 +152,19 @@ export class AssetLoader {
                 : 1 - Math.pow(-2 * progress + 2, 2) / 2;
 
             if (this.currentIntro) {
-                const newVolume = startIntroVolume + (targetVolume - startIntroVolume) * eased;
+                const newVolume = startIntroVolume + (effectiveTarget - startIntroVolume) * eased;
                 this.currentIntro.volume = Math.max(0, Math.min(1, newVolume));
             }
             
             if (this.currentLoop) {
-                const newVolume = startLoopVolume + (targetVolume - startLoopVolume) * eased;
+                const newVolume = startLoopVolume + (effectiveTarget - startLoopVolume) * eased;
                 this.currentLoop.volume = Math.max(0, Math.min(1, newVolume));
             }
 
             if (progress >= 1) {
                 // Ensure we hit the exact target
-                if (this.currentIntro) this.currentIntro.volume = targetVolume;
-                if (this.currentLoop) this.currentLoop.volume = targetVolume;
+                if (this.currentIntro) this.currentIntro.volume = effectiveTarget;
+                if (this.currentLoop) this.currentLoop.volume = effectiveTarget;
                 clearInterval(this.duckInterval);
                 this.duckInterval = null;
             }
@@ -637,7 +640,8 @@ export class AssetLoader {
         }
 
         this.baseMusicVolume = targetVolume;
-        const actualVolume = this.currentVoice ? targetVolume * 0.3 : targetVolume;
+        const requestedVolume = this.currentVoice ? targetVolume * 0.3 : targetVolume;
+        const actualVolume = this.musicMutedByUser ? 0 : requestedVolume;
 
         const nextIntro = this.getMusic(`${key}_intro`);
         const nextLoop = this.getMusic(`${key}_loop`);
@@ -674,7 +678,8 @@ export class AssetLoader {
         if (nextIntro && nextLoop) {
             nextIntro.onended = () => {
                 if (this.currentMusicKey === key) {
-                    const currentTarget = this.currentVoice ? this.baseMusicVolume * 0.3 : this.baseMusicVolume;
+                    const rawTarget = this.currentVoice ? this.baseMusicVolume * 0.3 : this.baseMusicVolume;
+                    const currentTarget = this.musicMutedByUser ? 0 : rawTarget;
                     nextLoop.volume = currentTarget;
                     nextLoop.currentTime = 0;
                     nextLoop.play().catch(e => {
@@ -709,7 +714,8 @@ export class AssetLoader {
             });
 
             // Fade in new music
-            const currentTarget = this.currentVoice ? this.baseMusicVolume * 0.3 : this.baseMusicVolume;
+            const rawTarget = this.currentVoice ? this.baseMusicVolume * 0.3 : this.baseMusicVolume;
+            const currentTarget = this.musicMutedByUser ? 0 : rawTarget;
             if (activeNextPart.volume < currentTarget - fadeInStep) {
                 activeNextPart.volume += fadeInStep;
                 finished = false;

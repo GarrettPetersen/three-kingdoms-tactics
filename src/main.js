@@ -258,14 +258,13 @@ async function init() {
         }
     });
 
-    // Ctrl+Shift+M or Cmd+Shift+M toggles in-game music (mute before recording so clips have no music)
-    let musicMutedByUser = false;
+    // Ctrl+Shift+M or Cmd+Shift+M toggles in-game music (mute persists until toggled again or game closed)
     window.addEventListener('keydown', (e) => {
         const isMusicHotkey = (e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'm';
         if (!isMusicHotkey) return;
         e.preventDefault();
-        musicMutedByUser = !musicMutedByUser;
-        const vol = musicMutedByUser ? 0 : (assets.baseMusicVolume ?? 0.5);
+        assets.musicMutedByUser = !assets.musicMutedByUser;
+        const vol = assets.musicMutedByUser ? 0 : (assets.baseMusicVolume ?? 0.5);
         assets.setMusicVolume(vol);
     });
 
