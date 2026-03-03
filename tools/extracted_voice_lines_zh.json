@@ -337,7 +337,7 @@
   },
   {
     "id": "daxing_lb_03",
-    "char": "zhoujing",
+    "char": "liubei",
     "text": "邹县令，我们只求为国效力。请带我们到大兴县，让我们结束这场叛乱。",
     "source": "NarrativeScripts.js"
   },
@@ -403,8 +403,8 @@
   },
   {
     "id": "debug_narrative_01",
-    "char": "system",
-    "text": "Cheat code accepted. Narrative scene is functional.",
+    "char": "narrator",
+    "text": "作弊码已接受。剧情场景运行正常。",
     "source": "main.js"
   },
   {
@@ -1111,13 +1111,13 @@
   },
   {
     "id": "pro_lb_choice_01",
-    "char": "zhangfei",
+    "char": "liubei",
     "text": "我叹百姓受苦。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_lb_choice_02",
-    "char": "zhangfei",
+    "char": "liubei",
     "text": "我叹自己失去的地位。",
     "source": "NarrativeScripts.js"
   },
