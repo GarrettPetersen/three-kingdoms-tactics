@@ -205,7 +205,7 @@ async function init() {
     recordStatus.textContent = '—';
     const recordHint = document.createElement('div');
     recordHint.style.cssText = 'font-size:10px;color:#aaa;margin-top:4px;';
-    recordHint.textContent = 'Records canvas only (256×256). Share tab/window for game audio. Clips save to Downloads.';
+    recordHint.textContent = 'Records canvas only (256×256). Share tab/window for game audio. Clips save to Downloads. Ctrl+Shift+M toggles music (mute before recording).';
     const armBtn = document.createElement('button');
     armBtn.textContent = 'Arm record (next action)';
     armBtn.style.cssText = 'margin-top:6px;padding:4px 8px;cursor:pointer;';
@@ -256,6 +256,17 @@ async function init() {
             recordPanel.style.display = recordPanel.style.display === 'none' ? 'block' : 'none';
             console.log('[Record hotkey] panel toggled, display=', recordPanel.style.display);
         }
+    });
+
+    // Ctrl+Shift+M or Cmd+Shift+M toggles in-game music (mute before recording so clips have no music)
+    let musicMutedByUser = false;
+    window.addEventListener('keydown', (e) => {
+        const isMusicHotkey = (e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'm';
+        if (!isMusicHotkey) return;
+        e.preventDefault();
+        musicMutedByUser = !musicMutedByUser;
+        const vol = musicMutedByUser ? 0 : (assets.baseMusicVolume ?? 0.5);
+        assets.setMusicVolume(vol);
     });
 
     canvas.addEventListener('pointerdown', (e) => sceneManager.handleInput(e));
