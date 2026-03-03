@@ -156,21 +156,9 @@
     "source": "Battles.js"
   },
   {
-    "id": "cc_yc_zb_retreat_01",
-    "char": "zhangbao",
-    "text": "梁弟，速突围！回广宗再与官军算账！",
-    "source": "Battles.js"
-  },
-  {
     "id": "cc_yc_zj_01",
     "char": "zhujun",
     "text": "张梁、张宝只率少数骑卒突围，多半会往广宗而去。",
-    "source": "Battles.js"
-  },
-  {
-    "id": "cc_yc_zl_retreat_01",
-    "char": "zhangliang",
-    "text": "退往广宗！与兄长会合！",
     "source": "Battles.js"
   },
   {
@@ -337,7 +325,7 @@
   },
   {
     "id": "daxing_lb_03",
-    "char": "liubei",
+    "char": "zhoujing",
     "text": "邹县令，我们只求为国效力。请带我们到大兴县，让我们结束这场叛乱。",
     "source": "NarrativeScripts.js"
   },
@@ -403,7 +391,7 @@
   },
   {
     "id": "debug_narrative_01",
-    "char": "narrator",
+    "char": "system",
     "text": "作弊码已接受。剧情场景运行正常。",
     "source": "main.js"
   },
@@ -1111,13 +1099,13 @@
   },
   {
     "id": "pro_lb_choice_01",
-    "char": "liubei",
+    "char": "zhangfei",
     "text": "我叹百姓受苦。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_lb_choice_02",
-    "char": "liubei",
+    "char": "zhangfei",
     "text": "我叹自己失去的地位。",
     "source": "NarrativeScripts.js"
   },

@@ -159,21 +159,9 @@
     "source": "Battles.js"
   },
   {
-    "id": "cc_yc_zb_retreat_01",
-    "char": "zhangbao",
-    "text": "Brother Liang, break away! We will settle this at Guangzong!",
-    "source": "Battles.js"
-  },
-  {
     "id": "cc_yc_zj_01",
     "char": "zhujun",
     "text": "Zhang Liang and Zhang Bao slipped away with a few horsemen. They will likely run toward Guangzong.",
-    "source": "Battles.js"
-  },
-  {
-    "id": "cc_yc_zl_retreat_01",
-    "char": "zhangliang",
-    "text": "To Guangzong! Rejoin the elder brother!",
     "source": "Battles.js"
   },
   {

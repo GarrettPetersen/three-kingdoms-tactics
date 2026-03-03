@@ -71,8 +71,10 @@ NAME_TO_CHAR = {
 
 
 def extract_voice_lines_from_file(filepath):
-    """Extract all voice lines from a single JS file."""
+    """Extract all voice lines from a single JS file. Returns (lines, missing) where missing is a list of {id, source} for voiceIds that lack the requested language."""
     lines = []
+    missing_lang = []
+    lang_to_extract = os.environ.get('EXTRACT_LANG', 'en')
     
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
@@ -115,9 +117,6 @@ def extract_voice_lines_from_file(filepath):
         obj_str = content[obj_start:obj_end]
         
         # Extract text field - support both string and object formats
-        # Determine which language to extract based on EXTRACT_LANG env var or default to 'en'
-        lang_to_extract = os.environ.get('EXTRACT_LANG', 'en')
-        
         # First try object format: text: { en: "...", zh: "..." }
         # Use word boundary to avoid matching buttonText.
         text_obj_start = re.search(r'\btext\s*:\s*\{', obj_str, re.DOTALL)
@@ -154,37 +153,25 @@ def extract_voice_lines_from_file(filepath):
                 # Handle escaped quotes
                 text = text.replace('\\"', '"').replace("\\'", "'")
             else:
-                # Fallback: if requested language not found, try 'en'
-                if lang_to_extract != 'en':
-                    pattern_en_no_quotes = r'en\s*:\s*"(.+?)"(?=\s*[,}])'
-                    pattern_en_no_quotes_single_value = r"en\s*:\s*'(.+?)'(?=\s*[,}])"
-                    pattern_en_double = r'"en"\s*:\s*"(.+?)"(?=\s*[,}])'
-                    text_obj_match = re.search(pattern_en_no_quotes, text_region, re.DOTALL)
-                    if not text_obj_match:
-                        text_obj_match = re.search(pattern_en_no_quotes_single_value, text_region, re.DOTALL)
-                    if not text_obj_match:
-                        text_obj_match = re.search(pattern_en_double, text_region, re.DOTALL)
-                    if text_obj_match:
-                        text = text_obj_match.group(1)
-                        text = text.replace('\\n', '\n')
-                        text = text.replace('\\"', '"').replace("\\'", "'")
-                    else:
-                        text = None
-                else:
-                    text = None
+                # Requested language not in text object — no fallback; require translation
+                missing_lang.append({'id': voice_id, 'source': os.path.basename(filepath)})
+                continue
         else:
-            # Fall back to string format: text: "..."
+            # Plain string format: text: "..." (no language keys — effectively English only)
             text_match = re.search(r'\btext\s*:\s*[\'"](.+?)[\'"](?:\s*[,}])', obj_str, re.DOTALL)
             if not text_match:
                 # Try escaped quotes or other formats
                 text_match = re.search(r'text\s*:\s*[\'"](.+?)[\'"]', obj_str, re.DOTALL)
             if text_match:
+                if lang_to_extract != 'en':
+                    missing_lang.append({'id': voice_id, 'source': os.path.basename(filepath)})
+                    continue
                 text = text_match.group(1)
             else:
                 print(f"  Warning: No text found for voiceId '{voice_id}' in {filepath}")
                 continue
         
-        # Skip if text is None
+        # Skip if text is None (e.g. en requested but no en key in object)
         if text is None:
             print(f"  Warning: Text is None for voiceId '{voice_id}' in {filepath}")
             continue
@@ -244,7 +231,7 @@ def extract_voice_lines_from_file(filepath):
             'source': os.path.basename(filepath)
         })
     
-    return lines
+    return (lines, missing_lang)
 
 
 def load_phonetic_overrides(filepath):
@@ -256,12 +243,16 @@ def load_phonetic_overrides(filepath):
 
 
 def main():
+    import sys
     project_root = Path(__file__).parent.parent
     
     all_lines = []
     seen_ids = set()
+    all_missing = []  # voiceIds missing the requested language
     
-    print("Extracting voice lines from game data files...")
+    lang_to_extract = os.environ.get('EXTRACT_LANG', 'en')
+    print(f"Extracting voice lines for language: {lang_to_extract}")
+    print("Scanning game data files...")
     
     for source_file in SOURCE_FILES:
         filepath = project_root / source_file
@@ -270,7 +261,8 @@ def main():
             continue
             
         print(f"  Scanning: {source_file}")
-        lines = extract_voice_lines_from_file(filepath)
+        lines, missing_lang = extract_voice_lines_from_file(filepath)
+        all_missing.extend(missing_lang)
         
         for line in lines:
             if line['id'] in seen_ids:
@@ -278,6 +270,24 @@ def main():
                 continue
             seen_ids.add(line['id'])
             all_lines.append(line)
+    
+    # If any voice lines are missing the requested language, error and prompt to translate
+    if all_missing:
+        seen_missing = set()
+        unique_missing = []
+        for m in all_missing:
+            if m['id'] not in seen_missing:
+                seen_missing.add(m['id'])
+                unique_missing.append(m)
+        print("\n" + "=" * 60)
+        print(f"ERROR: {len(unique_missing)} voice line(s) have no '{lang_to_extract}' text.")
+        print("Add the missing language to each dialogue (e.g. text: { en: \"...\", zh: \"...\" }).")
+        print("Then run extraction again.")
+        print("=" * 60)
+        for m in unique_missing:
+            print(f"  - {m['id']} (in {m['source']})")
+        print("")
+        sys.exit(1)
     
     # Sort by voiceId for consistency
     all_lines.sort(key=lambda x: x['id'])
