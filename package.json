@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "electron-main.js",
   "scripts": {
+    "export-trailer": "node tools/export_trailer.js",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",

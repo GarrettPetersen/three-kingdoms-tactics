@@ -440,7 +440,17 @@ export class NarrativeScene extends BaseScene {
 
         // Trigger voice if present
         if (step.voiceId) {
+            // If armed, start recording this line (covers first intro line and any line we land on without clicking advance)
+            if (this.manager.actionRecorder?.armed) {
+                this.manager.actionRecorder.onUserActionStart();
+            }
+            // Set end callback before playVoice so it's in place when the voice ends (avoids race with short/clipped audio)
+            if (this.manager.actionRecorder?.recording) {
+                assets.onNextVoiceEnd = () => this.manager.actionRecorder?.signalActionEnd();
+            }
             assets.playVoice(step.voiceId);
+        } else if ((step.type === 'title' || step.type === 'dialogue' || step.type === 'narrator') && step.duration && this.manager.actionRecorder?.recording) {
+            setTimeout(() => this.manager.actionRecorder?.signalActionEnd(), step.duration);
         }
 
         if (step.type === 'command') {
@@ -1718,6 +1728,9 @@ export class NarrativeScene extends BaseScene {
         if (step && (step.type === 'dialogue' || step.type === 'title' || step.type === 'narrator')) {
             // If in interactive mode, only advance if we're not on the interactive step
             if (!this.isInteractive || (this.isInteractive && this.currentStep !== this.interactiveStepIndex)) {
+                if (this.manager.actionRecorder?.armed) {
+                    this.manager.actionRecorder.onUserActionStart();
+                }
                 this.nextStep();
             }
         }

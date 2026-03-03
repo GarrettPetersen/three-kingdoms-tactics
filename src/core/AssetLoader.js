@@ -21,6 +21,7 @@ export class AssetLoader {
         this.loopingSounds = new Map(); // key -> { audio, fadeInterval }
         this.audioUnlocked = false;
         this.pendingMusic = null; // { key, targetVolume }
+        this.onNextVoiceEnd = null; // one-time callback when current voice finishes (for action recording)
     }
 
     async playVoice(voiceId, volume = 1.0) {
@@ -50,11 +51,21 @@ export class AssetLoader {
                 if (this.currentVoice === audio) {
                     this.stopVoice();
                 }
+                if (this.onNextVoiceEnd) {
+                    const fn = this.onNextVoiceEnd;
+                    this.onNextVoiceEnd = null;
+                    fn();
+                }
             };
 
             await audio.play();
         } catch (e) {
             console.warn(`Voice line not found or playback failed: ${src}`, e);
+            if (this.onNextVoiceEnd) {
+                const fn = this.onNextVoiceEnd;
+                this.onNextVoiceEnd = null;
+                fn();
+            }
             this.stopVoice();
         }
     }
@@ -66,6 +77,7 @@ export class AssetLoader {
             this.currentVoice.currentTime = 0;
             this.currentVoice = null;
         }
+        this.onNextVoiceEnd = null;
         // Restore music volume smoothly
         this.fadeMusicVolume(this.baseMusicVolume, 300);
     }

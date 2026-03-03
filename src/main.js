@@ -1,5 +1,6 @@
 import { assets } from './core/AssetLoader.js';
 import { SceneManager } from './core/SceneManager.js';
+import { ActionRecorder } from './core/ActionRecorder.js';
 import { LANGUAGE, setLanguage } from './core/Language.js';
 import { TitleScene } from './scenes/TitleScene.js';
 import { CustomBattleMenuScene } from './scenes/CustomBattleMenuScene.js';
@@ -192,6 +193,70 @@ async function init() {
     sceneManager.addScene('recovery', new RecoveryScene());
     sceneManager.addScene('levelup', new LevelUpScene());
     sceneManager.addScene('credits', new CreditsScene());
+
+    const actionRecorder = new ActionRecorder(assets, canvas);
+    sceneManager.actionRecorder = actionRecorder;
+
+    const recordPanel = document.createElement('div');
+    recordPanel.id = 'trailer-record-panel';
+    recordPanel.style.cssText = 'position:fixed;top:8px;right:8px;z-index:9999;background:rgba(0,0,0,0.85);color:#eee;padding:8px 12px;border-radius:6px;font:12px sans-serif;display:none;max-width:260px;';
+    const recordStatus = document.createElement('div');
+    recordStatus.id = 'trailer-record-status';
+    recordStatus.textContent = '—';
+    const recordHint = document.createElement('div');
+    recordHint.style.cssText = 'font-size:10px;color:#aaa;margin-top:4px;';
+    recordHint.textContent = 'Records canvas only (256×256). Share tab/window for game audio. Clips save to Downloads.';
+    const armBtn = document.createElement('button');
+    armBtn.textContent = 'Arm record (next action)';
+    armBtn.style.cssText = 'margin-top:6px;padding:4px 8px;cursor:pointer;';
+    armBtn.onclick = async () => {
+        const ok = await actionRecorder.arm();
+        recordStatus.textContent = ok ? 'Armed — click in-game to record' : (actionRecorder.lastError || 'Share tab when prompted');
+        stopBtn.style.display = 'none';
+    };
+    const stopBtn = document.createElement('button');
+    stopBtn.textContent = 'Stop recording';
+    stopBtn.style.cssText = 'margin-top:4px;padding:4px 8px;cursor:pointer;display:none;';
+    stopBtn.onclick = () => {
+        actionRecorder.signalActionEnd();
+        stopBtn.style.display = 'none';
+    };
+    actionRecorder.onArmedChange = (armed) => {
+        recordStatus.textContent = armed ? 'Armed — click in-game to record' : (actionRecorder.recording ? 'Recording…' : '—');
+        stopBtn.style.display = actionRecorder.recording ? 'block' : 'none';
+    };
+    actionRecorder.onRecordingChange = (recording) => {
+        recordStatus.textContent = recording ? 'Recording…' : (actionRecorder.armed ? 'Armed' : '—');
+        stopBtn.style.display = recording ? 'block' : 'none';
+    };
+    actionRecorder.onClipSaved = (filename) => {
+        recordStatus.textContent = `Saved ${filename} (in Downloads)`;
+        recordStatus.title = 'Clip saved to your browser\u2019s Downloads folder';
+        setTimeout(() => {
+            if (recordStatus.textContent.startsWith('Saved ')) {
+                recordStatus.textContent = actionRecorder.armed ? 'Armed — click in-game to record' : '—';
+                recordStatus.title = '';
+            }
+        }, 5000);
+    };
+    recordPanel.appendChild(recordStatus);
+    recordPanel.appendChild(recordHint);
+    recordPanel.appendChild(armBtn);
+    recordPanel.appendChild(stopBtn);
+    document.body.appendChild(recordPanel);
+
+    // Ctrl+Shift+E or Cmd+Shift+E toggles record panel (Cmd+Shift+R is browser "hard reload")
+    window.addEventListener('keydown', (e) => {
+        const isRecordHotkey = (e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'e';
+        if (e.shiftKey && (e.ctrlKey || e.metaKey) && /^[A-Z]$/i.test(e.key)) {
+            console.log('[Record hotkey] keydown', { key: e.key, ctrlKey: e.ctrlKey, metaKey: e.metaKey, shiftKey: e.shiftKey, isRecordHotkey });
+        }
+        if (isRecordHotkey) {
+            e.preventDefault();
+            recordPanel.style.display = recordPanel.style.display === 'none' ? 'block' : 'none';
+            console.log('[Record hotkey] panel toggled, display=', recordPanel.style.display);
+        }
+    });
 
     canvas.addEventListener('pointerdown', (e) => sceneManager.handleInput(e));
     const unlockAudio = () => {

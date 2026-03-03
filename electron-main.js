@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, session } = require('electron');
 const path = require('path');
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -31,6 +31,23 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  // Let getDisplayMedia() in the renderer capture this window (for trailer recording)
+  try {
+    session.defaultSession.setDisplayMediaRequestHandler((request, callback) => {
+      try {
+        if (request && request.frame) {
+          callback({ video: request.frame });
+        } else {
+          callback(new Error('Capture not available'));
+        }
+      } catch (err) {
+        callback(err);
+      }
+    });
+  } catch (err) {
+    console.warn('setDisplayMediaRequestHandler failed', err);
+  }
+
   createWindow();
 
   app.on('activate', () => {

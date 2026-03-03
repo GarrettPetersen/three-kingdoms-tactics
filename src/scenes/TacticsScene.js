@@ -749,8 +749,20 @@ export class TacticsScene extends BaseScene {
         this.cleanupDialogueOnComplete = onComplete || null;
         const firstStep = this.cleanupDialogueScript[0];
         if (firstStep && firstStep.voiceId) {
-            assets.playVoice(firstStep.voiceId);
+            this.playBattleVoice(firstStep.voiceId);
         }
+    }
+
+    /** Play a voice line in battle; if recorder is armed, start recording and stop when voice ends. */
+    playBattleVoice(voiceId, volume = 1) {
+        if (!voiceId) return;
+        if (this.manager.actionRecorder?.armed) {
+            this.manager.actionRecorder.onUserActionStart();
+        }
+        if (this.manager.actionRecorder?.recording) {
+            assets.onNextVoiceEnd = () => this.manager.actionRecorder?.signalActionEnd();
+        }
+        assets.playVoice(voiceId, volume);
     }
 
     isImmortalUnit(unit) {
@@ -834,7 +846,13 @@ export class TacticsScene extends BaseScene {
             }
             unit.isGone = true;
             if (fleeCfg.endBattle && typeof fleeCfg.endBattle.won === 'boolean') {
-                this.endBattle(!!fleeCfg.endBattle.won);
+                const won = !!fleeCfg.endBattle.won;
+                // Dong Zhuo rescue: after Zhang Jue flees, show victory dialogue (Dong Zhuo "What offices...") then end
+                if (this.battleId === 'dongzhuo_battle' && unit.id === 'zhangjue' && won) {
+                    this.startDongZhuoVictoryDialogue();
+                } else {
+                    this.endBattle(won);
+                }
             }
         };
         waitUntilGone();
@@ -1111,7 +1129,7 @@ export class TacticsScene extends BaseScene {
         // Play voice for first step
         const firstStep = this.cleanupDialogueScript[0];
         if (firstStep && firstStep.voiceId) {
-            assets.playVoice(firstStep.voiceId);
+            this.playBattleVoice(firstStep.voiceId);
         }
     }
 
@@ -1467,7 +1485,7 @@ export class TacticsScene extends BaseScene {
         
         // Play first voice line
         const firstStep = this.cleanupDialogueScript[0];
-        if (firstStep.voiceId) assets.playVoice(firstStep.voiceId);
+        if (firstStep.voiceId) this.playBattleVoice(firstStep.voiceId);
     }
 
     runCleanupTransition(transitionKey) {
@@ -1579,7 +1597,7 @@ export class TacticsScene extends BaseScene {
         
         // Play first voice line
         const firstStep = this.cleanupDialogueScript[0];
-        if (firstStep.voiceId) assets.playVoice(firstStep.voiceId);
+        if (firstStep.voiceId) this.playBattleVoice(firstStep.voiceId);
     }
 
     startChapter2DongZhuoChoiceDialogue(letHimStrike) {
@@ -1630,7 +1648,7 @@ export class TacticsScene extends BaseScene {
         };
 
         const firstStep = this.cleanupDialogueScript[0];
-        if (firstStep.voiceId) assets.playVoice(firstStep.voiceId);
+        if (firstStep.voiceId) this.playBattleVoice(firstStep.voiceId);
     }
 
     startChapter2DongZhuoFight() {
@@ -1736,7 +1754,7 @@ export class TacticsScene extends BaseScene {
         };
 
         const firstStep = this.cleanupDialogueScript[0];
-        if (firstStep.voiceId) assets.playVoice(firstStep.voiceId);
+        if (firstStep.voiceId) this.playBattleVoice(firstStep.voiceId);
     }
 
     spawnChapter2DongZhuoHorseReinforcements() {
@@ -2061,7 +2079,7 @@ export class TacticsScene extends BaseScene {
         };
 
         const firstStep = this.cleanupDialogueScript[0];
-        if (firstStep.voiceId) assets.playVoice(firstStep.voiceId);
+        if (firstStep.voiceId) this.playBattleVoice(firstStep.voiceId);
     }
     
     startDongZhuoVictoryDialogue() {
@@ -2151,7 +2169,7 @@ export class TacticsScene extends BaseScene {
         
         // Play first voice line
         const firstStep = this.cleanupDialogueScript[0];
-        if (firstStep.voiceId) assets.playVoice(firstStep.voiceId);
+        if (firstStep.voiceId) this.playBattleVoice(firstStep.voiceId);
     }
 
     startNpcPhase() {
@@ -4631,6 +4649,16 @@ export class TacticsScene extends BaseScene {
         // Mark which units were alive at the very start of this logical action
         // to determine if a collision should occur vs sliding over a corpse.
         this.units.forEach(u => u._aliveAtStartOfAction = u.hp > 0);
+
+        if (this.manager.actionRecorder?.armed) {
+            this.manager.actionRecorder.onUserActionStart();
+            const orig = onComplete;
+            onComplete = () => {
+                if (orig) orig();
+                // End recording 1.5s after attack completes so hit feedback and settle are included
+                setTimeout(() => this.manager.actionRecorder?.signalActionEnd(), 1500);
+            };
+        }
 
         // Safety check: Only player can trigger attacks via this method during their turn
         if (this.turn === 'player' && attacker.faction !== 'player') {
@@ -7365,7 +7393,7 @@ export class TacticsScene extends BaseScene {
                 }
                 // Play voice if it hasn't been played for this step yet
                 if (step.voiceId && !step._voicePlayed) {
-                    assets.playVoice(step.voiceId);
+                    this.playBattleVoice(step.voiceId);
                     step._voicePlayed = true;
                 }
                 if (step.type !== 'choice') {
@@ -10496,7 +10524,7 @@ export class TacticsScene extends BaseScene {
                     // Play voice for next step
                     const nextStep = this.cleanupDialogueScript[this.cleanupDialogueStep];
                     if (nextStep && nextStep.voiceId) {
-                        assets.playVoice(nextStep.voiceId);
+                        this.playBattleVoice(nextStep.voiceId);
                     }
                 }
             }
