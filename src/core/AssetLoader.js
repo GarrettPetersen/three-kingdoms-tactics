@@ -22,6 +22,7 @@ export class AssetLoader {
         this.audioUnlocked = false;
         this.pendingMusic = null; // { key, targetVolume }
         this.onNextVoiceEnd = null; // one-time callback when current voice finishes (for action recording)
+        this._voiceEndTimeout = null; // timeout for duration-based recorder stop
     }
 
     async playVoice(voiceId, volume = 1.0) {
@@ -35,6 +36,10 @@ export class AssetLoader {
             this.currentVoice.onended = null; // Clear previous callback
             this.currentVoice.currentTime = 0;
         }
+        if (this._voiceEndTimeout) {
+            clearTimeout(this._voiceEndTimeout);
+            this._voiceEndTimeout = null;
+        }
 
         const lang = getCurrentLanguage();
         const src = `assets/audio/voices/${lang}/${voiceId}.ogg`;
@@ -47,9 +52,10 @@ export class AssetLoader {
 
             this.fadeMusicVolume(this.baseMusicVolume * 0.3, 200);
 
-            audio.onended = () => {
-                if (this.currentVoice === audio) {
-                    this.stopVoice();
+            const fireVoiceEnd = () => {
+                if (this._voiceEndTimeout) {
+                    clearTimeout(this._voiceEndTimeout);
+                    this._voiceEndTimeout = null;
                 }
                 if (this.onNextVoiceEnd) {
                     const fn = this.onNextVoiceEnd;
@@ -57,6 +63,27 @@ export class AssetLoader {
                     fn();
                 }
             };
+
+            audio.onended = () => {
+                if (this.currentVoice === audio) {
+                    this.stopVoice();
+                }
+                fireVoiceEnd();
+            };
+
+            // Recorder stop: use known length + 0.25s so recording ends reliably when the line finishes
+            if (this.onNextVoiceEnd) {
+                const scheduleEnd = () => {
+                    if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+                    const ms = Math.round(audio.duration * 1000) + 250;
+                    this._voiceEndTimeout = setTimeout(fireVoiceEnd, ms);
+                };
+                if (Number.isFinite(audio.duration) && audio.duration > 0) {
+                    scheduleEnd();
+                } else {
+                    audio.addEventListener('loadedmetadata', scheduleEnd, { once: true });
+                }
+            }
 
             await audio.play();
         } catch (e) {
@@ -71,6 +98,10 @@ export class AssetLoader {
     }
 
     stopVoice() {
+        if (this._voiceEndTimeout) {
+            clearTimeout(this._voiceEndTimeout);
+            this._voiceEndTimeout = null;
+        }
         if (this.currentVoice) {
             this.currentVoice.pause();
             this.currentVoice.onended = null;

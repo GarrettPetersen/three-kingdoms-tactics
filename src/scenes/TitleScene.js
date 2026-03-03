@@ -50,6 +50,7 @@ export class TitleScene extends BaseScene {
         this.selection = null;
         this.showConfirm = false; // Reset confirmation dialog state
         this.confirmSelection = null;
+        this._recordingIntro = false;
     }
 
     processTitleImage() {
@@ -126,6 +127,10 @@ export class TitleScene extends BaseScene {
                     if (this.menuAlpha >= 1) {
                         this.menuAlpha = 1;
                         this.state = 'MENU';
+                        if (this._recordingIntro) {
+                            this._recordingIntro = false;
+                            setTimeout(() => this.manager.actionRecorder?.signalActionEnd(), 1000);
+                        }
                     }
                 }
             }
@@ -496,6 +501,10 @@ export class TitleScene extends BaseScene {
         
         if (this.waitingForInteraction) {
             this.waitingForInteraction = false;
+            if (this.manager.actionRecorder?.armed) {
+                this.manager.actionRecorder.onUserActionStart();
+                this._recordingIntro = true;
+            }
             this.state = 'PANNING';
             assets.playMusic('title', 0.5);
             return;

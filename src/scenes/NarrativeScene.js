@@ -438,6 +438,11 @@ export class NarrativeScene extends BaseScene {
             });
         }
 
+        // Title card: if armed, start recording when the card is shown; stop when user clicks out (in handleInput)
+        if (step.type === 'title' && this.manager.actionRecorder?.armed) {
+            this.manager.actionRecorder.onUserActionStart();
+        }
+
         // Trigger voice if present
         if (step.voiceId) {
             // If armed, start recording this line (covers first intro line and any line we land on without clicking advance)
@@ -1728,7 +1733,9 @@ export class NarrativeScene extends BaseScene {
         if (step && (step.type === 'dialogue' || step.type === 'title' || step.type === 'narrator')) {
             // If in interactive mode, only advance if we're not on the interactive step
             if (!this.isInteractive || (this.isInteractive && this.currentStep !== this.interactiveStepIndex)) {
-                if (this.manager.actionRecorder?.armed) {
+                if (step.type === 'title' && this.manager.actionRecorder?.recording) {
+                    this.manager.actionRecorder.signalActionEnd();
+                } else if ((step.type === 'dialogue' || step.type === 'narrator') && this.manager.actionRecorder?.armed) {
                     this.manager.actionRecorder.onUserActionStart();
                 }
                 this.nextStep();

@@ -7224,6 +7224,7 @@ export class TacticsScene extends BaseScene {
             }
             const tctx = this._telegraphLayerCtx;
             tctx.clearRect(0, 0, cw, ch);
+            // Draw each telegraph then punch out only that telegraph's unit, so other units (including other telegraphing units) stay covered
             for (const item of this._telegraphPunchList) {
                 const { unit: u, unitPos, targetCell, hoverTarget, attackKey, glow } = item;
                 const attack = ATTACKS[attackKey];
@@ -7255,8 +7256,6 @@ export class TacticsScene extends BaseScene {
                         }
                     }
                 }
-            }
-            for (const item of this._telegraphPunchList) {
                 tctx.save();
                 tctx.globalCompositeOperation = 'destination-out';
                 this.drawUnitSpriteOnly(tctx, item.unit, item.surfaceY, item.drawOptions, item.cell, item.timestamp);
