@@ -1020,6 +1020,18 @@
     "source": "MapScene.js"
   },
   {
+    "id": "map_lb_rem_06",
+    "char": "liubei",
+    "text": "Master Lu sent us to Yingchuan. Huangfu Song and Zhu Jun are engaging Zhang Liang and Zhang Bao there.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_rem_07",
+    "char": "liubei",
+    "text": "The rebels have already been routed at Yingchuan. We must return at once and report to Master Lu.",
+    "source": "MapScene.js"
+  },
+  {
     "id": "pg_gy_01",
     "char": "guanyu",
     "text": "We will rescue each other in difficulty; we will aid each other in danger.",

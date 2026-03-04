@@ -2118,8 +2118,8 @@
         "id": "gz_lb_ret_01",
         "character": "liubei",
         "original_text": "We have scattered their vanguard, but there are too many! We must retreat!",
-        "stt_output": "We have scattered their vanguard, but there are too many. We must retreat.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2145,8 +2145,26 @@
         "id": "qz_lb_surp_01",
         "character": "liubei",
         "original_text": "I... I think I've taken care of them already.",
-        "stt_output": "I... I think I've taken care of them already.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:map_lb_rem_06": {
+        "id": "map_lb_rem_06",
+        "character": "liubei",
+        "original_text": "Master Lu sent us to Yingchuan. Huangfu Song and Zhu Jun are engaging Zhang Liang and Zhang Bao there.",
+        "stt_output": "Master Lu sent us to Yingquan. Wanfu Song and Zhu Jun are engaging Zhang Li Yang and Zhang Baodai.",
+        "wer": 0.3157894736842105,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:map_lb_rem_07": {
+        "id": "map_lb_rem_07",
+        "character": "liubei",
+        "original_text": "The rebels have already been routed at Yingchuan. We must return at once and report to Master Lu.",
+        "stt_output": "The rebels have already been routed at Ying Kuan. We must return at once and report to Master Liu.",
+        "wer": 0.16666666666666666,
         "is_bad": false,
         "language": "en"
     }

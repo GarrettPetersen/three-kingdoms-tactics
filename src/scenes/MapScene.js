@@ -147,11 +147,13 @@ const HERO_REMINDERS = {
     'guangzong_camp': {
         portraitKey: 'liu-bei',
         name: 'Liu Bei',
+        voiceId: 'map_lb_rem_06',
         text: { en: "Master Lu sent us to Yingchuan. Huangfu Song and Zhu Jun are engaging Zhang Liang and Zhang Bao there.", zh: "卢师命我们去颍川。皇甫嵩与朱儁正在那里迎击张梁、张宝。" }
     },
     'yingchuan_aftermath': {
         portraitKey: 'liu-bei',
         name: 'Liu Bei',
+        voiceId: 'map_lb_rem_07',
         text: { en: "The rebels have already been routed at Yingchuan. We must return at once and report to Master Lu.", zh: "颍川叛军已败。我们应立刻回去向卢师复命。" }
     },
     'guangzong_encounter': {

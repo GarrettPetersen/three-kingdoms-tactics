@@ -1002,6 +1002,18 @@
     "source": "MapScene.js"
   },
   {
+    "id": "map_lb_rem_06",
+    "char": "liubei",
+    "text": "卢师命我们去颍川。皇甫嵩与朱儁正在那里迎击张梁、张宝。",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_rem_07",
+    "char": "liubei",
+    "text": "颍川叛军已败。我们应立刻回去向卢师复命。",
+    "source": "MapScene.js"
+  },
+  {
     "id": "pg_gy_01",
     "char": "guanyu",
     "text": "上报国家，下安黎庶。",

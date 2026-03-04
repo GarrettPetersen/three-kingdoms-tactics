@@ -100,17 +100,16 @@ def extract_voice_lines_from_file(filepath):
         
         if obj_start == -1: continue
         
-        # Find end of object (forwards from voiceId)
+        # Find end of object (forwards from obj_start so we get the full object that contains voiceId)
         bracket_count = 0
         obj_end = -1
-        for i in range(start_pos, len(content)):
+        for i in range(obj_start, len(content)):
             if content[i] == '{': bracket_count += 1
-            if content[i] == '}':
+            elif content[i] == '}':
+                bracket_count -= 1
                 if bracket_count == 0:
                     obj_end = i + 1
                     break
-                else:
-                    bracket_count -= 1
         
         if obj_end == -1: continue
         
