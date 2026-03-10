@@ -316,6 +316,17 @@ export class TacticsScene extends BaseScene {
         this.onChoiceRestrain = params.onChoiceRestrain || null; // Callback for peaceful choice
         this.onChoiceFight = params.onChoiceFight || null; // Callback for fight choice
         this.onFightVictory = params.onFightVictory || null; // Callback for cage-break victory
+        this._hexViewTarget = new Map();
+        this._hexViewProgress = new Map();
+        this._hexViewKeyByUnit = new WeakMap();
+        this._hexViewKeyByHorse = new WeakMap();
+        this._hexViewKeyCounter = 0;
+        this._hexViewLastSettled = new Map();
+        this._hexViewPrevUnitCount = undefined;
+        this._hexViewPrevHorseCount = undefined;
+        this._hexViewDirty = true;
+        this._hexViewDebugEnabled = false;
+        this._hexViewDebugCount = 0;
         this.controllerNavTargets = [];
         this.controllerNavIndex = -1;
         this.controllerNavMouseEnabled = true;
@@ -6212,6 +6223,7 @@ export class TacticsScene extends BaseScene {
     }
 
     updateRiderlessHorseAnimations(dt) {
+        let moveEnded = false;
         this.horses.forEach(h => {
             if (h.riderId) return;
             if (!h.moveData) {
@@ -6228,8 +6240,10 @@ export class TacticsScene extends BaseScene {
                 h.visualY = finalPos.y;
                 h.moveData = null;
                 h.isMoving = false;
+                moveEnded = true;
             }
         });
+        return moveEnded;
     }
 
     update(timestamp) {
@@ -6275,7 +6289,7 @@ export class TacticsScene extends BaseScene {
         }
 
         this.animationFrame = Math.floor(timestamp / 150) % 4;
-        this.updateRiderlessHorseAnimations(dt);
+        const horseMoveEnded = this.updateRiderlessHorseAnimations(dt);
         this.updateFireCrackleAudio();
         this.updateFireSmoke(dt);
         
@@ -6286,6 +6300,9 @@ export class TacticsScene extends BaseScene {
         }
         
         this.units.forEach(u => {
+            const wasMoving = !!u.isMoving;
+            const prevHp = u.hp;
+            const wasGone = !!u.isGone;
             // Update footprints
             const currentCell = this.tacticsMap.getCell(u.r, u.q);
             if (currentCell && currentCell.terrain === 'snow_01') {
@@ -6320,7 +6337,66 @@ export class TacticsScene extends BaseScene {
                 u.immortalPendingCause = null;
                 this.triggerImmortalBehavior(u, cause);
             }
+            if (wasMoving && !u.isMoving) this._hexViewDirty = true;
+            if (prevHp > 0 && u.hp <= 0) this._hexViewDirty = true;
+            if (!wasGone && u.isGone) this._hexViewDirty = true;
         });
+
+        // Hex-view: recompute targets only on coarse events + detected transitions.
+        const prevUnitCount = this._hexViewPrevUnitCount ?? -1;
+        const prevHorseCount = this._hexViewPrevHorseCount ?? -1;
+        this._hexViewPrevUnitCount = this.units.length;
+        this._hexViewPrevHorseCount = (this.horses || []).length;
+        if (this.units.length !== prevUnitCount || this._hexViewPrevHorseCount !== prevHorseCount) this._hexViewDirty = true;
+        if (horseMoveEnded) this._hexViewDirty = true;
+        if (this._hexViewDirty) {
+            this.recomputeHexViewTargets(this._hexViewDebugEnabled ? 'dirty' : undefined);
+            this._hexViewDirty = false;
+        }
+
+        // Animate hex-view progress toward stored targets (no per-frame clump check)
+        if (!this._hexViewProgress) this._hexViewProgress = new Map();
+        const hexViewSpeed = 2; // progress units per second
+        const hexViewStep = (dt / 1000) * hexViewSpeed;
+        this.units.forEach((u) => {
+            if (u.hp <= 0 || u.isGone) return;
+            const key = this.getUnitHexViewKey(u);
+            const target = (this._hexViewTarget && this._hexViewTarget.get(key)) ?? 0;
+            const prevP = this._hexViewProgress.get(key) ?? 0;
+            let p = prevP;
+            if (target > prevP + 0.0001) p = Math.min(1, prevP + hexViewStep);
+            else if (target < prevP - 0.0001) p = Math.max(0, prevP - hexViewStep);
+            this._hexViewProgress.set(key, p);
+            if ((prevP < 1 && p >= 1) || (prevP > 0 && p <= 0)) {
+                const settledState = p >= 1 ? 1 : 0;
+                const last = this._hexViewLastSettled?.get(key);
+                if (last !== settledState) {
+                    if (!this._hexViewLastSettled) this._hexViewLastSettled = new Map();
+                    this._hexViewLastSettled.set(key, settledState);
+                    this.hexViewDebugLog('settled', { key, id: u.id || null, r: u.r, q: u.q, target, prevP, p, moving: !!u.isMoving, hp: u.hp, gone: !!u.isGone });
+                }
+            }
+        });
+        (this.horses || []).forEach(h => {
+            if (h.riderId) return;
+            const key = this.getHorseHexViewKey(h);
+            const target = (this._hexViewTarget && this._hexViewTarget.get(key)) ?? 0;
+            const prevP = this._hexViewProgress.get(key) ?? 0;
+            let p = prevP;
+            if (target > prevP + 0.0001) p = Math.min(1, prevP + hexViewStep);
+            else if (target < prevP - 0.0001) p = Math.max(0, prevP - hexViewStep);
+            this._hexViewProgress.set(key, p);
+            if ((prevP < 1 && p >= 1) || (prevP > 0 && p <= 0)) {
+                const settledState = p >= 1 ? 1 : 0;
+                const last = this._hexViewLastSettled?.get(key);
+                if (last !== settledState) {
+                    if (!this._hexViewLastSettled) this._hexViewLastSettled = new Map();
+                    this._hexViewLastSettled.set(key, settledState);
+                    this.hexViewDebugLog('settled', { key, id: h.id || null, r: h.r, q: h.q, target, prevP, p, moving: !!h.isMoving, moveData: !!h.moveData });
+                }
+            }
+        });
+
         this.units.forEach(u => {
             if (u.name === 'Boulder' && u.rollData && u.rollData.bounceComplete) {
                 const roll = u.rollData;
@@ -6987,6 +7063,9 @@ export class TacticsScene extends BaseScene {
         });
 
         this._telegraphPunchList = [];
+        this._hexViewDrawList = [];
+        this._hexViewHorseList = [];
+        if (!this._hexViewProgress) this._hexViewProgress = new Map();
         for (const call of drawCalls) {
             const effect = this.getIntroEffect(Math.floor(call.r), call.q || 0);
             if (effect.alpha <= 0 && call.type !== 'particle' && call.type !== 'fire_smoke') continue; // Particles have their own alpha check
@@ -7108,21 +7187,27 @@ export class TacticsScene extends BaseScene {
                 }
 
                 const isSelected = this.selectedUnit === u;
-                if (isSelected) {
-                    if (u.onHorse) {
-                        this.drawMountedSpriteOutline(ctx, u, surfaceY, timestamp, '#ffffff');
-                    } else {
-                        this.drawHighlight(ctx, u.visualX, surfaceY, 'rgba(255, 255, 255, 0.4)');
-                    }
-                } else if (isCommandEligible) {
-                    if (u.onHorse) {
-                        this.drawMountedSpriteOutline(ctx, u, surfaceY, timestamp, '#66ccff');
-                    } else {
-                        this.drawHighlight(ctx, u.visualX, surfaceY, 'rgba(96, 184, 255, 0.35)');
-                    }
-                }
+                const hexViewProgress = (this._hexViewProgress && this._hexViewProgress.get(this.getUnitHexViewKey(u))) ?? 0;
+                const useHexView = hexViewProgress > 0;
 
-                this.drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp);
+                if (!useHexView) {
+                    if (isSelected) {
+                        if (u.onHorse) {
+                            this.drawMountedSpriteOutline(ctx, u, surfaceY, timestamp, '#ffffff');
+                        } else {
+                            this.drawHighlight(ctx, u.visualX, surfaceY, 'rgba(255, 255, 255, 0.4)');
+                        }
+                    } else if (isCommandEligible) {
+                        if (u.onHorse) {
+                            this.drawMountedSpriteOutline(ctx, u, surfaceY, timestamp, '#66ccff');
+                        } else {
+                            this.drawHighlight(ctx, u.visualX, surfaceY, 'rgba(96, 184, 255, 0.35)');
+                        }
+                    }
+                    this.drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp);
+                } else {
+                    this._hexViewDrawList.push({ u, surfaceY, drawOptions, cell, timestamp, progress: hexViewProgress });
+                }
             } else if (call.type === 'horse') {
                 const h = call.horse;
                 const keys = this.getHorseSpriteKeys(h.type || 'brown');
@@ -7132,45 +7217,17 @@ export class TacticsScene extends BaseScene {
                 const horseImg = isRunning ? horseRun : horseStand;
 
                 if (horseImg) {
-                    const pos = { x: call.x, y: call.y };
-                    const midX = Math.floor(pos.x);
-                    const hexCell = this.tacticsMap.getCell(h.r, h.q);
-                    const isShallow = !!(hexCell && hexCell.terrain?.includes('water_shallow'));
-                    const sink = isShallow ? 4 : 0;
-                    const midY = Math.floor(pos.y) + effect.yOffset + sink;
-
-                    const frameW = 48;
-                    const frameH = 48;
-                    const horseFeetY = 12;
-                    const dx = -frameW / 2;
-                    const dy = horseFeetY - frameH;
-                    const frameCount = isRunning ? Math.max(1, Math.floor(horseImg.width / frameW)) : 1;
-                    const f = isRunning ? (Math.floor(timestamp / 70) % frameCount) : 0;
-                    const sx = f * frameW;
-
-                    const drawHorsePass = (alpha = 1.0, clipRect = null) => {
-                        ctx.save();
-                        if (clipRect) {
-                            ctx.beginPath();
-                            ctx.rect(clipRect.x, clipRect.y, clipRect.w, clipRect.h);
-                            ctx.clip();
-                        }
-                        ctx.globalAlpha *= alpha;
-                        ctx.translate(midX, midY);
-                        if (h.flip) ctx.scale(-1, 1);
-                        if (isRunning) ctx.drawImage(horseImg, sx, 0, frameW, frameH, dx, dy, frameW, frameH);
-                        else ctx.drawImage(horseImg, dx, dy);
-                        ctx.restore();
-                    };
-
-                    if (isShallow) {
-                        const topY = midY + dy;
-                        const feetY = midY + horseFeetY;
-                        const waterlineY = feetY - sink;
-                        drawHorsePass(1.0, { x: midX - 32, y: topY - 8, w: 64, h: Math.max(0, waterlineY - (topY - 8)) });
-                        drawHorsePass(0.4, { x: midX - 32, y: waterlineY, w: 64, h: Math.max(0, (feetY + 8) - waterlineY) });
+                    const horseHexProgress = (this._hexViewProgress && this._hexViewProgress.get(this.getHorseHexViewKey(h))) ?? 0;
+                    if (horseHexProgress > 0) {
+                        this._hexViewHorseList.push({ h, effect, timestamp, progress: horseHexProgress });
                     } else {
-                        drawHorsePass(1.0);
+                        const pos = { x: call.x, y: call.y };
+                        const midX = Math.floor(pos.x);
+                        const hexCell = this.tacticsMap.getCell(h.r, h.q);
+                        const isShallow = !!(hexCell && hexCell.terrain?.includes('water_shallow'));
+                        const sink = isShallow ? 4 : 0;
+                        const midY = Math.floor(pos.y) + effect.yOffset + sink;
+                        this.drawRiderlessHorse(ctx, h, midX, midY, effect, timestamp);
                     }
                 }
             } else if (call.type === 'flag') {
@@ -7223,6 +7280,60 @@ export class TacticsScene extends BaseScene {
             ctx.restore();
         }
 
+        // Hex-view pass: draw deferred hex-view units and horses with animated offset and mask scale
+        const HEX_VIEW_OFFSET = 10;
+        const HEX_VIEW_SCALE_OUT = 3; // mask scale when progress=0 (show full sprite)
+        if (this._hexViewDrawList && this._hexViewDrawList.length > 0) {
+            for (const { u, surfaceY, drawOptions, cell, timestamp, progress } of this._hexViewDrawList) {
+                const p = progress ?? 1;
+                const offsetY = p * HEX_VIEW_OFFSET;
+                const maskScale = 1 + (1 - p) * (HEX_VIEW_SCALE_OUT - 1);
+                const hexCenter = this.getPixelPos(u.r, u.q);
+                ctx.save();
+                ctx.translate(0, offsetY);
+                this.beginHexClipPath(ctx, hexCenter.x, hexCenter.y - offsetY, maskScale);
+                ctx.clip();
+                this.drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp);
+                ctx.restore();
+                if (p >= 1) {
+                    ctx.save();
+                    ctx.translate(0, offsetY);
+                    this.beginHexClipPath(ctx, hexCenter.x, hexCenter.y - offsetY, 1);
+                    ctx.strokeStyle = this.getHexViewOutlineColor(u.faction);
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+        }
+        if (this._hexViewHorseList && this._hexViewHorseList.length > 0) {
+            for (const { h, effect, timestamp, progress } of this._hexViewHorseList) {
+                const p = progress ?? 1;
+                const offsetY = p * HEX_VIEW_OFFSET;
+                const maskScale = 1 + (1 - p) * (HEX_VIEW_SCALE_OUT - 1);
+                const hexCenter = this.getPixelPos(h.r, h.q);
+                const hexCell = this.tacticsMap.getCell(h.r, h.q);
+                const isShallow = !!(hexCell && hexCell.terrain?.includes('water_shallow'));
+                const sink = isShallow ? 4 : 0;
+                const midX = hexCenter.x;
+                const midY = hexCenter.y - offsetY + effect.yOffset + sink;
+                ctx.save();
+                ctx.translate(0, offsetY);
+                this.beginHexClipPath(ctx, hexCenter.x, hexCenter.y - offsetY, maskScale);
+                ctx.clip();
+                this.drawRiderlessHorse(ctx, h, midX, midY, effect, timestamp);
+                ctx.restore();
+                if (p >= 1) {
+                    ctx.save();
+                    ctx.translate(0, offsetY);
+                    this.beginHexClipPath(ctx, hexCenter.x, hexCenter.y - offsetY, 1);
+                    ctx.strokeStyle = this.getHexViewOutlineColor(null);
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+        }
         // Telegraph pass: draw telegraphs on an offscreen layer, punch out where the telegraphing unit's sprite is, then composite on top
         if (!this.isIntroAnimating && this._telegraphPunchList && this._telegraphPunchList.length > 0) {
             const cw = this.manager.canvas.width;
@@ -7235,42 +7346,61 @@ export class TacticsScene extends BaseScene {
             }
             const tctx = this._telegraphLayerCtx;
             tctx.clearRect(0, 0, cw, ch);
-            // Draw each telegraph then punch out only that telegraph's unit, so other units (including other telegraphing units) stay covered
+            if (!this._telegraphItemCanvas || this._telegraphItemCanvas.width !== cw || this._telegraphItemCanvas.height !== ch) {
+                this._telegraphItemCanvas = document.createElement('canvas');
+                this._telegraphItemCanvas.width = cw;
+                this._telegraphItemCanvas.height = ch;
+                this._telegraphItemCtx = this._telegraphItemCanvas.getContext('2d');
+            }
+            const itemCtx = this._telegraphItemCtx;
+            // Draw each telegraph on its own temporary layer, punch out only that telegrapher, then composite.
+            // This guarantees we only remove the telegraphing unit's own line and never erase prior telegraphs.
             for (const item of this._telegraphPunchList) {
+                itemCtx.clearRect(0, 0, cw, ch);
                 const { unit: u, unitPos, targetCell, hoverTarget, attackKey, glow } = item;
                 const attack = ATTACKS[attackKey];
                 if (!attack) continue;
                 if (targetCell) {
                     if (attack.type === 'directional_projectile') {
                         const boltPath = this.getDirectionalBoltPath(u, targetCell.r, targetCell.q);
-                        if (boltPath?.path?.length) this.drawDirectionalBoltPathDots(tctx, boltPath, 0.6 + glow, true);
+                        if (boltPath?.path?.length) this.drawDirectionalBoltPathDots(itemCtx, boltPath, 0.6 + glow, true);
                     } else if (attack.type === 'projectile') {
                         const originY = unitPos.y - 8;
                         const targetPos = this.getPixelPos(targetCell.r, targetCell.q);
-                        this.drawArrowParabolaPath(tctx, unitPos.x, originY, targetPos.x, targetPos.y, 0.6 + glow);
+                        this.drawArrowParabolaPath(itemCtx, unitPos.x, originY, targetPos.x, targetPos.y, 0.6 + glow);
                     } else {
                         const swishes = this.getMeleeTelegraphSwishes(u, attackKey, targetCell.r, targetCell.q);
-                        for (const spec of swishes) this.drawTelegraphSwish(tctx, spec, unitPos);
+                        for (const spec of swishes) this.drawTelegraphSwish(itemCtx, spec, unitPos);
                     }
                 } else if (hoverTarget) {
                     if (this.isDirectionalBoltAttack(attackKey)) {
                         const boltPath = this.getDirectionalBoltPath(u, hoverTarget.r, hoverTarget.q);
-                        if (boltPath?.path?.length) this.drawDirectionalBoltPathDots(tctx, boltPath, 0.7, true);
+                        if (boltPath?.path?.length) this.drawDirectionalBoltPathDots(itemCtx, boltPath, 0.7, true);
                     } else if (attack.type === 'projectile') {
                         const originY = unitPos.y - 8;
                         const endPos = this.getPixelPos(hoverTarget.r, hoverTarget.q);
-                        this.drawArrowParabolaPath(tctx, unitPos.x, originY, endPos.x, endPos.y, 0.7);
+                        this.drawArrowParabolaPath(itemCtx, unitPos.x, originY, endPos.x, endPos.y, 0.7);
                     } else {
                         const swishes = this.getMeleeTelegraphSwishes(u, attackKey, hoverTarget.r, hoverTarget.q);
                         if (swishes.length > 0) {
-                            for (const spec of swishes) this.drawTelegraphSwish(tctx, spec, unitPos);
+                            for (const spec of swishes) this.drawTelegraphSwish(itemCtx, spec, unitPos);
                         }
                     }
                 }
-                tctx.save();
-                tctx.globalCompositeOperation = 'destination-out';
-                this.drawUnitSpriteOnly(tctx, item.unit, item.surfaceY, item.drawOptions, item.cell, item.timestamp);
-                tctx.restore();
+                itemCtx.save();
+                itemCtx.globalCompositeOperation = 'destination-out';
+                const punchProgress = (this._hexViewProgress && this._hexViewProgress.get(this.getUnitHexViewKey(item.unit))) ?? 0;
+                if (punchProgress > 0) {
+                    const offsetY = punchProgress * HEX_VIEW_OFFSET;
+                    const maskScale = 1 + (1 - punchProgress) * (HEX_VIEW_SCALE_OUT - 1);
+                    const hexCenter = this.getPixelPos(item.unit.r, item.unit.q);
+                    itemCtx.translate(0, offsetY);
+                    this.beginHexClipPath(itemCtx, hexCenter.x, hexCenter.y - offsetY, maskScale);
+                    itemCtx.clip();
+                }
+                this.drawUnitSpriteOnly(itemCtx, item.unit, item.surfaceY, item.drawOptions, item.cell, item.timestamp);
+                itemCtx.restore();
+                tctx.drawImage(this._telegraphItemCanvas, 0, 0);
             }
             ctx.drawImage(this._telegraphLayerCanvas, 0, 0);
         }
@@ -7283,15 +7413,17 @@ export class TacticsScene extends BaseScene {
                 const surfaceY = u.visualY + (u.onHorse ? MOUNTED_Y_OFFSET : 0);
                 let uiX = u.visualX;
                 if (u.onHorse) uiX = Math.floor(u.visualX);
-                
+                const unitHexProgress = (this._hexViewProgress && this._hexViewProgress.get(this.getUnitHexViewKey(u))) ?? 0;
+                const hexViewHpOffset = unitHexProgress > 0 ? unitHexProgress * 6 : 0;
+
                 // Draw intent if enemy or ally
                 if (u.intent) {
                     this.drawIntent(ctx, u, uiX, surfaceY);
                 }
 
-                // Draw HP bar (not for dead units, boulders, or drowning units)
+                // Draw HP bar (not for dead units, boulders, or drowning units); move down in hex view to clear outline
                 if (u.hp > 0 && u.name !== 'Boulder' && (!u.isDrowning || u.drownTimer < 500)) {
-                    this.drawHpBar(ctx, u, uiX, surfaceY);
+                    this.drawHpBar(ctx, u, uiX, surfaceY + hexViewHpOffset);
                 }
             });
         }
@@ -7847,6 +7979,144 @@ export class TacticsScene extends BaseScene {
             );
         }
         ctx.restore();
+    }
+
+    /** Hex outline radius in pixels (pointy-top). */
+    static get HEX_RADIUS() { return 12; }
+
+    getUnitHexViewKey(unit) {
+        if (!unit) return 'u:unknown';
+        if (!this._hexViewKeyByUnit) this._hexViewKeyByUnit = new WeakMap();
+        let key = this._hexViewKeyByUnit.get(unit);
+        if (!key) {
+            this._hexViewKeyCounter = (this._hexViewKeyCounter || 0) + 1;
+            key = `u:auto:${this._hexViewKeyCounter}`;
+            this._hexViewKeyByUnit.set(unit, key);
+        }
+        return key;
+    }
+
+    getHorseHexViewKey(horse) {
+        if (!horse) return 'h:unknown';
+        if (!this._hexViewKeyByHorse) this._hexViewKeyByHorse = new WeakMap();
+        let key = this._hexViewKeyByHorse.get(horse);
+        if (!key) {
+            this._hexViewKeyCounter = (this._hexViewKeyCounter || 0) + 1;
+            key = `h:auto:${this._hexViewKeyCounter}`;
+            this._hexViewKeyByHorse.set(horse, key);
+        }
+        return key;
+    }
+
+    /**
+     * Recompute which units/horses should be in hex view (in a clump). Call when positions or presence change:
+     * someone finishes a move, appears, disappears, or dies. Targets are stored in _hexViewTarget; progress animates toward them each frame.
+     */
+    recomputeHexViewTargets(reason = 'unknown') {
+        if (!this._hexViewTarget) this._hexViewTarget = new Map();
+        const prevTargets = this._hexViewTarget;
+        const nextTargets = new Map();
+        const clumpCells = this.getClumpCells();
+        const setTarget = (key, inClump, meta = {}) => {
+            const next = inClump ? 1 : 0;
+            const prev = prevTargets.get(key) ?? 0;
+            nextTargets.set(key, next);
+            if (prev !== next) {
+                this.hexViewDebugLog('target_change', { reason, key, prev, next, ...meta });
+            }
+        };
+        this.units.forEach(u => {
+            if (u.hp <= 0 || u.isGone) return;
+            const key = this.getUnitHexViewKey(u);
+            setTarget(key, clumpCells.has(`${u.r},${u.q}`), { id: u.id || null, type: 'unit', r: u.r, q: u.q, moving: !!u.isMoving, hp: u.hp, gone: !!u.isGone });
+        });
+        (this.horses || []).forEach(h => {
+            if (h.riderId) return;
+            setTarget(this.getHorseHexViewKey(h), clumpCells.has(`${h.r},${h.q}`), { id: h.id || null, type: 'horse', r: h.r, q: h.q, moving: !!h.isMoving, moveData: !!h.moveData });
+        });
+        this._hexViewTarget = nextTargets;
+    }
+
+    hexViewDebugLog(event, payload) {
+        if (!this._hexViewDebugEnabled) return;
+        const LIMIT = 40;
+        this._hexViewDebugCount = this._hexViewDebugCount || 0;
+        if (this._hexViewDebugCount >= LIMIT) return;
+        this._hexViewDebugCount++;
+        console.log('[HexViewDebug]', event, payload);
+    }
+
+    /**
+     * Clump = three hexes (each with a unit or riderless horse) that share a vertex (triangle of touching hexes).
+     * Uses hex-grid topology (neighbor directions) so detection is exact and not affected by pixel rounding.
+     * Returns a Set of "r,q" for every cell that is part of at least one such clump.
+     */
+    getClumpCells() {
+        const occupied = new Set();
+        for (const u of this.units) {
+            if (u.hp <= 0 || u.isGone) continue;
+            if (u.isMoving || u.pushData) continue;
+            occupied.add(`${u.r},${u.q}`);
+        }
+        for (const h of this.horses || []) {
+            if (h.riderId) continue;
+            if (h.isMoving) continue;
+            occupied.add(`${h.r},${h.q}`);
+        }
+        const vertexToCells = new Map();
+        for (const key of occupied) {
+            const [r, q] = key.split(',').map(Number);
+            const dirs = this.tacticsMap.getDirections(r);
+            for (let i = 0; i < 6; i++) {
+                const na = dirs[i];
+                const nb = dirs[(i + 1) % 6];
+                const ra = r + na.dr;
+                const qa = q + na.dq;
+                const rb = r + nb.dr;
+                const qb = q + nb.dq;
+                if (!this.tacticsMap.getCell(ra, qa) || !this.tacticsMap.getCell(rb, qb)) continue;
+                const tri = [[r, q], [ra, qa], [rb, qb]].sort((a, b) => a[0] !== b[0] ? a[0] - b[0] : a[1] - b[1]);
+                const vertexKey = tri.map(([rr, qq]) => `${rr},${qq}`).join('|');
+                if (!vertexToCells.has(vertexKey)) vertexToCells.set(vertexKey, new Set());
+                vertexToCells.get(vertexKey).add(`${r},${q}`).add(`${ra},${qa}`).add(`${rb},${qb}`);
+            }
+        }
+        const clumpCells = new Set();
+        for (const cells of vertexToCells.values()) {
+            if (cells.size === 3 && [...cells].every(c => occupied.has(c))) {
+                for (const c of cells) clumpCells.add(c);
+            }
+        }
+        return clumpCells;
+    }
+
+    /** Faction color for hex-view outline: player green, allied blue, enemy red. Pass null/undefined for neutral (e.g. riderless horse). */
+    getHexViewOutlineColor(faction) {
+        if (faction === 'player') return '#0f0';
+        if (faction === 'allied') return '#08f';
+        if (faction === 'enemy') return '#f00';
+        return '#888';
+    }
+
+    /**
+     * Begin a path for the hex at the given center (pointy-top, same shape as drawHexOutline).
+     * Call ctx.clip() after this to use as a mask.
+     * @param {number} [scale=1] - Scale the hex radius (e.g. >1 when animating out to show full sprite).
+     */
+    beginHexClipPath(ctx, cx, cy, scale = 1) {
+        const r = TacticsScene.HEX_RADIUS * scale;
+        const pts = [
+            { x: cx, y: cy - r },
+            { x: cx + r, y: cy - r / 2 },
+            { x: cx + r, y: cy + r / 2 },
+            { x: cx, y: cy + r },
+            { x: cx - r, y: cy + r / 2 },
+            { x: cx - r, y: cy - r / 2 }
+        ];
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+        for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+        ctx.closePath();
     }
 
     drawHexOutline(ctx, x, y, color = '#ffd700') {
@@ -8423,6 +8693,53 @@ export class TacticsScene extends BaseScene {
                 const cageY = Math.floor(surfaceY - 54);
                 ctx.drawImage(cageImg, cageX, cageY);
             }
+        }
+    }
+
+    /**
+     * Draw a riderless horse at the given pixel center. Used in main draw loop and hex-view pass.
+     */
+    drawRiderlessHorse(ctx, h, midX, midY, effect, timestamp) {
+        const keys = this.getHorseSpriteKeys(h.type || 'brown');
+        const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
+        const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
+        const isRunning = !!h.isMoving && !!horseRun;
+        const horseImg = isRunning ? horseRun : horseStand;
+        if (!horseImg) return;
+        const hexCell = this.tacticsMap.getCell(h.r, h.q);
+        const isShallow = !!(hexCell && hexCell.terrain?.includes('water_shallow'));
+        const sink = isShallow ? 4 : 0;
+        const drawMidY = midY;
+        const frameW = 48;
+        const frameH = 48;
+        const horseFeetY = 12;
+        const dx = -frameW / 2;
+        const dy = horseFeetY - frameH;
+        const frameCount = isRunning ? Math.max(1, Math.floor(horseImg.width / frameW)) : 1;
+        const f = isRunning ? (Math.floor(timestamp / 70) % frameCount) : 0;
+        const sx = f * frameW;
+        const drawHorsePass = (alpha = 1.0, clipRect = null) => {
+            ctx.save();
+            if (clipRect) {
+                ctx.beginPath();
+                ctx.rect(clipRect.x, clipRect.y, clipRect.w, clipRect.h);
+                ctx.clip();
+            }
+            ctx.globalAlpha *= alpha;
+            ctx.translate(midX, drawMidY);
+            if (h.flip) ctx.scale(-1, 1);
+            if (isRunning) ctx.drawImage(horseImg, sx, 0, frameW, frameH, dx, dy, frameW, frameH);
+            else ctx.drawImage(horseImg, dx, dy);
+            ctx.restore();
+        };
+        if (isShallow) {
+            const topY = drawMidY + dy;
+            const feetY = drawMidY + horseFeetY;
+            const waterlineY = feetY - sink;
+            drawHorsePass(1.0, { x: midX - 32, y: topY - 8, w: 64, h: Math.max(0, waterlineY - (topY - 8)) });
+            drawHorsePass(0.4, { x: midX - 32, y: waterlineY, w: 64, h: Math.max(0, (feetY + 8) - waterlineY) });
+        } else {
+            drawHorsePass(1.0);
         }
     }
 

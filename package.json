@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "electron": "electron .",
     "electron:dev": "NODE_ENV=development electron .",
+    "dev:electron": "concurrently -k \"npm run dev\" \"npm run electron:dev\"",
     "dist": "npm run build && electron-builder --mac dir",
     "dist:dmg": "npm run build && electron-builder --mac dmg",
     "dist:win": "npm run build && electron-builder --win portable",
@@ -89,6 +90,7 @@
   "description": "",
   "devDependencies": {
     "canvas": "^3.2.1",
+    "concurrently": "^9.1.0",
     "electron": "^40.1.0",
     "electron-builder": "^26.7.0",
     "sharp": "^0.34.5",

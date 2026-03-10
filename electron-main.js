@@ -23,8 +23,14 @@ function createWindow() {
   win.maximize();
 
   if (isDev) {
-    win.loadURL('http://localhost:5173');
-    // win.webContents.openDevTools();
+    win.loadURL('http://localhost:5173').catch((err) => {
+      console.error('Electron failed to load http://localhost:5173:', err.message);
+      console.error('Make sure the Vite dev server is running: npm run dev');
+    });
+    win.webContents.on('did-fail-load', (event, code, description, validatedURL) => {
+      console.error('did-fail-load:', code, description, validatedURL);
+    });
+    // Uncomment to debug load/renderer issues: win.webContents.openDevTools();
   } else {
     win.loadFile(path.join(__dirname, 'dist/index.html'));
   }
