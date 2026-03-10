@@ -576,7 +576,7 @@ async function init() {
                 step_stone: 'assets/sfx/step_stone.wav',
                 step_generic: 'assets/sfx/step_generic.wav',
                 ui_click: 'assets/sfx/step_generic.wav',
-                step_water_walk: 'assets/sfx/step_water_walk.wav',
+                step_water_walk: 'assets/sfx/water_wade.ogg',
                 death_a: 'assets/sfx/death_a.mp3',
                 death_b: 'assets/sfx/death_b.mp3',
                 horse_gallop_loop: 'assets/sfx/horse_gallop_loop.mp3',

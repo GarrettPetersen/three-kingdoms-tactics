@@ -3569,6 +3569,7 @@ export class TacticsScene extends BaseScene {
         this.history.pop(); // Remove current state
         const prevState = this.history[this.history.length - 1];
         this.restoreState(prevState);
+        this._hexViewDirty = true; // recalc hex vs regular view for new positions
         assets.playSound('ui_click', 0.5);
     }
 
@@ -4693,6 +4694,7 @@ export class TacticsScene extends BaseScene {
         const wrappedOnComplete = () => {
             if (completed) return;
             completed = true;
+            this._hexViewDirty = true; // units may have been pushed or killed in/out of a clump
             if (onComplete) onComplete();
         };
         setTimeout(() => {
@@ -5503,6 +5505,7 @@ export class TacticsScene extends BaseScene {
         
         // Keep only the start state in history
         this.history = [startState];
+        this._hexViewDirty = true; // recalc hex vs regular view for new positions
         assets.playSound('ui_click', 0.5);
     }
 
@@ -6366,6 +6369,7 @@ export class TacticsScene extends BaseScene {
             let p = prevP;
             if (target > prevP + 0.0001) p = Math.min(1, prevP + hexViewStep);
             else if (target < prevP - 0.0001) p = Math.max(0, prevP - hexViewStep);
+            if (Math.abs(p - target) < 0.001) p = target; // snap so we don't get stuck just below 1 (missing outline)
             this._hexViewProgress.set(key, p);
             if ((prevP < 1 && p >= 1) || (prevP > 0 && p <= 0)) {
                 const settledState = p >= 1 ? 1 : 0;
@@ -6385,6 +6389,7 @@ export class TacticsScene extends BaseScene {
             let p = prevP;
             if (target > prevP + 0.0001) p = Math.min(1, prevP + hexViewStep);
             else if (target < prevP - 0.0001) p = Math.max(0, prevP - hexViewStep);
+            if (Math.abs(p - target) < 0.001) p = target; // snap so we don't get stuck just below 1 (missing outline)
             this._hexViewProgress.set(key, p);
             if ((prevP < 1 && p >= 1) || (prevP > 0 && p <= 0)) {
                 const settledState = p >= 1 ? 1 : 0;
@@ -7295,13 +7300,10 @@ export class TacticsScene extends BaseScene {
                 ctx.clip();
                 this.drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp);
                 ctx.restore();
-                if (p >= 1) {
+                if (p >= 0.999) {
                     ctx.save();
                     ctx.translate(0, offsetY);
-                    this.beginHexClipPath(ctx, hexCenter.x, hexCenter.y - offsetY, 1);
-                    ctx.strokeStyle = this.getHexViewOutlineColor(u.faction);
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
+                    this.drawHexOutline(ctx, hexCenter.x, hexCenter.y - offsetY, this.getHexViewOutlineColor(u.faction));
                     ctx.restore();
                 }
             }
@@ -7323,13 +7325,10 @@ export class TacticsScene extends BaseScene {
                 ctx.clip();
                 this.drawRiderlessHorse(ctx, h, midX, midY, effect, timestamp);
                 ctx.restore();
-                if (p >= 1) {
+                if (p >= 0.999) {
                     ctx.save();
                     ctx.translate(0, offsetY);
-                    this.beginHexClipPath(ctx, hexCenter.x, hexCenter.y - offsetY, 1);
-                    ctx.strokeStyle = this.getHexViewOutlineColor(null);
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
+                    this.drawHexOutline(ctx, hexCenter.x, hexCenter.y - offsetY, this.getHexViewOutlineColor(null));
                     ctx.restore();
                 }
             }
@@ -8119,16 +8118,20 @@ export class TacticsScene extends BaseScene {
         ctx.closePath();
     }
 
+    /** Draw hex outline 1px inset so it stays inside the hex and doesn't overlap adjacent hexes. Pixel-perfect (no anti-aliasing). */
     drawHexOutline(ctx, x, y, color = '#ffd700') {
         const cx = Math.floor(x);
         const cy = Math.floor(y);
+        const r = TacticsScene.HEX_RADIUS;
+        const inset = 1;
+        const R = r - inset; // 11: outline inside the hex
         const pts = [
-            { x: cx, y: cy - 12 },
-            { x: cx + 12, y: cy - 6 },
-            { x: cx + 12, y: cy + 6 },
-            { x: cx, y: cy + 12 },
-            { x: cx - 12, y: cy + 6 },
-            { x: cx - 12, y: cy - 6 }
+            { x: cx, y: cy - R },
+            { x: cx + R, y: cy - Math.floor(r / 2) },
+            { x: cx + R, y: cy + Math.floor(r / 2) },
+            { x: cx, y: cy + R },
+            { x: cx - R, y: cy + Math.floor(r / 2) },
+            { x: cx - R, y: cy - Math.floor(r / 2) }
         ];
         for (let i = 0; i < pts.length; i++) {
             const a = pts[i];
