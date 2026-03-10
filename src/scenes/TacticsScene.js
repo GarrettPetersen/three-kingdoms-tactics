@@ -7446,10 +7446,10 @@ export class TacticsScene extends BaseScene {
                     if (cell && cell.terrain.includes('water_shallow')) surfaceY += 4;
                     if (u.isDrowning) surfaceY += Math.min(1, u.drownTimer / 2000) * 40;
 
-                    const color = (u.faction === 'enemy') ? '#f44' : '#4f4';
+                    const color = (u.faction === 'enemy') ? '#f44' : '#48f';
                     this.drawPixelText(ctx, u.attackOrder.toString(), ux, surfaceY - 25, {
                         color,
-                        font: '10px Silkscreen',
+                        font: '8px Dogica',
                         align: 'center',
                         outline: true
                     });
@@ -9721,7 +9721,7 @@ export class TacticsScene extends BaseScene {
             });
         }
 
-        // 4. End Turn / Reset Turn / Order / Undo (Bottom Right)
+        // 4. End Turn / Order / Reset+Undo (Bottom Right) — 3 rows, same width; Reset and Undo share row
         if (this.turn === 'player' && !this.isProcessingTurn) {
             const hasActedAll = this.allUnitsActed();
             const isChinese = LANGUAGE.current === 'zh';
@@ -9736,64 +9736,40 @@ export class TacticsScene extends BaseScene {
             const orderText = '1,2,3'; // Numbers (universal)
             const undoText = '◄'; // Left triangle
             
-            // Calculate button sizes based on text
             ctx.save();
             ctx.font = getFontForLanguage(hasActedAll ? '10px Silkscreen' : '8px Silkscreen');
             const endTurnSize = getTextContainerSize(ctx, endTurnText, hasActedAll ? '10px Silkscreen' : '8px Silkscreen', 8, hasActedAll ? 20 : 8);
-            // Symbols are smaller, use fixed widths
-            ctx.font = '8px Tiny5';
-            const resetSize = { width: 24, height: 8 }; // |<< symbol
-            const orderSize = { width: 24, height: 8 }; // 1,2,3 text
-            const undoSize = { width: 16, height: 8 }; // ◄ symbol
             ctx.restore();
             
-            // Language-independent buttons (RESET, ORDER, UNDO) use same layout for both languages
-            // END TURN button is larger in Chinese to fit the text
-            let endTurnW, endTurnH, endTurnX, endTurnY;
-            let otherBtnW, otherBtnH, resetX, resetY, orderX, orderY, undoX, undoY;
+            // 3 rows inside bottom UI bar: bottom of block at screen bottom, top just at bar top
+            const rowWidth = isChinese ? Math.max(100, endTurnSize.width) : 80;
+            const gap = 2;
+            const blockBottom = canvas.height;
+            const blockTop = barY;
+            const blockHeight = blockBottom - blockTop; // = barH = 40
+            const rowHeight = Math.floor((blockHeight - 2 * gap) / 3);
+            const orx = canvas.width - rowWidth - 5;
             
-            // Symbol buttons are the same size in both languages
-            otherBtnW = Math.max(24, Math.max(resetSize.width, Math.max(orderSize.width, undoSize.width)));
-            otherBtnH = 8;
-            const orx = canvas.width - otherBtnW - 5;
+            const endTurnX = orx;
+            const endTurnY = blockTop;
+            const endTurnW = rowWidth;
+            const endTurnH = rowHeight;
             
-            // Other buttons: single column, same layout for both languages
-            resetX = orx;
-            resetY = barY + 12;
-            orderX = orx;
-            orderY = barY + 21;
-            undoX = orx;
-            undoY = barY + 30;
+            const orderX = orx;
+            const orderY = blockTop + rowHeight + gap;
+            const orderW = rowWidth;
+            const orderH = rowHeight;
             
-            if (hasActedAll) {
-                // Big END TURN button at bottom center
-                if (isChinese) {
-                    // Chinese: larger button to fit 12px zpix text
-                    endTurnW = Math.max(100, endTurnSize.width);
-                    endTurnH = 20; // 12px font + padding
-                    endTurnX = (canvas.width - endTurnW) / 2;
-                    // Position so bottom has 1px gap with RESET button (at resetY)
-                    endTurnY = resetY - endTurnH - 1;
-                } else {
-                    endTurnW = 80;
-                    endTurnH = 24;
-                    endTurnX = (canvas.width - endTurnW) / 2;
-                    endTurnY = canvas.height - endTurnH - 30;
-                }
-            } else {
-                // Small END TURN button in top right
-                if (isChinese) {
-                    // Chinese: fit 12px zpix text
-                    endTurnW = Math.max(50, endTurnSize.width);
-                    endTurnH = 16; // 12px font + padding
-                } else {
-                    endTurnW = 45;
-                    endTurnH = 8;
-                }
-                endTurnX = canvas.width - endTurnW - 5;
-                // Position so bottom has 1px gap with RESET button (at resetY)
-                endTurnY = resetY - endTurnH - 1;
-            }
+            const thirdRowY = blockTop + 2 * (rowHeight + gap);
+            const halfW = Math.floor((rowWidth - gap) / 2);
+            const resetX = orx;
+            const resetY = thirdRowY;
+            const resetW = halfW;
+            const resetH = rowHeight;
+            const undoX = orx + halfW + gap;
+            const undoY = thirdRowY;
+            const undoW = rowWidth - halfW - gap;
+            const undoH = rowHeight;
             
             // END TURN button
             ctx.save();
@@ -9814,10 +9790,9 @@ export class TacticsScene extends BaseScene {
             ctx.lineWidth = hasActedAll ? 2 : 1;
             ctx.strokeRect(endTurnX + 0.5, endTurnY + 0.5, endTurnW - 1, endTurnH - 1);
             
-            // END TURN button: use standard font sizes (12px zpix for Chinese, 8px/10px Silkscreen for English)
             let turnFont, turnFontSize;
             if (isChinese) {
-                turnFont = hasActedAll ? '12px zpix' : '12px zpix';
+                turnFont = '12px zpix';
                 turnFontSize = 12;
             } else {
                 turnFont = hasActedAll ? '10px Silkscreen' : '8px Silkscreen';
@@ -9840,54 +9815,48 @@ export class TacticsScene extends BaseScene {
             
             this.endTurnRect = { x: endTurnX, y: endTurnY, w: endTurnW, h: endTurnH };
 
-            // RESET button (hardcoded 8px font, no scaling)
-            ctx.fillStyle = 'rgba(20, 20, 20, 0.9)';
-            ctx.fillRect(resetX, resetY, otherBtnW, otherBtnH);
-            ctx.strokeStyle = '#fff';
-            ctx.strokeRect(resetX + 0.5, resetY + 0.5, otherBtnW - 1, otherBtnH - 1);
-            // Use hardcoded 8px font directly (bypass getFontForLanguage)
-            const resetTextY = resetY + (otherBtnH - 8) / 2;
-            ctx.save();
-            ctx.font = '8px Tiny5';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'top';
-            ctx.fillStyle = '#eee';
-            ctx.fillText(resetText, resetX + otherBtnW / 2, resetTextY);
-            ctx.restore();
-            this.resetTurnRect = { x: resetX, y: resetY, w: otherBtnW, h: otherBtnH };
-
-            // ORDER button (hardcoded 8px font, no scaling)
+            // ORDER button (row 2, full width)
             ctx.fillStyle = this.showAttackOrder ? 'rgba(0, 80, 0, 0.9)' : 'rgba(20, 20, 20, 0.9)';
-            ctx.fillRect(orderX, orderY, otherBtnW, otherBtnH);
+            ctx.fillRect(orderX, orderY, orderW, orderH);
             ctx.strokeStyle = this.showAttackOrder ? '#0f0' : '#888';
-            ctx.strokeRect(orderX + 0.5, orderY + 0.5, otherBtnW - 1, otherBtnH - 1);
-            // Use hardcoded 8px font directly (bypass getFontForLanguage)
-            const orderTextY = orderY + (otherBtnH - 8) / 2;
+            ctx.strokeRect(orderX + 0.5, orderY + 0.5, orderW - 1, orderH - 1);
             ctx.save();
             ctx.font = '8px Tiny5';
             ctx.textAlign = 'center';
-            ctx.textBaseline = 'top';
+            ctx.textBaseline = 'middle';
             ctx.fillStyle = '#fff';
-            ctx.fillText(orderText, orderX + otherBtnW / 2, orderTextY);
+            ctx.fillText(orderText, orderX + orderW / 2, orderY + orderH / 2);
             ctx.restore();
-            this.attackOrderRect = { x: orderX, y: orderY, w: otherBtnW, h: otherBtnH };
+            this.attackOrderRect = { x: orderX, y: orderY, w: orderW, h: orderH };
 
-            // UNDO button (hardcoded 8px font, no scaling)
+            // RESET button (row 3 left, square-ish)
+            ctx.fillStyle = 'rgba(20, 20, 20, 0.9)';
+            ctx.fillRect(resetX, resetY, resetW, resetH);
+            ctx.strokeStyle = '#fff';
+            ctx.strokeRect(resetX + 0.5, resetY + 0.5, resetW - 1, resetH - 1);
+            ctx.save();
+            ctx.font = '8px Tiny5';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#eee';
+            ctx.fillText(resetText, resetX + resetW / 2, resetY + resetH / 2);
+            ctx.restore();
+            this.resetTurnRect = { x: resetX, y: resetY, w: resetW, h: resetH };
+
+            // UNDO button (row 3 right, square-ish)
             const canUndo = this.history.length > 1;
             ctx.fillStyle = canUndo ? 'rgba(40, 40, 40, 0.9)' : 'rgba(20, 20, 20, 0.6)';
-            ctx.fillRect(undoX, undoY, otherBtnW, otherBtnH);
+            ctx.fillRect(undoX, undoY, undoW, undoH);
             ctx.strokeStyle = canUndo ? '#fff' : '#444';
-            ctx.strokeRect(undoX + 0.5, undoY + 0.5, otherBtnW - 1, otherBtnH - 1);
-            // Use hardcoded 8px font directly (bypass getFontForLanguage)
-            const undoTextY = undoY + (otherBtnH - 8) / 2;
+            ctx.strokeRect(undoX + 0.5, undoY + 0.5, undoW - 1, undoH - 1);
             ctx.save();
             ctx.font = '8px Tiny5';
             ctx.textAlign = 'center';
-            ctx.textBaseline = 'top';
+            ctx.textBaseline = 'middle';
             ctx.fillStyle = canUndo ? '#eee' : '#666';
-            ctx.fillText(undoText, undoX + otherBtnW / 2, undoTextY);
+            ctx.fillText(undoText, undoX + undoW / 2, undoY + undoH / 2);
             ctx.restore();
-            this.undoRect = { x: undoX, y: undoY, w: otherBtnW, h: otherBtnH };
+            this.undoRect = { x: undoX, y: undoY, w: undoW, h: undoH };
         } else {
             this.endTurnRect = null;
             this.resetTurnRect = null;
