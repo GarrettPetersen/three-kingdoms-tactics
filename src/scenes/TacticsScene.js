@@ -7467,7 +7467,7 @@ export class TacticsScene extends BaseScene {
             this.drawPixelText(ctx, text, canvas.width / 2, canvas.height / 2 - 10, { color, font: '16px Silkscreen', align: 'center' });
             
             if (this.battleId === 'daxing' && this.won) {
-                this.drawPixelText(ctx, getLocalizedText({ en: "The Yellow Turbans scatter!", zh: "黄巾军溃散了！" }), canvas.width / 2, canvas.height / 2 + 15, { color: '#aaa', font: '8px Tiny5', align: 'center' });
+                this.drawPixelText(ctx, getLocalizedText({ en: "The Yellow Turbans scatter!", zh: "黄巾军溃散了！" }), canvas.width / 2, canvas.height / 2 + 15, { color: '#aaa', font: '10px Tiny5', align: 'center' });
             }
         }
 
@@ -7585,7 +7585,7 @@ export class TacticsScene extends BaseScene {
         this.drawPixelText(ctx, promptText, canvas.width / 2, promptY, {
             color: '#ffd700',
             align: 'center',
-            font: '10px Silkscreen'
+            font: '16px Silkscreen'
         });
         
         const options = isNarrativeChoice
@@ -9514,7 +9514,7 @@ export class TacticsScene extends BaseScene {
             this.drawPixelText(ctx, continueText, canvas.width / 2, canvas.height - 20, { 
                 color: `rgba(255, 255, 255, ${0.5 + pulse * 0.5})`,
                 align: 'center',
-                font: '10px Silkscreen'
+                font: '16px Silkscreen'
             });
             return;
         }
@@ -9603,10 +9603,10 @@ export class TacticsScene extends BaseScene {
             }
             
             const actionY = Math.min(by + 4 + lineSpacing * 2, maxTextTop);
-            this.drawPixelText(ctx, actionText, bx + 4, actionY, { color: '#aaa', font: '8px Tiny5' });
+            this.drawPixelText(ctx, actionText, bx + 4, actionY, { color: '#aaa', font: '10px Tiny5' });
             const orderY = by + 4 + lineSpacing * 3;
             if (orderText && orderY <= maxTextTop) {
-                this.drawPixelText(ctx, orderText, bx + 4, orderY, { color: '#888', font: '8px Tiny5' });
+                this.drawPixelText(ctx, orderText, bx + 4, orderY, { color: '#888', font: '10px Tiny5' });
             }
         }
 
@@ -9704,19 +9704,19 @@ export class TacticsScene extends BaseScene {
             }
             this.drawPixelText(ctx, objectiveText, canvas.width / 2, 8, { 
                 color: '#fff', 
-                font: '8px Tiny5', 
+                font: '10px Tiny5', 
                 align: 'center' 
             });
         } else if (this.isFightMode) {
             this.drawPixelText(ctx, getLocalizedText({ en: "GOAL: FREE LU ZHI", zh: "目标：解救卢植" }), canvas.width / 2, 8, { 
                 color: '#fff', 
-                font: '8px Tiny5', 
+                font: '10px Tiny5', 
                 align: 'center' 
             });
         } else if (this.battleId === 'dongzhuo_battle') {
             this.drawPixelText(ctx, getLocalizedText({ en: "GOAL: SAVE DONG ZHUO", zh: "目标：救下董卓" }), canvas.width / 2, 8, { 
                 color: '#fff', 
-                font: '8px Tiny5', 
+                font: '10px Tiny5', 
                 align: 'center' 
             });
         }
@@ -9737,8 +9737,8 @@ export class TacticsScene extends BaseScene {
             const undoText = '◄'; // Left triangle
             
             ctx.save();
-            ctx.font = getFontForLanguage(hasActedAll ? '10px Silkscreen' : '8px Silkscreen');
-            const endTurnSize = getTextContainerSize(ctx, endTurnText, hasActedAll ? '10px Silkscreen' : '8px Silkscreen', 8, hasActedAll ? 20 : 8);
+            ctx.font = getFontForLanguage(hasActedAll ? '16px Silkscreen' : '8px Silkscreen');
+            const endTurnSize = getTextContainerSize(ctx, endTurnText, hasActedAll ? '16px Silkscreen' : '8px Silkscreen', 8, hasActedAll ? 20 : 8);
             ctx.restore();
             
             // 3 rows inside bottom UI bar: bottom of block at screen bottom, top just at bar top
@@ -9795,8 +9795,8 @@ export class TacticsScene extends BaseScene {
                 turnFont = '12px zpix';
                 turnFontSize = 12;
             } else {
-                turnFont = hasActedAll ? '10px Silkscreen' : '8px Silkscreen';
-                turnFontSize = hasActedAll ? 10 : 8;
+                turnFont = hasActedAll ? '16px Silkscreen' : '8px Silkscreen';
+                turnFontSize = hasActedAll ? 16 : 8;
             }
             const turnTextY = endTurnY + (endTurnH - turnFontSize) / 2;
             ctx.save();
@@ -9821,7 +9821,7 @@ export class TacticsScene extends BaseScene {
             ctx.strokeStyle = this.showAttackOrder ? '#0f0' : '#888';
             ctx.strokeRect(orderX + 0.5, orderY + 0.5, orderW - 1, orderH - 1);
             ctx.save();
-            ctx.font = '8px Tiny5';
+            ctx.font = '10px Tiny5';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#fff';
@@ -9835,7 +9835,7 @@ export class TacticsScene extends BaseScene {
             ctx.strokeStyle = '#fff';
             ctx.strokeRect(resetX + 0.5, resetY + 0.5, resetW - 1, resetH - 1);
             ctx.save();
-            ctx.font = '8px Tiny5';
+            ctx.font = '10px Tiny5';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#eee';
@@ -9850,7 +9850,7 @@ export class TacticsScene extends BaseScene {
             ctx.strokeStyle = canUndo ? '#fff' : '#444';
             ctx.strokeRect(undoX + 0.5, undoY + 0.5, undoW - 1, undoH - 1);
             ctx.save();
-            ctx.font = '8px Tiny5';
+            ctx.font = '10px Tiny5';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = canUndo ? '#eee' : '#666';
@@ -9888,8 +9888,8 @@ export class TacticsScene extends BaseScene {
             ctx.strokeRect(dx + 0.5, dy + 0.5, dw - 1, dh - 1);
             
             this.drawPixelText(ctx, getLocalizedText({ en: "UNFINISHED ACTIONS", zh: "尚有单位未行动" }), dx + dw / 2, dy + 10, { color: '#ff4444', font: '8px Silkscreen', align: 'center' });
-            this.drawPixelText(ctx, getLocalizedText({ en: "Some units have not acted.", zh: "仍有单位尚未行动。" }), dx + dw / 2, dy + 22, { color: '#fff', font: '8px Tiny5', align: 'center' });
-            this.drawPixelText(ctx, getLocalizedText({ en: "End turn anyway?", zh: "仍要结束回合吗？" }), dx + dw / 2, dy + 32, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, getLocalizedText({ en: "Some units have not acted.", zh: "仍有单位尚未行动。" }), dx + dw / 2, dy + 22, { color: '#fff', font: '10px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, getLocalizedText({ en: "End turn anyway?", zh: "仍要结束回合吗？" }), dx + dw / 2, dy + 32, { color: '#fff', font: '10px Tiny5', align: 'center' });
             
             // Buttons
             const bw = 50;
@@ -9946,7 +9946,7 @@ export class TacticsScene extends BaseScene {
             const attackName = getLocalizedText(attack?.name || { en: 'Attack', zh: '攻击' });
             this.drawPixelText(ctx, attackName, ax + aw / 2, ay + 3, { 
                 color: isDisabled ? '#555' : '#eee', 
-                font: '8px Tiny5',
+                font: '10px Tiny5',
                 align: 'center' 
             });
 
@@ -10054,7 +10054,7 @@ export class TacticsScene extends BaseScene {
 
         const text = getLocalizedText(UI_TEXT[textKey]);
         const boxW = Math.min(canvas.width - 16, 320);
-        const lines = this.wrapText(ctx, text, boxW - 14, '8px Tiny5');
+        const lines = this.wrapText(ctx, text, boxW - 14, '10px Tiny5');
         const lineHeight = LANGUAGE.current === 'zh' ? 11 : 8;
         const boxH = 10 + (lines.length * lineHeight) + 8;
         const boxX = Math.floor((canvas.width - boxW) / 2);
@@ -10068,7 +10068,7 @@ export class TacticsScene extends BaseScene {
 
         let ty = boxY + 6;
         lines.forEach(line => {
-            this.drawPixelText(ctx, line, boxX + boxW / 2, ty, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, line, boxX + boxW / 2, ty, { color: '#fff', font: '10px Tiny5', align: 'center' });
             ty += lineHeight;
         });
         ctx.restore();

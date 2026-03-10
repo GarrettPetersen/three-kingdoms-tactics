@@ -434,7 +434,7 @@ export class TitleScene extends BaseScene {
             const newGameText = getLocalizedText(UI_TEXT['START A NEW GAME?']);
             const progressText = getLocalizedText(UI_TEXT['EXISTING PROGRESS WILL BE LOST']);
             this.drawPixelText(ctx, newGameText, cx, dy + 26, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
-            this.drawPixelText(ctx, progressText, cx, dy + 42, { color: '#eee', font: '8px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, progressText, cx, dy + 42, { color: '#eee', font: '10px Tiny5', align: 'center' });
 
             const btnY = dy + 68;
             const boxPadH = 14;

@@ -111,7 +111,7 @@ export class RecoveryScene extends BaseScene {
         const displayName = getLocalizedCharacterName(current.name) || current.name;
         this.drawPixelText(ctx, displayName, cx, 125, { 
             color: '#fff', 
-            font: '10px Silkscreen', 
+            font: '16px Silkscreen', 
             align: 'center' 
         });
 
@@ -121,7 +121,7 @@ export class RecoveryScene extends BaseScene {
             zh: `恢复到等级 ${current.level}`
         }), cx, 140, {
             color: '#aaa', 
-            font: '8px Tiny5', 
+            font: '10px Tiny5', 
             align: 'center' 
         });
         if (current.xpLost > 0) {
@@ -130,7 +130,7 @@ export class RecoveryScene extends BaseScene {
                 zh: `重伤期间损失 -${current.xpLost} 经验`
             }), cx, 150, {
                 color: '#ff4444', 
-                font: '8px Tiny5', 
+                font: '10px Tiny5', 
                 align: 'center' 
             });
         }

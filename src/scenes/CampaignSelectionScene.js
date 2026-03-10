@@ -335,7 +335,7 @@ export class CampaignSelectionScene extends BaseScene {
             const lines = this.wrapText(ctx, selected.description, boxW - 10);
             let lineY = by + 18;
             lines.forEach(line => {
-                this.drawPixelText(ctx, line, bx + 5, lineY, { color: '#aaa', font: '8px Tiny5' });
+                this.drawPixelText(ctx, line, bx + 5, lineY, { color: '#aaa', font: '10px Tiny5' });
                 lineY += 10;
             });
 
@@ -354,7 +354,7 @@ export class CampaignSelectionScene extends BaseScene {
                 const promptText = selected.isInProgress 
                     ? getLocalizedText(UI_TEXT['CLICK CHARACTER TO CONTINUE'])
                     : getLocalizedText(UI_TEXT['CLICK CHARACTER TO BEGIN']);
-                this.drawPixelText(ctx, promptText, bx + boxW / 2, bottomTextY, { color: '#eee', font: '8px Tiny5', align: 'center' });
+                this.drawPixelText(ctx, promptText, bx + boxW / 2, bottomTextY, { color: '#eee', font: '10px Tiny5', align: 'center' });
                 ctx.globalAlpha = 1.0;
             }
         }

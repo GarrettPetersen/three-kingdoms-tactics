@@ -163,7 +163,7 @@ export class LevelUpScene extends BaseScene {
         const displayName = getLocalizedCharacterName(current.name) || current.name;
         this.drawPixelText(ctx, displayName, cx, nameY, { 
             color: '#fff', 
-            font: '10px Silkscreen', 
+            font: '16px Silkscreen', 
             align: 'center' 
         });
 
@@ -231,13 +231,13 @@ export class LevelUpScene extends BaseScene {
             }
 
             bonuses.forEach(b => {
-                const lines = this.wrapText(ctx, `+ ${b}`, 200, '8px Tiny5');
+                const lines = this.wrapText(ctx, `+ ${b}`, 200, '10px Tiny5');
                 lines.forEach(line => {
                     const maxY = reserveForPromotion ? (promotionY - 8) : 222;
                     if (by > maxY) return;
                     this.drawPixelText(ctx, line, cx, by, { 
                         color: '#4f4', 
-                        font: '8px Tiny5', 
+                        font: '10px Tiny5', 
                         align: 'center' 
                     });
                     by += 14;
@@ -285,7 +285,7 @@ export class LevelUpScene extends BaseScene {
             ctx.lineWidth = 2;
             ctx.fillRect(ax, ay, bw, bh);
             ctx.strokeRect(ax + 1, ay + 1, bw - 2, bh - 2);
-            this.drawPixelText(ctx, getLocalizedText({ en: "ARCHER", zh: "弓兵" }), ax + bw/2, ay + bh/2 - 3, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, getLocalizedText({ en: "ARCHER", zh: "弓兵" }), ax + bw/2, ay + bh/2 - 3, { color: '#fff', font: '10px Tiny5', align: 'center' });
             this.archerRect = { x: ax, y: ay, w: bw, h: bh };
 
             const cxb = cx + gap / 2;
@@ -295,7 +295,7 @@ export class LevelUpScene extends BaseScene {
             ctx.lineWidth = 2;
             ctx.fillRect(cxb, cyb, bw, bh);
             ctx.strokeRect(cxb + 1, cyb + 1, bw - 2, bh - 2);
-            this.drawPixelText(ctx, getLocalizedText({ en: "XBOW", zh: "弩兵" }), cxb + bw/2, cyb + bh/2 - 3, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, getLocalizedText({ en: "XBOW", zh: "弩兵" }), cxb + bw/2, cyb + bh/2 - 3, { color: '#fff', font: '10px Tiny5', align: 'center' });
             this.crossbowRect = { x: cxb, y: cyb, w: bw, h: bh };
         } else {
             // Level 2 soldier: Soldier | Archer
@@ -306,7 +306,7 @@ export class LevelUpScene extends BaseScene {
             ctx.lineWidth = 2;
             ctx.fillRect(sx, sy, bw, bh);
             ctx.strokeRect(sx + 1, sy + 1, bw - 2, bh - 2);
-            this.drawPixelText(ctx, getLocalizedText({ en: "SOLDIER", zh: "步兵" }), sx + bw/2, sy + bh/2 - 3, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, getLocalizedText({ en: "SOLDIER", zh: "步兵" }), sx + bw/2, sy + bh/2 - 3, { color: '#fff', font: '10px Tiny5', align: 'center' });
             this.soldierRect = { x: sx, y: sy, w: bw, h: bh };
 
             const ax = cx + gap / 2;
@@ -316,7 +316,7 @@ export class LevelUpScene extends BaseScene {
             ctx.lineWidth = 2;
             ctx.fillRect(ax, ay, bw, bh);
             ctx.strokeRect(ax + 1, ay + 1, bw - 2, bh - 2);
-            this.drawPixelText(ctx, getLocalizedText({ en: "ARCHER", zh: "弓兵" }), ax + bw/2, ay + bh/2 - 3, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, getLocalizedText({ en: "ARCHER", zh: "弓兵" }), ax + bw/2, ay + bh/2 - 3, { color: '#fff', font: '10px Tiny5', align: 'center' });
             this.archerRect = { x: ax, y: ay, w: bw, h: bh };
         }
     }

@@ -69,17 +69,17 @@ export class CreditsScene extends BaseScene {
 
             let options = {
                 color: '#fff',
-                font: '8px Tiny5',
+                font: '10px Tiny5',
                 align: 'center'
             };
 
             if (line.startsWith('# ')) {
                 options.color = '#ffd700';
-                options.font = '12px Silkscreen';
+                options.font = '16px Silkscreen';
                 line = line.substring(2).toUpperCase();
             } else if (line.startsWith('## ')) {
                 options.color = '#0af';
-                options.font = '10px Silkscreen';
+                options.font = '16px Silkscreen';
                 line = line.substring(3).toUpperCase();
             } else if (line === "") {
                 return;
@@ -94,7 +94,7 @@ export class CreditsScene extends BaseScene {
             ctx.globalAlpha = 0.3 + pulse * 0.3;
             this.drawPixelText(ctx, "CLICK TO SKIP", canvas.width - 5, canvas.height - 15, {
                 color: '#aaa',
-                font: '8px Tiny5',
+                font: '10px Tiny5',
                 align: 'right'
             });
             ctx.globalAlpha = 1.0;

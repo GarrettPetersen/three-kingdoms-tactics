@@ -599,7 +599,7 @@ export class BaseScene {
         };
     }
 
-    wrapText(ctx, text, maxWidth, font = '8px Tiny5') {
+    wrapText(ctx, text, maxWidth, font = '10px Tiny5') {
         if (!text) return [];
         
         const lines = [];
