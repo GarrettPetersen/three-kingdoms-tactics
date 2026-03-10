@@ -8261,8 +8261,9 @@ export class TacticsScene extends BaseScene {
         for (let i = 0; i < unit.maxHp; i++) {
             const lx = bx + i * (segmentW + gap);
             if (i < unit.hp) {
-                // Filled segment
-                ctx.fillStyle = unit.faction === 'enemy' ? '#f00' : '#0f0';
+                // Filled segment: red enemy, green player, blue allied
+                const fillColor = unit.faction === 'enemy' ? '#f00' : (unit.faction === 'allied' ? '#08f' : '#0f0');
+                ctx.fillStyle = fillColor;
             } else {
                 // Empty segment (darker, semi-transparent)
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
@@ -9570,10 +9571,14 @@ export class TacticsScene extends BaseScene {
             ctx.strokeStyle = '#666';
             ctx.strokeRect(hpBarX + 0.5, hpBarY + 0.5, hpBarW - 1, hpBarH - 1);
             
-            // Health fill
+            // Health fill (blue for allies, green for player, red for enemy; shade by health for player/enemy)
             const fillW = Math.floor(hpBarW * hpPercent);
             if (fillW > 0) {
-                ctx.fillStyle = hpPercent > 0.5 ? '#0f0' : (hpPercent > 0.25 ? '#ff0' : '#f00');
+                if (u.faction === 'allied') {
+                    ctx.fillStyle = hpPercent > 0.5 ? '#08f' : (hpPercent > 0.25 ? '#0af' : '#05f');
+                } else {
+                    ctx.fillStyle = u.faction === 'enemy' ? '#f00' : (hpPercent > 0.5 ? '#0f0' : (hpPercent > 0.25 ? '#ff0' : '#f00'));
+                }
                 ctx.fillRect(hpBarX + 1, hpBarY + 1, fillW - 2, hpBarH - 2);
             }
 
