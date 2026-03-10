@@ -140,7 +140,7 @@ export class CustomBattleMenuScene extends BaseScene {
             const dw = 120;
             const dh = 14;
 
-            this.drawPixelText(ctx, label, lx, ly + 3, { color: '#aaa', font: '10px Tiny5' });
+            this.drawPixelText(ctx, label, lx, ly + 3, { color: '#aaa', font: '8px Tiny5' });
             
             const rect = { x: dx, y: ly, w: dw, h: dh, type: 'dropdown', key: key };
             ctx.fillStyle = '#222';
@@ -150,7 +150,7 @@ export class CustomBattleMenuScene extends BaseScene {
             
             // Localize the value
             const displayVal = getLocalizedText(UI_TEXT[val]) || (typeof val === 'string' ? val.toUpperCase().replace(/_/g, ' ') : val);
-            this.drawPixelText(ctx, displayVal, dx + 5, ly + 3, { color: '#fff', font: '10px Tiny5' });
+            this.drawPixelText(ctx, displayVal, dx + 5, ly + 3, { color: '#fff', font: '8px Tiny5' });
             ctx.fillStyle = '#fff';
             ctx.beginPath();
             if (this.dropdowns[key].open) {
@@ -168,7 +168,7 @@ export class CustomBattleMenuScene extends BaseScene {
 
         const drawDensitySlider = (label, key, val, index) => {
             const ly = startY + index * spacing;
-            this.drawPixelText(ctx, label, 20, ly + 3, { color: '#aaa', font: '10px Tiny5' });
+            this.drawPixelText(ctx, label, 20, ly + 3, { color: '#aaa', font: '8px Tiny5' });
             const sw = 120;
             const sx = 100;
             const sy = ly + 6;
@@ -224,7 +224,7 @@ export class CustomBattleMenuScene extends BaseScene {
                     // Localize the item text
                     const itemText = getLocalizedText(UI_TEXT[item]) || item.toUpperCase().replace(/_/g, ' ');
                     const textY = iy + (LANGUAGE.current === 'zh' ? 2 : 3);
-                    this.drawPixelText(ctx, itemText, dx + 10, textY, { color: '#ccc', font: '10px Tiny5' });
+                    this.drawPixelText(ctx, itemText, dx + 10, textY, { color: '#ccc', font: '8px Tiny5' });
                     this.buttonRects.push(iRect);
                 }
                 
@@ -348,7 +348,7 @@ export class CustomBattleMenuScene extends BaseScene {
 
     renderUnitTweakPanel(ctx, x, y, w) {
         const sel = this.options.roster[this.selectedRosterIndex];
-        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['EDITING UNIT']), x, y, { color: '#ffd700', font: '10px Tiny5' });
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['EDITING UNIT']), x, y, { color: '#ffd700', font: '8px Tiny5' });
         
         // Large preview (scale 1:1)
         const charImg = assets.getImage(sel.imgKey);
@@ -369,7 +369,7 @@ export class CustomBattleMenuScene extends BaseScene {
         let cy = y + 80;
 
         // Faction: one cycling button (PLAYER -> ALLIED -> ENEMY)
-        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['FACTION:']), x, cy, { color: '#aaa', font: '10px Tiny5' });
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['FACTION:']), x, cy, { color: '#aaa', font: '8px Tiny5' });
         cy += 12;
         const factionColors = { player: '#4f4', allied: '#55f', enemy: '#f44' };
         const factionKey = (sel.faction || 'player').toUpperCase();
@@ -380,7 +380,7 @@ export class CustomBattleMenuScene extends BaseScene {
         cy += buttonH + blockGap;
 
         // Level selection
-        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['LEVEL:']), x, cy, { color: '#aaa', font: '10px Tiny5' });
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['LEVEL:']), x, cy, { color: '#aaa', font: '8px Tiny5' });
         cy += 12;
         [1, 2, 3, 4, 5].forEach((l, i) => {
             const rect = { x: x + i * 22, y: cy, w: 18, h: buttonH, type: 'set_level', level: l };
@@ -412,7 +412,7 @@ export class CustomBattleMenuScene extends BaseScene {
     }
 
     renderAvailableUnitsPanel(ctx, x, y, w) {
-        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['ADD UNITS']), x, y, { color: '#aaa', font: '10px Tiny5' });
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['ADD UNITS']), x, y, { color: '#aaa', font: '8px Tiny5' });
         
         // Unit dropdown
         const dropdownY = y + 15;
@@ -439,7 +439,7 @@ export class CustomBattleMenuScene extends BaseScene {
         
         // Truncate name if too long
         ctx.save();
-        ctx.font = '10px Tiny5';
+        ctx.font = '8px Tiny5';
         const maxWidth = dropdownW - 20; // Leave space for arrow
         let displayName = selectedUnitName;
         if (ctx.measureText(displayName).width > maxWidth) {
@@ -454,7 +454,7 @@ export class CustomBattleMenuScene extends BaseScene {
         }
         ctx.restore();
         
-        this.drawPixelText(ctx, displayName, x + 5, dropdownY + 3, { color: '#fff', font: '10px Tiny5' });
+        this.drawPixelText(ctx, displayName, x + 5, dropdownY + 3, { color: '#fff', font: '8px Tiny5' });
         ctx.fillStyle = '#fff';
         ctx.beginPath();
         if (this.dropdowns.unit.open) {
@@ -503,7 +503,7 @@ export class CustomBattleMenuScene extends BaseScene {
                 const unitName = getLocalizedCharacterName(unit.name) || unit.name;
                 const displayUnitName = LANGUAGE.current === 'zh' ? unitName : unitName.toUpperCase();
                 ctx.save();
-                ctx.font = '10px Tiny5';
+                ctx.font = '8px Tiny5';
                 const nameMaxWidth = dropdownW - 18 - 5; // Leave space for sprite and padding
                 let displayText = displayUnitName;
                 if (ctx.measureText(displayText).width > nameMaxWidth) {
@@ -520,7 +520,7 @@ export class CustomBattleMenuScene extends BaseScene {
                 
                 this.drawPixelText(ctx, displayText, itemRect.x + 18, itemRect.y + 3, { 
                     color: isSelected ? '#ffd700' : '#ccc', 
-                    font: '10px Tiny5' 
+                    font: '8px Tiny5' 
                 });
                 this.buttonRects.push(itemRect);
             }
@@ -569,7 +569,7 @@ export class CustomBattleMenuScene extends BaseScene {
         const headerSpacing = LANGUAGE.current === 'zh' ? 12 : 10;
         
         const rosterText = getLocalizedText(UI_TEXT['ROSTER']) + ` (${this.options.roster.length}/20)`;
-        this.drawPixelText(ctx, rosterText, x, y, { color: '#aaa', font: '10px Tiny5' });
+        this.drawPixelText(ctx, rosterText, x, y, { color: '#aaa', font: '8px Tiny5' });
 
         const rowH = LANGUAGE.current === 'zh' ? 18 : 16;
         const startY = y + headerSpacing;
@@ -622,10 +622,10 @@ export class CustomBattleMenuScene extends BaseScene {
             const displayName = LANGUAGE.current === 'zh' ? unitName : unitName.toUpperCase();
             // Truncate name with ellipsis if too long (account for sprite width ~16px)
             const maxWidth = rect.w - 18 - 2; // Leave space for sprite and padding
-            const truncatedName = this.truncateText(ctx, displayName, maxWidth, '10px Tiny5');
+            const truncatedName = this.truncateText(ctx, displayName, maxWidth, '8px Tiny5');
             // Center text vertically in the row: drawPixelText uses textBaseline='top'
             const nameTextY = rect.y + (rect.h - 8) / 2;
-            this.drawPixelText(ctx, truncatedName, rect.x + 18, nameTextY, { color: nameColor, font: '10px Tiny5' });
+            this.drawPixelText(ctx, truncatedName, rect.x + 18, nameTextY, { color: nameColor, font: '8px Tiny5' });
             this.buttonRects.push(rect);
         }
 
@@ -688,7 +688,7 @@ export class CustomBattleMenuScene extends BaseScene {
             const clearH = LANGUAGE.current === 'zh' ? 12 : 10;
             const clearRect = { x: x + w - 40, y: clearY, w: 40, h: clearH, type: 'clear_roster' };
             const clearTextY = clearY + (clearH - 8) / 2;
-            this.drawPixelText(ctx, getLocalizedText(UI_TEXT['CLEAR ALL']), x + w, clearTextY, { color: '#800', font: '10px Tiny5', align: 'right' });
+            this.drawPixelText(ctx, getLocalizedText(UI_TEXT['CLEAR ALL']), x + w, clearTextY, { color: '#800', font: '8px Tiny5', align: 'right' });
             this.buttonRects.push(clearRect);
         }
     }
@@ -701,8 +701,8 @@ export class CustomBattleMenuScene extends BaseScene {
         
         let y = 70;
         const drawStatLine = (label, val, color = '#eee') => {
-            this.drawPixelText(ctx, label, 50, y, { color: '#aaa', font: '10px Tiny5' });
-            this.drawPixelText(ctx, val.toString(), 200, y, { color: color, font: '10px Tiny5', align: 'right' });
+            this.drawPixelText(ctx, label, 50, y, { color: '#aaa', font: '8px Tiny5' });
+            this.drawPixelText(ctx, val.toString(), 200, y, { color: color, font: '8px Tiny5', align: 'right' });
             y += 18;
         };
 
@@ -736,7 +736,7 @@ export class CustomBattleMenuScene extends BaseScene {
         ctx.restore();
     }
 
-    truncateText(ctx, text, maxWidth, font = '10px Tiny5') {
+    truncateText(ctx, text, maxWidth, font = '8px Tiny5') {
         ctx.save();
         ctx.font = font;
         const ellipsis = '...';
@@ -787,7 +787,7 @@ export class CustomBattleMenuScene extends BaseScene {
         const textY = actualRect.y + (actualRect.h - 8) / 2;
         this.drawPixelText(ctx, text, actualRect.x + actualRect.w / 2, textY, { 
             color: isSelected ? '#000' : '#fff', 
-            font: '10px Tiny5', 
+            font: '8px Tiny5', 
             align: 'center' 
         });
     }

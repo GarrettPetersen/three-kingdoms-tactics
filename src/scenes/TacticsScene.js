@@ -7467,7 +7467,7 @@ export class TacticsScene extends BaseScene {
             this.drawPixelText(ctx, text, canvas.width / 2, canvas.height / 2 - 10, { color, font: '16px Silkscreen', align: 'center' });
             
             if (this.battleId === 'daxing' && this.won) {
-                this.drawPixelText(ctx, getLocalizedText({ en: "The Yellow Turbans scatter!", zh: "黄巾军溃散了！" }), canvas.width / 2, canvas.height / 2 + 15, { color: '#aaa', font: '10px Tiny5', align: 'center' });
+                this.drawPixelText(ctx, getLocalizedText({ en: "The Yellow Turbans scatter!", zh: "黄巾军溃散了！" }), canvas.width / 2, canvas.height / 2 + 15, { color: '#aaa', font: '8px Tiny5', align: 'center' });
             }
         }
 
@@ -9603,10 +9603,10 @@ export class TacticsScene extends BaseScene {
             }
             
             const actionY = Math.min(by + 4 + lineSpacing * 2, maxTextTop);
-            this.drawPixelText(ctx, actionText, bx + 4, actionY, { color: '#aaa', font: '10px Tiny5' });
+            this.drawPixelText(ctx, actionText, bx + 4, actionY, { color: '#aaa', font: '8px Tiny5' });
             const orderY = by + 4 + lineSpacing * 3;
             if (orderText && orderY <= maxTextTop) {
-                this.drawPixelText(ctx, orderText, bx + 4, orderY, { color: '#888', font: '10px Tiny5' });
+                this.drawPixelText(ctx, orderText, bx + 4, orderY, { color: '#888', font: '8px Tiny5' });
             }
         }
 
@@ -9618,7 +9618,7 @@ export class TacticsScene extends BaseScene {
             const text = (typeof dn.value === 'number') ? `-${dn.value}` : dn.value;
             this.drawPixelText(ctx, text, dn.x, dn.y, { 
                 color: dn.color, 
-                font: '10px Tiny5', 
+                font: '8px Tiny5', 
                 align: 'center' 
             });
             ctx.restore();
@@ -9704,19 +9704,19 @@ export class TacticsScene extends BaseScene {
             }
             this.drawPixelText(ctx, objectiveText, canvas.width / 2, 8, { 
                 color: '#fff', 
-                font: '10px Tiny5', 
+                font: '8px Tiny5', 
                 align: 'center' 
             });
         } else if (this.isFightMode) {
             this.drawPixelText(ctx, getLocalizedText({ en: "GOAL: FREE LU ZHI", zh: "目标：解救卢植" }), canvas.width / 2, 8, { 
                 color: '#fff', 
-                font: '10px Tiny5', 
+                font: '8px Tiny5', 
                 align: 'center' 
             });
         } else if (this.battleId === 'dongzhuo_battle') {
             this.drawPixelText(ctx, getLocalizedText({ en: "GOAL: SAVE DONG ZHUO", zh: "目标：救下董卓" }), canvas.width / 2, 8, { 
                 color: '#fff', 
-                font: '10px Tiny5', 
+                font: '8px Tiny5', 
                 align: 'center' 
             });
         }
@@ -9741,8 +9741,13 @@ export class TacticsScene extends BaseScene {
             const endTurnSize = getTextContainerSize(ctx, endTurnText, hasActedAll ? '16px Silkscreen' : '8px Silkscreen', 8, hasActedAll ? 20 : 8);
             ctx.restore();
             
-            // 3 rows inside bottom UI bar: bottom of block at screen bottom, top just at bar top
-            const rowWidth = isChinese ? Math.max(100, endTurnSize.width) : 80;
+            // 3 rows inside bottom UI bar; cap width so block doesn't overlap attack buttons (left of ~160px)
+            const maxRowWidth = Math.max(80, canvas.width - 170);
+            const rowWidth = Math.min(
+                isChinese ? Math.max(100, endTurnSize.width) : 80,
+                120,
+                maxRowWidth
+            );
             const gap = 2;
             const blockBottom = canvas.height;
             const blockTop = barY;
@@ -9815,13 +9820,13 @@ export class TacticsScene extends BaseScene {
             
             this.endTurnRect = { x: endTurnX, y: endTurnY, w: endTurnW, h: endTurnH };
 
-            // ORDER button (row 2, full width)
+            // ORDER button (row 2, full width) — "1,2,3" in 8px Silkscreen to fit and stay crisp
             ctx.fillStyle = this.showAttackOrder ? 'rgba(0, 80, 0, 0.9)' : 'rgba(20, 20, 20, 0.9)';
             ctx.fillRect(orderX, orderY, orderW, orderH);
             ctx.strokeStyle = this.showAttackOrder ? '#0f0' : '#888';
             ctx.strokeRect(orderX + 0.5, orderY + 0.5, orderW - 1, orderH - 1);
             ctx.save();
-            ctx.font = '10px Tiny5';
+            ctx.font = getFontForLanguage('8px Silkscreen');
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#fff';
@@ -9835,7 +9840,7 @@ export class TacticsScene extends BaseScene {
             ctx.strokeStyle = '#fff';
             ctx.strokeRect(resetX + 0.5, resetY + 0.5, resetW - 1, resetH - 1);
             ctx.save();
-            ctx.font = '10px Tiny5';
+            ctx.font = '8px Tiny5';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#eee';
@@ -9850,7 +9855,7 @@ export class TacticsScene extends BaseScene {
             ctx.strokeStyle = canUndo ? '#fff' : '#444';
             ctx.strokeRect(undoX + 0.5, undoY + 0.5, undoW - 1, undoH - 1);
             ctx.save();
-            ctx.font = '10px Tiny5';
+            ctx.font = '8px Tiny5';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = canUndo ? '#eee' : '#666';
@@ -9888,8 +9893,8 @@ export class TacticsScene extends BaseScene {
             ctx.strokeRect(dx + 0.5, dy + 0.5, dw - 1, dh - 1);
             
             this.drawPixelText(ctx, getLocalizedText({ en: "UNFINISHED ACTIONS", zh: "尚有单位未行动" }), dx + dw / 2, dy + 10, { color: '#ff4444', font: '8px Silkscreen', align: 'center' });
-            this.drawPixelText(ctx, getLocalizedText({ en: "Some units have not acted.", zh: "仍有单位尚未行动。" }), dx + dw / 2, dy + 22, { color: '#fff', font: '10px Tiny5', align: 'center' });
-            this.drawPixelText(ctx, getLocalizedText({ en: "End turn anyway?", zh: "仍要结束回合吗？" }), dx + dw / 2, dy + 32, { color: '#fff', font: '10px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, getLocalizedText({ en: "Some units have not acted.", zh: "仍有单位尚未行动。" }), dx + dw / 2, dy + 22, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, getLocalizedText({ en: "End turn anyway?", zh: "仍要结束回合吗？" }), dx + dw / 2, dy + 32, { color: '#fff', font: '8px Tiny5', align: 'center' });
             
             // Buttons
             const bw = 50;
@@ -9922,18 +9927,23 @@ export class TacticsScene extends BaseScene {
     }
 
     drawUnitAbilityUI(ctx, canvas, unit) {
-        // Positioned between Info Box and Turn Buttons
+        // Positioned between Info Box and Turn Buttons; attacks stacked vertically to fit the bar
         const startX = 100;
         const barY = canvas.height - 40;
-        
-        // Attack buttons
+        const barH = 40;
+        const gap = 2;
+        const aw = 55;
+        const n = unit.attacks.length;
+        // Fit within bar: use smaller height when 3+ attacks
+        const ah = n >= 3 ? 12 : 14;
+        const totalH = n * ah + (n - 1) * gap;
+        const startOff = Math.max(0, (barH - totalH) / 2);
+
         this.attackRects = [];
         unit.attacks.forEach((key, i) => {
             const attack = ATTACKS[key];
-            const aw = 55;
-            const ah = 14;
-            const ax = startX + i * (aw + 4);
-            const ay = barY + 13;
+            const ax = startX;
+            const ay = barY + startOff + i * (ah + gap);
 
             const isSelected = this.selectedAttack === key;
             const isDisabled = unit.hasAttacked;
@@ -9944,10 +9954,11 @@ export class TacticsScene extends BaseScene {
             ctx.strokeRect(ax + 0.5, ay + 0.5, aw - 1, ah - 1);
 
             const attackName = getLocalizedText(attack?.name || { en: 'Attack', zh: '攻击' });
-            this.drawPixelText(ctx, attackName, ax + aw / 2, ay + 3, { 
-                color: isDisabled ? '#555' : '#eee', 
-                font: '10px Tiny5',
-                align: 'center' 
+            const textOffset = ah >= 14 ? 3 : 2;
+            this.drawPixelText(ctx, attackName, ax + aw / 2, ay + textOffset, {
+                color: isDisabled ? '#555' : '#eee',
+                font: '8px Tiny5',
+                align: 'center'
             });
 
             this.attackRects.push({ x: ax, y: ay, w: aw, h: ah, key });
@@ -10054,7 +10065,7 @@ export class TacticsScene extends BaseScene {
 
         const text = getLocalizedText(UI_TEXT[textKey]);
         const boxW = Math.min(canvas.width - 16, 320);
-        const lines = this.wrapText(ctx, text, boxW - 14, '10px Tiny5');
+        const lines = this.wrapText(ctx, text, boxW - 14, '8px Tiny5');
         const lineHeight = LANGUAGE.current === 'zh' ? 11 : 8;
         const boxH = 10 + (lines.length * lineHeight) + 8;
         const boxX = Math.floor((canvas.width - boxW) / 2);
@@ -10068,7 +10079,7 @@ export class TacticsScene extends BaseScene {
 
         let ty = boxY + 6;
         lines.forEach(line => {
-            this.drawPixelText(ctx, line, boxX + boxW / 2, ty, { color: '#fff', font: '10px Tiny5', align: 'center' });
+            this.drawPixelText(ctx, line, boxX + boxW / 2, ty, { color: '#fff', font: '8px Tiny5', align: 'center' });
             ty += lineHeight;
         });
         ctx.restore();

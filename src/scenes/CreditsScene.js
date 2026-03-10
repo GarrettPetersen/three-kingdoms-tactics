@@ -69,7 +69,7 @@ export class CreditsScene extends BaseScene {
 
             let options = {
                 color: '#fff',
-                font: '10px Tiny5',
+                font: '8px Tiny5',
                 align: 'center'
             };
 
@@ -94,7 +94,7 @@ export class CreditsScene extends BaseScene {
             ctx.globalAlpha = 0.3 + pulse * 0.3;
             this.drawPixelText(ctx, "CLICK TO SKIP", canvas.width - 5, canvas.height - 15, {
                 color: '#aaa',
-                font: '10px Tiny5',
+                font: '8px Tiny5',
                 align: 'right'
             });
             ctx.globalAlpha = 1.0;

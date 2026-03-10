@@ -23,7 +23,7 @@ A tactical roguelike game set in the Three Kingdoms era, built with Vanilla JS, 
 ### 4. Typography Hierarchy
 - **Titles/Headers**: 8px `Silkscreen` (force uppercase).
 - **Dialogue/Body**: 8px `Dogica` (mixed case).
-- **Small UI/Prompts**: 8px `Tiny5`.
+- **Small UI/Prompts**: 8px `Tiny5` (effective design size 8px; use 8, 16, or 24px).
 
 ### 5. Narrative Scripting
 - **Commands**: `NarrativeScene` sequences are driven by a script array of commands:

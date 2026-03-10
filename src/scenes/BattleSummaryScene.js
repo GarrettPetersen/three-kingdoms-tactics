@@ -145,8 +145,8 @@ export class BattleSummaryScene extends BaseScene {
             }
         }
 
-        this.drawPixelText(ctx, label, x, y, { color: '#aaa', font: '10px Tiny5' });
-        this.drawPixelText(ctx, value.toString(), valX, y, { color: color, font: '10px Tiny5', align: 'right' });
+        this.drawPixelText(ctx, label, x, y, { color: '#aaa', font: '8px Tiny5' });
+        this.drawPixelText(ctx, value.toString(), valX, y, { color: color, font: '8px Tiny5', align: 'right' });
     }
 
     handleInput(e) {

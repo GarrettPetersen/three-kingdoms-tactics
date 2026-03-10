@@ -575,7 +575,7 @@ export class MapScene extends BaseScene {
         // Name and prompt are already localized when passed in
         // Calculate container size for both name and prompt
         const nameSize = getTextContainerSize(ctx, name, '8px Silkscreen', 5, 12);
-        const promptSize = getTextContainerSize(ctx, prompt, '10px Tiny5', 5, 12);
+        const promptSize = getTextContainerSize(ctx, prompt, '8px Tiny5', 5, 12);
         
         // Container needs to fit both lines, so use the wider of the two
         const boxW = Math.max(nameSize.width, promptSize.width);
@@ -609,7 +609,7 @@ export class MapScene extends BaseScene {
         ctx.globalAlpha = pulse;
         // Position prompt below name with proper spacing (Y coordinate is top of text)
         const promptY = by + topPadding + nameSize.height + lineSpacing;
-        this.drawPixelText(ctx, prompt, bx + 5, promptY, { color: '#eee', font: '10px Tiny5' });
+        this.drawPixelText(ctx, prompt, bx + 5, promptY, { color: '#eee', font: '8px Tiny5' });
         ctx.globalAlpha = 1.0;
     }
 
