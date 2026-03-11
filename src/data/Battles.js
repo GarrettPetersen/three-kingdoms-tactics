@@ -496,6 +496,65 @@ export const BATTLES = {
             { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_rage_01', text: { en: "We have just rescued this menial in a bloody fight, and now he is rude to us! Nothing but his death can slake my anger.", zh: "我们刚刚在一场血战中救了这个小人物，现在他却对我们无礼！只有他的死才能平息我的怒火。" } }
         ]
     },
+    'chapter2_zhangbao_probe': {
+        name: 'Yingchuan - First Clash with Zhang Bao',
+        map: {
+            biome: 'northern',
+            layout: 'foothills',
+            seed: 'chapter2_zhangbao_probe',
+            weather: 'rain',
+            forestDensity: 0.08,
+            mountainDensity: 0.06,
+            riverDensity: 0.0,
+            houseDensity: 0.02
+        },
+        enableZhangBaoLightning: true,
+        units: [
+            { id: 'liubei', r: 7, q: 2, type: 'hero' },
+            { id: 'guanyu', r: 6, q: 2, type: 'hero' },
+            { id: 'zhangfei', r: 8, q: 2, type: 'hero' },
+            { id: 'ally1', r: 7, q: 1, type: 'allied_soldier' },
+            { id: 'ally2', r: 6, q: 1, type: 'allied_soldier' },
+            { id: 'ally3', r: 8, q: 1, type: 'allied_soldier' },
+            {
+                id: 'zhangbao',
+                r: 4,
+                q: 9,
+                type: 'zhang_bao',
+                immortal: {
+                    enabled: true,
+                    triggerHp: 1,
+                    onNearDeath: { callback: 'chapter2_zhangbao_sorcery' }
+                }
+            },
+            { id: 'gaosheng', r: 5, q: 8, type: 'enemy_captain', templateId: 'gaosheng' },
+            { id: 'rebel1', r: 4, q: 8, type: 'enemy_soldier', templateId: 'rebel_archer' },
+            { id: 'rebel2', r: 5, q: 9, type: 'enemy_soldier' },
+            { id: 'rebel3', r: 3, q: 9, type: 'enemy_soldier' }
+        ],
+        introScript: [
+            {
+                speaker: 'zhangbao',
+                portraitKey: 'zhang-bao',
+                name: 'Zhang Bao',
+                voiceId: 'ch2_probe_zb_01',
+                text: {
+                    en: "You are Liu Xuande? Good. Taste the art of the Yellow Heaven.",
+                    zh: "你便是刘玄德？好，且尝黄天道法。"
+                }
+            },
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'ch2_probe_lb_01',
+                text: {
+                    en: "Hold the line. Break Gao Sheng first and pressure Zhang Bao.",
+                    zh: "稳住阵脚。先破高升，再逼张宝。"
+                }
+            }
+        ]
+    },
     'caocao_yingchuan_intercept': {
         name: 'Yingchuan - Cavalry Intercept',
         map: {
@@ -752,6 +811,7 @@ export const UNIT_TEMPLATES = {
     'enemy_captain': {
         'dengmao': { name: 'Deng Mao', imgKey: 'dengmao', hp: 5, moveRange: 3, attacks: ['generic_spear'], faction: 'enemy', level: 1 },
         'chengyuanzhi': { name: 'Cheng Yuanzhi', imgKey: 'chengyuanzhi', hp: 5, moveRange: 3, attacks: ['polearm_sweep'], faction: 'enemy', level: 2 },
+        'gaosheng': { name: 'Gao Sheng', imgKey: 'yellowturban', hp: 5, moveRange: 3, attacks: ['generic_spear'], faction: 'enemy', level: 2 },
         'zhang_jue_captain': { name: 'Yellow Turban Captain', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['bash'], faction: 'enemy' }
     },
     'commander': {

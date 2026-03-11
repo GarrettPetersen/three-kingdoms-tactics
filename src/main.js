@@ -537,6 +537,7 @@ async function init() {
                 boulder_cracked: 'assets/misc/boulder_cracked.png',
                 boulder_destroyed: 'assets/misc/boulder_destroyed.png',
                 boulder_shadow: 'assets/misc/boulder_shadow.png',
+                lightning_sheet: 'assets/misc/lightning.png',
                 cage: 'assets/terrain/individual/cage.png',
                 cage_damaged: 'assets/terrain/individual/cage_damaged.png',
                 cage_more_damaged: 'assets/terrain/individual/cage_more_damaged.png',
@@ -587,7 +588,9 @@ async function init() {
                 death: 'assets/sfx/death.wav',
                 gong: 'assets/sfx/gong.mp3',
                 unsheath_sword: 'assets/sfx/unsheath_sword.mp3',
-                fire_crackle_loop: 'assets/sfx/fire_crackle_loop.mp3'
+                fire_crackle_loop: 'assets/sfx/fire_crackle_loop.mp3',
+                rain_gentle_loop: 'assets/sfx/rain_gentle_loop.mp3',
+                lightning_strike: 'assets/sfx/lightning_strike.mp3'
             }),
             assets.loadMusic({
                 title_loop: 'assets/music/title_loop.ogg',

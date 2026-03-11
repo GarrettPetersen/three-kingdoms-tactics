@@ -62,7 +62,9 @@ export class TacticsScene extends BaseScene {
         this.chapter2DongZhuoFightActive = false;
         this.chapter2DongZhuoEscapeTriggered = false;
         this.chapter2DongZhuoEscapedFromDrowning = false;
+        this.chapter2ZhangBaoSorceryTriggered = false;
         this.horseRunSfxActive = false;
+        this.rainSfxActive = false;
         this.horseRunElapsedMs = 0;
         this.boulderRollSoundKey = null;
         this.boulderRollStartTime = 0;
@@ -333,6 +335,7 @@ export class TacticsScene extends BaseScene {
         this.chapter2DongZhuoFightActive = false;
         this.chapter2DongZhuoEscapeTriggered = false;
         this.chapter2DongZhuoEscapedFromDrowning = false;
+        this.chapter2ZhangBaoSorceryTriggered = false;
         this.horseRunSfxActive = false;
         this.horseRunElapsedMs = 0;
         this.boulderRollSoundKey = null;
@@ -353,6 +356,8 @@ export class TacticsScene extends BaseScene {
         assets.stopLoopingSound('horse_gallop_loop', 0);
         this.fireCrackleSfxActive = false;
         assets.stopLoopingSound('fire_crackle_loop', 0);
+        this.rainSfxActive = false;
+        assets.stopLoopingSound('rain_gentle_loop', 0);
         
         // If resuming a battle with choices but no callbacks provided, set them up dynamically
         if (this.battleId === 'guangzong_encounter' && !this.onChoiceRestrain) {
@@ -882,6 +887,10 @@ export class TacticsScene extends BaseScene {
             this.triggerChapter2DongZhuoEscape(cause === 'drown');
             return;
         }
+        if (callback === 'chapter2_zhangbao_sorcery') {
+            this.triggerChapter2ZhangBaoSorcery();
+            return;
+        }
 
         const sayCfg = nearDeathCfg.say || immortalCfg.say;
         const sayDuration = Number.isFinite(sayCfg?.durationMs) ? sayCfg.durationMs : 2200;
@@ -907,6 +916,84 @@ export class TacticsScene extends BaseScene {
                 if (!this.isGameOver) this.endBattle(!!endBattleCfg.won);
             }, Math.max(0, delayMs));
         }
+    }
+
+    triggerChapter2ZhangBaoSorcery() {
+        if (this.chapter2ZhangBaoSorceryTriggered || this.battleId !== 'chapter2_zhangbao_probe') return;
+        this.chapter2ZhangBaoSorceryTriggered = true;
+        this.isProcessingTurn = true;
+        this.selectedUnit = null;
+        this.selectedAttack = null;
+        this.reachableTiles.clear();
+        this.attackTiles.clear();
+
+        const zhangbao = this.units.find(u => u.id === 'zhangbao' && u.hp > 0 && !u.isGone);
+        const heroes = this.units.filter(u =>
+            (u.id === 'liubei' || u.id === 'guanyu' || u.id === 'zhangfei')
+            && u.hp > 0
+            && !u.isGone
+        );
+
+        const strikeHeroes = (idx, done) => {
+            if (idx >= heroes.length) {
+                done();
+                return;
+            }
+            const hero = heroes[idx];
+            this.projectiles.push({
+                type: 'lightning_strike',
+                r: hero.r,
+                q: hero.q,
+                progress: 0,
+                duration: 620
+            });
+            assets.playSound('lightning_strike', 0.85);
+            if (hero.hp > 1) {
+                const before = hero.hp;
+                hero.hp = 1;
+                if (typeof hero.triggerDamageFlash === 'function') hero.triggerDamageFlash();
+                hero.action = 'hit';
+                hero.currentAnimAction = 'hit';
+                const pos = this.getPixelPos(hero.r, hero.q);
+                this.addDamageNumber(pos.x, pos.y - 30, before - 1, '#d7ecff');
+            }
+            setTimeout(() => strikeHeroes(idx + 1, done), 260);
+        };
+
+        const retreatAndEnd = () => {
+            const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.isGone);
+            enemies.forEach(e => this.makeUnitFleeOffscreen(e, { edge: 'right', extraTiles: 4 }));
+            setTimeout(() => this.endBattle(true), 1200);
+        };
+
+        const introScript = [];
+        if (zhangbao) {
+            introScript.push({
+                portraitKey: 'zhang-bao',
+                name: zhangbao.name,
+                text: {
+                    en: "You cannot kill me in this storm. Behold the thunder of Heaven!",
+                    zh: "风雨之中，尔等岂能杀我？且看天雷！"
+                },
+                voiceId: 'ch2_probe_zb_sorcery_01'
+            });
+        }
+
+        this.startBattleEndDialogue(introScript, () => {
+            strikeHeroes(0, () => {
+                this.startBattleEndDialogue([{
+                    portraitKey: 'liu-bei',
+                    name: 'Liu Bei',
+                    text: {
+                        en: "Brothers, withdraw! We cannot break his sorcery head-on today!",
+                        zh: "二弟、三弟，先撤！今日不可与其妖法硬拼！"
+                    },
+                    voiceId: 'ch2_probe_lb_retreat_01'
+                }], () => {
+                    retreatAndEnd();
+                });
+            });
+        });
     }
 
     checkWinLoss() {
@@ -1647,6 +1734,12 @@ export class TacticsScene extends BaseScene {
                     name: 'Guan Yu',
                     voiceId: 'ch2_oath_gy_restrain_01',
                     text: { en: "Let us depart. The realm has larger fires ahead.", zh: "我等走吧。天下尚有更大的火要灭。" }
+                },
+                {
+                    speaker: 'liubei',
+                    portraitKey: 'liu-bei',
+                    name: 'Liu Bei',
+                    text: { en: "We leave this place tonight and march to join General Zhu Jun at Yingchuan.", zh: "今夜便离此地，赶赴颍川投朱儁将军麾下。" }
                 }
             ];
 
@@ -1654,8 +1747,13 @@ export class TacticsScene extends BaseScene {
         this.dialogueElapsed = 0;
         this.isCleanupDialogueActive = true;
         this.cleanupDialogueOnComplete = () => {
-            this.manager.gameState.setLastScene('campaign_selection');
-            this.manager.switchTo('campaign_selection');
+            this.manager.gameState.setStoryCursor('chapter2_oath_dongzhuo_choice', 'liubei');
+            this.manager.switchTo('map', {
+                campaignId: 'liubei',
+                partyX: 205,
+                partyY: 55,
+                afterEvent: 'chapter2_to_zhujun'
+            });
         };
 
         const firstStep = this.cleanupDialogueScript[0];
@@ -1868,8 +1966,13 @@ export class TacticsScene extends BaseScene {
         const dongzhuo = this.units.find(u => u.id === 'dongzhuo');
         if (!dongzhuo) {
             this.chapter2DongZhuoFightActive = false;
-            this.manager.gameState.setLastScene('campaign_selection');
-            this.manager.switchTo('campaign_selection');
+            this.manager.gameState.setStoryCursor('chapter2_oath_dongzhuo_choice', 'liubei');
+            this.manager.switchTo('map', {
+                campaignId: 'liubei',
+                partyX: 205,
+                partyY: 55,
+                afterEvent: 'chapter2_to_zhujun'
+            });
             return;
         }
 
@@ -2059,6 +2162,12 @@ export class TacticsScene extends BaseScene {
                 name: 'Zhang Fei',
                 voiceId: 'ch2_oath_zf_strike_water_after_01',
                 text: { en: "Bah! Not even drowning would keep that coward down. Next time, I'll tie a stone to him myself.", zh: "呸！连淹都淹不死这胆小鬼。下次俺也去亲手给他绑块石头！" }
+            },
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                text: { en: "Enough. We march to Yingchuan and place our strength under General Zhu Jun.", zh: "够了。我们即刻赶赴颍川，归入朱儁将军麾下。" }
             }
         ]
             : [
@@ -2075,6 +2184,12 @@ export class TacticsScene extends BaseScene {
                 name: 'Zhang Fei',
                 voiceId: 'ch2_oath_zf_strike_after_01',
                 text: { en: "Hmph! Next time, that butcher will not run so fast.", zh: "哼！下回那屠夫可跑不了这么快。" }
+            },
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                text: { en: "Enough. We march to Yingchuan and place our strength under General Zhu Jun.", zh: "够了。我们即刻赶赴颍川，归入朱儁将军麾下。" }
             }
         ];
 
@@ -2085,8 +2200,13 @@ export class TacticsScene extends BaseScene {
             this.isCleanupDialogueActive = false;
             this.isProcessingTurn = false;
             this.chapter2DongZhuoEscapedFromDrowning = false;
-            this.manager.gameState.setLastScene('campaign_selection');
-            this.manager.switchTo('campaign_selection');
+            this.manager.gameState.setStoryCursor('chapter2_oath_dongzhuo_choice', 'liubei');
+            this.manager.switchTo('map', {
+                campaignId: 'liubei',
+                partyX: 205,
+                partyY: 55,
+                afterEvent: 'chapter2_to_zhujun'
+            });
         };
 
         const firstStep = this.cleanupDialogueScript[0];
@@ -3576,8 +3696,10 @@ export class TacticsScene extends BaseScene {
     exit() {
         assets.stopLoopingSound('horse_gallop_loop', 100);
         assets.stopLoopingSound('fire_crackle_loop', 120);
+        assets.stopLoopingSound('rain_gentle_loop', 150);
         this.horseRunSfxActive = false;
         this.fireCrackleSfxActive = false;
+        this.rainSfxActive = false;
         // Save battle state when leaving (unless it's a custom battle or battle is complete)
         if (!this.isCustom && !this.isGameOver && !this.isVictoryDialogueActive) {
             this.saveBattleState();
@@ -3675,6 +3797,19 @@ export class TacticsScene extends BaseScene {
         } else if (this.fireCrackleSfxActive) {
             assets.stopLoopingSound('fire_crackle_loop', 220);
             this.fireCrackleSfxActive = false;
+        }
+    }
+
+    updateRainAmbienceAudio() {
+        const shouldPlayRain = this.weatherType === 'rain';
+        if (shouldPlayRain) {
+            if (!this.rainSfxActive) {
+                assets.playLoopingSound('rain_gentle_loop', 0.24, 220);
+                this.rainSfxActive = true;
+            }
+        } else if (this.rainSfxActive) {
+            assets.stopLoopingSound('rain_gentle_loop', 260);
+            this.rainSfxActive = false;
         }
     }
 
@@ -4750,6 +4885,8 @@ export class TacticsScene extends BaseScene {
             this.executeDoubleBlades(attacker, targetR, targetQ, wrappedOnComplete);
         } else if (attackKey.startsWith('green_dragon_slash') || isSweepAttack) {
             this.executeGreenDragonSlash(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
+        } else if (attack.type === 'lightning_aoe') {
+            this.executeHeavenlyLightning(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
         } else if (isDirectionalBolt) {
             this.executeDirectionalBolt(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
         } else if (isLineAttack) {
@@ -4934,6 +5071,60 @@ export class TacticsScene extends BaseScene {
             attacker.action = 'standby';
             if (onComplete) onComplete();
         }, 900);
+    }
+
+    executeHeavenlyLightning(attacker, attackKey, targetR, targetQ, onComplete) {
+        const attack = ATTACKS[attackKey] || ATTACKS.heavenly_lightning;
+        attacker.action = attack.animation || 'attack_2';
+        attacker.frame = 0;
+
+        let fired = false;
+        const fire = () => {
+            if (fired) return;
+            if (attacker.action !== (attack.animation || 'attack_2')) return;
+            if (attacker.frame >= 1) {
+                fired = true;
+                assets.playSound('lightning_strike', 0.9);
+                this.projectiles.push({
+                    type: 'lightning_strike',
+                    r: targetR,
+                    q: targetQ,
+                    progress: 0,
+                    duration: 620
+                });
+                this.applyHeavenlyLightning(attacker, attackKey, targetR, targetQ);
+                return;
+            }
+            setTimeout(fire, 16);
+        };
+        setTimeout(fire, 16);
+
+        setTimeout(() => {
+            attacker.action = 'standby';
+            if (onComplete) onComplete();
+        }, 980);
+    }
+
+    applyHeavenlyLightning(attacker, attackKey, targetR, targetQ) {
+        const affected = this.getAffectedTiles(attacker, attackKey, targetR, targetQ);
+        const hitVictims = new Set();
+        for (const tile of affected) {
+            const victim = this.getLivingUnitOccupyingCell(tile.r, tile.q);
+            if (!victim || hitVictims.has(victim)) continue;
+            hitVictims.add(victim);
+            if (victim.hp > 1) {
+                const before = victim.hp;
+                victim.hp = 1;
+                if (typeof victim.triggerDamageFlash === 'function') victim.triggerDamageFlash();
+                if (victim.name !== 'Boulder') {
+                    victim.action = 'hit';
+                    victim.currentAnimAction = 'hit';
+                }
+                const pos = this.getPixelPos(victim.r, victim.q);
+                this.addDamageNumber(pos.x, pos.y - 30, before - 1, '#d7ecff');
+                this.hitStopRemaining = Math.max(this.hitStopRemaining || 0, 60);
+            }
+        }
     }
 
     executeDoubleBlades(attacker, targetR, targetQ, onComplete) {
@@ -5751,6 +5942,7 @@ export class TacticsScene extends BaseScene {
                 }
 
                 attacks = applyLevelAttackUpgrades(attacks, unitClass, level, unitClass === 'archer', unitClass === 'crossbowman');
+                attacks = this.maybeEnableZhangBaoLightning(attacks, u, unitClass, imgKey);
 
             const unit = new Unit(u.id, {
                 ...u,
@@ -6621,6 +6813,7 @@ export class TacticsScene extends BaseScene {
     }
 
     updateWeather(dt) {
+        this.updateRainAmbienceAudio();
         if (!this.weatherType) {
             this.particles = [];
             return;
@@ -6721,7 +6914,11 @@ export class TacticsScene extends BaseScene {
         const dist = this.tacticsMap.getDistance(origin.r, origin.q, targetR, targetQ);
         const attack = ATTACKS[attackKey];
 
-        if (this.isDirectionalBoltAttack(attackKey)) {
+        if (attack?.type === 'lightning_aoe') {
+            affected.push({ r: targetR, q: targetQ });
+            const neighbors = this.tacticsMap.getNeighbors(targetR, targetQ) || [];
+            neighbors.forEach(n => affected.push({ r: n.r, q: n.q }));
+        } else if (this.isDirectionalBoltAttack(attackKey)) {
             const boltPath = this.getDirectionalBoltPath(attacker, targetR, targetQ);
             if (boltPath?.impactCell) {
                 affected.push({ r: boltPath.impactCell.r, q: boltPath.impactCell.q });
@@ -7367,6 +7564,15 @@ export class TacticsScene extends BaseScene {
                         const originY = unitPos.y - 8;
                         const targetPos = this.getPixelPos(targetCell.r, targetCell.q);
                         this.drawArrowParabolaPath(itemCtx, unitPos.x, originY, targetPos.x, targetPos.y, 0.6 + glow);
+                    } else if (attack.type === 'lightning_aoe') {
+                        const tiles = this.getAffectedTiles(u, attackKey, targetCell.r, targetCell.q);
+                        itemCtx.save();
+                        itemCtx.globalAlpha = 0.55 + glow * 0.25;
+                        tiles.forEach(t => {
+                            const pos = this.getPixelPos(t.r, t.q);
+                            this.drawHexOutline(itemCtx, pos.x, pos.y, '#ff3333');
+                        });
+                        itemCtx.restore();
                     } else {
                         const swishes = this.getMeleeTelegraphSwishes(u, attackKey, targetCell.r, targetCell.q);
                         for (const spec of swishes) this.drawTelegraphSwish(itemCtx, spec, unitPos);
@@ -7379,6 +7585,15 @@ export class TacticsScene extends BaseScene {
                         const originY = unitPos.y - 8;
                         const endPos = this.getPixelPos(hoverTarget.r, hoverTarget.q);
                         this.drawArrowParabolaPath(itemCtx, unitPos.x, originY, endPos.x, endPos.y, 0.7);
+                    } else if (attack.type === 'lightning_aoe') {
+                        const tiles = this.getAffectedTiles(u, attackKey, hoverTarget.r, hoverTarget.q);
+                        itemCtx.save();
+                        itemCtx.globalAlpha = 0.7;
+                        tiles.forEach(t => {
+                            const pos = this.getPixelPos(t.r, t.q);
+                            this.drawHexOutline(itemCtx, pos.x, pos.y, '#ff3333');
+                        });
+                        itemCtx.restore();
                     } else {
                         const swishes = this.getMeleeTelegraphSwishes(u, attackKey, hoverTarget.r, hoverTarget.q);
                         if (swishes.length > 0) {
@@ -9993,6 +10208,22 @@ export class TacticsScene extends BaseScene {
                 this.drawStraightSwipe(ctx, p);
             } else if (p.type === 'swipe_arc') {
                 this.drawArcSwipe(ctx, p);
+            } else if (p.type === 'lightning_strike') {
+                const sheet = assets.getImage('lightning_sheet');
+                if (!sheet) return;
+                const cols = 6;
+                const rows = 5;
+                const total = cols * rows;
+                const frameW = Math.floor((sheet.width || 0) / cols);
+                const frameH = Math.floor((sheet.height || 0) / rows);
+                if (!frameW || !frameH) return;
+                const frameIdx = Math.max(0, Math.min(total - 1, Math.floor(p.progress * (total - 1))));
+                const sx = (frameIdx % cols) * frameW;
+                const sy = Math.floor(frameIdx / cols) * frameH;
+                const strikePos = this.getPixelPos(p.r, p.q);
+                const dx = Math.floor(strikePos.x - frameW / 2);
+                const dy = Math.floor(strikePos.y - frameH);
+                ctx.drawImage(sheet, sx, sy, frameW, frameH, dx, dy, frameW, frameH);
             } else if (p.type === 'swish') {
                 this.drawSwish(ctx, p);
             }
@@ -10441,6 +10672,23 @@ export class TacticsScene extends BaseScene {
 
     isDirectionalBoltAttack(attackKey) {
         return ATTACKS[attackKey]?.type === 'directional_projectile';
+    }
+
+    shouldEnableZhangBaoLightning() {
+        return !!(this.isCustom || this.battleDef?.enableZhangBaoLightning);
+    }
+
+    maybeEnableZhangBaoLightning(attacks, unitDef = {}, unitClass = '', imgKey = '') {
+        if (!this.shouldEnableZhangBaoLightning()) return attacks;
+        const isZhangBao =
+            unitDef.type === 'zhang_bao'
+            || unitDef.templateId === 'zhangbao'
+            || unitDef.id === 'zhangbao'
+            || unitClass === 'zhangbao'
+            || imgKey === 'zhangbao';
+        if (!isZhangBao) return attacks;
+        if (attacks.includes('heavenly_lightning')) return attacks;
+        return [...attacks, 'heavenly_lightning'];
     }
 
     getDirectionalBoltPath(attacker, targetR, targetQ) {

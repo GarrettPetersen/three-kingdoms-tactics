@@ -80,6 +80,27 @@ const LIUBEI_LOCATIONS = {
         battleId: 'zhuo_return',
         unlockCondition: (gs) => (gs.hasReachedStoryNode('guangzong_encounter', 'liubei') || gs.hasMilestone('guangzong_encounter')) && !(gs.hasReachedStoryNode('chapter1_complete', 'liubei') || gs.hasMilestone('chapter1_complete')),
         isCompleted: (gs) => gs.hasReachedStoryNode('dongzhuo_battle', 'liubei') || gs.hasReachedStoryNode('chapter1_complete', 'liubei') || gs.hasMilestone('dongzhuo_battle') || gs.hasMilestone('chapter1_complete')
+    },
+    chapter2_zhujun_camp: {
+        id: 'chapter2_zhujun_camp',
+        x: 188,
+        y: 92,
+        name: 'Yingchuan - Zhu Jun Camp',
+        imgKey: 'camp_tent',
+        battleId: 'chapter2_zhujun_camp',
+        unlockCondition: (gs) =>
+            (
+                gs.getStoryChoice('chapter2_oath_dongzhuo_choice') != null
+                || gs.hasMilestone('chapter2_oath_dongzhuo_restrained')
+                || gs.hasMilestone('chapter2_oath_dongzhuo_fought')
+                || gs.hasReachedStoryNode('chapter2_oath_dongzhuo_choice', 'liubei')
+            ) && !(
+                gs.hasReachedStoryNode('chapter2_zhujun_camp', 'liubei')
+                || gs.hasMilestone('chapter2_zhujun_camp')
+            ),
+        isCompleted: (gs) =>
+            gs.hasReachedStoryNode('chapter2_zhujun_camp', 'liubei')
+            || gs.hasMilestone('chapter2_zhujun_camp')
     }
 };
 
@@ -116,6 +137,20 @@ const STORY_EVENTS = {
         name: 'Liu Bei',
         voiceId: 'qz_victory_lb_01',
         text: { en: "The siege is lifted. We should report back to Magistrate Zhou Jing for our next assignment.", zh: "围城已解。我们应该向邹靖县令报告，接受下一个任务。" }
+    },
+    'chapter2_to_zhujun': {
+        type: 'dialogue',
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_ch2_zhujun_01',
+        text: { en: "Dong Zhuo's road is not ours. We march to Yingchuan and report to General Zhu Jun.", zh: "董卓那条路，不是我们的路。我们赶赴颍川，投朱儁将军麾下。" }
+    },
+    'chapter2_zhangbao_probe_end': {
+        type: 'dialogue',
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_ch2_probe_01',
+        text: { en: "Zhang Bao's sorcery broke our first assault. We regroup at camp and plan a counter.", zh: "张宝妖术破了我军首战。先回营整军，再议破术之策。" }
     }
 };
 
@@ -169,6 +204,24 @@ const HERO_REMINDERS = {
         text: {
             en: "Government armies are already engaged with the Yellow Turbans at Yingchuan. We march there now and cut off their retreat.",
             zh: "官军已在颍川与黄巾交战。我们即刻前往，断其退路。"
+        }
+    },
+    'chapter2_oath_dongzhuo_choice': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_ch2_zhujun_02',
+        text: {
+            en: "General Zhu Jun is at Yingchuan. Let us march there and take proper command against the rebels.",
+            zh: "朱儁将军正在颍川。我们前往投军，循正道讨贼。"
+        }
+    },
+    'chapter2_zhangbao_probe': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_ch2_probe_02',
+        text: {
+            en: "We have seen Zhang Bao's sorcery with our own eyes. We need a counter before the next clash.",
+            zh: "张宝妖术已亲眼所见。下次交锋前，须先得破术之法。"
         }
     }
 };
@@ -805,6 +858,7 @@ export class MapScene extends BaseScene {
                     else if (loc.battleId === 'yingchuan_aftermath') this.startYingchuanAftermath();
                     else if (loc.battleId === 'guangzong_encounter') this.startGuangzongBriefing();
                     else if (loc.battleId === 'zhuo_return') this.startZhuoReturn();
+                    else if (loc.battleId === 'chapter2_zhujun_camp') this.startChapter2ZhuJunCamp();
                     else if (loc.battleId === 'caocao_yingchuan_intercept') this.startCaocaoYingchuanIntercept();
                 });
             }
@@ -957,6 +1011,7 @@ export class MapScene extends BaseScene {
                         else if (loc.battleId === 'yingchuan_aftermath') this.startYingchuanAftermath();
                         else if (loc.battleId === 'guangzong_encounter') this.startGuangzongBriefing();
                         else if (loc.battleId === 'zhuo_return') this.startZhuoReturn();
+                        else if (loc.battleId === 'chapter2_zhujun_camp') this.startChapter2ZhuJunCamp();
                         else if (loc.battleId === 'caocao_yingchuan_intercept') this.startCaocaoYingchuanIntercept();
                     });
                 }
@@ -1058,6 +1113,72 @@ export class MapScene extends BaseScene {
         });
     }
 
+    startChapter2ZhuJunCamp() {
+        this.manager.switchTo('narrative', {
+            musicKey: 'oath',
+            onComplete: () => {
+                this.manager.gameState.setStoryCursor('chapter2_zhujun_camp', 'liubei');
+                this.manager.gameState.addMilestone('chapter2_zhujun_camp');
+                this.manager.switchTo('tactics', {
+                    battleId: 'chapter2_zhangbao_probe',
+                    onVictory: () => {
+                        this.manager.gameState.setStoryCursor('chapter2_zhangbao_probe', 'liubei');
+                        this.manager.gameState.addMilestone('chapter2_zhangbao_probe');
+                        this.manager.switchTo('map', {
+                            campaignId: 'liubei',
+                            partyX: 188,
+                            partyY: 92,
+                            afterEvent: 'chapter2_zhangbao_probe_end'
+                        });
+                    }
+                });
+            },
+            script: [
+                { type: 'title', text: { en: 'YINGCHUAN - ZHU JUN CAMP', zh: '颍川·朱儁军营' }, duration: 1800 },
+                {
+                    type: 'dialogue',
+                    portraitKey: 'zhu-jun-generic',
+                    name: 'Zhu Jun',
+                    voiceId: 'ch2_zj_camp_zj_00',
+                    text: {
+                        en: "Xuande, you came by night to join my command. Good.",
+                        zh: "玄德，你们当夜引军来投，甚好。"
+                    }
+                },
+                {
+                    type: 'dialogue',
+                    portraitKey: 'zhu-jun-generic',
+                    name: 'Zhu Jun',
+                    voiceId: 'ch2_zj_camp_zj_02',
+                    text: {
+                        en: "I will receive your force with full trust. We combine our men as one host and advance against Zhang Bao.",
+                        zh: "我待汝军以厚礼。即刻合兵一处，进讨张宝。"
+                    }
+                },
+                {
+                    type: 'dialogue',
+                    portraitKey: 'zhu-jun-generic',
+                    name: 'Zhu Jun',
+                    voiceId: 'ch2_zj_camp_zj_01',
+                    text: {
+                        en: "Xuande, take the vanguard and engage the rebels first.",
+                        zh: "玄德，你为先锋，先与贼对敌。"
+                    }
+                },
+                {
+                    type: 'dialogue',
+                    portraitKey: 'liu-bei',
+                    name: 'Liu Bei',
+                    voiceId: 'ch2_zj_camp_lb_01',
+                    text: {
+                        en: "Understood. Guan Yu, Zhang Fei - prepare the men. We march at first light.",
+                        zh: "领命。云长、翼德，整备军士，黎明出发。"
+                    }
+                }
+            ]
+        });
+    }
+
     getCurrentPartyReminderKey(gs) {
         if (this.currentCampaignId === 'caocao') {
             if (gs.hasReachedStoryNode('caocao_chapter1_complete', 'caocao') || gs.hasMilestone('caocao_chapter1_complete')) return null;
@@ -1066,6 +1187,8 @@ export class MapScene extends BaseScene {
         }
 
         // Highest-priority progression first.
+        if (gs.hasReachedStoryNode('chapter2_zhangbao_probe', 'liubei') || gs.hasMilestone('chapter2_zhangbao_probe')) return 'chapter2_zhangbao_probe';
+        if ((gs.getStoryChoice('chapter2_oath_dongzhuo_choice') != null || gs.hasMilestone('chapter2_oath_dongzhuo_restrained') || gs.hasMilestone('chapter2_oath_dongzhuo_fought')) && !(gs.hasReachedStoryNode('chapter2_zhujun_camp', 'liubei') || gs.hasMilestone('chapter2_zhujun_camp'))) return 'chapter2_oath_dongzhuo_choice';
         if (gs.hasReachedStoryNode('chapter1_complete', 'liubei') || gs.hasMilestone('chapter1_complete')) return null;
         if (gs.hasReachedStoryNode('guangzong_encounter', 'liubei') || gs.hasMilestone('guangzong_encounter')) return 'guangzong_encounter';
         if (gs.hasReachedStoryNode('yingchuan_aftermath', 'liubei') || gs.hasMilestone('yingchuan_aftermath')) return 'yingchuan_aftermath';

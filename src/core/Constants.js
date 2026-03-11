@@ -369,6 +369,17 @@ export const ATTACKS = {
         animation: 'attack_2',
         description: { en: 'Heavy bolt with 3 damage and push.', zh: '重弩矢，造成 3 点伤害并击退。' }
     },
+    heavenly_lightning: {
+        name: { en: 'Heavenly Lightning', zh: '天雷术' },
+        damage: 0,
+        minRange: 1,
+        range: 99,
+        type: 'lightning_aoe',
+        shape: 'blast_adjacent',
+        setHpToOne: true,
+        animation: 'attack_2',
+        description: { en: 'Strikes a hex and all adjacent hexes, reducing units to 1 HP.', zh: '劈击目标格与相邻六格，将单位生命压至 1。' }
+    },
     blade_sweep_1: {
         name: { en: 'Blade Sweep I', zh: '刀锋横扫 I' },
         damage: 1,
