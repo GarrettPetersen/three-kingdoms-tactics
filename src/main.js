@@ -590,7 +590,7 @@ async function init() {
                 unsheath_sword: 'assets/sfx/unsheath_sword.mp3',
                 fire_crackle_loop: 'assets/sfx/fire_crackle_loop.mp3',
                 rain_gentle_loop: 'assets/sfx/rain_gentle_loop.mp3',
-                lightning_strike: 'assets/sfx/lightning_strike.mp3'
+                lightning_strike: 'assets/sfx/lightning-strike.ogg'
             }),
             assets.loadMusic({
                 title_loop: 'assets/music/title_loop.ogg',

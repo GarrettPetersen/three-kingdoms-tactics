@@ -65,6 +65,7 @@ export class TacticsScene extends BaseScene {
         this.chapter2ZhangBaoSorceryTriggered = false;
         this.horseRunSfxActive = false;
         this.rainSfxActive = false;
+        this.forceRainUntil = 0;
         this.horseRunElapsedMs = 0;
         this.boulderRollSoundKey = null;
         this.boulderRollStartTime = 0;
@@ -357,6 +358,7 @@ export class TacticsScene extends BaseScene {
         this.fireCrackleSfxActive = false;
         assets.stopLoopingSound('fire_crackle_loop', 0);
         this.rainSfxActive = false;
+        this.forceRainUntil = 0;
         assets.stopLoopingSound('rain_gentle_loop', 0);
         
         // If resuming a battle with choices but no callbacks provided, set them up dynamically
@@ -927,6 +929,14 @@ export class TacticsScene extends BaseScene {
         this.reachableTiles.clear();
         this.attackTiles.clear();
 
+        const LIGHTNING_DURATION_MS = 2000;
+        const GAP_BETWEEN_STRIKES_MS = LIGHTNING_DURATION_MS + 100;
+        const PRE_RAIN_MS = 1000;
+        const POST_RAIN_MS = 1000;
+        // First strike at PRE_RAIN_MS, then at +GAP, +GAP. Last ends at PRE_RAIN + 2*GAP + LIGHTNING_DURATION.
+        const totalStrikeWindow = PRE_RAIN_MS + 2 * GAP_BETWEEN_STRIKES_MS + LIGHTNING_DURATION_MS + POST_RAIN_MS;
+        this.forceRainUntil = Date.now() + totalStrikeWindow;
+
         const zhangbao = this.units.find(u => u.id === 'zhangbao' && u.hp > 0 && !u.isGone);
         const heroes = this.units.filter(u =>
             (u.id === 'liubei' || u.id === 'guanyu' || u.id === 'zhangfei')
@@ -940,14 +950,14 @@ export class TacticsScene extends BaseScene {
                 return;
             }
             const hero = heroes[idx];
+            assets.playSound('lightning_strike', 0.85);
             this.projectiles.push({
                 type: 'lightning_strike',
                 r: hero.r,
                 q: hero.q,
                 progress: 0,
-                duration: 620
+                duration: LIGHTNING_DURATION_MS
             });
-            assets.playSound('lightning_strike', 0.85);
             if (hero.hp > 1) {
                 const before = hero.hp;
                 hero.hp = 1;
@@ -957,7 +967,7 @@ export class TacticsScene extends BaseScene {
                 const pos = this.getPixelPos(hero.r, hero.q);
                 this.addDamageNumber(pos.x, pos.y - 30, before - 1, '#d7ecff');
             }
-            setTimeout(() => strikeHeroes(idx + 1, done), 260);
+            setTimeout(() => strikeHeroes(idx + 1, done), GAP_BETWEEN_STRIKES_MS);
         };
 
         const retreatAndEnd = () => {
@@ -979,21 +989,23 @@ export class TacticsScene extends BaseScene {
             });
         }
 
-        this.startBattleEndDialogue(introScript, () => {
-            strikeHeroes(0, () => {
-                this.startBattleEndDialogue([{
-                    portraitKey: 'liu-bei',
-                    name: 'Liu Bei',
-                    text: {
-                        en: "Brothers, withdraw! We cannot break his sorcery head-on today!",
-                        zh: "二弟、三弟，先撤！今日不可与其妖法硬拼！"
-                    },
-                    voiceId: 'ch2_probe_lb_retreat_01'
-                }], () => {
-                    retreatAndEnd();
+        setTimeout(() => {
+            this.startBattleEndDialogue(introScript, () => {
+                strikeHeroes(0, () => {
+                    this.startBattleEndDialogue([{
+                        portraitKey: 'liu-bei',
+                        name: 'Liu Bei',
+                        text: {
+                            en: "Brothers, withdraw! We cannot break his sorcery head-on today!",
+                            zh: "二弟、三弟，先撤！今日不可与其妖法硬拼！"
+                        },
+                        voiceId: 'ch2_probe_lb_retreat_01'
+                    }], () => {
+                        retreatAndEnd();
+                    });
                 });
             });
-        });
+        }, PRE_RAIN_MS);  // 1s rain before first strike
     }
 
     checkWinLoss() {
@@ -3801,7 +3813,9 @@ export class TacticsScene extends BaseScene {
     }
 
     updateRainAmbienceAudio() {
-        const shouldPlayRain = this.weatherType === 'rain';
+        const now = Date.now();
+        if (this.forceRainUntil && now >= this.forceRainUntil) this.forceRainUntil = 0;
+        const shouldPlayRain = this.weatherType === 'rain' || (this.forceRainUntil && now < this.forceRainUntil);
         if (shouldPlayRain) {
             if (!this.rainSfxActive) {
                 assets.playLoopingSound('rain_gentle_loop', 0.24, 220);
@@ -5074,35 +5088,33 @@ export class TacticsScene extends BaseScene {
     }
 
     executeHeavenlyLightning(attacker, attackKey, targetR, targetQ, onComplete) {
+        const LIGHTNING_DURATION_MS = 2000;  // 30 frames, slower
+        const PRE_RAIN_MS = 1000;
+        const POST_RAIN_MS = 1000;
+        const STRIKE_DELAY_MS = 1000;   // strike happens 1s after start (rain plays 1s first)
+
         const attack = ATTACKS[attackKey] || ATTACKS.heavenly_lightning;
         attacker.action = attack.animation || 'attack_2';
         attacker.frame = 0;
 
-        let fired = false;
-        const fire = () => {
-            if (fired) return;
-            if (attacker.action !== (attack.animation || 'attack_2')) return;
-            if (attacker.frame >= 1) {
-                fired = true;
-                assets.playSound('lightning_strike', 0.9);
-                this.projectiles.push({
-                    type: 'lightning_strike',
-                    r: targetR,
-                    q: targetQ,
-                    progress: 0,
-                    duration: 620
-                });
-                this.applyHeavenlyLightning(attacker, attackKey, targetR, targetQ);
-                return;
-            }
-            setTimeout(fire, 16);
-        };
-        setTimeout(fire, 16);
+        this.forceRainUntil = Date.now() + PRE_RAIN_MS + LIGHTNING_DURATION_MS + POST_RAIN_MS;
+
+        setTimeout(() => {
+            assets.playSound('lightning_strike', 0.9);
+            this.projectiles.push({
+                type: 'lightning_strike',
+                r: targetR,
+                q: targetQ,
+                progress: 0,
+                duration: LIGHTNING_DURATION_MS
+            });
+            this.applyHeavenlyLightning(attacker, attackKey, targetR, targetQ);
+        }, STRIKE_DELAY_MS);
 
         setTimeout(() => {
             attacker.action = 'standby';
             if (onComplete) onComplete();
-        }, 980);
+        }, STRIKE_DELAY_MS + LIGHTNING_DURATION_MS + 400);
     }
 
     applyHeavenlyLightning(attacker, attackKey, targetR, targetQ) {
@@ -6814,7 +6826,9 @@ export class TacticsScene extends BaseScene {
 
     updateWeather(dt) {
         this.updateRainAmbienceAudio();
-        if (!this.weatherType) {
+        const forceRain = this.forceRainUntil && Date.now() < this.forceRainUntil;
+        const effectiveWeather = forceRain ? 'rain' : this.weatherType;
+        if (!effectiveWeather) {
             this.particles = [];
             return;
         }
@@ -6822,14 +6836,14 @@ export class TacticsScene extends BaseScene {
         const { config, canvas } = this.manager;
         
         // 1. Spawn new particles (Slower spawn rates)
-        const spawnRate = this.weatherType === 'rain' ? 0.15 : 0.03; // Much slower
+        const spawnRate = effectiveWeather === 'rain' ? 0.15 : 0.03; // Much slower
         const spawnCount = Math.floor(dt * spawnRate + Math.random());
         for (let i = 0; i < spawnCount; i++) {
             const r = Math.floor(Math.random() * config.mapHeight);
             const q = Math.floor(Math.random() * config.mapWidth);
             const pos = this.getPixelPos(r, q);
             
-            if (this.weatherType === 'rain') {
+            if (effectiveWeather === 'rain') {
                 this.particles.push({
                     type: 'rain',
                     x: pos.x + (Math.random() - 0.5) * 20 - 30, // Start left for diagonal fall
@@ -7482,19 +7496,15 @@ export class TacticsScene extends BaseScene {
             ctx.restore();
         }
 
-        // Hex-view pass: draw deferred hex-view units and horses with animated offset and mask scale
-        const HEX_VIEW_OFFSET = 10;
-        const HEX_VIEW_SCALE_OUT = 3; // mask scale when progress=0 (show full sprite)
+        // Hex-view pass: draw deferred hex-view units and horses with animated offset only (no mask); show coloured hex outline when fully in hex view
+        const HEX_VIEW_OFFSET = 5;
         if (this._hexViewDrawList && this._hexViewDrawList.length > 0) {
             for (const { u, surfaceY, drawOptions, cell, timestamp, progress } of this._hexViewDrawList) {
                 const p = progress ?? 1;
                 const offsetY = p * HEX_VIEW_OFFSET;
-                const maskScale = 1 + (1 - p) * (HEX_VIEW_SCALE_OUT - 1);
                 const hexCenter = this.getPixelPos(u.r, u.q);
                 ctx.save();
                 ctx.translate(0, offsetY);
-                this.beginHexClipPath(ctx, hexCenter.x, hexCenter.y - offsetY, maskScale);
-                ctx.clip();
                 this.drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp);
                 ctx.restore();
                 if (p >= 0.999) {
@@ -7509,7 +7519,6 @@ export class TacticsScene extends BaseScene {
             for (const { h, effect, timestamp, progress } of this._hexViewHorseList) {
                 const p = progress ?? 1;
                 const offsetY = p * HEX_VIEW_OFFSET;
-                const maskScale = 1 + (1 - p) * (HEX_VIEW_SCALE_OUT - 1);
                 const hexCenter = this.getPixelPos(h.r, h.q);
                 const hexCell = this.tacticsMap.getCell(h.r, h.q);
                 const isShallow = !!(hexCell && hexCell.terrain?.includes('water_shallow'));
@@ -7518,8 +7527,6 @@ export class TacticsScene extends BaseScene {
                 const midY = hexCenter.y - offsetY + effect.yOffset + sink;
                 ctx.save();
                 ctx.translate(0, offsetY);
-                this.beginHexClipPath(ctx, hexCenter.x, hexCenter.y - offsetY, maskScale);
-                ctx.clip();
                 this.drawRiderlessHorse(ctx, h, midX, midY, effect, timestamp);
                 ctx.restore();
                 if (p >= 0.999) {
@@ -7605,12 +7612,8 @@ export class TacticsScene extends BaseScene {
                 itemCtx.globalCompositeOperation = 'destination-out';
                 const punchProgress = (this._hexViewProgress && this._hexViewProgress.get(this.getUnitHexViewKey(item.unit))) ?? 0;
                 if (punchProgress > 0) {
-                    const offsetY = punchProgress * HEX_VIEW_OFFSET;
-                    const maskScale = 1 + (1 - punchProgress) * (HEX_VIEW_SCALE_OUT - 1);
-                    const hexCenter = this.getPixelPos(item.unit.r, item.unit.q);
+                    const offsetY = punchProgress * 5; // HEX_VIEW_OFFSET (matches hex-view pass)
                     itemCtx.translate(0, offsetY);
-                    this.beginHexClipPath(itemCtx, hexCenter.x, hexCenter.y - offsetY, maskScale);
-                    itemCtx.clip();
                 }
                 this.drawUnitSpriteOnly(itemCtx, item.unit, item.surfaceY, item.drawOptions, item.cell, item.timestamp);
                 itemCtx.restore();
@@ -7628,7 +7631,7 @@ export class TacticsScene extends BaseScene {
                 let uiX = u.visualX;
                 if (u.onHorse) uiX = Math.floor(u.visualX);
                 const unitHexProgress = (this._hexViewProgress && this._hexViewProgress.get(this.getUnitHexViewKey(u))) ?? 0;
-                const hexViewHpOffset = unitHexProgress > 0 ? unitHexProgress * 6 : 0;
+                const hexViewHpOffset = unitHexProgress > 0 ? unitHexProgress * 3 : 0;
 
                 // Draw intent if enemy or ally
                 if (u.intent) {
@@ -8223,14 +8226,55 @@ export class TacticsScene extends BaseScene {
     }
 
     /**
-     * Recompute which units/horses should be in hex view (in a clump). Call when positions or presence change:
-     * someone finishes a move, appears, disappears, or dies. Targets are stored in _hexViewTarget; progress animates toward them each frame.
+     * Recompute which units/horses should be in hex view (in a clump). Only "front" of clump (someone behind them) get hex view.
+     * Corpses and boulders never get hex view and don't count toward clumps.
      */
     recomputeHexViewTargets(reason = 'unknown') {
         if (!this._hexViewTarget) this._hexViewTarget = new Map();
         const prevTargets = this._hexViewTarget;
         const nextTargets = new Map();
         const clumpCells = this.getClumpCells();
+        if (clumpCells.size === 0) {
+            this.units.forEach(u => {
+                if (u.hp <= 0 || u.isGone) return;
+                nextTargets.set(this.getUnitHexViewKey(u), 0);
+            });
+            (this.horses || []).forEach(h => {
+                if (h.riderId) return;
+                nextTargets.set(this.getHorseHexViewKey(h), 0);
+            });
+            this._hexViewTarget = nextTargets;
+            return;
+        }
+        const cellToEntity = new Map();
+        this.units.forEach(u => {
+            if (u.hp <= 0 || u.isGone || u.name === 'Boulder') return;
+            const key = `${u.r},${u.q}`;
+            if (clumpCells.has(key)) {
+                const sortVal = u.currentSortR ?? u.r;
+                cellToEntity.set(key, { type: 'unit', entity: u, sortValue: sortVal });
+            }
+        });
+        (this.horses || []).forEach(h => {
+            if (h.riderId) return;
+            const key = `${h.r},${h.q}`;
+            if (clumpCells.has(key) && !cellToEntity.has(key)) {
+                cellToEntity.set(key, { type: 'horse', entity: h, sortValue: h.r });
+            }
+        });
+        const components = this._getClumpComponents(clumpCells);
+        const frontCells = new Set();
+        for (const component of components) {
+            let minSort = Infinity;
+            for (const key of component) {
+                const ent = cellToEntity.get(key);
+                if (ent && ent.sortValue < minSort) minSort = ent.sortValue;
+            }
+            for (const key of component) {
+                const ent = cellToEntity.get(key);
+                if (ent && ent.sortValue > minSort) frontCells.add(key);
+            }
+        }
         const setTarget = (key, inClump, meta = {}) => {
             const next = inClump ? 1 : 0;
             const prev = prevTargets.get(key) ?? 0;
@@ -8241,14 +8285,41 @@ export class TacticsScene extends BaseScene {
         };
         this.units.forEach(u => {
             if (u.hp <= 0 || u.isGone) return;
-            const key = this.getUnitHexViewKey(u);
-            setTarget(key, clumpCells.has(`${u.r},${u.q}`), { id: u.id || null, type: 'unit', r: u.r, q: u.q, moving: !!u.isMoving, hp: u.hp, gone: !!u.isGone });
+            const ukey = `${u.r},${u.q}`;
+            const inClump = u.name !== 'Boulder' && frontCells.has(ukey);
+            setTarget(this.getUnitHexViewKey(u), inClump, { id: u.id || null, type: 'unit', r: u.r, q: u.q });
         });
         (this.horses || []).forEach(h => {
             if (h.riderId) return;
-            setTarget(this.getHorseHexViewKey(h), clumpCells.has(`${h.r},${h.q}`), { id: h.id || null, type: 'horse', r: h.r, q: h.q, moving: !!h.isMoving, moveData: !!h.moveData });
+            const hkey = `${h.r},${h.q}`;
+            setTarget(this.getHorseHexViewKey(h), frontCells.has(hkey), { id: h.id || null, type: 'horse', r: h.r, q: h.q });
         });
         this._hexViewTarget = nextTargets;
+    }
+
+    _getClumpComponents(clumpCells) {
+        const keys = [...clumpCells];
+        const visited = new Set();
+        const components = [];
+        for (const key of keys) {
+            if (visited.has(key)) continue;
+            const comp = new Set();
+            const stack = [key];
+            while (stack.length) {
+                const k = stack.pop();
+                if (visited.has(k)) continue;
+                visited.add(k);
+                comp.add(k);
+                const [r, q] = k.split(',').map(Number);
+                const neighbors = this.tacticsMap.getNeighbors(r, q) || [];
+                for (const n of neighbors) {
+                    const nk = `${n.r},${n.q}`;
+                    if (clumpCells.has(nk) && !visited.has(nk)) stack.push(nk);
+                }
+            }
+            components.push(comp);
+        }
+        return components;
     }
 
     hexViewDebugLog(event, payload) {
@@ -8269,6 +8340,7 @@ export class TacticsScene extends BaseScene {
         const occupied = new Set();
         for (const u of this.units) {
             if (u.hp <= 0 || u.isGone) continue;
+            if (u.name === 'Boulder') continue;
             if (u.isMoving || u.pushData) continue;
             occupied.add(`${u.r},${u.q}`);
         }
@@ -10217,7 +10289,7 @@ export class TacticsScene extends BaseScene {
                 const frameW = Math.floor((sheet.width || 0) / cols);
                 const frameH = Math.floor((sheet.height || 0) / rows);
                 if (!frameW || !frameH) return;
-                const frameIdx = Math.max(0, Math.min(total - 1, Math.floor(p.progress * (total - 1))));
+                const frameIdx = Math.max(0, Math.min(total - 1, Math.floor(p.progress * total)));
                 const sx = (frameIdx % cols) * frameW;
                 const sy = Math.floor(frameIdx / cols) * frameH;
                 const strikePos = this.getPixelPos(p.r, p.q);
@@ -10288,8 +10360,8 @@ export class TacticsScene extends BaseScene {
             const undoText = '◄'; // Left triangle
             
             ctx.save();
-            ctx.font = getFontForLanguage(hasActedAll ? '16px Silkscreen' : '8px Silkscreen');
-            const endTurnSize = getTextContainerSize(ctx, endTurnText, hasActedAll ? '16px Silkscreen' : '8px Silkscreen', 8, hasActedAll ? 20 : 8);
+            ctx.font = getFontForLanguage('8px Silkscreen');
+            const endTurnSize = getTextContainerSize(ctx, endTurnText, '8px Silkscreen', 8, 8);
             ctx.restore();
             
             // 3 rows inside bottom UI bar; cap width so block doesn't overlap attack buttons (left of ~160px)
@@ -10330,12 +10402,6 @@ export class TacticsScene extends BaseScene {
             // END TURN button
             ctx.save();
             if (hasActedAll) {
-                // Background shadow for the big button
-                ctx.shadowColor = 'rgba(0,0,0,0.7)';
-                ctx.shadowBlur = 6;
-                ctx.shadowOffsetY = 3;
-                
-                // Pulsing red glow
                 ctx.fillStyle = `rgba(${120 + pulse * 135}, 20, 20, 0.95)`;
             } else {
                 ctx.fillStyle = 'rgba(40, 20, 20, 0.9)';
@@ -10346,14 +10412,8 @@ export class TacticsScene extends BaseScene {
             ctx.lineWidth = hasActedAll ? 2 : 1;
             ctx.strokeRect(endTurnX + 0.5, endTurnY + 0.5, endTurnW - 1, endTurnH - 1);
             
-            let turnFont, turnFontSize;
-            if (isChinese) {
-                turnFont = '12px zpix';
-                turnFontSize = 12;
-            } else {
-                turnFont = hasActedAll ? '16px Silkscreen' : '8px Silkscreen';
-                turnFontSize = hasActedAll ? 16 : 8;
-            }
+            const turnFont = isChinese ? '12px zpix' : '8px Silkscreen';
+            const turnFontSize = isChinese ? 12 : 8;
             const turnTextY = endTurnY + (endTurnH - turnFontSize) / 2;
             ctx.save();
             ctx.font = turnFont;

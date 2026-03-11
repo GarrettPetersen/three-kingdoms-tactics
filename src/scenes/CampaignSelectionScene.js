@@ -16,10 +16,11 @@ export class CampaignSelectionScene extends BaseScene {
         this.lastTime = 0;
         this.fadeAlpha = 1;
         
-        // Campaigns available in the selected chapter
+        // Campaigns available per chapter (chapters array = which chapter(s) this story appears in)
         this.campaigns = [
-            { 
-                id: 'liubei', 
+            {
+                id: 'liubei',
+                chapters: ['1', '2'],
                 nameKey: 'THE OATH IN THE PEACH GARDEN',
                 nameCompleteKey: 'THE OATH IN THE PEACH GARDEN',
                 charName: 'LIU BEI',
@@ -34,6 +35,7 @@ export class CampaignSelectionScene extends BaseScene {
             },
             {
                 id: 'caocao',
+                chapters: ['1'],
                 nameKey: 'ASCENT OF THE CAVALRY COMMANDER',
                 nameCompleteKey: 'ASCENT OF THE CAVALRY COMMANDER',
                 charName: 'Cao Cao',
@@ -52,12 +54,20 @@ export class CampaignSelectionScene extends BaseScene {
         this.navIndex = -1;
     }
 
+    /** Campaigns that have a story in the currently selected chapter (used for display and nav). */
+    getVisibleCampaigns() {
+        const selectedChapter = this.chapters[this.selectedChapterIndex]?.id || '1';
+        return this.campaigns.filter(c => (c.chapters || ['1']).includes(selectedChapter));
+    }
+
     applyChapterViewState() {
         const gs = this.manager.gameState;
         const liubei = this.campaigns.find(c => c.id === 'liubei');
         if (!liubei) return;
 
         const selectedChapter = this.chapters[this.selectedChapterIndex]?.id || '1';
+        const visible = this.getVisibleCampaigns();
+        this.selectedIndex = Math.min(this.selectedIndex, Math.max(0, visible.length - 1));
         const chapter1Complete = gs.isChapterComplete(1);
         const chapter2OathComplete = gs.isCampaignComplete('chapter2_oath');
         const freedLuZhi = gs.getStoryChoice('luzhi_outcome') === 'freed' || gs.hasMilestone('freed_luzhi');
@@ -242,7 +252,8 @@ export class CampaignSelectionScene extends BaseScene {
         // 2. CHARACTER ICONS ON MAP
         const frame = Math.floor(Date.now() / 150) % 4;
         const currentNavTarget = this.getCurrentNavTarget();
-        this.campaigns.forEach((c, i) => {
+        const visibleCampaigns = this.getVisibleCampaigns();
+        visibleCampaigns.forEach((c, i) => {
             const isSelected = this.selectedIndex === i;
             const isFocusedByNav = !!(currentNavTarget && currentNavTarget.type === 'campaign' && currentNavTarget.index === i);
             const charImg = assets.getImage(c.imgKey);
@@ -314,7 +325,7 @@ export class CampaignSelectionScene extends BaseScene {
         });
 
         // 3. SELECTION INFO BOX (Bottom Center)
-        const selected = this.campaigns[this.selectedIndex];
+        const selected = this.getVisibleCampaigns()[this.selectedIndex];
         if (selected) {
             const boxH = 80; // Increased from 65 to accommodate 5 lines
             const boxW = canvas.width - 60;
@@ -407,7 +418,7 @@ export class CampaignSelectionScene extends BaseScene {
                 y: ty + 6
             });
         });
-        this.campaigns.forEach((c, i) => {
+        this.getVisibleCampaigns().forEach((c, i) => {
             targets.push({
                 id: `campaign:${i}`,
                 type: 'campaign',
@@ -437,7 +448,7 @@ export class CampaignSelectionScene extends BaseScene {
             if (campaignDefault >= 0) {
                 this.navIndex = campaignDefault;
             } else {
-                this.navIndex = 0;
+                this.navIndex = targets.findIndex(t => t.type === 'chapter') >= 0 ? 0 : -1;
             }
         }
     }
@@ -449,7 +460,7 @@ export class CampaignSelectionScene extends BaseScene {
             this.selectedChapterIndex = t.index;
             this.applyChapterViewState();
         } else if (t.type === 'campaign') {
-            this.selectedIndex = t.index;
+            this.selectedIndex = Math.min(t.index, this.getVisibleCampaigns().length - 1);
         }
     }
 
@@ -483,7 +494,7 @@ export class CampaignSelectionScene extends BaseScene {
             return;
         }
         if (t.type === 'campaign') {
-            const selected = this.campaigns[t.index];
+            const selected = this.getVisibleCampaigns()[t.index];
             if (!selected) return;
             if (selected.locked) {
                 this.addMessage(getLocalizedText(UI_TEXT['CAMPAIGN LOCKED']), '#8b0000');
@@ -590,7 +601,7 @@ export class CampaignSelectionScene extends BaseScene {
 
         // 2. Character Selection on Map
         let hitChar = false;
-        this.campaigns.forEach((c, i) => {
+        this.getVisibleCampaigns().forEach((c, i) => {
             const frame = Math.floor(Date.now() / 150) % 4;
             const charImg = assets.getImage(c.imgKey);
             if (this.checkCharacterHit(charImg, 'standby', frame, c.x, c.y, x, y)) {

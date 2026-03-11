@@ -370,7 +370,7 @@ export const ATTACKS = {
         description: { en: 'Heavy bolt with 3 damage and push.', zh: '重弩矢，造成 3 点伤害并击退。' }
     },
     heavenly_lightning: {
-        name: { en: 'Heavenly Lightning', zh: '天雷术' },
+        name: { en: 'Lightning', zh: '天雷' },
         damage: 0,
         minRange: 1,
         range: 99,

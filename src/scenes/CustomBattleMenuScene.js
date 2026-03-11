@@ -46,6 +46,9 @@ export class CustomBattleMenuScene extends BaseScene {
             { name: 'Yellow Turban Archer', imgKey: 'yellowturbanarcher', type: 'enemy_soldier', templateId: 'rebel_archer' },
             { name: 'Deng Mao', imgKey: 'dengmao', type: 'enemy_captain', templateId: 'dengmao' },
             { name: 'Cheng Yuanzhi', imgKey: 'chengyuanzhi', type: 'enemy_captain', templateId: 'chengyuanzhi' },
+            { name: 'Zhang Jue', imgKey: 'zhangjiao', type: 'zhang_jue', templateId: 'zhangjue' },
+            { name: 'Zhang Bao', imgKey: 'zhangbao', type: 'zhang_bao', templateId: 'zhangbao' },
+            { name: 'Zhang Liang', imgKey: 'zhangliang', type: 'zhang_liang', templateId: 'zhangliang' },
             { name: 'Archer', imgKey: 'archer', type: 'enemy_soldier', templateId: 'rebel', isArcher: true, hp: 2 },
             { name: 'Crossbowman', imgKey: 'crossbowman', type: 'crossbowman', templateId: 'crossbowman', isCrossbowman: true, hp: 2 },
         ];
