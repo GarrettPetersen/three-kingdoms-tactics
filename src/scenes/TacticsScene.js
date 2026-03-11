@@ -319,17 +319,7 @@ export class TacticsScene extends BaseScene {
         this.onChoiceRestrain = params.onChoiceRestrain || null; // Callback for peaceful choice
         this.onChoiceFight = params.onChoiceFight || null; // Callback for fight choice
         this.onFightVictory = params.onFightVictory || null; // Callback for cage-break victory
-        this._hexViewTarget = new Map();
-        this._hexViewProgress = new Map();
-        this._hexViewKeyByUnit = new WeakMap();
-        this._hexViewKeyByHorse = new WeakMap();
-        this._hexViewKeyCounter = 0;
-        this._hexViewLastSettled = new Map();
-        this._hexViewPrevUnitCount = undefined;
-        this._hexViewPrevHorseCount = undefined;
-        this._hexViewDirty = true;
-        this._hexViewDebugEnabled = false;
-        this._hexViewDebugCount = 0;
+        this._unitHexDriftMap = new Map(); // unit -> { x, y, isMoving }
         this.controllerNavTargets = [];
         this.controllerNavIndex = -1;
         this.controllerNavMouseEnabled = true;
@@ -3701,7 +3691,6 @@ export class TacticsScene extends BaseScene {
         this.history.pop(); // Remove current state
         const prevState = this.history[this.history.length - 1];
         this.restoreState(prevState);
-        this._hexViewDirty = true; // recalc hex vs regular view for new positions
         assets.playSound('ui_click', 0.5);
     }
 
@@ -4843,7 +4832,6 @@ export class TacticsScene extends BaseScene {
         const wrappedOnComplete = () => {
             if (completed) return;
             completed = true;
-            this._hexViewDirty = true; // units may have been pushed or killed in/out of a clump
             if (onComplete) onComplete();
         };
         setTimeout(() => {
@@ -5708,7 +5696,6 @@ export class TacticsScene extends BaseScene {
         
         // Keep only the start state in history
         this.history = [startState];
-        this._hexViewDirty = true; // recalc hex vs regular view for new positions
         assets.playSound('ui_click', 0.5);
     }
 
@@ -6195,10 +6182,10 @@ export class TacticsScene extends BaseScene {
         return this.attackTiles.has(`${cell.r},${cell.q}`) ? cell : null;
     }
 
-    drawMountedSpriteOutline(ctx, unit, surfaceY, timestamp, color = '#ffd700', regionRole = null) {
+    drawMountedSpriteOutline(ctx, unit, surfaceY, timestamp, color = '#ffd700', regionRole = null, offsetX = 0) {
         if (!unit?.onHorse) return;
         const rgb = this._hexToRgb(color);
-        this.drawHighlight(ctx, unit.visualX, surfaceY, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.35)`);
+        this.drawHighlight(ctx, unit.visualX + offsetX, surfaceY, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.35)`);
     }
 
     clearHorseFromCells(horse) {
@@ -6496,7 +6483,7 @@ export class TacticsScene extends BaseScene {
         }
 
         this.animationFrame = Math.floor(timestamp / 150) % 4;
-        const horseMoveEnded = this.updateRiderlessHorseAnimations(dt);
+        this.updateRiderlessHorseAnimations(dt);
         this.updateFireCrackleAudio();
         this.updateFireSmoke(dt);
         
@@ -6507,9 +6494,6 @@ export class TacticsScene extends BaseScene {
         }
         
         this.units.forEach(u => {
-            const wasMoving = !!u.isMoving;
-            const prevHp = u.hp;
-            const wasGone = !!u.isGone;
             // Update footprints
             const currentCell = this.tacticsMap.getCell(u.r, u.q);
             if (currentCell && currentCell.terrain === 'snow_01') {
@@ -6533,6 +6517,10 @@ export class TacticsScene extends BaseScene {
                 // During cutscene but not in dialogue - no one animates
                 shouldAnimate = false;
             }
+            if (!this.isCutscene) {
+                const driftState = this._unitHexDriftMap?.get(u);
+                if (driftState?.isMoving) shouldAnimate = true;
+            }
             
             // Get current terrain for footstep sounds
             const cell = this.tacticsMap.getCell(u.r, u.q);
@@ -6544,67 +6532,10 @@ export class TacticsScene extends BaseScene {
                 u.immortalPendingCause = null;
                 this.triggerImmortalBehavior(u, cause);
             }
-            if (wasMoving && !u.isMoving) this._hexViewDirty = true;
-            if (prevHp > 0 && u.hp <= 0) this._hexViewDirty = true;
-            if (!wasGone && u.isGone) this._hexViewDirty = true;
         });
 
-        // Hex-view: recompute targets only on coarse events + detected transitions.
-        const prevUnitCount = this._hexViewPrevUnitCount ?? -1;
-        const prevHorseCount = this._hexViewPrevHorseCount ?? -1;
-        this._hexViewPrevUnitCount = this.units.length;
-        this._hexViewPrevHorseCount = (this.horses || []).length;
-        if (this.units.length !== prevUnitCount || this._hexViewPrevHorseCount !== prevHorseCount) this._hexViewDirty = true;
-        if (horseMoveEnded) this._hexViewDirty = true;
-        if (this._hexViewDirty) {
-            this.recomputeHexViewTargets(this._hexViewDebugEnabled ? 'dirty' : undefined);
-            this._hexViewDirty = false;
-        }
-
-        // Animate hex-view progress toward stored targets (no per-frame clump check)
-        if (!this._hexViewProgress) this._hexViewProgress = new Map();
-        const hexViewSpeed = 2; // progress units per second
-        const hexViewStep = (dt / 1000) * hexViewSpeed;
-        this.units.forEach((u) => {
-            if (u.hp <= 0 || u.isGone) return;
-            const key = this.getUnitHexViewKey(u);
-            const target = (this._hexViewTarget && this._hexViewTarget.get(key)) ?? 0;
-            const prevP = this._hexViewProgress.get(key) ?? 0;
-            let p = prevP;
-            if (target > prevP + 0.0001) p = Math.min(1, prevP + hexViewStep);
-            else if (target < prevP - 0.0001) p = Math.max(0, prevP - hexViewStep);
-            if (Math.abs(p - target) < 0.001) p = target; // snap so we don't get stuck just below 1 (missing outline)
-            this._hexViewProgress.set(key, p);
-            if ((prevP < 1 && p >= 1) || (prevP > 0 && p <= 0)) {
-                const settledState = p >= 1 ? 1 : 0;
-                const last = this._hexViewLastSettled?.get(key);
-                if (last !== settledState) {
-                    if (!this._hexViewLastSettled) this._hexViewLastSettled = new Map();
-                    this._hexViewLastSettled.set(key, settledState);
-                    this.hexViewDebugLog('settled', { key, id: u.id || null, r: u.r, q: u.q, target, prevP, p, moving: !!u.isMoving, hp: u.hp, gone: !!u.isGone });
-                }
-            }
-        });
-        (this.horses || []).forEach(h => {
-            if (h.riderId) return;
-            const key = this.getHorseHexViewKey(h);
-            const target = (this._hexViewTarget && this._hexViewTarget.get(key)) ?? 0;
-            const prevP = this._hexViewProgress.get(key) ?? 0;
-            let p = prevP;
-            if (target > prevP + 0.0001) p = Math.min(1, prevP + hexViewStep);
-            else if (target < prevP - 0.0001) p = Math.max(0, prevP - hexViewStep);
-            if (Math.abs(p - target) < 0.001) p = target; // snap so we don't get stuck just below 1 (missing outline)
-            this._hexViewProgress.set(key, p);
-            if ((prevP < 1 && p >= 1) || (prevP > 0 && p <= 0)) {
-                const settledState = p >= 1 ? 1 : 0;
-                const last = this._hexViewLastSettled?.get(key);
-                if (last !== settledState) {
-                    if (!this._hexViewLastSettled) this._hexViewLastSettled = new Map();
-                    this._hexViewLastSettled.set(key, settledState);
-                    this.hexViewDebugLog('settled', { key, id: h.id || null, r: h.r, q: h.q, target, prevP, p, moving: !!h.isMoving, moveData: !!h.moveData });
-                }
-            }
-        });
+        const unitHexDriftTargets = this.buildUnitHexDriftMap();
+        this.updateUnitHexDriftAnimation(unitHexDriftTargets, dt);
 
         this.units.forEach(u => {
             if (u.name === 'Boulder' && u.rollData && u.rollData.bounceComplete) {
@@ -7279,9 +7210,8 @@ export class TacticsScene extends BaseScene {
         });
 
         this._telegraphPunchList = [];
-        this._hexViewDrawList = [];
-        this._hexViewHorseList = [];
-        if (!this._hexViewProgress) this._hexViewProgress = new Map();
+        this._hexOutlinePunchList = [];
+        const unitHexDriftMap = this._unitHexDriftMap || new Map();
         for (const call of drawCalls) {
             const effect = this.getIntroEffect(Math.floor(call.r), call.q || 0);
             if (effect.alpha <= 0 && call.type !== 'particle' && call.type !== 'fire_smoke') continue; // Particles have their own alpha check
@@ -7376,11 +7306,22 @@ export class TacticsScene extends BaseScene {
                     drawOptions.tint = 'rgba(96, 184, 255, 0.28)';
                 }
 
+                const driftState = unitHexDriftMap.get(u) || { x: 0, y: 0, isMoving: false };
+                drawOptions.hexOffsetX = driftState.x;
+                drawOptions.hexOffsetY = driftState.y;
+                const baseAction = u.currentAnimAction || u.action;
+                drawOptions.actionOverride = (driftState.isMoving && !u.onHorse && !u.isMoving && !u.pushData && !u.rollData && baseAction === 'standby')
+                    ? 'walk'
+                    : null;
+
                 // Record telegraph for late pass (drawn on top, then punched out by this unit's sprite)
-                const unitPos = { x: u.visualX + (u.visualOffsetX || 0), y: surfaceY + (u.visualOffsetY || 0) };
+                const unitPos = {
+                    x: u.visualX + (u.visualOffsetX || 0) + driftState.x,
+                    y: surfaceY + (u.visualOffsetY || 0) + driftState.y
+                };
                 const isThisUnitSelected = this.selectedUnit === u;
                 const hoverTarget = (isThisUnitSelected && this.selectedAttack && this.hoveredCell && this.attackTiles.has(`${this.hoveredCell.r},${this.hoveredCell.q}`)) ? this.hoveredCell : null;
-                const glow = isThisUnitSelected ? Math.abs(Math.sin(Date.now() / 200)) * 0.4 : 0;
+                const telegraphAlpha = this.getTelegraphAlpha(isThisUnitSelected);
                 let targetCellForTelegraph = null;
                 let hoverTargetForTelegraph = null;
                 let attackKeyForTelegraph = null;
@@ -7398,31 +7339,27 @@ export class TacticsScene extends BaseScene {
                     this._telegraphPunchList.push({
                         unit: u, surfaceY, drawOptions, cell, timestamp,
                         unitPos, targetCell: targetCellForTelegraph, hoverTarget: hoverTargetForTelegraph,
-                        attackKey: attackKeyForTelegraph, glow
+                        attackKey: attackKeyForTelegraph, telegraphAlpha
                     });
                 }
 
                 const isSelected = this.selectedUnit === u;
-                const hexViewProgress = (this._hexViewProgress && this._hexViewProgress.get(this.getUnitHexViewKey(u))) ?? 0;
-                const useHexView = hexViewProgress > 0;
-
-                if (!useHexView) {
-                    if (isSelected) {
-                        if (u.onHorse) {
-                            this.drawMountedSpriteOutline(ctx, u, surfaceY, timestamp, '#ffffff');
-                        } else {
-                            this.drawHighlight(ctx, u.visualX, surfaceY, 'rgba(255, 255, 255, 0.4)');
-                        }
-                    } else if (isCommandEligible) {
-                        if (u.onHorse) {
-                            this.drawMountedSpriteOutline(ctx, u, surfaceY, timestamp, '#66ccff');
-                        } else {
-                            this.drawHighlight(ctx, u.visualX, surfaceY, 'rgba(96, 184, 255, 0.35)');
-                        }
+                if (isSelected) {
+                    if (u.onHorse) {
+                        this.drawMountedSpriteOutline(ctx, u, surfaceY, timestamp, '#ffffff');
+                    } else {
+                        this.drawHighlight(ctx, u.visualX, surfaceY, 'rgba(255, 255, 255, 0.4)');
                     }
-                    this.drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp);
-                } else {
-                    this._hexViewDrawList.push({ u, surfaceY, drawOptions, cell, timestamp, progress: hexViewProgress });
+                } else if (isCommandEligible) {
+                    if (u.onHorse) {
+                        this.drawMountedSpriteOutline(ctx, u, surfaceY, timestamp, '#66ccff');
+                    } else {
+                        this.drawHighlight(ctx, u.visualX, surfaceY, 'rgba(96, 184, 255, 0.35)');
+                    }
+                }
+                this.drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp);
+                if (u.hp > 0 && !u.isGone && u.name !== 'Boulder') {
+                    this._hexOutlinePunchList.push({ unit: u, surfaceY, drawOptions, cell, timestamp });
                 }
             } else if (call.type === 'horse') {
                 const h = call.horse;
@@ -7433,18 +7370,13 @@ export class TacticsScene extends BaseScene {
                 const horseImg = isRunning ? horseRun : horseStand;
 
                 if (horseImg) {
-                    const horseHexProgress = (this._hexViewProgress && this._hexViewProgress.get(this.getHorseHexViewKey(h))) ?? 0;
-                    if (horseHexProgress > 0) {
-                        this._hexViewHorseList.push({ h, effect, timestamp, progress: horseHexProgress });
-                    } else {
-                        const pos = { x: call.x, y: call.y };
-                        const midX = Math.floor(pos.x);
-                        const hexCell = this.tacticsMap.getCell(h.r, h.q);
-                        const isShallow = !!(hexCell && hexCell.terrain?.includes('water_shallow'));
-                        const sink = isShallow ? 4 : 0;
-                        const midY = Math.floor(pos.y) + effect.yOffset + sink;
-                        this.drawRiderlessHorse(ctx, h, midX, midY, effect, timestamp);
-                    }
+                    const pos = { x: call.x, y: call.y };
+                    const midX = Math.floor(pos.x);
+                    const hexCell = this.tacticsMap.getCell(h.r, h.q);
+                    const isShallow = !!(hexCell && hexCell.terrain?.includes('water_shallow'));
+                    const sink = isShallow ? 4 : 0;
+                    const midY = Math.floor(pos.y) + effect.yOffset + sink;
+                    this.drawRiderlessHorse(ctx, h, midX, midY, effect, timestamp);
                 }
             } else if (call.type === 'flag') {
                 const img = assets.getImage('flag_01');
@@ -7496,45 +7428,78 @@ export class TacticsScene extends BaseScene {
             ctx.restore();
         }
 
-        // Hex-view pass: draw deferred hex-view units and horses with animated offset only (no mask); show coloured hex outline when fully in hex view
-        const HEX_VIEW_OFFSET = 5;
-        if (this._hexViewDrawList && this._hexViewDrawList.length > 0) {
-            for (const { u, surfaceY, drawOptions, cell, timestamp, progress } of this._hexViewDrawList) {
-                const p = progress ?? 1;
-                const offsetY = p * HEX_VIEW_OFFSET;
-                const hexCenter = this.getPixelPos(u.r, u.q);
-                ctx.save();
-                ctx.translate(0, offsetY);
-                this.drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp);
-                ctx.restore();
-                if (p >= 0.999) {
-                    ctx.save();
-                    ctx.translate(0, offsetY);
-                    this.drawHexOutline(ctx, hexCenter.x, hexCenter.y - offsetY, this.getHexViewOutlineColor(u.faction));
-                    ctx.restore();
-                }
+        // Unit hex outlines (always-on for living non-boulder units): draw on top, then punch out that same unit's sprite.
+        if (!this.isIntroAnimating && this._hexOutlinePunchList && this._hexOutlinePunchList.length > 0) {
+            const cw = this.manager.canvas.width;
+            const ch = this.manager.canvas.height;
+            if (!this._hexOutlineLayerCanvas || this._hexOutlineLayerCanvas.width !== cw || this._hexOutlineLayerCanvas.height !== ch) {
+                this._hexOutlineLayerCanvas = document.createElement('canvas');
+                this._hexOutlineLayerCanvas.width = cw;
+                this._hexOutlineLayerCanvas.height = ch;
+                this._hexOutlineLayerCtx = this._hexOutlineLayerCanvas.getContext('2d');
             }
+            if (!this._hexOutlineItemCanvas || this._hexOutlineItemCanvas.width !== cw || this._hexOutlineItemCanvas.height !== ch) {
+                this._hexOutlineItemCanvas = document.createElement('canvas');
+                this._hexOutlineItemCanvas.width = cw;
+                this._hexOutlineItemCanvas.height = ch;
+                this._hexOutlineItemCtx = this._hexOutlineItemCanvas.getContext('2d');
+            }
+            const layerCtx = this._hexOutlineLayerCtx;
+            const itemCtx = this._hexOutlineItemCtx;
+            layerCtx.clearRect(0, 0, cw, ch);
+            for (const item of this._hexOutlinePunchList) {
+                const u = item.unit;
+                if (!u || u.hp <= 0 || u.isGone || u.name === 'Boulder') continue;
+                itemCtx.clearRect(0, 0, cw, ch);
+                const hexPos = this.getPixelPos(u.r, u.q);
+                itemCtx.save();
+                itemCtx.globalAlpha = this.getUnitOutlineAlpha(u);
+                this.drawHexOutline(itemCtx, hexPos.x, hexPos.y, this.getHexViewOutlineColor(u.faction));
+                itemCtx.restore();
+                itemCtx.save();
+                itemCtx.globalCompositeOperation = 'destination-out';
+                this.drawUnitSpriteOnly(itemCtx, u, item.surfaceY, item.drawOptions, item.cell, item.timestamp);
+                itemCtx.restore();
+                layerCtx.drawImage(this._hexOutlineItemCanvas, 0, 0);
+            }
+            ctx.drawImage(this._hexOutlineLayerCanvas, 0, 0);
         }
-        if (this._hexViewHorseList && this._hexViewHorseList.length > 0) {
-            for (const { h, effect, timestamp, progress } of this._hexViewHorseList) {
-                const p = progress ?? 1;
-                const offsetY = p * HEX_VIEW_OFFSET;
-                const hexCenter = this.getPixelPos(h.r, h.q);
-                const hexCell = this.tacticsMap.getCell(h.r, h.q);
-                const isShallow = !!(hexCell && hexCell.terrain?.includes('water_shallow'));
-                const sink = isShallow ? 4 : 0;
-                const midX = hexCenter.x;
-                const midY = hexCenter.y - offsetY + effect.yOffset + sink;
+
+        // Unit sprite outlines (always-on for living units except boulders), drawn above terrain/units.
+        // Keyboard/controller yellow focus is drawn later and therefore stays on top.
+        if (!this.isIntroAnimating && this._hexOutlinePunchList && this._hexOutlinePunchList.length > 0) {
+            for (const item of this._hexOutlinePunchList) {
+                const u = item.unit;
+                if (!u || u.hp <= 0 || u.isGone || u.name === 'Boulder' || !u.img) continue;
+                const driftX = item.drawOptions?.hexOffsetX || 0;
+                const driftY = item.drawOptions?.hexOffsetY || 0;
+                const sinkOffset = item.drawOptions?.sinkOffset || 0;
+                const color = this.getHexViewOutlineColor(u.faction);
+                const alpha = this.getUnitOutlineAlpha(u);
+                const actionOverride = item.drawOptions?.actionOverride || null;
+                const action = u.onHorse
+                    ? ((u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action))
+                    : (actionOverride || u.currentAnimAction || u.action);
+                const outlineY = u.onHorse
+                    ? (item.surfaceY + (u.visualOffsetY || 0) + sinkOffset + driftY - 14)
+                    : (item.surfaceY + (u.visualOffsetY || 0) + driftY);
+                const outlineOptions = {
+                    flip: u.flip,
+                    color,
+                    sinkOffset: u.onHorse ? 0 : sinkOffset
+                };
                 ctx.save();
-                ctx.translate(0, offsetY);
-                this.drawRiderlessHorse(ctx, h, midX, midY, effect, timestamp);
+                ctx.globalAlpha = alpha;
+                this.drawCharacterPixelOutline(
+                    ctx,
+                    u.img,
+                    action,
+                    u.frame,
+                    u.visualX + (u.visualOffsetX || 0) + driftX,
+                    outlineY,
+                    outlineOptions
+                );
                 ctx.restore();
-                if (p >= 0.999) {
-                    ctx.save();
-                    ctx.translate(0, offsetY);
-                    this.drawHexOutline(ctx, hexCenter.x, hexCenter.y - offsetY, this.getHexViewOutlineColor(null));
-                    ctx.restore();
-                }
             }
         }
         // Telegraph pass: draw telegraphs on an offscreen layer, punch out where the telegraphing unit's sprite is, then composite on top
@@ -7560,21 +7525,21 @@ export class TacticsScene extends BaseScene {
             // This guarantees we only remove the telegraphing unit's own line and never erase prior telegraphs.
             for (const item of this._telegraphPunchList) {
                 itemCtx.clearRect(0, 0, cw, ch);
-                const { unit: u, unitPos, targetCell, hoverTarget, attackKey, glow } = item;
+                const { unit: u, unitPos, targetCell, hoverTarget, attackKey, telegraphAlpha } = item;
                 const attack = ATTACKS[attackKey];
                 if (!attack) continue;
                 if (targetCell) {
                     if (attack.type === 'directional_projectile') {
                         const boltPath = this.getDirectionalBoltPath(u, targetCell.r, targetCell.q);
-                        if (boltPath?.path?.length) this.drawDirectionalBoltPathDots(itemCtx, boltPath, 0.6 + glow, true);
+                        if (boltPath?.path?.length) this.drawDirectionalBoltPathDots(itemCtx, boltPath, telegraphAlpha, true);
                     } else if (attack.type === 'projectile') {
                         const originY = unitPos.y - 8;
                         const targetPos = this.getPixelPos(targetCell.r, targetCell.q);
-                        this.drawArrowParabolaPath(itemCtx, unitPos.x, originY, targetPos.x, targetPos.y, 0.6 + glow);
+                        this.drawArrowParabolaPath(itemCtx, unitPos.x, originY, targetPos.x, targetPos.y, telegraphAlpha);
                     } else if (attack.type === 'lightning_aoe') {
                         const tiles = this.getAffectedTiles(u, attackKey, targetCell.r, targetCell.q);
                         itemCtx.save();
-                        itemCtx.globalAlpha = 0.55 + glow * 0.25;
+                        itemCtx.globalAlpha = telegraphAlpha;
                         tiles.forEach(t => {
                             const pos = this.getPixelPos(t.r, t.q);
                             this.drawHexOutline(itemCtx, pos.x, pos.y, '#ff3333');
@@ -7582,20 +7547,20 @@ export class TacticsScene extends BaseScene {
                         itemCtx.restore();
                     } else {
                         const swishes = this.getMeleeTelegraphSwishes(u, attackKey, targetCell.r, targetCell.q);
-                        for (const spec of swishes) this.drawTelegraphSwish(itemCtx, spec, unitPos);
+                        for (const spec of swishes) this.drawTelegraphSwish(itemCtx, spec, unitPos, telegraphAlpha);
                     }
                 } else if (hoverTarget) {
                     if (this.isDirectionalBoltAttack(attackKey)) {
                         const boltPath = this.getDirectionalBoltPath(u, hoverTarget.r, hoverTarget.q);
-                        if (boltPath?.path?.length) this.drawDirectionalBoltPathDots(itemCtx, boltPath, 0.7, true);
+                        if (boltPath?.path?.length) this.drawDirectionalBoltPathDots(itemCtx, boltPath, telegraphAlpha, true);
                     } else if (attack.type === 'projectile') {
                         const originY = unitPos.y - 8;
                         const endPos = this.getPixelPos(hoverTarget.r, hoverTarget.q);
-                        this.drawArrowParabolaPath(itemCtx, unitPos.x, originY, endPos.x, endPos.y, 0.7);
+                        this.drawArrowParabolaPath(itemCtx, unitPos.x, originY, endPos.x, endPos.y, telegraphAlpha);
                     } else if (attack.type === 'lightning_aoe') {
                         const tiles = this.getAffectedTiles(u, attackKey, hoverTarget.r, hoverTarget.q);
                         itemCtx.save();
-                        itemCtx.globalAlpha = 0.7;
+                        itemCtx.globalAlpha = telegraphAlpha;
                         tiles.forEach(t => {
                             const pos = this.getPixelPos(t.r, t.q);
                             this.drawHexOutline(itemCtx, pos.x, pos.y, '#ff3333');
@@ -7604,17 +7569,12 @@ export class TacticsScene extends BaseScene {
                     } else {
                         const swishes = this.getMeleeTelegraphSwishes(u, attackKey, hoverTarget.r, hoverTarget.q);
                         if (swishes.length > 0) {
-                            for (const spec of swishes) this.drawTelegraphSwish(itemCtx, spec, unitPos);
+                            for (const spec of swishes) this.drawTelegraphSwish(itemCtx, spec, unitPos, telegraphAlpha);
                         }
                     }
                 }
                 itemCtx.save();
                 itemCtx.globalCompositeOperation = 'destination-out';
-                const punchProgress = (this._hexViewProgress && this._hexViewProgress.get(this.getUnitHexViewKey(item.unit))) ?? 0;
-                if (punchProgress > 0) {
-                    const offsetY = punchProgress * 5; // HEX_VIEW_OFFSET (matches hex-view pass)
-                    itemCtx.translate(0, offsetY);
-                }
                 this.drawUnitSpriteOnly(itemCtx, item.unit, item.surfaceY, item.drawOptions, item.cell, item.timestamp);
                 itemCtx.restore();
                 tctx.drawImage(this._telegraphItemCanvas, 0, 0);
@@ -7626,21 +7586,19 @@ export class TacticsScene extends BaseScene {
         if (!this.isIntroAnimating) {
             this.units.forEach(u => {
                 if (u.hp <= 0) return;
-                
-                const surfaceY = u.visualY + (u.onHorse ? MOUNTED_Y_OFFSET : 0);
-                let uiX = u.visualX;
-                if (u.onHorse) uiX = Math.floor(u.visualX);
-                const unitHexProgress = (this._hexViewProgress && this._hexViewProgress.get(this.getUnitHexViewKey(u))) ?? 0;
-                const hexViewHpOffset = unitHexProgress > 0 ? unitHexProgress * 3 : 0;
+                const driftState = unitHexDriftMap.get(u) || { x: 0, y: 0, isMoving: false };
+                const surfaceY = u.visualY + (u.onHorse ? MOUNTED_Y_OFFSET : 0) + driftState.y;
+                let uiX = u.visualX + driftState.x;
+                if (u.onHorse) uiX = Math.floor(u.visualX + driftState.x);
 
                 // Draw intent if enemy or ally
                 if (u.intent) {
                     this.drawIntent(ctx, u, uiX, surfaceY);
                 }
 
-                // Draw HP bar (not for dead units, boulders, or drowning units); move down in hex view to clear outline
+                // Draw HP bar (not for dead units, boulders, or drowning units)
                 if (u.hp > 0 && u.name !== 'Boulder' && (!u.isDrowning || u.drownTimer < 500)) {
-                    this.drawHpBar(ctx, u, uiX, surfaceY + hexViewHpOffset);
+                    this.drawHpBar(ctx, u, uiX, surfaceY);
                 }
             });
         }
@@ -7675,7 +7633,8 @@ export class TacticsScene extends BaseScene {
                             const origin = this.getAttackOriginForTarget(u, impactCell.r, impactCell.q);
                             const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, impactCell.r, impactCell.q);
                             if (dirIndex !== -1) {
-                                this.drawPushArrow(ctx, impactCell.r, impactCell.q, dirIndex);
+                                const alpha = this.selectedUnit === u ? this.getTelegraphAlpha(true) : 1;
+                                this.drawPushArrow(ctx, impactCell.r, impactCell.q, dirIndex, false, alpha);
                             }
                         }
                     }
@@ -7686,6 +7645,7 @@ export class TacticsScene extends BaseScene {
         if (this.selectedAttack && this.hoveredCell && this.attackTiles.has(`${this.hoveredCell.r},${this.hoveredCell.q}`)) {
             const attack = ATTACKS[this.selectedAttack];
             if (attack && attack.push && this.selectedUnit) {
+                const selectedPushAlpha = this.getTelegraphAlpha(true);
                 const origin = this.getAttackOriginForTarget(this.selectedUnit, this.hoveredCell.r, this.hoveredCell.q);
                 if (this.selectedAttack === 'double_blades') {
                     // Double Blades: Show both push arrows
@@ -7693,13 +7653,13 @@ export class TacticsScene extends BaseScene {
                     if (dirIndex !== -1) {
                         // Front target
                         if (this.hoveredCell.unit) {
-                            this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
+                            this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex, false, selectedPushAlpha);
                         }
                         // Back target
                         const oppositeDir = (dirIndex + 3) % 6;
                         const backCell = this.tacticsMap.getNeighborInDirection(origin.r, origin.q, oppositeDir);
                         if (backCell && backCell.unit) {
-                            this.drawPushArrow(ctx, backCell.r, backCell.q, oppositeDir);
+                            this.drawPushArrow(ctx, backCell.r, backCell.q, oppositeDir, false, selectedPushAlpha);
                         }
                     }
                 } else if (this.selectedAttack && this.isLineAttack(this.selectedAttack)) {
@@ -7708,7 +7668,7 @@ export class TacticsScene extends BaseScene {
                         const impactCell = boltPath?.impactCell || null;
                         if (impactCell && impactCell.unit) {
                             const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, impactCell.r, impactCell.q);
-                            if (dirIndex !== -1) this.drawPushArrow(ctx, impactCell.r, impactCell.q, dirIndex);
+                            if (dirIndex !== -1) this.drawPushArrow(ctx, impactCell.r, impactCell.q, dirIndex, false, selectedPushAlpha);
                         }
                     } else {
                         // Serpent Spear: Push the further target
@@ -7716,7 +7676,7 @@ export class TacticsScene extends BaseScene {
                         if (dirIndex !== -1) {
                             // Only show arrow if the hovered cell actually contains a unit
                             if (this.hoveredCell.unit) {
-                                this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
+                                this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex, false, selectedPushAlpha);
                             }
                         }
                     }
@@ -7726,10 +7686,10 @@ export class TacticsScene extends BaseScene {
                         if (this.hoveredCell.unit.name === 'Boulder') {
                             const { path, bumpAtEnd } = this.getBoulderRollPath(this.hoveredCell.unit.r, this.hoveredCell.unit.q, dirIndex);
                             for (let i = 0; i < path.length - 1; i++) {
-                                this.drawPushArrow(ctx, path[i].r, path[i].q, dirIndex, i === path.length - 2 && bumpAtEnd);
+                                this.drawPushArrow(ctx, path[i].r, path[i].q, dirIndex, i === path.length - 2 && bumpAtEnd, selectedPushAlpha);
                             }
                         } else {
-                            this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex);
+                            this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex, false, selectedPushAlpha);
                         }
                     }
                 }
@@ -8131,6 +8091,7 @@ export class TacticsScene extends BaseScene {
         if (!this.controllerNavTargets || this.controllerNavTargets.length === 0) return;
         if (this.controllerNavIndex < 0 || this.controllerNavIndex >= this.controllerNavTargets.length) return;
         const t = this.controllerNavTargets[this.controllerNavIndex];
+        const unitHexDriftMap = this._unitHexDriftMap || new Map();
         const isAttackTargetingMode = !!(this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack);
         const focusColor = '#ffd700';
         ctx.save();
@@ -8139,6 +8100,7 @@ export class TacticsScene extends BaseScene {
             this.drawHexOutline(ctx, pos.x, pos.y, t.type === 'attack_cell' ? '#ff3333' : '#ffd700');
         } else if (t.type === 'unit' && t.unit && t.unit.img) {
             const u = t.unit;
+            const drift = unitHexDriftMap.get(u) || { x: 0, y: 0, isMoving: false };
             const mountedRegions = (isAttackTargetingMode && u.onHorse) ? this.getMountedAttackRegions(u) : null;
             const canAttackThisUnit = isAttackTargetingMode && (
                 this.attackTiles.has(`${u.r},${u.q}`) ||
@@ -8150,7 +8112,7 @@ export class TacticsScene extends BaseScene {
                     this.drawHexOutline(ctx, pos.x, pos.y, region.canAttack ? '#ff3333' : '#ffd700');
                 });
             } else if (u.onHorse) {
-                this.drawMountedSpriteOutline(ctx, u, u.visualY + 10, timestamp, '#ffd700');
+                this.drawMountedSpriteOutline(ctx, u, u.visualY + MOUNTED_Y_OFFSET + drift.y, timestamp, '#ffd700', null, drift.x);
             }
             if (u.name === 'Boulder') {
                 const color = canAttackThisUnit ? '#ff3333' : '#ffd700';
@@ -8158,13 +8120,13 @@ export class TacticsScene extends BaseScene {
                 const by = Math.floor(u.visualY - (u.img.height - 5));
                 this.drawImageFramePixelOutline(ctx, u.img, 0, 0, u.img.width, u.img.height, bx, by, { color });
             } else {
-                const outlineY = u.visualY + (u.onHorse ? MOUNTED_Y_OFFSET : 0);
+                const outlineY = u.visualY + (u.onHorse ? MOUNTED_Y_OFFSET : 0) + drift.y;
                 this.drawCharacterPixelOutline(
                     ctx,
                     u.img,
                     u.currentAnimAction || u.action,
                     u.frame,
-                    u.visualX,
+                    u.visualX + drift.x,
                     outlineY,
                     { flip: u.flip, color: canAttackThisUnit ? '#ff3333' : '#ffd700' }
                 );
@@ -8173,7 +8135,16 @@ export class TacticsScene extends BaseScene {
             const pos = this.getPixelPos(t.r, t.q);
             this.drawHexOutline(ctx, pos.x, pos.y, t.canAttack ? '#ff3333' : '#ffd700');
             if (t.unit.onHorse) {
-                this.drawMountedSpriteOutline(ctx, t.unit, t.unit.visualY + 10, timestamp, t.canAttack ? '#ff3333' : '#ffd700', t.role);
+                const drift = unitHexDriftMap.get(t.unit) || { x: 0, y: 0, isMoving: false };
+                this.drawMountedSpriteOutline(
+                    ctx,
+                    t.unit,
+                    t.unit.visualY + MOUNTED_Y_OFFSET + drift.y,
+                    timestamp,
+                    t.canAttack ? '#ff3333' : '#ffd700',
+                    t.role,
+                    drift.x
+                );
             }
         } else if (t.rect) {
             this.drawPixelRectOutline(
@@ -8201,182 +8172,108 @@ export class TacticsScene extends BaseScene {
     /** Hex outline radius in pixels (pointy-top). */
     static get HEX_RADIUS() { return 12; }
 
-    getUnitHexViewKey(unit) {
-        if (!unit) return 'u:unknown';
-        if (!this._hexViewKeyByUnit) this._hexViewKeyByUnit = new WeakMap();
-        let key = this._hexViewKeyByUnit.get(unit);
-        if (!key) {
-            this._hexViewKeyCounter = (this._hexViewKeyCounter || 0) + 1;
-            key = `u:auto:${this._hexViewKeyCounter}`;
-            this._hexViewKeyByUnit.set(unit, key);
-        }
-        return key;
-    }
-
-    getHorseHexViewKey(horse) {
-        if (!horse) return 'h:unknown';
-        if (!this._hexViewKeyByHorse) this._hexViewKeyByHorse = new WeakMap();
-        let key = this._hexViewKeyByHorse.get(horse);
-        if (!key) {
-            this._hexViewKeyCounter = (this._hexViewKeyCounter || 0) + 1;
-            key = `h:auto:${this._hexViewKeyCounter}`;
-            this._hexViewKeyByHorse.set(horse, key);
-        }
-        return key;
-    }
-
-    /**
-     * Recompute which units/horses should be in hex view (in a clump). Only "front" of clump (someone behind them) get hex view.
-     * Corpses and boulders never get hex view and don't count toward clumps.
-     */
-    recomputeHexViewTargets(reason = 'unknown') {
-        if (!this._hexViewTarget) this._hexViewTarget = new Map();
-        const prevTargets = this._hexViewTarget;
-        const nextTargets = new Map();
-        const clumpCells = this.getClumpCells();
-        if (clumpCells.size === 0) {
-            this.units.forEach(u => {
-                if (u.hp <= 0 || u.isGone) return;
-                nextTargets.set(this.getUnitHexViewKey(u), 0);
-            });
-            (this.horses || []).forEach(h => {
-                if (h.riderId) return;
-                nextTargets.set(this.getHorseHexViewKey(h), 0);
-            });
-            this._hexViewTarget = nextTargets;
-            return;
-        }
-        const cellToEntity = new Map();
+    /** Build per-unit in-hex drift offsets based on adjacent living unit occupancy. */
+    buildUnitHexDriftMap() {
+        const drifts = new Map();
+        const occupied = new Set();
         this.units.forEach(u => {
             if (u.hp <= 0 || u.isGone || u.name === 'Boulder') return;
-            const key = `${u.r},${u.q}`;
-            if (clumpCells.has(key)) {
-                const sortVal = u.currentSortR ?? u.r;
-                cellToEntity.set(key, { type: 'unit', entity: u, sortValue: sortVal });
-            }
+            occupied.add(`${u.r},${u.q}`);
         });
-        (this.horses || []).forEach(h => {
-            if (h.riderId) return;
-            const key = `${h.r},${h.q}`;
-            if (clumpCells.has(key) && !cellToEntity.has(key)) {
-                cellToEntity.set(key, { type: 'horse', entity: h, sortValue: h.r });
-            }
-        });
-        const components = this._getClumpComponents(clumpCells);
-        const frontCells = new Set();
-        for (const component of components) {
-            let minSort = Infinity;
-            for (const key of component) {
-                const ent = cellToEntity.get(key);
-                if (ent && ent.sortValue < minSort) minSort = ent.sortValue;
-            }
-            for (const key of component) {
-                const ent = cellToEntity.get(key);
-                if (ent && ent.sortValue > minSort) frontCells.add(key);
-            }
-        }
-        const setTarget = (key, inClump, meta = {}) => {
-            const next = inClump ? 1 : 0;
-            const prev = prevTargets.get(key) ?? 0;
-            nextTargets.set(key, next);
-            if (prev !== next) {
-                this.hexViewDebugLog('target_change', { reason, key, prev, next, ...meta });
-            }
-        };
         this.units.forEach(u => {
-            if (u.hp <= 0 || u.isGone) return;
-            const ukey = `${u.r},${u.q}`;
-            const inClump = u.name !== 'Boulder' && frontCells.has(ukey);
-            setTarget(this.getUnitHexViewKey(u), inClump, { id: u.id || null, type: 'unit', r: u.r, q: u.q });
+            drifts.set(u, this.getUnitHexDriftOffset(u, occupied));
         });
-        (this.horses || []).forEach(h => {
-            if (h.riderId) return;
-            const hkey = `${h.r},${h.q}`;
-            setTarget(this.getHorseHexViewKey(h), frontCells.has(hkey), { id: h.id || null, type: 'horse', r: h.r, q: h.q });
-        });
-        this._hexViewTarget = nextTargets;
-    }
-
-    _getClumpComponents(clumpCells) {
-        const keys = [...clumpCells];
-        const visited = new Set();
-        const components = [];
-        for (const key of keys) {
-            if (visited.has(key)) continue;
-            const comp = new Set();
-            const stack = [key];
-            while (stack.length) {
-                const k = stack.pop();
-                if (visited.has(k)) continue;
-                visited.add(k);
-                comp.add(k);
-                const [r, q] = k.split(',').map(Number);
-                const neighbors = this.tacticsMap.getNeighbors(r, q) || [];
-                for (const n of neighbors) {
-                    const nk = `${n.r},${n.q}`;
-                    if (clumpCells.has(nk) && !visited.has(nk)) stack.push(nk);
-                }
-            }
-            components.push(comp);
-        }
-        return components;
-    }
-
-    hexViewDebugLog(event, payload) {
-        if (!this._hexViewDebugEnabled) return;
-        const LIMIT = 40;
-        this._hexViewDebugCount = this._hexViewDebugCount || 0;
-        if (this._hexViewDebugCount >= LIMIT) return;
-        this._hexViewDebugCount++;
-        console.log('[HexViewDebug]', event, payload);
+        return drifts;
     }
 
     /**
-     * Clump = three hexes (each with a unit or riderless horse) that share a vertex (triangle of touching hexes).
-     * Uses hex-grid topology (neighbor directions) so detection is exact and not affected by pixel rounding.
-     * Returns a Set of "r,q" for every cell that is part of at least one such clump.
+     * Smoothly animate per-unit in-hex drift toward targets.
+     * Units "walk in place" while this animated offset is settling.
      */
-    getClumpCells() {
-        const occupied = new Set();
-        for (const u of this.units) {
-            if (u.hp <= 0 || u.isGone) continue;
-            if (u.name === 'Boulder') continue;
-            if (u.isMoving || u.pushData) continue;
-            occupied.add(`${u.r},${u.q}`);
-        }
-        for (const h of this.horses || []) {
-            if (h.riderId) continue;
-            if (h.isMoving) continue;
-            occupied.add(`${h.r},${h.q}`);
-        }
-        const vertexToCells = new Map();
-        for (const key of occupied) {
-            const [r, q] = key.split(',').map(Number);
-            const dirs = this.tacticsMap.getDirections(r);
-            for (let i = 0; i < 6; i++) {
-                const na = dirs[i];
-                const nb = dirs[(i + 1) % 6];
-                const ra = r + na.dr;
-                const qa = q + na.dq;
-                const rb = r + nb.dr;
-                const qb = q + nb.dq;
-                if (!this.tacticsMap.getCell(ra, qa) || !this.tacticsMap.getCell(rb, qb)) continue;
-                const tri = [[r, q], [ra, qa], [rb, qb]].sort((a, b) => a[0] !== b[0] ? a[0] - b[0] : a[1] - b[1]);
-                const vertexKey = tri.map(([rr, qq]) => `${rr},${qq}`).join('|');
-                if (!vertexToCells.has(vertexKey)) vertexToCells.set(vertexKey, new Set());
-                vertexToCells.get(vertexKey).add(`${r},${q}`).add(`${ra},${qa}`).add(`${rb},${qb}`);
+    updateUnitHexDriftAnimation(targets, dt) {
+        if (!this._unitHexDriftMap) this._unitHexDriftMap = new Map();
+        const animated = this._unitHexDriftMap;
+        const maxStep = Math.max(0.001, (dt / 1000) * 16); // px per frame @ 16px/s
+
+        for (const [u, target] of targets.entries()) {
+            const prev = animated.get(u) || { x: 0, y: 0, isMoving: false };
+            const tx = target?.x || 0;
+            const ty = target?.y || 0;
+            const dx = tx - prev.x;
+            const dy = ty - prev.y;
+            const dist = Math.hypot(dx, dy);
+            let nx = prev.x;
+            let ny = prev.y;
+            if (dist > 0.001) {
+                if (dist <= maxStep) {
+                    nx = tx;
+                    ny = ty;
+                } else {
+                    nx = prev.x + (dx / dist) * maxStep;
+                    ny = prev.y + (dy / dist) * maxStep;
+                }
             }
+            const stillMoving = Math.hypot(tx - nx, ty - ny) > 0.05;
+            animated.set(u, { x: nx, y: ny, isMoving: stillMoving });
         }
-        const clumpCells = new Set();
-        for (const cells of vertexToCells.values()) {
-            if (cells.size === 3 && [...cells].every(c => occupied.has(c))) {
-                for (const c of cells) clumpCells.add(c);
-            }
+
+        // Cleanup stale units removed from battle.
+        for (const u of [...animated.keys()]) {
+            if (!targets.has(u)) animated.delete(u);
         }
-        return clumpCells;
     }
 
-    /** Faction color for hex-view outline: player green, allied blue, enemy red. Pass null/undefined for neutral (e.g. riderless horse). */
+    /**
+     * Give units subtle in-hex movement toward open adjacent sides.
+     * Rules:
+     * - Radius <= 4px
+     * - No drift when fully surrounded or when no adjacent living units exist
+     * - Ignore boulders/corpses for occupancy
+     */
+    getUnitHexDriftOffset(u, occupied) {
+        if (!u || u.hp <= 0 || u.isGone || u.name === 'Boulder') return { x: 0, y: 0 };
+        const dirs = this.tacticsMap.getDirections(u.r) || [];
+        if (dirs.length === 0) return { x: 0, y: 0 };
+
+        const center = this.getPixelPos(u.r, u.q);
+        let occupiedSides = 0;
+        let emptySides = 0;
+        let vx = 0;
+        let vy = 0;
+
+        for (const d of dirs) {
+            const nr = u.r + d.dr;
+            const nq = u.q + d.dq;
+            const nkey = `${nr},${nq}`;
+            const isOccupied = occupied.has(nkey);
+            if (isOccupied) {
+                occupiedSides++;
+                continue;
+            }
+            const ncell = this.tacticsMap.getCell(nr, nq);
+            if (!ncell) continue;
+            emptySides++;
+            const npos = this.getPixelPos(nr, nq);
+            const dx = npos.x - center.x;
+            const dy = npos.y - center.y;
+            const mag = Math.hypot(dx, dy);
+            if (mag > 0.0001) {
+                vx += dx / mag;
+                vy += dy / mag;
+            }
+        }
+
+        if (occupiedSides === 0 || occupiedSides >= 6 || emptySides === 0) return { x: 0, y: 0 };
+        const vmag = Math.hypot(vx, vy);
+        if (vmag < 0.001) return { x: 0, y: 0 };
+        const radius = 4;
+        return {
+            x: Math.round((vx / vmag) * radius),
+            y: Math.round((vy / vmag) * radius)
+        };
+    }
+
+    /** Faction color for unit hex outline: player green, allied blue, enemy red. */
     getHexViewOutlineColor(faction) {
         if (faction === 'player') return '#0f0';
         if (faction === 'allied') return '#08f';
@@ -8384,25 +8281,21 @@ export class TacticsScene extends BaseScene {
         return '#888';
     }
 
+    /** Shared opacity rule for unit/hex faction outlines. */
+    getUnitOutlineAlpha(unit) {
+        if (!unit) return 0.45;
+        return this.selectedUnit === unit ? 1 : 0.45;
+    }
+
     /**
-     * Begin a path for the hex at the given center (pointy-top, same shape as drawHexOutline).
-     * Call ctx.clip() after this to use as a mask.
-     * @param {number} [scale=1] - Scale the hex radius (e.g. >1 when animating out to show full sprite).
+     * Telegraph opacity rule:
+     * - Non-selected telegraphs stay more transparent.
+     * - Selected unit telegraphs blink/pulse.
      */
-    beginHexClipPath(ctx, cx, cy, scale = 1) {
-        const r = TacticsScene.HEX_RADIUS * scale;
-        const pts = [
-            { x: cx, y: cy - r },
-            { x: cx + r, y: cy - r / 2 },
-            { x: cx + r, y: cy + r / 2 },
-            { x: cx, y: cy + r },
-            { x: cx - r, y: cy + r / 2 },
-            { x: cx - r, y: cy - r / 2 }
-        ];
-        ctx.beginPath();
-        ctx.moveTo(pts[0].x, pts[0].y);
-        for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
-        ctx.closePath();
+    getTelegraphAlpha(isSelected) {
+        if (!isSelected) return 0.28;
+        const pulse = (Math.sin(Date.now() / 140) + 1) * 0.5; // 0..1 blink curve
+        return 0.25 + pulse * 0.55; // 0.25..0.80
     }
 
     /** Draw hex outline 1px inset so it stays inside the hex and doesn't overlap adjacent hexes. Pixel-perfect (no anti-aliasing). */
@@ -8909,12 +8802,14 @@ export class TacticsScene extends BaseScene {
      * Draw only a unit's sprite (horse+rider, boulder, or character+cage). Used in main draw loop and for telegraph punch (destination-out).
      */
     drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp) {
+        const hexOffsetX = drawOptions?.hexOffsetX || 0;
+        const hexOffsetY = drawOptions?.hexOffsetY || 0;
         if (u.onHorse) {
             const riderAction = (u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action);
-            const anchorX = u.visualX + u.visualOffsetX;
+            const anchorX = u.visualX + u.visualOffsetX + hexOffsetX;
             const isHorseInShallow = !!(cell && cell.terrain?.includes('water_shallow'));
             const terrainSink = Math.max(drawOptions.sinkOffset || 0, isHorseInShallow ? 4 : 0);
-            const anchorY = surfaceY + u.visualOffsetY + terrainSink;
+            const anchorY = surfaceY + u.visualOffsetY + terrainSink + hexOffsetY;
             const riderDrawOptions = { ...drawOptions, sinkOffset: 0, isSubmerged: false };
             const midX = Math.floor(anchorX);
             const midY = Math.floor(anchorY);
@@ -8973,21 +8868,30 @@ export class TacticsScene extends BaseScene {
         } else if (u.name === 'Boulder') {
             this.drawBoulder(ctx, u, surfaceY + u.visualOffsetY, drawOptions);
         } else {
-            this.drawCharacter(ctx, u.img, u.currentAnimAction || u.action, u.frame, u.visualX + u.visualOffsetX, surfaceY + u.visualOffsetY, drawOptions);
+            const drawAction = drawOptions?.actionOverride || u.currentAnimAction || u.action;
+            this.drawCharacter(
+                ctx,
+                u.img,
+                drawAction,
+                u.frame,
+                u.visualX + u.visualOffsetX + hexOffsetX,
+                surfaceY + u.visualOffsetY + hexOffsetY,
+                drawOptions
+            );
         }
         if (u.caged) {
             const cageKey = u.cageSprite || 'cage';
             const cageImg = assets.getImage(cageKey);
             if (cageImg) {
-                const cageX = Math.floor(u.visualX - cageImg.width / 2);
-                const cageY = Math.floor(surfaceY - 54);
+                const cageX = Math.floor(u.visualX + hexOffsetX - cageImg.width / 2);
+                const cageY = Math.floor(surfaceY + hexOffsetY - 54);
                 ctx.drawImage(cageImg, cageX, cageY);
             }
         }
     }
 
     /**
-     * Draw a riderless horse at the given pixel center. Used in main draw loop and hex-view pass.
+     * Draw a riderless horse at the given pixel center.
      */
     drawRiderlessHorse(ctx, h, midX, midY, effect, timestamp) {
         const keys = this.getHorseSpriteKeys(h.type || 'brown');
@@ -9117,7 +9021,7 @@ export class TacticsScene extends BaseScene {
         ctx.restore();
     }
 
-    drawPushArrow(ctx, fromR, fromQ, dirIndex, forceBump = false) {
+    drawPushArrow(ctx, fromR, fromQ, dirIndex, forceBump = false, alpha = 1) {
         const fromPos = this.getPixelPos(fromR, fromQ);
         const directions = this.tacticsMap.getDirections(fromR);
         const d = directions[dirIndex];
@@ -9154,7 +9058,8 @@ export class TacticsScene extends BaseScene {
         const sy = Math.round(fromPos.y);
         const ex = Math.round(fromPos.x + dx * 0.6);
         const ey = Math.round(fromPos.y + dy * 0.6);
-        const color = '#fff';
+        const a = Math.max(0, Math.min(1, alpha));
+        const color = `rgba(255, 255, 255, ${a})`;
 
         let angle = Math.atan2(dy, dx);
         if (isFallArc) {
@@ -9179,7 +9084,7 @@ export class TacticsScene extends BaseScene {
         }
 
         if (isBumpDamage) {
-            this.drawPixelImpactMarker(ctx, ex, ey, angle, '#fff');
+            this.drawPixelImpactMarker(ctx, ex, ey, angle, color);
         } else {
             this.drawPixelArrowHead(ctx, ex, ey, angle, color, 4);
         }
@@ -9557,7 +9462,7 @@ export class TacticsScene extends BaseScene {
      * Draw a telegraph swish: for single-hex attacks a small circle; for multi-hex a tapered ribbon.
      * Connector line from unit to center in both cases.
      */
-    drawTelegraphSwish(ctx, swishSpec, unitPos) {
+    drawTelegraphSwish(ctx, swishSpec, unitPos, alpha = 0.7) {
         if (!swishSpec.points || swishSpec.points.length < 2) return;
 
         const { points, singleHex } = swishSpec;
@@ -9565,9 +9470,9 @@ export class TacticsScene extends BaseScene {
         const cx = points.reduce((s, p) => s + p.x, 0) / n;
         const cy = points.reduce((s, p) => s + p.y, 0) / n;
 
-        this.drawPixelLine(ctx, unitPos.x, unitPos.y, cx, cy, 'rgb(255, 0, 0)', [4, 3]);
+        this.drawPixelLine(ctx, unitPos.x, unitPos.y, cx, cy, `rgba(255, 0, 0, ${alpha})`, [4, 3]);
 
-        const ribbonColor = 'rgba(255, 0, 0, 0.7)';
+        const ribbonColor = `rgba(255, 0, 0, ${alpha})`;
 
         if (singleHex) {
             ctx.save();
@@ -10259,13 +10164,11 @@ export class TacticsScene extends BaseScene {
             } else if (p.type === 'bolt') {
                 const dx = p.targetX - p.startX;
                 const dy = p.targetY - p.startY;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                const arcHeight = Math.min(8, dist * 0.06); // very flat arc (near-straight bolt)
                 const x = p.startX + p.progress * dx;
-                const y = p.startY + p.progress * dy - Math.sin(p.progress * Math.PI) * arcHeight;
+                const y = p.startY + p.progress * dy;
 
                 const nextX = p.startX + (p.progress + 0.01) * dx;
-                const nextY = p.startY + (p.progress + 0.01) * dy - Math.sin((p.progress + 0.01) * Math.PI) * arcHeight;
+                const nextY = p.startY + (p.progress + 0.01) * dy;
                 const angle = Math.atan2(nextY - y, nextX - x);
                 const boltLen = 14;
                 ctx.save();
