@@ -454,6 +454,7 @@ async function init() {
                 'retrocal-8': 'assets/palettes/retrocal-8.hex',
                 'csc16': 'assets/palettes/csc16.hex',
                 'cotten-candy-5': 'assets/palettes/cotten-candy-5.hex',
+                'cookie-dough-7': 'assets/palettes/cookie-dough-7.hex',
                 'fantasy-24': 'assets/palettes/fantasy-24.hex',
                 'pinkgreen': 'assets/palettes/pinkgreen.hex',
                 'resurrect-64': 'assets/palettes/resurrect-64.hex',
