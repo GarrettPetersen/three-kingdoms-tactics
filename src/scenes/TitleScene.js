@@ -62,9 +62,15 @@ export class TitleScene extends BaseScene {
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = titleImg.width;
         tempCanvas.height = titleImg.height;
-
-        // Create a white title mask with transparent background.
         const sctx = tempCanvas.getContext('2d');
+
+        // English title is white on transparency (brush art); Chinese still uses dark-glyph → white mask.
+        if (titleKey === 'title_en') {
+            sctx.drawImage(titleImg, 0, 0);
+            this.processedTitleCanvas = tempCanvas;
+            return;
+        }
+
         sctx.drawImage(titleImg, 0, 0);
         const imageData = sctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
         const data = imageData.data;
@@ -77,7 +83,7 @@ export class TitleScene extends BaseScene {
             }
         }
         sctx.putImageData(imageData, 0, 0);
-        
+
         this.processedTitleCanvas = tempCanvas;
     }
 

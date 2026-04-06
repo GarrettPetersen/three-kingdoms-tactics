@@ -474,7 +474,7 @@ async function init() {
                 'funkyfuture-8': 'assets/palettes/funkyfuture-8.hex'
             }),
             assets.loadImages({
-                title_en: 'assets/misc/three_kingdoms_stratagem_title.png',
+                title_en: 'assets/misc/three_kingdoms_stratagem_title_new.png',
                 title_zh: 'assets/misc/三国玄机.png',
                 intro_sky: 'assets/intro_animation/00_sky.png',
                 intro_hills: 'assets/intro_animation/01_hills.png',

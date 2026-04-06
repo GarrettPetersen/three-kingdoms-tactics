@@ -36,9 +36,12 @@ const ORIGINAL_HEIGHT = 256;
 // From TitleScene: targetPanX = 500 / 2.2 ≈ 227.27
 const PAN_X = 227.27;
 
-// Title images
-const TITLE_EN = 'assets/misc/three_kingdoms_stratagem_title.png';
+// Title images (EN: white on transparency — do not run dark-pixel extraction)
+const TITLE_EN = 'assets/misc/three_kingdoms_stratagem_title_new.png';
 const TITLE_ZH = 'assets/misc/三国玄机.png';
+
+/** Capsule sizes where English title is right-aligned, vertically centered (library_header handled separately below) */
+const EN_TITLE_RIGHT_LAYOUT = new Set(['header', 'main']);
 
 // Output sizes
 const CAPSULE_SIZES = [
@@ -61,7 +64,19 @@ const LIBRARY_LOGO_SIZE = { width: 1280, height: 720 }; // Aspect ratio maintain
 const SHORTCUT_ICON_SIZE = { width: 256, height: 256, name: 'shortcut_icon' };
 
 /**
- * Process title image to solid white text with no outline.
+ * Copy title as-is (e.g. white brush text on transparency). No dark-pixel extraction.
+ */
+function copyTitleImageAsIs(titleImg) {
+    const c = createCanvas(titleImg.width, titleImg.height);
+    const ctx = c.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.clearRect(0, 0, titleImg.width, titleImg.height);
+    ctx.drawImage(titleImg, 0, 0);
+    return c;
+}
+
+/**
+ * Process title image to solid white text with no outline (pixel-art / dark glyph sources).
  */
 function processTitleImage(titleImg) {
     const tempCanvas = createCanvas(titleImg.width, titleImg.height);
@@ -258,23 +273,31 @@ function drawGuandao(ctx, canvas, guandaoImg, horseRightEdge, horseImg, scale, s
 }
 
 /**
- * Draw title centered on canvas (both horizontally and vertically)
+ * Title position: right-aligned with margin, vertically centered; or centered.
  */
-function drawTitle(ctx, canvas, processedTitle) {
-    const x = Math.floor((canvas.width - processedTitle.width) / 2);
-    const y = Math.floor((canvas.height - processedTitle.height) / 2);
-    ctx.drawImage(processedTitle, x, y);
+function getTitlePosition(layout, canvasW, canvasH, titleW, titleH) {
+    if (layout === 'right') {
+        const margin = Math.max(12, Math.floor(canvasW * 0.035));
+        return {
+            x: Math.max(0, canvasW - titleW - margin),
+            y: Math.floor((canvasH - titleH) / 2)
+        };
+    }
+    return {
+        x: Math.floor((canvasW - titleW) / 2),
+        y: Math.floor((canvasH - titleH) / 2)
+    };
 }
 
 /**
- * Scale image buffer without anti-aliasing using nearest-neighbor
- * Maintains aspect ratio and crops to fit (never squishes)
+ * Scale image buffer. Use smooth (Lanczos) for brush/vector titles; nearest for pixel art.
  */
-async function scaleImage(buffer, targetWidth, targetHeight) {
+async function scaleImage(buffer, targetWidth, targetHeight, options = {}) {
+    const { smooth = false } = options;
     return await sharp(buffer)
         .resize(targetWidth, targetHeight, {
-            kernel: sharp.kernel.nearest, // Nearest-neighbor for pixel art
-            fit: 'cover' // Crop to fit, maintain aspect ratio
+            kernel: smooth ? sharp.kernel.lanczos3 : sharp.kernel.nearest,
+            fit: 'cover'
         })
         .png()
         .toBuffer();
@@ -338,10 +361,10 @@ async function generateCapsules() {
     const guandaoImg = await loadImage(guandaoPath);
     console.log('  Loaded horse and guandao');
     
-    // Process titles
-    const processedTitleEn = processTitleImage(titleEnImg);
+    // Titles: EN is already white on transparency; ZH still uses pixel-style extraction
+    const processedTitleEn = copyTitleImageAsIs(titleEnImg);
     const processedTitleZh = processTitleImage(titleZhImg);
-    console.log('  Processed titles');
+    console.log('  Prepared titles');
     
     // Create output directory
     const outputDir = path.join(__dirname, '..', 'steam_capsules');
@@ -372,13 +395,17 @@ async function generateCapsules() {
         }
         
         // Scale each language title independently to preserve aspect ratio.
-        const maxTitleWidth = Math.floor(size.width * 0.95);
+        const maxTitleWidthFull = Math.floor(size.width * 0.95);
         const maxTitleHeight = Math.floor(size.height * 0.95);
-        const titleEnDims = getTitleDimensions(processedTitleEn, titleScale, maxTitleWidth, maxTitleHeight);
-        const titleZhDims = getTitleDimensions(processedTitleZh, titleScale, maxTitleWidth, maxTitleHeight);
+        const titleRight = EN_TITLE_RIGHT_LAYOUT.has(size.name);
+        const maxTitleWidthBand = titleRight
+            ? Math.floor(size.width * 0.56)
+            : maxTitleWidthFull;
+        const titleEnDims = getTitleDimensions(processedTitleEn, titleScale, maxTitleWidthBand, maxTitleHeight);
+        const titleZhDims = getTitleDimensions(processedTitleZh, titleScale, maxTitleWidthBand, maxTitleHeight);
 
         const titleEnBuffer = canvasToBuffer(processedTitleEn);
-        const scaledTitleEnBuffer = await scaleImage(titleEnBuffer, titleEnDims.width, titleEnDims.height);
+        const scaledTitleEnBuffer = await scaleImage(titleEnBuffer, titleEnDims.width, titleEnDims.height, { smooth: true });
         const scaledTitleEn = await loadImage(scaledTitleEnBuffer);
         
         const titleZhBuffer = canvasToBuffer(processedTitleZh);
@@ -421,10 +448,8 @@ async function generateCapsules() {
         // Draw guandao on left side, maintaining spacing from horse
         drawGuandao(ctxEn, canvasEn, guandaoImg, horseRightEdge, horseImg, scale, size.name);
         
-        // Draw title centered (both horizontally and vertically)
-        const titleX = Math.floor((size.width - scaledTitleEn.width) / 2);
-        const titleY = Math.floor((size.height - scaledTitleEn.height) / 2);
-        ctxEn.drawImage(scaledTitleEn, titleX, titleY);
+        const enPos = getTitlePosition(titleRight ? 'right' : 'center', size.width, size.height, scaledTitleEn.width, scaledTitleEn.height);
+        ctxEn.drawImage(scaledTitleEn, enPos.x, enPos.y);
         
         // Save English version
         const filenameEn = `capsule_${size.name}_en.png`;
@@ -440,7 +465,8 @@ async function generateCapsules() {
         ctxZh.drawImage(scaledBase, 0, 0);
         const horseRightEdgeZh = drawHorse(ctxZh, canvasZh, horseImg, PAN_X, scale, size.name);
         drawGuandao(ctxZh, canvasZh, guandaoImg, horseRightEdgeZh, horseImg, scale, size.name);
-        ctxZh.drawImage(scaledTitleZh, titleX, titleY);
+        const zhPos = getTitlePosition(titleRight ? 'right' : 'center', size.width, size.height, scaledTitleZh.width, scaledTitleZh.height);
+        ctxZh.drawImage(scaledTitleZh, zhPos.x, zhPos.y);
         
         const filenameZh = `capsule_${size.name}_schinese.png`;
         const filepathZh = path.join(outputDir, filenameZh);
@@ -476,32 +502,32 @@ async function generateCapsules() {
     const libCapsuleScaleY = libCapsuleSize.height / ORIGINAL_HEIGHT;
     const libCapsuleScale = Math.max(libCapsuleScaleX, libCapsuleScaleY);
     
-    // Calculate title scale with 1.5x multiplier, but reduce if it doesn't fit
-    let libCapsuleTitleScale = libCapsuleScale * 1.5;
-    
-    // Check if title fits, and reduce title scale if needed (but keep background/horse/guandao at normal scale)
-    const maxTitleWidth = libCapsuleSize.width * 0.95; // 95% of canvas width for safety margin
-    const maxTitleHeight = libCapsuleSize.height * 0.95; // 95% of canvas height for safety margin
-    
-    const titleWidthAtScale = processedTitleEn.width * libCapsuleTitleScale;
-    const titleHeightAtScale = processedTitleEn.height * libCapsuleTitleScale;
-    
-    // Calculate scale factor needed to fit title (only adjust title, not everything)
-    const widthScaleFactor = titleWidthAtScale > maxTitleWidth ? maxTitleWidth / titleWidthAtScale : 1;
-    const heightScaleFactor = titleHeightAtScale > maxTitleHeight ? maxTitleHeight / titleHeightAtScale : 1;
-    const fitScaleFactor = Math.min(widthScaleFactor, heightScaleFactor);
-    
-    // If title doesn't fit, only scale down the title (keep background/horse/guandao at normal scale)
-    if (fitScaleFactor < 1) {
-        libCapsuleTitleScale *= fitScaleFactor;
-    }
-    
-    const libCapsuleTitleEnDims = getTitleDimensions(processedTitleEn, libCapsuleTitleScale);
-    const libCapsuleTitleZhDims = getTitleDimensions(processedTitleZh, libCapsuleTitleScale);
+    // Title scale per language: wide new EN logo was shrinking ZH when both shared one fit factor.
+    const libCapsuleTitleBaseScale = libCapsuleScale * 1.5;
+    const libCapsuleMaxTitleW = libCapsuleSize.width * 0.95;
+    const libCapsuleMaxTitleH = libCapsuleSize.height * 0.95;
+
+    const fitLibCapsuleTitleScale = (processedTitle) => {
+        let s = libCapsuleTitleBaseScale;
+        const wAt = processedTitle.width * s;
+        const hAt = processedTitle.height * s;
+        const wFac = wAt > libCapsuleMaxTitleW ? libCapsuleMaxTitleW / wAt : 1;
+        const hFac = hAt > libCapsuleMaxTitleH ? libCapsuleMaxTitleH / hAt : 1;
+        const fit = Math.min(wFac, hFac);
+        if (fit < 1) s *= fit;
+        return s;
+    };
+
+    const libCapsuleTitleScaleEn = fitLibCapsuleTitleScale(processedTitleEn);
+    const libCapsuleTitleScaleZh = fitLibCapsuleTitleScale(processedTitleZh);
+
+    const libCapsuleTitleEnDims = getTitleDimensions(processedTitleEn, libCapsuleTitleScaleEn);
+    const libCapsuleTitleZhDims = getTitleDimensions(processedTitleZh, libCapsuleTitleScaleZh);
     const libCapsuleTitleEnBuffer = await scaleImage(
         canvasToBuffer(processedTitleEn),
         libCapsuleTitleEnDims.width,
-        libCapsuleTitleEnDims.height
+        libCapsuleTitleEnDims.height,
+        { smooth: true }
     );
     const libCapsuleTitleEn = await loadImage(libCapsuleTitleEnBuffer);
     const libCapsuleTitleZhBuffer = await scaleImage(
@@ -550,7 +576,9 @@ async function generateCapsules() {
     drawGuandao(libCapsuleZhCtx, libCapsuleZhCanvas, guandaoImg, libCapsuleHorseRightZh, horseImg, libCapsuleScale, 'library_capsule');
     // Ensure pixel-perfect rendering (no anti-aliasing)
     libCapsuleZhCtx.imageSmoothingEnabled = false;
-    libCapsuleZhCtx.drawImage(libCapsuleTitleZh, libCapsuleTitleX, libCapsuleTitleY);
+    const libCapsuleTitleXZh = Math.floor((libCapsuleSize.width - libCapsuleTitleZh.width) / 2);
+    const libCapsuleTitleYZh = Math.floor((libCapsuleSize.height - libCapsuleTitleZh.height) / 2);
+    libCapsuleZhCtx.drawImage(libCapsuleTitleZh, libCapsuleTitleXZh, libCapsuleTitleYZh);
     
     const libCapsuleZhFile = path.join(outputDir, 'library_capsule_schinese.png');
     fs.writeFileSync(libCapsuleZhFile, libCapsuleZhCanvas.toBuffer('image/png'));
@@ -564,12 +592,24 @@ async function generateCapsules() {
     const headerScale = Math.max(headerScaleX, headerScaleY);
     const headerTitleScale = headerScale * 2; // Double the size for better readability
     
-    const headerTitleEnDims = getTitleDimensions(processedTitleEn, headerTitleScale);
-    const headerTitleZhDims = getTitleDimensions(processedTitleZh, headerTitleScale);
+    const headerMaxH = Math.floor(libHeaderSize.height * 0.95);
+    const headerTitleEnDims = getTitleDimensions(
+        processedTitleEn,
+        headerTitleScale,
+        Math.floor(libHeaderSize.width * 0.56),
+        headerMaxH
+    );
+    const headerTitleZhDims = getTitleDimensions(
+        processedTitleZh,
+        headerTitleScale,
+        Math.floor(libHeaderSize.width * 0.56),
+        headerMaxH
+    );
     const headerTitleEnBuffer = await scaleImage(
         canvasToBuffer(processedTitleEn),
         headerTitleEnDims.width,
-        headerTitleEnDims.height
+        headerTitleEnDims.height,
+        { smooth: true }
     );
     const headerTitleEn = await loadImage(headerTitleEnBuffer);
     const headerTitleZhBuffer = await scaleImage(
@@ -596,9 +636,14 @@ async function generateCapsules() {
     libHeaderEnCtx.drawImage(headerScaledBase, 0, 0);
     const libHeaderHorseRight = drawHorse(libHeaderEnCtx, libHeaderEnCanvas, horseImg, PAN_X, headerScale, 'header');
     drawGuandao(libHeaderEnCtx, libHeaderEnCanvas, guandaoImg, libHeaderHorseRight, horseImg, headerScale, 'header');
-    const libHeaderTitleX = Math.floor((libHeaderSize.width - headerTitleEn.width) / 2);
-    const libHeaderTitleY = Math.floor((libHeaderSize.height - headerTitleEn.height) / 2);
-    libHeaderEnCtx.drawImage(headerTitleEn, libHeaderTitleX, libHeaderTitleY);
+    const libHeaderTitleEnPos = getTitlePosition(
+        'right',
+        libHeaderSize.width,
+        libHeaderSize.height,
+        headerTitleEn.width,
+        headerTitleEn.height
+    );
+    libHeaderEnCtx.drawImage(headerTitleEn, libHeaderTitleEnPos.x, libHeaderTitleEnPos.y);
     
     const libHeaderEnFile = path.join(outputDir, 'library_header_en.png');
     fs.writeFileSync(libHeaderEnFile, libHeaderEnCanvas.toBuffer('image/png'));
@@ -611,7 +656,14 @@ async function generateCapsules() {
     libHeaderZhCtx.drawImage(headerScaledBase, 0, 0);
     const libHeaderHorseRightZh = drawHorse(libHeaderZhCtx, libHeaderZhCanvas, horseImg, PAN_X, headerScale, 'header');
     drawGuandao(libHeaderZhCtx, libHeaderZhCanvas, guandaoImg, libHeaderHorseRightZh, horseImg, headerScale, 'header');
-    libHeaderZhCtx.drawImage(headerTitleZh, libHeaderTitleX, libHeaderTitleY);
+    const libHeaderTitleZhPos = getTitlePosition(
+        'right',
+        libHeaderSize.width,
+        libHeaderSize.height,
+        headerTitleZh.width,
+        headerTitleZh.height
+    );
+    libHeaderZhCtx.drawImage(headerTitleZh, libHeaderTitleZhPos.x, libHeaderTitleZhPos.y);
     
     const libHeaderZhFile = path.join(outputDir, 'library_header_schinese.png');
     fs.writeFileSync(libHeaderZhFile, libHeaderZhCanvas.toBuffer('image/png'));
@@ -640,7 +692,7 @@ async function generateCapsules() {
     }
     
     // Scale the processed title to logo size (maintains transparency from processing)
-    const logoEnBuffer = await scaleImage(canvasToBuffer(processedTitleEn), logoWidth, logoHeight);
+    const logoEnBuffer = await scaleImage(canvasToBuffer(processedTitleEn), logoWidth, logoHeight, { smooth: true });
     const logoZhBuffer = await scaleImage(canvasToBuffer(processedTitleZh), logoWidth, logoHeight);
     
     const logoEnFile = path.join(outputDir, 'library_logo_en.png');

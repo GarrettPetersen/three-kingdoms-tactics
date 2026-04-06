@@ -55,7 +55,7 @@ function createTaglineImageWithCanvas(text, lang) {
 
 const TITLE_CARD = {
   en: {
-    image: path.join(projectRoot, 'public', 'assets', 'misc', 'three_kingdoms_stratagem_title.png'),
+    image: path.join(projectRoot, 'public', 'assets', 'misc', 'three_kingdoms_stratagem_title_new.png'),
     text: 'Wishlist it now on Steam'
   },
   zh: {
