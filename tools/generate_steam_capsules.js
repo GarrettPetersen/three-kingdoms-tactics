@@ -293,11 +293,11 @@ function getTitlePosition(layout, canvasW, canvasH, titleW, titleH) {
  * Scale image buffer. Use smooth (Lanczos) for brush/vector titles; nearest for pixel art.
  */
 async function scaleImage(buffer, targetWidth, targetHeight, options = {}) {
-    const { smooth = false } = options;
+    const { smooth = false, fit = 'cover' } = options;
     return await sharp(buffer)
         .resize(targetWidth, targetHeight, {
             kernel: smooth ? sharp.kernel.lanczos3 : sharp.kernel.nearest,
-            fit: 'cover'
+            fit
         })
         .png()
         .toBuffer();
@@ -677,31 +677,29 @@ async function generateCapsules() {
     fs.writeFileSync(libHeroFile, libHeroScaledBuffer);
     console.log(`  ✓ library_hero.png (${libHeroSize.width}x${libHeroSize.height})`);
     
-    // Library Logo - processed title on transparent background
-    // Calculate size maintaining aspect ratio, with max 1280px width or 720px height
-    const logoAspectRatio = processedTitleEn.width / processedTitleEn.height;
-    let logoWidth, logoHeight;
-    if (logoAspectRatio > (LIBRARY_LOGO_SIZE.width / LIBRARY_LOGO_SIZE.height)) {
-        // Wider than target aspect ratio - use width as constraint
-        logoWidth = LIBRARY_LOGO_SIZE.width;
-        logoHeight = Math.floor(LIBRARY_LOGO_SIZE.width / logoAspectRatio);
-    } else {
-        // Taller than target aspect ratio - use height as constraint
-        logoHeight = LIBRARY_LOGO_SIZE.height;
-        logoWidth = Math.floor(LIBRARY_LOGO_SIZE.height * logoAspectRatio);
-    }
-    
-    // Scale the processed title to logo size (maintains transparency from processing)
-    const logoEnBuffer = await scaleImage(canvasToBuffer(processedTitleEn), logoWidth, logoHeight, { smooth: true });
-    const logoZhBuffer = await scaleImage(canvasToBuffer(processedTitleZh), logoWidth, logoHeight);
-    
+    // Library Logo - processed title on transparent background, max 1280×720 each.
+    // EN and ZH must scale independently: same target WxH + fit 'cover' cropped ZH; use 'inside' so nothing overflows the box.
+    const maxLW = LIBRARY_LOGO_SIZE.width;
+    const maxLH = LIBRARY_LOGO_SIZE.height;
+    const logoEnBuffer = await sharp(canvasToBuffer(processedTitleEn))
+        .resize(maxLW, maxLH, { fit: 'inside', kernel: sharp.kernel.lanczos3 })
+        .png()
+        .toBuffer();
+    const logoZhBuffer = await sharp(canvasToBuffer(processedTitleZh))
+        .resize(maxLW, maxLH, { fit: 'inside', kernel: sharp.kernel.nearest })
+        .png()
+        .toBuffer();
+
+    const logoEnMeta = await sharp(logoEnBuffer).metadata();
+    const logoZhMeta = await sharp(logoZhBuffer).metadata();
+
     const logoEnFile = path.join(outputDir, 'library_logo_en.png');
     fs.writeFileSync(logoEnFile, logoEnBuffer);
-    console.log(`  ✓ library_logo_en.png (${logoWidth}x${logoHeight})`);
-    
+    console.log(`  ✓ library_logo_en.png (${logoEnMeta.width}x${logoEnMeta.height})`);
+
     const logoZhFile = path.join(outputDir, 'library_logo_schinese.png');
     fs.writeFileSync(logoZhFile, logoZhBuffer);
-    console.log(`  ✓ library_logo_schinese.png (${logoWidth}x${logoHeight})`);
+    console.log(`  ✓ library_logo_schinese.png (${logoZhMeta.width}x${logoZhMeta.height})`);
 
     // Shortcut icon (256x256) - same composition approach as capsules
     console.log('\nGenerating shortcut icon...');

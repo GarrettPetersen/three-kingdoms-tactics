@@ -266,7 +266,7 @@ export class TitleScene extends BaseScene {
             return;
         }
 
-        // Draw title
+        // Draw title at native pixel size (English uses pre-scaled brush asset; Chinese unchanged)
         if (this.processedTitleCanvas && this.titleAlpha > 0) {
             ctx.save();
             ctx.globalAlpha = this.titleAlpha;

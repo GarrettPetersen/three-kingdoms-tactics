@@ -7210,7 +7210,6 @@ export class TacticsScene extends BaseScene {
         });
 
         this._telegraphPunchList = [];
-        this._hexOutlinePunchList = [];
         const unitHexDriftMap = this._unitHexDriftMap || new Map();
         for (const call of drawCalls) {
             const effect = this.getIntroEffect(Math.floor(call.r), call.q || 0);
@@ -7358,9 +7357,7 @@ export class TacticsScene extends BaseScene {
                     }
                 }
                 this.drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp);
-                if (u.hp > 0 && !u.isGone && u.name !== 'Boulder') {
-                    this._hexOutlinePunchList.push({ unit: u, surfaceY, drawOptions, cell, timestamp });
-                }
+                this.drawUnitHexAndCharacterOutlines(ctx, u, surfaceY, drawOptions, cell, timestamp);
             } else if (call.type === 'horse') {
                 const h = call.horse;
                 const keys = this.getHorseSpriteKeys(h.type || 'brown');
@@ -7428,80 +7425,6 @@ export class TacticsScene extends BaseScene {
             ctx.restore();
         }
 
-        // Unit hex outlines (always-on for living non-boulder units): draw on top, then punch out that same unit's sprite.
-        if (!this.isIntroAnimating && this._hexOutlinePunchList && this._hexOutlinePunchList.length > 0) {
-            const cw = this.manager.canvas.width;
-            const ch = this.manager.canvas.height;
-            if (!this._hexOutlineLayerCanvas || this._hexOutlineLayerCanvas.width !== cw || this._hexOutlineLayerCanvas.height !== ch) {
-                this._hexOutlineLayerCanvas = document.createElement('canvas');
-                this._hexOutlineLayerCanvas.width = cw;
-                this._hexOutlineLayerCanvas.height = ch;
-                this._hexOutlineLayerCtx = this._hexOutlineLayerCanvas.getContext('2d');
-            }
-            if (!this._hexOutlineItemCanvas || this._hexOutlineItemCanvas.width !== cw || this._hexOutlineItemCanvas.height !== ch) {
-                this._hexOutlineItemCanvas = document.createElement('canvas');
-                this._hexOutlineItemCanvas.width = cw;
-                this._hexOutlineItemCanvas.height = ch;
-                this._hexOutlineItemCtx = this._hexOutlineItemCanvas.getContext('2d');
-            }
-            const layerCtx = this._hexOutlineLayerCtx;
-            const itemCtx = this._hexOutlineItemCtx;
-            layerCtx.clearRect(0, 0, cw, ch);
-            for (const item of this._hexOutlinePunchList) {
-                const u = item.unit;
-                if (!u || u.hp <= 0 || u.isGone || u.name === 'Boulder') continue;
-                itemCtx.clearRect(0, 0, cw, ch);
-                const hexPos = this.getPixelPos(u.r, u.q);
-                itemCtx.save();
-                itemCtx.globalAlpha = this.getUnitOutlineAlpha(u);
-                this.drawHexOutline(itemCtx, hexPos.x, hexPos.y, this.getHexViewOutlineColor(u.faction));
-                itemCtx.restore();
-                itemCtx.save();
-                itemCtx.globalCompositeOperation = 'destination-out';
-                this.drawUnitSpriteOnly(itemCtx, u, item.surfaceY, item.drawOptions, item.cell, item.timestamp);
-                itemCtx.restore();
-                layerCtx.drawImage(this._hexOutlineItemCanvas, 0, 0);
-            }
-            ctx.drawImage(this._hexOutlineLayerCanvas, 0, 0);
-        }
-
-        // Unit sprite outlines (always-on for living units except boulders), drawn above terrain/units.
-        // Keyboard/controller yellow focus is drawn later and therefore stays on top.
-        if (!this.isIntroAnimating && this._hexOutlinePunchList && this._hexOutlinePunchList.length > 0) {
-            for (const item of this._hexOutlinePunchList) {
-                const u = item.unit;
-                if (!u || u.hp <= 0 || u.isGone || u.name === 'Boulder' || !u.img) continue;
-                const driftX = item.drawOptions?.hexOffsetX || 0;
-                const driftY = item.drawOptions?.hexOffsetY || 0;
-                const sinkOffset = item.drawOptions?.sinkOffset || 0;
-                const color = this.getHexViewOutlineColor(u.faction);
-                const alpha = this.getUnitOutlineAlpha(u);
-                const actionOverride = item.drawOptions?.actionOverride || null;
-                const action = u.onHorse
-                    ? ((u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action))
-                    : (actionOverride || u.currentAnimAction || u.action);
-                const outlineY = u.onHorse
-                    ? (item.surfaceY + (u.visualOffsetY || 0) + sinkOffset + driftY - 14)
-                    : (item.surfaceY + (u.visualOffsetY || 0) + driftY);
-                const outlineOptions = {
-                    flip: u.flip,
-                    color,
-                    sinkOffset: u.onHorse ? 0 : sinkOffset
-                };
-                ctx.save();
-                ctx.globalAlpha = alpha;
-                this.drawCharacterPixelOutline(
-                    ctx,
-                    u.img,
-                    action,
-                    u.frame,
-                    u.visualX + (u.visualOffsetX || 0) + driftX,
-                    outlineY,
-                    outlineOptions
-                );
-                ctx.restore();
-            }
-        }
         // Telegraph pass: draw telegraphs on an offscreen layer, punch out where the telegraphing unit's sprite is, then composite on top
         if (!this.isIntroAnimating && this._telegraphPunchList && this._telegraphPunchList.length > 0) {
             const cw = this.manager.canvas.width;
@@ -8285,6 +8208,65 @@ export class TacticsScene extends BaseScene {
     getUnitOutlineAlpha(unit) {
         if (!unit) return 0.45;
         return this.selectedUnit === unit ? 1 : 0.45;
+    }
+
+    /**
+     * Faction hex ring (with sprite punched out) + character pixel outline, drawn at the current
+     * depth in the sorted scene so they sit above terrain but are covered by units drawn later.
+     */
+    drawUnitHexAndCharacterOutlines(ctx, u, surfaceY, drawOptions, cell, timestamp) {
+        if (this.isIntroAnimating || !u || u.hp <= 0 || u.isGone || u.name === 'Boulder') return;
+        const cw = this.manager.canvas.width;
+        const ch = this.manager.canvas.height;
+        if (!this._hexOutlineItemCanvas || this._hexOutlineItemCanvas.width !== cw || this._hexOutlineItemCanvas.height !== ch) {
+            this._hexOutlineItemCanvas = document.createElement('canvas');
+            this._hexOutlineItemCanvas.width = cw;
+            this._hexOutlineItemCanvas.height = ch;
+            this._hexOutlineItemCtx = this._hexOutlineItemCanvas.getContext('2d');
+        }
+        const itemCtx = this._hexOutlineItemCtx;
+        itemCtx.clearRect(0, 0, cw, ch);
+        const hexPos = this.getPixelPos(u.r, u.q);
+        itemCtx.save();
+        itemCtx.globalAlpha = this.getUnitOutlineAlpha(u);
+        this.drawHexOutline(itemCtx, hexPos.x, hexPos.y, this.getHexViewOutlineColor(u.faction));
+        itemCtx.restore();
+        itemCtx.save();
+        itemCtx.globalCompositeOperation = 'destination-out';
+        this.drawUnitSpriteOnly(itemCtx, u, surfaceY, drawOptions, cell, timestamp);
+        itemCtx.restore();
+        ctx.drawImage(this._hexOutlineItemCanvas, 0, 0);
+
+        if (!u.img) return;
+        const driftX = drawOptions?.hexOffsetX || 0;
+        const driftY = drawOptions?.hexOffsetY || 0;
+        const sinkOffset = drawOptions?.sinkOffset || 0;
+        const color = this.getHexViewOutlineColor(u.faction);
+        const alpha = this.getUnitOutlineAlpha(u);
+        const actionOverride = drawOptions?.actionOverride || null;
+        const action = u.onHorse
+            ? ((u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action))
+            : (actionOverride || u.currentAnimAction || u.action);
+        const outlineY = u.onHorse
+            ? (surfaceY + (u.visualOffsetY || 0) + sinkOffset + driftY - 14)
+            : (surfaceY + (u.visualOffsetY || 0) + driftY);
+        const outlineOptions = {
+            flip: u.flip,
+            color,
+            sinkOffset: u.onHorse ? 0 : sinkOffset
+        };
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        this.drawCharacterPixelOutline(
+            ctx,
+            u.img,
+            action,
+            u.frame,
+            u.visualX + (u.visualOffsetX || 0) + driftX,
+            outlineY,
+            outlineOptions
+        );
+        ctx.restore();
     }
 
     /**
