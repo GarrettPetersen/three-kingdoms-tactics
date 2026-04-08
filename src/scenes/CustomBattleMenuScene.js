@@ -894,6 +894,9 @@ export class CustomBattleMenuScene extends BaseScene {
             assets.playSound('ui_click', 0.4);
         } else if (btn.type === 'start') {
             assets.playSound('gong', 0.8);
+            const cityGateDefenderSide = this.options.layout === 'city_gate'
+                ? (Math.random() < 0.5 ? 'player' : 'enemy')
+                : null;
 
             const units = this.options.roster.map((u, i) => {
                 let r, q;
@@ -924,7 +927,7 @@ export class CustomBattleMenuScene extends BaseScene {
             this.manager.switchTo('tactics', {
                 battleId: 'custom',
                 isCustom: true,
-                mapGen: { ...this.options },
+                mapGen: { ...this.options, cityGateDefenderSide: cityGateDefenderSide || undefined },
                 units: units
             });
         } else if (btn.type === 'add_unit') {

@@ -37,7 +37,7 @@ const TERRAIN_TYPES = [
     'forest_deciduous_01', 'forest_deciduous_02', 'forest_broadleaf_01', 'forest_broadleaf_02', 'forest_broadleaf_03',
     'earth_cracked', 'earth_rocky',
     'mountain_stone_01', 'mountain_stone_02', 'mountain_stone_03', 'earth_stone',
-    'house_01', 'house_damaged_01', 'house_destroyed_01', 'wall_01',
+    'house_01', 'house_damaged_01', 'house_destroyed_01', 'wall_01', 'gate_01', 'gate_cracked_01', 'gate_open_01',
     'tent',
     'mud_01', 'mud_02', 'mud_03', 'mud_04', 'mud_05', 'mud_06', 'mud_07',
     'jungle_dense_01', 'jungle_dense_02', 'jungle_dense_03', 'jungle_palm_01', 'jungle_palm_02', 'jungle_palm_03',
@@ -413,7 +413,10 @@ async function init() {
 
         const terrainAssets = {};
         TERRAIN_TYPES.forEach(t => {
-            terrainAssets[t] = `assets/terrain/individual/${t}.png`;
+            const isGateTerrain = t.startsWith('gate_');
+            terrainAssets[t] = isGateTerrain
+                ? `assets/terrain/${t}.png`
+                : `assets/terrain/individual/${t}.png`;
         });
 
         // Character names for dedicated portraits

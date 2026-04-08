@@ -111,7 +111,7 @@ export class TacticsMap {
         if (!cell) return {};
         
         // Never create slopes for buildings/walls - they should always be cliffs
-        const isBuilding = cell.terrain && (cell.terrain.includes('house') || cell.terrain.includes('wall') || cell.terrain.includes('tent'));
+        const isBuilding = cell.terrain && (cell.terrain.includes('house') || cell.terrain.includes('wall') || cell.terrain.includes('gate') || cell.terrain.includes('tent'));
         if (isBuilding) return {};
         
         const slopes = {};
@@ -123,7 +123,7 @@ export class TacticsMap {
             const label = labels[i];
             if (n) {
                 // Also check if neighbor is a building - don't create slopes to/from buildings
-                const neighborIsBuilding = n.terrain && (n.terrain.includes('house') || n.terrain.includes('wall') || n.terrain.includes('tent'));
+                const neighborIsBuilding = n.terrain && (n.terrain.includes('house') || n.terrain.includes('wall') || n.terrain.includes('gate') || n.terrain.includes('tent'));
                 if (neighborIsBuilding) return;
                 
                 const levelDiff = (n.level || 0) - (cell.level || 0);
@@ -248,7 +248,11 @@ export class TacticsMap {
                 this.applyIce();
             }
 
-            this.placeProps(forestDensity, houseDensity);
+            // City-gate maps have bespoke terrain composition (inside city vs outside),
+            // so skip generic random prop placement there.
+            if (layout !== 'city_gate') {
+                this.placeProps(forestDensity, houseDensity);
+            }
             
             // First smooth out any single-tile elevation islands
             this.smoothLevels();
@@ -258,8 +262,11 @@ export class TacticsMap {
                 this.ensureGradualSlopes();
             }
             
-            // Then ensure everything is reachable based on the smoothed levels
-            this.ensureReachability();
+            // Then ensure everything is reachable based on the smoothed levels.
+            // City-gate maps intentionally have a partition and should not be auto-carved.
+            if (layout !== 'city_gate') {
+                this.ensureReachability();
+            }
             
             // Finally set the visual elevation properties
             this.smoothElevation();
@@ -267,8 +274,9 @@ export class TacticsMap {
             // Add terrain variety at elevation changes to make cliffs more visually clear
             this.varyCliffTerrain();
             
-            // General connectivity check to ensure the map isn't totally segmented
-            success = this.checkGeneralConnectivity();
+            // General connectivity check to ensure the map isn't totally segmented.
+            // City-gate can be intentionally segmented by the wall.
+            success = layout === 'city_gate' ? true : this.checkGeneralConnectivity();
             attempts++;
         }
 
@@ -287,6 +295,7 @@ export class TacticsMap {
     }
 
     initialTerrainPass(layout) {
+        this.cityGateMeta = null;
         // Reset
         for (let r = 0; r < this.height; r++) {
             for (let q = 0; q < this.width; q++) {
@@ -295,6 +304,9 @@ export class TacticsMap {
                 cell.level = 0;
                 cell.elevation = 0;
                 cell.impassable = false;
+                cell.gateState = null;
+                cell.gateDefenderSide = null;
+                cell.gateInside = null;
             }
         }
 
@@ -340,34 +352,112 @@ export class TacticsMap {
     }
 
     generateCityGate() {
-        // Wall line across middle (vertical)
-        const wallQ = Math.floor(this.width / 2);
-        const gapStart = Math.floor(this.height / 2) - 1;
-        const gapSize = 3;
+        // Build a diagonal wall (two possible diagonal families in odd-r offset):
+        // - x = constant
+        // - (x + z) = constant
+        // where x = q - floor(r/2), z = r
+        const orient = Math.random() < 0.5 ? 'x_const' : 'x_plus_z_const';
+        const midR = Math.floor(this.height / 2);
+        const midQ = Math.floor(this.width / 2);
+        const midX = midQ - Math.floor(midR / 2);
+        const lineValue = orient === 'x_const'
+            ? midX
+            : (midQ - Math.floor(midR / 2) + midR);
 
+        const wallCells = [];
+        for (let r = 0; r < this.height; r++) {
+            const q = orient === 'x_const'
+                ? (lineValue + Math.floor(r / 2))
+                : (lineValue - r + Math.floor(r / 2));
+            const cell = this.getCell(r, q);
+            if (cell) wallCells.push(cell);
+        }
+        if (!wallCells.length) return;
+
+        // Pick which side is "inside city" so we can divide mud/houses vs grass/trees.
+        const insideIsGreater = Math.random() < 0.5;
+        this.cityGateMeta = {
+            orientation: orient,
+            lineValue,
+            insideIsGreater,
+            gateR: null,
+            gateQ: null
+        };
+
+        // Select a single gate cell near the center of the wall line.
+        const gateCell = wallCells[Math.floor(wallCells.length / 2)];
+        this.cityGateMeta.gateR = gateCell.r;
+        this.cityGateMeta.gateQ = gateCell.q;
+
+        // Paint non-wall terrain first (inside vs outside).
         for (let r = 0; r < this.height; r++) {
             for (let q = 0; q < this.width; q++) {
-                const cell = this.grid[r][q];
-                if (q === wallQ) {
-                    if (r < gapStart || r >= gapStart + gapSize) {
-                        cell.terrain = 'wall_01';
-                        cell.impassable = true;
-                    } else {
-                        cell.terrain = 'mud_01'; // The road through the gate
-                    }
-                } else if (q > wallQ) {
-                    // Inside city: mud streets and houses
+                const cell = this.getCell(r, q);
+                if (!cell) continue;
+                const inside = this.isCityGateInsideCell(r, q);
+                cell.gateInside = inside;
+                if (inside) {
+                    // Inside city: mud + dense houses.
                     cell.terrain = 'mud_01';
-                    if (Math.random() < 0.15 && (q !== wallQ + 1 || (r < gapStart || r >= gapStart + gapSize))) {
+                    const nearWall = Math.abs((q - Math.floor(r / 2)) - (orient === 'x_const' ? lineValue : (lineValue - r))) <= 1;
+                    if (!nearWall && Math.random() < 0.18) {
                         cell.terrain = 'house_01';
                         cell.impassable = true;
                     }
                 } else {
-                    // Outside: grass
+                    // Outside city: grass + trees.
                     cell.terrain = this.getDefaultGrass();
+                    if (Math.random() < 0.16) {
+                        const forestVariants = this.biome === 'northern'
+                            ? ['pine_forest_01', 'forest_deciduous_01']
+                            : (this.biome === 'northern_snowy'
+                                ? ['pine_forest_snow_01', 'pine_forest_01']
+                                : (this.biome === 'southern'
+                                    ? ['jungle_dense_01', 'jungle_palm_01', 'jungle_dense_02']
+                                    : ['forest_deciduous_01', 'forest_broadleaf_01']));
+                        cell.terrain = forestVariants[Math.floor(Math.random() * forestVariants.length)];
+                    }
                 }
             }
         }
+
+        // Paint the wall and gate on top.
+        const defenderSide = this.params?.cityGateDefenderSide || 'player';
+        wallCells.forEach(c => {
+            c.terrain = 'wall_01';
+            c.impassable = true;
+            c.gateState = null;
+            c.gateDefenderSide = null;
+        });
+        gateCell.terrain = 'gate_01';
+        gateCell.impassable = false; // passability is handled by canUnitTraverseCell() using gate state + faction
+        gateCell.gateState = 'closed';
+        gateCell.gateDefenderSide = defenderSide;
+    }
+
+    isCityGateInsideCell(r, q) {
+        if (!this.cityGateMeta) return false;
+        const x = q - Math.floor(r / 2);
+        const v = this.cityGateMeta.orientation === 'x_const' ? x : (x + r);
+        if (this.cityGateMeta.insideIsGreater) return v > this.cityGateMeta.lineValue;
+        return v < this.cityGateMeta.lineValue;
+    }
+
+    canUnitTraverseCell(cell, movingUnit = null) {
+        if (!cell) return false;
+        const terrain = cell.terrain || '';
+        const isGate = terrain.startsWith('gate_');
+        if (!isGate) return !cell.impassable;
+
+        const gateState = cell.gateState || (terrain === 'gate_cracked_01' ? 'cracked' : (terrain === 'gate_open_01' ? 'open' : 'closed'));
+        if (gateState === 'broken') return true;
+
+        const side = cell.gateDefenderSide || this.params?.cityGateDefenderSide || 'player';
+        const faction = movingUnit?.faction || null;
+        const isDefender = side === 'enemy'
+            ? faction === 'enemy'
+            : (faction === 'player' || faction === 'allied');
+        return isDefender;
     }
 
     getDefaultGrass() {
@@ -1129,7 +1219,7 @@ export class TacticsMap {
 
             const neighbors = this.getNeighbors(current.r, current.q);
             neighbors.forEach(n => {
-                if (n.impassable) return;
+                if (!this.canUnitTraverseCell(n, movingUnit)) return;
 
                 // Living units block movement; corpses do not.
                 if (n.unit && n.unit !== movingUnit && n.unit.hp > 0 && !n.unit.isGone) {

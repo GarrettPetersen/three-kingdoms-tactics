@@ -2467,8 +2467,7 @@ export class TacticsScene extends BaseScene {
                 const cell = this.tacticsMap.getCell(t.r, t.q);
                 if (!cell) continue;
 
-                const isDestructible = (cell.terrain.includes('house') || cell.terrain.includes('tent') || cell.terrain.includes('ice')) &&
-                    !cell.terrain.includes('destroyed') && !cell.terrain.includes('broken');
+                const isDestructible = this.isCellDestructibleStructure(cell);
                 if (isDestructible) structureHits++;
 
                 const victim = this.getRiderUnitFromCell(cell);
@@ -2953,7 +2952,10 @@ export class TacticsScene extends BaseScene {
                 terrain: cell.terrain,
                 level: cell.level,
                 elevation: cell.elevation,
-                impassable: cell.impassable
+                impassable: cell.impassable,
+                gateState: cell.gateState || null,
+                gateDefenderSide: cell.gateDefenderSide || null,
+                gateInside: cell.gateInside ?? null
             }))),
             // Horse entities (mounted + riderless)
             horses: (this.horses || []).map(h => ({
@@ -3112,6 +3114,9 @@ export class TacticsScene extends BaseScene {
                     cell.level = savedCell.level;
                     cell.elevation = savedCell.elevation;
                     cell.impassable = savedCell.impassable;
+                    cell.gateState = savedCell.gateState || null;
+                    cell.gateDefenderSide = savedCell.gateDefenderSide || null;
+                    cell.gateInside = savedCell.gateInside ?? null;
                 }
                 cell.unit = null; // Clear all units first
                 cell.horse = null; // Clear all horses first
@@ -3555,6 +3560,9 @@ export class TacticsScene extends BaseScene {
                 cell.level = savedCell.level;
                 cell.elevation = savedCell.elevation;
                 cell.impassable = savedCell.impassable;
+                cell.gateState = savedCell.gateState || null;
+                cell.gateDefenderSide = savedCell.gateDefenderSide || null;
+                cell.gateInside = savedCell.gateInside ?? null;
                 cell.unit = null; // Clear all units first
                 cell.horse = null; // Clear all horses first
             }
@@ -4757,6 +4765,42 @@ export class TacticsScene extends BaseScene {
         return wave.amplitudePx * damping * oscillation;
     }
 
+    isGateTerrain(terrain) {
+        return typeof terrain === 'string' && terrain.startsWith('gate_');
+    }
+
+    isUnitOnDefenderSideForGate(unit, cell) {
+        if (!unit || !cell) return false;
+        const defenderSide = cell.gateDefenderSide || this.mapGenParams?.cityGateDefenderSide || 'player';
+        if (defenderSide === 'enemy') return unit.faction === 'enemy';
+        return unit.faction === 'player' || unit.faction === 'allied';
+    }
+
+    maybeOpenGateForUnit(unit) {
+        if (!unit || unit.hp <= 0 || unit.isGone || unit.isMoving || unit.pushData || unit.rollData) return;
+        const cell = this.tacticsMap.getCell(unit.r, unit.q);
+        if (!cell || !this.isGateTerrain(cell.terrain)) return;
+        if (cell.gateState === 'broken') return;
+        if (!this.isUnitOnDefenderSideForGate(unit, cell)) return;
+        if (cell.terrain !== 'gate_open_01') {
+            cell.terrain = 'gate_open_01';
+            cell.impassable = false;
+        }
+        if (!cell.gateState || cell.gateState === 'closed' || cell.gateState === 'cracked') {
+            cell.gateState = 'open';
+        }
+    }
+
+    isCellDestructibleStructure(cell) {
+        if (!cell || !cell.terrain) return false;
+        if (this.isGateTerrain(cell.terrain)) {
+            return cell.gateState !== 'broken';
+        }
+        return (cell.terrain.includes('house') || cell.terrain.includes('tent') || cell.terrain.includes('ice'))
+            && !cell.terrain.includes('destroyed')
+            && !cell.terrain.includes('broken');
+    }
+
     damageCell(r, q) {
         const cell = this.tacticsMap.getCell(r, q);
         if (!cell) return;
@@ -4780,6 +4824,21 @@ export class TacticsScene extends BaseScene {
             const pos = this.getPixelPos(r, q);
             this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "BURNED", zh: "焚毁" }));
             assets.playSound('building_damage', 0.85);
+        } else if (cell.terrain === 'gate_01' || (cell.terrain === 'gate_open_01' && cell.gateState !== 'broken')) {
+            cell.terrain = 'gate_cracked_01';
+            cell.gateState = 'cracked';
+            cell.impassable = false;
+            const pos = this.getPixelPos(r, q);
+            this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "CRACKED", zh: "开裂" }));
+            assets.playSound('building_damage', 0.75);
+        } else if (cell.terrain === 'gate_cracked_01') {
+            // Broken gate: permanently open for both sides.
+            cell.terrain = 'gate_open_01';
+            cell.gateState = 'broken';
+            cell.impassable = false;
+            const pos = this.getPixelPos(r, q);
+            this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "BROKEN", zh: "破碎" }));
+            assets.playSound('building_damage', 0.9);
         } else if (cell.terrain === 'wall_01') {
             // Walls are sturdy and don't break yet, but we play a sound
             assets.playSound('building_damage', 0.6);
@@ -4846,7 +4905,7 @@ export class TacticsScene extends BaseScene {
 
         const targetCell = this.tacticsMap.getCell(targetR, targetQ);
         const victim = targetCell ? this.getRiderUnitFromCell(targetCell) : null;
-        const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('tent') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
+        const isDestructible = this.isCellDestructibleStructure(targetCell);
         const isLineAttack = this.isLineAttack(attackKey);
         const isSweepAttack = this.isSweepAttack(attackKey);
         const isDirectionalBolt = this.isDirectionalBoltAttack(attackKey);
@@ -4935,7 +4994,7 @@ export class TacticsScene extends BaseScene {
                                 assets.playSound('arrow_hit', 0.7);
                                 this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos);
                             } else {
-                                const isHouse = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('tent'));
+                                const isHouse = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('tent') || this.isGateTerrain(targetCell.terrain));
                                 const isIce = targetCell && targetCell.terrain.includes('ice');
                                 if (isHouse) {
                                     assets.playSound('building_damage', 0.8);
@@ -4988,7 +5047,7 @@ export class TacticsScene extends BaseScene {
                         );
                     }
 
-                    const isDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('tent') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
+                    const isDestructible = this.isCellDestructibleStructure(targetCell);
 
                     this.damageCell(targetR, targetQ);
                     if (victim) {
@@ -5148,8 +5207,8 @@ export class TacticsScene extends BaseScene {
         const frontVictim = (frontVictimRaw === attacker) ? null : frontVictimRaw;
         const backVictim = (backVictimRaw === attacker) ? null : backVictimRaw;
         
-        const isFrontDestructible = targetCell && (targetCell.terrain.includes('house') || targetCell.terrain.includes('tent') || targetCell.terrain.includes('ice')) && !targetCell.terrain.includes('destroyed') && !targetCell.terrain.includes('broken');
-        const isBackDestructible = backCell && (backCell.terrain.includes('house') || backCell.terrain.includes('tent') || backCell.terrain.includes('ice')) && !backCell.terrain.includes('destroyed') && !backCell.terrain.includes('broken');
+        const isFrontDestructible = this.isCellDestructibleStructure(targetCell);
+        const isBackDestructible = this.isCellDestructibleStructure(backCell);
 
         // First strike: poll for the swing frame (frame >= 1), same pattern as green dragon / serpent spear.
         let struck1 = false;
@@ -5256,7 +5315,7 @@ export class TacticsScene extends BaseScene {
                     this.damageCell(pos.r, pos.q);
                     const cell = this.tacticsMap.getCell(pos.r, pos.q);
                     if (cell) {
-                        const isDestructible = (cell.terrain.includes('house') || cell.terrain.includes('tent') || cell.terrain.includes('ice')) && !cell.terrain.includes('destroyed') && !cell.terrain.includes('broken');
+                        const isDestructible = this.isCellDestructibleStructure(cell);
                         if (isDestructible) hitAnything = true;
 
                         const victim = this.getRiderUnitFromCell(cell);
@@ -5317,7 +5376,7 @@ export class TacticsScene extends BaseScene {
                 this.damageCell(pos.r, pos.q);
                 const cell = this.tacticsMap.getCell(pos.r, pos.q);
                 if (cell) {
-                    const isDestructible = (cell.terrain.includes('house') || cell.terrain.includes('tent') || cell.terrain.includes('ice')) && !cell.terrain.includes('destroyed') && !cell.terrain.includes('broken');
+                    const isDestructible = this.isCellDestructibleStructure(cell);
                     if (isDestructible) hitAnything = true;
 
                     const victim = this.getRiderUnitFromCell(cell);
@@ -5843,18 +5902,75 @@ export class TacticsScene extends BaseScene {
             const gs = this.manager.gameState;
             const unitXP = gs.getCampaignVar('unitXP') || {};
             const unitClasses = gs.getCampaignVar('unitClasses') || {};
+            let customCityGateSpawnById = null;
+
+            if (this.isCustom && this.mapGenParams?.layout === 'city_gate' && Array.isArray(unitsToPlace) && unitsToPlace.length > 0) {
+                const defenderSide = this.mapGenParams?.cityGateDefenderSide || 'player';
+                const insideCells = [];
+                const outsideCells = [];
+                for (let r = 0; r < this.manager.config.mapHeight; r++) {
+                    for (let q = 0; q < this.manager.config.mapWidth; q++) {
+                        const cell = this.tacticsMap.getCell(r, q);
+                        if (!cell || cell.impassable) continue;
+                        if (cell.terrain === 'wall_01' || this.isGateTerrain(cell.terrain)) continue;
+                        const target = this.tacticsMap.isCityGateInsideCell(r, q) ? insideCells : outsideCells;
+                        target.push({ r, q });
+                    }
+                }
+
+                // Consistent top-to-bottom ordering so spawns are readable.
+                insideCells.sort((a, b) => a.r !== b.r ? a.r - b.r : a.q - b.q);
+                outsideCells.sort((a, b) => a.r !== b.r ? a.r - b.r : a.q - b.q);
+
+                const used = new Set();
+                const pickSpawn = (pool, prefR, prefQ) => {
+                    let best = null;
+                    let bestDist = Infinity;
+                    for (const c of pool) {
+                        const key = `${c.r},${c.q}`;
+                        if (used.has(key)) continue;
+                        const d = this.tacticsMap.getDistance(prefR, prefQ, c.r, c.q);
+                        if (d < bestDist) {
+                            bestDist = d;
+                            best = c;
+                        }
+                    }
+                    if (best) used.add(`${best.r},${best.q}`);
+                    return best;
+                };
+
+                customCityGateSpawnById = new Map();
+                unitsToPlace.forEach((u, idx) => {
+                    const isDefender = defenderSide === 'enemy'
+                        ? (u.faction === 'enemy')
+                        : (u.faction === 'player' || u.faction === 'allied');
+                    const preferredPool = isDefender ? insideCells : outsideCells;
+                    const fallbackPool = isDefender ? outsideCells : insideCells;
+                    const spawn = pickSpawn(preferredPool, u.r, u.q) || pickSpawn(fallbackPool, u.r, u.q);
+                    if (spawn) {
+                        customCityGateSpawnById.set(u.id || `idx_${idx}`, spawn);
+                    }
+                });
+            }
 
             unitsToPlace.forEach(u => {
                 let finalR = u.r;
                 let finalQ = u.q;
                 let mountedSpawnPick = null;
                 const wantsHorseSpawn = !!u.onHorse;
+                if (customCityGateSpawnById) {
+                    const forced = customCityGateSpawnById.get(u.id);
+                    if (forced) {
+                        finalR = forced.r;
+                        finalQ = forced.q;
+                    }
+                }
 
                 if (wantsHorseSpawn) {
                     mountedSpawnPick = this.findNearestMountedDestination(
                         { ...u, onHorse: true, flip: !!u.flip },
-                        u.r,
-                        u.q,
+                        finalR,
+                        finalQ,
                         8,
                         u.flip ?? null
                     );
@@ -5865,7 +5981,7 @@ export class TacticsScene extends BaseScene {
                 }
 
                 if (!mountedSpawnPick) {
-                    const cell = this.findNearestFreeCell(u.r, u.q, 6);
+                    const cell = this.findNearestFreeCell(finalR, finalQ, 6);
                     if (!cell) {
                         console.warn(`Could not find a free spot for unit ${u.id} at (${u.r},${u.q})`);
                         return;
@@ -6002,7 +6118,7 @@ export class TacticsScene extends BaseScene {
 
     isValidMountedDestination(unit, r, q, plannedFlip = null) {
         const cell = this.tacticsMap.getCell(r, q);
-        if (!cell || cell.impassable) return false;
+        if (!cell || !this.tacticsMap.canUnitTraverseCell(cell, unit)) return false;
 
         const isSolidHouse = (cell) => cell && cell.terrain && (cell.terrain.includes('house') || cell.terrain.includes('tent')) && !cell.terrain.includes('destroyed');
         if (isSolidHouse(cell)) return false;
@@ -6527,6 +6643,7 @@ export class TacticsScene extends BaseScene {
             const terrainType = cell ? cell.terrain : 'grass_01';
             
             u.update(dt, (r, q) => this.getPixelPos(r, q), shouldAnimate, terrainType);
+            this.maybeOpenGateForUnit(u);
             if (u.immortalPendingCause) {
                 const cause = u.immortalPendingCause;
                 u.immortalPendingCause = null;
@@ -7096,12 +7213,13 @@ export class TacticsScene extends BaseScene {
             for (let q = 0; q < config.mapWidth; q++) {
                 const pos = this.getPixelPos(r, q);
                 const cell = this.tacticsMap.getCell(r, q);
+                const terrainForLayer = this.isGateTerrain(cell.terrain) ? 'mud_01' : cell.terrain;
                 
                 drawCalls.push({
                     type: 'hex',
                     r, q, x: pos.x, y: pos.y + (cell.elevation || 0), priority: 0,
                     terrain: cell.terrain,
-                    layer: this.getTerrainLayer(cell.terrain),
+                    layer: this.getTerrainLayer(terrainForLayer),
                     elevation: cell.elevation || 0,
                     isReachable: this.reachableTiles.has(`${r},${q}`),
                     isAttackRange: this.attackTiles.has(`${r},${q}`),
@@ -7110,6 +7228,17 @@ export class TacticsScene extends BaseScene {
                     isHovered: this.hoveredCell === cell,
                     isMovePreview: movePreviewTiles.has(`${r},${q}`)
                 });
+                if (this.isGateTerrain(cell.terrain)) {
+                    drawCalls.push({
+                        type: 'gate_overlay',
+                        r,
+                        q,
+                        x: pos.x,
+                        y: pos.y + (cell.elevation || 0),
+                        terrain: cell.terrain,
+                        elevation: cell.elevation || 0
+                    });
+                }
             }
         }
 
@@ -7190,7 +7319,7 @@ export class TacticsScene extends BaseScene {
             if (depthA !== depthB) return depthA - depthB;
             
             // Priority within same depth
-            const priorities = { 'hex': 0, 'particle': 1, 'fire_smoke': 1.1, 'unit': 2, 'flag': 1.5 };
+            const priorities = { 'hex': 0, 'particle': 1, 'fire_smoke': 1.1, 'flag': 1.5, 'unit': 2, 'gate_overlay': 2.2 };
             if (priorities[a.type] !== priorities[b.type]) return priorities[a.type] - priorities[b.type];
             
             // Within same type and row:
@@ -7210,6 +7339,7 @@ export class TacticsScene extends BaseScene {
         });
 
         this._telegraphPunchList = [];
+        this._terrainOverlayHexOutlines = [];
         const unitHexDriftMap = this._unitHexDriftMap || new Map();
         for (const call of drawCalls) {
             const effect = this.getIntroEffect(Math.floor(call.r), call.q || 0);
@@ -7222,28 +7352,39 @@ export class TacticsScene extends BaseScene {
                 const surfaceY = call.y - call.elevation + effect.yOffset;
                 const edgeStatus = this.tacticsMap.getEdgeStatus(call.r, call.q);
                 const slopeInfo = this.tacticsMap.getSlopeInfo(call.r, call.q);
-                this.drawTile(call.terrain, call.x, surfaceY, call.elevation, call.r, call.q, edgeStatus, slopeInfo);
+                const baseTerrain = this.isGateTerrain(call.terrain) ? 'mud_01' : call.terrain;
+                this.drawTile(baseTerrain, call.x, surfaceY, call.elevation, call.r, call.q, edgeStatus, slopeInfo);
+                let outlineRgba = null;
                 
                 if (call.isReachable) {
                     this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 215, 0, 0.3)');
+                    outlineRgba = 'rgba(255, 215, 0, 0.3)';
                 }
 
                 // Mounted move hover preview (show the planned destination).
                 if (call.isMovePreview) {
                     this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 255, 255, 0.28)');
+                    outlineRgba = 'rgba(255, 255, 255, 0.28)';
                 }
                 
                 if (call.isAffected) {
                     // Impact preview (Red)
                     this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 0, 0, 0.5)');
+                    outlineRgba = 'rgba(255, 0, 0, 0.5)';
                 } else if (call.isTelegraphed) {
                     // Telegraphed attack area (Subtle Red)
                     this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 0, 0, 0.25)');
+                    outlineRgba = 'rgba(255, 0, 0, 0.25)';
                 } else if (call.isAttackRange) {
                     // Possible targets (Subtle)
                     this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 0, 0, 0.15)');
+                    outlineRgba = 'rgba(255, 0, 0, 0.15)';
                 } else if (call.isHovered) {
                     this.drawHighlight(ctx, call.x, surfaceY, 'rgba(255, 255, 255, 0.2)');
+                    outlineRgba = 'rgba(255, 255, 255, 0.2)';
+                }
+                if (outlineRgba) {
+                    this._terrainOverlayHexOutlines.push({ x: call.x, y: surfaceY, rgba: outlineRgba });
                 }
             } else if (call.type === 'unit') {
                 const u = call.unit;
@@ -7358,6 +7499,11 @@ export class TacticsScene extends BaseScene {
                 }
                 this.drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp);
                 this.drawUnitHexAndCharacterOutlines(ctx, u, surfaceY, drawOptions, cell, timestamp);
+            } else if (call.type === 'gate_overlay') {
+                const surfaceY = call.y - call.elevation + effect.yOffset;
+                const edgeStatus = this.tacticsMap.getEdgeStatus(call.r, call.q);
+                const slopeInfo = this.tacticsMap.getSlopeInfo(call.r, call.q);
+                this.drawTile(call.terrain, call.x, surfaceY, call.elevation, call.r, call.q, edgeStatus, slopeInfo);
             } else if (call.type === 'horse') {
                 const h = call.horse;
                 const keys = this.getHorseSpriteKeys(h.type || 'brown');
@@ -7423,6 +7569,18 @@ export class TacticsScene extends BaseScene {
                 }
             }
             ctx.restore();
+        }
+
+        // Outline pass for highlighted hexes (reachable/attack/hover/etc), drawn after terrain to remain visible
+        // when walls/structures obscure filled highlights.
+        if (this._terrainOverlayHexOutlines && this._terrainOverlayHexOutlines.length > 0) {
+            for (const h of this._terrainOverlayHexOutlines) {
+                const parsed = this.parseRgbaColor(h.rgba, '#ffffff');
+                ctx.save();
+                ctx.globalAlpha = parsed.alpha;
+                this.drawHexOutline(ctx, h.x, h.y, parsed.color);
+                ctx.restore();
+            }
         }
 
         // Telegraph pass: draw telegraphs on an offscreen layer, punch out where the telegraphing unit's sprite is, then composite on top
@@ -9003,6 +9161,17 @@ export class TacticsScene extends BaseScene {
         ctx.restore();
     }
 
+    parseRgbaColor(rgba, fallbackHex = '#ffffff') {
+        if (!rgba || typeof rgba !== 'string') return { color: fallbackHex, alpha: 1 };
+        const m = rgba.match(/rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+)\s*)?\)/i);
+        if (!m) return { color: rgba, alpha: 1 };
+        const r = Math.max(0, Math.min(255, Math.floor(Number(m[1]))));
+        const g = Math.max(0, Math.min(255, Math.floor(Number(m[2]))));
+        const b = Math.max(0, Math.min(255, Math.floor(Number(m[3]))));
+        const a = m[4] !== undefined ? Math.max(0, Math.min(1, Number(m[4]))) : 1;
+        return { color: `rgb(${r}, ${g}, ${b})`, alpha: a };
+    }
+
     drawPushArrow(ctx, fromR, fromQ, dirIndex, forceBump = false, alpha = 1) {
         const fromPos = this.getPixelPos(fromR, fromQ);
         const directions = this.tacticsMap.getDirections(fromR);
@@ -9722,7 +9891,7 @@ export class TacticsScene extends BaseScene {
         const directions = this.tacticsMap.getDirections(r);
         const labels = ['NE', 'E', 'SE', 'SW', 'W', 'NW'];
         const currentCell = this.tacticsMap.getCell(r, q);
-        const isCurrentBuilding = currentCell && (currentCell.terrain.includes('house') || currentCell.terrain.includes('wall') || currentCell.terrain.includes('tent'));
+        const isCurrentBuilding = currentCell && (currentCell.terrain.includes('house') || currentCell.terrain.includes('wall') || currentCell.terrain.includes('gate') || currentCell.terrain.includes('tent'));
         
         // Helper to check if an edge should show black outline (cliffs only, not buildings)
         const isCliffEdge = (edgeLabel) => {
@@ -9733,7 +9902,7 @@ export class TacticsScene extends BaseScene {
             if (!neighbor) return false;
             // Don't show black edges for buildings
             if (isCurrentBuilding) return false;
-            const isNeighborBuilding = neighbor.terrain && (neighbor.terrain.includes('house') || neighbor.terrain.includes('wall') || neighbor.terrain.includes('tent'));
+            const isNeighborBuilding = neighbor.terrain && (neighbor.terrain.includes('house') || neighbor.terrain.includes('wall') || neighbor.terrain.includes('gate') || neighbor.terrain.includes('tent'));
             if (isNeighborBuilding) return false;
             // Only show black edge if it's a cliff (height diff > 1)
             const levelDiff = Math.abs((neighbor.level || 0) - (currentCell?.level || 0));
@@ -10667,10 +10836,7 @@ export class TacticsScene extends BaseScene {
             }
 
             const terrain = cell.terrain || '';
-            const isStructure =
-                (terrain.includes('house') || terrain.includes('tent') || terrain.includes('ice'))
-                && !terrain.includes('destroyed')
-                && !terrain.includes('broken');
+            const isStructure = this.isCellDestructibleStructure(cell);
             const isWall = terrain.includes('wall');
             const isBoltStopTerrain = isStructure || isWall;
             if (isBoltStopTerrain) {
@@ -10699,6 +10865,35 @@ export class TacticsScene extends BaseScene {
         return !!ATTACKS[attackKey]?.line;
     }
 
+    isOpenGateCell(cell) {
+        if (!cell || !this.isGateTerrain(cell.terrain)) return false;
+        if (cell.gateState === 'open' || cell.gateState === 'broken') return true;
+        return cell.terrain === 'gate_open_01';
+    }
+
+    canAttackIgnoreWallLOS(attackKey) {
+        const type = ATTACKS[attackKey]?.type;
+        // Archers (projectile) and magical AoE can ignore wall line-of-sight for targeting.
+        return type === 'projectile' || type === 'lightning_aoe' || type === 'command';
+    }
+
+    hasWallBlockingBetween(fromR, fromQ, toR, toQ) {
+        const targetCell = this.tacticsMap.getCell(toR, toQ);
+        // Targeting the wall/gate itself is always allowed.
+        if (targetCell && (targetCell.terrain.includes('wall') || this.isGateTerrain(targetCell.terrain))) {
+            return false;
+        }
+        const line = this.tacticsMap.getLine(fromR, fromQ, toR, toQ);
+        if (!line || line.length <= 2) return false;
+        for (let i = 1; i < line.length - 1; i++) {
+            const c = this.tacticsMap.getCell(line[i].r, line[i].q);
+            if (!c) continue;
+            if (c.terrain.includes('wall')) return true;
+            if (this.isGateTerrain(c.terrain) && !this.isOpenGateCell(c)) return true;
+        }
+        return false;
+    }
+
     isSweepAttack(attackKey) {
         return ATTACKS[attackKey]?.shape === 'sweep';
     }
@@ -10717,6 +10912,7 @@ export class TacticsScene extends BaseScene {
         // Find valid attack targets based on range
         this.attackTiles = new Map();
         const attack = ATTACKS[this.selectedAttack];
+        const ignoreWallLOS = this.canAttackIgnoreWallLOS(this.selectedAttack);
         if (attack && attack.type === 'command') {
             if (this.commandTutorialActive && this.commandTutorialStep === 'ability') {
                 this.commandTutorialStep = 'target';
@@ -10759,6 +10955,7 @@ export class TacticsScene extends BaseScene {
                 tiles.forEach(t => {
                     const k = `${t.r},${t.q}`;
                     if (originKeys.has(k)) return;
+                    if (!ignoreWallLOS && this.hasWallBlockingBetween(o.r, o.q, t.r, t.q)) return;
                     this.attackTiles.set(k, true);
                 });
             });
@@ -10773,6 +10970,7 @@ export class TacticsScene extends BaseScene {
                     // Don't allow targeting your own occupied hex.
                     if (originKeys.has(k)) return;
                     if (n.unit === this.selectedUnit) return;
+                    if (!ignoreWallLOS && this.hasWallBlockingBetween(o.r, o.q, n.r, n.q)) return;
                     this.attackTiles.set(k, true);
                 });
             });
@@ -10784,7 +10982,9 @@ export class TacticsScene extends BaseScene {
                     if (originKeys.has(k)) continue;
                     const inRange = origins.some(o => {
                         const dist = this.tacticsMap.getDistance(o.r, o.q, r, q);
-                        return dist >= minRange && dist <= range && dist > 0;
+                        if (!(dist >= minRange && dist <= range && dist > 0)) return false;
+                        if (!ignoreWallLOS && this.hasWallBlockingBetween(o.r, o.q, r, q)) return false;
+                        return true;
                     });
                     if (inRange) this.attackTiles.set(k, true);
                 }
