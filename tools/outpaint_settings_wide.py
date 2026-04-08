@@ -42,7 +42,7 @@ try:
 except Exception:
     pass
 
-from diffusers import AutoPipelineForInpainting
+from diffusers import StableDiffusionInpaintPipeline
 
 from model_paths import resolve_sd_model_path
 
@@ -52,6 +52,7 @@ DEFAULT_INPUT = PROJECT_ROOT / "public" / "assets" / "settings"
 DEFAULT_OUTPUT = PROJECT_ROOT / "public" / "assets" / "settings_wide"
 TARGET_W = 455
 TARGET_H = 256
+PIPE_W = 456  # Stable Diffusion inpaint requires multiples of 8
 
 
 def pick_device() -> str:
@@ -122,7 +123,7 @@ def resolve_model_path(explicit_model: Optional[str]) -> Path:
 
 def load_pipe(model_path: Path, device: str, dtype: torch.dtype):
     print(f"[load] model={model_path}")
-    pipe = AutoPipelineForInpainting.from_single_file(
+    pipe = StableDiffusionInpaintPipeline.from_single_file(
         str(model_path),
         torch_dtype=dtype,
         use_safetensors=True,
@@ -176,7 +177,7 @@ def main() -> None:
         dst_path = output_dir / src_path.name
         try:
             src = Image.open(src_path).convert("RGB")
-            base, mask = make_outpaint_inputs(src, TARGET_W, TARGET_H, max(0, args.feather))
+            base, mask = make_outpaint_inputs(src, PIPE_W, TARGET_H, max(0, args.feather))
             file_seed = seed_from_name(src_path.name, args.seed)
             gen = torch.Generator(device=device).manual_seed(file_seed)
 
@@ -185,7 +186,7 @@ def main() -> None:
                 negative_prompt=args.negative_prompt,
                 image=base,
                 mask_image=mask,
-                width=TARGET_W,
+                width=PIPE_W,
                 height=TARGET_H,
                 num_inference_steps=args.steps,
                 guidance_scale=args.guidance,
@@ -193,8 +194,10 @@ def main() -> None:
                 generator=gen,
             ).images[0]
 
-            # Ensure exact output dimensions and pixel-friendly save.
-            result = result.resize((TARGET_W, TARGET_H), Image.NEAREST)
+            # Crop from 456x256 -> 455x256 after generation.
+            if result.size != (PIPE_W, TARGET_H):
+                result = result.resize((PIPE_W, TARGET_H), Image.NEAREST)
+            result = result.crop((0, 0, TARGET_W, TARGET_H))
             result.save(dst_path)
             print(f"[{i}/{len(files)}] ok  {src_path.name} -> {dst_path}")
         except Exception as exc:
