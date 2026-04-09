@@ -2560,20 +2560,14 @@ export class TacticsScene extends BaseScene {
 
         // 1. Check if we can reach a unit to attack it
         let unitAttackTiles = [];
+        const gateTargets = this.getAttackableGateCellsForUnit(unit);
         validDestinations.forEach((data, key) => {
             const [r, q] = key.split(',').map(Number);
             attackOptions.forEach(attackKey => {
-                const { minRange, maxRange } = this.getEffectiveAttackRange(unit, attackKey);
-                const isLineAttack = this.isLineAttack(attackKey);
                 // Look for targets within range from this tile
                 unitTargets.forEach(t => {
-                    const dist = this.tacticsMap.getDistance(r, q, t.r, t.q);
-                    const inRange = dist >= minRange && dist <= maxRange;
-                    const candidateOrigins = [{ r, q }];
-                    const isAxial = !isLineAttack || candidateOrigins.some(o => !!this.getAxialDirectionToTarget(o.r, o.q, t.r, t.q));
-                    if (inRange && isAxial) {
-                        unitAttackTiles.push({ r, q, target: t, attackKey });
-                    }
+                    if (!this.canNpcAttackTileFrom(unit, attackKey, r, q, t.r, t.q)) return;
+                    unitAttackTiles.push({ r, q, target: t, attackKey });
                 });
             });
         });
@@ -2600,8 +2594,37 @@ export class TacticsScene extends BaseScene {
             chosenTargetPos = { r: bestTile.target.r, q: bestTile.target.q };
             chosenTargetId = bestTile.target.id || null;
             chosenAttackKey = bestTile.attackKey || null;
-        } 
-        // 2. If no units reachable, check if enemy can reach a house
+        }
+        // 2. If no units reachable, attackers should target gates before doing nothing at walls.
+        else if (gateTargets.length > 0) {
+            const gateAttackTiles = [];
+            validDestinations.forEach((data, key) => {
+                const [r, q] = key.split(',').map(Number);
+                attackOptions.forEach(attackKey => {
+                    gateTargets.forEach(g => {
+                        if (!this.canNpcAttackTileFrom(unit, attackKey, r, q, g.r, g.q)) return;
+                        gateAttackTiles.push({ r, q, target: g, attackKey });
+                    });
+                });
+            });
+
+            if (gateAttackTiles.length > 0) {
+                const scored = gateAttackTiles.map(c => {
+                    const dist = this.tacticsMap.getDistance(c.r, c.q, c.target.r, c.target.q);
+                    const { maxRange } = this.getEffectiveAttackRange(unit, c.attackKey);
+                    const isRanged = maxRange > 1;
+                    let score = isRanged ? dist * 0.45 : (10 - dist) * 0.55;
+                    score += Math.random() * 1.0;
+                    return { ...c, _score: score };
+                });
+                scored.sort((a, b) => b._score - a._score);
+                bestTile = scored[0];
+                chosenTargetPos = { r: bestTile.target.r, q: bestTile.target.q };
+                chosenTargetId = null;
+                chosenAttackKey = bestTile.attackKey || null;
+            }
+        }
+        // 3. If no units/gates reachable, check if enemy can reach a house
         else if (unit.faction === 'enemy') {
             let houseAttackTiles = [];
             validDestinations.forEach((data, key) => {
@@ -2644,12 +2667,20 @@ export class TacticsScene extends BaseScene {
 
         unit.npcPreferredAttackKey = chosenAttackKey || null;
 
-        // 3. If no immediate attacks possible, move towards the nearest unit (or house)
+        // 4. If no immediate attacks possible, move towards nearest gate (attacker side), then unit/house.
         if (!chosenTargetPos) {
             let nearestTargetPos = null;
             let minDist = Infinity;
 
-            if (unitTargets.length > 0) {
+            if (gateTargets.length > 0) {
+                for (const g of gateTargets) {
+                    const d = this.tacticsMap.getDistance(unit.r, unit.q, g.r, g.q);
+                    if (d < minDist) {
+                        minDist = d;
+                        nearestTargetPos = { r: g.r, q: g.q };
+                    }
+                }
+            } else if (unitTargets.length > 0) {
                 // Get all targets with distances
                 const targetsWithDist = unitTargets.map(t => ({
                     t,
@@ -2836,27 +2867,15 @@ export class TacticsScene extends BaseScene {
         });
         
         const candidatePlans = [];
+        const gateTargets = this.getAttackableGateCellsForUnit(unit);
         const origins = this.getAttackOrigins(unit);
         attackOptions.forEach(attackKey => {
-            const { minRange, maxRange } = this.getEffectiveAttackRange(unit, attackKey);
-            const isLineAttack = this.isLineAttack(attackKey);
             unitTargets.forEach(t => {
                 const canHit = origins.some(o => {
-                    const dist = this.tacticsMap.getDistance(o.r, o.q, t.r, t.q);
-                    const inRange = dist >= minRange && dist <= maxRange;
-                    const isAxial = !isLineAttack || !!this.getAxialDirectionToTarget(o.r, o.q, t.r, t.q);
-                    if (!inRange || !isAxial) return false;
-
-                    // Directional bolt can only target the first impact endpoint on that ray.
-                    // Anything "behind" a blocker is not targetable.
-                    if (this.isDirectionalBoltAttack(attackKey)) {
-                        const boltPath = this.getDirectionalBoltPath(unit, t.r, t.q);
-                        const impact = boltPath?.impactCell;
-                        return !!(impact && impact.r === t.r && impact.q === t.q);
-                    }
-                    return true;
+                    return this.canNpcAttackTileFrom(unit, attackKey, o.r, o.q, t.r, t.q);
                 });
                 if (!canHit) return;
+                const { maxRange } = this.getEffectiveAttackRange(unit, attackKey);
                 let dist = Infinity;
                 origins.forEach(o => {
                     dist = Math.min(dist, this.tacticsMap.getDistance(o.r, o.q, t.r, t.q));
@@ -2882,6 +2901,29 @@ export class TacticsScene extends BaseScene {
             targetPos = { r: candidatePlans[0].t.r, q: candidatePlans[0].t.q };
             targetId = candidatePlans[0].t.id || null;
             chosenAttackKey = candidatePlans[0].attackKey || chosenAttackKey;
+        } else if (gateTargets.length > 0) {
+            const gatePlans = [];
+            attackOptions.forEach(attackKey => {
+                gateTargets.forEach(g => {
+                    const canHit = origins.some(o => this.canNpcAttackTileFrom(unit, attackKey, o.r, o.q, g.r, g.q));
+                    if (!canHit) return;
+                    const { maxRange } = this.getEffectiveAttackRange(unit, attackKey);
+                    const isRanged = maxRange > 1;
+                    let dist = Infinity;
+                    origins.forEach(o => {
+                        dist = Math.min(dist, this.tacticsMap.getDistance(o.r, o.q, g.r, g.q));
+                    });
+                    let score = isRanged ? dist * 0.45 : (10 - dist) * 0.55;
+                    score += Math.random() * 1.0;
+                    gatePlans.push({ gate: g, attackKey, score });
+                });
+            });
+            if (gatePlans.length > 0) {
+                gatePlans.sort((a, b) => b.score - a.score);
+                targetPos = { r: gatePlans[0].gate.r, q: gatePlans[0].gate.q };
+                targetId = null;
+                chosenAttackKey = gatePlans[0].attackKey || chosenAttackKey;
+            }
         } else if (unit.faction === 'enemy') {
             // Enemies look for adjacent houses if no units are nearby
             const neighbors = this.tacticsMap.getNeighbors(unit.r, unit.q);
@@ -4776,19 +4818,53 @@ export class TacticsScene extends BaseScene {
         return unit.faction === 'player' || unit.faction === 'allied';
     }
 
-    maybeOpenGateForUnit(unit) {
-        if (!unit || unit.hp <= 0 || unit.isGone || unit.isMoving || unit.pushData || unit.rollData) return;
-        const cell = this.tacticsMap.getCell(unit.r, unit.q);
-        if (!cell || !this.isGateTerrain(cell.terrain)) return;
-        if (cell.gateState === 'broken') return;
+    getAttackableGateCellsForUnit(unit) {
+        if (!unit || !this.tacticsMap) return [];
+        const gates = [];
+        for (let r = 0; r < this.manager.config.mapHeight; r++) {
+            for (let q = 0; q < this.manager.config.mapWidth; q++) {
+                const cell = this.tacticsMap.getCell(r, q);
+                if (!cell || !this.isGateTerrain(cell.terrain)) continue;
+                if (cell.gateState === 'broken') continue;
+                if (this.isUnitOnDefenderSideForGate(unit, cell)) continue;
+                gates.push(cell);
+            }
+        }
+        return gates;
+    }
+
+    canNpcAttackTileFrom(unit, attackKey, fromR, fromQ, toR, toQ) {
+        if (!unit || !ATTACKS[attackKey]) return false;
+        const { minRange, maxRange } = this.getEffectiveAttackRange(unit, attackKey);
+        const dist = this.tacticsMap.getDistance(fromR, fromQ, toR, toQ);
+        if (!(dist >= minRange && dist <= maxRange)) return false;
+        if (this.isLineAttack(attackKey) && !this.getAxialDirectionToTarget(fromR, fromQ, toR, toQ)) return false;
+
+        if (this.isDirectionalBoltAttack(attackKey)) {
+            const prevR = unit.r;
+            const prevQ = unit.q;
+            unit.r = fromR;
+            unit.q = fromQ;
+            const boltPath = this.getDirectionalBoltPath(unit, toR, toQ);
+            unit.r = prevR;
+            unit.q = prevQ;
+            const impact = boltPath?.impactCell;
+            return !!(impact && impact.r === toR && impact.q === toQ);
+        }
+
+        const ignoreWallLOS = this.canAttackIgnoreWallLOS(attackKey);
+        if (!ignoreWallLOS && this.hasWallBlockingBetween(fromR, fromQ, toR, toQ)) return false;
+        return true;
+    }
+
+    onUnitEnteredHexCell(unit, fromKey, toKey) {
+        if (!unit || unit.hp <= 0 || unit.isGone) return;
+        const [toR, toQ] = toKey.split(',').map(Number);
+        const cell = this.tacticsMap.getCell(toR, toQ);
+        if (!cell || !this.isGateTerrain(cell.terrain) || cell.gateState === 'broken') return;
         if (!this.isUnitOnDefenderSideForGate(unit, cell)) return;
-        if (cell.terrain !== 'gate_open_01') {
-            cell.terrain = 'gate_open_01';
-            cell.impassable = false;
-        }
-        if (!cell.gateState || cell.gateState === 'closed' || cell.gateState === 'cracked') {
-            cell.gateState = 'open';
-        }
+        assets.playSound('heavy_door_unlocking', 0.85);
+        cell.gateTransientOpenUntil = Date.now() + 850;
     }
 
     isCellDestructibleStructure(cell) {
@@ -6643,7 +6719,11 @@ export class TacticsScene extends BaseScene {
             const terrainType = cell ? cell.terrain : 'grass_01';
             
             u.update(dt, (r, q) => this.getPixelPos(r, q), shouldAnimate, terrainType);
-            this.maybeOpenGateForUnit(u);
+            const cellKeyAfter = `${u.r},${u.q}`;
+            if (u._tacticsPrevCellKey !== undefined && u._tacticsPrevCellKey !== cellKeyAfter) {
+                this.onUnitEnteredHexCell(u, u._tacticsPrevCellKey, cellKeyAfter);
+            }
+            u._tacticsPrevCellKey = cellKeyAfter;
             if (u.immortalPendingCause) {
                 const cause = u.immortalPendingCause;
                 u.immortalPendingCause = null;
@@ -7075,13 +7155,21 @@ export class TacticsScene extends BaseScene {
             affected.push({ r: targetR, q: targetQ });
         }
 
+        let tilesAfterLos = affected;
+        if (attack && !this.canAttackIgnoreWallLOS(attackKey) && !this.isDirectionalBoltAttack(attackKey)) {
+            const losOrigin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
+            tilesAfterLos = affected.filter(
+                tile => !this.hasWallBlockingBetween(losOrigin.r, losOrigin.q, tile.r, tile.q)
+            );
+        }
+
         // Never allow an attack to "hit" the attacker itself.
         const forbidden = new Set([`${attacker.r},${attacker.q}`]);
 
         // De-dupe + filter out forbidden tiles + filter out off-map
         const uniq = [];
         const seen = new Set();
-        for (const t of affected) {
+        for (const t of tilesAfterLos) {
             if (!t) continue;
             const cell = this.tacticsMap.getCell(t.r, t.q);
             if (!cell) continue;
@@ -7235,7 +7323,7 @@ export class TacticsScene extends BaseScene {
                         q,
                         x: pos.x,
                         y: pos.y + (cell.elevation || 0),
-                        terrain: cell.terrain,
+                        terrain: this.getGateOverlayTerrain(cell, r, q),
                         elevation: cell.elevation || 0
                     });
                 }
@@ -7340,10 +7428,14 @@ export class TacticsScene extends BaseScene {
 
         this._telegraphPunchList = [];
         this._terrainOverlayHexOutlines = [];
+        this._unitOutlineItems = [];
+        this._renderedUnitSprites = [];
         const unitHexDriftMap = this._unitHexDriftMap || new Map();
+        let drawOrder = 0;
         for (const call of drawCalls) {
             const effect = this.getIntroEffect(Math.floor(call.r), call.q || 0);
             if (effect.alpha <= 0 && call.type !== 'particle' && call.type !== 'fire_smoke') continue; // Particles have their own alpha check
+            const callOrder = drawOrder++;
             
             ctx.save();
             ctx.globalAlpha = call.alpha || effect.alpha;
@@ -7498,7 +7590,8 @@ export class TacticsScene extends BaseScene {
                     }
                 }
                 this.drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp);
-                this.drawUnitHexAndCharacterOutlines(ctx, u, surfaceY, drawOptions, cell, timestamp);
+                this._renderedUnitSprites.push({ order: callOrder, unit: u, surfaceY, drawOptions, cell, timestamp });
+                this._unitOutlineItems.push({ order: callOrder, unit: u, surfaceY, drawOptions, cell, timestamp });
             } else if (call.type === 'gate_overlay') {
                 const surfaceY = call.y - call.elevation + effect.yOffset;
                 const edgeStatus = this.tacticsMap.getEdgeStatus(call.r, call.q);
@@ -7662,6 +7755,11 @@ export class TacticsScene extends BaseScene {
             }
             ctx.drawImage(this._telegraphLayerCanvas, 0, 0);
         }
+
+        // Unit outline overlay pass:
+        // - always above terrain
+        // - punched out by nearer unit sprites, so front characters occlude back outlines
+        this.drawUnitOutlineOverlayPass(ctx);
 
         // 3. Info Pass: Draw health bars and intents above all terrain
         if (!this.isIntroAnimating) {
@@ -8370,30 +8468,19 @@ export class TacticsScene extends BaseScene {
 
     /**
      * Faction hex ring (with sprite punched out) + character pixel outline, drawn at the current
-     * depth in the sorted scene so they sit above terrain but are covered by units drawn later.
+     * depth in an offscreen pass. Foreground character sprites are punched out after this draw.
      */
     drawUnitHexAndCharacterOutlines(ctx, u, surfaceY, drawOptions, cell, timestamp) {
         if (this.isIntroAnimating || !u || u.hp <= 0 || u.isGone || u.name === 'Boulder') return;
-        const cw = this.manager.canvas.width;
-        const ch = this.manager.canvas.height;
-        if (!this._hexOutlineItemCanvas || this._hexOutlineItemCanvas.width !== cw || this._hexOutlineItemCanvas.height !== ch) {
-            this._hexOutlineItemCanvas = document.createElement('canvas');
-            this._hexOutlineItemCanvas.width = cw;
-            this._hexOutlineItemCanvas.height = ch;
-            this._hexOutlineItemCtx = this._hexOutlineItemCanvas.getContext('2d');
-        }
-        const itemCtx = this._hexOutlineItemCtx;
-        itemCtx.clearRect(0, 0, cw, ch);
         const hexPos = this.getPixelPos(u.r, u.q);
-        itemCtx.save();
-        itemCtx.globalAlpha = this.getUnitOutlineAlpha(u);
-        this.drawHexOutline(itemCtx, hexPos.x, hexPos.y, this.getHexViewOutlineColor(u.faction));
-        itemCtx.restore();
-        itemCtx.save();
-        itemCtx.globalCompositeOperation = 'destination-out';
-        this.drawUnitSpriteOnly(itemCtx, u, surfaceY, drawOptions, cell, timestamp);
-        itemCtx.restore();
-        ctx.drawImage(this._hexOutlineItemCanvas, 0, 0);
+        ctx.save();
+        ctx.globalAlpha = this.getUnitOutlineAlpha(u);
+        this.drawHexOutline(ctx, hexPos.x, hexPos.y, this.getHexViewOutlineColor(u.faction));
+        ctx.restore();
+        ctx.save();
+        ctx.globalCompositeOperation = 'destination-out';
+        this.drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp);
+        ctx.restore();
 
         if (!u.img) return;
         const driftX = drawOptions?.hexOffsetX || 0;
@@ -8425,6 +8512,47 @@ export class TacticsScene extends BaseScene {
             outlineOptions
         );
         ctx.restore();
+    }
+
+    drawUnitOutlineOverlayPass(ctx) {
+        if (this.isIntroAnimating) return;
+        const items = this._unitOutlineItems || [];
+        if (items.length === 0) return;
+
+        const cw = this.manager.canvas.width;
+        const ch = this.manager.canvas.height;
+        if (!this._unitOutlineLayerCanvas || this._unitOutlineLayerCanvas.width !== cw || this._unitOutlineLayerCanvas.height !== ch) {
+            this._unitOutlineLayerCanvas = document.createElement('canvas');
+            this._unitOutlineLayerCanvas.width = cw;
+            this._unitOutlineLayerCanvas.height = ch;
+            this._unitOutlineLayerCtx = this._unitOutlineLayerCanvas.getContext('2d');
+        }
+        if (!this._unitOutlineItemCanvas || this._unitOutlineItemCanvas.width !== cw || this._unitOutlineItemCanvas.height !== ch) {
+            this._unitOutlineItemCanvas = document.createElement('canvas');
+            this._unitOutlineItemCanvas.width = cw;
+            this._unitOutlineItemCanvas.height = ch;
+            this._unitOutlineItemCtx = this._unitOutlineItemCanvas.getContext('2d');
+        }
+
+        const layerCtx = this._unitOutlineLayerCtx;
+        const itemCtx = this._unitOutlineItemCtx;
+        const blockers = this._renderedUnitSprites || [];
+
+        layerCtx.clearRect(0, 0, cw, ch);
+        for (const item of items) {
+            itemCtx.clearRect(0, 0, cw, ch);
+            this.drawUnitHexAndCharacterOutlines(itemCtx, item.unit, item.surfaceY, item.drawOptions, item.cell, item.timestamp);
+            itemCtx.save();
+            itemCtx.globalCompositeOperation = 'destination-out';
+            for (const blocker of blockers) {
+                if (blocker.order <= item.order) continue;
+                this.drawUnitSpriteOnly(itemCtx, blocker.unit, blocker.surfaceY, blocker.drawOptions, blocker.cell, blocker.timestamp);
+            }
+            itemCtx.restore();
+            layerCtx.drawImage(this._unitOutlineItemCanvas, 0, 0);
+        }
+
+        ctx.drawImage(this._unitOutlineLayerCanvas, 0, 0);
     }
 
     /**
@@ -10865,10 +10993,34 @@ export class TacticsScene extends BaseScene {
         return !!ATTACKS[attackKey]?.line;
     }
 
-    isOpenGateCell(cell) {
+    isOpenGateCell(cell, r, q) {
         if (!cell || !this.isGateTerrain(cell.terrain)) return false;
-        if (cell.gateState === 'open' || cell.gateState === 'broken') return true;
-        return cell.terrain === 'gate_open_01';
+        if (cell.gateState === 'broken' || cell.gateState === 'open') return true;
+        if (cell.terrain === 'gate_open_01') return true;
+        if (cell.gateTransientOpenUntil && Date.now() < cell.gateTransientOpenUntil) return true;
+        if (r !== undefined && q !== undefined) {
+            const occ = this.getLivingUnitOccupyingCell(r, q, null);
+            if (occ && this.isUnitOnDefenderSideForGate(occ, cell)) return true;
+        }
+        return false;
+    }
+
+    /** Sprite key for drawing the gate overlay (closed vs open) without mutating cell.terrain every frame. */
+    getGateOverlayTerrain(cell, r, q) {
+        if (!cell || !this.isGateTerrain(cell.terrain)) return cell?.terrain || 'mud_01';
+        const t = cell.terrain || '';
+        if (cell.gateState === 'broken' || t === 'gate_open_01') return 'gate_open_01';
+        if (t === 'gate_cracked_01') {
+            const transient = cell.gateTransientOpenUntil && Date.now() < cell.gateTransientOpenUntil;
+            const occ = this.getLivingUnitOccupyingCell(r, q, null);
+            if (transient || (occ && this.isUnitOnDefenderSideForGate(occ, cell))) return 'gate_open_01';
+            return 'gate_cracked_01';
+        }
+        if (cell.gateState === 'open') return 'gate_open_01';
+        const transient = cell.gateTransientOpenUntil && Date.now() < cell.gateTransientOpenUntil;
+        const occ = this.getLivingUnitOccupyingCell(r, q, null);
+        if (transient || (occ && this.isUnitOnDefenderSideForGate(occ, cell))) return 'gate_open_01';
+        return 'gate_01';
     }
 
     canAttackIgnoreWallLOS(attackKey) {
@@ -10889,7 +11041,7 @@ export class TacticsScene extends BaseScene {
             const c = this.tacticsMap.getCell(line[i].r, line[i].q);
             if (!c) continue;
             if (c.terrain.includes('wall')) return true;
-            if (this.isGateTerrain(c.terrain) && !this.isOpenGateCell(c)) return true;
+            if (this.isGateTerrain(c.terrain) && !this.isOpenGateCell(c, c.r, c.q)) return true;
         }
         return false;
     }
