@@ -90,6 +90,12 @@ def make_outpaint_inputs(src: Image.Image, target_w: int, target_h: int, feather
     canvas = Image.new("RGB", (target_w, target_h), (0, 0, 0))
     left = (target_w - w) // 2
     top = (target_h - h) // 2
+    # Seed side bands with edge-color extension so the model starts from plausible context.
+    if left > 0:
+        left_strip = src.crop((0, 0, 1, h)).resize((left, h), Image.NEAREST)
+        right_strip = src.crop((w - 1, 0, w, h)).resize((target_w - left - w, h), Image.NEAREST)
+        canvas.paste(left_strip, (0, top))
+        canvas.paste(right_strip, (left + w, top))
     canvas.paste(src, (left, top))
 
     mask = Image.new("L", (target_w, target_h), 255)
