@@ -7,6 +7,7 @@ export class SceneManager {
         this.config = config;
         this.currentScene = null;
         this.scenes = {};
+        this.optionsOverlay = null;
         this.gameState = new GameState();
         this.gameState.load();
         
@@ -33,10 +34,40 @@ export class SceneManager {
             const scaleY = this.canvas.height / rect.height;
             this.logicalMouseX = (e.clientX - rect.left) * scaleX;
             this.logicalMouseY = (e.clientY - rect.top) * scaleY;
-            if (this.currentScene && this.currentScene.onMouseInput) {
+            if (this.isOptionsOverlayActive()) {
+                if (this.optionsOverlay && this.optionsOverlay.onMouseInput) {
+                    this.optionsOverlay.onMouseInput(this.logicalMouseX, this.logicalMouseY);
+                }
+            } else if (this.currentScene && this.currentScene.onMouseInput) {
                 this.currentScene.onMouseInput(this.logicalMouseX, this.logicalMouseY);
             }
         });
+    }
+
+    setOptionsOverlay(overlayInstance) {
+        this.optionsOverlay = overlayInstance;
+        if (this.optionsOverlay) {
+            this.optionsOverlay.manager = this;
+        }
+    }
+
+    isOptionsOverlayActive() {
+        return !!(this.optionsOverlay && this.optionsOverlay.isOpen);
+    }
+
+    openOptionsOverlay(params = {}) {
+        if (!this.optionsOverlay) return;
+        this.optionsOverlay.open(params);
+    }
+
+    closeOptionsOverlay() {
+        if (!this.optionsOverlay) return;
+        this.optionsOverlay.close();
+    }
+
+    toggleOptionsOverlay(params = {}) {
+        if (this.isOptionsOverlayActive()) this.closeOptionsOverlay();
+        else this.openOptionsOverlay(params);
     }
 
     addScene(name, sceneInstance) {
@@ -45,6 +76,9 @@ export class SceneManager {
     }
 
     switchTo(name, params = {}) {
+        if (this.isOptionsOverlayActive()) {
+            this.closeOptionsOverlay();
+        }
         this.gameState.validateAndRepairInvariants(name, params);
 
         // Excluded scenes that should never be saved as lastScene
@@ -88,6 +122,12 @@ export class SceneManager {
 
     update(timestamp) {
         this.pollGamepad(timestamp);
+        if (this.isOptionsOverlayActive()) {
+            if (this.optionsOverlay && this.optionsOverlay.update) {
+                this.optionsOverlay.update(timestamp);
+            }
+            return;
+        }
         if (this.currentScene && this.currentScene.update) {
             this.currentScene.update(timestamp);
         }
@@ -97,15 +137,43 @@ export class SceneManager {
         if (this.currentScene && this.currentScene.render) {
             this.currentScene.render(timestamp);
         }
+        if (this.isOptionsOverlayActive() && this.optionsOverlay && this.optionsOverlay.render) {
+            this.optionsOverlay.render(timestamp);
+        }
     }
 
     handleInput(e) {
+        if (this.isOptionsOverlayActive()) {
+            if (this.optionsOverlay && this.optionsOverlay.handleInput) {
+                this.optionsOverlay.handleInput(e);
+            }
+            return;
+        }
         if (this.currentScene && this.currentScene.handleInput) {
             this.currentScene.handleInput(e);
         }
     }
 
     handleKeyDown(e) {
+        if (e && e.key === 'Escape') {
+            if (this.isOptionsOverlayActive()) {
+                if (typeof e.preventDefault === 'function') e.preventDefault();
+                this.closeOptionsOverlay();
+                return;
+            }
+            // Preserve legacy per-scene Escape behavior via Shift+Esc.
+            if (!e.shiftKey) {
+                if (typeof e.preventDefault === 'function') e.preventDefault();
+                this.openOptionsOverlay({ sourceScene: this.currentSceneKey });
+                return;
+            }
+        }
+        if (this.isOptionsOverlayActive()) {
+            if (this.optionsOverlay && this.optionsOverlay.handleKeyDown) {
+                this.optionsOverlay.handleKeyDown(e);
+            }
+            return;
+        }
         if (this.currentScene && this.currentScene.handleKeyDown) {
             this.currentScene.handleKeyDown(e);
         }
@@ -205,4 +273,3 @@ export class SceneManager {
         });
     }
 }
-

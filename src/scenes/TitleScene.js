@@ -22,11 +22,11 @@ export class TitleScene extends BaseScene {
             { key: 'intro_midground_army', speed: 1.0 },
             { key: 'intro_midground_army_flags', speed: 1.0, wave: 'flags' },
             { key: 'intro_field', speed: 1.1 },
-            { key: 'intro_grass', speed: 2.2 },
-            { key: 'intro_blades', speed: 2.2, wave: 'grass' }
+            { key: 'intro_grass', speed: 2.2, startOffsetX: 72 },
+            { key: 'intro_blades', speed: 2.2, wave: 'grass', startOffsetX: 72 }
         ];
         
-        this.horseX = 400; // Start position of horse
+        this.horseX = 520; // Start position of horse (off-screen on wide canvas)
         this.guandaoY = -260; // Hidden entirely above (canvas height is 256)
         this.guandaoTargetY = 0;
         this.guandaoBreathe = 0;
@@ -43,11 +43,14 @@ export class TitleScene extends BaseScene {
         this.isAnimating = false;
         this.panX = 0;
         this.animationProgress = 0;
+        const canvasWidth = this.manager?.canvas?.width || 256;
+        this.horseX = canvasWidth + 80;
         this.guandaoY = -260;
         this.titleAlpha = 0;
         this.menuAlpha = 0;
         this.menuOptions = [];
         this.selection = null;
+        this.optionsRect = null;
         this.showConfirm = false; // Reset confirmation dialog state
         this.confirmSelection = null;
         this._recordingIntro = false;
@@ -105,11 +108,9 @@ export class TitleScene extends BaseScene {
             const t = this.animationProgress;
             const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
             
-            // Pan target: horse at -100px. Horse moves with speed of grass (layer 5).
-            // Horse start is 400. To get to -100, it moves 500px.
-            // Horse position = horseX - (panX * speed_grass)
-            // -100 = 400 - (targetPanX * 2.2) -> 2.2 * targetPanX = 500 -> targetPanX = 227.27
-            const targetPanX = 500 / 2.2; 
+            // Pan target: horse at -100px. Horse moves with speed of grass (2.2).
+            // Horse position = horseX - (panX * 2.2) => targetPanX = (horseX + 100) / 2.2
+            const targetPanX = (this.horseX + 100) / 2.2;
             this.panX = ease * targetPanX;
 
         } else if (this.state === 'GUANDAO') {
@@ -189,19 +190,31 @@ export class TitleScene extends BaseScene {
         
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const getTileStartPositions = (baseX, tileWidth) => {
+            const starts = [];
+            if (!tileWidth || tileWidth <= 0) return starts;
+            let x = Math.floor(baseX) - tileWidth;
+            while (x + tileWidth < 0) x += tileWidth;
+            for (; x < canvas.width + tileWidth; x += tileWidth) {
+                starts.push(x);
+            }
+            return starts;
+        };
         
         // Draw parallax layers
         this.layers.forEach(layer => {
             const img = assets.getImage(layer.key);
             if (!img) return;
             
-            const baseX = -((this.panX * layer.speed) % img.width);
+            const layerStartOffsetX = layer.startOffsetX || 0;
+            const baseX = layerStartOffsetX - ((this.panX * layer.speed) % img.width);
+            const tileStartPositions = getTileStartPositions(baseX, img.width);
             
             if (!layer.wave) {
-                ctx.drawImage(img, Math.floor(baseX), 0);
-                if (baseX < 0) {
-                    ctx.drawImage(img, Math.floor(baseX + img.width), 0);
-                }
+                tileStartPositions.forEach((tileX) => {
+                    ctx.drawImage(img, tileX, 0);
+                });
             } else if (layer.wave === 'flags') {
                 // Wave moving left to right (offset Y based on X)
                 const waveAmp = 1.2;
@@ -214,11 +227,9 @@ export class TitleScene extends BaseScene {
                 for (let sx = 0; sx < img.width; sx += segmentWidth) {
                     const sw = Math.min(segmentWidth, img.width - sx);
                     const offY = Math.sin(time + sx * waveFreq) * waveAmp;
-                    
-                    ctx.drawImage(img, sx, 0, sw, img.height, Math.floor(baseX + sx), Math.floor(offY), sw, img.height);
-                    if (baseX < 0) {
-                        ctx.drawImage(img, sx, 0, sw, img.height, Math.floor(baseX + img.width + sx), Math.floor(offY), sw, img.height);
-                    }
+                    tileStartPositions.forEach((tileX) => {
+                        ctx.drawImage(img, sx, 0, sw, img.height, tileX + sx, Math.floor(offY), sw, img.height);
+                    });
                 }
             } else if (layer.wave === 'grass') {
                 // Wave moving top to bottom (offset X based on Y)
@@ -231,11 +242,9 @@ export class TitleScene extends BaseScene {
                 for (let sy = 0; sy < img.height; sy += segmentHeight) {
                     const sh = Math.min(segmentHeight, img.height - sy);
                     const offX = Math.sin(time + sy * waveFreq) * waveAmp;
-                    
-                    ctx.drawImage(img, 0, sy, img.width, sh, Math.floor(baseX + offX), sy, img.width, sh);
-                    if (baseX < 0) {
-                        ctx.drawImage(img, 0, sy, img.width, sh, Math.floor(baseX + img.width + offX), sy, img.width, sh);
-                    }
+                    tileStartPositions.forEach((tileX) => {
+                        ctx.drawImage(img, 0, sy, img.width, sh, Math.floor(tileX + offX), sy, img.width, sh);
+                    });
                 }
             }
         });
@@ -284,9 +293,6 @@ export class TitleScene extends BaseScene {
             ctx.restore();
         }
         
-        // Draw language toggle (always visible in bottom-left corner)
-        this.renderLanguageToggle(ctx, canvas);
-        
         // Reset alpha just in case
         ctx.globalAlpha = 1.0;
         }
@@ -299,28 +305,27 @@ export class TitleScene extends BaseScene {
             this.menuOptions.push({ rect: this.continueRect, action: 'continue' });
             this.menuOptions.push({ rect: this.newGameRect, action: 'newgame' });
             this.menuOptions.push({ rect: this.customBattleRect, action: 'custombattle' });
+            this.menuOptions.push({ rect: this.optionsRect, action: 'options' });
         } else {
             this.menuOptions.push({ rect: this.newGameRect, action: 'newgame' });
             this.menuOptions.push({ rect: this.customBattleRect, action: 'custombattle' });
+            this.menuOptions.push({ rect: this.optionsRect, action: 'options' });
         }
 
-        // Keyboard/controller nav should also be able to select language toggle.
-        if (this.languageToggleRect) {
-            this.menuOptions.push({ rect: this.languageToggleRect, action: 'toggleLanguage' });
-        }
     }
 
     renderMenu(ctx, canvas) {
         const cx = Math.floor(canvas.width / 2);
         const cy = canvas.height - 70;
         const pulse = Math.abs(Math.sin(Date.now() / 500)) * 0.5 + 0.5;
+        const hasSave = this.manager.gameState.hasSave();
 
         // Draw a subtle background for the menu area to ensure visibility
+        const menuBgH = hasSave ? 110 : 90;
         ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-        ctx.fillRect(cx - 80, cy - 30, 160, 80);
+        ctx.fillRect(cx - 80, cy - 30, 160, menuBgH);
 
         const ngText = getLocalizedText(UI_TEXT['NEW GAME']);
-        const hasSave = this.manager.gameState.hasSave();
         
         if (hasSave) {
             // CONTINUE Button
@@ -373,6 +378,21 @@ export class TitleScene extends BaseScene {
                 w: Math.floor(cbMetrics.width + 20),
                 h: 20
             };
+
+            const optionsText = getLocalizedText(UI_TEXT['OPTIONS']);
+            const optionsY = cy + 60;
+            const isHighlightedOptions = this.selection && this.selection.highlightedIndex === 3;
+            const optionsMetrics = this.drawPixelText(ctx, optionsText, cx, optionsY, {
+                color: isHighlightedOptions ? '#fff' : '#ffd700',
+                font: '8px Silkscreen',
+                align: 'center'
+            });
+            this.optionsRect = {
+                x: Math.floor(cx - optionsMetrics.width / 2 - 10),
+                y: optionsY - 10,
+                w: Math.floor(optionsMetrics.width + 20),
+                h: 20
+            };
         } else {
             // Original Layout
             const isHighlightedNG = this.selection && this.selection.highlightedIndex === 0;
@@ -404,6 +424,20 @@ export class TitleScene extends BaseScene {
                 x: Math.floor(cx - cbMetrics.width / 2 - 10),
                 y: cbY - 10,
                 w: Math.floor(cbMetrics.width + 20),
+                h: 20
+            };
+            const optionsText = getLocalizedText(UI_TEXT['OPTIONS']);
+            const optionsY = cy + 50;
+            const isHighlightedOptions = this.selection && this.selection.highlightedIndex === 2;
+            const optionsMetrics = this.drawPixelText(ctx, optionsText, cx, optionsY, {
+                color: isHighlightedOptions ? '#fff' : '#ffd700',
+                font: '8px Silkscreen',
+                align: 'center'
+            });
+            this.optionsRect = {
+                x: Math.floor(cx - optionsMetrics.width / 2 - 10),
+                y: optionsY - 10,
+                w: Math.floor(optionsMetrics.width + 20),
                 h: 20
             };
             this.continueRect = null;
@@ -495,15 +529,6 @@ export class TitleScene extends BaseScene {
 
     handleInput(e) {
         const { x, y } = this.getMousePos(e);
-        
-        // Check language toggle first (always available)
-        if (this.languageToggleRect) {
-            const { x: tx, y: ty, w, h } = this.languageToggleRect;
-            if (x >= tx && x <= tx + w && y >= ty && y <= ty + h) {
-                this.executeMenuAction('toggleLanguage');
-                return;
-            }
-        }
         
         if (this.waitingForInteraction) {
             this.waitingForInteraction = false;
@@ -607,6 +632,12 @@ export class TitleScene extends BaseScene {
             this.manager.switchTo('custom_battle');
             return;
         }
+
+        if (this.optionsRect && x >= this.optionsRect.x && x <= this.optionsRect.x + this.optionsRect.w &&
+            y >= this.optionsRect.y && y <= this.optionsRect.y + this.optionsRect.h) {
+            this.executeMenuAction('options');
+            return;
+        }
     }
 
     handleKeyDown(e) {
@@ -707,13 +738,19 @@ export class TitleScene extends BaseScene {
             }
         } else if (action === 'custombattle') {
             this.manager.switchTo('custom_battle');
+        } else if (action === 'options') {
+            this.manager.openOptionsOverlay({ sourceScene: 'title' });
         } else if (action === 'toggleLanguage') {
-            const currentLang = getCurrentLanguage();
-            const newLang = currentLang === 'en' ? 'zh' : 'en';
-            setLanguage(newLang);
-            assets.playSound('ui_click', 0.5);
-            // Reprocess title image with new language
-            this.processTitleImage();
+            const supported = Array.isArray(LANGUAGE.supported) ? LANGUAGE.supported : [];
+            if (supported.length > 0) {
+                const currentLang = getCurrentLanguage();
+                const currentIndex = Math.max(0, supported.indexOf(currentLang));
+                const nextLang = supported[(currentIndex + 1) % supported.length];
+                setLanguage(nextLang);
+                assets.clearVoiceCache();
+                assets.playSound('ui_click', 0.5);
+                this.processTitleImage();
+            }
         }
     }
 

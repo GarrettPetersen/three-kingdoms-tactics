@@ -1,5 +1,12 @@
 import { getCurrentLanguage } from './Language.js';
 
+const AUDIO_SETTINGS_STORAGE_KEY = 'gameAudioSettings';
+const DEFAULT_AUDIO_SETTINGS = {
+    music: 0.5,
+    sfx: 0.5,
+    voice: 0.5
+};
+
 export class AssetLoader {
     constructor() {
         this.images = {};
@@ -24,6 +31,96 @@ export class AssetLoader {
         this.onNextVoiceEnd = null; // one-time callback when current voice finishes (for action recording)
         this._voiceEndTimeout = null; // timeout for duration-based recorder stop
         this.musicMutedByUser = false; // Cmd+Shift+M mute persists until toggled again or game restarted
+        this.currentVoiceBaseVolume = 1.0;
+
+        const audioSettings = this._loadAudioSettings();
+        this.musicUserVolume = audioSettings.music;
+        this.sfxUserVolume = audioSettings.sfx;
+        this.voiceUserVolume = audioSettings.voice;
+    }
+
+    _clamp01(value) {
+        return Math.max(0, Math.min(1, Number.isFinite(value) ? value : 0));
+    }
+
+    _loadAudioSettings() {
+        if (typeof localStorage === 'undefined') {
+            return { ...DEFAULT_AUDIO_SETTINGS };
+        }
+        try {
+            const raw = localStorage.getItem(AUDIO_SETTINGS_STORAGE_KEY);
+            if (!raw) return { ...DEFAULT_AUDIO_SETTINGS };
+            const parsed = JSON.parse(raw);
+            return {
+                music: this._clamp01(parsed?.music ?? DEFAULT_AUDIO_SETTINGS.music),
+                sfx: this._clamp01(parsed?.sfx ?? DEFAULT_AUDIO_SETTINGS.sfx),
+                voice: this._clamp01(parsed?.voice ?? DEFAULT_AUDIO_SETTINGS.voice)
+            };
+        } catch (_err) {
+            return { ...DEFAULT_AUDIO_SETTINGS };
+        }
+    }
+
+    _saveAudioSettings() {
+        if (typeof localStorage === 'undefined') return;
+        try {
+            localStorage.setItem(AUDIO_SETTINGS_STORAGE_KEY, JSON.stringify(this.getAudioSettings()));
+        } catch (_err) {
+            // Best-effort persistence only.
+        }
+    }
+
+    _getEffectiveMusicVolume(rawVolume) {
+        const requested = this._clamp01(rawVolume);
+        const scaled = requested * this._clamp01(this.musicUserVolume);
+        return this.musicMutedByUser ? 0 : this._clamp01(scaled);
+    }
+
+    getAudioSettings() {
+        return {
+            music: this._clamp01(this.musicUserVolume),
+            sfx: this._clamp01(this.sfxUserVolume),
+            voice: this._clamp01(this.voiceUserVolume)
+        };
+    }
+
+    setAudioSettings(partial = {}) {
+        if (Object.prototype.hasOwnProperty.call(partial, 'music')) {
+            this.musicUserVolume = this._clamp01(partial.music);
+        }
+        if (Object.prototype.hasOwnProperty.call(partial, 'sfx')) {
+            this.sfxUserVolume = this._clamp01(partial.sfx);
+        }
+        if (Object.prototype.hasOwnProperty.call(partial, 'voice')) {
+            this.voiceUserVolume = this._clamp01(partial.voice);
+        }
+        this._saveAudioSettings();
+
+        const rawMusic = this.currentVoice ? this.baseMusicVolume * 0.3 : this.baseMusicVolume;
+        this.setMusicVolume(rawMusic);
+
+        if (this.currentVoice) {
+            this.currentVoice.volume = this._clamp01(this.currentVoiceBaseVolume * this.voiceUserVolume);
+        }
+
+        this.loopingSounds.forEach(entry => {
+            if (!entry || !entry.audio) return;
+            const baseVolume = this._clamp01(entry.baseVolume ?? 1.0);
+            entry.audio.volume = this._clamp01(baseVolume * this.sfxUserVolume);
+        });
+        return this.getAudioSettings();
+    }
+
+    setMusicUserVolume(volume) {
+        return this.setAudioSettings({ music: volume });
+    }
+
+    setSfxUserVolume(volume) {
+        return this.setAudioSettings({ sfx: volume });
+    }
+
+    setVoiceUserVolume(volume) {
+        return this.setAudioSettings({ voice: volume });
     }
 
     async playVoice(voiceId, volume = 1.0) {
@@ -48,7 +145,8 @@ export class AssetLoader {
         try {
             const audio = this.voices[voiceId] || new Audio(src);
             this.voices[voiceId] = audio;
-            audio.volume = volume;
+            this.currentVoiceBaseVolume = this._clamp01(volume);
+            audio.volume = this._clamp01(this.currentVoiceBaseVolume * this.voiceUserVolume);
             this.currentVoice = audio;
 
             this.fadeMusicVolume(this.baseMusicVolume * 0.3, 200);
@@ -108,20 +206,26 @@ export class AssetLoader {
             this.currentVoice.onended = null;
             this.currentVoice.currentTime = 0;
             this.currentVoice = null;
+            this.currentVoiceBaseVolume = 1.0;
         }
         this.onNextVoiceEnd = null;
         // Restore music volume smoothly
         this.fadeMusicVolume(this.baseMusicVolume, 300);
     }
 
+    clearVoiceCache() {
+        this.stopVoice();
+        this.voices = {};
+    }
+
     setMusicVolume(volume) {
-        const effective = this.musicMutedByUser ? 0 : volume;
+        const effective = this._getEffectiveMusicVolume(volume);
         if (this.currentIntro) this.currentIntro.volume = effective;
         if (this.currentLoop) this.currentLoop.volume = effective;
     }
 
     fadeMusicVolume(targetVolume, duration = 200) {
-        const effectiveTarget = this.musicMutedByUser ? 0 : targetVolume;
+        const effectiveTarget = this._getEffectiveMusicVolume(targetVolume);
         // Stop any existing ducking fade
         if (this.duckInterval) {
             clearInterval(this.duckInterval);
@@ -499,7 +603,7 @@ export class AssetLoader {
         if (sound) {
             const clone = sound.cloneNode();
             // Clamp volume between 0 and 1 to prevent IndexSizeError
-            clone.volume = Math.max(0, Math.min(1, resolvedVolume));
+            clone.volume = this._clamp01(resolvedVolume * this.sfxUserVolume);
             clone.play().catch(e => {
                 this.audioUnlocked = false;
                 console.log("Sound play prevented:", e);
@@ -557,13 +661,15 @@ export class AssetLoader {
         const base = this.getSound(key);
         if (!base) return;
 
-        const targetVolume = Math.max(0, Math.min(1, volume));
+        const baseVolume = this._clamp01(volume);
+        const targetVolume = this._clamp01(baseVolume * this.sfxUserVolume);
         const existing = this.loopingSounds.get(key);
         if (existing) {
             if (existing.fadeInterval) {
                 clearInterval(existing.fadeInterval);
                 existing.fadeInterval = null;
             }
+            existing.baseVolume = baseVolume;
             existing.audio.loop = true;
             if (fadeInMs <= 0) {
                 existing.audio.volume = targetVolume;
@@ -585,7 +691,7 @@ export class AssetLoader {
         const audio = base.cloneNode();
         audio.loop = true;
         audio.volume = (fadeInMs > 0) ? 0 : targetVolume;
-        const entry = { audio, fadeInterval: null };
+        const entry = { audio, fadeInterval: null, baseVolume };
         this.loopingSounds.set(key, entry);
         audio.play().catch(e => console.log("Looping sound play prevented:", e));
 
@@ -636,12 +742,14 @@ export class AssetLoader {
     playMusic(key, targetVolume = 0.5) {
         if (this.currentMusicKey === key) {
             this.baseMusicVolume = targetVolume;
+            const rawTarget = this.currentVoice ? targetVolume * 0.3 : targetVolume;
+            this.setMusicVolume(rawTarget);
             return;
         }
 
         this.baseMusicVolume = targetVolume;
         const requestedVolume = this.currentVoice ? targetVolume * 0.3 : targetVolume;
-        const actualVolume = this.musicMutedByUser ? 0 : requestedVolume;
+        const actualVolume = this._getEffectiveMusicVolume(requestedVolume);
 
         const nextIntro = this.getMusic(`${key}_intro`);
         const nextLoop = this.getMusic(`${key}_loop`);
@@ -679,7 +787,7 @@ export class AssetLoader {
             nextIntro.onended = () => {
                 if (this.currentMusicKey === key) {
                     const rawTarget = this.currentVoice ? this.baseMusicVolume * 0.3 : this.baseMusicVolume;
-                    const currentTarget = this.musicMutedByUser ? 0 : rawTarget;
+                    const currentTarget = this._getEffectiveMusicVolume(rawTarget);
                     nextLoop.volume = currentTarget;
                     nextLoop.currentTime = 0;
                     nextLoop.play().catch(e => {
@@ -715,7 +823,7 @@ export class AssetLoader {
 
             // Fade in new music
             const rawTarget = this.currentVoice ? this.baseMusicVolume * 0.3 : this.baseMusicVolume;
-            const currentTarget = this.musicMutedByUser ? 0 : rawTarget;
+            const currentTarget = this._getEffectiveMusicVolume(rawTarget);
             if (activeNextPart.volume < currentTarget - fadeInStep) {
                 activeNextPart.volume += fadeInStep;
                 finished = false;
@@ -732,4 +840,3 @@ export class AssetLoader {
 }
 
 export const assets = new AssetLoader();
-
