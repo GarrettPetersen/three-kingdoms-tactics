@@ -152,6 +152,7 @@ export class CampaignSelectionScene extends BaseScene {
 
         // Setup ESC key listener
         this._onKeyDown = (e) => {
+            if (this.manager?.isOptionsOverlayActive && this.manager.isOptionsOverlayActive()) return;
             if (e.key === 'Escape') {
                 this.manager.switchTo('title');
             }
@@ -676,6 +677,7 @@ export class CampaignSelectionScene extends BaseScene {
     }
 
     handleKeyDown(e) {
+        if (this.manager?.isOptionsOverlayActive && this.manager.isOptionsOverlayActive()) return;
         this.rebuildNavTargets(this.manager.canvas);
         if (e.key === 'Escape') {
             this.manager.switchTo('title');
@@ -712,4 +714,3 @@ export class CampaignSelectionScene extends BaseScene {
         }
     }
 }
-

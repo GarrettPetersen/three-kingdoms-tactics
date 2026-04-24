@@ -12,20 +12,48 @@ import { BattleSummaryScene } from './scenes/BattleSummaryScene.js';
 import { LevelUpScene } from './scenes/LevelUpScene.js';
 import { RecoveryScene } from './scenes/RecoveryScene.js';
 import { CreditsScene } from './scenes/CreditsScene.js';
+import { OptionsOverlay } from './scenes/OptionsOverlay.js';
 
 const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
 
+// Phase 1: centralize canvas sizing so resolution changes are controlled from one place.
+const TARGET_CANVAS_WIDTH = 455;
+const TARGET_CANVAS_HEIGHT = 256;
+const LEGACY_CANVAS_WIDTH = 256;
+const LEGACY_CANVAS_HEIGHT = 256;
+const LEGACY_X_OFFSET = Math.floor((TARGET_CANVAS_WIDTH - LEGACY_CANVAS_WIDTH) / 2);
+const USE_WIDE_CANVAS = true;
+
+const ACTIVE_CANVAS_WIDTH = USE_WIDE_CANVAS ? TARGET_CANVAS_WIDTH : LEGACY_CANVAS_WIDTH;
+const ACTIVE_CANVAS_HEIGHT = USE_WIDE_CANVAS ? TARGET_CANVAS_HEIGHT : LEGACY_CANVAS_HEIGHT;
+const LEGACY_MAP_WIDTH = 10;
+const LEGACY_MAP_HEIGHT = 12;
+const BASE_HEX_HORIZONTAL_SPACING = 23;
+const BASE_HEX_VERTICAL_SPACING = 17;
+const HEX_SPACING_SCALE = 1.25;
+
 const config = {
-    virtualWidth: 256,
-    virtualHeight: 256,
+    useWideCanvas: USE_WIDE_CANVAS,
+    targetCanvasWidth: TARGET_CANVAS_WIDTH,
+    targetCanvasHeight: TARGET_CANVAS_HEIGHT,
+    legacyCanvasWidth: LEGACY_CANVAS_WIDTH,
+    legacyCanvasHeight: LEGACY_CANVAS_HEIGHT,
+    legacyXOffset: LEGACY_X_OFFSET,
+    legacyMapWidth: LEGACY_MAP_WIDTH,
+    legacyMapHeight: LEGACY_MAP_HEIGHT,
+    baseHorizontalSpacing: BASE_HEX_HORIZONTAL_SPACING,
+    baseVerticalSpacing: BASE_HEX_VERTICAL_SPACING,
+    hexSpacingScale: HEX_SPACING_SCALE,
+    virtualWidth: ACTIVE_CANVAS_WIDTH,
+    virtualHeight: ACTIVE_CANVAS_HEIGHT,
     tileWidth: 36,
     tileHeight: 36,
     baseDepth: 6,
-    horizontalSpacing: 23, 
-    verticalSpacing: 17,   
-    mapWidth: 10,
-    mapHeight: 12
+    horizontalSpacing: Math.round(BASE_HEX_HORIZONTAL_SPACING * HEX_SPACING_SCALE),
+    verticalSpacing: Math.round(BASE_HEX_VERTICAL_SPACING * HEX_SPACING_SCALE),
+    mapWidth: LEGACY_MAP_WIDTH,
+    mapHeight: LEGACY_MAP_HEIGHT
 };
 
 const TERRAIN_TYPES = [
@@ -52,12 +80,13 @@ function setupCanvas() {
     canvas.height = config.virtualHeight;
     ctx.imageSmoothingEnabled = false;
 
-    // Scale canvas to the largest size that fits the viewport (maintain aspect ratio)
+    // Use uniform integer scale to keep pixels square and avoid distortion/blur.
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
-    const scale = Math.max(1, Math.min(screenWidth / config.virtualWidth, screenHeight / config.virtualHeight));
-    canvas.style.width = `${Math.floor(config.virtualWidth * scale)}px`;
-    canvas.style.height = `${Math.floor(config.virtualHeight * scale)}px`;
+    const maxScale = Math.min(screenWidth / config.virtualWidth, screenHeight / config.virtualHeight);
+    const scale = Math.max(1, Math.floor(maxScale));
+    canvas.style.width = `${config.virtualWidth * scale}px`;
+    canvas.style.height = `${config.virtualHeight * scale}px`;
 }
 
 /**
@@ -193,6 +222,7 @@ async function init() {
     sceneManager.addScene('recovery', new RecoveryScene());
     sceneManager.addScene('levelup', new LevelUpScene());
     sceneManager.addScene('credits', new CreditsScene());
+    sceneManager.setOptionsOverlay(new OptionsOverlay());
 
     const actionRecorder = new ActionRecorder(assets, canvas);
     sceneManager.actionRecorder = actionRecorder;
@@ -264,8 +294,8 @@ async function init() {
         if (!isMusicHotkey) return;
         e.preventDefault();
         assets.musicMutedByUser = !assets.musicMutedByUser;
-        const vol = assets.musicMutedByUser ? 0 : (assets.baseMusicVolume ?? 0.5);
-        assets.setMusicVolume(vol);
+        const rawTarget = assets.currentVoice ? (assets.baseMusicVolume ?? 0.5) * 0.3 : (assets.baseMusicVolume ?? 0.5);
+        assets.setMusicVolume(rawTarget);
     });
 
     canvas.addEventListener('pointerdown', (e) => sceneManager.handleInput(e));

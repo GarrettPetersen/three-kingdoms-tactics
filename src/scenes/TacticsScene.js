@@ -82,6 +82,122 @@ export class TacticsScene extends BaseScene {
         this.paletteToastUntil = 0;
         this.environmentPaletteImageKeys = [];
         this.environmentPaletteBaseImages = new Map();
+        this.uiTopReserve = 8;
+        this.uiBottomReserve = 40;
+        this.hexWalkableBottomOffset = 6;
+        this.hexSideCropAllowance = 2;
+        this.hexFitWidth = 24;
+        this.hexExtraColumns = 1;
+    }
+
+    clampInt(value, min, max) {
+        return Math.max(min, Math.min(max, Math.round(value)));
+    }
+
+    clampCoordToMap(r, q) {
+        const { config } = this.manager;
+        const maxR = Math.max(0, (config.mapHeight || 1) - 1);
+        const maxQ = Math.max(0, (config.mapWidth || 1) - 1);
+        return {
+            r: this.clampInt(Number.isFinite(r) ? r : 0, 0, maxR),
+            q: this.clampInt(Number.isFinite(q) ? q : 0, 0, maxQ)
+        };
+    }
+
+    remapLegacyCoordToCurrent(r, q) {
+        const { config } = this.manager;
+        const srcW = Math.max(1, config.legacyMapWidth || 10);
+        const srcH = Math.max(1, config.legacyMapHeight || 12);
+        const dstW = Math.max(1, config.mapWidth || srcW);
+        const dstH = Math.max(1, config.mapHeight || srcH);
+
+        const rawR = Number.isFinite(r) ? r : 0;
+        const rawQ = Number.isFinite(q) ? q : 0;
+        const srcR = this.clampInt(rawR, 0, srcH - 1);
+        const srcQ = this.clampInt(rawQ, 0, srcW - 1);
+
+        if (srcW === dstW && srcH === dstH) {
+            return {
+                r: this.clampInt(srcR, 0, dstH - 1),
+                q: this.clampInt(srcQ, 0, dstW - 1)
+            };
+        }
+
+        const rNorm = srcH > 1 ? (srcR / (srcH - 1)) : 0;
+        const qNorm = srcW > 1 ? (srcQ / (srcW - 1)) : 0;
+        return {
+            r: this.clampInt(rNorm * (dstH - 1), 0, dstH - 1),
+            q: this.clampInt(qNorm * (dstW - 1), 0, dstW - 1)
+        };
+    }
+
+    remapLegacyCoordList(coords) {
+        const unique = new Set();
+        const mapped = [];
+        (coords || []).forEach((c) => {
+            const p = this.remapLegacyCoordToCurrent(c.r, c.q);
+            const key = `${p.r},${p.q}`;
+            if (unique.has(key)) return;
+            unique.add(key);
+            mapped.push(p);
+        });
+        return mapped;
+    }
+
+    configureBattlefieldGeometry() {
+        const { config, canvas } = this.manager;
+        const spacingX = Math.max(1, config.horizontalSpacing || 1);
+        const spacingY = Math.max(1, config.verticalSpacing || 1);
+        const tileW = Math.max(1, config.tileWidth || 36);
+        const tileH = Math.max(1, config.tileHeight || 36);
+        const fitHexW = Math.max(1, Math.min(tileW, this.hexFitWidth || tileW));
+        const fitHalfHexW = fitHexW / 2;
+        const halfTileH = tileH / 2;
+        const sideCropAllowance = Math.max(0, Math.min(fitHalfHexW - 1, this.hexSideCropAllowance || 0));
+        const visibleTileW = Math.max(1, fitHexW - sideCropAllowance * 2);
+        const walkableBottom = Math.max(0, this.hexWalkableBottomOffset || 0);
+        const bottomSurfaceLimitY = canvas.height - this.uiBottomReserve - walkableBottom;
+
+        // Fit rows so full top of top row is visible, and bottom walkable surface can touch UI top edge.
+        const maxFitRows = Math.max(1, Math.floor((bottomSurfaceLimitY - halfTileH) / spacingY) + 1);
+        config.mapHeight = Math.max(6, maxFitRows);
+
+        // Fit columns by the walkable hex footprint (not full tile art box), with optional side shaving.
+        const oddRowOffset = config.mapHeight > 1 ? spacingX / 2 : 0;
+        const maxFitCols = Math.max(1, Math.floor((canvas.width - visibleTileW - oddRowOffset) / spacingX) + 1);
+        config.mapWidth = Math.max(6, maxFitCols + Math.max(0, this.hexExtraColumns || 0));
+
+        this.updateBattlefieldAnchor();
+    }
+
+    updateBattlefieldAnchor() {
+        const { config, canvas } = this.manager;
+        const spacingX = Math.max(1, config.horizontalSpacing || 1);
+        const spacingY = Math.max(1, config.verticalSpacing || 1);
+        const tileW = Math.max(1, config.tileWidth || 36);
+        const tileH = Math.max(1, config.tileHeight || 36);
+        const fitHexW = Math.max(1, Math.min(tileW, this.hexFitWidth || tileW));
+        const fitHalfHexW = fitHexW / 2;
+        const halfTileH = tileH / 2;
+        const sideCropAllowance = Math.max(0, Math.min(fitHalfHexW - 1, this.hexSideCropAllowance || 0));
+        const visibleHalfTileW = Math.max(1, fitHalfHexW - sideCropAllowance);
+        const oddRowOffset = config.mapHeight > 1 ? spacingX / 2 : 0;
+        const maxCenterXRelative = (Math.max(1, config.mapWidth) - 1) * spacingX + oddRowOffset;
+
+        const centeredStartX = (canvas.width - maxCenterXRelative) / 2;
+        const minStartX = visibleHalfTileW;
+        const maxStartX = canvas.width - visibleHalfTileW - maxCenterXRelative;
+        if (maxStartX < minStartX) {
+            this.startX = Math.floor(centeredStartX);
+        } else {
+            this.startX = Math.floor(Math.max(minStartX, Math.min(maxStartX, centeredStartX)));
+        }
+
+        const walkableBottom = Math.max(0, this.hexWalkableBottomOffset || 0);
+        const lastRowCenterTargetY = canvas.height - this.uiBottomReserve - walkableBottom;
+        const desiredStartY = lastRowCenterTargetY - (Math.max(1, config.mapHeight) - 1) * spacingY;
+        const minStartY = Math.max(this.uiTopReserve, halfTileH);
+        this.startY = Math.floor(Math.max(minStartY, desiredStartY));
     }
 
     cloneScriptSteps(steps) {
@@ -265,13 +381,9 @@ export class TacticsScene extends BaseScene {
         assets.playMusic(musicKey, 0.4);
         
         const { config, canvas } = this.manager;
+        this.configureBattlefieldGeometry();
         this.tacticsMap = new TacticsMap(config.mapWidth, config.mapHeight);
-
-        // Calculate map start positions once
-        const mapPixelWidth = config.mapWidth * config.horizontalSpacing;
-        const mapPixelHeight = config.mapHeight * config.verticalSpacing;
-        this.startX = Math.floor((canvas.width - mapPixelWidth) / 2);
-        this.startY = Math.floor((canvas.height - mapPixelHeight) / 2);
+        this.updateBattlefieldAnchor();
 
         // HARD RESET all scene state to prevent bleed from previous battles
         this.units = [];
@@ -427,7 +539,8 @@ export class TacticsScene extends BaseScene {
         // Apply terrain overrides from battle definition
         if (battleDef && battleDef.terrainOverrides) {
             for (const override of battleDef.terrainOverrides) {
-                const cell = this.tacticsMap.getCell(override.r, override.q);
+                const mapped = this.remapLegacyCoordToCurrent(override.r, override.q);
+                const cell = this.tacticsMap.getCell(mapped.r, mapped.q);
                 if (cell) {
                     cell.terrain = override.terrain;
                     // Clear impassable flag if setting to a traversable terrain
@@ -440,7 +553,8 @@ export class TacticsScene extends BaseScene {
 
         if (battleDef && battleDef.flagPos) {
             // Find a suitable spot for the flag if specified spot is impassable
-            let r = battleDef.flagPos.r, q = battleDef.flagPos.q;
+            const mappedFlag = this.remapLegacyCoordToCurrent(battleDef.flagPos.r, battleDef.flagPos.q);
+            let r = mappedFlag.r, q = mappedFlag.q;
             let cell = this.tacticsMap.getCell(r, q);
             if (!cell || cell.impassable) {
                 const foundCell = this.findNearestFreeCell(r, q);
@@ -459,7 +573,8 @@ export class TacticsScene extends BaseScene {
                 let attempts = 0;
                 while (attempts < 5) {
                     // Liu Bei starts at {r: 7, q: 4} in qingzhou_siege
-                    const path = this.tacticsMap.getPath(7, 4, this.flagPos.r, this.flagPos.q, 99);
+                    const mappedStart = this.remapLegacyCoordToCurrent(7, 4);
+                    const path = this.tacticsMap.getPath(mappedStart.r, mappedStart.q, this.flagPos.r, this.flagPos.q, 99);
                     if (path) break;
                     this.tacticsMap.generate(this.mapGenParams);
                     attempts++;
@@ -1138,43 +1253,49 @@ export class TacticsScene extends BaseScene {
 
             // After kills, oath brothers walk towards Gong Jing
             setTimeout(() => {
+                const liubeiTarget = this.remapLegacyCoordToCurrent(4, 4);
+                const guanyuTarget = this.remapLegacyCoordToCurrent(5, 4);
+                const zhangfeiTarget = this.remapLegacyCoordToCurrent(4, 6);
                 // Move Liu Bei towards Gong Jing
                 if (liubei) {
-                    const pathLiubei = this.tacticsMap.getPath(liubei.r, liubei.q, 4, 4, 10, liubei);
+                    const pathLiubei = this.tacticsMap.getPath(liubei.r, liubei.q, liubeiTarget.r, liubeiTarget.q, 10, liubei);
                     if (pathLiubei) {
                         const oldCell = this.tacticsMap.getCell(liubei.r, liubei.q);
                         if (oldCell) oldCell.unit = null;
                         liubei.startPath(pathLiubei);
-                        const newCell = this.tacticsMap.getCell(4, 4);
+                        const newCell = this.tacticsMap.getCell(liubeiTarget.r, liubeiTarget.q);
                         if (newCell) newCell.unit = liubei;
-                        liubei.r = 4; liubei.q = 4;
+                        liubei.r = liubeiTarget.r;
+                        liubei.q = liubeiTarget.q;
                     }
                 }
                 // Move Guan Yu
                 if (guanyu) {
                     setTimeout(() => {
-                        const pathGuanyu = this.tacticsMap.getPath(guanyu.r, guanyu.q, 5, 4, 10, guanyu);
+                        const pathGuanyu = this.tacticsMap.getPath(guanyu.r, guanyu.q, guanyuTarget.r, guanyuTarget.q, 10, guanyu);
                         if (pathGuanyu) {
                             const oldCell = this.tacticsMap.getCell(guanyu.r, guanyu.q);
                             if (oldCell) oldCell.unit = null;
                             guanyu.startPath(pathGuanyu);
-                            const newCell = this.tacticsMap.getCell(5, 4);
+                            const newCell = this.tacticsMap.getCell(guanyuTarget.r, guanyuTarget.q);
                             if (newCell) newCell.unit = guanyu;
-                            guanyu.r = 5; guanyu.q = 4;
+                            guanyu.r = guanyuTarget.r;
+                            guanyu.q = guanyuTarget.q;
                         }
                     }, 200);
                 }
                 // Move Zhang Fei
                 if (zhangfei) {
                     setTimeout(() => {
-                        const pathZhangfei = this.tacticsMap.getPath(zhangfei.r, zhangfei.q, 4, 6, 10, zhangfei);
+                        const pathZhangfei = this.tacticsMap.getPath(zhangfei.r, zhangfei.q, zhangfeiTarget.r, zhangfeiTarget.q, 10, zhangfei);
                         if (pathZhangfei) {
                             const oldCell = this.tacticsMap.getCell(zhangfei.r, zhangfei.q);
                             if (oldCell) oldCell.unit = null;
                             zhangfei.startPath(pathZhangfei);
-                            const newCell = this.tacticsMap.getCell(4, 6);
+                            const newCell = this.tacticsMap.getCell(zhangfeiTarget.r, zhangfeiTarget.q);
                             if (newCell) newCell.unit = zhangfei;
-                            zhangfei.r = 4; zhangfei.q = 6;
+                            zhangfei.r = zhangfeiTarget.r;
+                            zhangfei.q = zhangfeiTarget.q;
                         }
                     }, 400);
                 }
@@ -1328,6 +1449,7 @@ export class TacticsScene extends BaseScene {
         const unitXP = gs.getCampaignVar('unitXP') || {};
         const unitLevelsSeen = gs.getCampaignVar('unitLevelsSeen') || {};
         const unitClasses = gs.getCampaignVar('unitClasses') || {};
+        const mappedSpawn = this.remapLegacyCoordToCurrent(r, q);
         
         const xp = unitXP[id] || 0;
         const level = this.getLevelFromXP(xp);
@@ -1350,13 +1472,13 @@ export class TacticsScene extends BaseScene {
         const finalMaxHp = this.getMaxHpForLevel(level, baseHp);
 
         // AMBUSH SPECIAL: Force the spawn cell passable so units can appear on mountains (flood fill handles reachability)
-        const targetCell = this.tacticsMap.getCell(r, q);
+        const targetCell = this.tacticsMap.getCell(mappedSpawn.r, mappedSpawn.q);
         if (targetCell) targetCell.impassable = false;
 
         // Find closest free spot if r,q is taken
-        const finalCell = this.findNearestFreeCell(r, q, 5);
+        const finalCell = this.findNearestFreeCell(mappedSpawn.r, mappedSpawn.q, 5);
         if (!finalCell) {
-            console.warn(`Could not find a free spot for ambush unit ${id} at (${r},${q})`);
+            console.warn(`Could not find a free spot for ambush unit ${id} at (${mappedSpawn.r},${mappedSpawn.q})`);
             return null;
         }
 
@@ -1609,9 +1731,9 @@ export class TacticsScene extends BaseScene {
         const unitXP = gs.getCampaignVar('unitXP') || {};
         const unitClasses = gs.getCampaignVar('unitClasses') || {};
         const allyPositions = [
-            { id: 'ally1', r: 5, q: 0 },
-            { id: 'ally2', r: 7, q: 0 },
-            { id: 'ally3', r: 4, q: 2 }
+            { id: 'ally1', ...this.remapLegacyCoordToCurrent(5, 0) },
+            { id: 'ally2', ...this.remapLegacyCoordToCurrent(7, 0) },
+            { id: 'ally3', ...this.remapLegacyCoordToCurrent(4, 2) }
         ];
 
         allyPositions.forEach((allyDef) => {
@@ -1870,9 +1992,13 @@ export class TacticsScene extends BaseScene {
 
     spawnChapter2DongZhuoHorseReinforcements() {
         if (this.battleId !== 'chapter2_oath_dongzhuo_choice') return [];
+        const rowA = this.remapLegacyCoordToCurrent(5, 0).r;
+        const rowB = this.remapLegacyCoordToCurrent(7, 0).r;
+        const rightEdgeQ = Math.max(0, this.manager.config.mapWidth - 1);
+        const innerRightQ = Math.max(0, rightEdgeQ - 2);
         const defs = [
-            { id: 'dz_reinforce_black', horseType: 'black', start: { r: 5, q: this.manager.config.mapWidth - 1 }, dest: { r: 5, q: this.manager.config.mapWidth - 3 } },
-            { id: 'dz_reinforce_brown', horseType: 'brown', start: { r: 7, q: this.manager.config.mapWidth - 1 }, dest: { r: 7, q: this.manager.config.mapWidth - 3 } }
+            { id: 'dz_reinforce_black', horseType: 'black', start: { r: rowA, q: rightEdgeQ }, dest: { r: rowA, q: innerRightQ } },
+            { id: 'dz_reinforce_brown', horseType: 'brown', start: { r: rowB, q: rightEdgeQ }, dest: { r: rowB, q: innerRightQ } }
         ];
         const spawned = [];
 
@@ -4278,12 +4404,13 @@ export class TacticsScene extends BaseScene {
         
         // Only spawn if captains are alive and we're low on grunts
         if (aliveCaptains.length > 0 && enemies.length < 5) {
-            const spawnSpots = [
-                { r: this.manager.config.mapHeight - 1, q: 3 }, 
-                { r: this.manager.config.mapHeight - 1, q: 4 },
-                { r: this.manager.config.mapHeight - 1, q: 5 }, 
-                { r: this.manager.config.mapHeight - 1, q: 6 }
-            ];
+            const legacyBottomR = Math.max(0, (this.manager.config.legacyMapHeight || 12) - 1);
+            const spawnSpots = this.remapLegacyCoordList([
+                { r: legacyBottomR, q: 3 },
+                { r: legacyBottomR, q: 4 },
+                { r: legacyBottomR, q: 5 },
+                { r: legacyBottomR, q: 6 }
+            ]);
             
             let spawns = 0;
             spawnSpots.forEach(spot => {
@@ -4335,13 +4462,14 @@ export class TacticsScene extends BaseScene {
         // but the prompt says "5 enemies appearing on the first turn and then 5 more on the next turn"
         // which usually refers to the start of the battle.
         if (this.turnNumber === 1 || this.turnNumber === 2) {
-            const spawnSpots = [
-                { r: this.manager.config.mapHeight - 1, q: 2 },
-                { r: this.manager.config.mapHeight - 1, q: 3 },
-                { r: this.manager.config.mapHeight - 1, q: 4 },
-                { r: this.manager.config.mapHeight - 1, q: 5 },
-                { r: this.manager.config.mapHeight - 1, q: 6 }
-            ];
+            const legacyBottomR = Math.max(0, (this.manager.config.legacyMapHeight || 12) - 1);
+            const spawnSpots = this.remapLegacyCoordList([
+                { r: legacyBottomR, q: 2 },
+                { r: legacyBottomR, q: 3 },
+                { r: legacyBottomR, q: 4 },
+                { r: legacyBottomR, q: 5 },
+                { r: legacyBottomR, q: 6 }
+            ]);
 
             let spawns = 0;
             spawnSpots.forEach((spot, i) => {
@@ -4387,11 +4515,11 @@ export class TacticsScene extends BaseScene {
         // Trigger when first wave is mostly defeated.
         if (aliveMainThreats.length > 2) return;
 
-        const spawnSpots = [
+        const spawnSpots = this.remapLegacyCoordList([
             { r: 4, q: 1 },
             { r: 6, q: 1 },
             { r: 8, q: 1 }
-        ];
+        ]);
         let spawns = 0;
         spawnSpots.forEach((spot, i) => {
             const cell = this.findNearestFreeCell(spot.r, spot.q, 4);
@@ -5863,13 +5991,14 @@ export class TacticsScene extends BaseScene {
     }
 
     findNearestFreeCell(r, q, maxDist = 5) {
-        const startCell = this.tacticsMap.getCell(r, q);
+        const start = this.clampCoordToMap(r, q);
+        const startCell = this.tacticsMap.getCell(start.r, start.q);
         if (startCell && !startCell.unit && !startCell.impassable) {
             return startCell;
         }
 
-        const queue = [{ r, q, d: 0 }];
-        const visited = new Set([`${r},${q}`]);
+        const queue = [{ r: start.r, q: start.q, d: 0 }];
+        const visited = new Set([`${start.r},${start.q}`]);
 
         while (queue.length > 0) {
             const current = queue.shift();
@@ -5899,12 +6028,13 @@ export class TacticsScene extends BaseScene {
             return { cell, flip: resolvedFlip };
         };
 
-        const startCell = this.tacticsMap.getCell(r, q);
+        const start = this.clampCoordToMap(r, q);
+        const startCell = this.tacticsMap.getCell(start.r, start.q);
         const startPick = tryCell(startCell);
         if (startPick) return startPick;
 
-        const queue = [{ r, q, d: 0 }];
-        const visited = new Set([`${r},${q}`]);
+        const queue = [{ r: start.r, q: start.q, d: 0 }];
+        const visited = new Set([`${start.r},${start.q}`]);
 
         while (queue.length > 0) {
             const current = queue.shift();
@@ -6017,12 +6147,13 @@ export class TacticsScene extends BaseScene {
 
                 customCityGateSpawnById = new Map();
                 unitsToPlace.forEach((u, idx) => {
+                    const pref = this.remapLegacyCoordToCurrent(u.r, u.q);
                     const isDefender = defenderSide === 'enemy'
                         ? (u.faction === 'enemy')
                         : (u.faction === 'player' || u.faction === 'allied');
                     const preferredPool = isDefender ? insideCells : outsideCells;
                     const fallbackPool = isDefender ? outsideCells : insideCells;
-                    const spawn = pickSpawn(preferredPool, u.r, u.q) || pickSpawn(fallbackPool, u.r, u.q);
+                    const spawn = pickSpawn(preferredPool, pref.r, pref.q) || pickSpawn(fallbackPool, pref.r, pref.q);
                     if (spawn) {
                         customCityGateSpawnById.set(u.id || `idx_${idx}`, spawn);
                     }
@@ -6030,8 +6161,9 @@ export class TacticsScene extends BaseScene {
             }
 
             unitsToPlace.forEach(u => {
-                let finalR = u.r;
-                let finalQ = u.q;
+                const mapped = this.remapLegacyCoordToCurrent(u.r, u.q);
+                let finalR = mapped.r;
+                let finalQ = mapped.q;
                 let mountedSpawnPick = null;
                 const wantsHorseSpawn = !!u.onHorse;
                 if (customCityGateSpawnById) {
@@ -7244,11 +7376,7 @@ export class TacticsScene extends BaseScene {
         const { ctx, canvas, config } = this.manager;
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        const mapPixelWidth = config.mapWidth * config.horizontalSpacing;
-        const mapPixelHeight = config.mapHeight * config.verticalSpacing;
-        this.startX = Math.floor((canvas.width - mapPixelWidth) / 2);
-        this.startY = Math.floor((canvas.height - mapPixelHeight) / 2);
+        this.updateBattlefieldAnchor();
 
         const drawCalls = [];
 

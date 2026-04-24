@@ -20,6 +20,34 @@ export const UI_TEXT = {
         en: 'CUSTOM BATTLE',
         zh: '自定义战斗'
     },
+    'OPTIONS': {
+        en: 'OPTIONS',
+        zh: '选项'
+    },
+    'MUSIC VOLUME': {
+        en: 'MUSIC VOLUME',
+        zh: '音乐音量'
+    },
+    'SFX VOLUME': {
+        en: 'SFX VOLUME',
+        zh: '音效音量'
+    },
+    'VOICE VOLUME': {
+        en: 'VOICE VOLUME',
+        zh: '语音音量'
+    },
+    'LANGUAGE': {
+        en: 'LANGUAGE',
+        zh: '语言'
+    },
+    'CLOSE': {
+        en: 'CLOSE',
+        zh: '关闭'
+    },
+    'ESC TO CLOSE': {
+        en: 'ESC TO CLOSE',
+        zh: '按ESC关闭'
+    },
     'YES': {
         en: 'YES',
         zh: '是'
@@ -648,4 +676,3 @@ export function getLocalizedCharacterName(name) {
     // Fallback: try to translate common patterns
     return name;
 }
-
