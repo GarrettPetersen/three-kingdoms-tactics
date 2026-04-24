@@ -3,6 +3,9 @@ import { assets } from '../core/AssetLoader.js';
 import { getLocalizedText, LANGUAGE } from '../core/Language.js';
 import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
 
+const STORY_MAP_LEGACY_WIDTH = 256;
+const STORY_MAP_LEGACY_HEIGHT = 256;
+
 export class CampaignSelectionScene extends BaseScene {
     constructor() {
         super();
@@ -183,8 +186,32 @@ export class CampaignSelectionScene extends BaseScene {
         }
     }
 
+    getStoryMapRect(canvas) {
+        const mapImg = assets.getImage('china_map');
+        const mapW = mapImg?.width || STORY_MAP_LEGACY_WIDTH;
+        const mapH = mapImg?.height || STORY_MAP_LEGACY_HEIGHT;
+        const maxScale = Math.min(canvas.width / mapW, canvas.height / mapH);
+        const integerScale = Math.floor(maxScale);
+        const scale = integerScale >= 1 ? integerScale : maxScale;
+        const drawW = Math.max(1, Math.floor(mapW * scale));
+        const drawH = Math.max(1, Math.floor(mapH * scale));
+        const x = Math.floor((canvas.width - drawW) / 2);
+        const y = Math.floor((canvas.height - drawH) / 2);
+        return { x, y, width: drawW, height: drawH };
+    }
+
+    getCampaignScreenPos(campaign, mapRect) {
+        const scaleX = mapRect.width / STORY_MAP_LEGACY_WIDTH;
+        const scaleY = mapRect.height / STORY_MAP_LEGACY_HEIGHT;
+        return {
+            x: Math.round(mapRect.x + (campaign.x * scaleX)),
+            y: Math.round(mapRect.y + (campaign.y * scaleY))
+        };
+    }
+
     render(timestamp) {
         const { ctx, canvas } = this.manager;
+        const mapRect = this.getStoryMapRect(canvas);
         this.rebuildNavTargets(canvas);
         
         ctx.fillStyle = '#000';
@@ -194,7 +221,7 @@ export class CampaignSelectionScene extends BaseScene {
         const mapImg = assets.getImage('china_map');
         if (mapImg) {
             ctx.globalAlpha = 0.5; // Dim the map to make UI pop
-            ctx.drawImage(mapImg, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(mapImg, mapRect.x, mapRect.y, mapRect.width, mapRect.height);
             ctx.globalAlpha = 1.0;
         }
 
@@ -255,6 +282,7 @@ export class CampaignSelectionScene extends BaseScene {
         const currentNavTarget = this.getCurrentNavTarget();
         const visibleCampaigns = this.getVisibleCampaigns();
         visibleCampaigns.forEach((c, i) => {
+            const pos = this.getCampaignScreenPos(c, mapRect);
             const isSelected = this.selectedIndex === i;
             const isFocusedByNav = !!(currentNavTarget && currentNavTarget.type === 'campaign' && currentNavTarget.index === i);
             const charImg = assets.getImage(c.imgKey);
@@ -272,7 +300,7 @@ export class CampaignSelectionScene extends BaseScene {
                     const pulse = Math.abs(Math.sin(Date.now() / 500));
                     ctx.fillStyle = c.isComplete ? 'rgba(100, 100, 100, 0.3)' : 'rgba(255, 215, 0, 0.3)';
                     ctx.beginPath();
-                    ctx.arc(c.x, c.y, 10 + pulse * 5, 0, Math.PI * 2);
+                    ctx.arc(pos.x, pos.y, 10 + pulse * 5, 0, Math.PI * 2);
                     ctx.fill();
                 }
 
@@ -283,17 +311,17 @@ export class CampaignSelectionScene extends BaseScene {
                     ctx.strokeStyle = c.locked ? 'rgba(140, 140, 140, 0.95)' : 'rgba(255, 215, 0, 0.95)';
                     ctx.lineWidth = 2;
                     ctx.beginPath();
-                    ctx.arc(c.x, c.y, ringRadius, 0, Math.PI * 2);
+                    ctx.arc(pos.x, pos.y, ringRadius, 0, Math.PI * 2);
                     ctx.stroke();
                 }
 
                 // If complete, no idle animation
                 const animFrame = c.isComplete ? 0 : frame;
-                this.drawCharacter(ctx, charImg, 'standby', animFrame, c.x, c.y, { flip: false });
+                this.drawCharacter(ctx, charImg, 'standby', animFrame, pos.x, pos.y, { flip: false });
 
                 // Red "COMPLETE" text over character if complete
                 if (c.isComplete) {
-                    this.drawPixelText(ctx, "COMPLETE", c.x, c.y - 15, { 
+                    this.drawPixelText(ctx, "COMPLETE", pos.x, pos.y - 15, { 
                         color: '#f00', 
                         font: '8px Silkscreen', 
                         align: 'center',
@@ -301,7 +329,7 @@ export class CampaignSelectionScene extends BaseScene {
                     });
                 } else if (c.isInProgress) {
                     // Yellow "IN PROGRESS" text over character if in progress
-                    this.drawPixelText(ctx, "IN PROGRESS", c.x, c.y - 15, { 
+                    this.drawPixelText(ctx, "IN PROGRESS", pos.x, pos.y - 15, { 
                         color: '#ffd700', 
                         font: '8px Silkscreen', 
                         align: 'center',
@@ -317,8 +345,8 @@ export class CampaignSelectionScene extends BaseScene {
                 const displayName = charNameText || c.charName;
                 // Only uppercase for English
                 const finalName = LANGUAGE.current === 'zh' ? displayName : displayName.toUpperCase();
-                const labelX = c.x + (c.nameOffsetX || 0);
-                const labelY = c.y + (c.nameOffsetY !== undefined ? c.nameOffsetY : -34);
+                const labelX = pos.x + (c.nameOffsetX || 0);
+                const labelY = pos.y + (c.nameOffsetY !== undefined ? c.nameOffsetY : -34);
                 this.drawPixelText(ctx, finalName, labelX, labelY, { color: nameColor, font: '8px Silkscreen', align: 'center' });
                 
                 ctx.restore();
@@ -404,6 +432,7 @@ export class CampaignSelectionScene extends BaseScene {
         const timelineX = 10;
         const timelineY = 40;
         const timelineSpacing = 25;
+        const mapRect = this.getStoryMapRect(canvas);
         let selectedId = null;
         const cur = this.getCurrentNavTarget();
         if (cur) selectedId = cur.id;
@@ -420,12 +449,13 @@ export class CampaignSelectionScene extends BaseScene {
             });
         });
         this.getVisibleCampaigns().forEach((c, i) => {
+            const pos = this.getCampaignScreenPos(c, mapRect);
             targets.push({
                 id: `campaign:${i}`,
                 type: 'campaign',
                 index: i,
-                x: c.x,
-                y: c.y
+                x: pos.x,
+                y: pos.y
             });
         });
         targets.push({
@@ -569,6 +599,7 @@ export class CampaignSelectionScene extends BaseScene {
 
     handleInput(e) {
         const { x, y } = this.getMousePos(e);
+        const mapRect = this.getStoryMapRect(this.manager.canvas);
         this.rebuildNavTargets(this.manager.canvas);
 
         // 0. Back button check
@@ -605,7 +636,8 @@ export class CampaignSelectionScene extends BaseScene {
         this.getVisibleCampaigns().forEach((c, i) => {
             const frame = Math.floor(Date.now() / 150) % 4;
             const charImg = assets.getImage(c.imgKey);
-            if (this.checkCharacterHit(charImg, 'standby', frame, c.x, c.y, x, y)) {
+            const pos = this.getCampaignScreenPos(c, mapRect);
+            if (this.checkCharacterHit(charImg, 'standby', frame, pos.x, pos.y, x, y)) {
                 hitChar = true;
                 if (this.selectedIndex === i && !c.locked) {
                     if (c.isComplete) {

@@ -459,6 +459,12 @@ export class MapScene extends BaseScene {
         };
     }
 
+    getMapOrigin(canvas, mapImg) {
+        const mx = Math.floor((canvas.width - mapImg.width) / 2);
+        const my = Math.floor((canvas.height - mapImg.height) / 2);
+        return { mx, my };
+    }
+
     render(timestamp) {
         const { ctx, canvas } = this.manager;
         ctx.fillStyle = '#000';
@@ -467,8 +473,7 @@ export class MapScene extends BaseScene {
         const mapImg = assets.getImage('china_map');
         if (!mapImg) return;
 
-        const mx = Math.floor((canvas.width - mapImg.width) / 2);
-        const my = Math.floor((canvas.height - mapImg.height) / 2);
+        const { mx, my } = this.getMapOrigin(canvas, mapImg);
         ctx.drawImage(mapImg, mx, my);
 
         // Draw dynamic locations
@@ -892,12 +897,11 @@ export class MapScene extends BaseScene {
         const { canvas } = this.manager;
 
         // Back button (top right)
-        const backW = 40;
-        const backH = 15;
-        const bx = canvas.width - backW - 5;
-        const by = 5;
-        
-        const isBackHovered = mouseX >= bx && mouseX <= bx + backW && mouseY >= by && mouseY <= by + backH;
+        const backRect = this.backRect || { x: canvas.width - 45, y: 5, w: 40, h: 15 };
+        const isBackHovered = mouseX >= backRect.x
+            && mouseX <= backRect.x + backRect.w
+            && mouseY >= backRect.y
+            && mouseY <= backRect.y + backRect.h;
         
         if (isBackHovered) {
             assets.playSound('ui_click');
@@ -909,8 +913,8 @@ export class MapScene extends BaseScene {
             return;
         }
 
-        const mx = 0; // Fixed 256x256 resolution
-        const my = 0;
+        const mapImg = assets.getImage('china_map');
+        const { mx, my } = mapImg ? this.getMapOrigin(canvas, mapImg) : { mx: 0, my: 0 };
 
         // Advance dialogue if active
         if (this.interactionSelected === 'hero_reminder' || this.interactionSelected === 'story_event') {
