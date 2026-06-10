@@ -7580,6 +7580,8 @@ export class TacticsScene extends BaseScene {
             return a.r - b.r;
         });
 
+        this.buildWaterEffectMask(drawCalls);
+
         this._telegraphPunchList = [];
         this._terrainOverlayHexOutlines = [];
         this._unitOutlineItems = [];
@@ -7705,6 +7707,10 @@ export class TacticsScene extends BaseScene {
                     // to clip the actual feet (e.g., 28 + 2 = 30).
                     drawOptions.sinkOffset = 2;
                     drawOptions.hideBottom = 27;
+                }
+                if (drawOptions.isSubmerged && this.waterEffectMaskCanvas) {
+                    drawOptions.waterMaskCanvas = this.waterEffectMaskCanvas;
+                    drawOptions.waterEffectTime = timestamp;
                 }
 
                 if (u.damageFlashTimer > 0) {
@@ -9275,6 +9281,17 @@ export class TacticsScene extends BaseScene {
     /**
      * Draw only a unit's sprite (horse+rider, boulder, or character+cage). Used in main draw loop and for telegraph punch (destination-out).
      */
+    drawWaterMaskedImageFrame(ctx, drawSource, bounds, eligibilityClip, timestamp) {
+        if (!this.waterEffectMaskCanvas) return false;
+        return this.drawWaterMaskedPass(ctx, {
+            bounds,
+            maskCanvas: this.waterEffectMaskCanvas,
+            time: timestamp,
+            eligibilityClip,
+            drawSource
+        });
+    }
+
     drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp) {
         const hexOffsetX = drawOptions?.hexOffsetX || 0;
         const hexOffsetY = drawOptions?.hexOffsetY || 0;
@@ -9332,8 +9349,23 @@ export class TacticsScene extends BaseScene {
                     const topY = midY + dy;
                     const feetY = midY + horseFeetY;
                     const waterlineY = feetY - terrainSink;
-                    drawHorsePass(1.0, { x: midX - 40, y: topY - 10, w: 80, h: Math.max(0, waterlineY - (topY - 10)) });
-                    drawHorsePass(0.4, { x: midX - 40, y: waterlineY, w: 80, h: Math.max(0, (feetY + 10) - waterlineY) });
+                    const drawnWithMask = this.drawWaterMaskedImageFrame(
+                        ctx,
+                        (targetCtx) => {
+                            targetCtx.save();
+                            targetCtx.translate(midX, midY);
+                            if (u.flip) targetCtx.scale(-1, 1);
+                            targetCtx.drawImage(horseImg, sx, 0, frameW, frameH, dx, dy, frameW, frameH);
+                            targetCtx.restore();
+                        },
+                        { x: midX - 34, y: topY - 4, w: 68, h: frameH + 12 },
+                        { x: midX - 40, y: waterlineY, w: 80, h: Math.max(0, (feetY + 10) - waterlineY) },
+                        timestamp
+                    );
+                    if (!drawnWithMask) {
+                        drawHorsePass(1.0, { x: midX - 40, y: topY - 10, w: 80, h: Math.max(0, waterlineY - (topY - 10)) });
+                        drawHorsePass(0.4, { x: midX - 40, y: waterlineY, w: 80, h: Math.max(0, (feetY + 10) - waterlineY) });
+                    }
                 } else {
                     drawHorsePass(1.0);
                 }
@@ -9404,8 +9436,24 @@ export class TacticsScene extends BaseScene {
             const topY = drawMidY + dy;
             const feetY = drawMidY + horseFeetY;
             const waterlineY = feetY - sink;
-            drawHorsePass(1.0, { x: midX - 32, y: topY - 8, w: 64, h: Math.max(0, waterlineY - (topY - 8)) });
-            drawHorsePass(0.4, { x: midX - 32, y: waterlineY, w: 64, h: Math.max(0, (feetY + 8) - waterlineY) });
+            const drawnWithMask = this.drawWaterMaskedImageFrame(
+                ctx,
+                (targetCtx) => {
+                    targetCtx.save();
+                    targetCtx.translate(midX, drawMidY);
+                    if (h.flip) targetCtx.scale(-1, 1);
+                    if (isRunning) targetCtx.drawImage(horseImg, sx, 0, frameW, frameH, dx, dy, frameW, frameH);
+                    else targetCtx.drawImage(horseImg, dx, dy);
+                    targetCtx.restore();
+                },
+                { x: midX - 34, y: topY - 4, w: 68, h: frameH + 12 },
+                { x: midX - 32, y: waterlineY, w: 64, h: Math.max(0, (feetY + 8) - waterlineY) },
+                timestamp
+            );
+            if (!drawnWithMask) {
+                drawHorsePass(1.0, { x: midX - 32, y: topY - 8, w: 64, h: Math.max(0, waterlineY - (topY - 8)) });
+                drawHorsePass(0.4, { x: midX - 32, y: waterlineY, w: 64, h: Math.max(0, (feetY + 8) - waterlineY) });
+            }
         } else {
             drawHorsePass(1.0);
         }
@@ -10237,8 +10285,75 @@ export class TacticsScene extends BaseScene {
         return `edge_trapezoid_rocky_cliff_${direction}_${diffName}`;
     }
 
+    isWaterEffectTerrain(terrainType) {
+        const terrain = terrainType || '';
+        return terrain.includes('water_shallow') || terrain.includes('water_deep') || terrain.includes('water');
+    }
+
+    ensureWaterEffectMaskCanvas() {
+        const { canvas } = this.manager;
+        if (!this.waterEffectMaskCanvas) {
+            this.waterEffectMaskCanvas = document.createElement('canvas');
+            this.waterEffectMaskCtx = this.waterEffectMaskCanvas.getContext('2d');
+        }
+        if (this.waterEffectMaskCanvas.width !== canvas.width || this.waterEffectMaskCanvas.height !== canvas.height) {
+            this.waterEffectMaskCanvas.width = canvas.width;
+            this.waterEffectMaskCanvas.height = canvas.height;
+        }
+        return this.waterEffectMaskCtx;
+    }
+
+    buildWaterEffectMask(drawCalls) {
+        const maskCtx = this.ensureWaterEffectMaskCanvas();
+        const maskCanvas = this.waterEffectMaskCanvas;
+        maskCtx.clearRect(0, 0, maskCanvas.width, maskCanvas.height);
+        maskCtx.save();
+        maskCtx.globalCompositeOperation = 'source-over';
+        maskCtx.globalAlpha = 1;
+
+        for (const call of drawCalls) {
+            if (call.type !== 'hex') continue;
+            const effect = this.getIntroEffect(Math.floor(call.r), call.q || 0);
+            if (effect.alpha <= 0) continue;
+
+            const cell = this.tacticsMap.getCell(call.r, call.q);
+            if (!cell) continue;
+            const baseTerrain = this.isGateTerrain(call.terrain) ? 'mud_01' : call.terrain;
+            const sourceTerrain = this.getEdgeTrapezoidSourceTerrain(baseTerrain, cell);
+            if (!this.isWaterEffectTerrain(sourceTerrain)) continue;
+
+            const surfaceY = call.y - call.elevation + effect.yOffset;
+            const animatedKey = this.getAnimatedTerrain(baseTerrain, call.r, call.q);
+            const tileImg = assets.getImage(animatedKey);
+            if (tileImg) {
+                maskCtx.drawImage(
+                    tileImg,
+                    Math.floor(call.x - tileImg.width / 2),
+                    Math.floor(surfaceY - tileImg.height / 2)
+                );
+            }
+
+            const directions = this.tacticsMap.getDirections(call.r);
+            const labels = ['NE', 'E', 'SE', 'SW', 'W', 'NW'];
+            this.drawEdgeTrapezoids(
+                baseTerrain,
+                call.x,
+                surfaceY,
+                call.r,
+                call.q,
+                directions,
+                labels,
+                cell,
+                ['W', 'SW', 'SE'],
+                { ctx: maskCtx }
+            );
+        }
+
+        maskCtx.restore();
+    }
+
     drawEdgeTrapezoids(terrainType, x, y, r, q, directions, labels, currentCell, edgeLabels = ['W', 'SW', 'SE'], options = {}) {
-        const { ctx } = this.manager;
+        const ctx = options.ctx || this.manager.ctx;
         if (!currentCell || !directions || !labels) return;
 
         const allVisibleEdges = [

@@ -229,7 +229,18 @@ export class BaseScene {
 
     drawCharacter(ctx, img, action, frame, x, y, options = {}) {
         if (!img) return;
-        const { flip = false, sinkOffset = 0, isSubmerged = false, tint = null, hideBottom = 0, scale = 1.0, isProp = false } = options;
+        const {
+            flip = false,
+            sinkOffset = 0,
+            isSubmerged = false,
+            tint = null,
+            hideBottom = 0,
+            scale = 1.0,
+            isProp = false,
+            waterMaskCanvas = null,
+            waterEffectTime = 0,
+            waterClipRect = null
+        } = options;
         const sourceSize = 72;
 
         if (isProp) {
@@ -254,18 +265,7 @@ export class BaseScene {
         const sy = Math.floor(frameIdx / 8) * sourceSize;
         const feetY = -44;
 
-        const drawPass = (alpha = 1.0, clipRect = null) => {
-            ctx.save();
-            if (clipRect) {
-                ctx.beginPath();
-                ctx.rect(clipRect.x, clipRect.y, clipRect.w, clipRect.h);
-                ctx.clip();
-            }
-            ctx.globalAlpha *= alpha;
-            ctx.translate(Math.floor(x), Math.floor(y + sinkOffset));
-            if (flip) ctx.scale(-1, 1);
-            if (scale !== 1.0) ctx.scale(scale, scale);
-            
+        const drawSpriteFrame = (targetCtx) => {
             if (tint) {
                 // To tint ONLY the sprite and not the background already on the canvas,
                 // we must use a temporary buffer.
@@ -289,20 +289,60 @@ export class BaseScene {
                 tctx.restore();
                 
                 // 3. Draw temp back to main
-                ctx.drawImage(this._tintCanvas, -36, feetY);
+                targetCtx.drawImage(this._tintCanvas, -36, feetY);
             } else {
                 // Draw normally
-                ctx.drawImage(img, sx, sy, sourceSize, sourceSize, -36, feetY, sourceSize, sourceSize);
+                targetCtx.drawImage(img, sx, sy, sourceSize, sourceSize, -36, feetY, sourceSize, sourceSize);
             }
+        };
+
+        const drawPass = (alpha = 1.0, clipRect = null) => {
+            ctx.save();
+            if (clipRect) {
+                ctx.beginPath();
+                ctx.rect(clipRect.x, clipRect.y, clipRect.w, clipRect.h);
+                ctx.clip();
+            }
+            ctx.globalAlpha *= alpha;
+            ctx.translate(Math.floor(x), Math.floor(y + sinkOffset));
+            if (flip) ctx.scale(-1, 1);
+            if (scale !== 1.0) ctx.scale(scale, scale);
+            drawSpriteFrame(ctx);
             
             ctx.restore();
         };
 
         if (isSubmerged) {
-            // Above water
+            const defaultWaterClip = { x: x - 40, y, w: 80, h: 100 };
+            const submergedClip = waterClipRect === false ? null : (waterClipRect || defaultWaterClip);
+            if (waterMaskCanvas && this.drawWaterMaskedPass(ctx, {
+                x,
+                y: y + sinkOffset,
+                scale,
+                flip,
+                bounds: {
+                    x: Math.floor(x - 42 * scale),
+                    y: Math.floor(y + sinkOffset + feetY * scale - 4),
+                    w: Math.ceil(sourceSize * scale + 12),
+                    h: Math.ceil(sourceSize * scale + 12)
+                },
+                maskCanvas: waterMaskCanvas,
+                time: waterEffectTime,
+                eligibilityClip: submergedClip,
+                drawSource: (targetCtx) => {
+                    targetCtx.save();
+                    targetCtx.translate(Math.floor(x), Math.floor(y + sinkOffset));
+                    if (flip) targetCtx.scale(-1, 1);
+                    if (scale !== 1.0) targetCtx.scale(scale, scale);
+                    drawSpriteFrame(targetCtx);
+                    targetCtx.restore();
+                }
+            })) {
+                return;
+            }
+            // Fallback: rectangular split if the map mask is unavailable.
             drawPass(1.0, { x: x - 40, y: y - 100, w: 80, h: 100 });
-            // Below water
-            drawPass(0.4, { x: x - 40, y: y, w: 80, h: 100 });
+            drawPass(0.4, defaultWaterClip);
         } else if (hideBottom > 0) {
             // Hide N pixels from the absolute bottom of the 72x72 sprite
             // The bottom of the sprite is at anchor (y + sinkOffset) + 28 pixels (since feetY is -44)
@@ -312,6 +352,114 @@ export class BaseScene {
         } else {
             drawPass(1.0);
         }
+    }
+
+    ensureWaterEffectCanvas(name, width, height) {
+        const canvasKey = `_${name}Canvas`;
+        const ctxKey = `_${name}Ctx`;
+        if (!this[canvasKey]) {
+            this[canvasKey] = document.createElement('canvas');
+            this[ctxKey] = this[canvasKey].getContext('2d');
+        }
+        const canvas = this[canvasKey];
+        if (canvas.width !== width || canvas.height !== height) {
+            canvas.width = width;
+            canvas.height = height;
+        }
+        return { canvas, ctx: this[ctxKey] };
+    }
+
+    drawWaterMaskedPass(ctx, options = {}) {
+        const {
+            bounds,
+            maskCanvas,
+            time = 0,
+            eligibilityClip = null,
+            drawSource
+        } = options;
+        if (!maskCanvas || !drawSource || !ctx?.canvas || !bounds) return false;
+
+        const canvasW = ctx.canvas.width;
+        const canvasH = ctx.canvas.height;
+        const sx = Math.max(0, Math.floor(bounds.x));
+        const sy = Math.max(0, Math.floor(bounds.y));
+        const ex = Math.min(canvasW, Math.ceil(bounds.x + bounds.w));
+        const ey = Math.min(canvasH, Math.ceil(bounds.y + bounds.h));
+        const w = ex - sx;
+        const h = ey - sy;
+        if (w <= 0 || h <= 0) return false;
+
+        const sprite = this.ensureWaterEffectCanvas('waterSprite', canvasW, canvasH);
+        const dry = this.ensureWaterEffectCanvas('waterDry', canvasW, canvasH);
+        const wet = this.ensureWaterEffectCanvas('waterWet', canvasW, canvasH);
+        const refracted = this.ensureWaterEffectCanvas('waterRefracted', canvasW, canvasH);
+        const eligible = this.ensureWaterEffectCanvas('waterEligibleMask', canvasW, canvasH);
+
+        sprite.ctx.clearRect(sx, sy, w, h);
+        dry.ctx.clearRect(sx, sy, w, h);
+        wet.ctx.clearRect(sx, sy, w, h);
+        refracted.ctx.clearRect(sx, sy, w, h);
+        eligible.ctx.clearRect(sx, sy, w, h);
+
+        drawSource(sprite.ctx);
+
+        eligible.ctx.save();
+        if (eligibilityClip) {
+            eligible.ctx.beginPath();
+            eligible.ctx.rect(
+                Math.floor(eligibilityClip.x),
+                Math.floor(eligibilityClip.y),
+                Math.ceil(eligibilityClip.w),
+                Math.ceil(eligibilityClip.h)
+            );
+            eligible.ctx.clip();
+        }
+        eligible.ctx.drawImage(maskCanvas, sx, sy, w, h, sx, sy, w, h);
+        eligible.ctx.restore();
+
+        dry.ctx.drawImage(sprite.canvas, sx, sy, w, h, sx, sy, w, h);
+        dry.ctx.save();
+        dry.ctx.globalCompositeOperation = 'destination-out';
+        dry.ctx.drawImage(eligible.canvas, sx, sy, w, h, sx, sy, w, h);
+        dry.ctx.restore();
+
+        wet.ctx.drawImage(sprite.canvas, sx, sy, w, h, sx, sy, w, h);
+        wet.ctx.save();
+        wet.ctx.globalCompositeOperation = 'destination-in';
+        wet.ctx.drawImage(eligible.canvas, sx, sy, w, h, sx, sy, w, h);
+        wet.ctx.restore();
+        wet.ctx.save();
+        wet.ctx.globalCompositeOperation = 'source-atop';
+        wet.ctx.fillStyle = 'rgba(70, 150, 185, 0.14)';
+        wet.ctx.fillRect(sx, sy, w, h);
+        wet.ctx.restore();
+
+        ctx.drawImage(dry.canvas, sx, sy, w, h, sx, sy, w, h);
+
+        const phase = time * 0.0018;
+        const stripH = 2;
+        for (let row = sy; row < ey; row += stripH) {
+            const rowH = Math.min(stripH, ey - row);
+            const offsetX = Math.round(Math.sin(phase + row * 0.22) * 1.15);
+            const squeezeY = Math.round((row - sy) * -0.02);
+            refracted.ctx.drawImage(wet.canvas, sx, row, w, rowH, sx + offsetX, row + squeezeY, w, rowH);
+        }
+        refracted.ctx.save();
+        refracted.ctx.globalCompositeOperation = 'destination-in';
+        refracted.ctx.drawImage(eligible.canvas, sx, sy, w, h, sx, sy, w, h);
+        refracted.ctx.restore();
+
+        ctx.save();
+        ctx.globalAlpha *= 0.46;
+        ctx.drawImage(refracted.canvas, sx, sy, w, h, sx, sy, w, h);
+        ctx.restore();
+
+        sprite.ctx.clearRect(sx, sy, w, h);
+        dry.ctx.clearRect(sx, sy, w, h);
+        wet.ctx.clearRect(sx, sy, w, h);
+        refracted.ctx.clearRect(sx, sy, w, h);
+        eligible.ctx.clearRect(sx, sy, w, h);
+        return true;
     }
 
     checkCharacterHit(img, action, frame, x, y, clickX, clickY, options = {}) {
