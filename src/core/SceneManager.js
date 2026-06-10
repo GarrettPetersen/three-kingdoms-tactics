@@ -219,26 +219,24 @@ export class SceneManager {
         }
 
         const icon = assets.getImage('settings_menu_icon');
-        const size = 19;
-        const x = Math.max(4, this.canvas.width - size - 4);
-        const y = 4;
-        this.optionsButtonRect = { x, y, w: size, h: size };
+        const iconSize = 13;
+        const hitPadding = 3;
+        const size = iconSize + hitPadding * 2;
+        const iconX = Math.max(1, this.canvas.width - iconSize - 1);
+        const iconY = 1;
+        const hitX = Math.max(0, iconX - hitPadding);
+        const hitY = Math.max(0, iconY - hitPadding);
+        this.optionsButtonRect = { x: hitX, y: hitY, w: size, h: size };
 
-        const hovered = this.isPointInOptionsButton(this.logicalMouseX, this.logicalMouseY);
         this.ctx.save();
-        this.ctx.fillStyle = hovered ? 'rgba(25, 25, 25, 0.92)' : 'rgba(0, 0, 0, 0.72)';
-        this.ctx.fillRect(x, y, size, size);
-        this.ctx.strokeStyle = hovered ? '#ffffff' : '#ffd700';
-        this.ctx.lineWidth = 1;
-        this.ctx.strokeRect(x + 0.5, y + 0.5, size - 1, size - 1);
         if (icon) {
             this.ctx.imageSmoothingEnabled = false;
-            this.ctx.drawImage(icon, x + 3, y + 3);
+            this.ctx.drawImage(icon, iconX, iconY);
         } else {
-            this.ctx.fillStyle = hovered ? '#ffffff' : '#ffd700';
-            this.ctx.fillRect(x + 5, y + 5, 9, 2);
-            this.ctx.fillRect(x + 5, y + 9, 9, 2);
-            this.ctx.fillRect(x + 5, y + 13, 9, 2);
+            this.ctx.fillStyle = '#ffd700';
+            this.ctx.fillRect(iconX + 2, iconY + 2, 9, 2);
+            this.ctx.fillRect(iconX + 2, iconY + 6, 9, 2);
+            this.ctx.fillRect(iconX + 2, iconY + 10, 9, 2);
         }
         this.ctx.restore();
     }
