@@ -660,7 +660,7 @@ export class TacticsMap {
         }
     }
 
-    /** Flood fill from (startR, startQ) by passability only. Used to check map connectivity; unit movement uses getReachableData (which enforces level rule). */
+    /** Flood fill from (startR, startQ) by passability only. Some generation checks use movement reachability instead. */
     getReachableSet(startR, startQ) {
         const reachable = new Set();
         const startCell = this.getCell(startR, startQ);
@@ -684,6 +684,42 @@ export class TacticsMap {
         return reachable;
     }
 
+    getMovementReachableSet(startR, startQ) {
+        return new Set(this.getReachableData(startR, startQ, 9999).keys());
+    }
+
+    carveReachableRamp(path) {
+        if (!Array.isArray(path) || path.length < 2) return;
+
+        const first = this.getCell(path[0].r, path[0].q);
+        const last = this.getCell(path[path.length - 1].r, path[path.length - 1].q);
+        if (!first || !last) return;
+
+        let currentLevel = first.level || 0;
+        const targetLevel = last.level || 0;
+
+        for (let i = 1; i < path.length; i++) {
+            const stepCell = this.getCell(path[i].r, path[i].q);
+            if (!stepCell) continue;
+
+            stepCell.impassable = false;
+            if (stepCell.terrain.includes('mountain') || stepCell.terrain.includes('wall') || stepCell.terrain.includes('house') || stepCell.terrain.includes('tent')) {
+                stepCell.terrain = 'earth_rocky';
+            }
+            if (stepCell.terrain.includes('water_deep')) {
+                stepCell.terrain = 'water_shallow_01';
+            }
+
+            if (currentLevel < targetLevel) {
+                currentLevel++;
+            } else if (currentLevel > targetLevel) {
+                currentLevel--;
+            }
+
+            stepCell.level = currentLevel;
+        }
+    }
+
     ensureReachability() {
         // Find a guaranteed reachable starting point (the center of the map/valley)
         const startR = Math.floor(this.height / 2);
@@ -702,7 +738,7 @@ export class TacticsMap {
         const maxAttempts = 100; // Safety break
 
         while (attempts < maxAttempts) {
-            const reachable = this.getReachableSet(startR, startQ);
+            const reachable = this.getMovementReachableSet(startR, startQ);
             const reachableList = [...reachable];
 
             // Find all isolated passable cells with their nearest reachable cell and distance
@@ -748,18 +784,8 @@ export class TacticsMap {
             const [tr, tq] = targetKey.split(',').map(Number);
 
             // Connect this isolated cell to the chosen target on the main area
-            const path = this.getLine(chosen.r, chosen.q, tr, tq);
-            for (const step of path) {
-                const stepCell = this.getCell(step.r, step.q);
-                if (!stepCell) continue;
-                stepCell.impassable = false;
-                if (stepCell.terrain.includes('mountain') || stepCell.terrain.includes('wall') || stepCell.terrain.includes('house') || stepCell.terrain.includes('tent')) {
-                    stepCell.terrain = this.getDefaultGrass();
-                }
-                if (stepCell.terrain.includes('water_deep')) {
-                    stepCell.terrain = 'water_shallow_01';
-                }
-            }
+            const path = this.getLine(tr, tq, chosen.r, chosen.q);
+            this.carveReachableRamp(path);
             
             attempts++;
         }

@@ -7585,22 +7585,25 @@ export class TacticsScene extends BaseScene {
         this._unitOutlineItems = [];
         this._renderedUnitSprites = [];
         const unitHexDriftMap = this._unitHexDriftMap || new Map();
-        for (const call of drawCalls) {
-            if (call.type !== 'hex') continue;
-            const effect = this.getIntroEffect(Math.floor(call.r), call.q || 0);
-            if (effect.alpha <= 0) continue;
-            const surfaceY = call.y - call.elevation + effect.yOffset;
-            const baseTerrain = this.isGateTerrain(call.terrain) ? 'mud_01' : call.terrain;
-            const directions = this.tacticsMap.getDirections(call.r);
-            const labels = ['NE', 'E', 'SE', 'SW', 'W', 'NW'];
-            const currentCell = this.tacticsMap.getCell(call.r, call.q);
-            ctx.save();
-            ctx.globalAlpha = call.alpha || effect.alpha;
-            this.drawEdgeTrapezoids(baseTerrain, call.x, surfaceY, call.r, call.q, directions, labels, currentCell, ['W'], { skipFlatNatural: true });
-            ctx.restore();
-        }
+        const drawWestEdgesForRow = (row) => {
+            for (const call of drawCalls) {
+                if (call.type !== 'hex' || call.r !== row) continue;
+                const effect = this.getIntroEffect(Math.floor(call.r), call.q || 0);
+                if (effect.alpha <= 0) continue;
+                const surfaceY = call.y - call.elevation + effect.yOffset;
+                const baseTerrain = this.isGateTerrain(call.terrain) ? 'mud_01' : call.terrain;
+                const directions = this.tacticsMap.getDirections(call.r);
+                const labels = ['NE', 'E', 'SE', 'SW', 'W', 'NW'];
+                const currentCell = this.tacticsMap.getCell(call.r, call.q);
+                ctx.save();
+                ctx.globalAlpha = call.alpha || effect.alpha;
+                this.drawEdgeTrapezoids(baseTerrain, call.x, surfaceY, call.r, call.q, directions, labels, currentCell, ['W']);
+                ctx.restore();
+            }
+        };
 
         let drawOrder = 0;
+        let lastWestEdgeRow = null;
         for (const call of drawCalls) {
             const effect = this.getIntroEffect(Math.floor(call.r), call.q || 0);
             if (effect.alpha <= 0 && call.type !== 'particle' && call.type !== 'fire_smoke') continue; // Particles have their own alpha check
@@ -7610,6 +7613,13 @@ export class TacticsScene extends BaseScene {
             ctx.globalAlpha = call.alpha || effect.alpha;
 
             if (call.type === 'hex') {
+                if (call.r !== lastWestEdgeRow) {
+                    ctx.restore();
+                    drawWestEdgesForRow(call.r);
+                    ctx.save();
+                    ctx.globalAlpha = call.alpha || effect.alpha;
+                    lastWestEdgeRow = call.r;
+                }
                 const surfaceY = call.y - call.elevation + effect.yOffset;
                 const edgeStatus = this.tacticsMap.getEdgeStatus(call.r, call.q);
                 const slopeInfo = this.tacticsMap.getSlopeInfo(call.r, call.q);
@@ -8154,6 +8164,11 @@ export class TacticsScene extends BaseScene {
                 }
             }
         }
+        for (const key of Object.keys(assets.images || {})) {
+            if (key.startsWith('edge_trapezoid_')) {
+                keys.add(key);
+            }
+        }
         return [...keys];
     }
 
@@ -8191,16 +8206,38 @@ export class TacticsScene extends BaseScene {
         }
     }
 
-    cycleBattlePaletteForward() {
+    getBattlePaletteKey() {
+        if (!this.battlePaletteKeys || this.battlePaletteKeys.length === 0) return 'off';
+        return this.battlePaletteKeys[this.activeBattlePaletteIndex] || 'off';
+    }
+
+    getBattlePaletteLabel() {
+        const key = this.getBattlePaletteKey();
+        return key === 'off' ? 'OFF' : key;
+    }
+
+    setBattlePaletteByIndex(index, showToast = true) {
         if (!this.battlePaletteKeys || this.battlePaletteKeys.length === 0) return false;
         const total = this.battlePaletteKeys.length;
-        this.activeBattlePaletteIndex = (this.activeBattlePaletteIndex + 1) % total;
-        const key = this.battlePaletteKeys[this.activeBattlePaletteIndex];
+        this.activeBattlePaletteIndex = (index + total) % total;
+        const key = this.getBattlePaletteKey();
         this.applyBattleEnvironmentPalette(key);
-        this.paletteToastText = key === 'off'
-            ? getLocalizedText({ en: 'Palette: OFF', zh: '调色板：关闭' })
-            : getLocalizedText({ en: `Palette: ${key}`, zh: `调色板：${key}` });
-        this.paletteToastUntil = performance.now() + 5000;
+        if (showToast) {
+            this.paletteToastText = key === 'off'
+                ? getLocalizedText({ en: 'Palette: OFF', zh: '调色板：关闭' })
+                : getLocalizedText({ en: `Palette: ${key}`, zh: `调色板：${key}` });
+            this.paletteToastUntil = performance.now() + 5000;
+        }
+        return true;
+    }
+
+    cycleBattlePalette(direction = 1, showToast = true) {
+        if (!this.battlePaletteKeys || this.battlePaletteKeys.length === 0) return false;
+        return this.setBattlePaletteByIndex(this.activeBattlePaletteIndex + direction, showToast);
+    }
+
+    cycleBattlePaletteForward() {
+        if (!this.cycleBattlePalette(1, true)) return false;
         assets.playSound('ui_click', 0.4);
         return true;
     }
@@ -10510,7 +10547,6 @@ export class TacticsScene extends BaseScene {
             }
         }
 
-        this.drawEdgeTrapezoids(baseTerrain, x, y, r, q, directions, labels, currentCell, ['W'], { onlyFlatNatural: true });
         this.drawEdgeTrapezoids(baseTerrain, x, y, r, q, directions, labels, currentCell, ['SW', 'SE']);
 
         if (isBurningTent) {

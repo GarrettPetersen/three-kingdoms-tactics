@@ -12,7 +12,7 @@ export class OptionsOverlay extends BaseScene {
         this.rowRects = [];
         this.sliderRects = {};
         this.volumeKeys = ['master', 'music', 'sfx', 'voice'];
-        this.rowKeys = [...this.volumeKeys, 'language'];
+        this.rowKeys = [...this.volumeKeys, 'language', 'palette'];
     }
 
     open() {
@@ -72,9 +72,31 @@ export class OptionsOverlay extends BaseScene {
         }
     }
 
+    getPaletteScene() {
+        const scene = this.manager?.currentScene;
+        return scene && typeof scene.cycleBattlePalette === 'function' ? scene : null;
+    }
+
+    getPaletteLabel() {
+        const scene = this.getPaletteScene();
+        if (!scene || typeof scene.getBattlePaletteLabel !== 'function') return 'OFF';
+        return scene.getBattlePaletteLabel();
+    }
+
+    cyclePalette(direction = 1) {
+        const scene = this.getPaletteScene();
+        if (!scene) return;
+        if (scene.cycleBattlePalette(direction, true)) {
+            assets.playSound('ui_click', 0.45);
+        }
+    }
+
     activateRow(rowKey) {
         if (rowKey === 'language') {
             this.cycleLanguage(1);
+        }
+        if (rowKey === 'palette') {
+            this.cyclePalette(1);
         }
     }
 
@@ -105,6 +127,10 @@ export class OptionsOverlay extends BaseScene {
             }
             if (rowKey === 'language') {
                 this.cycleLanguage(dir);
+                return true;
+            }
+            if (rowKey === 'palette') {
+                this.cyclePalette(dir);
                 return true;
             }
             return true;
@@ -216,7 +242,7 @@ export class OptionsOverlay extends BaseScene {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         const panelW = Math.min(360, canvas.width - 20);
-        const panelH = 170;
+        const panelH = 194;
         const panelX = Math.floor((canvas.width - panelW) / 2);
         const panelY = Math.floor((canvas.height - panelH) / 2);
         this.panelRect = { x: panelX, y: panelY, w: panelW, h: panelH };
@@ -265,7 +291,8 @@ export class OptionsOverlay extends BaseScene {
             music: getLocalizedText(UI_TEXT['MUSIC VOLUME']),
             sfx: getLocalizedText(UI_TEXT['SFX VOLUME']),
             voice: getLocalizedText(UI_TEXT['VOICE VOLUME']),
-            language: getLocalizedText(UI_TEXT['LANGUAGE'])
+            language: getLocalizedText(UI_TEXT['LANGUAGE']),
+            palette: getLocalizedText(UI_TEXT['PALETTE'])
         };
 
         for (let i = 0; i < this.rowKeys.length; i++) {
@@ -293,6 +320,18 @@ export class OptionsOverlay extends BaseScene {
                 const languageLabel = this.getLanguageLabel(LANGUAGE.current);
                 this.drawPixelText(ctx, `< ${languageLabel} >`, rowRect.x + rowRect.w - 12, rowRect.y + 6, {
                     color: '#eeeeee',
+                    font: '8px Silkscreen',
+                    align: 'right'
+                });
+                continue;
+            }
+            if (rowKey === 'palette') {
+                this.drawPixelText(ctx, labels.palette, rowRect.x + 8, rowRect.y + 6, {
+                    color: isHighlighted ? '#ffffff' : '#ffd700',
+                    font: '8px Silkscreen'
+                });
+                this.drawPixelText(ctx, `< ${this.getPaletteLabel()} >`, rowRect.x + rowRect.w - 12, rowRect.y + 6, {
+                    color: this.getPaletteScene() ? '#eeeeee' : '#777777',
                     font: '8px Silkscreen',
                     align: 'right'
                 });

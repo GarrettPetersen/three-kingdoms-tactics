@@ -44,6 +44,10 @@ export const UI_TEXT = {
         en: 'LANGUAGE',
         zh: '语言'
     },
+    'PALETTE': {
+        en: 'PALETTE',
+        zh: '调色板'
+    },
     'CLOSE': {
         en: 'CLOSE',
         zh: '关闭'
