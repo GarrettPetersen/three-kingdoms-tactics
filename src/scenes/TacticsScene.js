@@ -6661,7 +6661,6 @@ export class TacticsScene extends BaseScene {
                 }
 
                 attacks = applyLevelAttackUpgrades(attacks, unitClass, level, unitClass === 'archer', unitClass === 'crossbowman');
-                attacks = this.maybeEnableZhangBaoLightning(attacks, u, unitClass, imgKey);
 
             const unit = new Unit(u.id, {
                 ...u,
@@ -8288,6 +8287,7 @@ export class TacticsScene extends BaseScene {
                             this.drawHexOutline(itemCtx, pos.x, pos.y, '#ff3333');
                         });
                         itemCtx.restore();
+                        this.drawLightningTargetIcon(itemCtx, targetCell.r, targetCell.q, telegraphAlpha, timestamp);
                     } else {
                         const swishes = this.getMeleeTelegraphSwishes(u, attackKey, targetCell.r, targetCell.q);
                         for (const spec of swishes) this.drawTelegraphSwish(itemCtx, spec, unitPos, telegraphAlpha);
@@ -8309,6 +8309,7 @@ export class TacticsScene extends BaseScene {
                             this.drawHexOutline(itemCtx, pos.x, pos.y, '#ff3333');
                         });
                         itemCtx.restore();
+                        this.drawLightningTargetIcon(itemCtx, hoverTarget.r, hoverTarget.q, telegraphAlpha, timestamp);
                     } else {
                         const swishes = this.getMeleeTelegraphSwishes(u, attackKey, hoverTarget.r, hoverTarget.q);
                         if (swishes.length > 0) {
@@ -9683,6 +9684,7 @@ export class TacticsScene extends BaseScene {
             const riderAction = (u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action);
             const anchorX = u.visualX + u.visualOffsetX + hexOffsetX;
             const isHorseInShallow = !!(cell && cell.terrain?.includes('water_shallow'));
+            const isHorseInWater = !!drawOptions?.isSubmerged || isHorseInShallow;
             const terrainSink = Math.max(drawOptions.sinkOffset || 0, isHorseInShallow ? 4 : 0);
             const anchorY = surfaceY + u.visualOffsetY + terrainSink + hexOffsetY;
             const riderDrawOptions = { ...drawOptions, sinkOffset: 0, isSubmerged: false };
@@ -9729,10 +9731,10 @@ export class TacticsScene extends BaseScene {
                     ctx.drawImage(horseImg, sx, 0, frameW, frameH, dx, dy, frameW, frameH);
                     ctx.restore();
                 };
-                if (isHorseInShallow) {
+                if (isHorseInWater) {
                     const topY = midY + dy;
                     const feetY = midY + horseFeetY;
-                    const waterlineY = feetY - terrainSink;
+                    const waterlineY = midY - terrainSink;
                     const drawnWithMask = this.drawWaterMaskedImageFrame(
                         ctx,
                         (targetCtx) => {
@@ -9819,7 +9821,7 @@ export class TacticsScene extends BaseScene {
         if (isShallow) {
             const topY = drawMidY + dy;
             const feetY = drawMidY + horseFeetY;
-            const waterlineY = feetY - sink;
+            const waterlineY = drawMidY - sink;
             const drawnWithMask = this.drawWaterMaskedImageFrame(
                 ctx,
                 (targetCtx) => {
@@ -9846,6 +9848,21 @@ export class TacticsScene extends BaseScene {
     drawIntent(ctx, unit, x, y) {
         // All attack telegraphs (melee swish, bolt path, arrow) are drawn in the telegraph pass and punched out by the unit sprite
         if (!unit.intent) return;
+    }
+
+    drawLightningTargetIcon(ctx, r, q, alpha = 1, timestamp = 0) {
+        const icon = assets.getImage('lightning_bolt_icon');
+        if (!icon) return;
+
+        const pos = this.getPixelPos(r, q);
+        const bob = Math.sin((timestamp || 0) * 0.003) * 3;
+        const x = Math.floor(pos.x - icon.width / 2);
+        const y = Math.floor(pos.y - icon.height - 18 + bob);
+
+        ctx.save();
+        ctx.globalAlpha *= Math.max(0, Math.min(1, alpha));
+        ctx.drawImage(icon, x, y);
+        ctx.restore();
     }
 
     drawPixelLine(ctx, x0, y0, x1, y1, color = '#fff', dashPattern = null) {
@@ -11696,23 +11713,6 @@ export class TacticsScene extends BaseScene {
 
     isDirectionalBoltAttack(attackKey) {
         return ATTACKS[attackKey]?.type === 'directional_projectile';
-    }
-
-    shouldEnableZhangBaoLightning() {
-        return !!(this.isCustom || this.battleDef?.enableZhangBaoLightning);
-    }
-
-    maybeEnableZhangBaoLightning(attacks, unitDef = {}, unitClass = '', imgKey = '') {
-        if (!this.shouldEnableZhangBaoLightning()) return attacks;
-        const isZhangBao =
-            unitDef.type === 'zhang_bao'
-            || unitDef.templateId === 'zhangbao'
-            || unitDef.id === 'zhangbao'
-            || unitClass === 'zhangbao'
-            || imgKey === 'zhangbao';
-        if (!isZhangBao) return attacks;
-        if (attacks.includes('heavenly_lightning')) return attacks;
-        return [...attacks, 'heavenly_lightning'];
     }
 
     getDirectionalBoltPath(attacker, targetR, targetQ) {

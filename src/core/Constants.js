@@ -195,6 +195,22 @@ export const ATTACKS = {
         animation: 'attack_1',
         description: { en: 'Strikes front and back, pushing both.', zh: '前后同时出剑，并击退双方目标。' }
     },
+    double_blades_2: {
+        name: { en: 'Double Blades II', zh: '双股剑 II' },
+        damage: 2,
+        range: 1,
+        push: true,
+        animation: 'attack_1',
+        description: { en: 'Stronger twin slashes that push both targets.', zh: '更强的双股剑斩，击退前后目标。' }
+    },
+    double_blades_3: {
+        name: { en: 'Double Blades III', zh: '双股剑 III' },
+        damage: 3,
+        range: 1,
+        push: true,
+        animation: 'attack_1',
+        description: { en: 'Powerful twin slashes with heavier damage.', zh: '更强力的双股剑斩，伤害提升。' }
+    },
     bash: {
         name: { en: 'Bash', zh: '猛击' },
         damage: 1,
@@ -422,7 +438,8 @@ export const ATTACKS = {
 
 export const UPGRADE_PATHS = {
     'liubei': {
-        // Liu Bei is balanced, maybe gains damage later?
+        3: { attack: 'double_blades_2', text: { en: 'Damage increased to 2', zh: '伤害提升至 2' } },
+        6: { attack: 'double_blades_3', text: { en: 'Damage increased to 3', zh: '伤害提升至 3' } }
     },
     'guanyu': {
         3: { attack: 'green_dragon_slash_2', text: { en: 'Damage increased to 2', zh: '伤害提升至 2' } },
@@ -443,6 +460,10 @@ export const UPGRADE_PATHS = {
         2: { attack: 'generic_spear_2', text: { en: 'Furthest target in line now takes +1 damage', zh: '直线最远目标额外受到 +1 伤害' } },
         4: { attack: 'generic_spear_3', text: { en: 'Range increased to 3', zh: '射程提升至 3' } }
     },
+    'gaosheng': {
+        2: { attack: 'generic_spear_2', text: { en: 'Furthest target in line now takes +1 damage', zh: '直线最远目标额外受到 +1 伤害' } },
+        4: { attack: 'generic_spear_3', text: { en: 'Range increased to 3', zh: '射程提升至 3' } }
+    },
     'chengyuanzhi': {
         2: { attack: 'polearm_sweep_2', text: { en: 'Sweep length increased to 2', zh: '横扫长度提升至 2' } },
         4: { attack: 'polearm_sweep_3', text: { en: 'Range increased to 3', zh: '射程提升至 3' } },
@@ -455,7 +476,27 @@ export const UPGRADE_PATHS = {
         7: { secondaryAttack: 'command_3', text: { en: 'Command now grants +1 damage', zh: '号令现可提供 +1 伤害' } },
         9: { secondaryAttack: 'command_4', text: { en: 'Command can now target enemies', zh: '号令现可作用于敌方单位' } }
     },
+    'gongjing': {
+        3: { attack: 'slash_2', text: { en: 'Slash damage increased to 2', zh: '斩击伤害提升至 2' } },
+        6: { attack: 'slash_3', text: { en: 'Slash now pushes the target', zh: '斩击现可击退目标' } }
+    },
+    'luzhi': {
+        3: { attack: 'slash_2', text: { en: 'Slash damage increased to 2', zh: '斩击伤害提升至 2' } },
+        6: { attack: 'slash_3', text: { en: 'Slash now pushes the target', zh: '斩击现可击退目标' } }
+    },
+    'huangfusong': {
+        3: { attack: 'slash_2', text: { en: 'Slash damage increased to 2', zh: '斩击伤害提升至 2' } },
+        6: { attack: 'slash_3', text: { en: 'Slash now pushes the target', zh: '斩击现可击退目标' } }
+    },
+    'zhujun': {
+        3: { attack: 'slash_2', text: { en: 'Slash damage increased to 2', zh: '斩击伤害提升至 2' } },
+        6: { attack: 'slash_3', text: { en: 'Slash now pushes the target', zh: '斩击现可击退目标' } }
+    },
     'rebel': {
+        3: { attack: 'bash_2', text: { en: 'Bash damage increased to 2', zh: '猛击伤害提升至 2' } },
+        6: { attack: 'bash_3', text: { en: 'Bash damage increased to 3', zh: '猛击伤害提升至 3' } }
+    },
+    'zhang_jue_captain': {
         3: { attack: 'bash_2', text: { en: 'Bash damage increased to 2', zh: '猛击伤害提升至 2' } },
         6: { attack: 'bash_3', text: { en: 'Bash damage increased to 3', zh: '猛击伤害提升至 3' } }
     },
@@ -468,6 +509,11 @@ export const UPGRADE_PATHS = {
         3: { attack: 'blade_sweep_3', text: { en: 'Sweep now pushes all hit targets', zh: '横扫现可击退所有命中目标' } },
         5: { attack: 'blade_sweep_4', text: { en: 'Sweep damage increased to 2', zh: '横扫伤害提升至 2' } }
     },
+    'zhangbao': {
+        2: { attack: 'slash_2', text: { en: 'Slash damage increased to 2', zh: '斩击伤害提升至 2' } },
+        4: { secondaryAttack: 'heavenly_lightning', text: { en: 'Learned Lightning', zh: '习得天雷' } },
+        6: { attack: 'slash_3', text: { en: 'Slash now pushes the target', zh: '斩击现可击退目标' } }
+    },
     'soldier': {
         2: { attack: 'polearm_sweep_2', text: { en: 'Sweep length increased to 2', zh: '横扫长度提升至 2' } },
         4: { attack: 'polearm_sweep_3', text: { en: 'Range increased to 3', zh: '射程提升至 3' } },
@@ -477,9 +523,12 @@ export const UPGRADE_PATHS = {
         4: { attack: 'arrow_shot_2', text: { en: 'Range increased to 5', zh: '射程提升至 5' } },
         6: { attack: 'arrow_shot_3', text: { en: 'Damage increased to 2', zh: '伤害提升至 2' } }
     },
+    'rebel_archer': {
+        4: { attack: 'arrow_shot_2', text: { en: 'Range increased to 5', zh: '射程提升至 5' } },
+        6: { attack: 'arrow_shot_3', text: { en: 'Damage increased to 2', zh: '伤害提升至 2' } }
+    },
     'crossbowman': {
         2: { attack: 'crossbow_bolt_2', text: { en: 'Bolt damage increased to 2', zh: '弩矢伤害提升至 2' } },
         3: { attack: 'crossbow_bolt_3', text: { en: 'Bolt damage increased to 3', zh: '弩矢伤害提升至 3' } }
     }
 };
-

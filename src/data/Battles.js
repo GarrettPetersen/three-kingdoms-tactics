@@ -508,7 +508,6 @@ export const BATTLES = {
             riverDensity: 0.0,
             houseDensity: 0.02
         },
-        enableZhangBaoLightning: true,
         units: [
             { id: 'liubei', r: 7, q: 2, type: 'hero' },
             { id: 'guanyu', r: 6, q: 2, type: 'hero' },
@@ -521,6 +520,7 @@ export const BATTLES = {
                 r: 4,
                 q: 9,
                 type: 'zhang_bao',
+                level: 4,
                 immortal: {
                     enabled: true,
                     triggerHp: 1,

@@ -541,7 +541,8 @@ async function init() {
             assets.loadImages({
                 title_en: 'assets/misc/three_kingdoms_stratagem_title_scaled.png',
                 title_zh: 'assets/misc/三国玄机.png',
-                settings_menu_icon: 'assets/UI Elements/settings_menu_icon.png',
+                settings_menu_icon: 'assets/ui_elements/settings_menu_icon.png',
+                lightning_bolt_icon: 'assets/ui_elements/lightning_bolt.png',
                 intro_sky: 'assets/intro_animation/00_sky.png',
                 intro_hills: 'assets/intro_animation/01_hills.png',
                 intro_distant_army: 'assets/intro_animation/02_distant_army.png',
