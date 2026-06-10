@@ -216,9 +216,10 @@ function getSideFaceRows({ diff }) {
     const pad = geometry.padding;
     const heightOffset = diff * geometry.elevationStep;
     const cliffDepth = Math.abs(diff) >= 2 ? Math.abs(diff) * geometry.elevationStep : 0;
+    const topOverlap = 3;
     return polygonToRows([
-        [pad - 2, pad + 18 - Math.max(0, heightOffset)],
-        [pad + 9, pad + 13 - Math.max(0, heightOffset)],
+        [pad - 2, pad + 18 - Math.max(0, heightOffset) - topOverlap],
+        [pad + 9, pad + 13 - Math.max(0, heightOffset) - topOverlap],
         [pad + 10, pad + 35 + Math.max(0, -heightOffset) + cliffDepth],
         [pad - 2, pad + 42 + Math.max(0, -heightOffset) + cliffDepth]
     ]);
