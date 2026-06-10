@@ -47,8 +47,8 @@ const terrainSources = {
 
 const terrainVariantDiffs = [-1, 0, 1];
 const terrainDiffsByGroup = {
-    water_shallow: [0],
-    water_deep: [0]
+    water_shallow: terrainVariantDiffs,
+    water_deep: terrainVariantDiffs
 };
 const sharedCliffDiffs = [-3, -2, 2, 3];
 
@@ -127,7 +127,8 @@ function applyTint(baseColor, tintAmount) {
 }
 
 function getFill(terrainColors, terrain, direction, diff) {
-    const sourceTerrain = Math.abs(diff) >= 2 ? 'rock' : terrain;
+    const isWaterBeachEdge = (terrain === 'water_shallow' || terrain === 'water_deep') && Math.abs(diff) === 1;
+    const sourceTerrain = Math.abs(diff) >= 2 ? 'rock' : (isWaterBeachEdge ? 'sand' : terrain);
     const baseColor = terrainColors[sourceTerrain] || '#808080';
     return applyTint(baseColor, getLightTintAmount(direction, diff));
 }
@@ -194,14 +195,13 @@ function getFrontFaceRows({ mask, direction, diff }) {
     const outerBow = 4;
     const outerBowDrop = 5;
     const outerBottomOverhang = 3;
-    const centerOverlap = 2;
 
     if (direction === 'sw') {
         const outerTopY = pad + getBottomEdgeY(7) - topOverlap;
         return polygonToRows([
             [pad + 2, outerTopY],
-            [pad + 17 + centerOverlap, pad + getBottomEdgeY(17) - Math.max(0, heightOffset) - topOverlap],
-            [pad + 23 + centerOverlap, pad + 39 + Math.max(0, -heightOffset) + cliffDepth],
+            [pad + 17, pad + getBottomEdgeY(17) - Math.max(0, heightOffset) - topOverlap],
+            [pad + 20, pad + 39 + Math.max(0, -heightOffset) + cliffDepth],
             [pad + 4 - outerBottomOverhang, pad + 33 + Math.max(0, -heightOffset) + cliffDepth],
             [pad + 2 - outerBow, outerTopY + outerBowDrop]
         ]);
@@ -209,11 +209,11 @@ function getFrontFaceRows({ mask, direction, diff }) {
 
     const outerTopY = pad + getBottomEdgeY(28) - topOverlap;
     return polygonToRows([
-        [pad + 18 - centerOverlap, pad + getBottomEdgeY(18) - Math.max(0, heightOffset) - topOverlap],
+        [pad + 18, pad + getBottomEdgeY(18) - Math.max(0, heightOffset) - topOverlap],
         [pad + 33, outerTopY],
         [pad + 33 + outerBow, outerTopY + outerBowDrop],
         [pad + 32 + outerBottomOverhang, pad + 33 + Math.max(0, -heightOffset) + cliffDepth],
-        [pad + 13 - centerOverlap, pad + 39 + Math.max(0, -heightOffset) + cliffDepth]
+        [pad + 21, pad + 39 + Math.max(0, -heightOffset) + cliffDepth]
     ]);
 }
 

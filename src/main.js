@@ -450,10 +450,7 @@ async function init() {
         });
         const edgeTrapezoidAssets = {};
         const edgeTerrainGroups = ['grass', 'earth', 'mud', 'sand', 'snow', 'rock'];
-        const edgeSingleDiffTerrainGroups = {
-            water_shallow: [0],
-            water_deep: [0]
-        };
+        const edgeWaterTerrainGroups = ['water_shallow', 'water_deep'];
         const edgeDirections = ['w', 'sw', 'se'];
         const edgeTerrainDiffs = [-1, 0, 1];
         const edgeCliffDiffs = [-3, -2, 2, 3];
@@ -467,9 +464,9 @@ async function init() {
                 });
             });
         });
-        Object.entries(edgeSingleDiffTerrainGroups).forEach(([terrain, diffs]) => {
+        edgeWaterTerrainGroups.forEach(terrain => {
             edgeDirections.forEach(direction => {
-                diffs.forEach(diff => {
+                edgeTerrainDiffs.forEach(diff => {
                     const diffName = getEdgeDiffName(diff);
                     edgeTrapezoidAssets[`edge_trapezoid_${terrain}_${direction}_${diffName}`] =
                         `assets/terrain/edge_trapezoids/${terrain}/${direction}_${diffName}.png`;

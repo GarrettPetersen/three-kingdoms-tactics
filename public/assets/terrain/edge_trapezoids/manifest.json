@@ -52,10 +52,14 @@
   ],
   "terrainDiffsByGroup": {
     "water_shallow": [
-      0
+      -1,
+      0,
+      1
     ],
     "water_deep": [
-      0
+      -1,
+      0,
+      1
     ]
   },
   "sharedCliffDiffs": [
@@ -692,11 +696,11 @@
           32
         ],
         [
-          34,
+          29,
           51
         ],
         [
-          33,
+          28,
           51
         ]
       ],
@@ -709,97 +713,97 @@
         {
           "y": 33,
           "start": 10,
-          "end": 17
+          "end": 16
         },
         {
           "y": 34,
           "start": 10,
-          "end": 20
+          "end": 19
         },
         {
           "y": 35,
           "start": 9,
-          "end": 23
+          "end": 22
         },
         {
           "y": 36,
           "start": 8,
-          "end": 27
+          "end": 25
         },
         {
           "y": 37,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 39,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 40,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 41,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 42,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 43,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 44,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 45,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 46,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 47,
-          "start": 17,
-          "end": 33
+          "start": 15,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 49,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 50,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 51,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -819,11 +823,11 @@
           32
         ],
         [
-          34,
+          29,
           48
         ],
         [
-          33,
+          28,
           48
         ]
       ],
@@ -836,82 +840,82 @@
         {
           "y": 33,
           "start": 10,
-          "end": 17
+          "end": 16
         },
         {
           "y": 34,
           "start": 10,
-          "end": 20
+          "end": 19
         },
         {
           "y": 35,
           "start": 9,
-          "end": 23
+          "end": 22
         },
         {
           "y": 36,
           "start": 8,
-          "end": 27
+          "end": 25
         },
         {
           "y": 37,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 39,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 40,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 41,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 42,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 43,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 44,
-          "start": 17,
-          "end": 32
+          "start": 15,
+          "end": 28
         },
         {
           "y": 45,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 46,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 47,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -927,15 +931,15 @@
           32
         ],
         [
-          16,
+          15,
           32
         ],
         [
-          34,
+          29,
           48
         ],
         [
-          33,
+          28,
           48
         ]
       ],
@@ -943,87 +947,87 @@
         {
           "y": 32,
           "start": 11,
-          "end": 16
+          "end": 15
         },
         {
           "y": 33,
           "start": 10,
-          "end": 24
+          "end": 23
         },
         {
           "y": 34,
           "start": 10,
-          "end": 29
+          "end": 27
         },
         {
           "y": 35,
           "start": 9,
-          "end": 29
+          "end": 27
         },
         {
           "y": 36,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 37,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 39,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 40,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 41,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 42,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 43,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 44,
-          "start": 17,
-          "end": 33
+          "start": 15,
+          "end": 29
         },
         {
           "y": 45,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 46,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 47,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -1043,11 +1047,11 @@
           32
         ],
         [
-          22,
+          32,
           51
         ],
         [
-          21,
+          30,
           51
         ]
       ],
@@ -1059,98 +1063,98 @@
         },
         {
           "y": 33,
-          "start": 37,
+          "start": 38,
           "end": 44
         },
         {
           "y": 34,
-          "start": 34,
+          "start": 35,
           "end": 44
         },
         {
           "y": 35,
-          "start": 31,
+          "start": 32,
           "end": 45
         },
         {
           "y": 36,
-          "start": 27,
+          "start": 29,
           "end": 46
         },
         {
           "y": 37,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 40,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 41,
-          "start": 24,
+          "start": 28,
           "end": 45
         },
         {
           "y": 42,
-          "start": 24,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 44,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 45,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 46,
-          "start": 22,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 47,
-          "start": 22,
-          "end": 38
+          "start": 30,
+          "end": 41
         },
         {
           "y": 48,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 49,
-          "start": 21,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 50,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 51,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -1170,11 +1174,11 @@
           32
         ],
         [
-          22,
+          32,
           48
         ],
         [
-          21,
+          30,
           48
         ]
       ],
@@ -1186,83 +1190,83 @@
         },
         {
           "y": 33,
-          "start": 37,
+          "start": 38,
           "end": 44
         },
         {
           "y": 34,
-          "start": 34,
+          "start": 35,
           "end": 44
         },
         {
           "y": 35,
-          "start": 31,
+          "start": 32,
           "end": 45
         },
         {
           "y": 36,
-          "start": 27,
+          "start": 29,
           "end": 46
         },
         {
           "y": 37,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 40,
-          "start": 24,
+          "start": 28,
           "end": 45
         },
         {
           "y": 41,
-          "start": 24,
+          "start": 29,
           "end": 45
         },
         {
           "y": 42,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 23,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 44,
-          "start": 22,
-          "end": 38
+          "start": 29,
+          "end": 41
         },
         {
           "y": 45,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 46,
-          "start": 22,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 47,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -1274,7 +1278,7 @@
       "file": "assets/terrain/edge_trapezoids/grass/se_plus1.png",
       "points": [
         [
-          38,
+          39,
           32
         ],
         [
@@ -1282,99 +1286,99 @@
           32
         ],
         [
-          22,
+          32,
           48
         ],
         [
-          21,
+          30,
           48
         ]
       ],
       "rows": [
         {
           "y": 32,
-          "start": 38,
+          "start": 39,
           "end": 43
         },
         {
           "y": 33,
-          "start": 30,
+          "start": 31,
           "end": 44
         },
         {
           "y": 34,
-          "start": 25,
+          "start": 28,
           "end": 44
         },
         {
           "y": 35,
-          "start": 25,
+          "start": 28,
           "end": 45
         },
         {
           "y": 36,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 37,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 24,
+          "start": 29,
           "end": 46
         },
         {
           "y": 40,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 41,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 42,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 22,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 44,
-          "start": 22,
-          "end": 38
+          "start": 30,
+          "end": 41
         },
         {
           "y": 45,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 46,
-          "start": 21,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 47,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -1985,11 +1989,11 @@
           32
         ],
         [
-          34,
+          29,
           51
         ],
         [
-          33,
+          28,
           51
         ]
       ],
@@ -2002,97 +2006,97 @@
         {
           "y": 33,
           "start": 10,
-          "end": 17
+          "end": 16
         },
         {
           "y": 34,
           "start": 10,
-          "end": 20
+          "end": 19
         },
         {
           "y": 35,
           "start": 9,
-          "end": 23
+          "end": 22
         },
         {
           "y": 36,
           "start": 8,
-          "end": 27
+          "end": 25
         },
         {
           "y": 37,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 39,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 40,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 41,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 42,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 43,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 44,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 45,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 46,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 47,
-          "start": 17,
-          "end": 33
+          "start": 15,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 49,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 50,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 51,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -2112,11 +2116,11 @@
           32
         ],
         [
-          34,
+          29,
           48
         ],
         [
-          33,
+          28,
           48
         ]
       ],
@@ -2129,82 +2133,82 @@
         {
           "y": 33,
           "start": 10,
-          "end": 17
+          "end": 16
         },
         {
           "y": 34,
           "start": 10,
-          "end": 20
+          "end": 19
         },
         {
           "y": 35,
           "start": 9,
-          "end": 23
+          "end": 22
         },
         {
           "y": 36,
           "start": 8,
-          "end": 27
+          "end": 25
         },
         {
           "y": 37,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 39,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 40,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 41,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 42,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 43,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 44,
-          "start": 17,
-          "end": 32
+          "start": 15,
+          "end": 28
         },
         {
           "y": 45,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 46,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 47,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -2220,15 +2224,15 @@
           32
         ],
         [
-          16,
+          15,
           32
         ],
         [
-          34,
+          29,
           48
         ],
         [
-          33,
+          28,
           48
         ]
       ],
@@ -2236,87 +2240,87 @@
         {
           "y": 32,
           "start": 11,
-          "end": 16
+          "end": 15
         },
         {
           "y": 33,
           "start": 10,
-          "end": 24
+          "end": 23
         },
         {
           "y": 34,
           "start": 10,
-          "end": 29
+          "end": 27
         },
         {
           "y": 35,
           "start": 9,
-          "end": 29
+          "end": 27
         },
         {
           "y": 36,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 37,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 39,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 40,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 41,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 42,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 43,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 44,
-          "start": 17,
-          "end": 33
+          "start": 15,
+          "end": 29
         },
         {
           "y": 45,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 46,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 47,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -2336,11 +2340,11 @@
           32
         ],
         [
-          22,
+          32,
           51
         ],
         [
-          21,
+          30,
           51
         ]
       ],
@@ -2352,98 +2356,98 @@
         },
         {
           "y": 33,
-          "start": 37,
+          "start": 38,
           "end": 44
         },
         {
           "y": 34,
-          "start": 34,
+          "start": 35,
           "end": 44
         },
         {
           "y": 35,
-          "start": 31,
+          "start": 32,
           "end": 45
         },
         {
           "y": 36,
-          "start": 27,
+          "start": 29,
           "end": 46
         },
         {
           "y": 37,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 40,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 41,
-          "start": 24,
+          "start": 28,
           "end": 45
         },
         {
           "y": 42,
-          "start": 24,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 44,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 45,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 46,
-          "start": 22,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 47,
-          "start": 22,
-          "end": 38
+          "start": 30,
+          "end": 41
         },
         {
           "y": 48,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 49,
-          "start": 21,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 50,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 51,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -2463,11 +2467,11 @@
           32
         ],
         [
-          22,
+          32,
           48
         ],
         [
-          21,
+          30,
           48
         ]
       ],
@@ -2479,83 +2483,83 @@
         },
         {
           "y": 33,
-          "start": 37,
+          "start": 38,
           "end": 44
         },
         {
           "y": 34,
-          "start": 34,
+          "start": 35,
           "end": 44
         },
         {
           "y": 35,
-          "start": 31,
+          "start": 32,
           "end": 45
         },
         {
           "y": 36,
-          "start": 27,
+          "start": 29,
           "end": 46
         },
         {
           "y": 37,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 40,
-          "start": 24,
+          "start": 28,
           "end": 45
         },
         {
           "y": 41,
-          "start": 24,
+          "start": 29,
           "end": 45
         },
         {
           "y": 42,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 23,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 44,
-          "start": 22,
-          "end": 38
+          "start": 29,
+          "end": 41
         },
         {
           "y": 45,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 46,
-          "start": 22,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 47,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -2567,7 +2571,7 @@
       "file": "assets/terrain/edge_trapezoids/earth/se_plus1.png",
       "points": [
         [
-          38,
+          39,
           32
         ],
         [
@@ -2575,99 +2579,99 @@
           32
         ],
         [
-          22,
+          32,
           48
         ],
         [
-          21,
+          30,
           48
         ]
       ],
       "rows": [
         {
           "y": 32,
-          "start": 38,
+          "start": 39,
           "end": 43
         },
         {
           "y": 33,
-          "start": 30,
+          "start": 31,
           "end": 44
         },
         {
           "y": 34,
-          "start": 25,
+          "start": 28,
           "end": 44
         },
         {
           "y": 35,
-          "start": 25,
+          "start": 28,
           "end": 45
         },
         {
           "y": 36,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 37,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 24,
+          "start": 29,
           "end": 46
         },
         {
           "y": 40,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 41,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 42,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 22,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 44,
-          "start": 22,
-          "end": 38
+          "start": 30,
+          "end": 41
         },
         {
           "y": 45,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 46,
-          "start": 21,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 47,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -3278,11 +3282,11 @@
           32
         ],
         [
-          34,
+          29,
           51
         ],
         [
-          33,
+          28,
           51
         ]
       ],
@@ -3295,97 +3299,97 @@
         {
           "y": 33,
           "start": 10,
-          "end": 17
+          "end": 16
         },
         {
           "y": 34,
           "start": 10,
-          "end": 20
+          "end": 19
         },
         {
           "y": 35,
           "start": 9,
-          "end": 23
+          "end": 22
         },
         {
           "y": 36,
           "start": 8,
-          "end": 27
+          "end": 25
         },
         {
           "y": 37,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 39,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 40,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 41,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 42,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 43,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 44,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 45,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 46,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 47,
-          "start": 17,
-          "end": 33
+          "start": 15,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 49,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 50,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 51,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -3405,11 +3409,11 @@
           32
         ],
         [
-          34,
+          29,
           48
         ],
         [
-          33,
+          28,
           48
         ]
       ],
@@ -3422,82 +3426,82 @@
         {
           "y": 33,
           "start": 10,
-          "end": 17
+          "end": 16
         },
         {
           "y": 34,
           "start": 10,
-          "end": 20
+          "end": 19
         },
         {
           "y": 35,
           "start": 9,
-          "end": 23
+          "end": 22
         },
         {
           "y": 36,
           "start": 8,
-          "end": 27
+          "end": 25
         },
         {
           "y": 37,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 39,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 40,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 41,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 42,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 43,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 44,
-          "start": 17,
-          "end": 32
+          "start": 15,
+          "end": 28
         },
         {
           "y": 45,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 46,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 47,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -3513,15 +3517,15 @@
           32
         ],
         [
-          16,
+          15,
           32
         ],
         [
-          34,
+          29,
           48
         ],
         [
-          33,
+          28,
           48
         ]
       ],
@@ -3529,87 +3533,87 @@
         {
           "y": 32,
           "start": 11,
-          "end": 16
+          "end": 15
         },
         {
           "y": 33,
           "start": 10,
-          "end": 24
+          "end": 23
         },
         {
           "y": 34,
           "start": 10,
-          "end": 29
+          "end": 27
         },
         {
           "y": 35,
           "start": 9,
-          "end": 29
+          "end": 27
         },
         {
           "y": 36,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 37,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 39,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 40,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 41,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 42,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 43,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 44,
-          "start": 17,
-          "end": 33
+          "start": 15,
+          "end": 29
         },
         {
           "y": 45,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 46,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 47,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -3629,11 +3633,11 @@
           32
         ],
         [
-          22,
+          32,
           51
         ],
         [
-          21,
+          30,
           51
         ]
       ],
@@ -3645,98 +3649,98 @@
         },
         {
           "y": 33,
-          "start": 37,
+          "start": 38,
           "end": 44
         },
         {
           "y": 34,
-          "start": 34,
+          "start": 35,
           "end": 44
         },
         {
           "y": 35,
-          "start": 31,
+          "start": 32,
           "end": 45
         },
         {
           "y": 36,
-          "start": 27,
+          "start": 29,
           "end": 46
         },
         {
           "y": 37,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 40,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 41,
-          "start": 24,
+          "start": 28,
           "end": 45
         },
         {
           "y": 42,
-          "start": 24,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 44,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 45,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 46,
-          "start": 22,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 47,
-          "start": 22,
-          "end": 38
+          "start": 30,
+          "end": 41
         },
         {
           "y": 48,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 49,
-          "start": 21,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 50,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 51,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -3756,11 +3760,11 @@
           32
         ],
         [
-          22,
+          32,
           48
         ],
         [
-          21,
+          30,
           48
         ]
       ],
@@ -3772,83 +3776,83 @@
         },
         {
           "y": 33,
-          "start": 37,
+          "start": 38,
           "end": 44
         },
         {
           "y": 34,
-          "start": 34,
+          "start": 35,
           "end": 44
         },
         {
           "y": 35,
-          "start": 31,
+          "start": 32,
           "end": 45
         },
         {
           "y": 36,
-          "start": 27,
+          "start": 29,
           "end": 46
         },
         {
           "y": 37,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 40,
-          "start": 24,
+          "start": 28,
           "end": 45
         },
         {
           "y": 41,
-          "start": 24,
+          "start": 29,
           "end": 45
         },
         {
           "y": 42,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 23,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 44,
-          "start": 22,
-          "end": 38
+          "start": 29,
+          "end": 41
         },
         {
           "y": 45,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 46,
-          "start": 22,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 47,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -3860,7 +3864,7 @@
       "file": "assets/terrain/edge_trapezoids/mud/se_plus1.png",
       "points": [
         [
-          38,
+          39,
           32
         ],
         [
@@ -3868,99 +3872,99 @@
           32
         ],
         [
-          22,
+          32,
           48
         ],
         [
-          21,
+          30,
           48
         ]
       ],
       "rows": [
         {
           "y": 32,
-          "start": 38,
+          "start": 39,
           "end": 43
         },
         {
           "y": 33,
-          "start": 30,
+          "start": 31,
           "end": 44
         },
         {
           "y": 34,
-          "start": 25,
+          "start": 28,
           "end": 44
         },
         {
           "y": 35,
-          "start": 25,
+          "start": 28,
           "end": 45
         },
         {
           "y": 36,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 37,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 24,
+          "start": 29,
           "end": 46
         },
         {
           "y": 40,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 41,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 42,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 22,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 44,
-          "start": 22,
-          "end": 38
+          "start": 30,
+          "end": 41
         },
         {
           "y": 45,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 46,
-          "start": 21,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 47,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -4571,11 +4575,11 @@
           32
         ],
         [
-          34,
+          29,
           51
         ],
         [
-          33,
+          28,
           51
         ]
       ],
@@ -4588,97 +4592,97 @@
         {
           "y": 33,
           "start": 10,
-          "end": 17
+          "end": 16
         },
         {
           "y": 34,
           "start": 10,
-          "end": 20
+          "end": 19
         },
         {
           "y": 35,
           "start": 9,
-          "end": 23
+          "end": 22
         },
         {
           "y": 36,
           "start": 8,
-          "end": 27
+          "end": 25
         },
         {
           "y": 37,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 39,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 40,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 41,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 42,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 43,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 44,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 45,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 46,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 47,
-          "start": 17,
-          "end": 33
+          "start": 15,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 49,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 50,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 51,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -4698,11 +4702,11 @@
           32
         ],
         [
-          34,
+          29,
           48
         ],
         [
-          33,
+          28,
           48
         ]
       ],
@@ -4715,82 +4719,82 @@
         {
           "y": 33,
           "start": 10,
-          "end": 17
+          "end": 16
         },
         {
           "y": 34,
           "start": 10,
-          "end": 20
+          "end": 19
         },
         {
           "y": 35,
           "start": 9,
-          "end": 23
+          "end": 22
         },
         {
           "y": 36,
           "start": 8,
-          "end": 27
+          "end": 25
         },
         {
           "y": 37,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 39,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 40,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 41,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 42,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 43,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 44,
-          "start": 17,
-          "end": 32
+          "start": 15,
+          "end": 28
         },
         {
           "y": 45,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 46,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 47,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -4806,15 +4810,15 @@
           32
         ],
         [
-          16,
+          15,
           32
         ],
         [
-          34,
+          29,
           48
         ],
         [
-          33,
+          28,
           48
         ]
       ],
@@ -4822,87 +4826,87 @@
         {
           "y": 32,
           "start": 11,
-          "end": 16
+          "end": 15
         },
         {
           "y": 33,
           "start": 10,
-          "end": 24
+          "end": 23
         },
         {
           "y": 34,
           "start": 10,
-          "end": 29
+          "end": 27
         },
         {
           "y": 35,
           "start": 9,
-          "end": 29
+          "end": 27
         },
         {
           "y": 36,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 37,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 39,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 40,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 41,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 42,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 43,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 44,
-          "start": 17,
-          "end": 33
+          "start": 15,
+          "end": 29
         },
         {
           "y": 45,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 46,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 47,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -4922,11 +4926,11 @@
           32
         ],
         [
-          22,
+          32,
           51
         ],
         [
-          21,
+          30,
           51
         ]
       ],
@@ -4938,98 +4942,98 @@
         },
         {
           "y": 33,
-          "start": 37,
+          "start": 38,
           "end": 44
         },
         {
           "y": 34,
-          "start": 34,
+          "start": 35,
           "end": 44
         },
         {
           "y": 35,
-          "start": 31,
+          "start": 32,
           "end": 45
         },
         {
           "y": 36,
-          "start": 27,
+          "start": 29,
           "end": 46
         },
         {
           "y": 37,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 40,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 41,
-          "start": 24,
+          "start": 28,
           "end": 45
         },
         {
           "y": 42,
-          "start": 24,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 44,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 45,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 46,
-          "start": 22,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 47,
-          "start": 22,
-          "end": 38
+          "start": 30,
+          "end": 41
         },
         {
           "y": 48,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 49,
-          "start": 21,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 50,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 51,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -5049,11 +5053,11 @@
           32
         ],
         [
-          22,
+          32,
           48
         ],
         [
-          21,
+          30,
           48
         ]
       ],
@@ -5065,83 +5069,83 @@
         },
         {
           "y": 33,
-          "start": 37,
+          "start": 38,
           "end": 44
         },
         {
           "y": 34,
-          "start": 34,
+          "start": 35,
           "end": 44
         },
         {
           "y": 35,
-          "start": 31,
+          "start": 32,
           "end": 45
         },
         {
           "y": 36,
-          "start": 27,
+          "start": 29,
           "end": 46
         },
         {
           "y": 37,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 40,
-          "start": 24,
+          "start": 28,
           "end": 45
         },
         {
           "y": 41,
-          "start": 24,
+          "start": 29,
           "end": 45
         },
         {
           "y": 42,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 23,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 44,
-          "start": 22,
-          "end": 38
+          "start": 29,
+          "end": 41
         },
         {
           "y": 45,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 46,
-          "start": 22,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 47,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -5153,7 +5157,7 @@
       "file": "assets/terrain/edge_trapezoids/sand/se_plus1.png",
       "points": [
         [
-          38,
+          39,
           32
         ],
         [
@@ -5161,99 +5165,99 @@
           32
         ],
         [
-          22,
+          32,
           48
         ],
         [
-          21,
+          30,
           48
         ]
       ],
       "rows": [
         {
           "y": 32,
-          "start": 38,
+          "start": 39,
           "end": 43
         },
         {
           "y": 33,
-          "start": 30,
+          "start": 31,
           "end": 44
         },
         {
           "y": 34,
-          "start": 25,
+          "start": 28,
           "end": 44
         },
         {
           "y": 35,
-          "start": 25,
+          "start": 28,
           "end": 45
         },
         {
           "y": 36,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 37,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 24,
+          "start": 29,
           "end": 46
         },
         {
           "y": 40,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 41,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 42,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 22,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 44,
-          "start": 22,
-          "end": 38
+          "start": 30,
+          "end": 41
         },
         {
           "y": 45,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 46,
-          "start": 21,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 47,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -5864,11 +5868,11 @@
           32
         ],
         [
-          34,
+          29,
           51
         ],
         [
-          33,
+          28,
           51
         ]
       ],
@@ -5881,97 +5885,97 @@
         {
           "y": 33,
           "start": 10,
-          "end": 17
+          "end": 16
         },
         {
           "y": 34,
           "start": 10,
-          "end": 20
+          "end": 19
         },
         {
           "y": 35,
           "start": 9,
-          "end": 23
+          "end": 22
         },
         {
           "y": 36,
           "start": 8,
-          "end": 27
+          "end": 25
         },
         {
           "y": 37,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 39,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 40,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 41,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 42,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 43,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 44,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 45,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 46,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 47,
-          "start": 17,
-          "end": 33
+          "start": 15,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 49,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 50,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 51,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -5991,11 +5995,11 @@
           32
         ],
         [
-          34,
+          29,
           48
         ],
         [
-          33,
+          28,
           48
         ]
       ],
@@ -6008,82 +6012,82 @@
         {
           "y": 33,
           "start": 10,
-          "end": 17
+          "end": 16
         },
         {
           "y": 34,
           "start": 10,
-          "end": 20
+          "end": 19
         },
         {
           "y": 35,
           "start": 9,
-          "end": 23
+          "end": 22
         },
         {
           "y": 36,
           "start": 8,
-          "end": 27
+          "end": 25
         },
         {
           "y": 37,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 39,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 40,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 41,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 42,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 43,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 44,
-          "start": 17,
-          "end": 32
+          "start": 15,
+          "end": 28
         },
         {
           "y": 45,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 46,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 47,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -6099,15 +6103,15 @@
           32
         ],
         [
-          16,
+          15,
           32
         ],
         [
-          34,
+          29,
           48
         ],
         [
-          33,
+          28,
           48
         ]
       ],
@@ -6115,87 +6119,87 @@
         {
           "y": 32,
           "start": 11,
-          "end": 16
+          "end": 15
         },
         {
           "y": 33,
           "start": 10,
-          "end": 24
+          "end": 23
         },
         {
           "y": 34,
           "start": 10,
-          "end": 29
+          "end": 27
         },
         {
           "y": 35,
           "start": 9,
-          "end": 29
+          "end": 27
         },
         {
           "y": 36,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 37,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 39,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 40,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 41,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 42,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 43,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 44,
-          "start": 17,
-          "end": 33
+          "start": 15,
+          "end": 29
         },
         {
           "y": 45,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 46,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 47,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -6215,11 +6219,11 @@
           32
         ],
         [
-          22,
+          32,
           51
         ],
         [
-          21,
+          30,
           51
         ]
       ],
@@ -6231,98 +6235,98 @@
         },
         {
           "y": 33,
-          "start": 37,
+          "start": 38,
           "end": 44
         },
         {
           "y": 34,
-          "start": 34,
+          "start": 35,
           "end": 44
         },
         {
           "y": 35,
-          "start": 31,
+          "start": 32,
           "end": 45
         },
         {
           "y": 36,
-          "start": 27,
+          "start": 29,
           "end": 46
         },
         {
           "y": 37,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 40,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 41,
-          "start": 24,
+          "start": 28,
           "end": 45
         },
         {
           "y": 42,
-          "start": 24,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 44,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 45,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 46,
-          "start": 22,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 47,
-          "start": 22,
-          "end": 38
+          "start": 30,
+          "end": 41
         },
         {
           "y": 48,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 49,
-          "start": 21,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 50,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 51,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -6342,11 +6346,11 @@
           32
         ],
         [
-          22,
+          32,
           48
         ],
         [
-          21,
+          30,
           48
         ]
       ],
@@ -6358,83 +6362,83 @@
         },
         {
           "y": 33,
-          "start": 37,
+          "start": 38,
           "end": 44
         },
         {
           "y": 34,
-          "start": 34,
+          "start": 35,
           "end": 44
         },
         {
           "y": 35,
-          "start": 31,
+          "start": 32,
           "end": 45
         },
         {
           "y": 36,
-          "start": 27,
+          "start": 29,
           "end": 46
         },
         {
           "y": 37,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 40,
-          "start": 24,
+          "start": 28,
           "end": 45
         },
         {
           "y": 41,
-          "start": 24,
+          "start": 29,
           "end": 45
         },
         {
           "y": 42,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 23,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 44,
-          "start": 22,
-          "end": 38
+          "start": 29,
+          "end": 41
         },
         {
           "y": 45,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 46,
-          "start": 22,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 47,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -6446,7 +6450,7 @@
       "file": "assets/terrain/edge_trapezoids/snow/se_plus1.png",
       "points": [
         [
-          38,
+          39,
           32
         ],
         [
@@ -6454,99 +6458,99 @@
           32
         ],
         [
-          22,
+          32,
           48
         ],
         [
-          21,
+          30,
           48
         ]
       ],
       "rows": [
         {
           "y": 32,
-          "start": 38,
+          "start": 39,
           "end": 43
         },
         {
           "y": 33,
-          "start": 30,
+          "start": 31,
           "end": 44
         },
         {
           "y": 34,
-          "start": 25,
+          "start": 28,
           "end": 44
         },
         {
           "y": 35,
-          "start": 25,
+          "start": 28,
           "end": 45
         },
         {
           "y": 36,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 37,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 24,
+          "start": 29,
           "end": 46
         },
         {
           "y": 40,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 41,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 42,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 22,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 44,
-          "start": 22,
-          "end": 38
+          "start": 30,
+          "end": 41
         },
         {
           "y": 45,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 46,
-          "start": 21,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 47,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -7157,11 +7161,11 @@
           32
         ],
         [
-          34,
+          29,
           51
         ],
         [
-          33,
+          28,
           51
         ]
       ],
@@ -7174,97 +7178,97 @@
         {
           "y": 33,
           "start": 10,
-          "end": 17
+          "end": 16
         },
         {
           "y": 34,
           "start": 10,
-          "end": 20
+          "end": 19
         },
         {
           "y": 35,
           "start": 9,
-          "end": 23
+          "end": 22
         },
         {
           "y": 36,
           "start": 8,
-          "end": 27
+          "end": 25
         },
         {
           "y": 37,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 39,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 40,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 41,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 42,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 43,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 44,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 45,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 46,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 47,
-          "start": 17,
-          "end": 33
+          "start": 15,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 49,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 50,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 51,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -7284,11 +7288,11 @@
           32
         ],
         [
-          34,
+          29,
           48
         ],
         [
-          33,
+          28,
           48
         ]
       ],
@@ -7301,82 +7305,82 @@
         {
           "y": 33,
           "start": 10,
-          "end": 17
+          "end": 16
         },
         {
           "y": 34,
           "start": 10,
-          "end": 20
+          "end": 19
         },
         {
           "y": 35,
           "start": 9,
-          "end": 23
+          "end": 22
         },
         {
           "y": 36,
           "start": 8,
-          "end": 27
+          "end": 25
         },
         {
           "y": 37,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 39,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 40,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 41,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 42,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 43,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 44,
-          "start": 17,
-          "end": 32
+          "start": 15,
+          "end": 28
         },
         {
           "y": 45,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 46,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 47,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -7392,15 +7396,15 @@
           32
         ],
         [
-          16,
+          15,
           32
         ],
         [
-          34,
+          29,
           48
         ],
         [
-          33,
+          28,
           48
         ]
       ],
@@ -7408,87 +7412,87 @@
         {
           "y": 32,
           "start": 11,
-          "end": 16
+          "end": 15
         },
         {
           "y": 33,
           "start": 10,
-          "end": 24
+          "end": 23
         },
         {
           "y": 34,
           "start": 10,
-          "end": 29
+          "end": 27
         },
         {
           "y": 35,
           "start": 9,
-          "end": 29
+          "end": 27
         },
         {
           "y": 36,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 37,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 39,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 40,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 41,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 42,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 43,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 44,
-          "start": 17,
-          "end": 33
+          "start": 15,
+          "end": 29
         },
         {
           "y": 45,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 46,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 47,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -7508,11 +7512,11 @@
           32
         ],
         [
-          22,
+          32,
           51
         ],
         [
-          21,
+          30,
           51
         ]
       ],
@@ -7524,98 +7528,98 @@
         },
         {
           "y": 33,
-          "start": 37,
+          "start": 38,
           "end": 44
         },
         {
           "y": 34,
-          "start": 34,
+          "start": 35,
           "end": 44
         },
         {
           "y": 35,
-          "start": 31,
+          "start": 32,
           "end": 45
         },
         {
           "y": 36,
-          "start": 27,
+          "start": 29,
           "end": 46
         },
         {
           "y": 37,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 40,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 41,
-          "start": 24,
+          "start": 28,
           "end": 45
         },
         {
           "y": 42,
-          "start": 24,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 44,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 45,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 46,
-          "start": 22,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 47,
-          "start": 22,
-          "end": 38
+          "start": 30,
+          "end": 41
         },
         {
           "y": 48,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 49,
-          "start": 21,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 50,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 51,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -7635,11 +7639,11 @@
           32
         ],
         [
-          22,
+          32,
           48
         ],
         [
-          21,
+          30,
           48
         ]
       ],
@@ -7651,83 +7655,83 @@
         },
         {
           "y": 33,
-          "start": 37,
+          "start": 38,
           "end": 44
         },
         {
           "y": 34,
-          "start": 34,
+          "start": 35,
           "end": 44
         },
         {
           "y": 35,
-          "start": 31,
+          "start": 32,
           "end": 45
         },
         {
           "y": 36,
-          "start": 27,
+          "start": 29,
           "end": 46
         },
         {
           "y": 37,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 40,
-          "start": 24,
+          "start": 28,
           "end": 45
         },
         {
           "y": 41,
-          "start": 24,
+          "start": 29,
           "end": 45
         },
         {
           "y": 42,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 23,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 44,
-          "start": 22,
-          "end": 38
+          "start": 29,
+          "end": 41
         },
         {
           "y": 45,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 46,
-          "start": 22,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 47,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -7739,7 +7743,7 @@
       "file": "assets/terrain/edge_trapezoids/rock/se_plus1.png",
       "points": [
         [
-          38,
+          39,
           32
         ],
         [
@@ -7747,99 +7751,301 @@
           32
         ],
         [
-          22,
+          32,
           48
         ],
         [
-          21,
+          30,
           48
         ]
       ],
       "rows": [
         {
           "y": 32,
-          "start": 38,
+          "start": 39,
           "end": 43
         },
         {
           "y": 33,
-          "start": 30,
+          "start": 31,
           "end": 44
         },
         {
           "y": 34,
-          "start": 25,
+          "start": 28,
           "end": 44
         },
         {
           "y": 35,
-          "start": 25,
+          "start": 28,
           "end": 45
         },
         {
           "y": 36,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 37,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 24,
+          "start": 29,
           "end": 46
         },
         {
           "y": 40,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 41,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 42,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 22,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 44,
-          "start": 22,
-          "end": 38
+          "start": 30,
+          "end": 41
         },
         {
           "y": 45,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 46,
-          "start": 21,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 47,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "water_shallow",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/water_shallow/w_minus1.png",
+      "points": [
+        [
+          17,
+          20
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          8,
+          54
+        ],
+        [
+          8,
+          54
+        ]
+      ],
+      "rows": [
+        {
+          "y": 20,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 21,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 22,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 23,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 52,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 53,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 54,
+          "start": 8,
+          "end": 8
         }
       ]
     },
@@ -8032,6 +8238,335 @@
     },
     {
       "terrain": "water_shallow",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/water_shallow/w_plus1.png",
+      "points": [
+        [
+          17,
+          17
+        ],
+        [
+          19,
+          17
+        ],
+        [
+          8,
+          51
+        ],
+        [
+          8,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 17,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 18,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 19,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 20,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 21,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 22,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 23,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "water_shallow",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/water_shallow/sw_minus1.png",
+      "points": [
+        [
+          11,
+          32
+        ],
+        [
+          13,
+          32
+        ],
+        [
+          29,
+          51
+        ],
+        [
+          28,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 32,
+          "start": 11,
+          "end": 13
+        },
+        {
+          "y": 33,
+          "start": 10,
+          "end": 16
+        },
+        {
+          "y": 34,
+          "start": 10,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 9,
+          "end": 22
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 25
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 27
+        },
+        {
+          "y": 40,
+          "start": 9,
+          "end": 27
+        },
+        {
+          "y": 41,
+          "start": 9,
+          "end": 27
+        },
+        {
+          "y": 42,
+          "start": 9,
+          "end": 28
+        },
+        {
+          "y": 43,
+          "start": 10,
+          "end": 28
+        },
+        {
+          "y": 44,
+          "start": 10,
+          "end": 28
+        },
+        {
+          "y": 45,
+          "start": 10,
+          "end": 28
+        },
+        {
+          "y": 46,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 47,
+          "start": 15,
+          "end": 29
+        },
+        {
+          "y": 48,
+          "start": 18,
+          "end": 29
+        },
+        {
+          "y": 49,
+          "start": 22,
+          "end": 29
+        },
+        {
+          "y": 50,
+          "start": 25,
+          "end": 29
+        },
+        {
+          "y": 51,
+          "start": 28,
+          "end": 29
+        }
+      ]
+    },
+    {
+      "terrain": "water_shallow",
       "direction": "sw",
       "directionLabel": "SW",
       "heightDiff": 0,
@@ -8046,11 +8581,11 @@
           32
         ],
         [
-          34,
+          29,
           48
         ],
         [
-          33,
+          28,
           48
         ]
       ],
@@ -8063,17 +8598,129 @@
         {
           "y": 33,
           "start": 10,
-          "end": 17
+          "end": 16
         },
         {
           "y": 34,
           "start": 10,
-          "end": 20
+          "end": 19
         },
         {
           "y": 35,
           "start": 9,
+          "end": 22
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 25
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 9,
+          "end": 27
+        },
+        {
+          "y": 40,
+          "start": 9,
+          "end": 27
+        },
+        {
+          "y": 41,
+          "start": 10,
+          "end": 28
+        },
+        {
+          "y": 42,
+          "start": 10,
+          "end": 28
+        },
+        {
+          "y": 43,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 44,
+          "start": 15,
+          "end": 28
+        },
+        {
+          "y": 45,
+          "start": 18,
+          "end": 29
+        },
+        {
+          "y": 46,
+          "start": 22,
+          "end": 29
+        },
+        {
+          "y": 47,
+          "start": 25,
+          "end": 29
+        },
+        {
+          "y": 48,
+          "start": 28,
+          "end": 29
+        }
+      ]
+    },
+    {
+      "terrain": "water_shallow",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/water_shallow/sw_plus1.png",
+      "points": [
+        [
+          11,
+          32
+        ],
+        [
+          15,
+          32
+        ],
+        [
+          29,
+          48
+        ],
+        [
+          28,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 32,
+          "start": 11,
+          "end": 15
+        },
+        {
+          "y": 33,
+          "start": 10,
           "end": 23
+        },
+        {
+          "y": 34,
+          "start": 10,
+          "end": 27
+        },
+        {
+          "y": 35,
+          "start": 9,
+          "end": 27
         },
         {
           "y": 36,
@@ -8083,62 +8730,189 @@
         {
           "y": 37,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 39,
           "start": 9,
-          "end": 30
+          "end": 28
         },
         {
           "y": 40,
           "start": 9,
-          "end": 30
+          "end": 28
         },
         {
           "y": 41,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 42,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 43,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 44,
-          "start": 17,
-          "end": 32
+          "start": 15,
+          "end": 29
         },
         {
           "y": 45,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 46,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 47,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 33,
+          "start": 28,
+          "end": 29
+        }
+      ]
+    },
+    {
+      "terrain": "water_shallow",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/water_shallow/se_minus1.png",
+      "points": [
+        [
+          41,
+          32
+        ],
+        [
+          43,
+          32
+        ],
+        [
+          32,
+          51
+        ],
+        [
+          30,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 32,
+          "start": 41,
+          "end": 43
+        },
+        {
+          "y": 33,
+          "start": 38,
+          "end": 44
+        },
+        {
+          "y": 34,
+          "start": 35,
+          "end": 44
+        },
+        {
+          "y": 35,
+          "start": 32,
+          "end": 45
+        },
+        {
+          "y": 36,
+          "start": 29,
+          "end": 46
+        },
+        {
+          "y": 37,
+          "start": 28,
+          "end": 46
+        },
+        {
+          "y": 38,
+          "start": 28,
+          "end": 46
+        },
+        {
+          "y": 39,
+          "start": 28,
+          "end": 46
+        },
+        {
+          "y": 40,
+          "start": 28,
+          "end": 46
+        },
+        {
+          "y": 41,
+          "start": 28,
+          "end": 45
+        },
+        {
+          "y": 42,
+          "start": 29,
+          "end": 45
+        },
+        {
+          "y": 43,
+          "start": 29,
+          "end": 45
+        },
+        {
+          "y": 44,
+          "start": 29,
+          "end": 45
+        },
+        {
+          "y": 45,
+          "start": 29,
+          "end": 45
+        },
+        {
+          "y": 46,
+          "start": 29,
+          "end": 43
+        },
+        {
+          "y": 47,
+          "start": 30,
+          "end": 41
+        },
+        {
+          "y": 48,
+          "start": 30,
+          "end": 39
+        },
+        {
+          "y": 49,
+          "start": 30,
+          "end": 36
+        },
+        {
+          "y": 50,
+          "start": 30,
           "end": 34
+        },
+        {
+          "y": 51,
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -8158,11 +8932,11 @@
           32
         ],
         [
-          22,
+          32,
           48
         ],
         [
-          21,
+          30,
           48
         ]
       ],
@@ -8174,83 +8948,397 @@
         },
         {
           "y": 33,
-          "start": 37,
+          "start": 38,
           "end": 44
         },
         {
           "y": 34,
-          "start": 34,
+          "start": 35,
           "end": 44
         },
         {
           "y": 35,
-          "start": 31,
+          "start": 32,
           "end": 45
         },
         {
           "y": 36,
-          "start": 27,
+          "start": 29,
           "end": 46
         },
         {
           "y": 37,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 40,
-          "start": 24,
+          "start": 28,
           "end": 45
         },
         {
           "y": 41,
-          "start": 24,
+          "start": 29,
           "end": 45
         },
         {
           "y": 42,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 23,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 44,
-          "start": 22,
-          "end": 38
+          "start": 29,
+          "end": 41
         },
         {
           "y": 45,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 46,
-          "start": 22,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 47,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "water_shallow",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/water_shallow/se_plus1.png",
+      "points": [
+        [
+          39,
+          32
+        ],
+        [
+          43,
+          32
+        ],
+        [
+          32,
+          48
+        ],
+        [
+          30,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 32,
+          "start": 39,
+          "end": 43
+        },
+        {
+          "y": 33,
+          "start": 31,
+          "end": 44
+        },
+        {
+          "y": 34,
+          "start": 28,
+          "end": 44
+        },
+        {
+          "y": 35,
+          "start": 28,
+          "end": 45
+        },
+        {
+          "y": 36,
+          "start": 28,
+          "end": 46
+        },
+        {
+          "y": 37,
+          "start": 28,
+          "end": 46
+        },
+        {
+          "y": 38,
+          "start": 28,
+          "end": 46
+        },
+        {
+          "y": 39,
+          "start": 29,
+          "end": 46
+        },
+        {
+          "y": 40,
+          "start": 29,
+          "end": 45
+        },
+        {
+          "y": 41,
+          "start": 29,
+          "end": 45
+        },
+        {
+          "y": 42,
+          "start": 29,
+          "end": 45
+        },
+        {
+          "y": 43,
+          "start": 29,
+          "end": 43
+        },
+        {
+          "y": 44,
+          "start": 30,
+          "end": 41
+        },
+        {
+          "y": 45,
+          "start": 30,
+          "end": 39
+        },
+        {
+          "y": 46,
+          "start": 30,
+          "end": 36
+        },
+        {
+          "y": 47,
+          "start": 30,
+          "end": 34
+        },
+        {
+          "y": 48,
+          "start": 30,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "water_deep",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/water_deep/w_minus1.png",
+      "points": [
+        [
+          17,
+          20
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          8,
+          54
+        ],
+        [
+          8,
+          54
+        ]
+      ],
+      "rows": [
+        {
+          "y": 20,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 21,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 22,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 23,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 52,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 53,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 54,
+          "start": 8,
+          "end": 8
         }
       ]
     },
@@ -8443,6 +9531,335 @@
     },
     {
       "terrain": "water_deep",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/water_deep/w_plus1.png",
+      "points": [
+        [
+          17,
+          17
+        ],
+        [
+          19,
+          17
+        ],
+        [
+          8,
+          51
+        ],
+        [
+          8,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 17,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 18,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 19,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 20,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 21,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 22,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 23,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "water_deep",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/water_deep/sw_minus1.png",
+      "points": [
+        [
+          11,
+          32
+        ],
+        [
+          13,
+          32
+        ],
+        [
+          29,
+          51
+        ],
+        [
+          28,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 32,
+          "start": 11,
+          "end": 13
+        },
+        {
+          "y": 33,
+          "start": 10,
+          "end": 16
+        },
+        {
+          "y": 34,
+          "start": 10,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 9,
+          "end": 22
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 25
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 27
+        },
+        {
+          "y": 40,
+          "start": 9,
+          "end": 27
+        },
+        {
+          "y": 41,
+          "start": 9,
+          "end": 27
+        },
+        {
+          "y": 42,
+          "start": 9,
+          "end": 28
+        },
+        {
+          "y": 43,
+          "start": 10,
+          "end": 28
+        },
+        {
+          "y": 44,
+          "start": 10,
+          "end": 28
+        },
+        {
+          "y": 45,
+          "start": 10,
+          "end": 28
+        },
+        {
+          "y": 46,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 47,
+          "start": 15,
+          "end": 29
+        },
+        {
+          "y": 48,
+          "start": 18,
+          "end": 29
+        },
+        {
+          "y": 49,
+          "start": 22,
+          "end": 29
+        },
+        {
+          "y": 50,
+          "start": 25,
+          "end": 29
+        },
+        {
+          "y": 51,
+          "start": 28,
+          "end": 29
+        }
+      ]
+    },
+    {
+      "terrain": "water_deep",
       "direction": "sw",
       "directionLabel": "SW",
       "heightDiff": 0,
@@ -8457,11 +9874,11 @@
           32
         ],
         [
-          34,
+          29,
           48
         ],
         [
-          33,
+          28,
           48
         ]
       ],
@@ -8474,17 +9891,129 @@
         {
           "y": 33,
           "start": 10,
-          "end": 17
+          "end": 16
         },
         {
           "y": 34,
           "start": 10,
-          "end": 20
+          "end": 19
         },
         {
           "y": 35,
           "start": 9,
+          "end": 22
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 25
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 9,
+          "end": 27
+        },
+        {
+          "y": 40,
+          "start": 9,
+          "end": 27
+        },
+        {
+          "y": 41,
+          "start": 10,
+          "end": 28
+        },
+        {
+          "y": 42,
+          "start": 10,
+          "end": 28
+        },
+        {
+          "y": 43,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 44,
+          "start": 15,
+          "end": 28
+        },
+        {
+          "y": 45,
+          "start": 18,
+          "end": 29
+        },
+        {
+          "y": 46,
+          "start": 22,
+          "end": 29
+        },
+        {
+          "y": 47,
+          "start": 25,
+          "end": 29
+        },
+        {
+          "y": 48,
+          "start": 28,
+          "end": 29
+        }
+      ]
+    },
+    {
+      "terrain": "water_deep",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/water_deep/sw_plus1.png",
+      "points": [
+        [
+          11,
+          32
+        ],
+        [
+          15,
+          32
+        ],
+        [
+          29,
+          48
+        ],
+        [
+          28,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 32,
+          "start": 11,
+          "end": 15
+        },
+        {
+          "y": 33,
+          "start": 10,
           "end": 23
+        },
+        {
+          "y": 34,
+          "start": 10,
+          "end": 27
+        },
+        {
+          "y": 35,
+          "start": 9,
+          "end": 27
         },
         {
           "y": 36,
@@ -8494,62 +10023,189 @@
         {
           "y": 37,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 39,
           "start": 9,
-          "end": 30
+          "end": 28
         },
         {
           "y": 40,
           "start": 9,
-          "end": 30
+          "end": 28
         },
         {
           "y": 41,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 42,
           "start": 10,
-          "end": 31
+          "end": 28
         },
         {
           "y": 43,
-          "start": 13,
-          "end": 32
+          "start": 12,
+          "end": 28
         },
         {
           "y": 44,
-          "start": 17,
-          "end": 32
+          "start": 15,
+          "end": 29
         },
         {
           "y": 45,
-          "start": 21,
-          "end": 33
+          "start": 18,
+          "end": 29
         },
         {
           "y": 46,
-          "start": 25,
-          "end": 33
+          "start": 22,
+          "end": 29
         },
         {
           "y": 47,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 48,
-          "start": 33,
+          "start": 28,
+          "end": 29
+        }
+      ]
+    },
+    {
+      "terrain": "water_deep",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/water_deep/se_minus1.png",
+      "points": [
+        [
+          41,
+          32
+        ],
+        [
+          43,
+          32
+        ],
+        [
+          32,
+          51
+        ],
+        [
+          30,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 32,
+          "start": 41,
+          "end": 43
+        },
+        {
+          "y": 33,
+          "start": 38,
+          "end": 44
+        },
+        {
+          "y": 34,
+          "start": 35,
+          "end": 44
+        },
+        {
+          "y": 35,
+          "start": 32,
+          "end": 45
+        },
+        {
+          "y": 36,
+          "start": 29,
+          "end": 46
+        },
+        {
+          "y": 37,
+          "start": 28,
+          "end": 46
+        },
+        {
+          "y": 38,
+          "start": 28,
+          "end": 46
+        },
+        {
+          "y": 39,
+          "start": 28,
+          "end": 46
+        },
+        {
+          "y": 40,
+          "start": 28,
+          "end": 46
+        },
+        {
+          "y": 41,
+          "start": 28,
+          "end": 45
+        },
+        {
+          "y": 42,
+          "start": 29,
+          "end": 45
+        },
+        {
+          "y": 43,
+          "start": 29,
+          "end": 45
+        },
+        {
+          "y": 44,
+          "start": 29,
+          "end": 45
+        },
+        {
+          "y": 45,
+          "start": 29,
+          "end": 45
+        },
+        {
+          "y": 46,
+          "start": 29,
+          "end": 43
+        },
+        {
+          "y": 47,
+          "start": 30,
+          "end": 41
+        },
+        {
+          "y": 48,
+          "start": 30,
+          "end": 39
+        },
+        {
+          "y": 49,
+          "start": 30,
+          "end": 36
+        },
+        {
+          "y": 50,
+          "start": 30,
           "end": 34
+        },
+        {
+          "y": 51,
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -8569,11 +10225,11 @@
           32
         ],
         [
-          22,
+          32,
           48
         ],
         [
-          21,
+          30,
           48
         ]
       ],
@@ -8585,83 +10241,195 @@
         },
         {
           "y": 33,
-          "start": 37,
+          "start": 38,
           "end": 44
         },
         {
           "y": 34,
-          "start": 34,
+          "start": 35,
           "end": 44
         },
         {
           "y": 35,
-          "start": 31,
+          "start": 32,
           "end": 45
         },
         {
           "y": 36,
-          "start": 27,
+          "start": 29,
           "end": 46
         },
         {
           "y": 37,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 40,
-          "start": 24,
+          "start": 28,
           "end": 45
         },
         {
           "y": 41,
-          "start": 24,
+          "start": 29,
           "end": 45
         },
         {
           "y": 42,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 43,
-          "start": 23,
-          "end": 42
+          "start": 29,
+          "end": 43
         },
         {
           "y": 44,
-          "start": 22,
-          "end": 38
+          "start": 29,
+          "end": 41
         },
         {
           "y": 45,
-          "start": 22,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 46,
-          "start": 22,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 47,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 48,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "water_deep",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/water_deep/se_plus1.png",
+      "points": [
+        [
+          39,
+          32
+        ],
+        [
+          43,
+          32
+        ],
+        [
+          32,
+          48
+        ],
+        [
+          30,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 32,
+          "start": 39,
+          "end": 43
+        },
+        {
+          "y": 33,
+          "start": 31,
+          "end": 44
+        },
+        {
+          "y": 34,
+          "start": 28,
+          "end": 44
+        },
+        {
+          "y": 35,
+          "start": 28,
+          "end": 45
+        },
+        {
+          "y": 36,
+          "start": 28,
+          "end": 46
+        },
+        {
+          "y": 37,
+          "start": 28,
+          "end": 46
+        },
+        {
+          "y": 38,
+          "start": 28,
+          "end": 46
+        },
+        {
+          "y": 39,
+          "start": 29,
+          "end": 46
+        },
+        {
+          "y": 40,
+          "start": 29,
+          "end": 45
+        },
+        {
+          "y": 41,
+          "start": 29,
+          "end": 45
+        },
+        {
+          "y": 42,
+          "start": 29,
+          "end": 45
+        },
+        {
+          "y": 43,
+          "start": 29,
+          "end": 43
+        },
+        {
+          "y": 44,
+          "start": 30,
+          "end": 41
+        },
+        {
+          "y": 45,
+          "start": 30,
+          "end": 39
+        },
+        {
+          "y": 46,
+          "start": 30,
+          "end": 36
+        },
+        {
+          "y": 47,
+          "start": 30,
+          "end": 34
+        },
+        {
+          "y": 48,
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -9584,7 +11352,7 @@
           32
         ],
         [
-          32,
+          28,
           55
         ],
         [
@@ -9601,117 +11369,117 @@
         {
           "y": 33,
           "start": 10,
-          "end": 17
+          "end": 16
         },
         {
           "y": 34,
           "start": 10,
-          "end": 20
+          "end": 19
         },
         {
           "y": 35,
           "start": 9,
-          "end": 23
+          "end": 22
         },
         {
           "y": 36,
           "start": 8,
-          "end": 27
+          "end": 25
         },
         {
           "y": 37,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 39,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 40,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 41,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 42,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 43,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 44,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 45,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 46,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 47,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 48,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 49,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 50,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 51,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 52,
           "start": 9,
-          "end": 32
+          "end": 28
         },
         {
           "y": 53,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 54,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 55,
           "start": 10,
-          "end": 32
+          "end": 28
         }
       ]
     },
@@ -9731,11 +11499,11 @@
           32
         ],
         [
-          33,
+          29,
           55
         ],
         [
-          13,
+          12,
           55
         ]
       ],
@@ -9748,117 +11516,117 @@
         {
           "y": 33,
           "start": 10,
-          "end": 17
+          "end": 16
         },
         {
           "y": 34,
           "start": 10,
-          "end": 20
+          "end": 19
         },
         {
           "y": 35,
           "start": 9,
-          "end": 23
+          "end": 22
         },
         {
           "y": 36,
           "start": 8,
-          "end": 27
+          "end": 25
         },
         {
           "y": 37,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 39,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 40,
           "start": 8,
-          "end": 29
+          "end": 27
         },
         {
           "y": 41,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 42,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 43,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 44,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 45,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 46,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 47,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 48,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 49,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 50,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 51,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 52,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 53,
           "start": 10,
-          "end": 33
+          "end": 29
         },
         {
           "y": 54,
           "start": 10,
-          "end": 33
+          "end": 29
         },
         {
           "y": 55,
-          "start": 13,
-          "end": 33
+          "start": 12,
+          "end": 29
         }
       ]
     },
@@ -9870,142 +11638,142 @@
       "file": "assets/terrain/edge_trapezoids/rocky_cliff/sw_plus2.png",
       "points": [
         [
-          20,
+          19,
+          31
+        ],
+        [
+          27,
           31
         ],
         [
           29,
-          31
-        ],
-        [
-          34,
           54
         ],
         [
-          33,
+          28,
           54
         ]
       ],
       "rows": [
         {
           "y": 31,
-          "start": 20,
-          "end": 29
+          "start": 19,
+          "end": 27
         },
         {
           "y": 32,
           "start": 11,
-          "end": 29
+          "end": 27
         },
         {
           "y": 33,
           "start": 10,
-          "end": 29
+          "end": 27
         },
         {
           "y": 34,
           "start": 10,
-          "end": 29
+          "end": 27
         },
         {
           "y": 35,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 36,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 37,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 39,
           "start": 8,
-          "end": 31
+          "end": 28
         },
         {
           "y": 40,
           "start": 8,
-          "end": 31
+          "end": 28
         },
         {
           "y": 41,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 42,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 43,
           "start": 9,
-          "end": 32
+          "end": 28
         },
         {
           "y": 44,
           "start": 9,
-          "end": 32
+          "end": 28
         },
         {
           "y": 45,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 46,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 47,
           "start": 10,
-          "end": 33
+          "end": 29
         },
         {
           "y": 48,
           "start": 10,
-          "end": 33
+          "end": 29
         },
         {
           "y": 49,
-          "start": 13,
-          "end": 33
+          "start": 12,
+          "end": 29
         },
         {
           "y": 50,
-          "start": 17,
-          "end": 33
+          "start": 15,
+          "end": 29
         },
         {
           "y": 51,
-          "start": 21,
-          "end": 34
+          "start": 18,
+          "end": 29
         },
         {
           "y": 52,
-          "start": 25,
-          "end": 34
+          "start": 22,
+          "end": 29
         },
         {
           "y": 53,
-          "start": 29,
-          "end": 34
+          "start": 25,
+          "end": 29
         },
         {
           "y": 54,
-          "start": 33,
-          "end": 34
+          "start": 28,
+          "end": 29
         }
       ]
     },
@@ -10017,162 +11785,162 @@
       "file": "assets/terrain/edge_trapezoids/rocky_cliff/sw_plus3.png",
       "points": [
         [
-          26,
+          25,
+          28
+        ],
+        [
+          27,
           28
         ],
         [
           29,
-          28
-        ],
-        [
-          34,
           55
         ],
         [
-          25,
+          22,
           55
         ]
       ],
       "rows": [
         {
           "y": 28,
-          "start": 26,
-          "end": 29
+          "start": 25,
+          "end": 27
         },
         {
           "y": 29,
-          "start": 22,
-          "end": 29
+          "start": 21,
+          "end": 27
         },
         {
           "y": 30,
-          "start": 18,
-          "end": 29
+          "start": 17,
+          "end": 27
         },
         {
           "y": 31,
-          "start": 14,
-          "end": 29
+          "start": 13,
+          "end": 27
         },
         {
           "y": 32,
           "start": 11,
-          "end": 29
+          "end": 27
         },
         {
           "y": 33,
           "start": 10,
-          "end": 30
+          "end": 27
         },
         {
           "y": 34,
           "start": 10,
-          "end": 30
+          "end": 27
         },
         {
           "y": 35,
           "start": 9,
-          "end": 30
+          "end": 27
         },
         {
           "y": 36,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 37,
           "start": 8,
-          "end": 30
+          "end": 27
         },
         {
           "y": 38,
           "start": 8,
-          "end": 31
+          "end": 28
         },
         {
           "y": 39,
           "start": 8,
-          "end": 31
+          "end": 28
         },
         {
           "y": 40,
           "start": 8,
-          "end": 31
+          "end": 28
         },
         {
           "y": 41,
           "start": 8,
-          "end": 31
+          "end": 28
         },
         {
           "y": 42,
           "start": 9,
-          "end": 31
+          "end": 28
         },
         {
           "y": 43,
           "start": 9,
-          "end": 32
+          "end": 28
         },
         {
           "y": 44,
           "start": 9,
-          "end": 32
+          "end": 28
         },
         {
           "y": 45,
           "start": 9,
-          "end": 32
+          "end": 28
         },
         {
           "y": 46,
           "start": 9,
-          "end": 32
+          "end": 28
         },
         {
           "y": 47,
           "start": 10,
-          "end": 32
+          "end": 28
         },
         {
           "y": 48,
           "start": 10,
-          "end": 33
+          "end": 29
         },
         {
           "y": 49,
           "start": 10,
-          "end": 33
+          "end": 29
         },
         {
           "y": 50,
           "start": 10,
-          "end": 33
+          "end": 29
         },
         {
           "y": 51,
           "start": 10,
-          "end": 33
+          "end": 29
         },
         {
           "y": 52,
-          "start": 13,
-          "end": 33
+          "start": 12,
+          "end": 29
         },
         {
           "y": 53,
-          "start": 17,
-          "end": 34
+          "start": 15,
+          "end": 29
         },
         {
           "y": 54,
-          "start": 21,
-          "end": 34
+          "start": 18,
+          "end": 29
         },
         {
           "y": 55,
-          "start": 25,
-          "end": 34
+          "start": 22,
+          "end": 29
         }
       ]
     },
@@ -10196,7 +11964,7 @@
           55
         ],
         [
-          22,
+          29,
           55
         ]
       ],
@@ -10208,117 +11976,117 @@
         },
         {
           "y": 33,
-          "start": 37,
+          "start": 38,
           "end": 44
         },
         {
           "y": 34,
-          "start": 34,
+          "start": 35,
           "end": 44
         },
         {
           "y": 35,
-          "start": 31,
+          "start": 32,
           "end": 45
         },
         {
           "y": 36,
-          "start": 27,
+          "start": 29,
           "end": 46
         },
         {
           "y": 37,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 40,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 41,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 42,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 43,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 44,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 45,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 46,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 47,
-          "start": 24,
+          "start": 29,
           "end": 46
         },
         {
           "y": 48,
-          "start": 24,
+          "start": 29,
           "end": 46
         },
         {
           "y": 49,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 50,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 51,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 52,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 53,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 54,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 55,
-          "start": 22,
+          "start": 29,
           "end": 45
         }
       ]
@@ -10339,11 +12107,11 @@
           32
         ],
         [
-          42,
+          43,
           55
         ],
         [
-          22,
+          30,
           55
         ]
       ],
@@ -10355,118 +12123,118 @@
         },
         {
           "y": 33,
-          "start": 37,
+          "start": 38,
           "end": 44
         },
         {
           "y": 34,
-          "start": 34,
+          "start": 35,
           "end": 44
         },
         {
           "y": 35,
-          "start": 31,
+          "start": 32,
           "end": 45
         },
         {
           "y": 36,
-          "start": 27,
+          "start": 29,
           "end": 46
         },
         {
           "y": 37,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 40,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 41,
-          "start": 25,
+          "start": 28,
           "end": 46
         },
         {
           "y": 42,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 43,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 44,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 45,
-          "start": 24,
+          "start": 29,
           "end": 46
         },
         {
           "y": 46,
-          "start": 24,
+          "start": 29,
           "end": 45
         },
         {
           "y": 47,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 48,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 49,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 50,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 51,
-          "start": 22,
+          "start": 29,
           "end": 45
         },
         {
           "y": 52,
-          "start": 22,
+          "start": 29,
           "end": 45
         },
         {
           "y": 53,
-          "start": 22,
+          "start": 30,
           "end": 45
         },
         {
           "y": 54,
-          "start": 22,
+          "start": 30,
           "end": 45
         },
         {
           "y": 55,
-          "start": 22,
-          "end": 42
+          "start": 30,
+          "end": 43
         }
       ]
     },
@@ -10478,142 +12246,142 @@
       "file": "assets/terrain/edge_trapezoids/rocky_cliff/se_plus2.png",
       "points": [
         [
-          25,
+          28,
           31
         ],
         [
-          34,
+          35,
           31
         ],
         [
-          22,
+          32,
           54
         ],
         [
-          21,
+          30,
           54
         ]
       ],
       "rows": [
         {
           "y": 31,
-          "start": 25,
-          "end": 34
+          "start": 28,
+          "end": 35
         },
         {
           "y": 32,
-          "start": 25,
+          "start": 28,
           "end": 43
         },
         {
           "y": 33,
-          "start": 25,
+          "start": 28,
           "end": 44
         },
         {
           "y": 34,
-          "start": 25,
+          "start": 28,
           "end": 44
         },
         {
           "y": 35,
-          "start": 25,
+          "start": 28,
           "end": 45
         },
         {
           "y": 36,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 37,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 39,
-          "start": 24,
+          "start": 29,
           "end": 46
         },
         {
           "y": 40,
-          "start": 24,
+          "start": 29,
           "end": 46
         },
         {
           "y": 41,
-          "start": 23,
+          "start": 29,
           "end": 46
         },
         {
           "y": 42,
-          "start": 23,
+          "start": 29,
           "end": 46
         },
         {
           "y": 43,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 44,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 45,
-          "start": 22,
+          "start": 29,
           "end": 45
         },
         {
           "y": 46,
-          "start": 22,
+          "start": 29,
           "end": 45
         },
         {
           "y": 47,
-          "start": 22,
+          "start": 30,
           "end": 45
         },
         {
           "y": 48,
-          "start": 22,
+          "start": 30,
           "end": 45
         },
         {
           "y": 49,
-          "start": 22,
-          "end": 42
+          "start": 30,
+          "end": 43
         },
         {
           "y": 50,
-          "start": 21,
-          "end": 38
+          "start": 30,
+          "end": 41
         },
         {
           "y": 51,
-          "start": 21,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 52,
-          "start": 21,
-          "end": 30
+          "start": 30,
+          "end": 36
         },
         {
           "y": 53,
-          "start": 21,
-          "end": 26
+          "start": 30,
+          "end": 34
         },
         {
           "y": 54,
-          "start": 21,
-          "end": 22
+          "start": 30,
+          "end": 32
         }
       ]
     },
@@ -10625,162 +12393,162 @@
       "file": "assets/terrain/edge_trapezoids/rocky_cliff/se_plus3.png",
       "points": [
         [
-          25,
-          28
-        ],
-        [
           28,
           28
         ],
         [
-          30,
+          29,
+          28
+        ],
+        [
+          36,
           55
         ],
         [
-          21,
+          30,
           55
         ]
       ],
       "rows": [
         {
           "y": 28,
-          "start": 25,
-          "end": 28
+          "start": 28,
+          "end": 29
         },
         {
           "y": 29,
-          "start": 25,
-          "end": 32
+          "start": 28,
+          "end": 33
         },
         {
           "y": 30,
-          "start": 25,
-          "end": 36
+          "start": 28,
+          "end": 37
         },
         {
           "y": 31,
-          "start": 25,
-          "end": 40
+          "start": 28,
+          "end": 41
         },
         {
           "y": 32,
-          "start": 25,
+          "start": 28,
           "end": 43
         },
         {
           "y": 33,
-          "start": 25,
+          "start": 28,
           "end": 44
         },
         {
           "y": 34,
-          "start": 24,
+          "start": 28,
           "end": 44
         },
         {
           "y": 35,
-          "start": 24,
+          "start": 28,
           "end": 45
         },
         {
           "y": 36,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 37,
-          "start": 24,
+          "start": 28,
           "end": 46
         },
         {
           "y": 38,
-          "start": 24,
+          "start": 29,
           "end": 46
         },
         {
           "y": 39,
-          "start": 24,
+          "start": 29,
           "end": 46
         },
         {
           "y": 40,
-          "start": 23,
+          "start": 29,
           "end": 46
         },
         {
           "y": 41,
-          "start": 23,
+          "start": 29,
           "end": 46
         },
         {
           "y": 42,
-          "start": 23,
+          "start": 29,
           "end": 46
         },
         {
           "y": 43,
-          "start": 23,
+          "start": 29,
           "end": 46
         },
         {
           "y": 44,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 45,
-          "start": 23,
+          "start": 29,
           "end": 45
         },
         {
           "y": 46,
-          "start": 22,
+          "start": 29,
           "end": 45
         },
         {
           "y": 47,
-          "start": 22,
+          "start": 29,
           "end": 45
         },
         {
           "y": 48,
-          "start": 22,
+          "start": 30,
           "end": 45
         },
         {
           "y": 49,
-          "start": 22,
+          "start": 30,
           "end": 45
         },
         {
           "y": 50,
-          "start": 22,
+          "start": 30,
           "end": 45
         },
         {
           "y": 51,
-          "start": 22,
+          "start": 30,
           "end": 45
         },
         {
           "y": 52,
-          "start": 21,
-          "end": 42
+          "start": 30,
+          "end": 43
         },
         {
           "y": 53,
-          "start": 21,
-          "end": 38
+          "start": 30,
+          "end": 41
         },
         {
           "y": 54,
-          "start": 21,
-          "end": 34
+          "start": 30,
+          "end": 39
         },
         {
           "y": 55,
-          "start": 21,
-          "end": 30
+          "start": 30,
+          "end": 36
         }
       ]
     }
