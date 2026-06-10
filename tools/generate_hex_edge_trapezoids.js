@@ -4,6 +4,9 @@ const { createCanvas, loadImage } = require('canvas');
 
 const OUT_DIR = path.join(__dirname, '..', 'public', 'assets', 'terrain', 'edge_trapezoids');
 const FORCE = process.argv.includes('--force');
+const FORCE_HAND_EDITED = process.argv.includes('--force-hand-edited');
+const ONLY_TERRAIN = process.argv.find(arg => arg.startsWith('--only-terrain='))?.split('=')[1] || null;
+const HAND_EDITED_TERRAINS = new Set(['grass']);
 
 const geometry = {
     tileWidth: 36,
@@ -121,9 +124,10 @@ function getTerrainFillColors(sourceImages) {
 }
 
 function getLightTintAmount(direction, diff) {
-    if (diff === 0 || Math.abs(diff) >= 2) return 0;
-
     const facesLeft = direction === 'w' || direction === 'sw';
+    if (Math.abs(diff) >= 2) return facesLeft ? 0.14 : -0.2;
+    if (diff === 0) return 0;
+
     const brighter = facesLeft ? diff < 0 : diff > 0;
     return brighter ? 0.18 : -0.18;
 }
@@ -275,10 +279,15 @@ function drawTrapezoid({ terrain, direction, diff, terrainColors }) {
     return { canvas, points: getPointsFromRows(rows), rows };
 }
 
-function writePng(filename, canvas) {
+function writePng(filename, canvas, terrain) {
+    if (HAND_EDITED_TERRAINS.has(terrain) && !FORCE_HAND_EDITED && fs.existsSync(filename)) return false;
     if (!FORCE && fs.existsSync(filename)) return false;
     fs.writeFileSync(filename, canvas.toBuffer('image/png'));
     return true;
+}
+
+function shouldWriteTerrain(terrain) {
+    return !ONLY_TERRAIN || terrain === ONLY_TERRAIN;
 }
 
 async function main() {
@@ -292,11 +301,15 @@ async function main() {
     const manifest = {
         generatedBy: path.basename(__filename),
         forceOverwrite: FORCE,
+        forceHandEdited: FORCE_HAND_EDITED,
+        onlyTerrain: ONLY_TERRAIN,
+        protectedTerrains: [...HAND_EDITED_TERRAINS],
         notes: [
             'Transparent 56x56 PNGs with a 36x36 tile footprint inset at x=10,y=10.',
             'Draw centered at the same logical hex center as terrain tiles.',
             'Rows are rasterized from the real polygon between the current hex edge and the adjacent hex edge, using the same 29x23 spacing and 3px elevation step as the map renderer.',
             'This generator is non-destructive by default: existing PNGs are skipped. Pass --force to overwrite placeholder art.',
+            'Hand-edited terrain groups are protected even with --force. Pass --force-hand-edited only when you really want to replace those PNGs.',
             'heightDiff is neighbor.level - current.level. Diffs -1/+1 are walkable slopes; absolute diffs >=2 use the shared rocky_cliff set because they are impassable.'
         ],
         geometry,
@@ -318,8 +331,10 @@ async function main() {
                 const diffName = diff > 0 ? `plus${diff}` : diff < 0 ? `minus${Math.abs(diff)}` : 'zero';
                 const filename = `${direction}_${diffName}.png`;
                 const { canvas, points, rows } = drawTrapezoid({ terrain, direction, diff, terrainColors });
-                if (writePng(path.join(terrainDir, filename), canvas)) written++;
-                else skipped++;
+                if (shouldWriteTerrain(terrain)) {
+                    if (writePng(path.join(terrainDir, filename), canvas, terrain)) written++;
+                    else skipped++;
+                }
                 manifest.assets.push({
                     terrain,
                     direction,
@@ -340,8 +355,10 @@ async function main() {
             const diffName = diff > 0 ? `plus${diff}` : `minus${Math.abs(diff)}`;
             const filename = `${direction}_${diffName}.png`;
             const { canvas, points, rows } = drawTrapezoid({ terrain: 'rock', direction, diff, terrainColors });
-            if (writePng(path.join(cliffDir, filename), canvas)) written++;
-            else skipped++;
+            if (shouldWriteTerrain('rocky_cliff')) {
+                if (writePng(path.join(cliffDir, filename), canvas, 'rocky_cliff')) written++;
+                else skipped++;
+            }
             manifest.assets.push({
                 terrain: 'rocky_cliff',
                 direction,
