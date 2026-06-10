@@ -3260,6 +3260,30 @@ export class TacticsScene extends BaseScene {
         return null;
     }
 
+    shiftIntentTargetWithDisplacement(unit, fromR, fromQ, toR, toQ) {
+        if (!unit || !unit.intent || unit.intent.type !== 'attack') return;
+        if (unit.intent.relX === undefined) return;
+
+        const oldTarget = this.getIntentTargetCell(unit);
+        if (!oldTarget) return;
+
+        const fromCube = this.tacticsMap.offsetToCube(fromR, fromQ);
+        const toCube = this.tacticsMap.offsetToCube(toR, toQ);
+        const oldTargetCube = this.tacticsMap.offsetToCube(oldTarget.r, oldTarget.q);
+        const shiftedTargetCube = {
+            x: oldTargetCube.x + (toCube.x - fromCube.x),
+            y: oldTargetCube.y + (toCube.y - fromCube.y),
+            z: oldTargetCube.z + (toCube.z - fromCube.z)
+        };
+
+        unit.intent = {
+            ...unit.intent,
+            relX: shiftedTargetCube.x - toCube.x,
+            relY: shiftedTargetCube.y - toCube.y,
+            relZ: shiftedTargetCube.z - toCube.z
+        };
+    }
+
     restoreBattleState(state) {
         if (!state) return;
         const config = this.manager.config;
@@ -5888,6 +5912,7 @@ export class TacticsScene extends BaseScene {
 
                     // Displaced push: if mounted, fall off horse (horse stays) before resolving fall.
                     if (wasMounted) this.dismountUnitLeaveHorse(victim);
+                    this.shiftIntentTargetWithDisplacement(victim, victimPushR, victimPushQ, pushCell.r, pushCell.q);
                     victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false, Math.abs(levelDiff));
                     if (victimCellForPush) victimCellForPush.unit = null;
 
@@ -5895,6 +5920,8 @@ export class TacticsScene extends BaseScene {
                         // CRUSH MECHANIC
                         this.handleCrushLanding(victim, occupant, pushCell, levelDiff, targetPos);
                     } else {
+                        victim.setPosition(pushCell.r, pushCell.q);
+                        pushCell.unit = victim;
                         // Normal fall landing
                     setTimeout(() => { 
                             if (isDeepWater) {
@@ -5905,8 +5932,6 @@ export class TacticsScene extends BaseScene {
                                 this.applyUnitDamage(victim, fallDamage);
                                 this.addDamageNumber(targetPos.x, targetPos.y - 30, fallDamage);
                             }
-                    victim.setPosition(pushCell.r, pushCell.q);
-                        pushCell.unit = victim;
                         }, 400);
                     }
                 }
@@ -5916,6 +5941,7 @@ export class TacticsScene extends BaseScene {
                     const dismountFallHeight = wasMounted ? 1 : 0;
                     if (wasMounted) this.dismountUnitLeaveHorse(victim);
                     if (victimCellForPush) victimCellForPush.unit = null;
+                    this.shiftIntentTargetWithDisplacement(victim, victimPushR, victimPushQ, pushCell.r, pushCell.q);
                     victim.setPosition(pushCell.r, pushCell.q);
                     pushCell.unit = victim;
                     victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false, dismountFallHeight);
@@ -11920,6 +11946,7 @@ export class TacticsScene extends BaseScene {
 
             // IMPORTANT: The faller has landed on `targetCell`. Ensure their logical position matches
             // so future telegraphs/attacks are anchored to the unit (not their old horse anchor).
+            this.shiftIntentTargetWithDisplacement(faller, faller.r, faller.q, targetCell.r, targetCell.q);
             faller.setPosition(targetCell.r, targetCell.q);
             faller.currentSortR = targetCell.r;
 
@@ -11933,6 +11960,7 @@ export class TacticsScene extends BaseScene {
                 if (freeCell) {
                     targetCell.unit = (faller.hp > 0) ? faller : null;
                     const oldPos = this.getPixelPos(occupant.r, occupant.q);
+                    this.shiftIntentTargetWithDisplacement(occupant, occupant.r, occupant.q, freeCell.r, freeCell.q);
                     occupant.setPosition(freeCell.r, freeCell.q);
                     freeCell.unit = occupant;
                     const newPos = this.getPixelPos(freeCell.r, freeCell.q);

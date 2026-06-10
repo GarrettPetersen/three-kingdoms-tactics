@@ -191,21 +191,24 @@ function getFrontFaceRows({ mask, direction, diff }) {
     const heightOffset = diff * geometry.elevationStep;
     const cliffDepth = Math.abs(diff) >= 2 ? Math.abs(diff) * geometry.elevationStep : 0;
     const topOverlap = 3;
+    const outerTopOverhang = 4;
+    const outerBottomOverhang = 3;
+    const centerOverlap = 2;
 
     if (direction === 'sw') {
         return polygonToRows([
-            [pad + 2, pad + getBottomEdgeY(7) - topOverlap + 2],
-            [pad + 17, pad + getBottomEdgeY(17) - Math.max(0, heightOffset) - topOverlap],
-            [pad + 23, pad + 39 + Math.max(0, -heightOffset) + cliffDepth],
-            [pad + 4, pad + 33 + Math.max(0, -heightOffset) + cliffDepth]
+            [pad + 2 - outerTopOverhang, pad + getBottomEdgeY(7) - topOverlap],
+            [pad + 17 + centerOverlap, pad + getBottomEdgeY(17) - Math.max(0, heightOffset) - topOverlap],
+            [pad + 23 + centerOverlap, pad + 39 + Math.max(0, -heightOffset) + cliffDepth],
+            [pad + 4 - outerBottomOverhang, pad + 33 + Math.max(0, -heightOffset) + cliffDepth]
         ]);
     }
 
     return polygonToRows([
-        [pad + 18, pad + getBottomEdgeY(18) - Math.max(0, heightOffset) - topOverlap],
-        [pad + 33, pad + getBottomEdgeY(28) - topOverlap + 2],
-        [pad + 32, pad + 33 + Math.max(0, -heightOffset) + cliffDepth],
-        [pad + 13, pad + 39 + Math.max(0, -heightOffset) + cliffDepth]
+        [pad + 18 - centerOverlap, pad + getBottomEdgeY(18) - Math.max(0, heightOffset) - topOverlap],
+        [pad + 33 + outerTopOverhang, pad + getBottomEdgeY(28) - topOverlap],
+        [pad + 32 + outerBottomOverhang, pad + 33 + Math.max(0, -heightOffset) + cliffDepth],
+        [pad + 13 - centerOverlap, pad + 39 + Math.max(0, -heightOffset) + cliffDepth]
     ]);
 }
 
