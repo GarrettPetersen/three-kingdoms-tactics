@@ -28,6 +28,7 @@ export class Unit {
         this.action = config.action || (this.hp <= 0 ? 'death' : 'standby');
         this.currentAnimAction = config.currentAnimAction || this.action || 'standby';
         this.frame = (config.frame !== undefined) ? config.frame : 0;
+        this.actionHoldMs = config.actionHoldMs || 0;
         this.flip = config.flip || false;
         this.dialogue = config.dialogue || "";
         this.hasMoved = config.hasMoved || false;
@@ -161,7 +162,10 @@ export class Unit {
         const isDeath = (this.action === 'death');
         
         if (isOneShot) {
-            if (this.frame < anim.length - 0.1) {
+            if (this.actionHoldMs > 0 && this.frame >= anim.length - 1) {
+                this.actionHoldMs -= dt;
+                this.frame = anim.length - 1;
+            } else if (this.frame < anim.length - 0.1) {
                 this.frame += dt * 0.008;
             } else {
                 this.action = 'standby';

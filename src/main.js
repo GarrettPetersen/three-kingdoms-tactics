@@ -656,6 +656,7 @@ async function init() {
                 horse_snort: 'assets/sfx/horse_snort.mp3',
                 death: 'assets/sfx/death.wav',
                 gong: 'assets/sfx/gong.mp3',
+                war_horn: 'assets/sfx/war_horn.mp3',
                 heavy_door_unlocking: 'assets/sfx/heavy-door-unlocking.mp3',
                 unsheath_sword: 'assets/sfx/unsheath_sword.mp3',
                 fire_crackle_loop: 'assets/sfx/fire_crackle_loop.mp3',

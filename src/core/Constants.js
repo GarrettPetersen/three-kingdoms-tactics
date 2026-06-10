@@ -151,6 +151,36 @@ export const ATTACKS = {
         animation: 'attack_1',
         description: { en: 'Devastating sweep that pushes all targets.', zh: '毁灭性横扫，击退全部目标。' }
     },
+    shout: {
+        name: { en: 'Shout', zh: '怒吼' },
+        damage: 0,
+        range: 2,
+        shape: 'shout_cone',
+        push: true,
+        suppressDamageNumber: true,
+        animation: 'attack_1',
+        description: { en: 'A thunderous shout that pushes enemies in a cone.', zh: '雷霆怒吼，击退锥形范围内的敌人。' }
+    },
+    shout_2: {
+        name: { en: 'Shout II', zh: '怒吼 II' },
+        damage: 0,
+        range: 3,
+        shape: 'shout_cone',
+        push: true,
+        suppressDamageNumber: true,
+        animation: 'attack_1',
+        description: { en: 'A stronger shout with longer reach.', zh: '更强怒吼，范围更远。' }
+    },
+    shout_3: {
+        name: { en: 'Shout III', zh: '怒吼 III' },
+        damage: 0,
+        range: 5,
+        shape: 'shout_cone',
+        push: true,
+        suppressDamageNumber: true,
+        animation: 'attack_1',
+        description: { en: 'A battlefield-shaking roar with great reach.', zh: '震动战场的怒吼，范围极远。' }
+    },
     polearm_sweep: {
         name: { en: 'Polearm Sweep', zh: '长柄横扫' },
         damage: 1,
@@ -447,8 +477,11 @@ export const UPGRADE_PATHS = {
         8: { attack: 'green_dragon_slash_4', text: { en: 'Damage increased to 3', zh: '伤害提升至 3' } }
     },
     'zhangfei': {
+        2: { secondaryAttack: 'shout', text: { en: 'Learned Shout', zh: '习得怒吼' } },
         3: { attack: 'serpent_spear_2', text: { en: 'Range increased to 3', zh: '射程提升至 3' } },
+        4: { secondaryAttack: 'shout_2', text: { en: 'Shout range increased to 3', zh: '怒吼范围提升至 3' } },
         5: { attack: 'serpent_spear_3', text: { en: 'Damage increased to 2', zh: '伤害提升至 2' } },
+        7: { secondaryAttack: 'shout_3', text: { en: 'Shout range increased to 5', zh: '怒吼范围提升至 5' } },
         8: { attack: 'serpent_spear_4', text: { en: 'Push affects all targets in line', zh: '击退影响直线上的全部目标' } }
     },
     'caoren': {

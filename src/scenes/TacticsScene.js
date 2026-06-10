@@ -20,6 +20,7 @@ export class TacticsScene extends BaseScene {
         this.horses = []; // { id, riderId|null }
         this.selectedUnit = null;
         this.selectedAttack = null;
+        this.doubleBladesFirstTarget = null;
         this.reachableTiles = new Map();
         this.attackTiles = new Map();
         
@@ -391,6 +392,7 @@ export class TacticsScene extends BaseScene {
         this.horses = [];
         this.selectedUnit = null;
         this.selectedAttack = null;
+        this.doubleBladesFirstTarget = null;
         this.hoveredCell = null;
         this.hoveredMountedAttackRegions = null;
         this.introScript = null; // Fix dialogue flicker
@@ -1034,6 +1036,7 @@ export class TacticsScene extends BaseScene {
         this.isProcessingTurn = true;
         this.selectedUnit = null;
         this.selectedAttack = null;
+        this.doubleBladesFirstTarget = null;
         this.reachableTiles.clear();
         this.attackTiles.clear();
 
@@ -2110,6 +2113,7 @@ export class TacticsScene extends BaseScene {
         this.isProcessingTurn = true;
         this.selectedUnit = null;
         this.selectedAttack = null;
+        this.doubleBladesFirstTarget = null;
         this.reachableTiles.clear();
         this.attackTiles.clear();
 
@@ -2586,7 +2590,11 @@ export class TacticsScene extends BaseScene {
             unit.q = fromQ;
             unit.flip = flip;
 
+            if (this.isFlexibleDoubleBladesAttack(attackKey)) {
+                unit._doubleBlades3SecondaryTarget = this.chooseDoubleBlades3SecondaryTarget(unit, attackKey, targetR, targetQ);
+            }
             const affected = this.getAffectedTiles(unit, attackKey, targetR, targetQ);
+            unit._doubleBlades3SecondaryTarget = null;
             const hitVictims = new Set();
             let desiredHits = 0;
             let friendlyHits = 0;
@@ -3025,11 +3033,13 @@ export class TacticsScene extends BaseScene {
         let targetPos = null;
         let targetId = null;
         let chosenAttackKey = attackOptions[0] || 'stab';
+        let secondaryTargetPos = null;
         if (candidatePlans.length > 0) {
             candidatePlans.sort((a, b) => b.score - a.score);
             targetPos = { r: candidatePlans[0].t.r, q: candidatePlans[0].t.q };
             targetId = candidatePlans[0].t.id || null;
             chosenAttackKey = candidatePlans[0].attackKey || chosenAttackKey;
+            secondaryTargetPos = this.chooseDoubleBlades3SecondaryTarget(unit, chosenAttackKey, targetPos.r, targetPos.q);
         } else if (gateTargets.length > 0) {
             const gatePlans = [];
             attackOptions.forEach(attackKey => {
@@ -3052,6 +3062,7 @@ export class TacticsScene extends BaseScene {
                 targetPos = { r: gatePlans[0].gate.r, q: gatePlans[0].gate.q };
                 targetId = null;
                 chosenAttackKey = gatePlans[0].attackKey || chosenAttackKey;
+                secondaryTargetPos = this.chooseDoubleBlades3SecondaryTarget(unit, chosenAttackKey, targetPos.r, targetPos.q);
             }
         } else if (unit.faction === 'enemy') {
             // Enemies look for adjacent houses if no units are nearby
@@ -3078,6 +3089,9 @@ export class TacticsScene extends BaseScene {
             const intentOrigin = this.getAttackOriginForTarget(unit, targetPos.r, targetPos.q);
             const fromCube = this.tacticsMap.offsetToCube(intentOrigin.r, intentOrigin.q);
             const toCube = this.tacticsMap.offsetToCube(targetPos.r, targetPos.q);
+            const secondaryCube = secondaryTargetPos
+                ? this.tacticsMap.offsetToCube(secondaryTargetPos.r, secondaryTargetPos.q)
+                : null;
             
             // RELATIVE INTENT: store the relative cube vector from current anchor.
             unit.intent = { 
@@ -3085,6 +3099,11 @@ export class TacticsScene extends BaseScene {
                 relX: toCube.x - fromCube.x,
                 relY: toCube.y - fromCube.y,
                 relZ: toCube.z - fromCube.z,
+                ...(secondaryCube ? {
+                    rel2X: secondaryCube.x - fromCube.x,
+                    rel2Y: secondaryCube.y - fromCube.y,
+                    rel2Z: secondaryCube.z - fromCube.z
+                } : {}),
                 attackKey: chosenAttackKey,
                 targetId: targetId || null
             };
@@ -3452,6 +3471,7 @@ export class TacticsScene extends BaseScene {
 
         this.selectedUnit = null;
         this.selectedAttack = null;
+        this.doubleBladesFirstTarget = null;
         this.reachableTiles.clear();
         this.attackTiles.clear();
         this.attackRects = [];
@@ -4411,12 +4431,13 @@ export class TacticsScene extends BaseScene {
             const targetCell = this.getIntentTargetCell(unit);
             
             if (targetCell) {
+                const secondaryTarget = this.getIntentSecondaryTargetCell(unit);
                 this.executeAttack(unit, unit.intent.attackKey, targetCell.r, targetCell.q, () => {
                     // Pause between individual attacks so results are clear
                     setTimeout(() => {
                         executeAll(index + 1);
                     }, 500);
-                });
+                }, secondaryTarget ? { secondaryTarget } : {});
             } else {
                 // Target is off-map or unreachable relatively (attack cancelled)
                 executeAll(index + 1);
@@ -4935,12 +4956,14 @@ export class TacticsScene extends BaseScene {
         });
     }
 
-    triggerHexDamageWave(r, q, amplitudePx = 3.2, durationMs = 760) {
+    triggerHexDamageWave(r, q, amplitudePx = 3.2, durationMs = 760, delayMs = 0, options = {}) {
         const key = `${r},${q}`;
         this.hexDamageWaves.set(key, {
-            elapsedMs: 0,
+            elapsedMs: -Math.max(0, delayMs),
             durationMs,
-            amplitudePx
+            amplitudePx,
+            damping: Number.isFinite(options.damping) ? options.damping : 3.8,
+            angularFreq: Number.isFinite(options.angularFreq) ? options.angularFreq : 17.0
         });
     }
 
@@ -4958,11 +4981,12 @@ export class TacticsScene extends BaseScene {
         if (!this.hexDamageWaves || this.hexDamageWaves.size === 0) return 0;
         const wave = this.hexDamageWaves.get(`${r},${q}`);
         if (!wave) return 0;
+        if (wave.elapsedMs < 0) return 0;
 
         // Starts with a downward dip, then springs upward/downward with a slower damping curve.
         const t = wave.elapsedMs / 1000;
-        const damping = Math.exp(-3.8 * t);
-        const oscillation = Math.cos(17.0 * t);
+        const damping = Math.exp(-(wave.damping ?? 3.8) * t);
+        const oscillation = Math.cos((wave.angularFreq ?? 17.0) * t);
         return wave.amplitudePx * damping * oscillation;
     }
 
@@ -4997,6 +5021,7 @@ export class TacticsScene extends BaseScene {
         const { minRange, maxRange } = this.getEffectiveAttackRange(unit, attackKey);
         const dist = this.tacticsMap.getDistance(fromR, fromQ, toR, toQ);
         if (!(dist >= minRange && dist <= maxRange)) return false;
+        if (this.isShoutAttack(attackKey) && dist <= 0) return false;
         if (this.isLineAttack(attackKey) && !this.getAxialDirectionToTarget(fromR, fromQ, toR, toQ)) return false;
 
         if (this.isDirectionalBoltAttack(attackKey)) {
@@ -5100,7 +5125,7 @@ export class TacticsScene extends BaseScene {
         }
     }
 
-    executeAttack(attacker, attackKey, targetR, targetQ, onComplete) {
+    executeAttack(attacker, attackKey, targetR, targetQ, onComplete, options = {}) {
         // Mark which units were alive at the very start of this logical action
         // to determine if a collision should occur vs sliding over a corpse.
         this.units.forEach(u => u._aliveAtStartOfAction = u.hp > 0);
@@ -5151,7 +5176,10 @@ export class TacticsScene extends BaseScene {
         } else if (isLineAttack) assets.playSound('stab');
         else if (attackKey.startsWith('green_dragon_slash')) assets.playSound('green_dragon');
         else if (isSweepAttack) assets.playSound('green_dragon');
-        else if (attackKey === 'double_blades') assets.playSound('double_blades');
+        else if (this.isShoutAttack(attackKey)) {
+            // Fired on the release frame so the sound wave syncs with the shout pose.
+        }
+        else if (this.isDoubleBladesAttack(attackKey)) assets.playSound('double_blades');
         else if (attackKey === 'bash') assets.playSound('bash');
         else if (attackKey.startsWith('slash')) assets.playSound('slash');
         else if (attackKey === 'stab') assets.playSound('stab');
@@ -5177,12 +5205,19 @@ export class TacticsScene extends BaseScene {
             if (targetPos.x > startPos.x) attacker.flip = false;
         }
 
-        if (attackKey === 'double_blades') {
-            this.executeDoubleBlades(attacker, targetR, targetQ, wrappedOnComplete);
+        if (this.isFlexibleDoubleBladesAttack(attackKey) && options.secondaryTarget) {
+            this.executeFlexibleDoubleBlades(attacker, attackKey, [
+                { r: targetR, q: targetQ },
+                options.secondaryTarget
+            ], wrappedOnComplete);
+        } else if (this.isDoubleBladesAttack(attackKey)) {
+            this.executeDoubleBlades(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
         } else if (attackKey.startsWith('green_dragon_slash') || isSweepAttack) {
             this.executeGreenDragonSlash(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
         } else if (attack.type === 'lightning_aoe') {
             this.executeHeavenlyLightning(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
+        } else if (this.isShoutAttack(attackKey)) {
+            this.executeShout(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
         } else if (isDirectionalBolt) {
             this.executeDirectionalBolt(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
         } else if (isLineAttack) {
@@ -5421,7 +5456,71 @@ export class TacticsScene extends BaseScene {
         }
     }
 
-    executeDoubleBlades(attacker, targetR, targetQ, onComplete) {
+    executeShout(attacker, attackKey, targetR, targetQ, onComplete) {
+        const attack = ATTACKS[attackKey] || ATTACKS.shout;
+        const SHOUT_DURATION_MS = 5000;
+        attacker.action = attack.animation || 'attack_1';
+        attacker.frame = 0;
+        attacker.actionHoldMs = 0;
+
+        const origin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
+        const startPos = this.getPixelPos(origin.r, origin.q);
+        const affected = this.getAffectedTiles(attacker, attackKey, targetR, targetQ);
+
+        let released = false;
+        const checkRelease = () => {
+            if (released) return;
+            if (attacker.action !== (attack.animation || 'attack_1')) return;
+
+            if (attacker.frame >= 1) {
+                released = true;
+                assets.playSound('war_horn', 0.9);
+                const anim = ANIMATIONS[attack.animation || 'attack_1'] || ANIMATIONS.attack_1;
+                attacker.frame = Math.max(0, anim.length - 1);
+                attacker.actionHoldMs = SHOUT_DURATION_MS;
+
+                const hitVictims = new Set();
+                let hitAnything = false;
+                affected.forEach(pos => {
+                    const dist = this.tacticsMap.getDistance(origin.r, origin.q, pos.r, pos.q);
+                    const delay = Math.max(0, (dist - 1) * 80);
+                    this.triggerHexDamageWave(pos.r, pos.q, 5.2, SHOUT_DURATION_MS, delay, {
+                        damping: 0.32,
+                        angularFreq: 12.0
+                    });
+
+                    const cell = this.tacticsMap.getCell(pos.r, pos.q);
+                    if (!cell) return;
+                    const victim = this.getRiderUnitFromCell(cell);
+                    if (!victim || victim === attacker || hitVictims.has(victim)) return;
+                    hitVictims.add(victim);
+                    hitAnything = true;
+                    const victimPos = this.getPixelPos(pos.r, pos.q);
+                    const dirIndex = this.getNearestDirectionIndexFromVector(origin.r, origin.q, pos.r, pos.q);
+                    const shoutAttack = { ...attack, damage: 0, push: true, suppressDamageNumber: true, shoutPushDirIndex: dirIndex };
+                    setTimeout(() => {
+                        this.applyDamageAndPush(attacker, victim, shoutAttack, pos.r, pos.q, startPos, victimPos);
+                    }, delay);
+                });
+
+                if (!hitAnything) {
+                    assets.playSound('whiff', 0.35);
+                }
+
+                setTimeout(() => {
+                    attacker.actionHoldMs = 0;
+                    attacker.action = 'standby';
+                    if (onComplete) onComplete();
+                }, SHOUT_DURATION_MS);
+                return;
+            }
+            setTimeout(checkRelease, 16);
+        };
+        setTimeout(checkRelease, 16);
+    }
+
+    executeDoubleBlades(attacker, attackKey, targetR, targetQ, onComplete) {
+        const attack = ATTACKS[attackKey] || ATTACKS.double_blades;
         attacker.action = 'attack_1';
         attacker.frame = 0;
 
@@ -5462,7 +5561,7 @@ export class TacticsScene extends BaseScene {
                 );
                 this.damageCell(targetR, targetQ);
                 if (frontVictim) {
-                    this.applyDamageAndPush(attacker, frontVictim, ATTACKS.double_blades, targetR, targetQ, startPos, frontPos);
+                    this.applyDamageAndPush(attacker, frontVictim, attack, targetR, targetQ, startPos, frontPos);
                 } else if (!isFrontDestructible) {
                     assets.playSound('whiff', 0.6);
                 }
@@ -5496,7 +5595,7 @@ export class TacticsScene extends BaseScene {
                                 );
                                 this.damageCell(backCell.r, backCell.q);
                                 if (backVictim) {
-                                    this.applyDamageAndPush(attacker, backVictim, ATTACKS.double_blades, backCell.r, backCell.q, startPos2, backPos);
+                                    this.applyDamageAndPush(attacker, backVictim, attack, backCell.r, backCell.q, startPos2, backPos);
                                 } else if (!isBackDestructible) {
                                     assets.playSound('whiff', 0.6);
                                 }
@@ -5519,6 +5618,75 @@ export class TacticsScene extends BaseScene {
             setTimeout(checkFirst, 16);
         };
         setTimeout(checkFirst, 16);
+    }
+
+    executeFlexibleDoubleBlades(attacker, attackKey, targetCells, onComplete) {
+        const attack = ATTACKS[attackKey] || ATTACKS.double_blades_3 || ATTACKS.double_blades;
+        const cells = (targetCells || [])
+            .filter(Boolean)
+            .filter((cell, index, all) => all.findIndex(other => other.r === cell.r && other.q === cell.q) === index)
+            .slice(0, 2);
+        if (cells.length === 0) {
+            if (onComplete) onComplete();
+            return;
+        }
+
+        const strikeAt = (index) => {
+            const target = cells[index];
+            if (!target) {
+                attacker.action = 'standby';
+                if (onComplete) onComplete();
+                return;
+            }
+
+            const targetPos = this.getPixelPos(target.r, target.q);
+            const origin = this.getAttackOriginForTarget(attacker, target.r, target.q);
+            const startPos = this.getPixelPos(origin.r, origin.q);
+            if (attacker.onHorse) {
+                this.turnMountedInPlace(attacker, targetPos.x < startPos.x);
+            } else {
+                if (targetPos.x < startPos.x) attacker.flip = true;
+                if (targetPos.x > startPos.x) attacker.flip = false;
+            }
+
+            attacker.action = 'attack_1';
+            attacker.frame = 0;
+            if (index > 0) assets.playSound('double_blades');
+
+            let struck = false;
+            const checkStrike = () => {
+                if (struck) return;
+                if (attacker.action !== 'attack_1') return;
+
+                if (attacker.frame >= 1) {
+                    struck = true;
+                    const cell = this.tacticsMap.getCell(target.r, target.q);
+                    const victimRaw = cell ? this.getRiderUnitFromCell(cell) : null;
+                    const victim = victimRaw === attacker ? null : victimRaw;
+                    const isDestructible = this.isCellDestructibleStructure(cell);
+
+                    this.spawnSwish(
+                        [{ r: target.r, q: target.q }],
+                        startPos,
+                        'slash',
+                        { maxWidth: 7, duration: 130 }
+                    );
+                    this.damageCell(target.r, target.q);
+                    if (victim) {
+                        this.applyDamageAndPush(attacker, victim, attack, target.r, target.q, startPos, targetPos);
+                    } else if (!isDestructible) {
+                        assets.playSound('whiff', 0.6);
+                    }
+
+                    setTimeout(() => strikeAt(index + 1), index === 0 ? 300 : 400);
+                    return;
+                }
+                setTimeout(checkStrike, 16);
+            };
+            setTimeout(checkStrike, 16);
+        };
+
+        strikeAt(0);
     }
 
     executeGreenDragonSlash(attacker, attackKey, targetR, targetQ, onComplete) {
@@ -6001,7 +6169,7 @@ export class TacticsScene extends BaseScene {
         return true;
     }
 
-    applyUnitDamage(victim, damage, sourceCell = null) {
+    applyUnitDamage(victim, damage, sourceCell = null, options = {}) {
         // Corpses should not take damage or retrigger death SFX.
         if (!victim || victim.isGone || victim.hp <= 0) return 0;
 
@@ -6090,7 +6258,7 @@ export class TacticsScene extends BaseScene {
         if (victim.hp <= 0 && wasAlive) {
             const wasOverkilled = victim.name !== 'Boulder' && victim.hp < 0;
             let overkillEffectStarted = false;
-            if (wasOverkilled) {
+            if (wasOverkilled && !options.deferOverkill) {
                 overkillEffectStarted = this.startOverkillEffect(victim);
             }
             victim.hp = 0;
@@ -6134,6 +6302,23 @@ export class TacticsScene extends BaseScene {
         }
 
         return finalDamage;
+    }
+
+    finishDeferredOverkill(victim, attacker = null, delayMs = 0) {
+        if (!victim || victim.name === 'Boulder') return;
+        setTimeout(() => {
+            if (!victim || victim.overkillEffectStarted || victim.isGone) return;
+            if (victim.hp > 0) return;
+
+            const currentCell = this.tacticsMap.getCell(victim.r, victim.q);
+            if (currentCell?.unit === victim) currentCell.unit = null;
+            const snapshot = this.getOverkillSnapshot(victim, attacker);
+            if (this.startOverkillEffect(victim, snapshot)) {
+                victim.isGone = true;
+                victim.intent = null;
+                victim.pushData = null;
+            }
+        }, Math.max(0, delayMs));
     }
 
     applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos, pushRefR = targetR, pushRefQ = targetQ) {
@@ -6205,14 +6390,26 @@ export class TacticsScene extends BaseScene {
         // Apply damage & shake at the hit cell.
         const hitCell = this.tacticsMap.getCell(targetR, targetQ);
         const victimOverkillSnapshot = this.getOverkillSnapshot(victim, attacker);
-        finalDamage = this.applyUnitDamage(victim, finalDamage, hitCell);
+        const victimHpBeforeDamage = victim.hp;
+        const canPushThisVictim = !!attack.push && (
+            attack.push !== 'furthest' || (victim.r === pushRefR && victim.q === pushRefQ)
+        );
+        finalDamage = this.applyUnitDamage(victim, finalDamage, hitCell, { deferOverkill: canPushThisVictim });
+        const hasDeferredOverkill = canPushThisVictim
+            && victim.name !== 'Boulder'
+            && finalDamage > victimHpBeforeDamage
+            && victim.hp <= 0
+            && !victim.isGone
+            && !victim.overkillEffectStarted;
         if (finalDamage > 0) {
             victim.triggerShake(startPos.x, startPos.y, endPos.x, endPos.y);
             this.hitStopRemaining = 80;
         }
 
         // Visual Feedback
-        if (isResisted) {
+        if (attack.suppressDamageNumber) {
+            // Utility attacks like Shout intentionally push without showing a 0-damage popup.
+        } else if (isResisted) {
             this.addDamageNumber(endPos.x, endPos.y - 30, resistText, '#00ff00');
             assets.playSound('whiff');
         } else if (isCrit) {
@@ -6231,8 +6428,13 @@ export class TacticsScene extends BaseScene {
 
             // Handle push
             const attackerOrigin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
-            const dirIndex = this.tacticsMap.getDirectionIndex(attackerOrigin.r, attackerOrigin.q, targetR, targetQ);
-            if (dirIndex === -1) return; // Cannot push if direction is undefined
+            const dirIndex = Number.isFinite(attack.shoutPushDirIndex)
+                ? attack.shoutPushDirIndex
+                : this.tacticsMap.getDirectionIndex(attackerOrigin.r, attackerOrigin.q, targetR, targetQ);
+            if (dirIndex === -1) {
+                if (hasDeferredOverkill) this.finishDeferredOverkill(victim, attacker, 180);
+                return; // Cannot push if direction is undefined
+            }
 
             if (victim.name === 'Boulder' && !victim.isDestroyedBoulder) {
                 const { path } = this.getBoulderRollPath(victim.r, victim.q, dirIndex);
@@ -6253,7 +6455,7 @@ export class TacticsScene extends BaseScene {
 
             const victimCellForPush = this.tacticsMap.getCell(victimPushR, victimPushQ);
             const pushCell = this.tacticsMap.getNeighborInDirection(victimPushR, victimPushQ, dirIndex);
-            const pushDamageContext = { victimOverkillSnapshot };
+            const pushDamageContext = { victimOverkillSnapshot, deferredOverkill: hasDeferredOverkill, attacker };
             
             const victimPos = this.getPixelPos(victimPushR, victimPushQ);
 
@@ -6289,20 +6491,28 @@ export class TacticsScene extends BaseScene {
                     if (occupant && occupant.hp > 0) {
                         // CRUSH MECHANIC
                         this.handleCrushLanding(victim, occupant, pushCell, levelDiff, targetPos);
+                        if (hasDeferredOverkill) this.finishDeferredOverkill(victim, attacker, 460);
                     } else {
                         victim.setPosition(pushCell.r, pushCell.q);
                         pushCell.unit = victim;
-                        // Normal fall landing
-                    setTimeout(() => { 
-                            if (isDeepWater) {
-                        victim.isDrowning = true;
-                                assets.playSound('drown');
-                            } else {
-                                assets.playSound('collision', 0.8);
-                                this.applyUnitDamage(victim, fallDamage);
-                                this.addDamageNumber(targetPos.x, targetPos.y - 30, fallDamage);
-                            }
-                        }, 400);
+                        if (hasDeferredOverkill) {
+                            setTimeout(() => {
+                                assets.playSound(isDeepWater ? 'drown' : 'collision', isDeepWater ? 1 : 0.8);
+                            }, 400);
+                            this.finishDeferredOverkill(victim, attacker, 430);
+                        } else {
+                            // Normal fall landing
+                            setTimeout(() => {
+                                if (isDeepWater) {
+                                    victim.isDrowning = true;
+                                    assets.playSound('drown');
+                                } else {
+                                    assets.playSound('collision', 0.8);
+                                    this.applyUnitDamage(victim, fallDamage);
+                                    this.addDamageNumber(targetPos.x, targetPos.y - 30, fallDamage);
+                                }
+                            }, 400);
+                        }
                     }
                 }
                 // 3. NORMAL PUSH (Same level or slight elevation change)
@@ -6317,7 +6527,12 @@ export class TacticsScene extends BaseScene {
                     victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false, dismountFallHeight);
 
                     // Deep water drowning
-                    if (isDeepWater) {
+                    if (hasDeferredOverkill) {
+                        setTimeout(() => {
+                            assets.playSound(isDeepWater ? 'drown' : 'bash', isDeepWater ? 1 : 0.5);
+                        }, 250);
+                        this.finishDeferredOverkill(victim, attacker, 280);
+                    } else if (isDeepWater) {
                         setTimeout(() => {
                             if (victim.name === 'Boulder') {
                                 assets.playSound('drown');
@@ -6339,6 +6554,7 @@ export class TacticsScene extends BaseScene {
                 victim.action = 'hit';
                 // If mounted, stay mounted when blocked at the edge.
                 assets.playSound('collision', 0.5); // Quieter collision sound
+                if (hasDeferredOverkill) this.finishDeferredOverkill(victim, attacker, 180);
             }
         } else {
             victim.action = 'hit';
@@ -7588,6 +7804,17 @@ export class TacticsScene extends BaseScene {
             affected.push({ r: targetR, q: targetQ });
             const neighbors = this.tacticsMap.getNeighbors(targetR, targetQ) || [];
             neighbors.forEach(n => affected.push({ r: n.r, q: n.q }));
+        } else if (this.isShoutAttack(attackKey)) {
+            const targetDepth = Math.max(1, dist);
+            const { maxRange } = this.getEffectiveAttackRange(attacker, attackKey);
+            const coneRange = Math.min(maxRange, targetDepth);
+            for (let r = 0; r < this.manager.config.mapHeight; r++) {
+                for (let q = 0; q < this.manager.config.mapWidth; q++) {
+                    if (this.isCellInShoutCone(origin.r, origin.q, targetR, targetQ, r, q, coneRange)) {
+                        affected.push({ r, q });
+                    }
+                }
+            }
         } else if (this.isDirectionalBoltAttack(attackKey)) {
             const boltPath = this.getDirectionalBoltPath(attacker, targetR, targetQ);
             if (boltPath?.impactCell) {
@@ -7642,7 +7869,11 @@ export class TacticsScene extends BaseScene {
                     }
                 }
             }
-        } else if (attackKey === 'double_blades') {
+        } else if (this.isFlexibleDoubleBladesAttack(attackKey)) {
+            affected.push({ r: targetR, q: targetQ });
+            const secondary = this.getFlexibleDoubleBladesSecondaryTarget(attacker, attackKey, targetR, targetQ);
+            if (secondary) affected.push({ r: secondary.r, q: secondary.q });
+        } else if (this.isDoubleBladesAttack(attackKey)) {
             // Mounted units: when targeting left/right, hit front and back relative to facing.
             if (attacker.onHorse) {
                 const body = { r: attacker.r, q: attacker.q };
@@ -7796,6 +8027,9 @@ export class TacticsScene extends BaseScene {
 
         // Determine which tiles are currently being "previewed" for damage
         const affectedTiles = new Map();
+        if (this.selectedUnit && this.selectedAttack && this.doubleBladesFirstTarget) {
+            affectedTiles.set(`${this.doubleBladesFirstTarget.r},${this.doubleBladesFirstTarget.q}`, true);
+        }
         if (this.selectedUnit && this.selectedAttack && this.hoveredCell && this.attackTiles.has(`${this.hoveredCell.r},${this.hoveredCell.q}`)) {
             const tiles = this.getAffectedTiles(this.selectedUnit, this.selectedAttack, this.hoveredCell.r, this.hoveredCell.q);
             tiles.forEach(t => affectedTiles.set(`${t.r},${t.q}`, true));
@@ -8395,7 +8629,7 @@ export class TacticsScene extends BaseScene {
                 );
                 if (!handledPushPreview) {
                     const origin = this.getAttackOriginForTarget(this.selectedUnit, this.hoveredCell.r, this.hoveredCell.q);
-                    if (this.selectedAttack === 'double_blades') {
+                    if (this.isDoubleBladesAttack(this.selectedAttack)) {
                         // Double Blades: Show both push arrows
                         const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, this.hoveredCell.r, this.hoveredCell.q);
                         if (dirIndex !== -1) {
@@ -9373,21 +9607,28 @@ export class TacticsScene extends BaseScene {
                     this.issueCommand(this.selectedUnit, r, q, selectedAttackData);
                     return;
                 }
+                if (this.isFlexibleDoubleBladesAttack(this.selectedAttack) && !this.doubleBladesFirstTarget) {
+                    this.selectFlexibleDoubleBladesFirstTarget(clickedCell);
+                    return;
+                }
                 const attacker = this.selectedUnit;
+                const primaryTarget = this.doubleBladesFirstTarget || { r, q };
+                const secondaryTarget = this.doubleBladesFirstTarget ? { r, q } : null;
                 this.isProcessingTurn = true;
-                this.executeAttack(attacker, this.selectedAttack, r, q, () => {
+                this.executeAttack(attacker, this.selectedAttack, primaryTarget.r, primaryTarget.q, () => {
                     if (this.turn === 'player' && attacker.hp > 0) {
                         attacker.hasAttacked = true;
                         attacker.hasActed = true;
                         if (this.selectedUnit === attacker) {
                             this.selectedUnit = null;
                             this.selectedAttack = null;
+                            this.doubleBladesFirstTarget = null;
                             this.attackTiles.clear();
                         }
                         this.pushHistory();
                     }
                     this.isProcessingTurn = false;
-                });
+                }, secondaryTarget ? { secondaryTarget } : {});
             }
             return;
         }
@@ -9520,6 +9761,7 @@ export class TacticsScene extends BaseScene {
     clearBattleSelection() {
         this.selectedUnit = null;
         this.selectedAttack = null;
+        this.doubleBladesFirstTarget = null;
         this.reachableTiles.clear();
         this.attackTiles.clear();
         this.attackRects = [];
@@ -9532,6 +9774,7 @@ export class TacticsScene extends BaseScene {
         }
         this.selectedUnit = targetUnit;
         this.selectedAttack = null;
+        this.doubleBladesFirstTarget = null;
         this.attackTiles.clear();
         this.attackRects = [];
         if (this.selectedUnit.faction === 'player' && !this.selectedUnit.hasActed) {
@@ -10366,7 +10609,7 @@ export class TacticsScene extends BaseScene {
         const thin = TacticsScene.TELEGRAPH_SWISH_MAX_WIDTH;
         const out = [];
 
-        if (attackKey === 'double_blades') {
+        if (this.isDoubleBladesAttack(attackKey)) {
             for (const h of affected) {
                 const points = this.getSwishPointsFromHexes([h], originPos, 'slash', { maxWidth: 7 });
                 if (points) out.push({ points, style: 'slash', maxWidth: thin, originPos, singleHex: true });
@@ -11775,6 +12018,139 @@ export class TacticsScene extends BaseScene {
         return !!ATTACKS[attackKey]?.line;
     }
 
+    isShoutAttack(attackKey) {
+        return ATTACKS[attackKey]?.shape === 'shout_cone';
+    }
+
+    getNearestDirectionIndexFromVector(originR, originQ, targetR, targetQ) {
+        const originPos = this.getPixelPos(originR, originQ);
+        const targetPos = this.getPixelPos(targetR, targetQ);
+        const vx = targetPos.x - originPos.x;
+        const vy = targetPos.y - originPos.y;
+        let bestDir = -1;
+        let bestDot = Number.NEGATIVE_INFINITY;
+        for (let dir = 0; dir < 6; dir++) {
+            const neighbor = this.tacticsMap.getNeighborInDirection(originR, originQ, dir);
+            if (!neighbor) continue;
+            const nPos = this.getPixelPos(neighbor.r, neighbor.q);
+            const nx = nPos.x - originPos.x;
+            const ny = nPos.y - originPos.y;
+            const denom = Math.max(1, Math.hypot(vx, vy) * Math.hypot(nx, ny));
+            const dot = (vx * nx + vy * ny) / denom;
+            if (dot > bestDot) {
+                bestDot = dot;
+                bestDir = dir;
+            }
+        }
+        return bestDir;
+    }
+
+    isCellInShoutCone(originR, originQ, targetR, targetQ, cellR, cellQ, maxRange) {
+        const dist = this.tacticsMap.getDistance(originR, originQ, cellR, cellQ);
+        if (dist <= 0 || dist > maxRange) return false;
+
+        const originPos = this.getPixelPos(originR, originQ);
+        const targetPos = this.getPixelPos(targetR, targetQ);
+        const cellPos = this.getPixelPos(cellR, cellQ);
+        let dx = targetPos.x - originPos.x;
+        let dy = targetPos.y - originPos.y;
+        const dLen = Math.hypot(dx, dy);
+        if (dLen <= 0) return false;
+        dx /= dLen;
+        dy /= dLen;
+
+        const vx = cellPos.x - originPos.x;
+        const vy = cellPos.y - originPos.y;
+        const forward = vx * dx + vy * dy;
+        if (forward <= 0) return false;
+        const lateral = Math.abs(vx * -dy + vy * dx);
+        return lateral <= forward * 0.62 + 10;
+    }
+
+    isDoubleBladesAttack(attackKey) {
+        return (attackKey || '').startsWith('double_blades');
+    }
+
+    isFlexibleDoubleBladesAttack(attackKey) {
+        return attackKey === 'double_blades_3';
+    }
+
+    getIntentSecondaryTargetCell(unit) {
+        if (!unit?.intent || !Number.isFinite(unit.intent.rel2X)) return null;
+        const primary = this.getIntentTargetCell(unit);
+        if (!primary) return null;
+        const origin = this.getAttackOriginForTarget(unit, primary.r, primary.q);
+        const fromCube = this.tacticsMap.offsetToCube(origin.r, origin.q);
+        const toCube = {
+            x: fromCube.x + unit.intent.rel2X,
+            y: fromCube.y + unit.intent.rel2Y,
+            z: fromCube.z + unit.intent.rel2Z
+        };
+        const r = toCube.z;
+        const q = toCube.x + Math.floor(r / 2);
+        return this.tacticsMap.getCell(r, q);
+    }
+
+    getFlexibleDoubleBladesSecondaryTarget(attacker, attackKey, targetR, targetQ) {
+        if (!this.isFlexibleDoubleBladesAttack(attackKey)) return null;
+        const primaryKey = `${targetR},${targetQ}`;
+
+        if (attacker?.intent?.attackKey === attackKey) {
+            const primary = this.getIntentTargetCell(attacker);
+            const secondary = this.getIntentSecondaryTargetCell(attacker);
+            if (primary && secondary && `${primary.r},${primary.q}` === primaryKey) return secondary;
+        }
+
+        if (attacker === this.selectedUnit && this.selectedAttack === attackKey && this.doubleBladesFirstTarget) {
+            const first = this.doubleBladesFirstTarget;
+            const firstKey = `${first.r},${first.q}`;
+            if (primaryKey !== firstKey) return first;
+            if (this.hoveredCell) {
+                const hoverKey = `${this.hoveredCell.r},${this.hoveredCell.q}`;
+                if (hoverKey !== firstKey && this.attackTiles.has(hoverKey)) return this.hoveredCell;
+            }
+        }
+
+        if (attacker?._doubleBlades3SecondaryTarget) {
+            const secondary = attacker._doubleBlades3SecondaryTarget;
+            if (`${secondary.r},${secondary.q}` !== primaryKey) return secondary;
+        }
+
+        return null;
+    }
+
+    chooseDoubleBlades3SecondaryTarget(unit, attackKey, primaryR, primaryQ) {
+        if (!this.isFlexibleDoubleBladesAttack(attackKey) || !unit) return null;
+        const origin = this.getAttackOriginForTarget(unit, primaryR, primaryQ);
+        const primaryKey = `${primaryR},${primaryQ}`;
+        const candidates = (this.tacticsMap.getNeighbors(origin.r, origin.q) || [])
+            .filter(cell => `${cell.r},${cell.q}` !== primaryKey)
+            .filter(cell => !(cell.r === unit.r && cell.q === unit.q))
+            .filter(cell => !this.hasWallBlockingBetween(origin.r, origin.q, cell.r, cell.q));
+
+        let best = null;
+        let bestScore = Number.NEGATIVE_INFINITY;
+        for (const cell of candidates) {
+            const victim = this.getRiderUnitFromCell(cell);
+            const isDestructible = this.isCellDestructibleStructure(cell);
+            let score = 0;
+            if (victim) {
+                if (this.isVictimDesiredForNpcAttack(unit, victim)) score += 10;
+                else if (this.isVictimFriendlyForNpcAttack(unit, victim)) score -= unit.faction === 'allied' ? 12 : 6;
+            } else if (isDestructible && unit.faction === 'enemy') {
+                score += 2;
+            } else {
+                score -= 1;
+            }
+            score += Math.random() * 0.2;
+            if (score > bestScore) {
+                bestScore = score;
+                best = cell;
+            }
+        }
+        return best ? { r: best.r, q: best.q } : null;
+    }
+
     isOpenGateCell(cell, r, q) {
         if (!cell || !this.isGateTerrain(cell.terrain)) return false;
         if (cell.gateState === 'broken' || cell.gateState === 'open') return true;
@@ -11841,6 +12217,7 @@ export class TacticsScene extends BaseScene {
         if (!this.selectedUnit || this.selectedUnit.faction !== 'player' || this.selectedUnit.hasAttacked) return;
         
         this.selectedAttack = attackKey;
+        this.doubleBladesFirstTarget = null;
         this.reachableTiles.clear(); // Clear move highlights when an attack is selected
         
         // Find valid attack targets based on range
@@ -11924,6 +12301,28 @@ export class TacticsScene extends BaseScene {
                 }
             }
         }
+    }
+
+    selectFlexibleDoubleBladesFirstTarget(cell) {
+        if (!this.selectedUnit || !this.isFlexibleDoubleBladesAttack(this.selectedAttack) || !cell) return false;
+        this.doubleBladesFirstTarget = { r: cell.r, q: cell.q };
+        this.attackTiles = new Map();
+        const firstKey = `${cell.r},${cell.q}`;
+        const origins = this.getAttackOrigins(this.selectedUnit);
+        const originKeys = new Set(origins.map(o => `${o.r},${o.q}`));
+        origins.forEach(o => {
+            const neighbors = this.tacticsMap.getNeighbors(o.r, o.q) || [];
+            neighbors.forEach(n => {
+                const key = `${n.r},${n.q}`;
+                if (key === firstKey) return;
+                if (originKeys.has(key)) return;
+                if (n.unit === this.selectedUnit) return;
+                if (this.hasWallBlockingBetween(o.r, o.q, n.r, n.q)) return;
+                this.attackTiles.set(key, true);
+            });
+        });
+        assets.playSound('ui_click', 0.45);
+        return true;
     }
 
     handleInput(e) {
@@ -12334,10 +12733,18 @@ export class TacticsScene extends BaseScene {
                     this.issueCommand(this.selectedUnit, chosenAttackCell.r, chosenAttackCell.q, selectedAttackData);
                     return;
                 }
+                if (this.isFlexibleDoubleBladesAttack(this.selectedAttack) && !this.doubleBladesFirstTarget) {
+                    this.selectFlexibleDoubleBladesFirstTarget(chosenAttackCell);
+                    return;
+                }
                 const attacker = this.selectedUnit;
+                const primaryTarget = this.doubleBladesFirstTarget || { r: chosenAttackCell.r, q: chosenAttackCell.q };
+                const secondaryTarget = this.doubleBladesFirstTarget
+                    ? { r: chosenAttackCell.r, q: chosenAttackCell.q }
+                    : null;
                 this.isProcessingTurn = true; // Lock turn during animation
                 
-                this.executeAttack(attacker, this.selectedAttack, chosenAttackCell.r, chosenAttackCell.q, () => {
+                this.executeAttack(attacker, this.selectedAttack, primaryTarget.r, primaryTarget.q, () => {
                     // Safety: only apply if the action wasn't undone or state reset
                     if (this.turn === 'player' && attacker.hp > 0) {
                         attacker.hasAttacked = true;
@@ -12345,12 +12752,13 @@ export class TacticsScene extends BaseScene {
                         if (this.selectedUnit === attacker) {
                     this.selectedUnit = null;
                     this.selectedAttack = null;
+                    this.doubleBladesFirstTarget = null;
                     this.attackTiles.clear();
                         }
                         this.pushHistory(); // Capture state AFTER attack
                     }
                     this.isProcessingTurn = false; // Unlock turn
-                });
+                }, secondaryTarget ? { secondaryTarget } : {});
                 return;
             }
 
@@ -12459,6 +12867,7 @@ export class TacticsScene extends BaseScene {
         // D. DESELECT
         this.selectedUnit = null;
         this.selectedAttack = null;
+        this.doubleBladesFirstTarget = null;
         this.reachableTiles.clear();
         this.attackTiles.clear();
         this.attackRects = [];
@@ -12475,7 +12884,9 @@ export class TacticsScene extends BaseScene {
                 this.damageCell(pushCell.r, pushCell.q);
             }
 
-            if (context.victimOverkillSnapshot && victim?.hp === 0 && !victim.isGone && victim.name !== 'Boulder') {
+            if (context.deferredOverkill && victim?.hp === 0 && !victim.isGone && victim.name !== 'Boulder') {
+                this.finishDeferredOverkill(victim, context.attacker || null, 160);
+            } else if (context.victimOverkillSnapshot && victim?.hp === 0 && !victim.isGone && victim.name !== 'Boulder') {
                 const currentCell = this.tacticsMap.getCell(victim.r, victim.q);
                 if (currentCell?.unit === victim) currentCell.unit = null;
                 if (this.startOverkillEffect(victim, context.victimOverkillSnapshot)) {
