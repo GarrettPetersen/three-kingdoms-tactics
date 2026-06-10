@@ -40,6 +40,7 @@ export class TacticsScene extends BaseScene {
         this.hexDamageWaves = new Map(); // key "r,q" -> { elapsedMs, durationMs, amplitudePx }
         this.projectiles = []; // { startX, startY, targetX, targetY, progress, type, duration }
         this.particles = []; // { x, y, r, type, vx, vy, life, targetY }
+        this.overkillEffects = [];
         this.fireSmokeParticles = []; // { x, y, r, life, maxLife, vx, vy, alpha, driftTimer, size }
         this.weatherType = null; // 'rain', 'snow'
         this.enemiesKilled = 0; // Track kills for specific objectives
@@ -398,6 +399,7 @@ export class TacticsScene extends BaseScene {
         this.attackTiles = new Map();
         this.projectiles = [];
         this.particles = [];
+        this.overkillEffects = [];
         this.fireSmokeParticles = [];
         this.damageNumbers = [];
         this.hexDamageWaves = new Map();
@@ -616,6 +618,7 @@ export class TacticsScene extends BaseScene {
         }
 
         this.particles = [];
+        this.overkillEffects = [];
         this.fireSmokeParticles = [];
         if (!this.isCustom) {
             // Don't set lastScene here - SceneManager will handle it when switching away
@@ -5641,6 +5644,181 @@ export class TacticsScene extends BaseScene {
         checkSwing();
     }
 
+    startOverkillEffect(unit) {
+        if (!unit || !unit.img || unit.name === 'Boulder') return false;
+        const sourceSize = 72;
+        const action = unit.currentAnimAction || unit.action || 'standby';
+        const anim = ANIMATIONS[action] || ANIMATIONS.standby;
+        const f = Math.floor(unit.frame || 0) % anim.length;
+        const frameIdx = anim.start + f;
+        const sx = (frameIdx % 8) * sourceSize;
+        const sy = Math.floor(frameIdx / 8) * sourceSize;
+
+        const sourceCanvas = document.createElement('canvas');
+        sourceCanvas.width = sourceSize;
+        sourceCanvas.height = sourceSize;
+        const sourceCtx = sourceCanvas.getContext('2d');
+        sourceCtx.drawImage(unit.img, sx, sy, sourceSize, sourceSize, 0, 0, sourceSize, sourceSize);
+
+        const sourceData = sourceCtx.getImageData(0, 0, sourceSize, sourceSize);
+        const leftData = sourceCtx.createImageData(sourceSize, sourceSize);
+        const rightData = sourceCtx.createImageData(sourceSize, sourceSize);
+        const pixelCandidates = [];
+
+        for (let y = 0; y < sourceSize; y++) {
+            const cutX = 34 + (y - 36) * 0.22 + Math.sin(y * 0.85) * 2;
+            for (let x = 0; x < sourceSize; x++) {
+                const i = (y * sourceSize + x) * 4;
+                const alpha = sourceData.data[i + 3];
+                if (alpha < 24) continue;
+                const dest = x < cutX ? leftData : rightData;
+                dest.data[i] = sourceData.data[i];
+                dest.data[i + 1] = sourceData.data[i + 1];
+                dest.data[i + 2] = sourceData.data[i + 2];
+                dest.data[i + 3] = alpha;
+
+                if ((x + y) % 3 === 0 || (alpha > 220 && (x * 7 + y * 11) % 5 === 0)) {
+                    const side = x < cutX ? -1 : 1;
+                    pixelCandidates.push({
+                        lx: x - 36,
+                        ly: y - 44,
+                        color: `rgba(${sourceData.data[i]},${sourceData.data[i + 1]},${sourceData.data[i + 2]},${(alpha / 255).toFixed(3)})`,
+                        side
+                    });
+                }
+            }
+        }
+        const maxPixels = 360;
+        const pixels = pixelCandidates.length <= maxPixels
+            ? pixelCandidates
+            : Array.from({ length: maxPixels }, (_, idx) => {
+                const sourceIdx = Math.floor(idx * (pixelCandidates.length - 1) / Math.max(1, maxPixels - 1));
+                return pixelCandidates[sourceIdx];
+            });
+
+        const makePieceCanvas = (imageData) => {
+            const canvas = document.createElement('canvas');
+            canvas.width = sourceSize;
+            canvas.height = sourceSize;
+            canvas.getContext('2d').putImageData(imageData, 0, 0);
+            return canvas;
+        };
+
+        const baseX = unit.visualX + (unit.visualOffsetX || 0);
+        let baseY = unit.visualY + (unit.visualOffsetY || 0);
+        if (unit.onHorse) baseY += MOUNTED_Y_OFFSET - 14;
+        const cell = this.tacticsMap.getCell(unit.r, unit.q);
+        if (unit.isDrowning) baseY += Math.min(1, (unit.drownTimer || 0) / 2000) * 40;
+        else if (cell && cell.terrain?.includes('water_shallow')) baseY += 4;
+
+        this.overkillEffects.push({
+            r: unit.currentSortR ?? unit.r,
+            elapsed: 0,
+            burstDelay: 1040,
+            maxLife: 2100,
+            burstDone: false,
+            x: baseX,
+            y: baseY,
+            groundY: 31,
+            flip: !!unit.flip,
+            pieces: [
+                { canvas: makePieceCanvas(leftData), x: -2, y: -1, vx: -0.105, vy: -0.24, rotation: -0.15, vr: -0.006, bounces: 0 },
+                { canvas: makePieceCanvas(rightData), x: 2, y: -1, vx: 0.105, vy: -0.26, rotation: 0.15, vr: 0.006, bounces: 0 }
+            ],
+            sourcePixels: pixels,
+            pixels: []
+        });
+        return true;
+    }
+
+    updateOverkillEffects(dt) {
+        if (!this.overkillEffects || this.overkillEffects.length === 0) return;
+        for (let i = this.overkillEffects.length - 1; i >= 0; i--) {
+            const effect = this.overkillEffects[i];
+            effect.elapsed += dt;
+
+            if (!effect.burstDone && effect.elapsed >= effect.burstDelay) {
+                effect.burstDone = true;
+                const flipSign = effect.flip ? -1 : 1;
+                effect.pixels = effect.sourcePixels.map(p => {
+                    const outward = p.side * flipSign;
+                    const life = 620 + Math.random() * 460;
+                    return {
+                        x: effect.x + p.lx * (effect.flip ? -1 : 1),
+                        y: effect.y + p.ly,
+                        vx: outward * (0.035 + Math.random() * 0.095) + (Math.random() - 0.5) * 0.04,
+                        vy: -0.12 - Math.random() * 0.12 + Math.abs(p.ly) * -0.0006,
+                        life,
+                        maxLife: life,
+                        color: p.color,
+                        size: Math.random() < 0.18 ? 2 : 1
+                    };
+                });
+            }
+
+            if (!effect.burstDone) {
+                effect.pieces.forEach(piece => {
+                    piece.x += piece.vx * dt;
+                    piece.y += piece.vy * dt;
+                    piece.vy += 0.00062 * dt;
+                    if (piece.y >= effect.groundY) {
+                        piece.y = effect.groundY;
+                        if (piece.bounces < 2 && Math.abs(piece.vy) > 0.04) {
+                            piece.vy *= piece.bounces === 0 ? -0.52 : -0.34;
+                            piece.vx *= 0.78;
+                            piece.vr *= -0.7;
+                            piece.bounces++;
+                        } else {
+                            piece.vy = 0;
+                            piece.vx *= 0.86;
+                            piece.vr *= 0.82;
+                        }
+                    }
+                    piece.rotation += piece.vr * dt;
+                });
+            } else {
+                for (let j = effect.pixels.length - 1; j >= 0; j--) {
+                    const p = effect.pixels[j];
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    p.vy += 0.00034 * dt;
+                    p.life -= dt;
+                    if (p.life <= 0) effect.pixels.splice(j, 1);
+                }
+            }
+
+            if (effect.elapsed >= effect.maxLife && (!effect.pixels || effect.pixels.length === 0)) {
+                this.overkillEffects.splice(i, 1);
+            }
+        }
+    }
+
+    drawOverkillEffect(ctx, effect) {
+        if (!effect) return;
+        if (!effect.burstDone) {
+            const alpha = Math.max(0, Math.min(1, 1 - (effect.elapsed / effect.burstDelay) * 0.25));
+            effect.pieces.forEach(piece => {
+                ctx.save();
+                ctx.globalAlpha *= alpha;
+                ctx.translate(Math.floor(effect.x + piece.x), Math.floor(effect.y + piece.y));
+                if (effect.flip) ctx.scale(-1, 1);
+                ctx.rotate(piece.rotation);
+                ctx.drawImage(piece.canvas, -36, -44);
+                ctx.restore();
+            });
+            return;
+        }
+
+        for (const p of effect.pixels) {
+            const alpha = Math.max(0, Math.min(1, p.life / p.maxLife));
+            ctx.save();
+            ctx.globalAlpha *= alpha;
+            ctx.fillStyle = p.color;
+            ctx.fillRect(Math.floor(p.x), Math.floor(p.y), p.size, p.size);
+            ctx.restore();
+        }
+    }
+
     applyUnitDamage(victim, damage, sourceCell = null) {
         // Corpses should not take damage or retrigger death SFX.
         if (!victim || victim.isGone || victim.hp <= 0) return 0;
@@ -5728,6 +5906,11 @@ export class TacticsScene extends BaseScene {
         }
 
         if (victim.hp <= 0 && wasAlive) {
+            const wasOverkilled = victim.name !== 'Boulder' && victim.hp < 0;
+            let overkillEffectStarted = false;
+            if (wasOverkilled) {
+                overkillEffectStarted = this.startOverkillEffect(victim);
+            }
             victim.hp = 0;
             // Cracked boulder: destroy (no roll, use boulder_destroyed sprite; doesn't block)
             if (victim.name === 'Boulder' && victim.imgKey === 'boulder_cracked') {
@@ -5749,6 +5932,9 @@ export class TacticsScene extends BaseScene {
             victim.intent = null;
             const currentCell = sourceCell || this.tacticsMap.getCell(victim.r, victim.q);
             if (currentCell) currentCell.unit = null;
+            if (overkillEffectStarted) {
+                victim.isGone = true;
+            }
             if (typeof victim.playDeathSoundOnce === 'function') {
                 victim.playDeathSoundOnce();
             } else {
@@ -6938,6 +7124,7 @@ export class TacticsScene extends BaseScene {
                 this.projectiles.splice(i, 1);
             }
         }
+        this.updateOverkillEffects(dt);
 
         const controllerTarget = (
             !this.controllerNavMouseEnabled &&
@@ -7552,6 +7739,16 @@ export class TacticsScene extends BaseScene {
                 alpha: alpha
             });
         });
+        this.overkillEffects.forEach(effect => {
+            const { alpha } = this.getIntroEffect(Math.floor(effect.r), 0);
+            if (alpha <= 0) return;
+            drawCalls.push({
+                type: 'overkill_effect',
+                r: effect.r,
+                effect,
+                alpha
+            });
+        });
 
         // 4. Sort by row, then by priority (hex < particle < unit)
         drawCalls.sort((a, b) => {
@@ -7561,7 +7758,7 @@ export class TacticsScene extends BaseScene {
             if (depthA !== depthB) return depthA - depthB;
             
             // Priority within same depth
-            const priorities = { 'hex': 0, 'particle': 1, 'fire_smoke': 1.1, 'flag': 1.5, 'unit': 2, 'gate_overlay': 2.2 };
+            const priorities = { 'hex': 0, 'particle': 1, 'fire_smoke': 1.1, 'flag': 1.5, 'overkill_effect': 1.9, 'unit': 2, 'gate_overlay': 2.2 };
             if (priorities[a.type] !== priorities[b.type]) return priorities[a.type] - priorities[b.type];
             
             // Within same type and row:
@@ -7833,6 +8030,9 @@ export class TacticsScene extends BaseScene {
                     ctx.fillStyle = '#fff';
                     ctx.fillRect(px, py, size, size);
                 }
+            } else if (call.type === 'overkill_effect') {
+                ctx.globalAlpha = call.alpha;
+                this.drawOverkillEffect(ctx, call.effect);
             } else if (call.type === 'fire_smoke') {
                 const p = call.particle;
                 const lifeRatio = Math.max(0, Math.min(1, p.life / p.maxLife));
