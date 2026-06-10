@@ -1,0 +1,9988 @@
+{
+  "generatedBy": "generate_hex_edge_trapezoids.js",
+  "forceOverwrite": true,
+  "notes": [
+    "Transparent 56x56 PNGs with a 36x36 tile footprint inset at x=10,y=10.",
+    "Draw centered at the same logical hex center as terrain tiles, then tune from the manifest polygon points.",
+    "This generator is non-destructive by default: existing PNGs are skipped. Pass --force to overwrite placeholder art.",
+    "heightDiff is neighbor.level - current.level. Diffs -1/+1 are walkable slopes; absolute diffs >=2 use the shared rocky_cliff set because they are impassable."
+  ],
+  "geometry": {
+    "tileWidth": 36,
+    "tileHeight": 36,
+    "padding": 10,
+    "canvasWidth": 56,
+    "canvasHeight": 56,
+    "center": {
+      "x": 28,
+      "y": 28
+    },
+    "horizontalSpacing": 29,
+    "verticalSpacing": 23,
+    "baseDepth": 6,
+    "elevationStep": 3,
+    "heightDiffs": [
+      -3,
+      -2,
+      -1,
+      0,
+      1,
+      2,
+      3
+    ],
+    "directions": {
+      "w": {
+        "label": "W",
+        "description": "Left / west side underlay region, widened to tuck under same-row neighbor art."
+      },
+      "sw": {
+        "label": "SW",
+        "description": "Bottom-left front face region, widened to fill corner joins."
+      },
+      "se": {
+        "label": "SE",
+        "description": "Bottom-right front face region, widened to fill corner joins."
+      }
+    }
+  },
+  "terrainVariantDiffs": [
+    -1,
+    0,
+    1
+  ],
+  "terrainDiffsByGroup": {
+    "water_shallow": [
+      0
+    ],
+    "water_deep": [
+      0
+    ]
+  },
+  "sharedCliffDiffs": [
+    -3,
+    -2,
+    2,
+    3
+  ],
+  "terrainSources": {
+    "grass": "grass_01",
+    "earth": "earth_rocky",
+    "mud": "mud_01",
+    "sand": "sand_01",
+    "snow": "snow_01",
+    "rock": "mountain_stone_01",
+    "water_shallow": "water_shallow_01",
+    "water_deep": "water_deep_01_01"
+  },
+  "terrainColors": {
+    "grass": "#b2a555",
+    "earth": "#7e7976",
+    "mud": "#936849",
+    "sand": "#f8d97b",
+    "snow": "#eae9e9",
+    "rock": "#7e7976",
+    "water_shallow": "#87bfbc",
+    "water_deep": "#276468"
+  },
+  "assets": [
+    {
+      "terrain": "grass",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/grass/w_minus1.png",
+      "points": [
+        [
+          17,
+          23
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          8,
+          54
+        ],
+        [
+          8,
+          54
+        ]
+      ],
+      "rows": [
+        {
+          "y": 23,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 52,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 53,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 54,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "grass",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/grass/w_zero.png",
+      "points": [
+        [
+          17,
+          23
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          8,
+          51
+        ],
+        [
+          8,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 23,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "grass",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/grass/w_plus1.png",
+      "points": [
+        [
+          17,
+          20
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          8,
+          51
+        ],
+        [
+          8,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 20,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 21,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 22,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 23,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "grass",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/grass/sw_minus1.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          14,
+          34
+        ],
+        [
+          32,
+          51
+        ],
+        [
+          31,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 43,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 44,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 45,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 46,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 18,
+          "end": 31
+        },
+        {
+          "y": 48,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 49,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 50,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 51,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "grass",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/grass/sw_zero.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          14,
+          34
+        ],
+        [
+          32,
+          48
+        ],
+        [
+          31,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 13,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 43,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 44,
+          "start": 18,
+          "end": 30
+        },
+        {
+          "y": 45,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 46,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 47,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 48,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "grass",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/grass/sw_plus1.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          27,
+          34
+        ],
+        [
+          32,
+          48
+        ],
+        [
+          31,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 38,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 39,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 43,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 44,
+          "start": 18,
+          "end": 31
+        },
+        {
+          "y": 45,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 46,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 47,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 48,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "grass",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/grass/se_minus1.png",
+      "points": [
+        [
+          40,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          51
+        ],
+        [
+          23,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 40,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 30,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 44,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 45,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 46,
+          "start": 24,
+          "end": 40
+        },
+        {
+          "y": 47,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 48,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 49,
+          "start": 23,
+          "end": 30
+        },
+        {
+          "y": 50,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 51,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "grass",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/grass/se_zero.png",
+      "points": [
+        [
+          40,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          48
+        ],
+        [
+          23,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 40,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 30,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 25,
+          "end": 40
+        },
+        {
+          "y": 44,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 45,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 46,
+          "start": 24,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 48,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "grass",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/grass/se_plus1.png",
+      "points": [
+        [
+          27,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          48
+        ],
+        [
+          23,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 24,
+          "end": 40
+        },
+        {
+          "y": 44,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 45,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 46,
+          "start": 23,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 48,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "earth",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/earth/w_minus1.png",
+      "points": [
+        [
+          17,
+          23
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          8,
+          54
+        ],
+        [
+          8,
+          54
+        ]
+      ],
+      "rows": [
+        {
+          "y": 23,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 52,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 53,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 54,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "earth",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/earth/w_zero.png",
+      "points": [
+        [
+          17,
+          23
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          8,
+          51
+        ],
+        [
+          8,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 23,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "earth",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/earth/w_plus1.png",
+      "points": [
+        [
+          17,
+          20
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          8,
+          51
+        ],
+        [
+          8,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 20,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 21,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 22,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 23,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "earth",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/earth/sw_minus1.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          14,
+          34
+        ],
+        [
+          32,
+          51
+        ],
+        [
+          31,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 43,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 44,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 45,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 46,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 18,
+          "end": 31
+        },
+        {
+          "y": 48,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 49,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 50,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 51,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "earth",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/earth/sw_zero.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          14,
+          34
+        ],
+        [
+          32,
+          48
+        ],
+        [
+          31,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 13,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 43,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 44,
+          "start": 18,
+          "end": 30
+        },
+        {
+          "y": 45,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 46,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 47,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 48,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "earth",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/earth/sw_plus1.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          27,
+          34
+        ],
+        [
+          32,
+          48
+        ],
+        [
+          31,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 38,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 39,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 43,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 44,
+          "start": 18,
+          "end": 31
+        },
+        {
+          "y": 45,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 46,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 47,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 48,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "earth",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/earth/se_minus1.png",
+      "points": [
+        [
+          40,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          51
+        ],
+        [
+          23,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 40,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 30,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 44,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 45,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 46,
+          "start": 24,
+          "end": 40
+        },
+        {
+          "y": 47,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 48,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 49,
+          "start": 23,
+          "end": 30
+        },
+        {
+          "y": 50,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 51,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "earth",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/earth/se_zero.png",
+      "points": [
+        [
+          40,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          48
+        ],
+        [
+          23,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 40,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 30,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 25,
+          "end": 40
+        },
+        {
+          "y": 44,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 45,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 46,
+          "start": 24,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 48,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "earth",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/earth/se_plus1.png",
+      "points": [
+        [
+          27,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          48
+        ],
+        [
+          23,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 24,
+          "end": 40
+        },
+        {
+          "y": 44,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 45,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 46,
+          "start": 23,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 48,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "mud",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/mud/w_minus1.png",
+      "points": [
+        [
+          17,
+          23
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          8,
+          54
+        ],
+        [
+          8,
+          54
+        ]
+      ],
+      "rows": [
+        {
+          "y": 23,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 52,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 53,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 54,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "mud",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/mud/w_zero.png",
+      "points": [
+        [
+          17,
+          23
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          8,
+          51
+        ],
+        [
+          8,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 23,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "mud",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/mud/w_plus1.png",
+      "points": [
+        [
+          17,
+          20
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          8,
+          51
+        ],
+        [
+          8,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 20,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 21,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 22,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 23,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "mud",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/mud/sw_minus1.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          14,
+          34
+        ],
+        [
+          32,
+          51
+        ],
+        [
+          31,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 43,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 44,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 45,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 46,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 18,
+          "end": 31
+        },
+        {
+          "y": 48,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 49,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 50,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 51,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "mud",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/mud/sw_zero.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          14,
+          34
+        ],
+        [
+          32,
+          48
+        ],
+        [
+          31,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 13,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 43,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 44,
+          "start": 18,
+          "end": 30
+        },
+        {
+          "y": 45,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 46,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 47,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 48,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "mud",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/mud/sw_plus1.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          27,
+          34
+        ],
+        [
+          32,
+          48
+        ],
+        [
+          31,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 38,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 39,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 43,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 44,
+          "start": 18,
+          "end": 31
+        },
+        {
+          "y": 45,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 46,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 47,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 48,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "mud",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/mud/se_minus1.png",
+      "points": [
+        [
+          40,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          51
+        ],
+        [
+          23,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 40,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 30,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 44,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 45,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 46,
+          "start": 24,
+          "end": 40
+        },
+        {
+          "y": 47,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 48,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 49,
+          "start": 23,
+          "end": 30
+        },
+        {
+          "y": 50,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 51,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "mud",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/mud/se_zero.png",
+      "points": [
+        [
+          40,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          48
+        ],
+        [
+          23,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 40,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 30,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 25,
+          "end": 40
+        },
+        {
+          "y": 44,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 45,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 46,
+          "start": 24,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 48,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "mud",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/mud/se_plus1.png",
+      "points": [
+        [
+          27,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          48
+        ],
+        [
+          23,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 24,
+          "end": 40
+        },
+        {
+          "y": 44,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 45,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 46,
+          "start": 23,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 48,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "sand",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/sand/w_minus1.png",
+      "points": [
+        [
+          17,
+          23
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          8,
+          54
+        ],
+        [
+          8,
+          54
+        ]
+      ],
+      "rows": [
+        {
+          "y": 23,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 52,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 53,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 54,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "sand",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/sand/w_zero.png",
+      "points": [
+        [
+          17,
+          23
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          8,
+          51
+        ],
+        [
+          8,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 23,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "sand",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/sand/w_plus1.png",
+      "points": [
+        [
+          17,
+          20
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          8,
+          51
+        ],
+        [
+          8,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 20,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 21,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 22,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 23,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "sand",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/sand/sw_minus1.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          14,
+          34
+        ],
+        [
+          32,
+          51
+        ],
+        [
+          31,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 43,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 44,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 45,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 46,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 18,
+          "end": 31
+        },
+        {
+          "y": 48,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 49,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 50,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 51,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "sand",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/sand/sw_zero.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          14,
+          34
+        ],
+        [
+          32,
+          48
+        ],
+        [
+          31,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 13,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 43,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 44,
+          "start": 18,
+          "end": 30
+        },
+        {
+          "y": 45,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 46,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 47,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 48,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "sand",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/sand/sw_plus1.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          27,
+          34
+        ],
+        [
+          32,
+          48
+        ],
+        [
+          31,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 38,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 39,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 43,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 44,
+          "start": 18,
+          "end": 31
+        },
+        {
+          "y": 45,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 46,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 47,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 48,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "sand",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/sand/se_minus1.png",
+      "points": [
+        [
+          40,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          51
+        ],
+        [
+          23,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 40,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 30,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 44,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 45,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 46,
+          "start": 24,
+          "end": 40
+        },
+        {
+          "y": 47,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 48,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 49,
+          "start": 23,
+          "end": 30
+        },
+        {
+          "y": 50,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 51,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "sand",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/sand/se_zero.png",
+      "points": [
+        [
+          40,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          48
+        ],
+        [
+          23,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 40,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 30,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 25,
+          "end": 40
+        },
+        {
+          "y": 44,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 45,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 46,
+          "start": 24,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 48,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "sand",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/sand/se_plus1.png",
+      "points": [
+        [
+          27,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          48
+        ],
+        [
+          23,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 24,
+          "end": 40
+        },
+        {
+          "y": 44,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 45,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 46,
+          "start": 23,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 48,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "snow",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/snow/w_minus1.png",
+      "points": [
+        [
+          17,
+          23
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          8,
+          54
+        ],
+        [
+          8,
+          54
+        ]
+      ],
+      "rows": [
+        {
+          "y": 23,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 52,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 53,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 54,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "snow",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/snow/w_zero.png",
+      "points": [
+        [
+          17,
+          23
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          8,
+          51
+        ],
+        [
+          8,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 23,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "snow",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/snow/w_plus1.png",
+      "points": [
+        [
+          17,
+          20
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          8,
+          51
+        ],
+        [
+          8,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 20,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 21,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 22,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 23,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "snow",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/snow/sw_minus1.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          14,
+          34
+        ],
+        [
+          32,
+          51
+        ],
+        [
+          31,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 43,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 44,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 45,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 46,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 18,
+          "end": 31
+        },
+        {
+          "y": 48,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 49,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 50,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 51,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "snow",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/snow/sw_zero.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          14,
+          34
+        ],
+        [
+          32,
+          48
+        ],
+        [
+          31,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 13,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 43,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 44,
+          "start": 18,
+          "end": 30
+        },
+        {
+          "y": 45,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 46,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 47,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 48,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "snow",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/snow/sw_plus1.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          27,
+          34
+        ],
+        [
+          32,
+          48
+        ],
+        [
+          31,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 38,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 39,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 43,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 44,
+          "start": 18,
+          "end": 31
+        },
+        {
+          "y": 45,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 46,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 47,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 48,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "snow",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/snow/se_minus1.png",
+      "points": [
+        [
+          40,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          51
+        ],
+        [
+          23,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 40,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 30,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 44,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 45,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 46,
+          "start": 24,
+          "end": 40
+        },
+        {
+          "y": 47,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 48,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 49,
+          "start": 23,
+          "end": 30
+        },
+        {
+          "y": 50,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 51,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "snow",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/snow/se_zero.png",
+      "points": [
+        [
+          40,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          48
+        ],
+        [
+          23,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 40,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 30,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 25,
+          "end": 40
+        },
+        {
+          "y": 44,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 45,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 46,
+          "start": 24,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 48,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "snow",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/snow/se_plus1.png",
+      "points": [
+        [
+          27,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          48
+        ],
+        [
+          23,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 24,
+          "end": 40
+        },
+        {
+          "y": 44,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 45,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 46,
+          "start": 23,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 48,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "rock",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/rock/w_minus1.png",
+      "points": [
+        [
+          17,
+          23
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          8,
+          54
+        ],
+        [
+          8,
+          54
+        ]
+      ],
+      "rows": [
+        {
+          "y": 23,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 52,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 53,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 54,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "rock",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/rock/w_zero.png",
+      "points": [
+        [
+          17,
+          23
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          8,
+          51
+        ],
+        [
+          8,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 23,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "rock",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/rock/w_plus1.png",
+      "points": [
+        [
+          17,
+          20
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          8,
+          51
+        ],
+        [
+          8,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 20,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 21,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 22,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 23,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "rock",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/rock/sw_minus1.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          14,
+          34
+        ],
+        [
+          32,
+          51
+        ],
+        [
+          31,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 43,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 44,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 45,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 46,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 18,
+          "end": 31
+        },
+        {
+          "y": 48,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 49,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 50,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 51,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "rock",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/rock/sw_zero.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          14,
+          34
+        ],
+        [
+          32,
+          48
+        ],
+        [
+          31,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 13,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 43,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 44,
+          "start": 18,
+          "end": 30
+        },
+        {
+          "y": 45,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 46,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 47,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 48,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "rock",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/rock/sw_plus1.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          27,
+          34
+        ],
+        [
+          32,
+          48
+        ],
+        [
+          31,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 38,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 39,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 43,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 44,
+          "start": 18,
+          "end": 31
+        },
+        {
+          "y": 45,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 46,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 47,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 48,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "rock",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/rock/se_minus1.png",
+      "points": [
+        [
+          40,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          51
+        ],
+        [
+          23,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 40,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 30,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 44,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 45,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 46,
+          "start": 24,
+          "end": 40
+        },
+        {
+          "y": 47,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 48,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 49,
+          "start": 23,
+          "end": 30
+        },
+        {
+          "y": 50,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 51,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "rock",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/rock/se_zero.png",
+      "points": [
+        [
+          40,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          48
+        ],
+        [
+          23,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 40,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 30,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 25,
+          "end": 40
+        },
+        {
+          "y": 44,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 45,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 46,
+          "start": 24,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 48,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "rock",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/rock/se_plus1.png",
+      "points": [
+        [
+          27,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          48
+        ],
+        [
+          23,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 24,
+          "end": 40
+        },
+        {
+          "y": 44,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 45,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 46,
+          "start": 23,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 48,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "water_shallow",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/water_shallow/w_zero.png",
+      "points": [
+        [
+          17,
+          23
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          8,
+          51
+        ],
+        [
+          8,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 23,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "water_shallow",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/water_shallow/sw_zero.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          14,
+          34
+        ],
+        [
+          32,
+          48
+        ],
+        [
+          31,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 13,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 43,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 44,
+          "start": 18,
+          "end": 30
+        },
+        {
+          "y": 45,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 46,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 47,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 48,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "water_shallow",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/water_shallow/se_zero.png",
+      "points": [
+        [
+          40,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          48
+        ],
+        [
+          23,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 40,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 30,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 25,
+          "end": 40
+        },
+        {
+          "y": 44,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 45,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 46,
+          "start": 24,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 48,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "water_deep",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/water_deep/w_zero.png",
+      "points": [
+        [
+          17,
+          23
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          8,
+          51
+        ],
+        [
+          8,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 23,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 12
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 10
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "terrain": "water_deep",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/water_deep/sw_zero.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          14,
+          34
+        ],
+        [
+          32,
+          48
+        ],
+        [
+          31,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 13,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 43,
+          "start": 15,
+          "end": 30
+        },
+        {
+          "y": 44,
+          "start": 18,
+          "end": 30
+        },
+        {
+          "y": 45,
+          "start": 21,
+          "end": 31
+        },
+        {
+          "y": 46,
+          "start": 25,
+          "end": 31
+        },
+        {
+          "y": 47,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 48,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "water_deep",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/water_deep/se_zero.png",
+      "points": [
+        [
+          40,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          24,
+          48
+        ],
+        [
+          23,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 40,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 30,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 25,
+          "end": 40
+        },
+        {
+          "y": 44,
+          "start": 24,
+          "end": 37
+        },
+        {
+          "y": 45,
+          "start": 24,
+          "end": 34
+        },
+        {
+          "y": 46,
+          "start": 24,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 48,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "rocky_cliff",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": -3,
+      "file": "assets/terrain/edge_trapezoids/rocky_cliff/w_minus3.png",
+      "points": [
+        [
+          17,
+          23
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          19,
+          55
+        ],
+        [
+          8,
+          55
+        ]
+      ],
+      "rows": [
+        {
+          "y": 23,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 52,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 53,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 54,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 55,
+          "start": 8,
+          "end": 19
+        }
+      ]
+    },
+    {
+      "terrain": "rocky_cliff",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": -2,
+      "file": "assets/terrain/edge_trapezoids/rocky_cliff/w_minus2.png",
+      "points": [
+        [
+          17,
+          23
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          19,
+          55
+        ],
+        [
+          8,
+          55
+        ]
+      ],
+      "rows": [
+        {
+          "y": 23,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 52,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 53,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 54,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 55,
+          "start": 8,
+          "end": 19
+        }
+      ]
+    },
+    {
+      "terrain": "rocky_cliff",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 2,
+      "file": "assets/terrain/edge_trapezoids/rocky_cliff/w_plus2.png",
+      "points": [
+        [
+          17,
+          17
+        ],
+        [
+          19,
+          17
+        ],
+        [
+          12,
+          55
+        ],
+        [
+          8,
+          55
+        ]
+      ],
+      "rows": [
+        {
+          "y": 17,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 18,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 19,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 20,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 21,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 22,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 23,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 52,
+          "start": 8,
+          "end": 17
+        },
+        {
+          "y": 53,
+          "start": 8,
+          "end": 15
+        },
+        {
+          "y": 54,
+          "start": 8,
+          "end": 13
+        },
+        {
+          "y": 55,
+          "start": 8,
+          "end": 12
+        }
+      ]
+    },
+    {
+      "terrain": "rocky_cliff",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 3,
+      "file": "assets/terrain/edge_trapezoids/rocky_cliff/w_plus3.png",
+      "points": [
+        [
+          17,
+          14
+        ],
+        [
+          19,
+          14
+        ],
+        [
+          17,
+          55
+        ],
+        [
+          8,
+          55
+        ]
+      ],
+      "rows": [
+        {
+          "y": 14,
+          "start": 17,
+          "end": 19
+        },
+        {
+          "y": 15,
+          "start": 15,
+          "end": 19
+        },
+        {
+          "y": 16,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "y": 17,
+          "start": 11,
+          "end": 19
+        },
+        {
+          "y": 18,
+          "start": 9,
+          "end": 19
+        },
+        {
+          "y": 19,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 20,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 21,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 22,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 23,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 24,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 25,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 26,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 27,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 28,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 29,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 30,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 31,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 33,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 34,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 35,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 37,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 38,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 39,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 40,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 41,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 42,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 43,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 44,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 45,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 46,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 47,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 48,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 49,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 50,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 51,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 52,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 53,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 54,
+          "start": 8,
+          "end": 19
+        },
+        {
+          "y": 55,
+          "start": 8,
+          "end": 17
+        }
+      ]
+    },
+    {
+      "terrain": "rocky_cliff",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": -3,
+      "file": "assets/terrain/edge_trapezoids/rocky_cliff/sw_minus3.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          14,
+          34
+        ],
+        [
+          30,
+          55
+        ],
+        [
+          13,
+          55
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 40,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 41,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 42,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 43,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 44,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 45,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 46,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 47,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 48,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 49,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 50,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 51,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 52,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 53,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 54,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 55,
+          "start": 13,
+          "end": 30
+        }
+      ]
+    },
+    {
+      "terrain": "rocky_cliff",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": -2,
+      "file": "assets/terrain/edge_trapezoids/rocky_cliff/sw_minus2.png",
+      "points": [
+        [
+          12,
+          34
+        ],
+        [
+          14,
+          34
+        ],
+        [
+          31,
+          55
+        ],
+        [
+          15,
+          55
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 39,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 40,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 41,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 42,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 43,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 44,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 45,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 46,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 47,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 48,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 49,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 50,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 51,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 52,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 53,
+          "start": 13,
+          "end": 31
+        },
+        {
+          "y": 54,
+          "start": 13,
+          "end": 31
+        },
+        {
+          "y": 55,
+          "start": 15,
+          "end": 31
+        }
+      ]
+    },
+    {
+      "terrain": "rocky_cliff",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 2,
+      "file": "assets/terrain/edge_trapezoids/rocky_cliff/sw_plus2.png",
+      "points": [
+        [
+          24,
+          31
+        ],
+        [
+          27,
+          31
+        ],
+        [
+          32,
+          54
+        ],
+        [
+          31,
+          54
+        ]
+      ],
+      "rows": [
+        {
+          "y": 31,
+          "start": 24,
+          "end": 27
+        },
+        {
+          "y": 32,
+          "start": 19,
+          "end": 27
+        },
+        {
+          "y": 33,
+          "start": 14,
+          "end": 27
+        },
+        {
+          "y": 34,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 38,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 39,
+          "start": 12,
+          "end": 29
+        },
+        {
+          "y": 40,
+          "start": 12,
+          "end": 29
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 29
+        },
+        {
+          "y": 43,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 44,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 45,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 46,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 13,
+          "end": 31
+        },
+        {
+          "y": 48,
+          "start": 13,
+          "end": 31
+        },
+        {
+          "y": 49,
+          "start": 15,
+          "end": 31
+        },
+        {
+          "y": 50,
+          "start": 18,
+          "end": 31
+        },
+        {
+          "y": 51,
+          "start": 21,
+          "end": 32
+        },
+        {
+          "y": 52,
+          "start": 25,
+          "end": 32
+        },
+        {
+          "y": 53,
+          "start": 28,
+          "end": 32
+        },
+        {
+          "y": 54,
+          "start": 31,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "rocky_cliff",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 3,
+      "file": "assets/terrain/edge_trapezoids/rocky_cliff/sw_plus3.png",
+      "points": [
+        [
+          25,
+          28
+        ],
+        [
+          27,
+          28
+        ],
+        [
+          32,
+          55
+        ],
+        [
+          25,
+          55
+        ]
+      ],
+      "rows": [
+        {
+          "y": 28,
+          "start": 25,
+          "end": 27
+        },
+        {
+          "y": 29,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 30,
+          "start": 20,
+          "end": 27
+        },
+        {
+          "y": 31,
+          "start": 18,
+          "end": 27
+        },
+        {
+          "y": 32,
+          "start": 15,
+          "end": 27
+        },
+        {
+          "y": 33,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 34,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 35,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 36,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 38,
+          "start": 12,
+          "end": 29
+        },
+        {
+          "y": 39,
+          "start": 12,
+          "end": 29
+        },
+        {
+          "y": 40,
+          "start": 12,
+          "end": 29
+        },
+        {
+          "y": 41,
+          "start": 12,
+          "end": 29
+        },
+        {
+          "y": 42,
+          "start": 12,
+          "end": 29
+        },
+        {
+          "y": 43,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 44,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 45,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 46,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 47,
+          "start": 13,
+          "end": 30
+        },
+        {
+          "y": 48,
+          "start": 13,
+          "end": 31
+        },
+        {
+          "y": 49,
+          "start": 13,
+          "end": 31
+        },
+        {
+          "y": 50,
+          "start": 13,
+          "end": 31
+        },
+        {
+          "y": 51,
+          "start": 13,
+          "end": 31
+        },
+        {
+          "y": 52,
+          "start": 15,
+          "end": 31
+        },
+        {
+          "y": 53,
+          "start": 18,
+          "end": 32
+        },
+        {
+          "y": 54,
+          "start": 21,
+          "end": 32
+        },
+        {
+          "y": 55,
+          "start": 25,
+          "end": 32
+        }
+      ]
+    },
+    {
+      "terrain": "rocky_cliff",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": -3,
+      "file": "assets/terrain/edge_trapezoids/rocky_cliff/se_minus3.png",
+      "points": [
+        [
+          40,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          42,
+          55
+        ],
+        [
+          24,
+          55
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 40,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 30,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 44,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 45,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 46,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 47,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 48,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 49,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 50,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 51,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 52,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 53,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 54,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 55,
+          "start": 24,
+          "end": 42
+        }
+      ]
+    },
+    {
+      "terrain": "rocky_cliff",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": -2,
+      "file": "assets/terrain/edge_trapezoids/rocky_cliff/se_minus2.png",
+      "points": [
+        [
+          40,
+          34
+        ],
+        [
+          42,
+          34
+        ],
+        [
+          40,
+          55
+        ],
+        [
+          24,
+          55
+        ]
+      ],
+      "rows": [
+        {
+          "y": 34,
+          "start": 40,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 30,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 44,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 45,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 46,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 47,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 48,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 49,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 50,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 51,
+          "start": 24,
+          "end": 42
+        },
+        {
+          "y": 52,
+          "start": 24,
+          "end": 42
+        },
+        {
+          "y": 53,
+          "start": 24,
+          "end": 42
+        },
+        {
+          "y": 54,
+          "start": 24,
+          "end": 42
+        },
+        {
+          "y": 55,
+          "start": 24,
+          "end": 40
+        }
+      ]
+    },
+    {
+      "terrain": "rocky_cliff",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 2,
+      "file": "assets/terrain/edge_trapezoids/rocky_cliff/se_plus2.png",
+      "points": [
+        [
+          27,
+          31
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          24,
+          54
+        ],
+        [
+          23,
+          54
+        ]
+      ],
+      "rows": [
+        {
+          "y": 31,
+          "start": 27,
+          "end": 30
+        },
+        {
+          "y": 32,
+          "start": 27,
+          "end": 35
+        },
+        {
+          "y": 33,
+          "start": 27,
+          "end": 40
+        },
+        {
+          "y": 34,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 44,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 45,
+          "start": 24,
+          "end": 42
+        },
+        {
+          "y": 46,
+          "start": 24,
+          "end": 42
+        },
+        {
+          "y": 47,
+          "start": 24,
+          "end": 42
+        },
+        {
+          "y": 48,
+          "start": 24,
+          "end": 42
+        },
+        {
+          "y": 49,
+          "start": 24,
+          "end": 40
+        },
+        {
+          "y": 50,
+          "start": 23,
+          "end": 37
+        },
+        {
+          "y": 51,
+          "start": 23,
+          "end": 34
+        },
+        {
+          "y": 52,
+          "start": 23,
+          "end": 30
+        },
+        {
+          "y": 53,
+          "start": 23,
+          "end": 27
+        },
+        {
+          "y": 54,
+          "start": 23,
+          "end": 24
+        }
+      ]
+    },
+    {
+      "terrain": "rocky_cliff",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 3,
+      "file": "assets/terrain/edge_trapezoids/rocky_cliff/se_plus3.png",
+      "points": [
+        [
+          27,
+          28
+        ],
+        [
+          29,
+          28
+        ],
+        [
+          30,
+          55
+        ],
+        [
+          23,
+          55
+        ]
+      ],
+      "rows": [
+        {
+          "y": 28,
+          "start": 27,
+          "end": 29
+        },
+        {
+          "y": 29,
+          "start": 27,
+          "end": 31
+        },
+        {
+          "y": 30,
+          "start": 27,
+          "end": 34
+        },
+        {
+          "y": 31,
+          "start": 27,
+          "end": 36
+        },
+        {
+          "y": 32,
+          "start": 27,
+          "end": 39
+        },
+        {
+          "y": 33,
+          "start": 27,
+          "end": 41
+        },
+        {
+          "y": 34,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 26,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 44,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 45,
+          "start": 25,
+          "end": 42
+        },
+        {
+          "y": 46,
+          "start": 24,
+          "end": 42
+        },
+        {
+          "y": 47,
+          "start": 24,
+          "end": 42
+        },
+        {
+          "y": 48,
+          "start": 24,
+          "end": 42
+        },
+        {
+          "y": 49,
+          "start": 24,
+          "end": 42
+        },
+        {
+          "y": 50,
+          "start": 24,
+          "end": 42
+        },
+        {
+          "y": 51,
+          "start": 24,
+          "end": 42
+        },
+        {
+          "y": 52,
+          "start": 23,
+          "end": 40
+        },
+        {
+          "y": 53,
+          "start": 23,
+          "end": 37
+        },
+        {
+          "y": 54,
+          "start": 23,
+          "end": 34
+        },
+        {
+          "y": 55,
+          "start": 23,
+          "end": 30
+        }
+      ]
+    }
+  ]
+}

@@ -448,6 +448,41 @@ async function init() {
                 ? `assets/terrain/${t}.png`
                 : `assets/terrain/individual/${t}.png`;
         });
+        const edgeTrapezoidAssets = {};
+        const edgeTerrainGroups = ['grass', 'earth', 'mud', 'sand', 'snow', 'rock'];
+        const edgeSingleDiffTerrainGroups = {
+            water_shallow: [0],
+            water_deep: [0]
+        };
+        const edgeDirections = ['w', 'sw', 'se'];
+        const edgeTerrainDiffs = [-1, 0, 1];
+        const edgeCliffDiffs = [-3, -2, 2, 3];
+        const getEdgeDiffName = (diff) => diff > 0 ? `plus${diff}` : diff < 0 ? `minus${Math.abs(diff)}` : 'zero';
+        edgeTerrainGroups.forEach(terrain => {
+            edgeDirections.forEach(direction => {
+                edgeTerrainDiffs.forEach(diff => {
+                    const diffName = getEdgeDiffName(diff);
+                    edgeTrapezoidAssets[`edge_trapezoid_${terrain}_${direction}_${diffName}`] =
+                        `assets/terrain/edge_trapezoids/${terrain}/${direction}_${diffName}.png`;
+                });
+            });
+        });
+        Object.entries(edgeSingleDiffTerrainGroups).forEach(([terrain, diffs]) => {
+            edgeDirections.forEach(direction => {
+                diffs.forEach(diff => {
+                    const diffName = getEdgeDiffName(diff);
+                    edgeTrapezoidAssets[`edge_trapezoid_${terrain}_${direction}_${diffName}`] =
+                        `assets/terrain/edge_trapezoids/${terrain}/${direction}_${diffName}.png`;
+                });
+            });
+        });
+        edgeDirections.forEach(direction => {
+            edgeCliffDiffs.forEach(diff => {
+                const diffName = getEdgeDiffName(diff);
+                edgeTrapezoidAssets[`edge_trapezoid_rocky_cliff_${direction}_${diffName}`] =
+                    `assets/terrain/edge_trapezoids/rocky_cliff/${direction}_${diffName}.png`;
+            });
+        });
 
         // Character names for dedicated portraits
         const portraitNames = [
@@ -584,7 +619,8 @@ async function init() {
                 fire_yellow_06: 'assets/fire/fire_yellow_06.png',
                 fire_yellow_07: 'assets/fire/fire_yellow_07.png',
                 fire_yellow_08: 'assets/fire/fire_yellow_08.png',
-                ...terrainAssets
+                ...terrainAssets,
+                ...edgeTrapezoidAssets
             }),
             assets.loadSounds({
                 slash: 'assets/sfx/slash.wav',

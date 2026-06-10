@@ -7559,6 +7559,21 @@ export class TacticsScene extends BaseScene {
         this._unitOutlineItems = [];
         this._renderedUnitSprites = [];
         const unitHexDriftMap = this._unitHexDriftMap || new Map();
+        for (const call of drawCalls) {
+            if (call.type !== 'hex') continue;
+            const effect = this.getIntroEffect(Math.floor(call.r), call.q || 0);
+            if (effect.alpha <= 0) continue;
+            const surfaceY = call.y - call.elevation + effect.yOffset;
+            const baseTerrain = this.isGateTerrain(call.terrain) ? 'mud_01' : call.terrain;
+            const directions = this.tacticsMap.getDirections(call.r);
+            const labels = ['NE', 'E', 'SE', 'SW', 'W', 'NW'];
+            const currentCell = this.tacticsMap.getCell(call.r, call.q);
+            ctx.save();
+            ctx.globalAlpha = call.alpha || effect.alpha;
+            this.drawEdgeTrapezoids(baseTerrain, call.x, surfaceY, call.r, call.q, directions, labels, currentCell, ['W']);
+            ctx.restore();
+        }
+
         let drawOrder = 0;
         for (const call of drawCalls) {
             const effect = this.getIntroEffect(Math.floor(call.r), call.q || 0);
@@ -10116,6 +10131,55 @@ export class TacticsScene extends BaseScene {
         }
     }
 
+    getEdgeTrapezoidTerrainGroup(terrainType) {
+        if (!terrainType) return 'grass';
+        if (terrainType.includes('water_deep')) return 'water_deep';
+        if (terrainType.includes('water_shallow') || terrainType.includes('water')) return 'water_shallow';
+        if (terrainType.includes('snow') || terrainType.includes('ice')) return 'snow';
+        if (terrainType.includes('sand')) return 'sand';
+        if (terrainType.includes('mud')) return 'mud';
+        if (terrainType.includes('earth')) return 'earth';
+        if (terrainType.includes('mountain') || terrainType.includes('stone') || terrainType.includes('rock') || terrainType.includes('wall')) return 'rock';
+        return 'grass';
+    }
+
+    getEdgeTrapezoidImageKey(terrainType, direction, levelDiff) {
+        const clampedDiff = Math.max(-3, Math.min(3, Math.round(levelDiff || 0)));
+        if (clampedDiff === 0 || Math.abs(clampedDiff) === 1) {
+            const terrainGroup = this.getEdgeTrapezoidTerrainGroup(terrainType);
+            const diffName = clampedDiff > 0 ? `plus${clampedDiff}` : clampedDiff < 0 ? `minus${Math.abs(clampedDiff)}` : 'zero';
+            return `edge_trapezoid_${terrainGroup}_${direction}_${diffName}`;
+        }
+        const cliffDiff = clampedDiff > 0 ? Math.min(3, Math.max(2, clampedDiff)) : Math.max(-3, Math.min(-2, clampedDiff));
+        const diffName = cliffDiff > 0 ? `plus${cliffDiff}` : `minus${Math.abs(cliffDiff)}`;
+        return `edge_trapezoid_rocky_cliff_${direction}_${diffName}`;
+    }
+
+    drawEdgeTrapezoids(terrainType, x, y, r, q, directions, labels, currentCell, edgeLabels = ['W', 'SW', 'SE']) {
+        const { ctx } = this.manager;
+        if (!currentCell || !directions || !labels) return;
+
+        const allVisibleEdges = [
+            { label: 'W', assetDirection: 'w' },
+            { label: 'SW', assetDirection: 'sw' },
+            { label: 'SE', assetDirection: 'se' }
+        ];
+        const visibleEdges = allVisibleEdges.filter(edge => edgeLabels.includes(edge.label));
+
+        visibleEdges.forEach(edge => {
+            const direction = directions[labels.indexOf(edge.label)];
+            if (!direction) return;
+
+            const neighbor = this.tacticsMap.getCell(r + direction.dr, q + direction.dq);
+            const levelDiff = neighbor ? ((neighbor.level || 0) - (currentCell.level || 0)) : 0;
+            const key = this.getEdgeTrapezoidImageKey(terrainType, edge.assetDirection, levelDiff);
+            const img = assets.getImage(key);
+            if (!img) return;
+
+            ctx.drawImage(img, Math.floor(x - img.width / 2), Math.floor(y - img.height / 2));
+        });
+    }
+
     drawTile(terrainType, x, y, elevation = 0, r = 0, q = 0, edgeStatus = {}, slopeInfo = {}) {
         const { ctx, config } = this.manager;
         const isBurningTent = terrainType === 'tent_burning' || terrainType === 'tent_white_burning';
@@ -10393,6 +10457,8 @@ export class TacticsScene extends BaseScene {
                 }
             }
         }
+
+        this.drawEdgeTrapezoids(baseTerrain, x, y, r, q, directions, labels, currentCell, ['SW', 'SE']);
 
         if (isBurningTent) {
             const fireKey = this.getAnimatedTerrain('fire_yellow_01', r, q);
