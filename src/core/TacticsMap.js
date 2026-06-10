@@ -301,6 +301,7 @@ export class TacticsMap {
             for (let q = 0; q < this.width; q++) {
                 const cell = this.grid[r][q];
                 cell.terrain = this.getDefaultGrass();
+                cell.baseTerrain = null;
                 cell.level = 0;
                 cell.elevation = 0;
                 cell.impassable = false;
@@ -338,6 +339,7 @@ export class TacticsMap {
             for (let q = 0; q < this.width; q++) {
                 const cell = this.grid[r][q];
                 if (q === wallQ) {
+                    cell.baseTerrain = 'mud_01';
                     cell.terrain = 'wall_01';
                     cell.impassable = true;
                 } else if (q < wallQ) {
@@ -401,6 +403,7 @@ export class TacticsMap {
                     cell.terrain = 'mud_01';
                     const nearWall = Math.abs((q - Math.floor(r / 2)) - (orient === 'x_const' ? lineValue : (lineValue - r))) <= 1;
                     if (!nearWall && Math.random() < 0.18) {
+                        cell.baseTerrain = cell.terrain;
                         cell.terrain = 'house_01';
                         cell.impassable = true;
                     }
@@ -424,6 +427,7 @@ export class TacticsMap {
         // Paint the wall and gate on top.
         const defenderSide = this.params?.cityGateDefenderSide || 'player';
         wallCells.forEach(c => {
+            c.baseTerrain = c.terrain;
             c.terrain = 'wall_01';
             c.impassable = true;
             c.gateState = null;
@@ -574,6 +578,7 @@ export class TacticsMap {
             const tooClose = placed.some(p => Math.abs(p.r - pos.r) + Math.abs(p.q - pos.q) < minSeparation);
             if (tooClose) continue;
             const cell = this.grid[pos.r][pos.q];
+            cell.baseTerrain = cell.terrain;
             cell.terrain = placed.length < burningCount ? burningTerrain : tentTerrain;
             cell.impassable = true;
             cell.level = 0;
@@ -1165,6 +1170,7 @@ export class TacticsMap {
 
                 const rand = Math.random();
                 if (rand < houseDensity) {
+                    cell.baseTerrain = cell.terrain;
                     cell.terrain = 'house_01';
                     cell.impassable = true;
                 } else if (rand < houseDensity + forestDensity) {
@@ -1276,4 +1282,3 @@ export class TacticsMap {
         return path;
     }
 }
-

@@ -1,8 +1,8 @@
 {
   "generatedBy": "generate_hex_edge_trapezoids.js",
-  "forceOverwrite": true,
+  "forceOverwrite": false,
   "forceHandEdited": false,
-  "onlyTerrain": "rocky_cliff",
+  "onlyTerrain": null,
   "protectedTerrains": [
     "grass"
   ],

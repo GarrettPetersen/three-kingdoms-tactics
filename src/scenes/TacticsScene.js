@@ -7596,7 +7596,7 @@ export class TacticsScene extends BaseScene {
             const currentCell = this.tacticsMap.getCell(call.r, call.q);
             ctx.save();
             ctx.globalAlpha = call.alpha || effect.alpha;
-            this.drawEdgeTrapezoids(baseTerrain, call.x, surfaceY, call.r, call.q, directions, labels, currentCell, ['W']);
+            this.drawEdgeTrapezoids(baseTerrain, call.x, surfaceY, call.r, call.q, directions, labels, currentCell, ['W'], { skipFlatNatural: true });
             ctx.restore();
         }
 
@@ -10169,6 +10169,25 @@ export class TacticsScene extends BaseScene {
         return 'grass';
     }
 
+    getEdgeTrapezoidSourceTerrain(terrainType, cell) {
+        const terrain = terrainType || cell?.terrain || '';
+        const usesBaseTerrain = this.isEdgeStructureTerrain(terrain);
+
+        if (usesBaseTerrain && cell?.baseTerrain) {
+            return cell.baseTerrain;
+        }
+
+        return terrain;
+    }
+
+    isEdgeStructureTerrain(terrainType) {
+        const terrain = terrainType || '';
+        return terrain.includes('house') ||
+            terrain.includes('tent') ||
+            terrain.includes('wall') ||
+            this.isGateTerrain(terrain);
+    }
+
     getEdgeTrapezoidImageKey(terrainType, direction, levelDiff) {
         const clampedDiff = Math.max(-3, Math.min(3, Math.round(levelDiff || 0)));
         if (clampedDiff === 0 || Math.abs(clampedDiff) === 1) {
@@ -10181,7 +10200,7 @@ export class TacticsScene extends BaseScene {
         return `edge_trapezoid_rocky_cliff_${direction}_${diffName}`;
     }
 
-    drawEdgeTrapezoids(terrainType, x, y, r, q, directions, labels, currentCell, edgeLabels = ['W', 'SW', 'SE']) {
+    drawEdgeTrapezoids(terrainType, x, y, r, q, directions, labels, currentCell, edgeLabels = ['W', 'SW', 'SE'], options = {}) {
         const { ctx } = this.manager;
         if (!currentCell || !directions || !labels) return;
 
@@ -10198,7 +10217,14 @@ export class TacticsScene extends BaseScene {
 
             const neighbor = this.tacticsMap.getCell(r + direction.dr, q + direction.dq);
             const levelDiff = neighbor ? ((neighbor.level || 0) - (currentCell.level || 0)) : 0;
-            const key = this.getEdgeTrapezoidImageKey(terrainType, edge.assetDirection, levelDiff);
+            const isFlatNaturalEdge = levelDiff === 0 &&
+                !this.isEdgeStructureTerrain(currentCell?.terrain) &&
+                !this.isEdgeStructureTerrain(neighbor?.terrain);
+            if (options.skipFlatNatural && isFlatNaturalEdge) return;
+            if (options.onlyFlatNatural && !isFlatNaturalEdge) return;
+
+            const sourceTerrain = this.getEdgeTrapezoidSourceTerrain(terrainType, currentCell);
+            const key = this.getEdgeTrapezoidImageKey(sourceTerrain, edge.assetDirection, levelDiff);
             const img = assets.getImage(key);
             if (!img) return;
 
@@ -10484,6 +10510,7 @@ export class TacticsScene extends BaseScene {
             }
         }
 
+        this.drawEdgeTrapezoids(baseTerrain, x, y, r, q, directions, labels, currentCell, ['W'], { onlyFlatNatural: true });
         this.drawEdgeTrapezoids(baseTerrain, x, y, r, q, directions, labels, currentCell, ['SW', 'SE']);
 
         if (isBurningTent) {
