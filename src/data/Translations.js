@@ -472,6 +472,10 @@ export const UI_TEXT = {
         en: 'ADD UNIT',
         zh: '添加单位'
     },
+    'UPDATE UNIT': {
+        en: 'UPDATE UNIT',
+        zh: '更新单位'
+    },
     // Battle UI
     'YOUR TURN': {
         en: 'YOUR TURN',

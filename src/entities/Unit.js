@@ -58,6 +58,7 @@ export class Unit {
         this.isGone = config.isGone || false;
         this.drownTimer = 0;
         this.deathSoundPlayed = config.deathSoundPlayed || false;
+        this.overkillEffectStarted = false;
         this.immortal = config.immortal || null; // Boolean or config object
         this.immortalTriggered = config.immortalTriggered || false;
         this.immortalPendingCause = config.immortalPendingCause || null; // 'damage' | 'drown'

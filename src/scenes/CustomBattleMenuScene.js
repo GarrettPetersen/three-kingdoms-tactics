@@ -32,6 +32,7 @@ export class CustomBattleMenuScene extends BaseScene {
         this.setupStep = 0; // 0: Environment, 1: Army
         this.buttonRects = [];
         this.selectedRosterIndex = -1;
+        this.pendingAddedRosterIndex = -1;
         this.rosterScrollOffsets = { friendly: 0, enemy: 0, all: 0 }; // Per-column roster scrolling
         this.rosterColumnState = {};
 
@@ -63,6 +64,7 @@ export class CustomBattleMenuScene extends BaseScene {
         this.view = 'MENU';
         this.setupStep = 0;
         this.selectedRosterIndex = -1;
+        this.pendingAddedRosterIndex = -1;
         this.rosterScrollOffsets = { friendly: 0, enemy: 0, all: 0 };
         this.rosterColumnState = {};
         // Reset dropdowns
@@ -335,6 +337,7 @@ export class CustomBattleMenuScene extends BaseScene {
 
         // Bottom Navigation
         const isAddingUnit = this.selectedRosterIndex >= 0;
+        const isNewUnit = isAddingUnit && this.pendingAddedRosterIndex === this.selectedRosterIndex;
         
         // Left button: UNDO (when adding unit) or BACK TO MAP (otherwise)
         let leftButtonText, leftButtonType;
@@ -349,7 +352,7 @@ export class CustomBattleMenuScene extends BaseScene {
         // Right button: ADD UNIT (when adding unit) or START BATTLE (when roster has units)
         let rightButtonText, rightButtonType, rightButtonColor;
         if (isAddingUnit) {
-            rightButtonText = getLocalizedText(UI_TEXT['ADD UNIT']);
+            rightButtonText = getLocalizedText(UI_TEXT[isNewUnit ? 'ADD UNIT' : 'UPDATE UNIT']);
             rightButtonType = 'confirm_add_unit';
             rightButtonColor = '#228b22';
         } else if (this.options.roster.length > 0) {
@@ -883,6 +886,7 @@ export class CustomBattleMenuScene extends BaseScene {
                     horseType: 'brown'
                 });
                 this.selectedRosterIndex = this.options.roster.length - 1;
+                this.pendingAddedRosterIndex = this.selectedRosterIndex;
                 this.dropdowns.unit.selectedIndex = undefined;
                 this.dropdowns.unit.open = false;
                 this.dropdowns.unit.scrollOffset = 0;
@@ -945,14 +949,17 @@ export class CustomBattleMenuScene extends BaseScene {
             if (this.selectedRosterIndex >= 0 && this.selectedRosterIndex < this.options.roster.length) {
                 this.options.roster.splice(this.selectedRosterIndex, 1);
                 this.selectedRosterIndex = -1;
+                this.pendingAddedRosterIndex = -1;
                 assets.playSound('ui_click', 0.4);
             }
         } else if (btn.type === 'confirm_add_unit') {
             // Confirm adding the unit (just deselect it to finish)
             this.selectedRosterIndex = -1;
+            this.pendingAddedRosterIndex = -1;
             assets.playSound('ui_click', 0.6);
         } else if (btn.type === 'deselect_unit') {
             this.selectedRosterIndex = -1;
+            this.pendingAddedRosterIndex = -1;
             assets.playSound('ui_click', 0.4);
         } else if (btn.type === 'start') {
             assets.playSound('gong', 0.8);
@@ -1005,6 +1012,7 @@ export class CustomBattleMenuScene extends BaseScene {
                     horseType: 'brown'
                 });
                 this.selectedRosterIndex = this.options.roster.length - 1;
+                this.pendingAddedRosterIndex = this.selectedRosterIndex;
                 assets.playSound('ui_click', 0.6);
             } else {
                 assets.playSound('ui_error', 0.5);
@@ -1012,9 +1020,11 @@ export class CustomBattleMenuScene extends BaseScene {
         } else if (btn.type === 'remove_unit') {
             this.options.roster.splice(btn.index, 1);
             this.selectedRosterIndex = -1;
+            this.pendingAddedRosterIndex = -1;
             assets.playSound('ui_click', 0.4);
         } else if (btn.type === 'select_roster') {
             this.selectedRosterIndex = btn.index;
+            this.pendingAddedRosterIndex = -1;
             assets.playSound('ui_click', 0.6);
         } else if (btn.type === 'cycle_faction') {
             if (this.selectedRosterIndex >= 0) {

@@ -3290,6 +3290,7 @@ export class TacticsScene extends BaseScene {
     restoreBattleState(state) {
         if (!state) return;
         const config = this.manager.config;
+        this.overkillEffects = [];
         
         this.turn = state.turn;
         this.turnNumber = state.turnNumber;
@@ -3380,6 +3381,7 @@ export class TacticsScene extends BaseScene {
             u.imgKey = uData.imgKey;
             u.img = assets.getImage(uData.imgKey);
             u.isDestroyedBoulder = !!(uData.isDestroyedBoulder || (u.name === 'Boulder' && uData.imgKey === 'boulder_destroyed'));
+            u.overkillEffectStarted = false;
             u.hasMoved = uData.hasMoved;
             u.hasAttacked = uData.hasAttacked;
             u.hasActed = uData.hasActed;
@@ -3739,6 +3741,7 @@ export class TacticsScene extends BaseScene {
     restoreState(state) {
         if (!state) return;
         const config = this.manager.config;
+        this.overkillEffects = [];
         
         this.turn = state.turn;
         this.turnNumber = state.turnNumber;
@@ -3791,6 +3794,7 @@ export class TacticsScene extends BaseScene {
             u.imgKey = uData.imgKey;
             u.img = assets.getImage(uData.imgKey);
             u.isDestroyedBoulder = !!(uData.isDestroyedBoulder || (u.name === 'Boulder' && uData.imgKey === 'boulder_destroyed'));
+            u.overkillEffectStarted = false;
             u.attacks = Array.isArray(uData.attacks) ? [...uData.attacks] : u.attacks;
             u.hasMoved = uData.hasMoved;
             u.hasAttacked = uData.hasAttacked;
@@ -5644,12 +5648,116 @@ export class TacticsScene extends BaseScene {
         checkSwing();
     }
 
-    startOverkillEffect(unit) {
-        if (!unit || !unit.img || unit.name === 'Boulder') return false;
+    getOverkillSnapshot(unit, attacker = null) {
+        if (!unit || !unit.img || unit.name === 'Boulder') return null;
+        const baseX = unit.visualX + (unit.visualOffsetX || 0);
+        let baseY = unit.visualY + (unit.visualOffsetY || 0);
+        if (unit.onHorse) baseY += MOUNTED_Y_OFFSET - 14;
+        const cell = this.tacticsMap.getCell(unit.r, unit.q);
+        if (unit.isDrowning) baseY += Math.min(1, (unit.drownTimer || 0) / 2000) * 40;
+        else if (cell && cell.terrain?.includes('water_shallow')) baseY += 4;
+        return {
+            img: unit.img,
+            action: 'hit',
+            frame: 0,
+            x: baseX,
+            y: baseY,
+            unitR: unit.r,
+            unitQ: unit.q,
+            attackerR: attacker?.r,
+            attackerQ: attacker?.q,
+            r: unit.currentSortR ?? unit.r,
+            flip: !!unit.flip
+        };
+    }
+
+    getOverkillTrajectoryPoint(r, q, fallbackX, fallbackY) {
+        const cell = this.tacticsMap.getCell(r, q);
+        if (!cell) return { r, q, x: fallbackX, y: fallbackY };
+        const pos = this.getPixelPos(r, q);
+        return { r, q, x: pos.x, y: pos.y };
+    }
+
+    chooseOverkillPieceTrajectories(effectSource) {
+        const origin = {
+            r: effectSource.unitR,
+            q: effectSource.unitQ,
+            x: effectSource.x,
+            y: effectSource.y
+        };
+        const attackerPos = (Number.isFinite(effectSource.attackerR) && Number.isFinite(effectSource.attackerQ))
+            ? this.getPixelPos(effectSource.attackerR, effectSource.attackerQ)
+            : { x: origin.x + (effectSource.flip ? 1 : -1) * 24, y: origin.y + 12 };
+        let awayX = origin.x - attackerPos.x;
+        let awayY = origin.y - attackerPos.y;
+        const awayLen = Math.hypot(awayX, awayY) || 1;
+        awayX /= awayLen;
+        awayY /= awayLen;
+
+        const directions = this.tacticsMap.getDirections(origin.r);
+        const candidates = [];
+        directions.forEach((direction, dirIndex) => {
+            const firstCell = this.tacticsMap.getCell(origin.r + direction.dr, origin.q + direction.dq);
+            if (!firstCell) return;
+            const firstPos = this.getPixelPos(firstCell.r, firstCell.q);
+            const dx = firstPos.x - origin.x;
+            const dy = firstPos.y - origin.y;
+            const len = Math.hypot(dx, dy) || 1;
+            const nx = dx / len;
+            const ny = dy / len;
+            const dot = nx * awayX + ny * awayY;
+            const cross = awayX * ny - awayY * nx;
+            candidates.push({ dirIndex, firstCell, firstPos, dot, cross, nx, ny });
+        });
+
+        const chooseCandidate = (side, blockedDir = null) => {
+            const sorted = candidates
+                .filter(candidate => candidate.dirIndex !== blockedDir)
+                .sort((a, b) => {
+                    const scoreA = a.dot * 3 + Math.max(0, side * a.cross);
+                    const scoreB = b.dot * 3 + Math.max(0, side * b.cross);
+                    return scoreB - scoreA;
+                });
+            return sorted[0] || candidates[0] || null;
+        };
+
+        const makeTrajectory = (candidate, side) => {
+            if (!candidate) {
+                return [
+                    { x: origin.x, y: origin.y },
+                    { x: origin.x + awayX * 28 + side * 10, y: origin.y + awayY * 28 },
+                    { x: origin.x + awayX * 48 + side * 16, y: origin.y + awayY * 48 }
+                ];
+            }
+            const secondCell = this.tacticsMap.getNeighborInDirection(candidate.firstCell.r, candidate.firstCell.q, candidate.dirIndex);
+            const fallbackSecondX = candidate.firstPos.x + candidate.nx * 26;
+            const fallbackSecondY = candidate.firstPos.y + candidate.ny * 20;
+            const secondPoint = secondCell
+                ? this.getOverkillTrajectoryPoint(secondCell.r, secondCell.q, fallbackSecondX, fallbackSecondY)
+                : { x: fallbackSecondX, y: fallbackSecondY };
+            return [
+                { x: origin.x, y: origin.y },
+                { x: candidate.firstPos.x, y: candidate.firstPos.y },
+                { x: secondPoint.x, y: secondPoint.y }
+            ];
+        };
+
+        const leftCandidate = chooseCandidate(-1);
+        const rightCandidate = chooseCandidate(1, leftCandidate?.dirIndex);
+        return {
+            left: makeTrajectory(leftCandidate, -1),
+            right: makeTrajectory(rightCandidate, 1)
+        };
+    }
+
+    startOverkillEffect(unit, snapshot = null) {
+        const effectSource = snapshot || this.getOverkillSnapshot(unit);
+        if (!unit || !effectSource?.img || unit.name === 'Boulder' || unit.overkillEffectStarted) return false;
+        unit.overkillEffectStarted = true;
         const sourceSize = 72;
-        const action = unit.currentAnimAction || unit.action || 'standby';
+        const action = effectSource.action || 'standby';
         const anim = ANIMATIONS[action] || ANIMATIONS.standby;
-        const f = Math.floor(unit.frame || 0) % anim.length;
+        const f = Math.floor(effectSource.frame || 0) % anim.length;
         const frameIdx = anim.start + f;
         const sx = (frameIdx % 8) * sourceSize;
         const sy = Math.floor(frameIdx / 8) * sourceSize;
@@ -5658,7 +5766,7 @@ export class TacticsScene extends BaseScene {
         sourceCanvas.width = sourceSize;
         sourceCanvas.height = sourceSize;
         const sourceCtx = sourceCanvas.getContext('2d');
-        sourceCtx.drawImage(unit.img, sx, sy, sourceSize, sourceSize, 0, 0, sourceSize, sourceSize);
+        sourceCtx.drawImage(effectSource.img, sx, sy, sourceSize, sourceSize, 0, 0, sourceSize, sourceSize);
 
         const sourceData = sourceCtx.getImageData(0, 0, sourceSize, sourceSize);
         const leftData = sourceCtx.createImageData(sourceSize, sourceSize);
@@ -5666,19 +5774,19 @@ export class TacticsScene extends BaseScene {
         const pixelCandidates = [];
 
         for (let y = 0; y < sourceSize; y++) {
-            const cutX = 34 + (y - 36) * 0.22 + Math.sin(y * 0.85) * 2;
             for (let x = 0; x < sourceSize; x++) {
+                const cutY = 35 + (x - 36) * 0.24 + Math.sin(x * 0.72) * 1.5;
                 const i = (y * sourceSize + x) * 4;
                 const alpha = sourceData.data[i + 3];
                 if (alpha < 24) continue;
-                const dest = x < cutX ? leftData : rightData;
+                const dest = y < cutY ? leftData : rightData;
                 dest.data[i] = sourceData.data[i];
                 dest.data[i + 1] = sourceData.data[i + 1];
                 dest.data[i + 2] = sourceData.data[i + 2];
                 dest.data[i + 3] = alpha;
 
                 if ((x + y) % 3 === 0 || (alpha > 220 && (x * 7 + y * 11) % 5 === 0)) {
-                    const side = x < cutX ? -1 : 1;
+                    const side = y < cutY ? -1 : 1;
                     pixelCandidates.push({
                         lx: x - 36,
                         ly: y - 44,
@@ -5704,26 +5812,23 @@ export class TacticsScene extends BaseScene {
             return canvas;
         };
 
-        const baseX = unit.visualX + (unit.visualOffsetX || 0);
-        let baseY = unit.visualY + (unit.visualOffsetY || 0);
-        if (unit.onHorse) baseY += MOUNTED_Y_OFFSET - 14;
-        const cell = this.tacticsMap.getCell(unit.r, unit.q);
-        if (unit.isDrowning) baseY += Math.min(1, (unit.drownTimer || 0) / 2000) * 40;
-        else if (cell && cell.terrain?.includes('water_shallow')) baseY += 4;
-
+        const trajectories = this.chooseOverkillPieceTrajectories(effectSource);
         this.overkillEffects.push({
-            r: unit.currentSortR ?? unit.r,
+            r: effectSource.r,
             elapsed: 0,
-            burstDelay: 1040,
-            maxLife: 2100,
+            splitStartDelay: 360,
+            firstHopDuration: 760,
+            secondHopDuration: 520,
+            burstDelay: 1640,
+            maxLife: 4300,
             burstDone: false,
-            x: baseX,
-            y: baseY,
-            groundY: 31,
-            flip: !!unit.flip,
+            x: effectSource.x,
+            y: effectSource.y,
+            flip: !!effectSource.flip,
+            sourceCanvas,
             pieces: [
-                { canvas: makePieceCanvas(leftData), x: -2, y: -1, vx: -0.105, vy: -0.24, rotation: -0.15, vr: -0.006, bounces: 0 },
-                { canvas: makePieceCanvas(rightData), x: 2, y: -1, vx: 0.105, vy: -0.26, rotation: 0.15, vr: 0.006, bounces: 0 }
+                { side: -1, canvas: makePieceCanvas(leftData), x: 0, y: 0, rotation: -0.04, vr: -0.0028, path: trajectories.left },
+                { side: 1, canvas: makePieceCanvas(rightData), x: 0, y: 0, rotation: 0.04, vr: 0.0028, path: trajectories.right }
             ],
             sourcePixels: pixels,
             pixels: []
@@ -5731,23 +5836,48 @@ export class TacticsScene extends BaseScene {
         return true;
     }
 
+    getOverkillParticleGroundY(x, y, fallbackY, offset = 0) {
+        const cell = this.getCellAt(x, y + 10) || this.getCellAt(x, y) || this.getCellAt(x, fallbackY);
+        if (!cell) return fallbackY;
+        return this.getPixelPos(cell.r, cell.q).y + offset;
+    }
+
     updateOverkillEffects(dt) {
         if (!this.overkillEffects || this.overkillEffects.length === 0) return;
         for (let i = this.overkillEffects.length - 1; i >= 0; i--) {
             const effect = this.overkillEffects[i];
             effect.elapsed += dt;
+            const splitElapsed = Math.max(0, effect.elapsed - effect.splitStartDelay);
 
             if (!effect.burstDone && effect.elapsed >= effect.burstDelay) {
                 effect.burstDone = true;
                 const flipSign = effect.flip ? -1 : 1;
                 effect.pixels = effect.sourcePixels.map(p => {
                     const outward = p.side * flipSign;
-                    const life = 620 + Math.random() * 460;
+                    const piece = effect.pieces.find(candidate => candidate.side === p.side) || effect.pieces[0];
+                    const finalFrom = piece.path[1] || piece.path[0];
+                    const finalTo = piece.path[2] || piece.path[piece.path.length - 1] || finalFrom;
+                    const travelVx = (finalTo.x - finalFrom.x) / Math.max(1, effect.secondHopDuration || 520);
+                    const travelVy = (finalTo.y - finalFrom.y) / Math.max(1, effect.secondHopDuration || 520);
+                    const localX = p.lx;
+                    const localY = p.ly;
+                    const cos = Math.cos(piece.rotation);
+                    const sin = Math.sin(piece.rotation);
+                    const rotatedX = localX * cos - localY * sin;
+                    const rotatedY = localX * sin + localY * cos;
+                    const particleX = effect.x + piece.x + rotatedX * (effect.flip ? -1 : 1);
+                    const particleY = effect.y + piece.y + rotatedY;
+                    const life = 1450 + Math.random() * 900;
+                    const scatter = 0.035 + Math.random() * 0.035;
+                    const groundOffset = Math.floor(Math.random() * 3);
                     return {
-                        x: effect.x + p.lx * (effect.flip ? -1 : 1),
-                        y: effect.y + p.ly,
-                        vx: outward * (0.035 + Math.random() * 0.095) + (Math.random() - 0.5) * 0.04,
-                        vy: -0.12 - Math.random() * 0.12 + Math.abs(p.ly) * -0.0006,
+                        x: particleX,
+                        y: particleY,
+                        vx: travelVx * 1.15 + outward * scatter + (Math.random() - 0.5) * 0.025,
+                        vy: travelVy * 0.65 - 0.07 - Math.random() * 0.055,
+                        groundOffset,
+                        groundY: this.getOverkillParticleGroundY(particleX, particleY, effect.y + piece.y + 28, groundOffset),
+                        settled: false,
                         life,
                         maxLife: life,
                         color: p.color,
@@ -5756,32 +5886,41 @@ export class TacticsScene extends BaseScene {
                 });
             }
 
-            if (!effect.burstDone) {
+            if (!effect.burstDone && splitElapsed > 0) {
                 effect.pieces.forEach(piece => {
-                    piece.x += piece.vx * dt;
-                    piece.y += piece.vy * dt;
-                    piece.vy += 0.00062 * dt;
-                    if (piece.y >= effect.groundY) {
-                        piece.y = effect.groundY;
-                        if (piece.bounces < 2 && Math.abs(piece.vy) > 0.04) {
-                            piece.vy *= piece.bounces === 0 ? -0.52 : -0.34;
-                            piece.vx *= 0.78;
-                            piece.vr *= -0.7;
-                            piece.bounces++;
-                        } else {
-                            piece.vy = 0;
-                            piece.vx *= 0.86;
-                            piece.vr *= 0.82;
-                        }
-                    }
+                    const firstDuration = effect.firstHopDuration || 760;
+                    const secondDuration = effect.secondHopDuration || 520;
+                    const hopIndex = splitElapsed <= firstDuration ? 0 : 1;
+                    const hopElapsed = hopIndex === 0 ? splitElapsed : Math.min(secondDuration, splitElapsed - firstDuration);
+                    const hopDuration = hopIndex === 0 ? firstDuration : secondDuration;
+                    const from = piece.path[hopIndex] || piece.path[0];
+                    const to = piece.path[hopIndex + 1] || piece.path[piece.path.length - 1] || from;
+                    const t = Math.max(0, Math.min(1, hopElapsed / Math.max(1, hopDuration)));
+                    const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+                    const arcHeight = hopIndex === 0 ? 30 : 16;
+                    const x = from.x + (to.x - from.x) * eased;
+                    const y = from.y + (to.y - from.y) * eased - Math.sin(t * Math.PI) * arcHeight;
+                    piece.x = x - effect.x;
+                    piece.y = y - effect.y;
                     piece.rotation += piece.vr * dt;
                 });
             } else {
                 for (let j = effect.pixels.length - 1; j >= 0; j--) {
                     const p = effect.pixels[j];
-                    p.x += p.vx * dt;
-                    p.y += p.vy * dt;
-                    p.vy += 0.00034 * dt;
+                    if (!p.settled) {
+                        p.x += p.vx * dt;
+                        p.y += p.vy * dt;
+                        p.vy += 0.00046 * dt;
+                        p.groundY = this.getOverkillParticleGroundY(p.x, p.y, p.groundY, p.groundOffset || 0);
+                        if (p.y >= p.groundY) {
+                            p.y = p.groundY;
+                            p.vx = 0;
+                            p.vy = 0;
+                            p.settled = true;
+                            p.life = Math.max(p.life, 1150 + Math.random() * 900);
+                            p.maxLife = Math.max(p.maxLife, p.life);
+                        }
+                    }
                     p.life -= dt;
                     if (p.life <= 0) effect.pixels.splice(j, 1);
                 }
@@ -5796,7 +5935,16 @@ export class TacticsScene extends BaseScene {
     drawOverkillEffect(ctx, effect) {
         if (!effect) return;
         if (!effect.burstDone) {
-            const alpha = Math.max(0, Math.min(1, 1 - (effect.elapsed / effect.burstDelay) * 0.25));
+            if (effect.elapsed < effect.splitStartDelay) {
+                ctx.save();
+                ctx.translate(Math.floor(effect.x), Math.floor(effect.y));
+                if (effect.flip) ctx.scale(-1, 1);
+                ctx.drawImage(effect.sourceCanvas, -36, -44);
+                ctx.restore();
+                return;
+            }
+            const splitProgress = Math.max(0, Math.min(1, (effect.elapsed - effect.splitStartDelay) / Math.max(1, effect.burstDelay - effect.splitStartDelay)));
+            const alpha = Math.max(0, Math.min(1, 1 - splitProgress * 0.18));
             effect.pieces.forEach(piece => {
                 ctx.save();
                 ctx.globalAlpha *= alpha;
@@ -5817,6 +5965,40 @@ export class TacticsScene extends BaseScene {
             ctx.fillRect(Math.floor(p.x), Math.floor(p.y), p.size, p.size);
             ctx.restore();
         }
+    }
+
+    drawPushPreviewArrowsForAttack(ctx, attacker, attackKey, targetR, targetQ, alpha = 1) {
+        const attack = ATTACKS[attackKey];
+        if (!attacker || !attack?.push) return false;
+
+        const affected = this.getAffectedTiles(attacker, attackKey, targetR, targetQ);
+        const previewTiles = attack.push === 'furthest'
+            ? affected.filter(tile => tile.r === targetR && tile.q === targetQ)
+            : affected;
+        if (previewTiles.length === 0) return true;
+
+        const shownVictims = new Set();
+        for (const tile of previewTiles) {
+            const cell = this.tacticsMap.getCell(tile.r, tile.q);
+            const victim = this.getRiderUnitFromCell(cell);
+            if (!victim || shownVictims.has(victim)) continue;
+            shownVictims.add(victim);
+
+            const origin = this.getAttackOriginForTarget(attacker, tile.r, tile.q);
+            const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, tile.r, tile.q);
+            if (dirIndex === -1) continue;
+
+            if (victim.name === 'Boulder') {
+                const { path, bumpAtEnd } = this.getBoulderRollPath(victim.r, victim.q, dirIndex);
+                for (let i = 0; i < path.length - 1; i++) {
+                    this.drawPushArrow(ctx, path[i].r, path[i].q, dirIndex, i === path.length - 2 && bumpAtEnd, alpha);
+                }
+            } else {
+                this.drawPushArrow(ctx, tile.r, tile.q, dirIndex, false, alpha);
+            }
+        }
+
+        return true;
     }
 
     applyUnitDamage(victim, damage, sourceCell = null) {
@@ -6022,6 +6204,7 @@ export class TacticsScene extends BaseScene {
 
         // Apply damage & shake at the hit cell.
         const hitCell = this.tacticsMap.getCell(targetR, targetQ);
+        const victimOverkillSnapshot = this.getOverkillSnapshot(victim, attacker);
         finalDamage = this.applyUnitDamage(victim, finalDamage, hitCell);
         if (finalDamage > 0) {
             victim.triggerShake(startPos.x, startPos.y, endPos.x, endPos.y);
@@ -6070,6 +6253,7 @@ export class TacticsScene extends BaseScene {
 
             const victimCellForPush = this.tacticsMap.getCell(victimPushR, victimPushQ);
             const pushCell = this.tacticsMap.getNeighborInDirection(victimPushR, victimPushQ, dirIndex);
+            const pushDamageContext = { victimOverkillSnapshot };
             
             const victimPos = this.getPixelPos(victimPushR, victimPushQ);
 
@@ -6089,7 +6273,7 @@ export class TacticsScene extends BaseScene {
 
                     // Blocked push: bump damage + bounce, but stay mounted (no displacement).
                     victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, true, 0); // true = bounce
-                    this.executePushCollision(victim, pushCell, victimPos, targetPos);
+                    this.executePushCollision(victim, pushCell, victimPos, targetPos, pushDamageContext);
                 } 
                 // 2. FALLING (Pushing off a cliff)
                 else if (levelDiff < -1) {
@@ -8187,19 +8371,9 @@ export class TacticsScene extends BaseScene {
                     const attack = ATTACKS[u.intent.attackKey];
                     if (attack && attack.push) {
                         const targetCell = this.getIntentTargetCell(u);
-                        const boltPath = (targetCell && this.isDirectionalBoltAttack(u.intent.attackKey))
-                            ? this.getDirectionalBoltPath(u, targetCell.r, targetCell.q)
-                            : null;
-                        const impactCell = boltPath?.impactCell || targetCell;
-                        
-                        // Only show arrow if there's a unit to be pushed
-                        if (impactCell && impactCell.unit) {
-                            const origin = this.getAttackOriginForTarget(u, impactCell.r, impactCell.q);
-                            const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, impactCell.r, impactCell.q);
-                            if (dirIndex !== -1) {
-                                const alpha = this.selectedUnit === u ? this.getTelegraphAlpha(true) : 1;
-                                this.drawPushArrow(ctx, impactCell.r, impactCell.q, dirIndex, false, alpha);
-                            }
+                        if (targetCell) {
+                            const alpha = this.selectedUnit === u ? this.getTelegraphAlpha(true) : 1;
+                            this.drawPushPreviewArrowsForAttack(ctx, u, u.intent.attackKey, targetCell.r, targetCell.q, alpha);
                         }
                     }
                 }
@@ -8210,50 +8384,60 @@ export class TacticsScene extends BaseScene {
             const attack = ATTACKS[this.selectedAttack];
             if (attack && attack.push && this.selectedUnit) {
                 const selectedPushAlpha = this.getTelegraphAlpha(true);
-                const origin = this.getAttackOriginForTarget(this.selectedUnit, this.hoveredCell.r, this.hoveredCell.q);
-                if (this.selectedAttack === 'double_blades') {
-                    // Double Blades: Show both push arrows
-                    const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, this.hoveredCell.r, this.hoveredCell.q);
-                    if (dirIndex !== -1) {
-                        // Front target
-                        if (this.hoveredCell.unit) {
-                            this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex, false, selectedPushAlpha);
-                        }
-                        // Back target
-                        const oppositeDir = (dirIndex + 3) % 6;
-                        const backCell = this.tacticsMap.getNeighborInDirection(origin.r, origin.q, oppositeDir);
-                        if (backCell && backCell.unit) {
-                            this.drawPushArrow(ctx, backCell.r, backCell.q, oppositeDir, false, selectedPushAlpha);
-                        }
-                    }
-                } else if (this.selectedAttack && this.isLineAttack(this.selectedAttack)) {
-                    if (this.isDirectionalBoltAttack(this.selectedAttack)) {
-                        const boltPath = this.getDirectionalBoltPath(this.selectedUnit, this.hoveredCell.r, this.hoveredCell.q);
-                        const impactCell = boltPath?.impactCell || null;
-                        if (impactCell && impactCell.unit) {
-                            const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, impactCell.r, impactCell.q);
-                            if (dirIndex !== -1) this.drawPushArrow(ctx, impactCell.r, impactCell.q, dirIndex, false, selectedPushAlpha);
-                        }
-                    } else {
-                        // Serpent Spear: Push the further target
+                const handledPushPreview = this.drawPushPreviewArrowsForAttack(
+                    ctx,
+                    this.selectedUnit,
+                    this.selectedAttack,
+                    this.hoveredCell.r,
+                    this.hoveredCell.q,
+                    selectedPushAlpha
+                );
+                if (!handledPushPreview) {
+                    const origin = this.getAttackOriginForTarget(this.selectedUnit, this.hoveredCell.r, this.hoveredCell.q);
+                    if (this.selectedAttack === 'double_blades') {
+                        // Double Blades: Show both push arrows
                         const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, this.hoveredCell.r, this.hoveredCell.q);
                         if (dirIndex !== -1) {
-                            // Only show arrow if the hovered cell actually contains a unit
+                            // Front target
                             if (this.hoveredCell.unit) {
                                 this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex, false, selectedPushAlpha);
                             }
+                            // Back target
+                            const oppositeDir = (dirIndex + 3) % 6;
+                            const backCell = this.tacticsMap.getNeighborInDirection(origin.r, origin.q, oppositeDir);
+                            if (backCell && backCell.unit) {
+                                this.drawPushArrow(ctx, backCell.r, backCell.q, oppositeDir, false, selectedPushAlpha);
+                            }
                         }
-                    }
-                } else {
-                    const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, this.hoveredCell.r, this.hoveredCell.q);
-                    if (dirIndex !== -1 && this.hoveredCell.unit) {
-                        if (this.hoveredCell.unit.name === 'Boulder') {
-                            const { path, bumpAtEnd } = this.getBoulderRollPath(this.hoveredCell.unit.r, this.hoveredCell.unit.q, dirIndex);
-                            for (let i = 0; i < path.length - 1; i++) {
-                                this.drawPushArrow(ctx, path[i].r, path[i].q, dirIndex, i === path.length - 2 && bumpAtEnd, selectedPushAlpha);
+                    } else if (this.selectedAttack && this.isLineAttack(this.selectedAttack)) {
+                        if (this.isDirectionalBoltAttack(this.selectedAttack)) {
+                            const boltPath = this.getDirectionalBoltPath(this.selectedUnit, this.hoveredCell.r, this.hoveredCell.q);
+                            const impactCell = boltPath?.impactCell || null;
+                            if (impactCell && impactCell.unit) {
+                                const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, impactCell.r, impactCell.q);
+                                if (dirIndex !== -1) this.drawPushArrow(ctx, impactCell.r, impactCell.q, dirIndex, false, selectedPushAlpha);
                             }
                         } else {
-                            this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex, false, selectedPushAlpha);
+                            // Serpent Spear: Push the further target
+                            const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, this.hoveredCell.r, this.hoveredCell.q);
+                            if (dirIndex !== -1) {
+                                // Only show arrow if the hovered cell actually contains a unit
+                                if (this.hoveredCell.unit) {
+                                    this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex, false, selectedPushAlpha);
+                                }
+                            }
+                        }
+                    } else {
+                        const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, this.hoveredCell.r, this.hoveredCell.q);
+                        if (dirIndex !== -1 && this.hoveredCell.unit) {
+                            if (this.hoveredCell.unit.name === 'Boulder') {
+                                const { path, bumpAtEnd } = this.getBoulderRollPath(this.hoveredCell.unit.r, this.hoveredCell.unit.q, dirIndex);
+                                for (let i = 0; i < path.length - 1; i++) {
+                                    this.drawPushArrow(ctx, path[i].r, path[i].q, dirIndex, i === path.length - 2 && bumpAtEnd, selectedPushAlpha);
+                                }
+                            } else {
+                                this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex, false, selectedPushAlpha);
+                            }
                         }
                     }
                 }
@@ -12280,7 +12464,7 @@ export class TacticsScene extends BaseScene {
         this.attackRects = [];
     }
 
-    executePushCollision(victim, pushCell, victimPos, targetPos) {
+    executePushCollision(victim, pushCell, victimPos, targetPos, context = {}) {
         setTimeout(() => {
             const isBoulder = victim && victim.name === 'Boulder';
             assets.playSound(isBoulder ? 'boulder_impact' : 'collision');
@@ -12291,7 +12475,16 @@ export class TacticsScene extends BaseScene {
                 this.damageCell(pushCell.r, pushCell.q);
             }
 
-            this.applyUnitDamage(victim, 1);
+            if (context.victimOverkillSnapshot && victim?.hp === 0 && !victim.isGone && victim.name !== 'Boulder') {
+                const currentCell = this.tacticsMap.getCell(victim.r, victim.q);
+                if (currentCell?.unit === victim) currentCell.unit = null;
+                if (this.startOverkillEffect(victim, context.victimOverkillSnapshot)) {
+                    victim.isGone = true;
+                    victim.intent = null;
+                }
+            } else {
+                this.applyUnitDamage(victim, 1);
+            }
             this.addDamageNumber(victimPos.x, victimPos.y - 30, 1);
 
             const bumpVictim = this.getLivingUnitOccupyingCell(pushCell.r, pushCell.q, victim);
