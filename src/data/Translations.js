@@ -24,6 +24,10 @@ export const UI_TEXT = {
         en: 'OPTIONS',
         zh: '选项'
     },
+    'MASTER VOLUME': {
+        en: 'MASTER VOLUME',
+        zh: '总音量'
+    },
     'MUSIC VOLUME': {
         en: 'MUSIC VOLUME',
         zh: '音乐音量'

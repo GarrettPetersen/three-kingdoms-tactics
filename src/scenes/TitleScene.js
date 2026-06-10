@@ -298,150 +298,62 @@ export class TitleScene extends BaseScene {
         }
         
     updateMenuOptions() {
-        const hasSave = this.manager.gameState.hasSave();
-        this.menuOptions = [];
-        
-        if (hasSave) {
-            this.menuOptions.push({ rect: this.continueRect, action: 'continue' });
-            this.menuOptions.push({ rect: this.newGameRect, action: 'newgame' });
-            this.menuOptions.push({ rect: this.customBattleRect, action: 'custombattle' });
-            this.menuOptions.push({ rect: this.optionsRect, action: 'options' });
-        } else {
-            this.menuOptions.push({ rect: this.newGameRect, action: 'newgame' });
-            this.menuOptions.push({ rect: this.customBattleRect, action: 'custombattle' });
-            this.menuOptions.push({ rect: this.optionsRect, action: 'options' });
-        }
+        this.menuOptions = this.getMenuEntries().map(entry => ({
+            rect: this[entry.rectKey],
+            action: entry.action
+        }));
 
+    }
+
+    getMenuEntries() {
+        const hasSave = this.manager.gameState.hasSave();
+        return [
+            ...(hasSave ? [{ textKey: 'CONTINUE', action: 'continue', rectKey: 'continueRect' }] : []),
+            { textKey: 'NEW GAME', action: 'newgame', rectKey: 'newGameRect' },
+            { textKey: 'CUSTOM BATTLE', action: 'custombattle', rectKey: 'customBattleRect' },
+            { textKey: 'OPTIONS', action: 'options', rectKey: 'optionsRect' }
+        ];
     }
 
     renderMenu(ctx, canvas) {
         const cx = Math.floor(canvas.width / 2);
         const cy = canvas.height - 70;
         const pulse = Math.abs(Math.sin(Date.now() / 500)) * 0.5 + 0.5;
-        const hasSave = this.manager.gameState.hasSave();
+        const entries = this.getMenuEntries();
+        const itemGap = 24;
+        const firstY = cy - Math.floor(((entries.length - 1) * itemGap) / 2);
 
         // Draw a subtle background for the menu area to ensure visibility
-        const menuBgH = hasSave ? 110 : 90;
+        const menuBgH = entries.length * itemGap + 20;
+        const menuBgY = firstY - 18;
         ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-        ctx.fillRect(cx - 80, cy - 30, 160, menuBgH);
+        ctx.fillRect(cx - 86, menuBgY, 172, menuBgH);
 
-        const ngText = getLocalizedText(UI_TEXT['NEW GAME']);
-        
-        if (hasSave) {
-            // CONTINUE Button
-            const contText = getLocalizedText(UI_TEXT['CONTINUE']);
-            const contY = cy - 15;
-            const isHighlighted = this.selection && this.selection.highlightedIndex === 0;
+        this.continueRect = null;
+        this.newGameRect = null;
+        this.customBattleRect = null;
+        this.optionsRect = null;
+
+        entries.forEach((entry, i) => {
+            const y = firstY + i * itemGap;
+            const isHighlighted = this.selection && this.selection.highlightedIndex === i;
+            const shouldPulse = (entry.action === 'continue') || (entry.action === 'newgame' && !this.manager.gameState.hasSave());
+            const text = getLocalizedText(UI_TEXT[entry.textKey]);
             ctx.save();
-            ctx.globalAlpha *= pulse;
-            const contMetrics = this.drawPixelText(ctx, contText, cx, contY, { 
-                color: isHighlighted ? '#fff' : '#ffd700', 
+            if (shouldPulse) ctx.globalAlpha *= pulse;
+            const metrics = this.drawPixelText(ctx, text, cx, y, {
+                color: isHighlighted ? '#fff' : '#ffd700',
                 font: '8px Silkscreen', 
                 align: 'center' 
             });
             ctx.restore();
-            
-            this.continueRect = {
-                x: Math.floor(cx - contMetrics.width / 2 - 10),
-                y: contY - 10,
-                w: Math.floor(contMetrics.width + 20),
+            this[entry.rectKey] = {
+                x: Math.floor(cx - metrics.width / 2 - 10),
+                y: y - 10,
+                w: Math.floor(metrics.width + 20),
                 h: 20
             };
-
-            // NEW GAME
-            const ngY = cy + 10;
-            const isHighlightedNG = this.selection && this.selection.highlightedIndex === 1;
-            const ngMetrics = this.drawPixelText(ctx, ngText, cx, ngY, { 
-                color: isHighlightedNG ? '#fff' : '#ffd700', 
-                font: '8px Silkscreen', 
-                align: 'center' 
-            });
-            this.newGameRect = { 
-                x: Math.floor(cx - ngMetrics.width / 2 - 10), 
-                y: ngY - 10, 
-                w: Math.floor(ngMetrics.width + 20), 
-                h: 20 
-            };
-
-            // CUSTOM BATTLE
-            const cbText = getLocalizedText(UI_TEXT['CUSTOM BATTLE']);
-            const cbY = cy + 35;
-            const isHighlightedCB = this.selection && this.selection.highlightedIndex === 2;
-            const cbMetrics = this.drawPixelText(ctx, cbText, cx, cbY, { 
-                color: isHighlightedCB ? '#fff' : '#ffd700', 
-                font: '8px Silkscreen', 
-                align: 'center' 
-            });
-            this.customBattleRect = {
-                x: Math.floor(cx - cbMetrics.width / 2 - 10),
-                y: cbY - 10,
-                w: Math.floor(cbMetrics.width + 20),
-                h: 20
-            };
-
-            const optionsText = getLocalizedText(UI_TEXT['OPTIONS']);
-            const optionsY = cy + 60;
-            const isHighlightedOptions = this.selection && this.selection.highlightedIndex === 3;
-            const optionsMetrics = this.drawPixelText(ctx, optionsText, cx, optionsY, {
-                color: isHighlightedOptions ? '#fff' : '#ffd700',
-                font: '8px Silkscreen',
-                align: 'center'
-            });
-            this.optionsRect = {
-                x: Math.floor(cx - optionsMetrics.width / 2 - 10),
-                y: optionsY - 10,
-                w: Math.floor(optionsMetrics.width + 20),
-                h: 20
-            };
-        } else {
-            // Original Layout
-            const isHighlightedNG = this.selection && this.selection.highlightedIndex === 0;
-            ctx.save();
-            ctx.globalAlpha *= pulse;
-            const ngMetrics = this.drawPixelText(ctx, ngText, cx, cy, { 
-                color: isHighlightedNG ? '#fff' : '#ffd700', 
-                font: '8px Silkscreen', 
-                align: 'center' 
-            });
-            ctx.restore();
-            
-            this.newGameRect = { 
-                x: Math.floor(cx - ngMetrics.width / 2 - 10), 
-                y: cy - 10, 
-                w: Math.floor(ngMetrics.width + 20), 
-                h: 20 
-            };
-
-            const cbText = getLocalizedText(UI_TEXT['CUSTOM BATTLE']);
-            const cbY = cy + 25;
-            const isHighlightedCB = this.selection && this.selection.highlightedIndex === 1;
-            const cbMetrics = this.drawPixelText(ctx, cbText, cx, cbY, { 
-                color: isHighlightedCB ? '#fff' : '#ffd700', 
-                font: '8px Silkscreen', 
-                align: 'center' 
-            });
-            this.customBattleRect = {
-                x: Math.floor(cx - cbMetrics.width / 2 - 10),
-                y: cbY - 10,
-                w: Math.floor(cbMetrics.width + 20),
-                h: 20
-            };
-            const optionsText = getLocalizedText(UI_TEXT['OPTIONS']);
-            const optionsY = cy + 50;
-            const isHighlightedOptions = this.selection && this.selection.highlightedIndex === 2;
-            const optionsMetrics = this.drawPixelText(ctx, optionsText, cx, optionsY, {
-                color: isHighlightedOptions ? '#fff' : '#ffd700',
-                font: '8px Silkscreen',
-                align: 'center'
-            });
-            this.optionsRect = {
-                x: Math.floor(cx - optionsMetrics.width / 2 - 10),
-                y: optionsY - 10,
-                w: Math.floor(optionsMetrics.width + 20),
-                h: 20
-            };
-            this.continueRect = null;
-        }
+        });
         
         // Update menu options array after rendering
         this.updateMenuOptions();

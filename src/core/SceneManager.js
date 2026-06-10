@@ -1,4 +1,5 @@
 import { GameState } from './GameState.js';
+import { assets } from './AssetLoader.js';
 
 export class SceneManager {
     constructor(ctx, canvas, config) {
@@ -8,6 +9,7 @@ export class SceneManager {
         this.currentScene = null;
         this.scenes = {};
         this.optionsOverlay = null;
+        this.optionsButtonRect = null;
         this.gameState = new GameState();
         this.gameState.load();
         
@@ -137,6 +139,7 @@ export class SceneManager {
         if (this.currentScene && this.currentScene.render) {
             this.currentScene.render(timestamp);
         }
+        this.renderOptionsButton();
         if (this.isOptionsOverlayActive() && this.optionsOverlay && this.optionsOverlay.render) {
             this.optionsOverlay.render(timestamp);
         }
@@ -147,6 +150,12 @@ export class SceneManager {
             if (this.optionsOverlay && this.optionsOverlay.handleInput) {
                 this.optionsOverlay.handleInput(e);
             }
+            return;
+        }
+        const p = this.getLogicalPointFromEvent(e);
+        if (this.isOptionsButtonVisible() && this.isPointInOptionsButton(p.x, p.y)) {
+            assets.playSound('ui_click', 0.4);
+            this.openOptionsOverlay({ sourceScene: this.currentSceneKey });
             return;
         }
         if (this.currentScene && this.currentScene.handleInput) {
@@ -177,6 +186,61 @@ export class SceneManager {
         if (this.currentScene && this.currentScene.handleKeyDown) {
             this.currentScene.handleKeyDown(e);
         }
+    }
+
+    getLogicalPointFromEvent(e) {
+        if (e && Number.isFinite(e.clientX) && Number.isFinite(e.clientY)) {
+            const rect = this.canvas.getBoundingClientRect();
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
+            return {
+                x: (e.clientX - rect.left) * scaleX,
+                y: (e.clientY - rect.top) * scaleY
+            };
+        }
+        return { x: this.logicalMouseX, y: this.logicalMouseY };
+    }
+
+    isOptionsButtonVisible() {
+        return !!this.currentSceneKey && this.currentSceneKey !== 'title' && !this.isOptionsOverlayActive();
+    }
+
+    isPointInOptionsButton(x, y) {
+        const r = this.optionsButtonRect;
+        return !!r && Number.isFinite(x) && Number.isFinite(y)
+            && x >= r.x && x <= r.x + r.w
+            && y >= r.y && y <= r.y + r.h;
+    }
+
+    renderOptionsButton() {
+        if (!this.isOptionsButtonVisible()) {
+            this.optionsButtonRect = null;
+            return;
+        }
+
+        const icon = assets.getImage('settings_menu_icon');
+        const size = 19;
+        const x = Math.max(4, this.canvas.width - size - 4);
+        const y = 4;
+        this.optionsButtonRect = { x, y, w: size, h: size };
+
+        const hovered = this.isPointInOptionsButton(this.logicalMouseX, this.logicalMouseY);
+        this.ctx.save();
+        this.ctx.fillStyle = hovered ? 'rgba(25, 25, 25, 0.92)' : 'rgba(0, 0, 0, 0.72)';
+        this.ctx.fillRect(x, y, size, size);
+        this.ctx.strokeStyle = hovered ? '#ffffff' : '#ffd700';
+        this.ctx.lineWidth = 1;
+        this.ctx.strokeRect(x + 0.5, y + 0.5, size - 1, size - 1);
+        if (icon) {
+            this.ctx.imageSmoothingEnabled = false;
+            this.ctx.drawImage(icon, x + 3, y + 3);
+        } else {
+            this.ctx.fillStyle = hovered ? '#ffffff' : '#ffd700';
+            this.ctx.fillRect(x + 5, y + 5, 9, 2);
+            this.ctx.fillRect(x + 5, y + 9, 9, 2);
+            this.ctx.fillRect(x + 5, y + 13, 9, 2);
+        }
+        this.ctx.restore();
     }
 
     pollGamepad(timestamp) {

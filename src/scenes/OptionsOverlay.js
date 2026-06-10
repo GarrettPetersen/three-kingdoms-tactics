@@ -11,7 +11,8 @@ export class OptionsOverlay extends BaseScene {
         this.closeButtonRect = null;
         this.rowRects = [];
         this.sliderRects = {};
-        this.rowKeys = ['music', 'sfx', 'voice', 'language'];
+        this.volumeKeys = ['master', 'music', 'sfx', 'voice'];
+        this.rowKeys = [...this.volumeKeys, 'language'];
     }
 
     open() {
@@ -98,7 +99,7 @@ export class OptionsOverlay extends BaseScene {
             this.selection.mouseoverEnabled = false;
             const rowKey = this.rowKeys[this.selection.highlightedIndex];
             const dir = e.key === 'ArrowRight' ? 1 : -1;
-            if (rowKey === 'music' || rowKey === 'sfx' || rowKey === 'voice') {
+            if (this.volumeKeys.includes(rowKey)) {
                 this.adjustVolume(rowKey, dir * 0.05);
                 return true;
             }
@@ -142,20 +143,12 @@ export class OptionsOverlay extends BaseScene {
             this.selection.highlightedIndex = rowIndex;
         }
 
-        const hitMusic = this.sliderRects.music;
-        const hitSfx = this.sliderRects.sfx;
-        const hitVoice = this.sliderRects.voice;
-        if (hitMusic && x >= hitMusic.x && x <= hitMusic.x + hitMusic.w && y >= hitMusic.y && y <= hitMusic.y + hitMusic.h) {
-            this.setVolumeFromRatio('music', (x - hitMusic.x) / hitMusic.w);
-            return true;
-        }
-        if (hitSfx && x >= hitSfx.x && x <= hitSfx.x + hitSfx.w && y >= hitSfx.y && y <= hitSfx.y + hitSfx.h) {
-            this.setVolumeFromRatio('sfx', (x - hitSfx.x) / hitSfx.w);
-            return true;
-        }
-        if (hitVoice && x >= hitVoice.x && x <= hitVoice.x + hitVoice.w && y >= hitVoice.y && y <= hitVoice.y + hitVoice.h) {
-            this.setVolumeFromRatio('voice', (x - hitVoice.x) / hitVoice.w);
-            return true;
+        for (const key of this.volumeKeys) {
+            const hit = this.sliderRects[key];
+            if (hit && x >= hit.x && x <= hit.x + hit.w && y >= hit.y && y <= hit.y + hit.h) {
+                this.setVolumeFromRatio(key, (x - hit.x) / hit.w);
+                return true;
+            }
         }
 
         if (rowIndex >= 0) {
@@ -223,7 +216,7 @@ export class OptionsOverlay extends BaseScene {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         const panelW = Math.min(360, canvas.width - 20);
-        const panelH = 146;
+        const panelH = 170;
         const panelX = Math.floor((canvas.width - panelW) / 2);
         const panelY = Math.floor((canvas.height - panelH) / 2);
         this.panelRect = { x: panelX, y: panelY, w: panelW, h: panelH };
@@ -268,6 +261,7 @@ export class OptionsOverlay extends BaseScene {
         const startY = panelY + 28;
 
         const labels = {
+            master: getLocalizedText(UI_TEXT['MASTER VOLUME']),
             music: getLocalizedText(UI_TEXT['MUSIC VOLUME']),
             sfx: getLocalizedText(UI_TEXT['SFX VOLUME']),
             voice: getLocalizedText(UI_TEXT['VOICE VOLUME']),
@@ -287,16 +281,8 @@ export class OptionsOverlay extends BaseScene {
             ctx.lineWidth = 1;
             ctx.strokeRect(rowRect.x + 0.5, rowRect.y + 0.5, rowRect.w - 1, rowRect.h - 1);
 
-            if (rowKey === 'music') {
-                this.drawVolumeRow(ctx, rowRect, labels.music, settings.music, isHighlighted, 'music');
-                continue;
-            }
-            if (rowKey === 'sfx') {
-                this.drawVolumeRow(ctx, rowRect, labels.sfx, settings.sfx, isHighlighted, 'sfx');
-                continue;
-            }
-            if (rowKey === 'voice') {
-                this.drawVolumeRow(ctx, rowRect, labels.voice, settings.voice, isHighlighted, 'voice');
+            if (this.volumeKeys.includes(rowKey)) {
+                this.drawVolumeRow(ctx, rowRect, labels[rowKey], settings[rowKey], isHighlighted, rowKey);
                 continue;
             }
             if (rowKey === 'language') {
