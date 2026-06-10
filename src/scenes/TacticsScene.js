@@ -4963,7 +4963,8 @@ export class TacticsScene extends BaseScene {
             durationMs,
             amplitudePx,
             damping: Number.isFinite(options.damping) ? options.damping : 3.8,
-            angularFreq: Number.isFinite(options.angularFreq) ? options.angularFreq : 17.0
+            angularFreq: Number.isFinite(options.angularFreq) ? options.angularFreq : 17.0,
+            fadeOutStart: Number.isFinite(options.fadeOutStart) ? Math.max(0, Math.min(0.98, options.fadeOutStart)) : null
         });
     }
 
@@ -4985,9 +4986,15 @@ export class TacticsScene extends BaseScene {
 
         // Starts with a downward dip, then springs upward/downward with a slower damping curve.
         const t = wave.elapsedMs / 1000;
+        const progress = Math.max(0, Math.min(1, wave.elapsedMs / Math.max(1, wave.durationMs)));
         const damping = Math.exp(-(wave.damping ?? 3.8) * t);
         const oscillation = Math.cos((wave.angularFreq ?? 17.0) * t);
-        return wave.amplitudePx * damping * oscillation;
+        let fade = 1;
+        if (Number.isFinite(wave.fadeOutStart)) {
+            const fadeProgress = Math.max(0, Math.min(1, (progress - wave.fadeOutStart) / (1 - wave.fadeOutStart)));
+            fade = 1 - (fadeProgress * fadeProgress * (3 - 2 * fadeProgress));
+        }
+        return wave.amplitudePx * damping * fade * oscillation;
     }
 
     isGateTerrain(terrain) {
@@ -5485,8 +5492,9 @@ export class TacticsScene extends BaseScene {
                     const dist = this.tacticsMap.getDistance(origin.r, origin.q, pos.r, pos.q);
                     const delay = Math.max(0, (dist - 1) * 80);
                     this.triggerHexDamageWave(pos.r, pos.q, 5.2, SHOUT_DURATION_MS, delay, {
-                        damping: 0.32,
-                        angularFreq: 12.0
+                        damping: 0.18,
+                        angularFreq: 12.0,
+                        fadeOutStart: 0.56
                     });
 
                     const cell = this.tacticsMap.getCell(pos.r, pos.q);
