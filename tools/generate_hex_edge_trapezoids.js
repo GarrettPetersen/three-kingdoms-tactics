@@ -3,7 +3,6 @@ const path = require('path');
 const { createCanvas, loadImage } = require('canvas');
 
 const OUT_DIR = path.join(__dirname, '..', 'public', 'assets', 'terrain', 'edge_trapezoids');
-const MASK_TILE = path.join(__dirname, '..', 'public', 'assets', 'terrain', 'individual', 'grass_01.png');
 const FORCE = process.argv.includes('--force');
 
 const geometry = {
@@ -18,18 +17,27 @@ const geometry = {
     baseDepth: 6,
     elevationStep: 3,
     heightDiffs: [-3, -2, -1, 0, 1, 2, 3],
+    coveragePad: 1,
+    surfaceVertices: {
+        N: { x: 18, y: 6 },
+        NE: { x: 29, y: 12 },
+        SE: { x: 29, y: 24 },
+        S: { x: 18, y: 30 },
+        SW: { x: 7, y: 24 },
+        NW: { x: 7, y: 12 }
+    },
     directions: {
         w: {
             label: 'W',
-            description: 'Left / west side underlay region, widened to tuck under same-row neighbor art.'
+            description: 'Region between the current NW-SW edge and the west neighbor NE-SE edge.'
         },
         sw: {
             label: 'SW',
-            description: 'Bottom-left front face region, widened to fill corner joins.'
+            description: 'Region between the current SW-S edge and the southwest neighbor N-NE edge.'
         },
         se: {
             label: 'SE',
-            description: 'Bottom-right front face region, widened to fill corner joins.'
+            description: 'Region between the current S-SE edge and the southeast neighbor NW-N edge.'
         }
     }
 };
@@ -133,33 +141,6 @@ function getFill(terrainColors, terrain, direction, diff) {
     return applyTint(baseColor, getLightTintAmount(direction, diff));
 }
 
-function getTileMask(img) {
-    const canvas = createCanvas(img.width, img.height);
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    return ctx.getImageData(0, 0, img.width, img.height).data;
-}
-
-function maskHasPixel(mask, localX, localY, width, height) {
-    const x = Math.floor(localX);
-    const y = Math.floor(localY);
-    if (x < 0 || x >= width || y < 0 || y >= height) return false;
-    return mask[(y * width + x) * 4 + 3] > 50;
-}
-
-function getColumnTop(mask, localX, width, height) {
-    for (let y = 0; y < height; y++) {
-        if (maskHasPixel(mask, localX, y, width, height)) return y;
-    }
-    return 0;
-}
-
-function getBottomEdgeY(x) {
-    if (x >= 7 && x <= 17) return 25 + Math.floor((x - 7) * (30 - 25) / 10);
-    if (x >= 18 && x <= 28) return 30 + Math.floor((x - 18) * (25 - 30) / 10);
-    return null;
-}
-
 function polygonToRows(points) {
     const rows = [];
     const minY = Math.max(0, Math.floor(Math.min(...points.map(p => p[1]))));
@@ -187,113 +168,87 @@ function polygonToRows(points) {
     return rows;
 }
 
-function getFrontFaceRows({ mask, direction, diff }) {
-    const pad = geometry.padding;
-    const heightOffset = diff * geometry.elevationStep;
-    const cliffDepth = Math.abs(diff) >= 2 ? Math.abs(diff) * geometry.elevationStep : 0;
-    const topOverlap = 3;
-    const outerBow = 4;
-    const outerBowDrop = 5;
-    const outerBottomOverhang = 3;
+function padRows(rows, amount = 0) {
+    if (amount <= 0) return rows;
+    const rowsByY = new Map();
+    rows.forEach(row => {
+        for (let dy = -amount; dy <= amount; dy++) {
+            const y = row.y + dy;
+            if (y < 0 || y >= geometry.canvasHeight) continue;
+            const start = Math.max(0, row.start - amount);
+            const end = Math.min(geometry.canvasWidth - 1, row.end + amount);
+            const existing = rowsByY.get(y);
+            if (existing) {
+                existing.start = Math.min(existing.start, start);
+                existing.end = Math.max(existing.end, end);
+            } else {
+                rowsByY.set(y, { y, start, end });
+            }
+        }
+    });
+    return [...rowsByY.values()].sort((a, b) => a.y - b.y);
+}
 
-    if (direction === 'sw') {
-        const outerTopY = pad + getBottomEdgeY(7) - topOverlap;
-        return polygonToRows([
-            [pad + 2, outerTopY],
-            [pad + 17, pad + getBottomEdgeY(17) - Math.max(0, heightOffset) - topOverlap],
-            [pad + 20, pad + 39 + Math.max(0, -heightOffset) + cliffDepth],
-            [pad + 4 - outerBottomOverhang, pad + 33 + Math.max(0, -heightOffset) + cliffDepth],
-            [pad + 2 - outerBow, outerTopY + outerBowDrop]
-        ]);
+function surfacePoint(name, offset = { x: 0, y: 0 }) {
+    const p = geometry.surfaceVertices[name];
+    return [
+        geometry.padding + p.x + offset.x,
+        geometry.padding + p.y + offset.y
+    ];
+}
+
+function getNeighborEdgeGeometry(direction, diff) {
+    const elevationOffset = -diff * geometry.elevationStep;
+    if (direction === 'w') {
+        return {
+            current: ['NW', 'SW'],
+            neighbor: ['NE', 'SE'],
+            offset: { x: -geometry.horizontalSpacing, y: elevationOffset }
+        };
     }
+    if (direction === 'sw') {
+        return {
+            current: ['SW', 'S'],
+            neighbor: ['N', 'NE'],
+            offset: { x: -geometry.horizontalSpacing / 2, y: geometry.verticalSpacing + elevationOffset }
+        };
+    }
+    return {
+        current: ['S', 'SE'],
+        neighbor: ['NW', 'N'],
+        offset: { x: geometry.horizontalSpacing / 2, y: geometry.verticalSpacing + elevationOffset }
+    };
+}
 
-    const outerTopY = pad + getBottomEdgeY(28) - topOverlap;
-    return polygonToRows([
-        [pad + 18, pad + getBottomEdgeY(18) - Math.max(0, heightOffset) - topOverlap],
-        [pad + 33, outerTopY],
-        [pad + 33 + outerBow, outerTopY + outerBowDrop],
-        [pad + 32 + outerBottomOverhang, pad + 33 + Math.max(0, -heightOffset) + cliffDepth],
-        [pad + 21, pad + 39 + Math.max(0, -heightOffset) + cliffDepth]
-    ]);
+function getEdgeToEdgeRows({ direction, diff }) {
+    const edge = getNeighborEdgeGeometry(direction, diff);
+    const points = [
+        surfacePoint(edge.current[0]),
+        surfacePoint(edge.current[1]),
+        surfacePoint(edge.neighbor[1], edge.offset),
+        surfacePoint(edge.neighbor[0], edge.offset)
+    ];
+    return padRows(polygonToRows(points), geometry.coveragePad);
+}
+
+function getFrontFaceRows({ direction, diff }) {
+    return getEdgeToEdgeRows({ direction, diff });
 }
 
 function getSideFaceRows({ diff }) {
-    const pad = geometry.padding;
-    const heightOffset = diff * geometry.elevationStep;
-    const cliffDepth = Math.abs(diff) >= 2 ? Math.abs(diff) * geometry.elevationStep : 0;
-    const topOverlap = 3;
-    return polygonToRows([
-        [pad - 2, pad + 18 - Math.max(0, heightOffset) - topOverlap],
-        [pad + 9, pad + 13 - Math.max(0, heightOffset) - topOverlap],
-        [pad + 10, pad + 35 + Math.max(0, -heightOffset) + cliffDepth],
-        [pad - 2, pad + 42 + Math.max(0, -heightOffset) + cliffDepth]
-    ]);
+    return getEdgeToEdgeRows({ direction: 'w', diff });
 }
 
-function getFaceRows({ mask, direction, diff }) {
-    const width = geometry.tileWidth;
-    const height = geometry.tileHeight;
-    const pad = geometry.padding;
-    const extraDepth = Math.abs(diff) >= 2 ? Math.abs(diff) * geometry.elevationStep : 0;
-    const pixelsByRow = new Map();
-
+function getFaceRows({ direction, diff }) {
     if (direction === 'w') {
         return getSideFaceRows({ diff });
     }
 
     if (direction === 'sw' || direction === 'se') {
-        return getFrontFaceRows({ mask, direction, diff });
+        return getFrontFaceRows({ direction, diff });
     }
 
-    for (let localX = 0; localX < width; localX++) {
-        for (let localY = 0; localY < height; localY++) {
-            if (!maskHasPixel(mask, localX, localY, width, height)) continue;
-
-            let inFace = false;
-            if (direction === 'w') {
-                inFace = localX >= 2 && localX <= 7 && localY >= 12;
-            } else if (direction === 'sw') {
-                const edgeY = getBottomEdgeY(localX);
-                inFace = edgeY !== null && localX <= 17 && localY >= edgeY;
-            } else if (direction === 'se') {
-                const edgeY = getBottomEdgeY(localX);
-                inFace = edgeY !== null && localX >= 18 && localY >= edgeY;
-            }
-            if (!inFace) continue;
-
-            const x = localX + pad;
-            const y = localY + pad;
-            const row = pixelsByRow.get(y) || { y, start: x, end: x };
-            row.start = Math.min(row.start, x);
-            row.end = Math.max(row.end, x);
-            pixelsByRow.set(y, row);
-        }
-    }
-
-    if (extraDepth > 0) {
-        const rows = [...pixelsByRow.values()];
-        const lastByColumn = new Map();
-        rows.forEach(row => {
-            for (let x = row.start; x <= row.end; x++) lastByColumn.set(x, Math.max(lastByColumn.get(x) || 0, row.y));
-        });
-        for (const [x, y] of lastByColumn) {
-            for (let d = 1; d <= extraDepth; d++) {
-                const yy = y + d;
-                if (yy >= geometry.canvasHeight) continue;
-                const row = pixelsByRow.get(yy) || { y: yy, start: x, end: x };
-                row.start = Math.min(row.start, x);
-                row.end = Math.max(row.end, x);
-                pixelsByRow.set(yy, row);
-            }
-        }
-    }
-
-    const rawRows = [...pixelsByRow.values()].sort((a, b) => a.y - b.y);
-    const rows = [];
-    rawRows.forEach(row => {
-        if (row.start <= row.end) rows.push(row);
-    });
-    return rows;
+    return [];
 }
 
 function getPointsFromRows(rows) {
@@ -306,10 +261,10 @@ function getPointsFromRows(rows) {
     ];
 }
 
-function drawTrapezoid({ terrain, direction, diff, mask, terrainColors }) {
+function drawTrapezoid({ terrain, direction, diff, terrainColors }) {
     const canvas = createCanvas(geometry.canvasWidth, geometry.canvasHeight);
     const ctx = canvas.getContext('2d');
-    const rows = getFaceRows({ mask, direction, diff });
+    const rows = getFaceRows({ direction, diff });
 
     ctx.imageSmoothingEnabled = false;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -328,8 +283,6 @@ function writePng(filename, canvas) {
 
 async function main() {
     ensureCleanDir(OUT_DIR);
-    const maskImage = await loadImage(MASK_TILE);
-    const mask = getTileMask(maskImage);
     const sourceImages = {};
     for (const [terrain, source] of Object.entries(terrainSources)) {
         sourceImages[terrain] = await loadImage(path.join(__dirname, '..', 'public', 'assets', 'terrain', 'individual', `${source}.png`));
@@ -341,7 +294,8 @@ async function main() {
         forceOverwrite: FORCE,
         notes: [
             'Transparent 56x56 PNGs with a 36x36 tile footprint inset at x=10,y=10.',
-            'Draw centered at the same logical hex center as terrain tiles, then tune from the manifest polygon points.',
+            'Draw centered at the same logical hex center as terrain tiles.',
+            'Rows are rasterized from the real polygon between the current hex edge and the adjacent hex edge, using the same 29x23 spacing and 3px elevation step as the map renderer.',
             'This generator is non-destructive by default: existing PNGs are skipped. Pass --force to overwrite placeholder art.',
             'heightDiff is neighbor.level - current.level. Diffs -1/+1 are walkable slopes; absolute diffs >=2 use the shared rocky_cliff set because they are impassable.'
         ],
@@ -363,7 +317,7 @@ async function main() {
             for (const diff of terrainDiffsByGroup[terrain] || terrainVariantDiffs) {
                 const diffName = diff > 0 ? `plus${diff}` : diff < 0 ? `minus${Math.abs(diff)}` : 'zero';
                 const filename = `${direction}_${diffName}.png`;
-                const { canvas, points, rows } = drawTrapezoid({ terrain, direction, diff, mask, terrainColors });
+                const { canvas, points, rows } = drawTrapezoid({ terrain, direction, diff, terrainColors });
                 if (writePng(path.join(terrainDir, filename), canvas)) written++;
                 else skipped++;
                 manifest.assets.push({
@@ -385,7 +339,7 @@ async function main() {
         for (const diff of sharedCliffDiffs) {
             const diffName = diff > 0 ? `plus${diff}` : `minus${Math.abs(diff)}`;
             const filename = `${direction}_${diffName}.png`;
-            const { canvas, points, rows } = drawTrapezoid({ terrain: 'rock', direction, diff, mask, terrainColors });
+            const { canvas, points, rows } = drawTrapezoid({ terrain: 'rock', direction, diff, terrainColors });
             if (writePng(path.join(cliffDir, filename), canvas)) written++;
             else skipped++;
             manifest.assets.push({
