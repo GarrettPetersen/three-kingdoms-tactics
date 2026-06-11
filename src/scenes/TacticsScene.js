@@ -3087,6 +3087,7 @@ export class TacticsScene extends BaseScene {
             else unit.flip = desiredFlip;
 
             const intentOrigin = this.getAttackOriginForTarget(unit, targetPos.r, targetPos.q);
+            const unitCube = this.tacticsMap.offsetToCube(unit.r, unit.q);
             const fromCube = this.tacticsMap.offsetToCube(intentOrigin.r, intentOrigin.q);
             const toCube = this.tacticsMap.offsetToCube(targetPos.r, targetPos.q);
             const secondaryCube = secondaryTargetPos
@@ -3099,6 +3100,9 @@ export class TacticsScene extends BaseScene {
                 relX: toCube.x - fromCube.x,
                 relY: toCube.y - fromCube.y,
                 relZ: toCube.z - fromCube.z,
+                originOffsetX: fromCube.x - unitCube.x,
+                originOffsetY: fromCube.y - unitCube.y,
+                originOffsetZ: fromCube.z - unitCube.z,
                 ...(secondaryCube ? {
                     rel2X: secondaryCube.x - fromCube.x,
                     rel2Y: secondaryCube.y - fromCube.y,
@@ -3230,9 +3234,7 @@ export class TacticsScene extends BaseScene {
         if (!unit || !unit.intent) return null;
         if (unit.intent.relX === undefined) return null;
 
-        const originR = unit.r;
-        const originQ = unit.q;
-        const currentCube = this.tacticsMap.offsetToCube(originR, originQ);
+        const currentCube = this.getIntentOriginCubeForAnchor(unit.intent, unit.r, unit.q);
         const targetCube = {
             x: currentCube.x + unit.intent.relX,
             y: currentCube.y + unit.intent.relY,
@@ -3282,11 +3284,42 @@ export class TacticsScene extends BaseScene {
         return null;
     }
 
+    getIntentOriginCubeForAnchor(intent, anchorR, anchorQ) {
+        const anchorCube = this.tacticsMap.offsetToCube(anchorR, anchorQ);
+        return {
+            x: anchorCube.x + (Number.isFinite(intent?.originOffsetX) ? intent.originOffsetX : 0),
+            y: anchorCube.y + (Number.isFinite(intent?.originOffsetY) ? intent.originOffsetY : 0),
+            z: anchorCube.z + (Number.isFinite(intent?.originOffsetZ) ? intent.originOffsetZ : 0)
+        };
+    }
+
+    getIntentTargetCellFromAnchor(intent, anchorR, anchorQ) {
+        if (!intent || intent.relX === undefined) return null;
+        const originCube = this.getIntentOriginCubeForAnchor(intent, anchorR, anchorQ);
+        const targetCube = {
+            x: originCube.x + intent.relX,
+            y: originCube.y + intent.relY,
+            z: originCube.z + intent.relZ
+        };
+        return this.tacticsMap.getCellByCube(targetCube.x, targetCube.y, targetCube.z);
+    }
+
+    getIntentSecondaryTargetCellFromAnchor(intent, anchorR, anchorQ) {
+        if (!intent || !Number.isFinite(intent.rel2X)) return null;
+        const originCube = this.getIntentOriginCubeForAnchor(intent, anchorR, anchorQ);
+        const targetCube = {
+            x: originCube.x + intent.rel2X,
+            y: originCube.y + intent.rel2Y,
+            z: originCube.z + intent.rel2Z
+        };
+        return this.tacticsMap.getCellByCube(targetCube.x, targetCube.y, targetCube.z);
+    }
+
     shiftIntentTargetWithDisplacement(unit, fromR, fromQ, toR, toQ) {
         if (!unit || !unit.intent || unit.intent.type !== 'attack') return;
         if (unit.intent.relX === undefined) return;
 
-        const oldTarget = this.getIntentTargetCell(unit);
+        const oldTarget = this.getIntentTargetCellFromAnchor(unit.intent, fromR, fromQ);
         if (!oldTarget) return;
 
         const fromCube = this.tacticsMap.offsetToCube(fromR, fromQ);
@@ -3297,12 +3330,29 @@ export class TacticsScene extends BaseScene {
             y: oldTargetCube.y + (toCube.y - fromCube.y),
             z: oldTargetCube.z + (toCube.z - fromCube.z)
         };
+        const newOriginCube = this.getIntentOriginCubeForAnchor(unit.intent, toR, toQ);
+
+        const oldSecondary = this.getIntentSecondaryTargetCellFromAnchor(unit.intent, fromR, fromQ);
+        const secondaryPatch = {};
+        if (oldSecondary) {
+            const oldSecondaryCube = this.tacticsMap.offsetToCube(oldSecondary.r, oldSecondary.q);
+            const shiftedSecondaryCube = {
+                x: oldSecondaryCube.x + (toCube.x - fromCube.x),
+                y: oldSecondaryCube.y + (toCube.y - fromCube.y),
+                z: oldSecondaryCube.z + (toCube.z - fromCube.z)
+            };
+            secondaryPatch.rel2X = shiftedSecondaryCube.x - newOriginCube.x;
+            secondaryPatch.rel2Y = shiftedSecondaryCube.y - newOriginCube.y;
+            secondaryPatch.rel2Z = shiftedSecondaryCube.z - newOriginCube.z;
+        }
 
         unit.intent = {
             ...unit.intent,
-            relX: shiftedTargetCube.x - toCube.x,
-            relY: shiftedTargetCube.y - toCube.y,
-            relZ: shiftedTargetCube.z - toCube.z
+            relX: shiftedTargetCube.x - newOriginCube.x,
+            relY: shiftedTargetCube.y - newOriginCube.y,
+            relZ: shiftedTargetCube.z - newOriginCube.z,
+            ...secondaryPatch,
+            targetId: null
         };
     }
 
@@ -12085,18 +12135,7 @@ export class TacticsScene extends BaseScene {
 
     getIntentSecondaryTargetCell(unit) {
         if (!unit?.intent || !Number.isFinite(unit.intent.rel2X)) return null;
-        const primary = this.getIntentTargetCell(unit);
-        if (!primary) return null;
-        const origin = this.getAttackOriginForTarget(unit, primary.r, primary.q);
-        const fromCube = this.tacticsMap.offsetToCube(origin.r, origin.q);
-        const toCube = {
-            x: fromCube.x + unit.intent.rel2X,
-            y: fromCube.y + unit.intent.rel2Y,
-            z: fromCube.z + unit.intent.rel2Z
-        };
-        const r = toCube.z;
-        const q = toCube.x + Math.floor(r / 2);
-        return this.tacticsMap.getCell(r, q);
+        return this.getIntentSecondaryTargetCellFromAnchor(unit.intent, unit.r, unit.q);
     }
 
     getFlexibleDoubleBladesSecondaryTarget(attacker, attackKey, targetR, targetQ) {
