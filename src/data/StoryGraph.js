@@ -43,9 +43,20 @@ export function buildParentMap(routeId) {
     const parents = {};
     if (!route || !route.nodes) return parents;
     for (const [nodeId, node] of Object.entries(route.nodes)) {
-        const next = node?.next;
-        if (next) parents[next] = nodeId;
+        const nextNodes = getStoryNodeNextIds(node);
+        for (const next of nextNodes) {
+            if (!parents[next]) parents[next] = nodeId;
+        }
     }
     return parents;
 }
 
+export function getStoryNodeNextIds(node) {
+    if (!node) return [];
+    if (Array.isArray(node.transitions)) {
+        return node.transitions
+            .map(transition => transition?.to)
+            .filter(Boolean);
+    }
+    return node.next ? [node.next] : [];
+}

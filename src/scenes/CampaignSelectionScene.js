@@ -73,7 +73,7 @@ export class CampaignSelectionScene extends BaseScene {
         this.selectedIndex = Math.min(this.selectedIndex, Math.max(0, visible.length - 1));
         const chapter1Complete = gs.isChapterComplete(1);
         const chapter2OathComplete = gs.isCampaignComplete('chapter2_oath');
-        const freedLuZhi = gs.getStoryChoice('luzhi_outcome') === 'freed' || gs.hasMilestone('freed_luzhi');
+        const freedLuZhi = gs.getStoryChoice('luzhi_outcome', null, 'liubei') === 'freed' || gs.hasMilestone('freed_luzhi', 'liubei');
         const caocao = this.campaigns.find(c => c.id === 'caocao');
 
         if (selectedChapter === '2') {

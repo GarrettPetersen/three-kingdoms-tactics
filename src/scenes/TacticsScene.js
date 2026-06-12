@@ -482,6 +482,7 @@ export class TacticsScene extends BaseScene {
             this.onFightVictory = () => {
                 this.manager.gameState.setStoryChoice('luzhi_outcome', 'freed');
                 this.manager.gameState.addMilestone('freed_luzhi');
+                this.manager.gameState.addWorldMilestone('freed_luzhi');
                 // Use MapScene logic to show story
                 const mapScene = this.manager.scenes['map'];
                 if (mapScene) {
@@ -1834,7 +1835,9 @@ export class TacticsScene extends BaseScene {
             return;
         }
         this.manager.gameState.setStoryChoice('chapter2_oath_dongzhuo_choice', 'restrain');
+        this.manager.gameState.setWorldChoice('chapter2_oath_dongzhuo_choice', 'restrain');
         this.manager.gameState.addMilestone('chapter2_oath_dongzhuo_restrained');
+        this.manager.gameState.addWorldMilestone('chapter2_oath_dongzhuo_restrained');
 
         this.cleanupDialogueScript = [
                 {
@@ -1893,7 +1896,9 @@ export class TacticsScene extends BaseScene {
     startChapter2DongZhuoFight() {
         const gs = this.manager.gameState;
         gs.setStoryChoice('chapter2_oath_dongzhuo_choice', 'strike');
+        gs.setWorldChoice('chapter2_oath_dongzhuo_choice', 'strike');
         gs.addMilestone('chapter2_oath_dongzhuo_fought');
+        gs.addWorldMilestone('chapter2_oath_dongzhuo_fought');
 
         this.cleanupDialogueScript = [
             {

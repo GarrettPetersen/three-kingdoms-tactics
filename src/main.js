@@ -337,6 +337,7 @@ async function init() {
                 if (n >= 1) {
                     sceneManager.gameState.setStoryChoice('luzhi_outcome', 'restrained');
                     sceneManager.gameState.setStoryChoice('chapter2_oath_dongzhuo_choice', 'restrain');
+                    sceneManager.gameState.setWorldChoice('chapter2_oath_dongzhuo_choice', 'restrain');
                     sceneManager.gameState.removeMilestone('freed_luzhi');
                     sceneManager.gameState.removeMilestone('chapter2_oath_dongzhuo_fought');
                 }

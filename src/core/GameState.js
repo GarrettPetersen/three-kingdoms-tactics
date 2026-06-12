@@ -1,6 +1,17 @@
 import { STORY_ROUTES, buildParentMap } from '../data/StoryGraph.js';
 import { CHAPTERS } from '../data/Chapters.js';
 
+const SAVE_VERSION = 4;
+const SCENE_STATE_KEYS = ['map', 'tactics', 'narrative', 'levelup'];
+
+function createSceneStates() {
+    return Object.fromEntries(SCENE_STATE_KEYS.map(key => [key, null]));
+}
+
+function uniqueList(values = []) {
+    return [...new Set(values.filter(Boolean))];
+}
+
 export class GameState {
     constructor() {
         this.saveKey = 'three_kingdoms_tactics_save';
@@ -9,31 +20,20 @@ export class GameState {
 
     getDefaults() {
         return {
-            version: 3,
-            progress: {
+            version: SAVE_VERSION,
+            activeRunId: null,
+            runs: {},
+            world: {
                 unlockedYears: ['184'],
-                milestones: [] // e.g. 'prologue_complete', 'daxing_won'
+                flags: {},
+                choices: {},
+                completedRoutes: {}
             },
             session: {
                 lastScene: 'title',
-                currentCampaign: null,
-                currentBattleId: null,
-                story: {
-                    activeRoute: null,
-                    cursorNode: null,
-                    choices: {},
-                    routes: {},
-                    globalChoices: {}
-                },
-                sceneStates: {
-                    map: null,
-                    tactics: null,
-                    narrative: null
-                },
-                sceneStatesByRoute: {} // { routeId: { map, tactics, narrative } }
+                lastRunId: null,
+                currentBattleId: null
             },
-            // Campaign-specific persistent state
-            campaignState: {}, // { 'liubei': { partyX, partyY, unitXP, unitClasses } }
             customStats: {
                 totalBattles: 0,
                 wins: 0,
@@ -51,22 +51,97 @@ export class GameState {
         return null;
     }
 
-    // Isolated campaign state management
-    setCampaignVar(key, value, campaignId = null) {
-        const id = campaignId || this.getCurrentCampaign();
-        if (!id) return;
-        
-        if (!this.data.campaignState[id]) {
-            this.data.campaignState[id] = {};
-        }
-        this.data.campaignState[id][key] = value;
-        this.save();
+    createRunState(routeId) {
+        const route = STORY_ROUTES[routeId];
+        return {
+            routeId,
+            currentNodeId: null,
+            visitedNodeIds: route?.startNode ? [route.startNode] : [],
+            completedNodeIds: [],
+            choices: {},
+            flags: {},
+            sceneStates: createSceneStates(),
+            party: {},
+            state: {},
+            inventory: {}
+        };
     }
 
-    getCampaignVar(key, campaignId = null) {
-        const id = campaignId || this.getCurrentCampaign();
-        if (!id || !this.data.campaignState[id]) return undefined;
-        return this.data.campaignState[id][key];
+    getRunState(routeId = null, { create = true } = {}) {
+        const id = routeId || this.getCurrentCampaign();
+        if (!id) return null;
+        if (!this.data.runs) this.data.runs = {};
+        if (!this.data.runs[id] && create) {
+            this.data.runs[id] = this.createRunState(id);
+        }
+        const run = this.data.runs[id] || null;
+        if (run && create) this.repairRunShape(run, id);
+        return run;
+    }
+
+    repairRunShape(run, routeId = run?.routeId) {
+        if (!run) return;
+        run.routeId = run.routeId || routeId;
+        run.visitedNodeIds = uniqueList(run.visitedNodeIds || []);
+        run.completedNodeIds = uniqueList(run.completedNodeIds || []);
+        run.choices = { ...(run.choices || {}) };
+        run.flags = { ...(run.flags || {}) };
+        run.sceneStates = { ...createSceneStates(), ...(run.sceneStates || {}) };
+        run.party = { ...(run.party || {}) };
+        run.state = { ...(run.state || {}) };
+        run.inventory = { ...(run.inventory || {}) };
+    }
+
+    save() {
+        localStorage.setItem(this.saveKey, JSON.stringify(this.data));
+    }
+
+    load() {
+        const saved = localStorage.getItem(this.saveKey);
+        if (!saved) return false;
+
+        try {
+            const parsed = JSON.parse(saved);
+            if (parsed?.version !== SAVE_VERSION || !parsed?.runs || !parsed?.world) {
+                this.data = this.getDefaults();
+                localStorage.removeItem(this.saveKey);
+                return false;
+            }
+
+            const defaults = this.getDefaults();
+            this.data = {
+                ...defaults,
+                ...parsed,
+                version: SAVE_VERSION,
+                activeRunId: parsed.activeRunId ?? parsed.session?.lastRunId ?? null,
+                runs: { ...(parsed.runs || {}) },
+                world: {
+                    ...defaults.world,
+                    ...(parsed.world || {}),
+                    flags: { ...(parsed.world?.flags || {}) },
+                    choices: { ...(parsed.world?.choices || {}) },
+                    completedRoutes: { ...(parsed.world?.completedRoutes || {}) },
+                    unlockedYears: parsed.world?.unlockedYears || defaults.world.unlockedYears
+                },
+                session: {
+                    ...defaults.session,
+                    ...(parsed.session || {})
+                },
+                customStats: {
+                    ...defaults.customStats,
+                    ...(parsed.customStats || {})
+                }
+            };
+
+            for (const [routeId, run] of Object.entries(this.data.runs)) {
+                this.repairRunShape(run, routeId);
+            }
+            this.save();
+            return true;
+        } catch (e) {
+            console.error('Failed to parse save data', e);
+            return false;
+        }
     }
 
     getLastScene() {
@@ -74,29 +149,20 @@ export class GameState {
     }
 
     setLastScene(sceneName) {
-        if (!this.data.session) this.data.session = {};
+        if (!this.data.session) this.data.session = this.getDefaults().session;
         this.data.session.lastScene = sceneName;
         this.save();
     }
 
     getCurrentCampaign() {
-        return this.data.session?.currentCampaign ?? null;
+        return this.data.activeRunId ?? this.data.session?.lastRunId ?? null;
     }
 
     setCurrentCampaign(campaignId) {
-        if (!this.data.session) this.data.session = {};
-        this.data.session.currentCampaign = campaignId;
-        if (campaignId && STORY_ROUTES[campaignId]) {
-            const story = this.getStoryState(campaignId);
-            this.data.session.story = {
-                ...(this.data.session.story || {}),
-                activeRoute: campaignId,
-                cursorNode: story.cursorNode ?? STORY_ROUTES[campaignId].startNode,
-                choices: { ...(story.choices || {}) },
-                routes: { ...(story.routes || {}) },
-                globalChoices: { ...(story.globalChoices || {}) }
-            };
-        }
+        if (!this.data.session) this.data.session = this.getDefaults().session;
+        this.data.activeRunId = campaignId ?? null;
+        this.data.session.lastRunId = campaignId ?? null;
+        if (campaignId) this.getRunState(campaignId);
         this.save();
     }
 
@@ -105,178 +171,166 @@ export class GameState {
     }
 
     setCurrentBattleId(battleId) {
-        if (!this.data.session) this.data.session = {};
+        if (!this.data.session) this.data.session = this.getDefaults().session;
         this.data.session.currentBattleId = battleId;
         this.save();
     }
 
-    getStoryState(routeId = null) {
-        const storyDefaults = this.getDefaults().session.story;
-        const rawStory = this.data.session?.story || {};
-        const merged = {
-            ...storyDefaults,
-            ...rawStory,
-            routes: { ...(rawStory.routes || {}) },
-            globalChoices: {
-                ...(storyDefaults.globalChoices || {}),
-                ...(rawStory.globalChoices || {}),
-                ...(rawStory.choices || {})
-            }
-        };
-
-        const activeRoute = routeId || merged.activeRoute || this.getCurrentCampaign() || null;
-        if (activeRoute && !merged.routes[activeRoute]) {
-            merged.routes[activeRoute] = {
-                cursorNode: null,
-                choices: {}
-            };
+    setCampaignVar(key, value, campaignId = null) {
+        const run = this.getRunState(campaignId);
+        if (!run) return;
+        if (key === 'partyX' || key === 'partyY') {
+            run.party[key] = value;
+        } else {
+            run.state[key] = value;
         }
-        const activeRouteState = activeRoute ? (merged.routes[activeRoute] || { cursorNode: null, choices: {} }) : { cursorNode: null, choices: {} };
+        this.save();
+    }
+
+    getCampaignVar(key, campaignId = null) {
+        const run = this.getRunState(campaignId, { create: false });
+        if (key === 'partyX' || key === 'partyY') return run?.party?.[key];
+        return run?.state?.[key];
+    }
+
+    getStoryState(routeId = null) {
+        const activeRoute = routeId || this.getCurrentCampaign();
+        const run = activeRoute ? this.getRunState(activeRoute) : null;
         return {
-            ...merged,
             activeRoute,
-            cursorNode: activeRouteState.cursorNode ?? null,
-            choices: { ...(activeRouteState.choices || {}) }
+            cursorNode: run?.currentNodeId ?? null,
+            choices: { ...(run?.choices || {}) },
+            routes: Object.fromEntries(Object.entries(this.data.runs || {}).map(([id, routeRun]) => [
+                id,
+                {
+                    cursorNode: routeRun.currentNodeId ?? null,
+                    choices: { ...(routeRun.choices || {}) },
+                    visitedNodeIds: [...(routeRun.visitedNodeIds || [])],
+                    completedNodeIds: [...(routeRun.completedNodeIds || [])],
+                    flags: { ...(routeRun.flags || {}) }
+                }
+            ])),
+            globalChoices: { ...(this.data.world?.choices || {}) }
         };
     }
 
-    setStoryState(storyState) {
-        if (!this.data.session) this.data.session = {};
-        const defaults = this.getDefaults().session.story;
-        const merged = {
-            ...defaults,
-            ...(storyState || {}),
-            routes: { ...((storyState && storyState.routes) || {}) },
-            globalChoices: { ...((storyState && storyState.globalChoices) || {}) }
-        };
-        const activeRoute = merged.activeRoute || null;
+    setStoryState(storyState = {}) {
+        const activeRoute = storyState.activeRoute || this.getCurrentCampaign();
         if (activeRoute) {
-            const bucket = merged.routes[activeRoute] || { cursorNode: null, choices: {} };
-            if (merged.cursorNode !== undefined) bucket.cursorNode = merged.cursorNode;
-            if (merged.choices) bucket.choices = { ...(bucket.choices || {}), ...(merged.choices || {}) };
-            merged.routes[activeRoute] = bucket;
+            const run = this.getRunState(activeRoute);
+            const routeBucket = storyState.routes?.[activeRoute] || {};
+            if (storyState.cursorNode !== undefined) run.currentNodeId = storyState.cursorNode;
+            if (routeBucket.cursorNode !== undefined) run.currentNodeId = routeBucket.cursorNode;
+            if (storyState.choices) run.choices = { ...run.choices, ...storyState.choices };
+            if (routeBucket.choices) run.choices = { ...run.choices, ...routeBucket.choices };
+            if (routeBucket.visitedNodeIds) run.visitedNodeIds = uniqueList(routeBucket.visitedNodeIds);
+            if (routeBucket.completedNodeIds) run.completedNodeIds = uniqueList(routeBucket.completedNodeIds);
+            if (routeBucket.flags) run.flags = { ...run.flags, ...routeBucket.flags };
+            this.data.activeRunId = activeRoute;
+            this.data.session.lastRunId = activeRoute;
         }
-        const activeBucket = activeRoute ? merged.routes[activeRoute] : null;
-        this.data.session.story = {
-            ...defaults,
-            activeRoute,
-            cursorNode: activeBucket?.cursorNode ?? null,
-            choices: { ...(activeBucket?.choices || {}) },
-            routes: merged.routes,
-            globalChoices: merged.globalChoices
-        };
+        if (storyState.globalChoices) {
+            this.data.world.choices = { ...this.data.world.choices, ...storyState.globalChoices };
+        }
         this.save();
     }
 
     startStoryRoute(routeId, startNode = null) {
         const route = STORY_ROUTES[routeId];
         if (!route) return;
-        const story = this.getStoryState(routeId);
-        const existingNode = story.routes?.[routeId]?.cursorNode;
-        const node = startNode || existingNode || route.startNode;
-        this.setStoryState({
-            ...story,
-            activeRoute: routeId,
-            cursorNode: node
-        });
+        const run = this.getRunState(routeId);
+        const node = startNode || run.currentNodeId || route.startNode;
+        run.currentNodeId = node;
+        run.visitedNodeIds = uniqueList([...(run.visitedNodeIds || []), route.startNode, node]);
+        this.data.activeRunId = routeId;
+        this.data.session.lastRunId = routeId;
+        this.save();
+    }
+
+    markStoryPathReached(run, nodeId) {
+        if (!run || !nodeId) return;
+        const routeId = run.routeId;
+        const parents = buildParentMap(routeId);
+        const reached = [];
+        let cur = nodeId;
+        while (cur && !reached.includes(cur)) {
+            reached.push(cur);
+            cur = parents[cur] || null;
+        }
+        run.visitedNodeIds = uniqueList([...(run.visitedNodeIds || []), ...reached]);
+        run.completedNodeIds = uniqueList([...(run.completedNodeIds || []), ...reached.filter(id => id !== nodeId)]);
     }
 
     setStoryCursor(nodeId, routeId = null) {
-        const story = this.getStoryState();
-        const resolvedRouteId = routeId || story.activeRoute || this.getCurrentCampaign();
+        const resolvedRouteId = routeId || this.getCurrentCampaign();
         const route = STORY_ROUTES[resolvedRouteId];
         if (!route || !route.nodes[nodeId]) return;
-        const routes = { ...(story.routes || {}) };
-        const bucket = routes[resolvedRouteId] || { cursorNode: null, choices: {} };
-        bucket.cursorNode = nodeId;
-        routes[resolvedRouteId] = bucket;
-        this.setStoryState({
-            ...story,
-            activeRoute: resolvedRouteId,
-            routes,
-            cursorNode: nodeId
-        });
+        const run = this.getRunState(resolvedRouteId);
+        if (run.currentNodeId && run.currentNodeId !== nodeId) {
+            run.completedNodeIds = uniqueList([...(run.completedNodeIds || []), run.currentNodeId]);
+        }
+        run.currentNodeId = nodeId;
+        this.markStoryPathReached(run, nodeId);
+        this.data.activeRunId = resolvedRouteId;
+        this.data.session.lastRunId = resolvedRouteId;
+        this.save();
     }
 
     getStoryCursor(routeId = null) {
-        const story = this.getStoryState(routeId);
-        return { routeId: story.activeRoute, nodeId: story.cursorNode };
+        const resolvedRouteId = routeId || this.getCurrentCampaign();
+        const run = resolvedRouteId ? this.getRunState(resolvedRouteId, { create: false }) : null;
+        return { routeId: resolvedRouteId, nodeId: run?.currentNodeId ?? null };
     }
 
     hasReachedStoryNode(nodeId, routeId = null) {
-        const story = this.getStoryState(routeId);
-        const resolvedRouteId = routeId || story.activeRoute;
-        if (!resolvedRouteId) return false;
+        const resolvedRouteId = routeId || this.getCurrentCampaign();
         const route = STORY_ROUTES[resolvedRouteId];
         if (!route || !route.nodes[nodeId]) return false;
-        let cur = story.routes?.[resolvedRouteId]?.cursorNode ?? null;
-        const parents = buildParentMap(resolvedRouteId);
-        while (cur) {
-            if (cur === nodeId) return true;
-            cur = parents[cur] || null;
-        }
-        return false;
+        const run = this.getRunState(resolvedRouteId, { create: false });
+        if (!run) return false;
+        return run.currentNodeId === nodeId
+            || (run.visitedNodeIds || []).includes(nodeId)
+            || (run.completedNodeIds || []).includes(nodeId)
+            || run.flags?.[nodeId] === true;
     }
 
     setStoryChoice(key, value, routeId = null) {
-        const story = this.getStoryState(routeId);
-        const resolvedRouteId = routeId || story.activeRoute || this.getCurrentCampaign();
+        const resolvedRouteId = routeId || this.getCurrentCampaign();
         if (!resolvedRouteId) {
-            this.setStoryState({
-                ...story,
-                globalChoices: { ...(story.globalChoices || {}), [key]: value }
-            });
+            this.data.world.choices[key] = value;
+            this.save();
             return;
         }
-        const routes = { ...(story.routes || {}) };
-        const bucket = routes[resolvedRouteId] || { cursorNode: null, choices: {} };
-        bucket.choices = { ...(bucket.choices || {}), [key]: value };
-        routes[resolvedRouteId] = bucket;
-        this.setStoryState({
-            ...story,
-            activeRoute: resolvedRouteId,
-            routes,
-            choices: bucket.choices,
-            globalChoices: { ...(story.globalChoices || {}), [key]: value }
-        });
+        const run = this.getRunState(resolvedRouteId);
+        run.choices[key] = value;
+        this.save();
+    }
+
+    setWorldChoice(key, value) {
+        this.data.world.choices[key] = value;
+        this.save();
     }
 
     getStoryChoice(key, fallback = null, routeId = null) {
-        const story = this.getStoryState(routeId);
-        const resolvedRouteId = routeId || story.activeRoute || this.getCurrentCampaign();
-        const routeValue = story.routes?.[resolvedRouteId]?.choices?.[key];
-        if (routeValue !== undefined) return routeValue;
-        return story.globalChoices?.[key] ?? fallback;
+        const resolvedRouteId = routeId || this.getCurrentCampaign();
+        const run = resolvedRouteId ? this.getRunState(resolvedRouteId, { create: false }) : null;
+        if (run?.choices?.[key] !== undefined) return run.choices[key];
+        return this.data.world?.choices?.[key] ?? fallback;
     }
 
     resolveStoryRouteId(routeId = null) {
-        return routeId || this.getCurrentCampaign() || this.getStoryState().activeRoute || null;
+        return routeId || this.getCurrentCampaign();
     }
 
     getSceneState(sceneName, routeId = null) {
-        const resolvedRouteId = this.resolveStoryRouteId(routeId);
-        const byRoute = this.data.session?.sceneStatesByRoute?.[resolvedRouteId];
-        if (byRoute && Object.prototype.hasOwnProperty.call(byRoute, sceneName)) {
-            return byRoute[sceneName] ?? null;
-        }
-        if (routeId) {
-            return null;
-        }
-        return this.data.session?.sceneStates?.[sceneName] ?? null;
+        const run = this.getRunState(this.resolveStoryRouteId(routeId), { create: false });
+        return run?.sceneStates?.[sceneName] ?? null;
     }
 
     setSceneState(sceneName, state, routeId = null) {
-        if (!this.data.session) this.data.session = {};
-        if (!this.data.session.sceneStates) this.data.session.sceneStates = {};
-        if (!this.data.session.sceneStatesByRoute) this.data.session.sceneStatesByRoute = {};
-        const resolvedRouteId = this.resolveStoryRouteId(routeId);
-        if (resolvedRouteId) {
-            if (!this.data.session.sceneStatesByRoute[resolvedRouteId]) {
-                this.data.session.sceneStatesByRoute[resolvedRouteId] = {};
-            }
-            this.data.session.sceneStatesByRoute[resolvedRouteId][sceneName] = state;
-        }
-        this.data.session.sceneStates[sceneName] = state;
+        const run = this.getRunState(this.resolveStoryRouteId(routeId));
+        if (!run) return;
+        run.sceneStates[sceneName] = state;
         this.save();
     }
 
@@ -297,7 +351,6 @@ export class GameState {
         const mapState = this.getSceneState('map');
         const levelUpState = this.getSceneState('levelup');
 
-        // Completed campaign stories should resume at story selection, not stale in-campaign states.
         if (this.isCampaignComplete(campaignId)) {
             return { scene: 'campaign_selection', params: {} };
         }
@@ -308,7 +361,6 @@ export class GameState {
             this.clearSceneState('narrative');
         }
 
-        // 1) Resume the scene the player most recently left.
         if (lastScene === 'map') {
             return { scene: 'map', params: { campaignId, isResume: true } };
         }
@@ -322,7 +374,6 @@ export class GameState {
             return { scene: 'levelup', params: { isResume: true } };
         }
 
-        // 2) Fallback to any valid saved state.
         if (hasValidNarrativeState) {
             return { scene: 'narrative', params: { isResume: true } };
         }
@@ -336,7 +387,6 @@ export class GameState {
             return { scene: 'levelup', params: { isResume: true } };
         }
 
-        // 3) Final fallback to lastScene.
         let resolvedLastScene = lastScene;
         if (!resolvedLastScene || excludedScenes.includes(resolvedLastScene)) {
             resolvedLastScene = campaignId ? 'map' : 'campaign_selection';
@@ -345,7 +395,6 @@ export class GameState {
             resolvedLastScene = campaignId ? 'map' : 'campaign_selection';
         }
         if (resolvedLastScene === 'tactics' && !battleState) {
-            // Never "continue" into a fresh battle when no tactics save exists.
             resolvedLastScene = campaignId ? 'map' : 'campaign_selection';
         }
 
@@ -360,50 +409,52 @@ export class GameState {
     validateAndRepairInvariants(targetScene = null, targetParams = {}) {
         let changed = false;
 
-        let currentCampaign = this.getCurrentCampaign();
-        const mapState = this.getSceneState('map');
-        const battleState = this.getSceneState('tactics');
-        const narrativeState = this.getSceneState('narrative');
-
-        // Recover campaign identity from saved map state when possible.
-        if (!currentCampaign && mapState?.currentCampaignId) {
-            this.data.session.currentCampaign = mapState.currentCampaignId;
-            currentCampaign = mapState.currentCampaignId;
+        if (!this.data.runs) {
+            this.data.runs = {};
+            changed = true;
+        }
+        if (!this.data.world) {
+            this.data.world = this.getDefaults().world;
+            changed = true;
+        }
+        if (!this.data.session) {
+            this.data.session = this.getDefaults().session;
             changed = true;
         }
 
-        // If map is requested but campaign is unknown, fall back to the default campaign.
+        let currentCampaign = this.getCurrentCampaign();
         if (targetScene === 'map' && !currentCampaign) {
-            this.data.session.currentCampaign = 'liubei';
+            this.data.activeRunId = 'liubei';
+            this.data.session.lastRunId = 'liubei';
             currentCampaign = 'liubei';
             changed = true;
         }
 
-        // Ensure map state is structurally valid.
+        const run = currentCampaign ? this.getRunState(currentCampaign) : null;
+        const mapState = run?.sceneStates?.map ?? null;
+        const battleState = run?.sceneStates?.tactics ?? null;
+        const narrativeState = run?.sceneStates?.narrative ?? null;
+
         if (mapState) {
             if (!mapState.party || mapState.party.x === undefined || mapState.party.y === undefined) {
-                this.data.session.sceneStates.map = null;
+                run.sceneStates.map = null;
                 changed = true;
             } else if (!mapState.currentCampaignId && currentCampaign) {
                 mapState.currentCampaignId = currentCampaign;
-                this.data.session.sceneStates.map = mapState;
                 changed = true;
             }
         }
 
-        // Ensure tactics state has a battle id.
         if (battleState && !battleState.battleId) {
-            this.data.session.sceneStates.tactics = null;
+            run.sceneStates.tactics = null;
             changed = true;
         }
 
-        // Ensure narrative state has basic shape.
         if (narrativeState && typeof narrativeState.currentStep !== 'number') {
-            this.data.session.sceneStates.narrative = null;
+            run.sceneStates.narrative = null;
             changed = true;
         }
 
-        // Keep currentBattleId synchronized with saved tactics state.
         if (!this.getCurrentBattleId() && battleState?.battleId) {
             this.data.session.currentBattleId = battleState.battleId;
             changed = true;
@@ -413,168 +464,52 @@ export class GameState {
             changed = true;
         }
 
-        // Defensive shape repair if older saves had partial session objects.
-        if (!this.data.session) {
-            this.data.session = { ...this.getDefaults().session };
-            changed = true;
-        } else {
-            if (!this.data.session.story) {
-                this.data.session.story = { ...this.getDefaults().session.story };
-                changed = true;
-            } else {
-                if (!this.data.session.story.routes) {
-                    this.data.session.story.routes = {};
-                    changed = true;
-                }
-                if (!this.data.session.story.globalChoices) {
-                    this.data.session.story.globalChoices = { ...(this.data.session.story.choices || {}) };
-                    changed = true;
-                }
-            }
-            if (!this.data.session.sceneStates) {
-                this.data.session.sceneStates = { ...this.getDefaults().session.sceneStates };
-                changed = true;
-            } else {
-                for (const key of Object.keys(this.getDefaults().session.sceneStates)) {
-                    if (!(key in this.data.session.sceneStates)) {
-                        this.data.session.sceneStates[key] = null;
-                        changed = true;
-                    }
-                }
-            }
-            if (!this.data.session.sceneStatesByRoute) {
-                this.data.session.sceneStatesByRoute = {};
-                changed = true;
-            }
-        }
-
         if (changed) this.save();
     }
 
-    save() {
-        localStorage.setItem(this.saveKey, JSON.stringify(this.data));
-    }
-
-    load() {
-        const saved = localStorage.getItem(this.saveKey);
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                const defaults = this.getDefaults();
-                const parsedProgress = parsed.progress || {};
-                const parsedSession = parsed.session || {};
-                const parsedSceneStates = parsedSession.sceneStates || {};
-                const parsedStory = parsedSession.story || {};
-                const parsedRouteStates = parsedSession.sceneStatesByRoute || {};
-
-                const migratedMilestones = [
-                    ...(parsed.milestones || []),
-                    ...(parsedProgress.milestones || [])
-                ];
-                if (parsed.prologueComplete) migratedMilestones.push('prologue_complete');
-                if (parsed.completedCampaigns) migratedMilestones.push(...parsed.completedCampaigns);
-
-                const uniqueMilestones = [...new Set(migratedMilestones)];
-
-                const migratedCampaignState = {
-                    ...(parsed.campaignState || {})
-                };
-                if (!migratedCampaignState.liubei) migratedCampaignState.liubei = {};
-                if (parsed.unitXP && !migratedCampaignState.liubei.unitXP) migratedCampaignState.liubei.unitXP = parsed.unitXP;
-                if (parsed.unitClasses && !migratedCampaignState.liubei.unitClasses) migratedCampaignState.liubei.unitClasses = parsed.unitClasses;
-                if (parsed.partyX !== undefined && migratedCampaignState.liubei.partyX === undefined) migratedCampaignState.liubei.partyX = parsed.partyX;
-                if (parsed.partyY !== undefined && migratedCampaignState.liubei.partyY === undefined) migratedCampaignState.liubei.partyY = parsed.partyY;
-
-                const migratedActiveRoute = parsedStory.activeRoute || parsedSession.currentCampaign || parsed.currentCampaign || null;
-                const migratedRoutes = { ...(parsedStory.routes || {}) };
-                if (migratedActiveRoute && !migratedRoutes[migratedActiveRoute]) {
-                    migratedRoutes[migratedActiveRoute] = {
-                        cursorNode: parsedStory.cursorNode || null,
-                        choices: { ...(parsedStory.choices || {}) }
-                    };
-                }
-                const activeRouteState = migratedActiveRoute ? migratedRoutes[migratedActiveRoute] : null;
-                const migratedStory = {
-                    ...defaults.session.story,
-                    ...parsedStory,
-                    activeRoute: migratedActiveRoute,
-                    cursorNode: activeRouteState?.cursorNode ?? parsedStory.cursorNode ?? null,
-                    choices: { ...(activeRouteState?.choices || parsedStory.choices || {}) },
-                    routes: migratedRoutes,
-                    globalChoices: {
-                        ...(parsedStory.globalChoices || {}),
-                        ...(parsedStory.choices || {})
-                    }
-                };
-
-                const migratedSceneStatesByRoute = { ...parsedRouteStates };
-                const routeForLegacyStates = parsedSession.currentCampaign || parsed.currentCampaign || migratedActiveRoute;
-                if (routeForLegacyStates && !migratedSceneStatesByRoute[routeForLegacyStates]) {
-                    migratedSceneStatesByRoute[routeForLegacyStates] = {
-                        map: parsedSceneStates.map ?? parsed.mapState ?? defaults.session.sceneStates.map,
-                        tactics: parsedSceneStates.tactics ?? parsed.battleState ?? defaults.session.sceneStates.tactics,
-                        narrative: parsedSceneStates.narrative ?? parsed.narrativeState ?? defaults.session.sceneStates.narrative
-                    };
-                }
-
-                this.data = {
-                    ...defaults,
-                    ...parsed,
-                    progress: {
-                        ...defaults.progress,
-                        ...parsedProgress,
-                        unlockedYears: parsedProgress.unlockedYears || parsed.unlockedYears || defaults.progress.unlockedYears,
-                        milestones: uniqueMilestones
-                    },
-                    session: {
-                        ...defaults.session,
-                        ...parsedSession,
-                        lastScene: parsedSession.lastScene || parsed.lastScene || defaults.session.lastScene,
-                        currentCampaign: parsedSession.currentCampaign || parsed.currentCampaign || defaults.session.currentCampaign,
-                        currentBattleId: parsedSession.currentBattleId || parsed.currentBattleId || defaults.session.currentBattleId,
-                        story: migratedStory,
-                        sceneStates: {
-                            ...defaults.session.sceneStates,
-                            ...parsedSceneStates,
-                            map: parsedSceneStates.map ?? parsed.mapState ?? defaults.session.sceneStates.map,
-                            tactics: parsedSceneStates.tactics ?? parsed.battleState ?? defaults.session.sceneStates.tactics,
-                            narrative: parsedSceneStates.narrative ?? parsed.narrativeState ?? defaults.session.sceneStates.narrative
-                        },
-                        sceneStatesByRoute: migratedSceneStatesByRoute
-                    },
-                    campaignState: migratedCampaignState,
-                    version: 3
-                };
-
-                // Persist migrated shape immediately so future loads are deterministic.
-                this.save();
-                return true;
-            } catch (e) {
-                console.error("Failed to parse save data", e);
-                return false;
+    addMilestone(id, routeId = null) {
+        if (!id) return;
+        const resolvedRouteId = routeId || this.getCurrentCampaign();
+        const route = STORY_ROUTES[resolvedRouteId];
+        if (resolvedRouteId) {
+            const run = this.getRunState(resolvedRouteId);
+            run.flags[id] = true;
+            if (route?.nodes?.[id]) {
+                if (run.currentNodeId !== id) run.completedNodeIds = uniqueList([...(run.completedNodeIds || []), id]);
+                run.visitedNodeIds = uniqueList([...(run.visitedNodeIds || []), id]);
             }
+        } else {
+            this.data.world.flags[id] = true;
         }
-        return false;
+        this.save();
     }
 
-    addMilestone(id) {
-        if (!this.data.progress.milestones.includes(id)) {
-            this.data.progress.milestones.push(id);
-            this.save();
-        }
+    addWorldMilestone(id) {
+        if (!id) return;
+        this.data.world.flags[id] = true;
+        this.save();
     }
 
-    removeMilestone(id) {
-        const milestones = this.data.progress?.milestones || [];
-        const next = milestones.filter(m => m !== id);
-        if (next.length !== milestones.length) {
-            this.data.progress.milestones = next;
-            this.save();
+    removeMilestone(id, routeId = null) {
+        const resolvedRouteId = routeId || this.getCurrentCampaign();
+        const run = resolvedRouteId ? this.getRunState(resolvedRouteId, { create: false }) : null;
+        if (run) {
+            delete run.flags[id];
+            run.visitedNodeIds = (run.visitedNodeIds || []).filter(nodeId => nodeId !== id);
+            run.completedNodeIds = (run.completedNodeIds || []).filter(nodeId => nodeId !== id);
         }
+        delete this.data.world.flags[id];
+        this.save();
     }
 
-    hasMilestone(id) {
-        return (this.data.progress?.milestones || []).includes(id);
+    hasMilestone(id, routeId = null) {
+        if (!id) return false;
+        const resolvedRouteId = routeId || this.getCurrentCampaign();
+        const run = resolvedRouteId ? this.getRunState(resolvedRouteId, { create: false }) : null;
+        if (run?.flags?.[id]) return true;
+        if ((run?.visitedNodeIds || []).includes(id)) return true;
+        if ((run?.completedNodeIds || []).includes(id)) return true;
+        return this.data.world?.flags?.[id] === true;
     }
 
     getChapterRouteIds(chapterId) {
@@ -585,7 +520,6 @@ export class GameState {
                 .map(route => route?.id)
                 .filter(Boolean);
         }
-        // Legacy fallback for Chapter 1 before route objects were introduced.
         if (Number(chapterId) === 1) return ['liubei'];
         return [];
     }
@@ -602,20 +536,17 @@ export class GameState {
         const id = campaignId || this.getCurrentCampaign();
         if (!id) return false;
 
+        if (this.data.world?.completedRoutes?.[id]) return true;
+
         const route = STORY_ROUTES[id];
-        if (route && route.terminalNode) {
-            if (this.hasReachedStoryNode(route.terminalNode, id)) return true;
-        }
+        if (route?.terminalNode && this.hasReachedStoryNode(route.terminalNode, id)) return true;
+        if (this.hasMilestone(`${id}_complete`, id)) return true;
 
-        // Generic naming convention for future campaigns.
-        if (this.hasMilestone(`${id}_complete`)) return true;
-
-        // Legacy/explicit completion milestones.
-        const legacyCompletionMilestone = {
+        const explicitCompletionMilestone = {
             liubei: 'chapter1_complete'
         };
-        const legacyKey = legacyCompletionMilestone[id];
-        return !!(legacyKey && this.hasMilestone(legacyKey));
+        const key = explicitCompletionMilestone[id];
+        return !!(key && this.hasMilestone(key, id));
     }
 
     hasSave() {
@@ -625,11 +556,9 @@ export class GameState {
     reset() {
         this.data = this.getDefaults();
         localStorage.removeItem(this.saveKey);
-        // Save the reset state to ensure it's persisted
         this.save();
     }
 
-    // Convenience getters/setters
     set(key, value) {
         const sceneName = this.getLegacySceneName(key);
         if (sceneName) {
@@ -649,12 +578,17 @@ export class GameState {
             return;
         }
         if (key === 'milestones') {
-            this.data.progress.milestones = value || [];
+            const run = this.getRunState();
+            if (run) {
+                run.flags = Object.fromEntries((value || []).map(id => [id, true]));
+            } else {
+                this.data.world.flags = Object.fromEntries((value || []).map(id => [id, true]));
+            }
             this.save();
             return;
         }
         if (key === 'unlockedYears') {
-            this.data.progress.unlockedYears = value || ['184'];
+            this.data.world.unlockedYears = value || ['184'];
             this.save();
             return;
         }
@@ -670,8 +604,11 @@ export class GameState {
         if (key === 'lastScene') return this.getLastScene();
         if (key === 'currentCampaign') return this.getCurrentCampaign();
         if (key === 'currentBattleId') return this.getCurrentBattleId();
-        if (key === 'milestones') return this.data.progress?.milestones;
-        if (key === 'unlockedYears') return this.data.progress?.unlockedYears;
+        if (key === 'milestones') {
+            const run = this.getRunState(null, { create: false });
+            return Object.keys(run?.flags || {});
+        }
+        if (key === 'unlockedYears') return this.data.world?.unlockedYears;
         return this.data[key];
     }
 }

@@ -1238,12 +1238,14 @@ export class MapScene extends BaseScene {
                 // Called when cage is broken and Lu Zhi is freed
                 this.manager.gameState.setStoryChoice('luzhi_outcome', 'freed');
                 this.manager.gameState.addMilestone('freed_luzhi');
+                this.manager.gameState.addWorldMilestone('freed_luzhi');
                 this.continueAfterEscortBattle();
             },
             onVictory: () => {
                 // Fallback for if they kill all enemies without breaking the cage
                 this.manager.gameState.setStoryChoice('luzhi_outcome', 'freed');
                 this.manager.gameState.addMilestone('freed_luzhi');
+                this.manager.gameState.addWorldMilestone('freed_luzhi');
                 this.continueAfterEscortBattle();
             }
         });
