@@ -130,6 +130,8 @@ function drawBoard() {
 }
 
 function drawPiece(color, isOwl, vertical) {
+    if (isOwl) return drawOwl(color);
+
     const w = vertical ? 10 : 16;
     const h = vertical ? 16 : 10;
     const canvas = createCanvas(w, h);
@@ -137,8 +139,7 @@ function drawPiece(color, isOwl, vertical) {
     ctx.imageSmoothingEnabled = false;
     const fill = color === 'white' ? '#e3d6bd' : '#443229';
     const hi = color === 'white' ? '#fff0ce' : '#6a4b37';
-    const shadow = color === 'white' ? '#9d7c57' : '#201713';
-    ctx.fillStyle = shadow;
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.42)';
     ctx.fillRect(2, 2, w - 2, h - 2);
     ctx.fillStyle = fill;
     ctx.fillRect(0, 0, w - 2, h - 2);
@@ -153,6 +154,96 @@ function drawPiece(color, isOwl, vertical) {
         ctx.fillRect(cx - 2, cy - 2, 5, 5);
         ctx.fillRect(cx - 1, cy - 5, 3, 2);
     }
+    return canvas;
+}
+
+function drawOwl(color) {
+    const w = 10;
+    const h = 18;
+    const canvas = createCanvas(w, h);
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+    const fill = color === 'white' ? '#e3d6bd' : '#443229';
+    const side = color === 'white' ? '#b7a88d' : '#2b1d18';
+    const hi = color === 'white' ? '#fff0ce' : '#6a4b37';
+    const mark = color === 'white' ? '#b42318' : '#d5b466';
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.42)';
+    ctx.fillRect(3, 3, 7, 15);
+
+    // Upright cuboid body.
+    ctx.fillStyle = fill;
+    ctx.fillRect(1, 0, 7, 15);
+    ctx.fillStyle = side;
+    ctx.fillRect(6, 2, 2, 13);
+    ctx.fillStyle = hi;
+    ctx.fillRect(2, 2, 4, 2);
+    ctx.fillStyle = '#1a110c';
+    ctx.strokeRect(0.5, 0.5, 7, 14);
+
+    // Top lip and Owl mark make this read as the promoted standing piece.
+    ctx.fillStyle = mark;
+    ctx.fillRect(3, 5, 3, 4);
+    ctx.fillRect(4, 3, 2, 2);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.28)';
+    ctx.fillRect(3, 1, 3, 1);
+
+    ctx.fillStyle = '#1a110c';
+    ctx.fillRect(2, 15, 6, 2);
+    return canvas;
+}
+
+function drawCup(includeSticks = true) {
+    const canvas = createCanvas(42, 34);
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+    ctx.fillRect(9, 8, 27, 24);
+
+    if (includeSticks) {
+        // Sticks tucked in the cup.
+        [
+            [11, 5, 18, 20],
+            [18, 3, 20, 20],
+            [26, 4, 22, 20],
+            [31, 7, 25, 20]
+        ].forEach(([x1, y1, x2, y2], i) => {
+            ctx.strokeStyle = i % 2 === 0 ? '#d4ab68' : '#9c7044';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(x1 + 0.5, y1 + 0.5);
+            ctx.lineTo(x2 + 0.5, y2 + 0.5);
+            ctx.stroke();
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.38)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x1 + 2.5, y1 + 0.5);
+            ctx.lineTo(x2 + 2.5, y2 + 0.5);
+            ctx.stroke();
+        });
+    }
+
+    // Cup body.
+    ctx.fillStyle = '#754125';
+    ctx.fillRect(8, 14, 26, 15);
+    ctx.fillStyle = '#9b5b32';
+    ctx.fillRect(10, 12, 22, 5);
+    ctx.fillStyle = '#d09a58';
+    ctx.fillRect(12, 13, 17, 2);
+    ctx.fillStyle = '#4a2819';
+    ctx.fillRect(10, 27, 22, 3);
+    ctx.strokeStyle = '#1e130d';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(8.5, 13.5, 25, 15);
+
+    // Small handle lip.
+    ctx.strokeStyle = '#1e130d';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(32.5, 17.5, 5, 8);
+    ctx.fillStyle = '#754125';
+    ctx.fillRect(33, 18, 3, 6);
+
     return canvas;
 }
 
@@ -195,3 +286,5 @@ writePng('stick_marked_h.png', drawStick(true, false));
 writePng('stick_unmarked_h.png', drawStick(false, false));
 writePng('stick_marked_v.png', drawStick(true, true));
 writePng('stick_unmarked_v.png', drawStick(false, true));
+writePng('cup.png', drawCup());
+writePng('cup_empty.png', drawCup(false));

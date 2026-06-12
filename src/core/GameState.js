@@ -2,7 +2,7 @@ import { STORY_ROUTES, buildParentMap } from '../data/StoryGraph.js';
 import { CHAPTERS } from '../data/Chapters.js';
 
 const SAVE_VERSION = 4;
-const SCENE_STATE_KEYS = ['map', 'tactics', 'narrative', 'levelup'];
+const SCENE_STATE_KEYS = ['map', 'tactics', 'narrative', 'levelup', 'liubo'];
 
 function createSceneStates() {
     return Object.fromEntries(SCENE_STATE_KEYS.map(key => [key, null]));
@@ -338,6 +338,32 @@ export class GameState {
         this.setSceneState(sceneName, null, routeId);
     }
 
+    getCampaignLiuboRecord(routeId = null) {
+        const run = this.getRunState(routeId);
+        if (!run) return { played: 0, wins: 0, losses: 0, activities: {} };
+        if (!run.state.liuboRecord) {
+            run.state.liuboRecord = { played: 0, wins: 0, losses: 0, activities: {} };
+        }
+        if (!run.state.liuboRecord.activities) run.state.liuboRecord.activities = {};
+        return run.state.liuboRecord;
+    }
+
+    recordCampaignLiuboResult(activityId, won, routeId = null) {
+        const record = this.getCampaignLiuboRecord(routeId);
+        record.played = (record.played || 0) + 1;
+        if (won) record.wins = (record.wins || 0) + 1;
+        else record.losses = (record.losses || 0) + 1;
+        if (activityId) {
+            const activity = record.activities[activityId] || { played: 0, wins: 0, losses: 0 };
+            activity.played = (activity.played || 0) + 1;
+            if (won) activity.wins = (activity.wins || 0) + 1;
+            else activity.losses = (activity.losses || 0) + 1;
+            record.activities[activityId] = activity;
+        }
+        this.save();
+        return record;
+    }
+
     resolveContinueTarget(options = {}) {
         const {
             validateNarrativeState = () => true,
@@ -350,6 +376,7 @@ export class GameState {
         const battleState = this.getSceneState('tactics');
         const mapState = this.getSceneState('map');
         const levelUpState = this.getSceneState('levelup');
+        const liuboState = this.getSceneState('liubo');
 
         if (this.isCampaignComplete(campaignId)) {
             return { scene: 'campaign_selection', params: {} };
@@ -359,6 +386,10 @@ export class GameState {
         if (narrativeState && !hasValidNarrativeState) {
             console.warn('Clearing invalid narrative state', narrativeState);
             this.clearSceneState('narrative');
+        }
+
+        if (liuboState) {
+            return { scene: 'liubo', params: { isResume: true } };
         }
 
         if (lastScene === 'map') {

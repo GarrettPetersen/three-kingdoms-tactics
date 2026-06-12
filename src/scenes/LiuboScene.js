@@ -12,16 +12,21 @@ import {
     chooseAiMove,
     createLiuboState,
     getAllLegalMoves,
+    getLegalMovesForPiece,
     getPiece,
     getPlayerPieces,
+    rollLiuboSticks,
     selectLiuboPiece
 } from '../minigames/liubo/LiuboRules.js';
 
 const BOARD_DRAW_SIZE = 236;
 const PIECE_W = 16;
 const PIECE_H = 10;
+const OWL_W = 10;
+const OWL_H = 18;
 const MOVE_SEGMENT_MS = 150;
 const MOVE_MIN_MS = 260;
+const ROLL_ANIMATION_MS = 760;
 
 export class LiuboScene extends BaseScene {
     constructor() {
@@ -30,7 +35,20 @@ export class LiuboScene extends BaseScene {
         this.pieceRects = [];
         this.moveRects = [];
         this.rollRect = null;
+        this.rollAnimation = null;
         this.returnRect = null;
+        this.confirmReturn = false;
+        this.confirmYesRect = null;
+        this.confirmNoRect = null;
+        this.resultPlayAgainRect = null;
+        this.resultReturnRect = null;
+        this.resultContinueRect = null;
+        this.startOptions = {};
+        this.mode = 'menu';
+        this.activityId = null;
+        this.resultRecorded = false;
+        this.previousActivityPlays = 0;
+        this.campaignComplete = false;
         this.aiTimer = 0;
         this.lastTime = 0;
         this.moveAnimations = [];
@@ -38,13 +56,32 @@ export class LiuboScene extends BaseScene {
     }
 
     enter(params = {}) {
-        assets.playMusic('campaign', 0.25);
-        this.state = createLiuboState({
-            humanPlayer: params.humanPlayer || 'white',
-            firstPlayer: params.firstPlayer || 'white'
-        });
+        assets.playMusic('liubo', 0.35);
+        const savedState = params.isResume ? this.manager.gameState.getSceneState('liubo') : null;
+        if (savedState) {
+            this.restoreState(savedState);
+        } else {
+            this.mode = params.mode || 'menu';
+            this.activityId = params.activityId || null;
+            this.resultRecorded = false;
+            this.campaignComplete = false;
+            const record = this.mode === 'campaign' ? this.manager.gameState.getCampaignLiuboRecord() : null;
+            this.previousActivityPlays = record?.activities?.[this.activityId]?.played || 0;
+            this.startOptions = {
+                humanPlayer: params.humanPlayer || 'white',
+                firstPlayer: params.firstPlayer || 'white'
+            };
+            this.state = createLiuboState(this.startOptions);
+            this.saveState();
+        }
         this.pieceRects = [];
         this.moveRects = [];
+        this.confirmReturn = false;
+        this.confirmYesRect = null;
+        this.confirmNoRect = null;
+        this.resultPlayAgainRect = null;
+        this.resultReturnRect = null;
+        this.resultContinueRect = null;
         this.aiTimer = 0;
         this.lastTime = 0;
         this.moveAnimations = [];
@@ -56,6 +93,9 @@ export class LiuboScene extends BaseScene {
         this.lastTime = timestamp;
         this.updateMoveAnimations(dt);
         this.updateFloatTexts(dt);
+        this.updateRollAnimation(dt);
+        if (this.confirmReturn) return;
+        if (this.rollAnimation) return;
         if (this.moveAnimations.length) return;
         if (this.state.winner) return;
         if (this.state.currentPlayer !== this.state.humanPlayer) {
@@ -69,8 +109,7 @@ export class LiuboScene extends BaseScene {
 
     stepAi() {
         if (this.state.phase === 'roll') {
-            beginTurnRoll(this.state);
-            assets.playSound('ui_click', 0.35);
+            if (this.startStickRoll()) assets.playSound('ui_click', 0.35);
             return;
         }
         if (this.state.phase === 'choose_piece') {
@@ -97,6 +136,8 @@ export class LiuboScene extends BaseScene {
         this.renderFloatTexts(ctx);
         this.renderControls(ctx, canvas, layout);
         this.renderLog(ctx, canvas, layout);
+        if (this.state.winner) this.renderResultOverlay(ctx, canvas);
+        if (this.confirmReturn) this.renderReturnConfirm(ctx, canvas);
         ctx.restore();
     }
 
@@ -145,6 +186,11 @@ export class LiuboScene extends BaseScene {
             align: 'center'
         });
 
+        if (this.isCampaignMode()) {
+            this.returnRect = null;
+            return;
+        }
+
         this.returnRect = { x: canvas.width - 68, y: 1, w: 48, h: 16 };
         ctx.fillStyle = 'rgba(0,0,0,0.4)';
         ctx.fillRect(this.returnRect.x, this.returnRect.y, this.returnRect.w, this.returnRect.h);
@@ -184,6 +230,7 @@ export class LiuboScene extends BaseScene {
         this.pieceRects = [];
         const stacks = new Map();
         const active = this.state.pieces.filter(piece => piece.state === 'board');
+        const selectablePieces = this.getSelectablePieceIds();
         active.forEach(piece => {
             if (this.moveAnimations.some(animation => animation.pieceId === piece.id)) return;
             const key = String(piece.spaceId);
@@ -195,19 +242,23 @@ export class LiuboScene extends BaseScene {
             const offsetY = Math.floor(count / 3) * 5 - 2;
             const selected = this.state.selectedPieceId === piece.id;
             const img = this.getPieceImage(piece, Math.abs(pos.x - (this.boardLayout?.boardX || 0) - 118) < Math.abs(pos.y - (this.boardLayout?.boardY || 0) - 118));
-            const x = Math.floor(pos.x - PIECE_W / 2 + offsetX);
-            const y = Math.floor(pos.y - PIECE_H / 2 + offsetY);
+            const dims = this.getPieceDimensions(piece, img);
+            const x = Math.floor(pos.x - dims.w / 2 + offsetX);
+            const y = Math.floor(pos.y + PIECE_H / 2 - dims.h + offsetY);
+            if (selectablePieces.has(piece.id)) {
+                this.drawActionGlow(ctx, x + dims.w / 2, y + dims.h / 2, piece.player === 'white' ? '#fff0a4' : '#d6a35d');
+            }
             if (selected) {
                 ctx.fillStyle = 'rgba(255,255,255,0.35)';
-                ctx.fillRect(x - 3, y - 3, PIECE_W + 6, PIECE_H + 6);
+                ctx.fillRect(x - 3, y - 3, dims.w + 6, dims.h + 6);
             }
             if (img) {
                 ctx.drawImage(img, x, y);
             } else {
                 ctx.fillStyle = piece.player === 'white' ? '#eee0c7' : '#3d2c24';
-                ctx.fillRect(x, y, PIECE_W, PIECE_H);
+                ctx.fillRect(x, y, dims.w, dims.h);
             }
-            this.pieceRects.push({ x: x - 3, y: y - 3, w: PIECE_W + 6, h: PIECE_H + 6, pieceId: piece.id });
+            this.pieceRects.push({ x: x - 3, y: y - 3, w: dims.w + 6, h: dims.h + 6, pieceId: piece.id });
         });
     }
 
@@ -220,24 +271,16 @@ export class LiuboScene extends BaseScene {
         ctx.strokeStyle = '#60472c';
         ctx.strokeRect(panelX + 0.5, panelY + 0.5, panelW - 1, layout.panelH - 1);
 
-        this.renderSticks(ctx, panelX, panelW, panelY + 14);
-        this.renderPieceBenches(ctx, panelX, panelW, panelY + 48, layout.portrait);
+        this.renderPieceBenches(ctx, panelX, panelW, panelY + 36, layout.portrait);
 
-        this.rollRect = { x: Math.floor(panelX + panelW / 2 - 50), y: panelY + (layout.portrait ? 108 : 174), w: 100, h: 22 };
+        this.rollRect = { x: Math.floor(panelX + panelW / 2 - (layout.portrait ? 76 : 74)), y: panelY + (layout.portrait ? 101 : 168), w: 48, h: 34 };
         const canRoll = this.state.phase === 'roll' && this.state.currentPlayer === this.state.humanPlayer && !this.state.winner;
-        ctx.fillStyle = canRoll ? '#6d3d22' : '#3a2b22';
-        ctx.fillRect(this.rollRect.x, this.rollRect.y, this.rollRect.w, this.rollRect.h);
-        ctx.strokeStyle = canRoll ? '#d6a35d' : '#665448';
-        ctx.strokeRect(this.rollRect.x + 0.5, this.rollRect.y + 0.5, this.rollRect.w - 1, this.rollRect.h - 1);
-        this.drawPixelText(ctx, this.state.winner ? getLocalizedText(UI_TEXT['NEW GAME']) : getLocalizedText(UI_TEXT['ROLL STICKS']), this.rollRect.x + this.rollRect.w / 2, this.rollRect.y + 7, {
-            color: canRoll || this.state.winner ? '#ffd77a' : '#8c7967',
-            font: '8px Silkscreen',
-            align: 'center'
-        });
+        this.renderRollCup(ctx, canRoll);
+        this.renderSticks(ctx, layout);
 
         if (this.state.phase === 'choose_piece') {
             const moves = getAllLegalMoves(this.state, this.state.currentPlayer).length;
-            this.drawPixelText(ctx, `${moves}`, this.rollRect.x + this.rollRect.w / 2, this.rollRect.y + 29, {
+            this.drawPixelText(ctx, `${moves}`, this.rollRect.x + this.rollRect.w / 2, this.rollRect.y + 36, {
                 color: '#9ebf92',
                 font: '8px Tiny5',
                 align: 'center'
@@ -245,27 +288,131 @@ export class LiuboScene extends BaseScene {
         }
     }
 
-    renderSticks(ctx, panelX, panelW, y) {
-        const startX = Math.floor(panelX + panelW / 2 - 82);
+    renderRollCup(ctx, canRoll) {
+        const isRolling = !!this.rollAnimation;
+        const cup = assets.getImage(isRolling ? 'liubo_cup_empty' : 'liubo_cup') || assets.getImage('liubo_cup');
+        const cx = this.rollRect.x + this.rollRect.w / 2;
+        const cy = this.rollRect.y + this.rollRect.h / 2;
+        const pulse = getUiPulse();
+        if (canRoll || isRolling) {
+            ctx.save();
+            ctx.globalAlpha = isRolling ? 0.5 : 0.22 + pulse * 0.24;
+            ctx.fillStyle = '#ffd77a';
+            ctx.fillRect(this.rollRect.x - 4, this.rollRect.y - 3, this.rollRect.w + 8, this.rollRect.h + 6);
+            ctx.restore();
+        }
+
+        const shake = isRolling ? Math.sin(this.rollAnimation.age * 0.045) * 3 : 0;
+        const lift = isRolling ? Math.sin(this.rollAnimation.age * 0.028) * 2 : 0;
+        ctx.save();
+        ctx.globalAlpha = canRoll || isRolling ? 1 : 0.58;
+        if (cup) {
+            ctx.drawImage(cup, Math.floor(cx - cup.width / 2 + shake), Math.floor(cy - cup.height / 2 + lift));
+        } else {
+            ctx.fillStyle = '#754125';
+            ctx.fillRect(Math.floor(cx - 15 + shake), Math.floor(cy - 10 + lift), 30, 22);
+        }
+        ctx.restore();
+
+        if (isRolling) this.renderRollingStickBurst(ctx, cx, cy);
+    }
+
+    renderRollingStickBurst(ctx, cx, cy) {
+        const progress = Math.max(0, Math.min(1, this.rollAnimation.age / ROLL_ANIMATION_MS));
+        const eased = easeInOut(progress);
+        const launchX = cx + 10;
+        const launchY = cy - 6;
         for (let i = 0; i < 6; i++) {
-            const marked = (this.state.sticks[i] || 2) === 3;
-            const img = assets.getImage(marked ? 'liubo_stick_marked_h' : 'liubo_stick_unmarked_h');
-            const x = startX + i * 28;
-            if (img) ctx.drawImage(img, x, y);
-            else {
-                ctx.fillStyle = marked ? '#c79a58' : '#8f6940';
-                ctx.fillRect(x, y, 28, 5);
-            }
+            const target = this.getStickLandingPoint(i);
+            const spin = (1.7 + i * 0.17) * (i % 2 ? -1 : 1);
+            const arc = Math.sin(progress * Math.PI) * (16 + (i % 3) * 3);
+            const wobble = Math.sin(progress * Math.PI * 5 + i) * (1 - eased) * 3;
+            const x = launchX + (target.x - launchX) * eased + wobble;
+            const y = launchY + (target.y - launchY) * eased - arc;
+            const rotation = target.rotation + (1 - eased) * spin;
+            this.drawLiuboStick(ctx, x, y, rotation, this.rollAnimation.sticks[i] === 3, i >= 3);
+        }
+    }
+
+    renderSticks(ctx, layout) {
+        if (this.rollAnimation) {
+            const labelX = this.rollRect.x + this.rollRect.w / 2 + (layout.portrait ? 61 : 64);
+            this.drawPixelText(ctx, '- / -', labelX, this.rollRect.y + 30, {
+                color: '#8b7559',
+                font: '8px Silkscreen',
+                align: 'center'
+            });
+            return;
+        }
+
+        const sticks = this.rollAnimation?.sticks || this.state.sticks || [];
+        if (!sticks.length && !this.rollAnimation) {
+            const cx = this.rollRect.x + this.rollRect.w / 2 + 62;
+            const cy = this.rollRect.y - 6;
+            this.drawPixelText(ctx, '- / -', cx, cy + 29, {
+                color: '#8b7559',
+                font: '8px Silkscreen',
+                align: 'center'
+            });
+            return;
+        }
+
+        for (let i = 0; i < 6; i++) {
+            const target = this.getStickLandingPoint(i);
+            this.drawLiuboStick(ctx, target.x, target.y, target.rotation, (sticks[i] || 2) === 3, i >= 3);
         }
         const values = this.state.moveValues?.length ? this.state.moveValues.join(' / ') : '- / -';
-        this.drawPixelText(ctx, values, panelX + panelW / 2, y + 12, {
+        const labelX = this.rollRect.x + this.rollRect.w / 2 + (layout.portrait ? 61 : 64);
+        this.drawPixelText(ctx, values, labelX, this.rollRect.y + 30, {
             color: '#ffd77a',
             font: '8px Silkscreen',
             align: 'center'
         });
     }
 
+    getStickLandingPoint(i) {
+        const cx = this.rollRect.x + this.rollRect.w / 2;
+        const baseX = cx + 40;
+        const baseY = this.rollRect.y - 10;
+        const points = [
+            { x: baseX - 5, y: baseY + 2, rotation: -0.18 },
+            { x: baseX + 16, y: baseY + 8, rotation: 0.08 },
+            { x: baseX + 37, y: baseY + 3, rotation: -0.1 },
+            { x: baseX + 1, y: baseY + 16, rotation: 0.14 },
+            { x: baseX + 22, y: baseY + 21, rotation: -0.06 },
+            { x: baseX + 43, y: baseY + 15, rotation: 0.18 }
+        ];
+        return points[i] || points[0];
+    }
+
+    drawLiuboStick(ctx, x, y, rotation, faceUp, darkSet) {
+        const w = 22;
+        const h = 5;
+        const body = darkSet ? '#4b3127' : '#eee3c8';
+        const edge = darkSet ? '#1a100d' : '#5a4128';
+        const high = faceUp ? (darkSet ? '#8a6047' : '#fff4cd') : (darkSet ? '#2b1c17' : '#b9965f');
+        const mark = faceUp ? (darkSet ? '#f0d49c' : '#4b251a') : null;
+        ctx.save();
+        ctx.translate(Math.floor(x), Math.floor(y));
+        ctx.rotate(rotation);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.38)';
+        ctx.fillRect(-w / 2 + 2, -h / 2 + 2, w, h);
+        ctx.fillStyle = body;
+        ctx.fillRect(-w / 2, -h / 2, w, h);
+        ctx.fillStyle = high;
+        ctx.fillRect(-w / 2 + 2, -h / 2 + 1, w - 6, 2);
+        ctx.strokeStyle = edge;
+        ctx.strokeRect(-w / 2 + 0.5, -h / 2 + 0.5, w - 1, h - 1);
+        if (mark) {
+            ctx.fillStyle = mark;
+            ctx.fillRect(-5, -1, 2, 2);
+            ctx.fillRect(5, -1, 2, 2);
+        }
+        ctx.restore();
+    }
+
     renderPieceBenches(ctx, panelX, panelW, y, portrait) {
+        const selectablePieces = this.getSelectablePieceIds();
         for (const player of ['white', 'black']) {
             const x = portrait
                 ? (player === 'white' ? panelX + 14 : panelX + panelW - 88)
@@ -303,17 +450,23 @@ export class LiuboScene extends BaseScene {
                 const px = x + 9 + (i % 3) * 21;
                 const py = blockY + lineGap * 3 + 3 + Math.floor(i / 3) * 13;
                 const selected = this.state.selectedPieceId === piece.id;
+                if (selectablePieces.has(piece.id)) {
+                    this.drawActionGlow(ctx, px + PIECE_W / 2, py + PIECE_H / 2, player === 'white' ? '#fff0a4' : '#d6a35d');
+                }
                 if (selected) {
                     ctx.fillStyle = 'rgba(255,255,255,0.35)';
                     ctx.fillRect(px - 2, py - 2, 20, 14);
                 }
                 const img = this.getPieceImage(piece, false);
-                if (img) ctx.drawImage(img, px, py);
+                const dims = this.getPieceDimensions(piece, img);
+                const drawX = Math.floor(px + PIECE_W / 2 - dims.w / 2);
+                const drawY = Math.floor(py + PIECE_H - dims.h);
+                if (img) ctx.drawImage(img, drawX, drawY);
                 else {
                     ctx.fillStyle = player === 'white' ? '#eee0c7' : '#3d2c24';
-                    ctx.fillRect(px, py, PIECE_W, PIECE_H);
+                    ctx.fillRect(drawX, drawY, dims.w, dims.h);
                 }
-                this.pieceRects.push({ x: px - 2, y: py - 2, w: 20, h: 14, pieceId: piece.id });
+                this.pieceRects.push({ x: drawX - 2, y: drawY - 2, w: dims.w + 4, h: dims.h + 4, pieceId: piece.id });
             });
         }
     }
@@ -332,6 +485,101 @@ export class LiuboScene extends BaseScene {
         });
     }
 
+    renderResultOverlay(ctx, canvas) {
+        const won = this.state.winner === this.state.humanPlayer;
+        const w = Math.min(184, canvas.width - 28);
+        const h = 104;
+        const x = Math.floor((canvas.width - w) / 2);
+        const y = Math.floor((canvas.height - h) / 2);
+        const pulse = getUiPulse();
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(8, 6, 5, 0.78)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = won ? '#2b2114' : '#241816';
+        ctx.fillRect(x, y, w, h);
+        ctx.strokeStyle = won ? '#ffd77a' : '#d96c55';
+        ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+        ctx.globalAlpha = 0.18 + pulse * 0.1;
+        ctx.fillStyle = won ? '#ffe254' : '#ff8a70';
+        ctx.fillRect(x + 5, y + 5, w - 10, 19);
+        ctx.globalAlpha = 1;
+
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT[won ? 'YOU WIN' : 'YOU LOSE']), x + w / 2, y + 11, {
+            color: won ? '#ffe254' : '#ff8a70',
+            font: '16px Silkscreen',
+            align: 'center'
+        });
+        const scoreText = `${this.getPlayerLabel('white')} ${this.state.scores.white}  ${this.getPlayerLabel('black')} ${this.state.scores.black}`;
+        this.drawPixelText(ctx, scoreText, x + w / 2, y + 39, {
+            color: '#e8d7b7',
+            font: '8px Silkscreen',
+            align: 'center'
+        });
+        this.drawPixelText(ctx, fitText(this.state.message || '', getCurrentLanguage() === 'zh' ? 13 : 22), x + w / 2, y + 53, {
+            color: '#c8b08d',
+            font: '8px Tiny5',
+            align: 'center'
+        });
+
+        if (this.isCampaignMode()) {
+            this.resultPlayAgainRect = null;
+            this.resultReturnRect = null;
+            this.resultContinueRect = { x: Math.floor(x + w / 2 - 40), y: y + 72, w: 80, h: 17 };
+            this.drawDialogButton(ctx, this.resultContinueRect, getLocalizedText(UI_TEXT['CONTINUE']), '#744226', '#ffd77a');
+        } else {
+            this.resultContinueRect = null;
+            this.resultPlayAgainRect = { x: x + 16, y: y + 72, w: 70, h: 17 };
+            this.resultReturnRect = { x: x + w - 86, y: y + 72, w: 70, h: 17 };
+            this.drawDialogButton(ctx, this.resultPlayAgainRect, getLocalizedText(UI_TEXT['PLAY AGAIN']), '#744226', '#ffd77a');
+            this.drawDialogButton(ctx, this.resultReturnRect, getLocalizedText(UI_TEXT['RETURN']), '#1e1815', '#d6c299');
+        }
+        ctx.restore();
+    }
+
+    renderReturnConfirm(ctx, canvas) {
+        const w = Math.min(178, canvas.width - 24);
+        const h = 76;
+        const x = Math.floor((canvas.width - w) / 2);
+        const y = Math.floor((canvas.height - h) / 2);
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(8, 6, 5, 0.76)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#221815';
+        ctx.fillRect(x, y, w, h);
+        ctx.strokeStyle = '#ffd77a';
+        ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['END LIUBO GAME?']), x + w / 2, y + 12, {
+            color: '#ffe254',
+            font: '8px Silkscreen',
+            align: 'center'
+        });
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['CURRENT GAME WILL BE LOST']), x + w / 2, y + 29, {
+            color: '#c8b08d',
+            font: '8px Tiny5',
+            align: 'center'
+        });
+
+        this.confirmYesRect = { x: x + 22, y: y + 48, w: 52, h: 16 };
+        this.confirmNoRect = { x: x + w - 74, y: y + 48, w: 52, h: 16 };
+        this.drawDialogButton(ctx, this.confirmYesRect, getLocalizedText(UI_TEXT['YES']), '#5f2f25', '#fff0a4');
+        this.drawDialogButton(ctx, this.confirmNoRect, getLocalizedText(UI_TEXT['NO']), '#1e1815', '#d6c299');
+        ctx.restore();
+    }
+
+    drawDialogButton(ctx, rect, label, fill, color) {
+        ctx.fillStyle = fill;
+        ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+        ctx.strokeStyle = color;
+        ctx.strokeRect(rect.x + 0.5, rect.y + 0.5, rect.w - 1, rect.h - 1);
+        this.drawPixelText(ctx, fitText(label, getCurrentLanguage() === 'zh' ? 5 : 10), rect.x + rect.w / 2, rect.y + 5, {
+            color,
+            font: '8px Silkscreen',
+            align: 'center'
+        });
+    }
+
     boardToScreen(point) {
         if (!point) return null;
         const scale = BOARD_DRAW_SIZE / LIUBO_BOARD_PADDED_SIZE;
@@ -340,6 +588,34 @@ export class LiuboScene extends BaseScene {
             x: Math.round(layout.boardX + point.x * scale),
             y: Math.round(layout.boardY + point.y * scale)
         };
+    }
+
+    getSelectablePieceIds() {
+        if (
+            this.state.phase !== 'choose_piece'
+            || this.state.currentPlayer !== this.state.humanPlayer
+            || this.moveAnimations.length
+        ) {
+            return new Set();
+        }
+        const ids = new Set();
+        getPlayerPieces(this.state, this.state.currentPlayer).forEach(piece => {
+            if (getLegalMovesForPiece(this.state, piece).length) ids.add(piece.id);
+        });
+        return ids;
+    }
+
+    drawActionGlow(ctx, cx, cy, color) {
+        const pulse = getUiPulse();
+        ctx.save();
+        ctx.globalAlpha = 0.35 + pulse * 0.35;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(Math.floor(cx - 11) + 0.5, Math.floor(cy - 8) + 0.5, 21, 15);
+        ctx.globalAlpha = 0.16 + pulse * 0.12;
+        ctx.fillStyle = color;
+        ctx.fillRect(Math.floor(cx - 10), Math.floor(cy - 7), 20, 14);
+        ctx.restore();
     }
 
     getPieceScreenCenter(piece) {
@@ -372,6 +648,7 @@ export class LiuboScene extends BaseScene {
         };
         const result = applyLiuboMove(this.state, move);
         if (!result) return false;
+        this.saveState();
 
         const destination = route[route.length - 1] || this.boardToScreen(getBoardPointPosition(move.toSpaceId));
         if (destination && (result.scoredFish || result.captured?.length)) {
@@ -398,6 +675,31 @@ export class LiuboScene extends BaseScene {
             });
         }
         return true;
+    }
+
+    startStickRoll() {
+        if (this.rollAnimation || this.state.phase !== 'roll' || this.state.winner) return false;
+        const rolled = rollLiuboSticks();
+        this.rollAnimation = {
+            age: 0,
+            seed: Math.floor(Math.random() * 1000),
+            sticks: rolled.sticks,
+            moveValues: rolled.moveValues
+        };
+        return true;
+    }
+
+    updateRollAnimation(dt) {
+        if (!this.rollAnimation) return;
+        this.rollAnimation.age += dt;
+        if (this.rollAnimation.age < ROLL_ANIMATION_MS) return;
+        const rolled = {
+            sticks: this.rollAnimation.sticks,
+            moveValues: this.rollAnimation.moveValues
+        };
+        this.rollAnimation = null;
+        beginTurnRoll(this.state, Math.random, rolled);
+        this.saveState();
     }
 
     updateMoveAnimations(dt) {
@@ -439,14 +741,15 @@ export class LiuboScene extends BaseScene {
             const point = sampleRoute(animation.route, animation.age / animation.duration);
             const hop = Math.sin(Math.min(1, animation.age / animation.duration) * Math.PI) * animation.hop;
             const img = this.getPieceImage(animation.piece, Math.abs(point.x - (this.boardLayout?.boardX || 0) - 118) < Math.abs(point.y - (this.boardLayout?.boardY || 0) - 118));
-            const x = Math.floor(point.x - PIECE_W / 2);
-            const y = Math.floor(point.y - PIECE_H / 2 - hop);
+            const dims = this.getPieceDimensions(animation.piece, img);
+            const x = Math.floor(point.x - dims.w / 2);
+            const y = Math.floor(point.y + PIECE_H / 2 - dims.h - hop);
             ctx.save();
             ctx.globalAlpha = 0.95;
             if (img) ctx.drawImage(img, x, y);
             else {
                 ctx.fillStyle = animation.piece.player === 'white' ? '#eee0c7' : '#3d2c24';
-                ctx.fillRect(x, y, PIECE_W, PIECE_H);
+                ctx.fillRect(x, y, dims.w, dims.h);
             }
             ctx.restore();
         });
@@ -468,8 +771,14 @@ export class LiuboScene extends BaseScene {
 
     getPieceImage(piece, vertical) {
         const type = piece.isOwl ? 'owl' : 'piece';
-        const orientation = vertical ? 'v' : 'h';
+        const orientation = piece.isOwl && vertical ? 'v' : 'h';
         return assets.getImage(`liubo_${type}_${piece.player}_${orientation}`);
+    }
+
+    getPieceDimensions(piece, img = null) {
+        if (img) return { w: img.width, h: img.height };
+        if (piece?.isOwl) return { w: OWL_W, h: OWL_H };
+        return { w: PIECE_W, h: PIECE_H };
     }
 
     getPlayerLabel(player) {
@@ -489,21 +798,46 @@ export class LiuboScene extends BaseScene {
 
     handleInput(e) {
         const { x, y } = this.getMousePos(e);
+        if (this.confirmReturn) {
+            if (this.confirmYesRect && pointInRect(x, y, this.confirmYesRect)) {
+                assets.playSound('ui_click', 0.4);
+                this.manager.switchTo('title');
+                return;
+            }
+            if (this.confirmNoRect && pointInRect(x, y, this.confirmNoRect)) {
+                assets.playSound('ui_click', 0.35);
+                this.confirmReturn = false;
+                return;
+            }
+            return;
+        }
+        if (this.state.winner) {
+            if (this.resultContinueRect && pointInRect(x, y, this.resultContinueRect)) {
+                assets.playSound('ui_click', 0.4);
+                this.finishCampaignLiubo();
+                return;
+            }
+            if (this.resultPlayAgainRect && pointInRect(x, y, this.resultPlayAgainRect)) {
+                assets.playSound('ui_click', 0.4);
+                this.resetGame();
+                return;
+            }
+            if (this.resultReturnRect && pointInRect(x, y, this.resultReturnRect)) {
+                assets.playSound('ui_click', 0.4);
+                this.manager.switchTo('title');
+                return;
+            }
+        }
         if (this.returnRect && pointInRect(x, y, this.returnRect)) {
             assets.playSound('ui_click', 0.4);
-            this.manager.switchTo('title');
+            this.requestReturn();
             return;
         }
-        if (this.state.winner && this.rollRect && pointInRect(x, y, this.rollRect)) {
-            assets.playSound('ui_click', 0.4);
-            this.state = createLiuboState();
-            return;
-        }
+        if (this.state.winner) return;
         if (this.state.currentPlayer !== this.state.humanPlayer || this.moveAnimations.length) return;
 
         if (this.state.phase === 'roll' && this.rollRect && pointInRect(x, y, this.rollRect)) {
-            beginTurnRoll(this.state);
-            assets.playSound('ui_click', 0.4);
+            if (this.startStickRoll()) assets.playSound('ui_click', 0.4);
             return;
         }
 
@@ -528,16 +862,152 @@ export class LiuboScene extends BaseScene {
 
     handleKeyDown(e) {
         if (e.key === 'Escape') {
-            this.manager.switchTo('title');
+            if (this.isCampaignMode()) return;
+            if (this.confirmReturn) {
+                this.confirmReturn = false;
+            } else if (this.state.winner) {
+                this.manager.switchTo('title');
+            } else {
+                this.requestReturn();
+            }
             return;
+        }
+        if (this.confirmReturn) {
+            if (e.key === 'Enter') {
+                this.manager.switchTo('title');
+                return;
+            }
+            if (e.key === 'n' || e.key === 'N') {
+                this.confirmReturn = false;
+                return;
+            }
+        }
+        if (this.state.winner) {
+            if (e.key === 'r' || e.key === 'R' || e.key === 'Enter') {
+                if (this.isCampaignMode()) this.finishCampaignLiubo();
+                else this.resetGame();
+                return;
+            }
         }
         if (e.key === 'r' || e.key === 'R' || e.key === 'Enter') {
             if (this.state.currentPlayer === this.state.humanPlayer && this.state.phase === 'roll') {
-                beginTurnRoll(this.state);
-                assets.playSound('ui_click', 0.4);
+                if (this.startStickRoll()) assets.playSound('ui_click', 0.4);
             }
         }
     }
+
+    resetGame() {
+        this.state = createLiuboState(this.startOptions);
+        this.rollAnimation = null;
+        this.moveAnimations = [];
+        this.floatTexts = [];
+        this.confirmReturn = false;
+        this.resultPlayAgainRect = null;
+        this.resultReturnRect = null;
+        this.resultContinueRect = null;
+        this.resultRecorded = false;
+        this.saveState();
+    }
+
+    requestReturn() {
+        if (this.isCampaignMode()) return;
+        if (this.isGameInProgress()) {
+            this.confirmReturn = true;
+            return;
+        }
+        this.manager.switchTo('title');
+    }
+
+    isGameInProgress() {
+        if (this.state.winner) return false;
+        return this.state.turn > 1
+            || this.state.phase !== 'roll'
+            || (this.state.log && this.state.log.length > 0)
+            || (this.state.sticks && this.state.sticks.length > 0);
+    }
+
+    isCampaignMode() {
+        return this.mode === 'campaign';
+    }
+
+    saveState() {
+        if (!this.isCampaignMode() || this.campaignComplete || !this.manager?.gameState) return;
+        this.manager.gameState.setSceneState('liubo', {
+            mode: this.mode,
+            activityId: this.activityId,
+            startOptions: this.startOptions,
+            state: this.clonePlain(this.state),
+            resultRecorded: this.resultRecorded,
+            previousActivityPlays: this.previousActivityPlays
+        });
+        this.manager.gameState.setLastScene('liubo');
+    }
+
+    restoreState(savedState) {
+        this.mode = savedState.mode || 'campaign';
+        this.activityId = savedState.activityId || null;
+        this.campaignComplete = false;
+        this.startOptions = savedState.startOptions || { humanPlayer: 'white', firstPlayer: 'white' };
+        this.state = savedState.state || createLiuboState(this.startOptions);
+        this.resultRecorded = !!savedState.resultRecorded;
+        this.previousActivityPlays = savedState.previousActivityPlays || 0;
+    }
+
+    clonePlain(value) {
+        return JSON.parse(JSON.stringify(value));
+    }
+
+    finishCampaignLiubo() {
+        if (!this.isCampaignMode() || !this.state.winner) return;
+        const won = this.state.winner === this.state.humanPlayer;
+        if (!this.resultRecorded) {
+            this.manager.gameState.recordCampaignLiuboResult(this.activityId, won);
+            this.resultRecorded = true;
+        }
+        this.campaignComplete = true;
+        const narrativeResumeState = this.manager.gameState.getSceneState('narrative');
+        if (narrativeResumeState) {
+            this.manager.gameState.setCampaignVar('narrativeResumeAfterLiubo', narrativeResumeState);
+        }
+        this.manager.gameState.clearSceneState('liubo');
+        this.manager.switchTo('narrative', {
+            keepMusic: true,
+            script: buildCampaignLiuboResultScript({ won, previousActivityPlays: this.previousActivityPlays })
+        });
+    }
+}
+
+function buildCampaignLiuboResultScript({ won, previousActivityPlays = 0 }) {
+    const returning = previousActivityPlays > 0;
+    const text = won
+        ? (returning
+            ? {
+                en: "Again! You read the sticks like a market scale. I will have to stop wagering with you.",
+                zh: "又赢了！你看箸如看秤。我可不能再同你下注了。"
+            }
+            : {
+                en: "Ha! A fine first game. You saw the Owl's path before I did.",
+                zh: "哈！第一局便下得漂亮。枭棋的路数，你比我还先看出来。"
+            })
+        : (returning
+            ? {
+                en: "The board has humbled many travelers. Come back after your battles and we will set the pieces again.",
+                zh: "这棋盘让许多过客低头。打完仗再来，我们再摆一局。"
+            }
+            : {
+                en: "No shame in losing the first game. Liubo rewards patience more than pride.",
+                zh: "第一局输了不丢人。六博赏的是耐心，不是骄气。"
+            });
+    return [
+        {
+            type: 'dialogue',
+            portraitKey: 'farmer-v2',
+            position: 'top',
+            name: 'Villager',
+            text
+        },
+        { type: 'command', action: 'resumeSavedNarrative' }
+    ];
 }
 
 function pointInRect(x, y, rect) {
@@ -571,6 +1041,10 @@ function sampleRoute(route, amount) {
 
 function easeInOut(t) {
     return t * t * (3 - 2 * t);
+}
+
+function getUiPulse() {
+    return 0.5 + Math.sin(performance.now() * 0.006) * 0.5;
 }
 
 function distance(a, b) {

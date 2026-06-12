@@ -7,6 +7,7 @@ const DEFAULT_AUDIO_SETTINGS = {
     sfx: 0.5,
     voice: 0.5
 };
+const MUSIC_CROSSFADE_MS = 1100;
 
 export class AssetLoader {
     constructor() {
@@ -775,11 +776,12 @@ export class AssetLoader {
             clearInterval(this.fadeInterval);
         }
 
-        const fadeOutStep = 0.05;
-        const fadeInStep = 0.05;
-        
-        const oldIntro = this.currentIntro;
-        const oldLoop = this.currentLoop;
+        const oldTracks = [this.currentIntro, this.currentLoop]
+            .filter(track => track && !track.paused)
+            .map(track => ({
+                audio: track,
+                volume: track.volume
+            }));
 
         // Initialize next track
         let activeNextPart = nextIntro || nextLoop;
@@ -816,37 +818,30 @@ export class AssetLoader {
         this.currentIntro = nextIntro || null;
         this.currentLoop = nextLoop || null;
 
+        const startTime = Date.now();
         this.fadeInterval = setInterval(() => {
-            let finished = true;
+            const t = Math.min(1, (Date.now() - startTime) / MUSIC_CROSSFADE_MS);
+            const eased = t * t * (3 - 2 * t);
 
-            // Fade out old music (both intro and loop if they exist)
-            [oldIntro, oldLoop].forEach(old => {
-                if (old && old.paused === false) {
-                    if (old.volume > fadeOutStep) {
-                        old.volume -= fadeOutStep;
-                        finished = false;
-                    } else {
-                        old.volume = 0;
-                        old.pause();
-                    }
-                }
+            oldTracks.forEach(({ audio, volume }) => {
+                audio.volume = Math.max(0, volume * (1 - eased));
             });
 
-            // Fade in new music
             const rawTarget = this.currentVoice ? this.baseMusicVolume * 0.3 : this.baseMusicVolume;
             const currentTarget = this._getEffectiveMusicVolume(rawTarget);
-            if (activeNextPart.volume < currentTarget - fadeInStep) {
-                activeNextPart.volume += fadeInStep;
-                finished = false;
-            } else {
-                activeNextPart.volume = currentTarget;
-            }
+            activeNextPart.volume = currentTarget * eased;
 
-            if (finished) {
+            if (t >= 1) {
+                oldTracks.forEach(({ audio }) => {
+                    audio.volume = 0;
+                    audio.pause();
+                    audio.currentTime = 0;
+                });
+                activeNextPart.volume = currentTarget;
                 clearInterval(this.fadeInterval);
                 this.fadeInterval = null;
             }
-        }, 50);
+        }, 16);
     }
 }
 

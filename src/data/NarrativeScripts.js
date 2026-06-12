@@ -1097,18 +1097,127 @@ export const NARRATIVE_SCRIPTS = {
         
         // --- SWITCH TO INN ---
         { bg: 'inn', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'clearProps' },
         { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 80, y: 200 },
         { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 120, y: 200, flip: true },
         { type: 'command', action: 'animate', id: 'liubei', animation: 'recovery' },
         { type: 'command', action: 'animate', id: 'zhangfei', animation: 'recovery' },
-        { type: 'command', action: 'addActor', id: 'farmer', imgKey: 'farmer', x: 200, y: 180, flip: true },
+        { type: 'command', action: 'addActor', id: 'farmer', imgKey: 'farmer', x: 198, y: 176, flip: true },
         { type: 'command', action: 'animate', id: 'farmer', animation: 'recovery' },
+        { type: 'command', action: 'addProp', id: 'liubo_table', imgKey: 'liubo_table', x: 174, y: 178, sortY: 226 },
         
         { type: 'command', action: 'fade', target: 0, speed: 0.002 },
         
         // Interactive step: players can explore the inn before Guan Yu arrives
         { type: 'interactive',
           clickableRegions: {
+            'liubo_table': {
+                liuboActivityId: 'inn_first_liubo',
+                x: 166,
+                y: 150,
+                w: 78,
+                h: 78,
+                onClick: [
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'farmer-v2',
+                        position: 'top',
+                        name: 'Villager',
+                        text: {
+                            en: "The road is dangerous, friend. Sit for a game of Liubo before you chase trouble?",
+                            zh: "路上凶险，朋友。追着麻烦走之前，坐下博一局如何？"
+                        },
+                        _isInserted: true
+                    },
+                    {
+                        type: 'choice',
+                        portraitKey: 'farmer-v2',
+                        name: 'Villager',
+                        options: [
+                            {
+                                buttonText: { en: "Play Liubo.", zh: "博一局。" },
+                                text: {
+                                    en: "Very well. Let us play.",
+                                    zh: "好。我们博一局。"
+                                },
+                                result: [
+                                    { type: 'command', action: 'startCampaignLiubo', activityId: 'inn_first_liubo', humanPlayer: 'white', firstPlayer: 'white' }
+                                ]
+                            },
+                            {
+                                buttonText: { en: "Not now.", zh: "现在不玩。" },
+                                text: {
+                                    en: "Another time.",
+                                    zh: "改日吧。"
+                                },
+                                result: [
+                                    {
+                                        type: 'dialogue',
+                                        portraitKey: 'farmer-v2',
+                                        position: 'top',
+                                        name: 'Villager',
+                                        text: {
+                                            en: "The board will wait. The rebels, perhaps not.",
+                                            zh: "棋盘会等你。黄巾贼可未必。"
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        _isInserted: true
+                    }
+                ],
+                onClickRepeat: [
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'farmer-v2',
+                        position: 'top',
+                        name: 'Villager',
+                        text: {
+                            en: "Back to the board? Good. A second game tells more truth than the first.",
+                            zh: "又来棋盘前了？好。第二局比第一局更见真章。"
+                        },
+                        _isInserted: true
+                    },
+                    {
+                        type: 'choice',
+                        portraitKey: 'farmer-v2',
+                        name: 'Villager',
+                        options: [
+                            {
+                                buttonText: { en: "Play again.", zh: "再博一局。" },
+                                text: {
+                                    en: "Set the pieces again.",
+                                    zh: "再摆一局。"
+                                },
+                                result: [
+                                    { type: 'command', action: 'startCampaignLiubo', activityId: 'inn_first_liubo', humanPlayer: 'white', firstPlayer: 'white' }
+                                ]
+                            },
+                            {
+                                buttonText: { en: "Not now.", zh: "现在不玩。" },
+                                text: {
+                                    en: "Another time.",
+                                    zh: "改日吧。"
+                                },
+                                result: [
+                                    {
+                                        type: 'dialogue',
+                                        portraitKey: 'farmer-v2',
+                                        position: 'top',
+                                        name: 'Villager',
+                                        text: {
+                                            en: "Then keep your eyes sharp. The road plays rougher games than mine.",
+                                            zh: "那就把眼睛放亮些。路上的局，比我这棋盘更狠。"
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        _isInserted: true
+                    }
+                ]
+            },
             'wine_casks': {
                 // Wine casks on left-hand middle of screen (approximate position)
                 x: 0,
@@ -1933,5 +2042,3 @@ export const NARRATIVE_SCRIPTS = {
     // Note: Guangzong scene is now handled inline in MapScene.startGuangzongBriefing()
     // following the novel where Lu Zhi was arrested and Liu Bei encounters Dong Zhuo
 };
-
-

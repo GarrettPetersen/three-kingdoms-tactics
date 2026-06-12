@@ -546,6 +546,7 @@ async function init() {
                 title_zh: 'assets/misc/三国玄机.png',
                 settings_menu_icon: 'assets/ui_elements/settings_menu_icon.png',
                 lightning_bolt_icon: 'assets/ui_elements/lightning_bolt.png',
+                liubo_table: 'assets/misc/liubo_table.png',
                 liubo_board: 'assets/liubo/board.png',
                 liubo_piece_white_h: 'assets/liubo/piece_white_h.png',
                 liubo_piece_white_v: 'assets/liubo/piece_white_v.png',
@@ -559,6 +560,8 @@ async function init() {
                 liubo_stick_unmarked_h: 'assets/liubo/stick_unmarked_h.png',
                 liubo_stick_marked_v: 'assets/liubo/stick_marked_v.png',
                 liubo_stick_unmarked_v: 'assets/liubo/stick_unmarked_v.png',
+                liubo_cup: 'assets/liubo/cup.png',
+                liubo_cup_empty: 'assets/liubo/cup_empty.png',
                 intro_sky: 'assets/intro_animation/00_sky.png',
                 intro_hills: 'assets/intro_animation/01_hills.png',
                 intro_distant_army: 'assets/intro_animation/02_distant_army.png',
@@ -690,7 +693,9 @@ async function init() {
                 oath_loop: 'assets/music/oath_loop.ogg',
                 forest_intro: 'assets/music/forest_intro.ogg',
                 forest_loop: 'assets/music/forest_loop.ogg',
-                grim_refugees_loop: 'assets/music/grim_refugees_loop.ogg'
+                grim_refugees_loop: 'assets/music/grim_refugees_loop.ogg',
+                liubo_intro: 'assets/music/liubo_intro.ogg',
+                liubo_loop: 'assets/music/liubo_loop.ogg'
             })
         ]);
 

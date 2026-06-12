@@ -11,6 +11,7 @@ export class NarrativeScene extends BaseScene {
         this.script = [];
         this.currentStep = 0;
         this.actors = {}; // { id: { x, y, img, action, frame, flip, targetX, targetY } }
+        this.props = {}; // { id: { x, y, imgKey, sortY } } static scene objects
         this.isWaiting = false;
         this.timer = 0;
         this.fadeAlpha = 0;
@@ -35,6 +36,7 @@ export class NarrativeScene extends BaseScene {
         this.pendingInteractiveAdvance = false;
         this.invalidScriptRecoveryScheduled = false;
         this.waitingForActorId = null;
+        this.skipNextExitSave = false;
     }
 
     cloneScriptSteps(steps) {
@@ -119,6 +121,7 @@ export class NarrativeScene extends BaseScene {
             this.currentStep = 0;
             this.subStep = 0; // Track 3-line chunks for long dialogue
             this.actors = {};
+            this.props = {};
             this.isWaiting = false;
             this.timer = 0;
             this.lastTime = 0;
@@ -225,6 +228,20 @@ export class NarrativeScene extends BaseScene {
                 loopXStart: actor.loopXStart !== undefined ? actor.loopXStart : null,
                 loopXEnd: actor.loopXEnd !== undefined ? actor.loopXEnd : null,
                 drawAboveForeground: !!actor.drawAboveForeground
+            };
+        }
+
+        const savedProps = state.props || {};
+        this.props = {};
+        for (const [id, prop] of Object.entries(savedProps)) {
+            this.props[id] = {
+                x: prop.x || 0,
+                y: prop.y || 0,
+                sortY: prop.sortY !== undefined ? prop.sortY : (prop.y || 0),
+                imgKey: prop.imgKey,
+                img: prop.imgKey ? assets.getImage(prop.imgKey) : null,
+                w: prop.w,
+                h: prop.h
             };
         }
         
@@ -400,6 +417,22 @@ export class NarrativeScene extends BaseScene {
         } else if (cmd.action === 'clearActors') {
             // Should be reflected in saved state, but clear if needed
             this.actors = {};
+        } else if (cmd.action === 'addProp') {
+            if (!this.props[cmd.id]) {
+                this.props[cmd.id] = {
+                    x: cmd.x || 0,
+                    y: cmd.y || 0,
+                    sortY: cmd.sortY !== undefined ? cmd.sortY : (cmd.y || 0),
+                    imgKey: cmd.imgKey,
+                    img: cmd.imgKey ? assets.getImage(cmd.imgKey) : null,
+                    w: cmd.w,
+                    h: cmd.h
+                };
+            }
+        } else if (cmd.action === 'removeProp') {
+            delete this.props[cmd.id];
+        } else if (cmd.action === 'clearProps') {
+            this.props = {};
         } else if (cmd.action === 'fade') {
             this.fadeTarget = cmd.target;
             this.fadeSpeed = cmd.speed || 0.002;
@@ -413,9 +446,34 @@ export class NarrativeScene extends BaseScene {
         }
         // Don't call nextStep() for any command during resume
     }
+
+    prepareNarrativeResumeAfterMinigame() {
+        if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
+            this.script.splice(this.insertedStepsStartIndex, this.insertedStepsCount);
+            if (this.currentStep >= this.insertedStepsStartIndex) {
+                this.currentStep = Math.max(0, this.currentStep - this.insertedStepsCount);
+            }
+            this.insertedStepsCount = 0;
+            this.insertedStepsStartIndex = -1;
+        }
+        if (this.interactiveStepIndex >= 0) {
+            this.currentStep = this.interactiveStepIndex;
+        }
+        this.subStep = 0;
+        this.isInteractive = true;
+        this.isWaiting = true;
+        this.waitingForActorId = null;
+        this.timer = 0;
+        this.returnStack = [];
+        this.pendingInteractiveAdvance = false;
+    }
     
     exit() {
         // Save narrative state when leaving (also saved on every step change)
+        if (this.skipNextExitSave) {
+            this.skipNextExitSave = false;
+            return;
+        }
         this.saveNarrativeState();
     }
 
@@ -548,6 +606,23 @@ export class NarrativeScene extends BaseScene {
         } else if (cmd.action === 'clearActors') {
             this.actors = {};
             this.nextStep();
+        } else if (cmd.action === 'addProp') {
+            this.props[cmd.id] = {
+                x: cmd.x || 0,
+                y: cmd.y || 0,
+                sortY: cmd.sortY !== undefined ? cmd.sortY : (cmd.y || 0),
+                imgKey: cmd.imgKey,
+                img: cmd.imgKey ? assets.getImage(cmd.imgKey) : null,
+                w: cmd.w,
+                h: cmd.h
+            };
+            this.nextStep();
+        } else if (cmd.action === 'removeProp') {
+            delete this.props[cmd.id];
+            this.nextStep();
+        } else if (cmd.action === 'clearProps') {
+            this.props = {};
+            this.nextStep();
         } else if (cmd.action === 'fade') {
             this.fadeTarget = cmd.target;
             this.fadeSpeed = cmd.speed || 0.002;
@@ -566,6 +641,23 @@ export class NarrativeScene extends BaseScene {
         } else if (cmd.action === 'playSound') {
             assets.playSound(cmd.key, cmd.volume !== undefined ? cmd.volume : 1.0);
             this.nextStep();
+        } else if (cmd.action === 'startCampaignLiubo') {
+            this.prepareNarrativeResumeAfterMinigame();
+            this.saveNarrativeState();
+            this.manager.switchTo('liubo', {
+                mode: 'campaign',
+                activityId: cmd.activityId || 'campaign_liubo',
+                humanPlayer: cmd.humanPlayer || 'white',
+                firstPlayer: cmd.firstPlayer || 'white'
+            });
+        } else if (cmd.action === 'resumeSavedNarrative') {
+            const resumeState = this.manager.gameState.getCampaignVar('narrativeResumeAfterLiubo');
+            if (resumeState) {
+                this.manager.gameState.setSceneState('narrative', resumeState);
+                this.manager.gameState.setCampaignVar('narrativeResumeAfterLiubo', null);
+            }
+            this.skipNextExitSave = true;
+            this.manager.switchTo('narrative', { isResume: true });
         } else if (cmd.action === 'setStoryChoice') {
             const routeId = cmd.routeId || this.manager.gameState.getCurrentCampaign() || null;
             if (cmd.key) {
@@ -903,6 +995,7 @@ export class NarrativeScene extends BaseScene {
             currentStep: this.currentStep,
             subStep: this.subStep,
             actors: this.actors,
+            props: this.props,
             nextScene: nextScene,
             nextParams: nextParams,
             isWaiting: this.isWaiting,
@@ -1196,11 +1289,13 @@ export class NarrativeScene extends BaseScene {
             ctx.clip();
         }
 
-        const sortedActors = Object.values(this.actors).sort((a, b) => a.y - b.y);
-        const actorsBelowForeground = sortedActors.filter(a => !a.drawAboveForeground);
-        const actorsAboveForeground = sortedActors.filter(a => !!a.drawAboveForeground);
+        const actorEntries = Object.entries(this.actors).map(([id, actor]) => ({ id, type: 'actor', item: actor, sortY: actor.y }));
+        const propEntries = Object.entries(this.props || {}).map(([id, prop]) => ({ id, type: 'prop', item: prop, sortY: prop.sortY ?? prop.y }));
+        const sortedDrawables = [...actorEntries, ...propEntries].sort((a, b) => a.sortY - b.sortY);
+        const drawablesBelowForeground = sortedDrawables.filter(entry => !(entry.type === 'actor' && entry.item.drawAboveForeground));
+        const actorsAboveForeground = sortedDrawables.filter(entry => entry.type === 'actor' && !!entry.item.drawAboveForeground);
         let hoveredActorOutline = null;
-        const drawActor = (a) => {
+        const drawActor = (a, actorId) => {
             if (!a.img && a.imgKey) {
                 a.img = assets.getImage(a.imgKey);
             }
@@ -1208,7 +1303,6 @@ export class NarrativeScene extends BaseScene {
             const actorScreenY = bgY + a.y;
             
             // Check if this actor is clickable and hovered
-            const actorId = Object.keys(this.actors).find(id => this.actors[id] === a);
             const isClickable = actorId && this.clickableActors && this.clickableActors[actorId];
             const isHovered = this.isInteractive && isClickable && this.hoveredActor === actorId;
             
@@ -1226,7 +1320,18 @@ export class NarrativeScene extends BaseScene {
                 };
             }
         };
-        actorsBelowForeground.forEach(drawActor);
+        const drawProp = (prop) => {
+            if (!prop.img && prop.imgKey) prop.img = assets.getImage(prop.imgKey);
+            if (!prop.img) return;
+            const w = prop.w || prop.img.width;
+            const h = prop.h || prop.img.height;
+            ctx.drawImage(prop.img, bgX + prop.x, bgY + prop.y, w, h);
+        };
+        const drawDrawable = (entry) => {
+            if (entry.type === 'prop') drawProp(entry.item);
+            else drawActor(entry.item, entry.id);
+        };
+        drawablesBelowForeground.forEach(drawDrawable);
         if (hoveredActorOutline) {
             this.drawCharacterPixelOutline(
                 ctx,
@@ -1248,7 +1353,7 @@ export class NarrativeScene extends BaseScene {
                 ctx.restore();
             }
         }
-        actorsAboveForeground.forEach(drawActor);
+        actorsAboveForeground.forEach(drawDrawable);
         ctx.restore();
 
         // Fade overlay
@@ -1535,7 +1640,12 @@ export class NarrativeScene extends BaseScene {
         const region = this.clickableRegions?.[regionId];
         if (!region) return false;
         assets.playSound('ui_click', 0.5);
-        const clickHandler = region.onClick;
+        let clickHandler = region.onClick;
+        if (region.liuboActivityId && region.onClickRepeat) {
+            const record = this.manager.gameState.getCampaignLiuboRecord();
+            const played = record.activities?.[region.liuboActivityId]?.played || 0;
+            if (played > 0) clickHandler = region.onClickRepeat;
+        }
 
         if (clickHandler) {
             if (Array.isArray(clickHandler)) {
@@ -1715,9 +1825,16 @@ export class NarrativeScene extends BaseScene {
 
                         const resultSteps = this.cloneScriptSteps(opt.result || []);
                         resultSteps.forEach(s => {
-                            if (s && typeof s === 'object') s._isChoiceInserted = true;
+                            if (s && typeof s === 'object') {
+                                s._isChoiceInserted = true;
+                                s._isInserted = true;
+                            }
                         });
+                        choiceDialogue._isInserted = true;
                         this.script.splice(this.currentStep + 1, 0, choiceDialogue, ...resultSteps);
+                        if (this.isInteractive && this.insertedStepsStartIndex >= 0) {
+                            this.insertedStepsCount += 1 + resultSteps.length;
+                        }
                         
                         this.nextStep();
                     }
@@ -1960,9 +2077,16 @@ export class NarrativeScene extends BaseScene {
 
                     const resultSteps = this.cloneScriptSteps(opt.result || []);
                     resultSteps.forEach(s => {
-                        if (s && typeof s === 'object') s._isChoiceInserted = true;
+                        if (s && typeof s === 'object') {
+                            s._isChoiceInserted = true;
+                            s._isInserted = true;
+                        }
                     });
+                    choiceDialogue._isInserted = true;
                     this.script.splice(this.currentStep + 1, 0, choiceDialogue, ...resultSteps);
+                    if (this.isInteractive && this.insertedStepsStartIndex >= 0) {
+                        this.insertedStepsCount += 1 + resultSteps.length;
+                    }
                     
                     this.nextStep();
                 }

@@ -2,6 +2,8 @@ import {
     LIUBO_ENTRY_SPACES,
     LIUBO_PLAYERS,
     getAdjacentLiuboSpaces,
+    getLiuboFeatureCapacity,
+    getLiuboFeatureId,
     getLiuboSpaceCapacity,
     isLiuboNest,
     isScoringNest,
@@ -59,9 +61,9 @@ export function rollLiuboSticks(rng = Math.random) {
     };
 }
 
-export function beginTurnRoll(state, rng = Math.random) {
+export function beginTurnRoll(state, rng = Math.random, presetRoll = null) {
     if (state.winner) return state;
-    const rolled = rollLiuboSticks(rng);
+    const rolled = presetRoll || rollLiuboSticks(rng);
     state.sticks = rolled.sticks;
     state.moveValues = rolled.moveValues;
     state.movesRemaining = [...rolled.moveValues];
@@ -69,7 +71,7 @@ export function beginTurnRoll(state, rng = Math.random) {
     state.selectedPieceId = null;
     state.legalMoves = [];
     state.phase = 'choose_piece';
-    state.mustRollAgain = rolled.moveValues[0] === rolled.moveValues[1] && (rolled.moveValues[0] === 1 || rolled.moveValues[0] === 4);
+    state.mustRollAgain = false;
     state.message = `${playerName(state.currentPlayer)} rolled ${rolled.moveValues.join(' and ')}.`;
     state.log.unshift(state.message);
     trimLog(state);
@@ -117,7 +119,7 @@ export function getAllLegalMoves(state, player = state.currentPlayer) {
 
 export function getLegalMovesForPiece(state, piece) {
     if (!piece || piece.player !== state.currentPlayer || state.phase !== 'choose_piece') return [];
-    if (!piece.isOwl && state.usedPieceIds.includes(piece.id)) return [];
+    if (state.usedPieceIds.includes(piece.id)) return [];
 
     const moves = [];
     for (const value of state.movesRemaining) {
@@ -152,7 +154,7 @@ export function applyLiuboMove(state, move) {
         piece.carryingFish = false;
     }
 
-    if (!wasOwl && !legal.promoteToOwl) state.usedPieceIds.push(piece.id);
+    if (!state.usedPieceIds.includes(piece.id)) state.usedPieceIds.push(piece.id);
     state.movesRemaining.splice(state.movesRemaining.indexOf(legal.value), 1);
     state.selectedPieceId = null;
     state.legalMoves = [];
@@ -163,7 +165,6 @@ export function applyLiuboMove(state, move) {
     state.log.unshift(state.message);
     trimLog(state);
 
-    if (legal.promoteToOwl || scoredFish || captured.length) state.mustRollAgain = true;
     updateWinner(state);
     if (state.winner) {
         state.phase = 'game_over';
@@ -214,7 +215,7 @@ function scoreMove(state, move) {
     if (move.scoreFish) score += 120;
     if (move.promoteToOwl) score += 60;
     if (piece?.isOwl) score += 8;
-    const enemies = getPiecesAt(state, move.toSpaceId, otherPlayer(piece.player));
+    const enemies = getCapturablePiecesAt(state, piece, move.toSpaceId);
     score += enemies.length * 45;
     if (piece?.state === 'offboard') score += 10;
     score += Math.random() * 2;
@@ -225,7 +226,7 @@ function resolveMove(state, piece, value) {
     if (piece.state === 'removed' || piece.state === 'captured') return null;
     const startSpaces = piece.state === 'offboard' ? (LIUBO_ENTRY_SPACES[piece.player] || []) : [piece.spaceId];
     const steps = piece.state === 'offboard' ? Math.max(0, value - 1) : value;
-    const canEnterPond = piece.isOwl || !getActiveOwl(state, piece.player);
+    const canEnterPond = true;
     const paths = startSpaces.flatMap(startSpace => {
         if (piece.state === 'offboard' && !canMoveThroughOrLand(state, piece, startSpace, steps === 0)) return [];
         return findLiuboPaths(state, piece, startSpace, steps, {
@@ -244,9 +245,6 @@ function resolveMove(state, piece, value) {
             crossedPond,
             path: path.path
         });
-    }).filter(move => {
-        if (!move.promoteToOwl) return true;
-        return !getActiveOwl(state, piece.player);
     });
 }
 
@@ -294,14 +292,28 @@ function canMoveThroughOrLand(state, piece, spaceId, isFinalStep, path = null) {
 
     const friendly = getPiecesAt(state, spaceId, piece.player).filter(other => other.id !== piece.id);
     const enemies = getPiecesAt(state, spaceId, otherPlayer(piece.player));
-    const capacity = getLiuboSpaceCapacity(spaceId);
+    const spaceCapacity = getLiuboSpaceCapacity(spaceId);
+    const featurePieces = getPiecesOnFeature(state, spaceId).filter(other => other.id !== piece.id);
+    const featureEnemies = featurePieces.filter(other => other.player !== piece.player);
 
     if (enemies.length) {
         if (!isFinalStep) return false;
-        return enemies.length === 1 && friendly.length === 0;
+        return canCaptureOnSpace(state, piece, spaceId, friendly, enemies);
     }
 
-    return friendly.length < capacity;
+    if (friendly.length >= spaceCapacity) return false;
+    if (featureEnemies.some(enemy => enemy.isOwl !== piece.isOwl)) return isFinalStep;
+    return featurePieces.length < getLiuboFeatureCapacity(spaceId);
+}
+
+function canCaptureOnSpace(state, piece, spaceId, friendly, enemies) {
+    if (friendly.length > 0 || enemies.length !== 1) return false;
+    const target = enemies[0];
+    const contested = isContestedFeature(state, spaceId, piece.id);
+    if (contested) return true;
+    if (!piece.isOwl && target.isOwl) return true;
+    if (piece.isOwl && !target.isOwl) return true;
+    return false;
 }
 
 function buildMove(piece, value, toSpaceId, extra = {}) {
@@ -317,18 +329,44 @@ function buildMove(piece, value, toSpaceId, extra = {}) {
 }
 
 function resolveCaptures(state, mover) {
-    const enemy = otherPlayer(mover.player);
     const captured = [];
-    for (const target of getPiecesAt(state, mover.spaceId, enemy)) {
+    for (const target of getCapturablePiecesAt(state, mover, mover.spaceId)) {
         target.wasOwlWhenCaptured = target.isOwl;
         target.isOwl = false;
         target.carryingFish = false;
-        target.state = 'removed';
+        target.state = 'offboard';
         target.spaceId = null;
         captured.push(target);
     }
     if (captured.length) state.scores[mover.player] += captured.length;
     return captured;
+}
+
+function getCapturablePiecesAt(state, mover, spaceId) {
+    if (!mover || !spaceId) return [];
+    const featureEnemies = getPiecesOnFeature(state, spaceId).filter(piece => (
+        piece.id !== mover.id
+        && piece.player === otherPlayer(mover.player)
+    ));
+    const mixedTypeEnemy = featureEnemies.find(enemy => enemy.isOwl !== mover.isOwl);
+    if (mixedTypeEnemy) return [mixedTypeEnemy];
+
+    const friendly = getPiecesAt(state, spaceId, mover.player).filter(other => other.id !== mover.id);
+    const enemies = getPiecesAt(state, spaceId, otherPlayer(mover.player)).filter(other => other.id !== mover.id);
+    if (!canCaptureOnSpace(state, mover, spaceId, friendly, enemies)) return [];
+    return enemies;
+}
+
+function getPiecesOnFeature(state, spaceId) {
+    const feature = getLiuboFeatureId(spaceId);
+    return state.pieces.filter(piece => isActive(piece) && getLiuboFeatureId(piece.spaceId) === feature);
+}
+
+function isContestedFeature(state, spaceId, movingPieceId = null) {
+    const pieces = getPiecesOnFeature(state, spaceId).filter(piece => piece.id !== movingPieceId);
+    return [false, true].some(isOwl => (
+        LIUBO_PLAYERS.every(player => pieces.some(piece => piece.player === player && piece.isOwl === isOwl))
+    ));
 }
 
 function updateWinner(state) {

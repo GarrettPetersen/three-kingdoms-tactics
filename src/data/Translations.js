@@ -72,6 +72,26 @@ export const UI_TEXT = {
         en: 'FISH',
         zh: '鱼'
     },
+    'YOU WIN': {
+        en: 'YOU WIN',
+        zh: '你赢了'
+    },
+    'YOU LOSE': {
+        en: 'YOU LOSE',
+        zh: '你输了'
+    },
+    'PLAY AGAIN': {
+        en: 'PLAY AGAIN',
+        zh: '再来一局'
+    },
+    'END LIUBO GAME?': {
+        en: 'END LIUBO GAME?',
+        zh: '结束六博？'
+    },
+    'CURRENT GAME WILL BE LOST': {
+        en: 'CURRENT GAME WILL BE LOST',
+        zh: '本局将会丢失'
+    },
     'OPTIONS': {
         en: 'OPTIONS',
         zh: '选项'

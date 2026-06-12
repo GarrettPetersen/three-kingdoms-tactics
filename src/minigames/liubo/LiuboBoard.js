@@ -104,12 +104,19 @@ export function isScoringNest(player, spaceId) {
     return LIUBO_SCORING_NESTS[player]?.includes(spaceId) || false;
 }
 
-export function getLiuboSpaceCapacity() {
+export function getLiuboSpaceCapacity(spaceId) {
+    if (LIUBO_SPACES[spaceId]?.kind === 'pond') return 6;
     return 1;
 }
 
 export function getLiuboFeatureId(spaceId) {
     return LIUBO_SPACES[spaceId]?.feature || spaceId;
+}
+
+export function getLiuboFeatureCapacity(spaceId) {
+    if (LIUBO_SPACES[spaceId]?.kind === 'pond') return 6;
+    const feature = getLiuboFeatureId(spaceId);
+    return Object.values(LIUBO_SPACES).filter(space => space.feature === feature).length || 1;
 }
 
 export function otherPlayer(player) {
