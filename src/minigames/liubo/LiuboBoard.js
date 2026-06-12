@@ -105,8 +105,10 @@ export function isScoringNest(player, spaceId) {
 }
 
 export function getLiuboSpaceCapacity(spaceId) {
-    if (LIUBO_SPACES[spaceId]?.kind === 'pond') return 6;
-    return 1;
+    const kind = LIUBO_SPACES[spaceId]?.kind;
+    if (kind === 'pond') return 6;
+    if (kind === 'nest') return 1;
+    return 2;
 }
 
 export function getLiuboFeatureId(spaceId) {

@@ -298,17 +298,32 @@ function canMoveThroughOrLand(state, piece, spaceId, isFinalStep, path = null) {
 
     if (enemies.length) {
         if (!isFinalStep) return false;
-        return canCaptureOnSpace(state, piece, spaceId, friendly, enemies);
+        return canEnterEnemyOccupiedSpace(state, piece, spaceId, friendly, enemies);
     }
 
+    if (friendly.some(other => other.isOwl !== piece.isOwl)) return false;
     if (friendly.length >= spaceCapacity) return false;
     if (featureEnemies.some(enemy => enemy.isOwl !== piece.isOwl)) return isFinalStep;
     return featurePieces.length < getLiuboFeatureCapacity(spaceId);
 }
 
-function canCaptureOnSpace(state, piece, spaceId, friendly, enemies) {
-    if (friendly.length > 0 || enemies.length !== 1) return false;
+function canEnterEnemyOccupiedSpace(state, piece, spaceId, friendly, enemies) {
+    if (enemies.length !== 1) return false;
+    if (friendly.length > 1) return false;
+    if (friendly.some(other => other.isOwl !== piece.isOwl)) return false;
+
     const target = enemies[0];
+    if (friendly.length === 1) return true;
+    if (target.isOwl !== piece.isOwl) return true;
+    return getLiuboSpaceCapacity(spaceId) > 1;
+}
+
+function canCaptureOnSpace(state, piece, spaceId, friendly, enemies) {
+    if (enemies.length !== 1) return false;
+    if (friendly.length > 1) return false;
+    if (friendly.some(other => other.isOwl !== piece.isOwl)) return false;
+    const target = enemies[0];
+    if (friendly.length === 1) return true;
     const contested = isContestedFeature(state, spaceId, piece.id);
     if (contested) return true;
     if (!piece.isOwl && target.isOwl) return true;
