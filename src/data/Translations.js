@@ -20,6 +20,58 @@ export const UI_TEXT = {
         en: 'CUSTOM BATTLE',
         zh: '自定义战斗'
     },
+    'PLAY LIUBO': {
+        en: 'PLAY LIUBO',
+        zh: '六博'
+    },
+    'LIUBO': {
+        en: 'LIUBO',
+        zh: '六博'
+    },
+    'ROLL STICKS': {
+        en: 'ROLL STICKS',
+        zh: '掷箸'
+    },
+    'ROLL': {
+        en: 'ROLL',
+        zh: '掷'
+    },
+    'MOVE': {
+        en: 'MOVE',
+        zh: '行'
+    },
+    'WHITE': {
+        en: 'WHITE',
+        zh: '白'
+    },
+    'BLACK': {
+        en: 'BLACK',
+        zh: '黑'
+    },
+    'OFF': {
+        en: 'OFF',
+        zh: '未入'
+    },
+    'HELD': {
+        en: 'HELD',
+        zh: '待返'
+    },
+    'OWL': {
+        en: 'OWL',
+        zh: '枭'
+    },
+    'LOST': {
+        en: 'LOST',
+        zh: '除'
+    },
+    'SCORE': {
+        en: 'SCORE',
+        zh: '分'
+    },
+    'FISH': {
+        en: 'FISH',
+        zh: '鱼'
+    },
     'OPTIONS': {
         en: 'OPTIONS',
         zh: '选项'

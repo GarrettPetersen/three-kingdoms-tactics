@@ -85,7 +85,7 @@ export class SceneManager {
 
         // Excluded scenes that should never be saved as lastScene
         // campaign_selection is now allowed so users can continue from there
-        const excludedScenes = ['title', 'custom_battle'];
+        const excludedScenes = ['title', 'custom_battle', 'liubo'];
         
         // Save scene state if the current scene has a saveState method
         if (this.currentScene && typeof this.currentScene.saveState === 'function') {

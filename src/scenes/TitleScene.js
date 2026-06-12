@@ -51,6 +51,7 @@ export class TitleScene extends BaseScene {
         this.menuOptions = [];
         this.selection = null;
         this.optionsRect = null;
+        this.liuboRect = null;
         this.showConfirm = false; // Reset confirmation dialog state
         this.confirmSelection = null;
         this._recordingIntro = false;
@@ -311,6 +312,7 @@ export class TitleScene extends BaseScene {
             ...(hasSave ? [{ textKey: 'CONTINUE', action: 'continue', rectKey: 'continueRect' }] : []),
             { textKey: 'NEW GAME', action: 'newgame', rectKey: 'newGameRect' },
             { textKey: 'CUSTOM BATTLE', action: 'custombattle', rectKey: 'customBattleRect' },
+            { textKey: 'PLAY LIUBO', action: 'liubo', rectKey: 'liuboRect' },
             { textKey: 'OPTIONS', action: 'options', rectKey: 'optionsRect' }
         ];
     }
@@ -332,6 +334,7 @@ export class TitleScene extends BaseScene {
         this.continueRect = null;
         this.newGameRect = null;
         this.customBattleRect = null;
+        this.liuboRect = null;
         this.optionsRect = null;
 
         entries.forEach((entry, i) => {
@@ -545,6 +548,12 @@ export class TitleScene extends BaseScene {
             return;
         }
 
+        if (this.liuboRect && x >= this.liuboRect.x && x <= this.liuboRect.x + this.liuboRect.w &&
+            y >= this.liuboRect.y && y <= this.liuboRect.y + this.liuboRect.h) {
+            this.executeMenuAction('liubo');
+            return;
+        }
+
         if (this.optionsRect && x >= this.optionsRect.x && x <= this.optionsRect.x + this.optionsRect.w &&
             y >= this.optionsRect.y && y <= this.optionsRect.y + this.optionsRect.h) {
             this.executeMenuAction('options');
@@ -650,6 +659,8 @@ export class TitleScene extends BaseScene {
             }
         } else if (action === 'custombattle') {
             this.manager.switchTo('custom_battle');
+        } else if (action === 'liubo') {
+            this.manager.switchTo('liubo');
         } else if (action === 'options') {
             this.manager.openOptionsOverlay({ sourceScene: 'title' });
         } else if (action === 'toggleLanguage') {

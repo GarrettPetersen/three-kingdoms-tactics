@@ -6073,6 +6073,35 @@ export class TacticsScene extends BaseScene {
         return this.getPixelPos(cell.r, cell.q).y + offset;
     }
 
+    getOverkillEffectSortR(effect) {
+        if (!effect) return 0;
+        const rows = [];
+        const addRowAt = (x, y, fallbackR = effect.r) => {
+            const cell = this.getCellAt(x, y + 10) || this.getCellAt(x, y) || this.getCellAt(x, y + 24);
+            rows.push(cell ? cell.r : fallbackR);
+        };
+
+        if (!effect.burstDone && effect.pieces?.length) {
+            if (effect.elapsed < effect.splitStartDelay) {
+                addRowAt(effect.x, effect.y, effect.r);
+            } else {
+                effect.pieces.forEach(piece => {
+                    addRowAt(effect.x + (piece.x || 0), effect.y + (piece.y || 0), effect.r);
+                });
+            }
+        } else if (effect.pixels?.length) {
+            // Sample settled/falling pixels so the cloud follows whichever hex it has reached.
+            const sampleStep = Math.max(1, Math.floor(effect.pixels.length / 24));
+            for (let i = 0; i < effect.pixels.length; i += sampleStep) {
+                const p = effect.pixels[i];
+                addRowAt(p.x, p.y, effect.r);
+            }
+        }
+
+        if (rows.length === 0) return effect.r || 0;
+        return Math.max(...rows);
+    }
+
     updateOverkillEffects(dt) {
         if (!this.overkillEffects || this.overkillEffects.length === 0) return;
         for (let i = this.overkillEffects.length - 1; i >= 0; i--) {
@@ -8220,11 +8249,12 @@ export class TacticsScene extends BaseScene {
             });
         });
         this.overkillEffects.forEach(effect => {
-            const { alpha } = this.getIntroEffect(Math.floor(effect.r), 0);
+            const sortR = this.getOverkillEffectSortR(effect);
+            const { alpha } = this.getIntroEffect(Math.floor(sortR), 0);
             if (alpha <= 0) return;
             drawCalls.push({
                 type: 'overkill_effect',
-                r: effect.r,
+                r: sortR,
                 effect,
                 alpha
             });

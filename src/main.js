@@ -13,6 +13,7 @@ import { LevelUpScene } from './scenes/LevelUpScene.js';
 import { RecoveryScene } from './scenes/RecoveryScene.js';
 import { CreditsScene } from './scenes/CreditsScene.js';
 import { OptionsOverlay } from './scenes/OptionsOverlay.js';
+import { LiuboScene } from './scenes/LiuboScene.js';
 
 const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
@@ -214,6 +215,7 @@ async function init() {
     const sceneManager = new SceneManager(ctx, canvas, config);
     sceneManager.addScene('title', new TitleScene());
     sceneManager.addScene('custom_battle', new CustomBattleMenuScene());
+    sceneManager.addScene('liubo', new LiuboScene());
     sceneManager.addScene('campaign_selection', new CampaignSelectionScene());
     sceneManager.addScene('map', new MapScene());
     sceneManager.addScene('tactics', new TacticsScene());
@@ -544,6 +546,19 @@ async function init() {
                 title_zh: 'assets/misc/三国玄机.png',
                 settings_menu_icon: 'assets/ui_elements/settings_menu_icon.png',
                 lightning_bolt_icon: 'assets/ui_elements/lightning_bolt.png',
+                liubo_board: 'assets/liubo/board.png',
+                liubo_piece_white_h: 'assets/liubo/piece_white_h.png',
+                liubo_piece_white_v: 'assets/liubo/piece_white_v.png',
+                liubo_piece_black_h: 'assets/liubo/piece_black_h.png',
+                liubo_piece_black_v: 'assets/liubo/piece_black_v.png',
+                liubo_owl_white_h: 'assets/liubo/owl_white_h.png',
+                liubo_owl_white_v: 'assets/liubo/owl_white_v.png',
+                liubo_owl_black_h: 'assets/liubo/owl_black_h.png',
+                liubo_owl_black_v: 'assets/liubo/owl_black_v.png',
+                liubo_stick_marked_h: 'assets/liubo/stick_marked_h.png',
+                liubo_stick_unmarked_h: 'assets/liubo/stick_unmarked_h.png',
+                liubo_stick_marked_v: 'assets/liubo/stick_marked_v.png',
+                liubo_stick_unmarked_v: 'assets/liubo/stick_unmarked_v.png',
                 intro_sky: 'assets/intro_animation/00_sky.png',
                 intro_hills: 'assets/intro_animation/01_hills.png',
                 intro_distant_army: 'assets/intro_animation/02_distant_army.png',
