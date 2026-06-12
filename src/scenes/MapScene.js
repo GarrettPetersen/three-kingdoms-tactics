@@ -596,11 +596,11 @@ export class MapScene extends BaseScene {
             || (LANGUAGE.current === 'zh' ? 12 : 8);
         ctx.restore();
         const padX = LANGUAGE.current === 'zh' ? 10 : 8;
-        const padY = LANGUAGE.current === 'zh' ? 4 : 3;
         const backW = Math.max(40, measuredW + padX * 2);
-        const backH = Math.max(14, measuredH + padY * 2);
-        const bx = canvas.width - backW - 5;
-        const by = 5;
+        const optionsLayout = this.manager.getOptionsButtonLayout ? this.manager.getOptionsButtonLayout() : null;
+        const backH = optionsLayout?.iconSize || 13;
+        const bx = optionsLayout ? optionsLayout.hitX - backW - 1 : canvas.width - backW - 5;
+        const by = optionsLayout ? optionsLayout.iconY : 5;
         
         ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         ctx.fillRect(bx, by, backW, backH);

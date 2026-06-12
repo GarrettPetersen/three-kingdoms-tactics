@@ -259,6 +259,9 @@ export class GameState {
         if (byRoute && Object.prototype.hasOwnProperty.call(byRoute, sceneName)) {
             return byRoute[sceneName] ?? null;
         }
+        if (routeId) {
+            return null;
+        }
         return this.data.session?.sceneStates?.[sceneName] ?? null;
     }
 
@@ -672,4 +675,3 @@ export class GameState {
         return this.data[key];
     }
 }
-

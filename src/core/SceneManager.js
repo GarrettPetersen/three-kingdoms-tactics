@@ -212,6 +212,22 @@ export class SceneManager {
             && y >= r.y && y <= r.y + r.h;
     }
 
+    getOptionsButtonLayout() {
+        const iconSize = 13;
+        const hitPadding = 3;
+        const iconX = Math.max(1, this.canvas.width - iconSize - 1);
+        const iconY = 1;
+        return {
+            iconX,
+            iconY,
+            iconSize,
+            hitPadding,
+            hitX: Math.max(0, iconX - hitPadding),
+            hitY: Math.max(0, iconY - hitPadding),
+            hitSize: iconSize + hitPadding * 2
+        };
+    }
+
     renderOptionsButton() {
         if (!this.isOptionsButtonVisible()) {
             this.optionsButtonRect = null;
@@ -219,14 +235,8 @@ export class SceneManager {
         }
 
         const icon = assets.getImage('settings_menu_icon');
-        const iconSize = 13;
-        const hitPadding = 3;
-        const size = iconSize + hitPadding * 2;
-        const iconX = Math.max(1, this.canvas.width - iconSize - 1);
-        const iconY = 1;
-        const hitX = Math.max(0, iconX - hitPadding);
-        const hitY = Math.max(0, iconY - hitPadding);
-        this.optionsButtonRect = { x: hitX, y: hitY, w: size, h: size };
+        const { iconX, iconY, iconSize, hitX, hitY, hitSize } = this.getOptionsButtonLayout();
+        this.optionsButtonRect = { x: hitX, y: hitY, w: hitSize, h: hitSize };
 
         this.ctx.save();
         if (icon) {

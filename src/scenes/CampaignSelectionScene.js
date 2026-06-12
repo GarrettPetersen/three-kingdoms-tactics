@@ -403,7 +403,12 @@ export class CampaignSelectionScene extends BaseScene {
         this.drawPixelText(ctx, getLocalizedText(UI_TEXT['STORY SELECTION']), canvas.width / 2, 10, { color: '#fff', font: '8px Silkscreen', align: 'center' });
         
         // Back Button
-        const backRect = { x: canvas.width - 55, y: 5, w: 50, h: 14 };
+        const optionsLayout = this.manager.getOptionsButtonLayout ? this.manager.getOptionsButtonLayout() : null;
+        const backW = 50;
+        const backH = optionsLayout?.iconSize || 13;
+        const backX = optionsLayout ? optionsLayout.hitX - backW - 1 : canvas.width - backW - 5;
+        const backY = optionsLayout ? optionsLayout.iconY : 5;
+        const backRect = { x: backX, y: backY, w: backW, h: backH };
         const backNavTarget = this.getCurrentNavTarget();
         const isBackFocused = backNavTarget && backNavTarget.type === 'back';
         ctx.fillStyle = 'rgba(60, 0, 0, 0.8)';
