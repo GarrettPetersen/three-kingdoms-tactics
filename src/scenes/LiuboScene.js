@@ -139,6 +139,7 @@ export class LiuboScene extends BaseScene {
         this.renderHeader(ctx, canvas, layout);
         this.renderBoard(ctx, layout);
         this.renderPieces(ctx);
+        this.renderMoveAffordances(ctx);
         this.renderMoveAnimations(ctx);
         this.renderFloatTexts(ctx);
         this.renderControls(ctx, canvas, layout);
@@ -225,13 +226,27 @@ export class LiuboScene extends BaseScene {
         legalMoves.forEach(move => {
             const pos = this.boardToScreen(getBoardPointPosition(move.toSpaceId));
             if (!pos) return;
+            this.moveRects.push({ x: pos.x - 10, y: pos.y - 10, w: 20, h: 20, move });
+        });
+    }
+
+    renderMoveAffordances(ctx) {
+        const legalMoves = this.state.legalMoves || [];
+        legalMoves.forEach(move => {
+            const pos = this.boardToScreen(getBoardPointPosition(move.toSpaceId));
+            if (!pos) return;
             const style = this.getMoveAffordance(move);
+            ctx.save();
             ctx.fillStyle = style.fill;
-            ctx.fillRect(pos.x - 8, pos.y - 8, 16, 16);
+            ctx.fillRect(pos.x - 9, pos.y - 9, 18, 18);
+            ctx.strokeStyle = 'rgba(38, 28, 21, 0.78)';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(pos.x - 9.5, pos.y - 9.5, 18, 18);
             ctx.strokeStyle = style.stroke;
+            ctx.lineWidth = 1;
             ctx.strokeRect(pos.x - 8.5, pos.y - 8.5, 16, 16);
             this.drawMoveAffordanceIcon(ctx, pos.x, pos.y, style.kind, style.stroke);
-            this.moveRects.push({ x: pos.x - 10, y: pos.y - 10, w: 20, h: 20, move });
+            ctx.restore();
         });
     }
 
