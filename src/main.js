@@ -18,6 +18,23 @@ import { LiuboScene } from './scenes/LiuboScene.js';
 const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
 
+function hideBootLoader() {
+    const loader = document.getElementById('boot-loader');
+    if (!loader) return;
+
+    loader.classList.add('boot-loader--hidden');
+    window.setTimeout(() => loader.remove(), 320);
+}
+
+function showBootLoadError() {
+    const loader = document.getElementById('boot-loader');
+    if (!loader) return;
+
+    loader.classList.add('boot-loader--error');
+    const text = loader.querySelector('.boot-loader__text');
+    if (text) text.textContent = 'LOAD FAILED';
+}
+
 // Phase 1: centralize canvas sizing so resolution changes are controlled from one place.
 const TARGET_CANVAS_WIDTH = 455;
 const TARGET_CANVAS_HEIGHT = 256;
@@ -912,6 +929,7 @@ async function init() {
         }
 
         sceneManager.switchTo('title');
+        hideBootLoader();
 
         function gameLoop(timestamp) {
             sceneManager.update(timestamp);
@@ -922,6 +940,7 @@ async function init() {
 
     } catch (err) {
         console.error('Failed to initialize game', err);
+        showBootLoadError();
     }
 }
 

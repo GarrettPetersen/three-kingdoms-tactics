@@ -8,10 +8,27 @@
 </head>
 <body>
     <div id="game-container">
+        <div id="boot-loader" role="status" aria-live="polite">
+            <div class="boot-loader__panel">
+                <div class="boot-loader__banners" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="boot-loader__title">THREE KINGDOMS</div>
+                <div class="boot-loader__track" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="boot-loader__text">LOADING</div>
+            </div>
+        </div>
         <canvas id="game-canvas"></canvas>
     </div>
     <script type="module" src="src/main.js"></script>
 </body>
 </html>
-
 
