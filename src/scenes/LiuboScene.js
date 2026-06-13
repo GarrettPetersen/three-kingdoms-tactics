@@ -217,13 +217,59 @@ export class LiuboScene extends BaseScene {
         legalMoves.forEach(move => {
             const pos = this.boardToScreen(getBoardPointPosition(move.toSpaceId));
             if (!pos) return;
-            const enemies = getPiecesAtDestination(this.state, move);
-            ctx.fillStyle = move.scoreFish ? 'rgba(255, 226, 84, 0.62)' : move.promoteToOwl ? 'rgba(95, 189, 226, 0.55)' : enemies ? 'rgba(221, 92, 71, 0.55)' : 'rgba(101, 202, 120, 0.45)';
+            const style = this.getMoveAffordance(move);
+            ctx.fillStyle = style.fill;
             ctx.fillRect(pos.x - 8, pos.y - 8, 16, 16);
-            ctx.strokeStyle = move.scoreFish ? '#ffe254' : move.promoteToOwl ? '#9ad7ff' : enemies ? '#ff8a70' : '#fff0a4';
+            ctx.strokeStyle = style.stroke;
             ctx.strokeRect(pos.x - 8.5, pos.y - 8.5, 16, 16);
+            this.drawMoveAffordanceIcon(ctx, pos.x, pos.y, style.kind, style.stroke);
             this.moveRects.push({ x: pos.x - 10, y: pos.y - 10, w: 20, h: 20, move });
         });
+    }
+
+    getMoveAffordance(move) {
+        const kind = classifyLiuboMove(this.state, move);
+        if (kind === 'score') return { kind, fill: 'rgba(255, 226, 84, 0.62)', stroke: '#ffe254', path: 'rgba(255, 226, 84, 0.46)' };
+        if (kind === 'promote') return { kind, fill: 'rgba(95, 189, 226, 0.55)', stroke: '#9ad7ff', path: 'rgba(154, 215, 255, 0.38)' };
+        if (kind === 'capture') return { kind, fill: 'rgba(221, 92, 71, 0.58)', stroke: '#ff8a70', path: 'rgba(255, 138, 112, 0.38)' };
+        if (kind === 'contest') return { kind, fill: 'rgba(229, 145, 58, 0.54)', stroke: '#ffc06d', path: 'rgba(229, 145, 58, 0.34)' };
+        if (kind === 'block') return { kind, fill: 'rgba(105, 176, 101, 0.55)', stroke: '#b8e083', path: 'rgba(130, 205, 112, 0.32)' };
+        return { kind, fill: 'rgba(101, 202, 120, 0.45)', stroke: '#fff0a4', path: 'rgba(255, 240, 164, 0.24)' };
+    }
+
+    drawMoveAffordanceIcon(ctx, x, y, kind, color) {
+        if (kind === 'move' || kind === 'score' || kind === 'promote') return;
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = 2;
+        if (kind === 'block') {
+            ctx.fillRect(x - 5, y - 5, 3, 10);
+            ctx.fillRect(x + 2, y - 5, 3, 10);
+        } else if (kind === 'contest') {
+            ctx.beginPath();
+            ctx.moveTo(x - 6, y);
+            ctx.lineTo(x - 1, y - 5);
+            ctx.lineTo(x + 4, y);
+            ctx.lineTo(x - 1, y + 5);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x + 6, y);
+            ctx.lineTo(x + 1, y - 5);
+            ctx.lineTo(x - 4, y);
+            ctx.lineTo(x + 1, y + 5);
+            ctx.closePath();
+            ctx.stroke();
+        } else if (kind === 'capture') {
+            ctx.beginPath();
+            ctx.moveTo(x - 5, y - 5);
+            ctx.lineTo(x + 5, y + 5);
+            ctx.moveTo(x + 5, y - 5);
+            ctx.lineTo(x - 5, y + 5);
+            ctx.stroke();
+        }
+        ctx.restore();
     }
 
     renderPieces(ctx) {
@@ -723,7 +769,7 @@ export class LiuboScene extends BaseScene {
             .map(spaceId => this.boardToScreen(getBoardPointPosition(spaceId)))
             .filter(Boolean);
         if (points.length < 2) return;
-        const color = move.scoreFish ? 'rgba(255, 226, 84, 0.46)' : move.promoteToOwl ? 'rgba(154, 215, 255, 0.38)' : getPiecesAtDestination(this.state, move) ? 'rgba(255, 138, 112, 0.38)' : 'rgba(255, 240, 164, 0.24)';
+        const color = this.getMoveAffordance(move).path;
         ctx.save();
         ctx.strokeStyle = color;
         ctx.lineWidth = 2;
@@ -1014,14 +1060,25 @@ function pointInRect(x, y, rect) {
     return rect && x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
 }
 
-function getPiecesAtDestination(state, move) {
+function classifyLiuboMove(state, move) {
+    if (move.scoreFish) return 'score';
+    if (move.promoteToOwl) return 'promote';
     const mover = state.pieces.find(piece => piece.id === move.pieceId);
-    if (!mover) return 0;
-    return state.pieces.filter(piece => (
+    if (!mover) return 'move';
+    const pieces = state.pieces.filter(piece => (
         piece.state === 'board'
         && piece.spaceId === move.toSpaceId
-        && piece.player !== mover.player
-    )).length;
+        && piece.id !== mover.id
+    ));
+    const friendly = pieces.filter(piece => piece.player === mover.player);
+    const enemies = pieces.filter(piece => piece.player !== mover.player);
+    if (enemies.length) {
+        if (friendly.length === 1) return 'capture';
+        if (enemies.some(piece => piece.isOwl !== mover.isOwl)) return 'capture';
+        return 'contest';
+    }
+    if (friendly.length) return 'block';
+    return 'move';
 }
 
 function sampleRoute(route, amount) {
