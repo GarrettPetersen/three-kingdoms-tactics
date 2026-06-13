@@ -115,6 +115,10 @@ export function getLiuboFeatureId(spaceId) {
     return LIUBO_SPACES[spaceId]?.feature || spaceId;
 }
 
+export function getLiuboSpaceKind(spaceId) {
+    return LIUBO_SPACES[spaceId]?.kind || null;
+}
+
 export function getLiuboFeatureCapacity(spaceId) {
     if (LIUBO_SPACES[spaceId]?.kind === 'pond') return 6;
     const feature = getLiuboFeatureId(spaceId);

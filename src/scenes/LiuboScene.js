@@ -214,6 +214,7 @@ export class LiuboScene extends BaseScene {
         this.moveRects = [];
         const legalMoves = this.state.legalMoves || [];
         legalMoves.forEach(move => this.renderMovePath(ctx, move));
+        this.renderEntryGateAffordances(ctx, legalMoves, layout);
         legalMoves.forEach(move => {
             const pos = this.boardToScreen(getBoardPointPosition(move.toSpaceId));
             if (!pos) return;
@@ -225,6 +226,65 @@ export class LiuboScene extends BaseScene {
             this.drawMoveAffordanceIcon(ctx, pos.x, pos.y, style.kind, style.stroke);
             this.moveRects.push({ x: pos.x - 10, y: pos.y - 10, w: 20, h: 20, move });
         });
+    }
+
+    renderEntryGateAffordances(ctx, legalMoves, layout) {
+        const selected = getPiece(this.state, this.state.selectedPieceId);
+        if (!selected || selected.state !== 'offboard' || !legalMoves.length) return;
+
+        const entrySpaces = new Set();
+        legalMoves.forEach(move => {
+            const entrySpace = move.path?.[0];
+            if (entrySpace) entrySpaces.add(entrySpace);
+        });
+
+        const pulse = getUiPulse();
+        const center = {
+            x: layout.boardX + BOARD_DRAW_SIZE / 2,
+            y: layout.boardY + BOARD_DRAW_SIZE / 2
+        };
+        ctx.save();
+        ctx.globalAlpha = 0.72 + pulse * 0.24;
+        for (const spaceId of entrySpaces) {
+            const pos = this.boardToScreen(getBoardPointPosition(spaceId));
+            if (!pos) continue;
+            this.drawEntryGateAffordance(ctx, pos, center);
+        }
+        ctx.restore();
+    }
+
+    drawEntryGateAffordance(ctx, pos, center) {
+        const dx = pos.x - center.x;
+        const dy = pos.y - center.y;
+        const length = Math.hypot(dx, dy) || 1;
+        const nx = dx / length;
+        const ny = dy / length;
+        const px = -ny;
+        const py = nx;
+        const outer = { x: pos.x + nx * 20, y: pos.y + ny * 20 };
+        const inner = { x: pos.x + nx * 4, y: pos.y + ny * 4 };
+
+        ctx.strokeStyle = '#9ad7ff';
+        ctx.fillStyle = 'rgba(95, 189, 226, 0.32)';
+        ctx.lineWidth = 2;
+        ctx.fillRect(pos.x - 9, pos.y - 9, 18, 18);
+        ctx.strokeRect(pos.x - 9.5, pos.y - 9.5, 18, 18);
+
+        ctx.beginPath();
+        ctx.moveTo(outer.x + 0.5, outer.y + 0.5);
+        ctx.lineTo(inner.x + 0.5, inner.y + 0.5);
+        ctx.lineTo(inner.x + nx * 6 + px * 4 + 0.5, inner.y + ny * 6 + py * 4 + 0.5);
+        ctx.moveTo(inner.x + 0.5, inner.y + 0.5);
+        ctx.lineTo(inner.x + nx * 6 - px * 4 + 0.5, inner.y + ny * 6 - py * 4 + 0.5);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#e3f7ff';
+        ctx.beginPath();
+        ctx.moveTo(pos.x + px * 7 - nx * 5 + 0.5, pos.y + py * 7 - ny * 5 + 0.5);
+        ctx.lineTo(pos.x + px * 7 + nx * 5 + 0.5, pos.y + py * 7 + ny * 5 + 0.5);
+        ctx.moveTo(pos.x - px * 7 - nx * 5 + 0.5, pos.y - py * 7 - ny * 5 + 0.5);
+        ctx.lineTo(pos.x - px * 7 + nx * 5 + 0.5, pos.y - py * 7 + ny * 5 + 0.5);
+        ctx.stroke();
     }
 
     getMoveAffordance(move) {
