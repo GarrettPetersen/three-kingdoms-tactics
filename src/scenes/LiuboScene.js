@@ -4,7 +4,6 @@ import { getCurrentLanguage, getLocalizedText } from '../core/Language.js';
 import { UI_TEXT } from '../data/Translations.js';
 import {
     LIUBO_BOARD_PADDED_SIZE,
-    getLiuboFeatureId,
     getBoardPointPosition
 } from '../minigames/liubo/LiuboBoard.js';
 import {
@@ -1228,14 +1227,6 @@ function classifyLiuboMove(state, move) {
     ));
     const friendly = pieces.filter(piece => piece.player === mover.player);
     const enemies = pieces.filter(piece => piece.player !== mover.player);
-    const targetFeature = getLiuboFeatureId(move.toSpaceId);
-    const featureEnemies = state.pieces.filter(piece => (
-        piece.state === 'board'
-        && piece.player !== mover.player
-        && piece.id !== mover.id
-        && getLiuboFeatureId(piece.spaceId) === targetFeature
-    ));
-    if (featureEnemies.some(piece => piece.isOwl !== mover.isOwl)) return 'capture';
     if (enemies.length) {
         if (friendly.length === 1) return 'capture';
         if (enemies.some(piece => piece.isOwl !== mover.isOwl)) return 'capture';
