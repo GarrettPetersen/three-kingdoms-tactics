@@ -14,7 +14,11 @@ export class AssetLoader {
         this.images = {};
         this.originalImages = {};
         this.sounds = {};
+        this.soundSources = {};
+        this.soundLoadPromises = {};
         this.music = {};
+        this.musicSources = {};
+        this.musicLoadPromises = {};
         this.palettes = {};
         this.fontsLoaded = false;
         
@@ -545,37 +549,60 @@ export class AssetLoader {
         return Promise.all(promises);
     }
 
-    async loadSounds(assets) {
-        const promises = Object.entries(assets).map(([key, src]) => {
-            return new Promise((resolve, reject) => {
-                const audio = new Audio();
-                audio.oncanplaythrough = () => {
-                    this.sounds[key] = audio;
-                    resolve(audio);
-                };
-                audio.onerror = reject;
-                audio.src = src;
-            });
+    async loadAudioSource(src, options = {}) {
+        return new Promise((resolve) => {
+            const audio = new Audio();
+            audio.preload = 'auto';
+            audio.loop = !!options.loop;
+            audio.oncanplaythrough = () => resolve(audio);
+            audio.onerror = () => {
+                console.warn(`Failed to load audio: ${src}`);
+                resolve(null);
+            };
+            audio.src = src;
+            audio.load();
         });
+    }
+
+    async loadSound(key) {
+        if (this.sounds[key]) return this.sounds[key];
+        const src = this.soundSources[key];
+        if (!src) return null;
+        if (!this.soundLoadPromises[key]) {
+            this.soundLoadPromises[key] = this.loadAudioSource(src).then(audio => {
+                if (audio) this.sounds[key] = audio;
+                return audio;
+            });
+        }
+        return this.soundLoadPromises[key];
+    }
+
+    async loadSounds(assets, options = {}) {
+        Object.assign(this.soundSources, assets);
+        const preloadKeys = options.preload || Object.keys(assets);
+        const promises = preloadKeys.map(key => this.loadSound(key));
         return Promise.all(promises);
     }
 
-    async loadMusic(assets) {
-        const promises = Object.entries(assets).map(([key, src]) => {
-            return new Promise((resolve, reject) => {
-                const audio = new Audio();
-                // If it's a loop file, enable looping
-                if (key.endsWith('_loop')) {
-                    audio.loop = true;
-                }
-                audio.oncanplaythrough = () => {
-                    this.music[key] = audio;
-                    resolve(audio);
-                };
-                audio.onerror = reject;
-                audio.src = src;
+    async loadMusicTrack(key) {
+        if (this.music[key]) return this.music[key];
+        const src = this.musicSources[key];
+        if (!src) return null;
+        if (!this.musicLoadPromises[key]) {
+            this.musicLoadPromises[key] = this.loadAudioSource(src, {
+                loop: key.endsWith('_loop')
+            }).then(audio => {
+                if (audio) this.music[key] = audio;
+                return audio;
             });
-        });
+        }
+        return this.musicLoadPromises[key];
+    }
+
+    async loadMusic(assets, options = {}) {
+        Object.assign(this.musicSources, assets);
+        const preloadKeys = options.preload || Object.keys(assets);
+        const promises = preloadKeys.map(key => this.loadMusicTrack(key));
         return Promise.all(promises);
     }
 
@@ -596,12 +623,22 @@ export class AssetLoader {
         return this.music[key];
     }
 
+    _playLoadedSound(sound, volume) {
+        if (!sound) return;
+        const clone = sound.cloneNode();
+        clone.volume = this._clamp01(volume * this.masterUserVolume * this.sfxUserVolume);
+        clone.play().catch(e => {
+            this.audioUnlocked = false;
+            console.log("Sound play prevented:", e);
+        });
+    }
+
     playSound(key, volume = 1.0) {
         let resolvedKey = key;
         let resolvedVolume = volume;
         if (key === 'death') {
-            const hasA = !!this.getSound('death_a');
-            const hasB = !!this.getSound('death_b');
+            const hasA = !!(this.getSound('death_a') || this.soundSources.death_a);
+            const hasB = !!(this.getSound('death_b') || this.soundSources.death_b);
             if (hasA || hasB) {
                 if (hasA && hasB) {
                     resolvedKey = Math.random() < 0.5 ? 'death_a' : 'death_b';
@@ -613,13 +650,12 @@ export class AssetLoader {
 
         const sound = this.getSound(resolvedKey);
         if (sound) {
-            const clone = sound.cloneNode();
-            // Clamp volume between 0 and 1 to prevent IndexSizeError
-            clone.volume = this._clamp01(resolvedVolume * this.masterUserVolume * this.sfxUserVolume);
-            clone.play().catch(e => {
-                this.audioUnlocked = false;
-                console.log("Sound play prevented:", e);
-            });
+            this._playLoadedSound(sound, resolvedVolume);
+            return;
+        }
+
+        if (this.soundSources[resolvedKey]) {
+            this.loadSound(resolvedKey).then(loaded => this._playLoadedSound(loaded, resolvedVolume));
         }
     }
 
@@ -671,7 +707,12 @@ export class AssetLoader {
 
     playLoopingSound(key, volume = 1.0, fadeInMs = 0) {
         const base = this.getSound(key);
-        if (!base) return;
+        if (!base) {
+            if (this.soundSources[key]) {
+                this.loadSound(key).then(() => this.playLoopingSound(key, volume, fadeInMs));
+            }
+            return;
+        }
 
         const baseVolume = this._clamp01(volume);
         const targetVolume = this._clamp01(baseVolume * this.masterUserVolume * this.sfxUserVolume);
@@ -767,6 +808,14 @@ export class AssetLoader {
         const nextLoop = this.getMusic(`${key}_loop`);
 
         if (!nextLoop && !nextIntro) {
+            const lazyKeys = [`${key}_intro`, `${key}_loop`].filter(musicKey => this.musicSources[musicKey]);
+            if (lazyKeys.length) {
+                Promise.all(lazyKeys.map(musicKey => this.loadMusicTrack(musicKey))).then(() => {
+                    this.currentMusicKey = null;
+                    this.playMusic(key, targetVolume);
+                });
+                return;
+            }
             console.warn(`Music track not found: ${key}`);
             return;
         }
