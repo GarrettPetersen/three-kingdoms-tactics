@@ -1102,6 +1102,8 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 120, y: 200, flip: true },
         { type: 'command', action: 'animate', id: 'liubei', animation: 'recovery' },
         { type: 'command', action: 'animate', id: 'zhangfei', animation: 'recovery' },
+        { type: 'command', action: 'addActor', id: 'bar_farmer', imgKey: 'farmer2', x: 36, y: 154 },
+        { type: 'command', action: 'animate', id: 'bar_farmer', animation: 'recovery' },
         { type: 'command', action: 'addActor', id: 'farmer', imgKey: 'farmer', x: 198, y: 158, flip: true },
         { type: 'command', action: 'animate', id: 'farmer', animation: 'recovery' },
         { type: 'command', action: 'addProp', id: 'liubo_table', imgKey: 'liubo_table', x: 174, y: 138, sortY: 226 },
@@ -1118,18 +1120,6 @@ export const NARRATIVE_SCRIPTS = {
                 w: 78,
                 h: 78,
                 onClick: [
-                    {
-                        type: 'dialogue',
-                        portraitKey: 'farmer-v2',
-                        position: 'top',
-                        name: 'Villager',
-                        voiceId: 'inn_farmer_01',
-                        text: {
-                            en: "These Yellow Turban rebels... I try to drink away my worries, but they always return. What will become of us?",
-                            zh: "这些黄巾叛军...我想借酒消愁，但忧虑总是回来。我们该怎么办？"
-                        },
-                        _isInserted: true
-                    },
                     {
                         type: 'dialogue',
                         portraitKey: 'farmer-v2',
@@ -1265,7 +1255,7 @@ export const NARRATIVE_SCRIPTS = {
             }
           },
           clickableActors: {
-            'farmer': {
+            'bar_farmer': {
                 onClick: [
                     {
                         type: 'dialogue',
@@ -1277,6 +1267,64 @@ export const NARRATIVE_SCRIPTS = {
                             en: "These Yellow Turban rebels... I try to drink away my worries, but they always return. What will become of us?",
                             zh: "这些黄巾叛军...我想借酒消愁，但忧虑总是回来。我们该怎么办？"
                         },
+                        _isInserted: true
+                    }
+                ]
+            },
+            'farmer': {
+                onClick: [
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'farmer-v2',
+                        position: 'top',
+                        name: 'Villager',
+                        voiceId: 'inn_liubo_intro_01',
+                        text: {
+                            en: "The road is dangerous, friend. Sit for a game of Liubo before you chase trouble?",
+                            zh: "路上凶险，朋友。追着麻烦走之前，坐下博一局如何？"
+                        },
+                        _isInserted: true
+                    },
+                    {
+                        type: 'choice',
+                        portraitKey: 'farmer-v2',
+                        name: 'Villager',
+                        options: [
+                            {
+                                buttonText: { en: "Play Liubo.", zh: "博一局。" },
+                                speaker: 'farmer',
+                                voiceId: 'inn_liubo_accept_01',
+                                text: {
+                                    en: "Very well. Let us play.",
+                                    zh: "好。我们博一局。"
+                                },
+                                result: [
+                                    { type: 'command', action: 'startCampaignLiubo', activityId: 'inn_first_liubo', humanPlayer: 'white', firstPlayer: 'white' }
+                                ]
+                            },
+                            {
+                                buttonText: { en: "Not now.", zh: "现在不玩。" },
+                                speaker: 'farmer',
+                                voiceId: 'inn_liubo_decline_01',
+                                text: {
+                                    en: "Another time.",
+                                    zh: "改日吧。"
+                                },
+                                result: [
+                                    {
+                                        type: 'dialogue',
+                                        portraitKey: 'farmer-v2',
+                                        position: 'top',
+                                        name: 'Villager',
+                                        voiceId: 'inn_liubo_decline_reply_01',
+                                        text: {
+                                            en: "The board will wait. The rebels, perhaps not.",
+                                            zh: "棋盘会等你。黄巾贼可未必。"
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
                         _isInserted: true
                     }
                 ]
