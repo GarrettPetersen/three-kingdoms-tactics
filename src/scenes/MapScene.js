@@ -5,6 +5,21 @@ import { CHAPTERS } from '../data/Chapters.js';
 import { getLocalizedText, LANGUAGE, getFontForLanguage, getTextContainerSize } from '../core/Language.js';
 import { UI_TEXT } from '../data/Translations.js';
 
+const CHAPTER2_ROUTE_ID = 'chapter2_oath';
+const CHAPTER2_LEGACY_ROUTE_ID = 'liubei';
+
+function hasChapter2Node(gs, nodeId) {
+    return gs.hasReachedStoryNode(nodeId, CHAPTER2_ROUTE_ID)
+        || gs.hasMilestone(nodeId, CHAPTER2_ROUTE_ID)
+        || gs.hasReachedStoryNode(nodeId, CHAPTER2_LEGACY_ROUTE_ID)
+        || gs.hasMilestone(nodeId, CHAPTER2_LEGACY_ROUTE_ID);
+}
+
+function hasChapter2Choice(gs, choiceId) {
+    return gs.getStoryChoice(choiceId, null, CHAPTER2_ROUTE_ID) != null
+        || gs.getStoryChoice(choiceId, null, CHAPTER2_LEGACY_ROUTE_ID) != null;
+}
+
 // Locations and reminders will eventually be moved to CHAPTERS data
 const LIUBEI_LOCATIONS = {
     magistrate: {
@@ -90,17 +105,15 @@ const LIUBEI_LOCATIONS = {
         battleId: 'chapter2_zhujun_camp',
         unlockCondition: (gs) =>
             (
-                gs.getStoryChoice('chapter2_oath_dongzhuo_choice') != null
+                hasChapter2Choice(gs, 'chapter2_oath_dongzhuo_choice')
                 || gs.hasMilestone('chapter2_oath_dongzhuo_restrained')
                 || gs.hasMilestone('chapter2_oath_dongzhuo_fought')
-                || gs.hasReachedStoryNode('chapter2_oath_dongzhuo_choice', 'liubei')
+                || hasChapter2Node(gs, 'chapter2_oath_dongzhuo_choice')
             ) && !(
-                gs.hasReachedStoryNode('chapter2_zhujun_camp', 'liubei')
-                || gs.hasMilestone('chapter2_zhujun_camp')
+                hasChapter2Node(gs, 'chapter2_zhujun_camp')
             ),
         isCompleted: (gs) =>
-            gs.hasReachedStoryNode('chapter2_zhujun_camp', 'liubei')
-            || gs.hasMilestone('chapter2_zhujun_camp')
+            hasChapter2Node(gs, 'chapter2_zhujun_camp')
     }
 };
 
@@ -306,10 +319,10 @@ export class MapScene extends BaseScene {
                 // Don't set lastScene here - SceneManager will handle it
 
                 // Initialize party based on campaign
-                if (params.campaignId === 'liubei') {
+                if (params.campaignId === 'liubei' || params.campaignId === CHAPTER2_ROUTE_ID) {
                     // Prefer explicit params, then saved position, then default
-                    const savedX = gs.getCampaignVar('partyX');
-                    const savedY = gs.getCampaignVar('partyY');
+                    const savedX = gs.getCampaignVar('partyX', params.campaignId);
+                    const savedY = gs.getCampaignVar('partyY', params.campaignId);
                     this.party = { 
                         id: 'liubei', 
                         name: 'Liu Bei', 
@@ -331,9 +344,9 @@ export class MapScene extends BaseScene {
             } else {
                 // No params (coming from Continue), restore from save
                 this.currentCampaignId = gs.getCurrentCampaign();
-                const savedX = gs.getCampaignVar('partyX');
-                const savedY = gs.getCampaignVar('partyY');
-                if (this.currentCampaignId === 'liubei') {
+                const savedX = gs.getCampaignVar('partyX', this.currentCampaignId);
+                const savedY = gs.getCampaignVar('partyY', this.currentCampaignId);
+                if (this.currentCampaignId === 'liubei' || this.currentCampaignId === CHAPTER2_ROUTE_ID) {
                     this.party = { 
                         id: 'liubei', 
                         name: 'Liu Bei', 
@@ -1121,15 +1134,15 @@ export class MapScene extends BaseScene {
         this.manager.switchTo('narrative', {
             musicKey: 'oath',
             onComplete: () => {
-                this.manager.gameState.setStoryCursor('chapter2_zhujun_camp', 'liubei');
-                this.manager.gameState.addMilestone('chapter2_zhujun_camp');
+                this.manager.gameState.setStoryCursor('chapter2_zhujun_camp', CHAPTER2_ROUTE_ID);
+                this.manager.gameState.addMilestone('chapter2_zhujun_camp', CHAPTER2_ROUTE_ID);
                 this.manager.switchTo('tactics', {
                     battleId: 'chapter2_zhangbao_probe',
                     onVictory: () => {
-                        this.manager.gameState.setStoryCursor('chapter2_zhangbao_probe', 'liubei');
-                        this.manager.gameState.addMilestone('chapter2_zhangbao_probe');
+                        this.manager.gameState.setStoryCursor('chapter2_zhangbao_probe', CHAPTER2_ROUTE_ID);
+                        this.manager.gameState.addMilestone('chapter2_zhangbao_probe', CHAPTER2_ROUTE_ID);
                         this.manager.switchTo('map', {
-                            campaignId: 'liubei',
+                            campaignId: CHAPTER2_ROUTE_ID,
                             partyX: 188,
                             partyY: 92,
                             afterEvent: 'chapter2_zhangbao_probe_end'
@@ -1191,8 +1204,8 @@ export class MapScene extends BaseScene {
         }
 
         // Highest-priority progression first.
-        if (gs.hasReachedStoryNode('chapter2_zhangbao_probe', 'liubei') || gs.hasMilestone('chapter2_zhangbao_probe')) return 'chapter2_zhangbao_probe';
-        if ((gs.getStoryChoice('chapter2_oath_dongzhuo_choice') != null || gs.hasMilestone('chapter2_oath_dongzhuo_restrained') || gs.hasMilestone('chapter2_oath_dongzhuo_fought')) && !(gs.hasReachedStoryNode('chapter2_zhujun_camp', 'liubei') || gs.hasMilestone('chapter2_zhujun_camp'))) return 'chapter2_oath_dongzhuo_choice';
+        if (hasChapter2Node(gs, 'chapter2_zhangbao_probe')) return 'chapter2_zhangbao_probe';
+        if ((hasChapter2Choice(gs, 'chapter2_oath_dongzhuo_choice') || gs.hasMilestone('chapter2_oath_dongzhuo_restrained') || gs.hasMilestone('chapter2_oath_dongzhuo_fought')) && !hasChapter2Node(gs, 'chapter2_zhujun_camp')) return 'chapter2_oath_dongzhuo_choice';
         if (gs.hasReachedStoryNode('chapter1_complete', 'liubei') || gs.hasMilestone('chapter1_complete')) return null;
         if (gs.hasReachedStoryNode('guangzong_encounter', 'liubei') || gs.hasMilestone('guangzong_encounter')) return 'guangzong_encounter';
         if (gs.hasReachedStoryNode('yingchuan_aftermath', 'liubei') || gs.hasMilestone('yingchuan_aftermath')) return 'yingchuan_aftermath';

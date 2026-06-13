@@ -1880,9 +1880,9 @@ export class TacticsScene extends BaseScene {
         this.dialogueElapsed = 0;
         this.isCleanupDialogueActive = true;
         this.cleanupDialogueOnComplete = () => {
-            this.manager.gameState.setStoryCursor('chapter2_oath_dongzhuo_choice', 'liubei');
+            this.manager.gameState.setStoryCursor('chapter2_oath_dongzhuo_choice', 'chapter2_oath');
             this.manager.switchTo('map', {
-                campaignId: 'liubei',
+                campaignId: 'chapter2_oath',
                 partyX: 205,
                 partyY: 55,
                 afterEvent: 'chapter2_to_zhujun'
@@ -2105,9 +2105,9 @@ export class TacticsScene extends BaseScene {
         const dongzhuo = this.units.find(u => u.id === 'dongzhuo');
         if (!dongzhuo) {
             this.chapter2DongZhuoFightActive = false;
-            this.manager.gameState.setStoryCursor('chapter2_oath_dongzhuo_choice', 'liubei');
+            this.manager.gameState.setStoryCursor('chapter2_oath_dongzhuo_choice', 'chapter2_oath');
             this.manager.switchTo('map', {
-                campaignId: 'liubei',
+                campaignId: 'chapter2_oath',
                 partyX: 205,
                 partyY: 55,
                 afterEvent: 'chapter2_to_zhujun'
@@ -2340,9 +2340,9 @@ export class TacticsScene extends BaseScene {
             this.isCleanupDialogueActive = false;
             this.isProcessingTurn = false;
             this.chapter2DongZhuoEscapedFromDrowning = false;
-            this.manager.gameState.setStoryCursor('chapter2_oath_dongzhuo_choice', 'liubei');
+            this.manager.gameState.setStoryCursor('chapter2_oath_dongzhuo_choice', 'chapter2_oath');
             this.manager.switchTo('map', {
-                campaignId: 'liubei',
+                campaignId: 'chapter2_oath',
                 partyX: 205,
                 partyY: 55,
                 afterEvent: 'chapter2_to_zhujun'

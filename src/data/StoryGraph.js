@@ -32,7 +32,9 @@ export const STORY_ROUTES = {
         startNode: 'chapter2_oath_dongzhuo_choice',
         terminalNode: 'chapter2_oath_complete',
         nodes: {
-            chapter2_oath_dongzhuo_choice: { next: 'chapter2_oath_complete' },
+            chapter2_oath_dongzhuo_choice: { next: 'chapter2_zhujun_camp' },
+            chapter2_zhujun_camp: { next: 'chapter2_zhangbao_probe' },
+            chapter2_zhangbao_probe: { next: 'chapter2_oath_complete' },
             chapter2_oath_complete: { next: null }
         }
     }

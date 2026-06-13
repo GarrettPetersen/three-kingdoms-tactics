@@ -135,6 +135,39 @@ export class CampaignSelectionScene extends BaseScene {
         }
     }
 
+    startChapter2OathRoute() {
+        const gs = this.manager.gameState;
+        const routeId = 'chapter2_oath';
+        gs.setCurrentCampaign(routeId);
+
+        const cursor = gs.getStoryCursor(routeId);
+        const hasResolvedOpener = gs.getStoryChoice('chapter2_oath_dongzhuo_choice', null, routeId) != null
+            || gs.hasMilestone('chapter2_oath_dongzhuo_restrained', routeId)
+            || gs.hasMilestone('chapter2_oath_dongzhuo_fought', routeId);
+        const hasLaterProgress = gs.hasMilestone('chapter2_zhujun_camp', routeId)
+            || gs.hasMilestone('chapter2_zhangbao_probe', routeId);
+        const hasSavedScene = !!gs.getSceneState('map', routeId)
+            || !!gs.getSceneState('narrative', routeId)
+            || !!gs.getSceneState('tactics', routeId);
+        const hasProgress = hasResolvedOpener || hasLaterProgress || hasSavedScene;
+
+        if (!hasResolvedOpener && !hasLaterProgress) {
+            gs.startStoryRoute(routeId);
+            if (!hasProgress) {
+                gs.clearSceneState('map', routeId);
+                gs.clearSceneState('narrative', routeId);
+                gs.clearSceneState('tactics', routeId);
+            }
+            this.manager.switchTo('tactics', { battleId: 'chapter2_oath_dongzhuo_choice' });
+            return;
+        }
+
+        if (!cursor.nodeId) {
+            gs.startStoryRoute(routeId);
+        }
+        this.manager.switchTo('map', { campaignId: routeId });
+    }
+
     enter() {
         if (assets.currentMusicKey !== 'title') {
             assets.playMusic('title');
@@ -558,12 +591,7 @@ export class CampaignSelectionScene extends BaseScene {
                 return;
             }
             if (selectedChapter === '2') {
-                gs.setCurrentCampaign('chapter2_oath');
-                gs.startStoryRoute('chapter2_oath');
-                gs.clearSceneState('map', 'chapter2_oath');
-                gs.clearSceneState('narrative', 'chapter2_oath');
-                gs.clearSceneState('tactics', 'chapter2_oath');
-                this.manager.switchTo('tactics', { battleId: 'chapter2_oath_dongzhuo_choice' });
+                this.startChapter2OathRoute();
                 return;
             }
 
@@ -666,12 +694,7 @@ export class CampaignSelectionScene extends BaseScene {
                             return;
                         }
                         if (selectedChapter === '2') {
-                            gs.setCurrentCampaign('chapter2_oath');
-                            gs.startStoryRoute('chapter2_oath');
-                            gs.clearSceneState('map', 'chapter2_oath');
-                            gs.clearSceneState('narrative', 'chapter2_oath');
-                            gs.clearSceneState('tactics', 'chapter2_oath');
-                            this.manager.switchTo('tactics', { battleId: 'chapter2_oath_dongzhuo_choice' });
+                            this.startChapter2OathRoute();
                             return;
                         }
 
