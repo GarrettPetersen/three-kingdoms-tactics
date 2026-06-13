@@ -478,7 +478,7 @@
     },
     "zh:inn_farmer_01": {
         "id": "inn_farmer_01",
-        "character": "farmerv2",
+        "character": "farmer",
         "original_text": "这些黄巾叛军...我想借酒消愁，但忧虑总是回来。我们该怎么办？",
         "stt_output": "",
         "wer": 0,
@@ -1018,7 +1018,7 @@
     },
     "zh:pro_farmer2_01": {
         "id": "pro_farmer2_01",
-        "character": "farmerfemale",
+        "character": "farmer2",
         "original_text": "我听说叛军已经到了邻县。他们对抵抗者毫不留情。我们必须做最坏的打算。",
         "stt_output": "",
         "wer": 0,
@@ -1027,7 +1027,7 @@
     },
     "zh:pro_farmer_01": {
         "id": "pro_farmer_01",
-        "character": "farmerv1",
+        "character": "farmer",
         "original_text": "黄巾军...听说他们会烧毁一切。我家世代住在这里。我们该怎么办？",
         "stt_output": "",
         "wer": 0,
@@ -2037,9 +2037,9 @@
         "id": "cc_yc_zb_retreat_01",
         "character": "zhangbao",
         "original_text": "梁弟，速突围！回广宗再与官军算账！",
-        "stt_output": "良帝速突围 回广宗在与冠军算账",
-        "wer": 2.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:cc_yc_zj_01": {
@@ -2055,9 +2055,9 @@
         "id": "cc_yc_zl_retreat_01",
         "character": "zhangliang",
         "original_text": "退往广宗！与兄长会合！",
-        "stt_output": "退王廣宗與兄長會合",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:map_cc_rem_01": {
@@ -2154,16 +2154,223 @@
         "id": "map_lb_rem_06",
         "character": "liubei",
         "original_text": "卢师命我们去颍川。皇甫嵩与朱儁正在那里迎击张梁、张宝。",
-        "stt_output": "如诗面我们去隐穿王府松雨诸俊正在哪里应机张良张宝",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:map_lb_rem_07": {
         "id": "map_lb_rem_07",
         "character": "liubei",
         "original_text": "颍川叛军已败。我们应立刻回去向卢师复命。",
-        "stt_output": "隐穿判军一拜,我们印力刻回去向如诗父明。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_probe_lb_01": {
+        "id": "ch2_probe_lb_01",
+        "character": "liubei",
+        "original_text": "稳住阵脚。先破高升，再逼张宝。",
+        "stt_output": "稳住正角,先破高升在B帳堡",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_probe_lb_retreat_01": {
+        "id": "ch2_probe_lb_retreat_01",
+        "character": "liubei",
+        "original_text": "二弟、三弟，先撤！今日不可与其妖法硬拼！",
+        "stt_output": "二弟三弟先扯今日不可與其也要法應拼",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_probe_zb_01": {
+        "id": "ch2_probe_zb_01",
+        "character": "zhangbao",
+        "original_text": "你便是刘玄德？好，且尝黄天道法。",
+        "stt_output": "你便是留玄德好且常皇天到法",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_probe_zb_sorcery_01": {
+        "id": "ch2_probe_zb_sorcery_01",
+        "character": "zhangbao",
+        "original_text": "风雨之中，尔等岂能杀我？且看天雷！",
+        "stt_output": "风雨之中 而等岂能杀我且看天雷",
+        "wer": 2.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_zj_camp_lb_01": {
+        "id": "ch2_zj_camp_lb_01",
+        "character": "liubei",
+        "original_text": "领命。云长、翼德，整备军士，黎明出发。",
+        "stt_output": "领命云长 亦得准备军事 黎明出发",
+        "wer": 3.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_zj_camp_zj_00": {
+        "id": "ch2_zj_camp_zj_00",
+        "character": "zhujungeneric",
+        "original_text": "玄德，你们当夜引军来投，甚好。",
+        "stt_output": "選得你們當夜影軍來投勝好",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_zj_camp_zj_01": {
+        "id": "ch2_zj_camp_zj_01",
+        "character": "zhujungeneric",
+        "original_text": "玄德，你为先锋，先与贼对敌。",
+        "stt_output": "選得你為先鋒先與賊對敵",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_zj_camp_zj_02": {
+        "id": "ch2_zj_camp_zj_02",
+        "character": "zhujungeneric",
+        "original_text": "我待汝军以厚礼。即刻合兵一处，进讨张宝。",
+        "stt_output": "我带入军以后离极客和兵一处镜头张宝",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:inn_liubo_accept_01": {
+        "id": "inn_liubo_accept_01",
+        "character": "farmer",
+        "original_text": "好。我们博一局。",
+        "stt_output": "好我们播一局",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:inn_liubo_accept_repeat_01": {
+        "id": "inn_liubo_accept_repeat_01",
+        "character": "farmer",
+        "original_text": "再摆一局。",
+        "stt_output": "再白衣局",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:inn_liubo_decline_01": {
+        "id": "inn_liubo_decline_01",
+        "character": "farmer",
+        "original_text": "改日吧。",
+        "stt_output": "舔一舔",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:inn_liubo_decline_reply_01": {
+        "id": "inn_liubo_decline_reply_01",
+        "character": "farmer",
+        "original_text": "棋盘会等你。黄巾贼可未必。",
+        "stt_output": "期盤會等你黃金賊可外必",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:inn_liubo_decline_reply_02": {
+        "id": "inn_liubo_decline_reply_02",
+        "character": "farmer",
+        "original_text": "那就把眼睛放亮些。路上的局，比我这棋盘更狠。",
+        "stt_output": "那就把眼睛放亮些路上的局比我这期盘更狠",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:inn_liubo_intro_01": {
+        "id": "inn_liubo_intro_01",
+        "character": "farmer",
+        "original_text": "路上凶险，朋友。追着麻烦走之前，坐下博一局如何？",
+        "stt_output": "路上凶险朋友追着麻烦走之前做下播一局如何",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:inn_liubo_loss_first_01": {
+        "id": "inn_liubo_loss_first_01",
+        "character": "farmer",
+        "original_text": "第一局输了不丢人。六博赏的是耐心，不是骄气。",
+        "stt_output": "第一局输了不丢人六博上的事耐心不是交气",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:inn_liubo_loss_repeat_01": {
+        "id": "inn_liubo_loss_repeat_01",
+        "character": "farmer",
+        "original_text": "这棋盘让许多过客低头。打完仗再来，我们再摆一局。",
+        "stt_output": "這期排讓許多過客低頭打完仗再來,我們再擺一局",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:inn_liubo_repeat_01": {
+        "id": "inn_liubo_repeat_01",
+        "character": "farmer",
+        "original_text": "又来棋盘前了？好。第二局比第一局更见真章。",
+        "stt_output": "又来其盘前了好第二局比第一局更见真张",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:inn_liubo_win_first_01": {
+        "id": "inn_liubo_win_first_01",
+        "character": "farmer",
+        "original_text": "哈！第一局便下得漂亮。枭棋的路数，你比我还先看出来。",
+        "stt_output": "哈哎喵第一局变下得漂亮消息的路数你比我还先看出来",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:inn_liubo_win_repeat_01": {
+        "id": "inn_liubo_win_repeat_01",
+        "character": "farmer",
+        "original_text": "又赢了！你看箸如看秤。我可不能再同你下注了。",
+        "stt_output": "又贏了你看住如看城我可不能再同你下住了",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:map_lb_ch2_probe_01": {
+        "id": "map_lb_ch2_probe_01",
+        "character": "liubei",
+        "original_text": "张宝妖术破了我军首战。先回营整军，再议破术之策。",
+        "stt_output": "张宝妖术破了我军手战先回英整军再以破树之策",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:map_lb_ch2_probe_02": {
+        "id": "map_lb_ch2_probe_02",
+        "character": "liubei",
+        "original_text": "张宝妖术已亲眼所见。下次交锋前，须先得破术之法。",
+        "stt_output": "张宝妖术以亲言所见下次交风前 须先的破树之法",
+        "wer": 2.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:map_lb_ch2_zhujun_01": {
+        "id": "map_lb_ch2_zhujun_01",
+        "character": "liubei",
+        "original_text": "董卓那条路，不是我们的路。我们赶赴颍川，投朱儁将军麾下。",
+        "stt_output": "董卓那条路不是我们的路我们敢负引川投诸俊将军灰下",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:map_lb_ch2_zhujun_02": {
+        "id": "map_lb_ch2_zhujun_02",
+        "character": "liubei",
+        "original_text": "朱儁将军正在颍川。我们前往投军，循正道讨贼。",
+        "stt_output": "朱俊将军正在影穿我们前往头军寻证到讨责",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"

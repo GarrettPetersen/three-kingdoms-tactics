@@ -1195,32 +1195,52 @@ export class LiuboScene extends BaseScene {
 
 function buildCampaignLiuboResultScript({ won, previousActivityPlays = 0 }) {
     const returning = previousActivityPlays > 0;
-    const text = won
-        ? (returning
-            ? {
+    let result;
+    if (won && returning) {
+        result = {
+            speaker: 'farmer',
+            voiceId: 'inn_liubo_win_repeat_01',
+            text: {
                 en: "Again! You read the sticks like a market scale. I will have to stop wagering with you.",
                 zh: "又赢了！你看箸如看秤。我可不能再同你下注了。"
             }
-            : {
+        };
+    } else if (won) {
+        result = {
+            speaker: 'farmer',
+            voiceId: 'inn_liubo_win_first_01',
+            text: {
                 en: "Ha! A fine first game. You saw the Owl's path before I did.",
                 zh: "哈！第一局便下得漂亮。枭棋的路数，你比我还先看出来。"
-            })
-        : (returning
-            ? {
+            }
+        };
+    } else if (returning) {
+        result = {
+            speaker: 'farmer',
+            voiceId: 'inn_liubo_loss_repeat_01',
+            text: {
                 en: "The board has humbled many travelers. Come back after your battles and we will set the pieces again.",
                 zh: "这棋盘让许多过客低头。打完仗再来，我们再摆一局。"
             }
-            : {
+        };
+    } else {
+        result = {
+            speaker: 'farmer',
+            voiceId: 'inn_liubo_loss_first_01',
+            text: {
                 en: "No shame in losing the first game. Liubo rewards patience more than pride.",
                 zh: "第一局输了不丢人。六博赏的是耐心，不是骄气。"
-            });
+            }
+        };
+    }
     return [
         {
             type: 'dialogue',
             portraitKey: 'farmer-v2',
             position: 'top',
             name: 'Villager',
-            text
+            voiceId: result.voiceId,
+            text: result.text
         },
         { type: 'command', action: 'resumeSavedNarrative' }
     ];

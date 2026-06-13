@@ -23,6 +23,7 @@ SOURCE_FILES = [
     'src/scenes/BattleSummaryScene.js',
     'src/scenes/LevelUpScene.js',
     'src/scenes/RecoveryScene.js',
+    'src/scenes/LiuboScene.js',
     'src/main.js',
 ]
 
@@ -46,6 +47,12 @@ PORTRAIT_TO_CHAR = {
     'peach_garden': 'narrator',
     'noticeboard': 'noticeboard',  # Noticeboard has its own voice
     'narrator': 'narrator',
+    'farmer-v1': 'farmer',
+    'farmer-v2': 'farmer',
+    'farmer-v3': 'farmer',
+    'farmer-v4': 'farmer',
+    'farmer-v5': 'farmer',
+    'farmer-female': 'farmer2',
 }
 
 # Fallback: if no portrait key, try to derive from name
@@ -356,4 +363,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

@@ -156,9 +156,21 @@
     "source": "Battles.js"
   },
   {
+    "id": "cc_yc_zb_retreat_01",
+    "char": "zhangbao",
+    "text": "梁弟，速突围！回广宗再与官军算账！",
+    "source": "Battles.js"
+  },
+  {
     "id": "cc_yc_zj_01",
     "char": "zhujun",
     "text": "张梁、张宝只率少数骑卒突围，多半会往广宗而去。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_zl_retreat_01",
+    "char": "zhangliang",
+    "text": "退往广宗！与兄长会合！",
     "source": "Battles.js"
   },
   {
@@ -226,6 +238,54 @@
     "char": "zhangfei",
     "text": "呸！连淹都淹不死这胆小鬼。下次俺也去亲手给他绑块石头！",
     "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_probe_lb_01",
+    "char": "liubei",
+    "text": "稳住阵脚。先破高升，再逼张宝。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_probe_lb_retreat_01",
+    "char": "liubei",
+    "text": "二弟、三弟，先撤！今日不可与其妖法硬拼！",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_probe_zb_01",
+    "char": "zhangbao",
+    "text": "你便是刘玄德？好，且尝黄天道法。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_probe_zb_sorcery_01",
+    "char": "zhangbao",
+    "text": "风雨之中，尔等岂能杀我？且看天雷！",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_zj_camp_lb_01",
+    "char": "liubei",
+    "text": "领命。云长、翼德，整备军士，黎明出发。",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "ch2_zj_camp_zj_00",
+    "char": "zhujungeneric",
+    "text": "玄德，你们当夜引军来投，甚好。",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "ch2_zj_camp_zj_01",
+    "char": "zhujungeneric",
+    "text": "玄德，你为先锋，先与贼对敌。",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "ch2_zj_camp_zj_02",
+    "char": "zhujungeneric",
+    "text": "我待汝军以厚礼。即刻合兵一处，进讨张宝。",
+    "source": "MapScene.js"
   },
   {
     "id": "daxing_gy_01",
@@ -685,7 +745,7 @@
   },
   {
     "id": "inn_farmer_01",
-    "char": "farmerv2",
+    "char": "farmer",
     "text": "这些黄巾叛军...我想借酒消愁，但忧虑总是回来。我们该怎么办？",
     "source": "NarrativeScripts.js"
   },
@@ -784,6 +844,72 @@
     "char": "liubei",
     "text": "这里的酒品质上乘。在这乱世中，这是好酒。",
     "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_liubo_accept_01",
+    "char": "farmer",
+    "text": "好。我们博一局。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_liubo_accept_repeat_01",
+    "char": "farmer",
+    "text": "再摆一局。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_liubo_decline_01",
+    "char": "farmer",
+    "text": "改日吧。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_liubo_decline_reply_01",
+    "char": "farmer",
+    "text": "棋盘会等你。黄巾贼可未必。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_liubo_decline_reply_02",
+    "char": "farmer",
+    "text": "那就把眼睛放亮些。路上的局，比我这棋盘更狠。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_liubo_intro_01",
+    "char": "farmer",
+    "text": "路上凶险，朋友。追着麻烦走之前，坐下博一局如何？",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_liubo_loss_first_01",
+    "char": "farmer",
+    "text": "第一局输了不丢人。六博赏的是耐心，不是骄气。",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_loss_repeat_01",
+    "char": "farmer",
+    "text": "这棋盘让许多过客低头。打完仗再来，我们再摆一局。",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_repeat_01",
+    "char": "farmer",
+    "text": "又来棋盘前了？好。第二局比第一局更见真章。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_liubo_win_first_01",
+    "char": "farmer",
+    "text": "哈！第一局便下得漂亮。枭棋的路数，你比我还先看出来。",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_win_repeat_01",
+    "char": "farmer",
+    "text": "又赢了！你看箸如看秤。我可不能再同你下注了。",
+    "source": "LiuboScene.js"
   },
   {
     "id": "inn_zf_01",
@@ -966,6 +1092,30 @@
     "source": "MapScene.js"
   },
   {
+    "id": "map_lb_ch2_probe_01",
+    "char": "liubei",
+    "text": "张宝妖术破了我军首战。先回营整军，再议破术之策。",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_probe_02",
+    "char": "liubei",
+    "text": "张宝妖术已亲眼所见。下次交锋前，须先得破术之法。",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_zhujun_01",
+    "char": "liubei",
+    "text": "董卓那条路，不是我们的路。我们赶赴颍川，投朱儁将军麾下。",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_zhujun_02",
+    "char": "liubei",
+    "text": "朱儁将军正在颍川。我们前往投军，循正道讨贼。",
+    "source": "MapScene.js"
+  },
+  {
     "id": "map_lb_defeat",
     "char": "liubei",
     "text": "我们被击溃了！我们必须重整旗鼓，再次出击。",
@@ -1063,13 +1213,13 @@
   },
   {
     "id": "pro_farmer2_01",
-    "char": "farmerfemale",
+    "char": "farmer2",
     "text": "我听说叛军已经到了邻县。他们对抵抗者毫不留情。我们必须做最坏的打算。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_farmer_01",
-    "char": "farmerv1",
+    "char": "farmer",
     "text": "黄巾军...听说他们会烧毁一切。我家世代住在这里。我们该怎么办？",
     "source": "NarrativeScripts.js"
   },

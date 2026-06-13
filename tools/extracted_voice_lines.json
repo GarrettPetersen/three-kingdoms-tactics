@@ -159,9 +159,21 @@
     "source": "Battles.js"
   },
   {
+    "id": "cc_yc_zb_retreat_01",
+    "char": "zhangbao",
+    "text": "Brother Liang, break away! We will settle this at Guangzong!",
+    "source": "Battles.js"
+  },
+  {
     "id": "cc_yc_zj_01",
     "char": "zhujun",
     "text": "Zhang Liang and Zhang Bao slipped away with a few horsemen. They will likely run toward Guangzong.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_zl_retreat_01",
+    "char": "zhangliang",
+    "text": "To Guangzong! Rejoin the elder brother!",
     "source": "Battles.js"
   },
   {
@@ -230,6 +242,54 @@
     "char": "zhangfei",
     "text": "Bah! Not even drowning would keep that coward down. Next time, I'll tie a stone to him myself.",
     "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_probe_lb_01",
+    "char": "liubei",
+    "text": "Hold the line. Break Gao Sheng first and pressure Zhang Bao.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_probe_lb_retreat_01",
+    "char": "liubei",
+    "text": "Brothers, withdraw! We cannot break his sorcery head-on today!",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_probe_zb_01",
+    "char": "zhangbao",
+    "text": "You are Liu Xuande? Good. Taste the art of the Yellow Heaven.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_probe_zb_sorcery_01",
+    "char": "zhangbao",
+    "text": "You cannot kill me in this storm. Behold the thunder of Heaven!",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_zj_camp_lb_01",
+    "char": "liubei",
+    "text": "Understood. Guan Yu, Zhang Fei - prepare the men. We march at first light.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "ch2_zj_camp_zj_00",
+    "char": "zhujungeneric",
+    "text": "Xuande, you came by night to join my command. Good.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "ch2_zj_camp_zj_01",
+    "char": "zhujungeneric",
+    "text": "Xuande, take the vanguard and engage the rebels first.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "ch2_zj_camp_zj_02",
+    "char": "zhujungeneric",
+    "text": "I will receive your force with full trust. We combine our men as one host and advance against Zhang Bao.",
+    "source": "MapScene.js"
   },
   {
     "id": "daxing_gy_01",
@@ -698,7 +758,7 @@
   },
   {
     "id": "inn_farmer_01",
-    "char": "farmerv2",
+    "char": "farmer",
     "text": "These Yellow Turban rebels... I try to drink away my worries, but they always return. What will become of us?",
     "source": "NarrativeScripts.js"
   },
@@ -797,6 +857,72 @@
     "char": "liubei",
     "text": "The wine here is of fine quality. A good vintage for such troubled times.",
     "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_liubo_accept_01",
+    "char": "farmer",
+    "text": "Very well. Let us play.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_liubo_accept_repeat_01",
+    "char": "farmer",
+    "text": "Set the pieces again.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_liubo_decline_01",
+    "char": "farmer",
+    "text": "Another time.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_liubo_decline_reply_01",
+    "char": "farmer",
+    "text": "The board will wait. The rebels, perhaps not.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_liubo_decline_reply_02",
+    "char": "farmer",
+    "text": "Then keep your eyes sharp. The road plays rougher games than mine.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_liubo_intro_01",
+    "char": "farmer",
+    "text": "The road is dangerous, friend. Sit for a game of Liubo before you chase trouble?",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_liubo_loss_first_01",
+    "char": "farmer",
+    "text": "No shame in losing the first game. Liubo rewards patience more than pride.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_loss_repeat_01",
+    "char": "farmer",
+    "text": "The board has humbled many travelers. Come back after your battles and we will set the pieces again.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_repeat_01",
+    "char": "farmer",
+    "text": "Back to the board? Good. A second game tells more truth than the first.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_liubo_win_first_01",
+    "char": "farmer",
+    "text": "Ha! A fine first game. You saw the Owl's path before I did.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_win_repeat_01",
+    "char": "farmer",
+    "text": "Again! You read the sticks like a market scale. I will have to stop wagering with you.",
+    "source": "LiuboScene.js"
   },
   {
     "id": "inn_zf_01",
@@ -982,6 +1108,30 @@
     "source": "MapScene.js"
   },
   {
+    "id": "map_lb_ch2_probe_01",
+    "char": "liubei",
+    "text": "Zhang Bao's sorcery broke our first assault. We regroup at camp and plan a counter.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_probe_02",
+    "char": "liubei",
+    "text": "We have seen Zhang Bao's sorcery with our own eyes. We need a counter before the next clash.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_zhujun_01",
+    "char": "liubei",
+    "text": "Dong Zhuo's road is not ours. We march to Yingchuan and report to General Zhu Jun.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_zhujun_02",
+    "char": "liubei",
+    "text": "General Zhu Jun is at Yingchuan. Let us march there and take proper command against the rebels.",
+    "source": "MapScene.js"
+  },
+  {
     "id": "map_lb_defeat",
     "char": "liubei",
     "text": "We were overwhelmed! We must regroup and strike again.",
@@ -1082,13 +1232,13 @@
   },
   {
     "id": "pro_farmer2_01",
-    "char": "farmerfemale",
+    "char": "farmer2",
     "text": "I've heard the rebels are already in the next county. They show no mercy to those who resist. We must prepare for the worst.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_farmer_01",
-    "char": "farmerv1",
+    "char": "farmer",
     "text": "The Yellow Turbans... they say they'll burn everything in their path. My family has lived here for generations. What will become of us?",
     "source": "NarrativeScripts.js"
   },

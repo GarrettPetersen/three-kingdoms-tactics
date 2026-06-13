@@ -1123,6 +1123,19 @@ export const NARRATIVE_SCRIPTS = {
                         portraitKey: 'farmer-v2',
                         position: 'top',
                         name: 'Villager',
+                        voiceId: 'inn_farmer_01',
+                        text: {
+                            en: "These Yellow Turban rebels... I try to drink away my worries, but they always return. What will become of us?",
+                            zh: "这些黄巾叛军...我想借酒消愁，但忧虑总是回来。我们该怎么办？"
+                        },
+                        _isInserted: true
+                    },
+                    {
+                        type: 'dialogue',
+                        portraitKey: 'farmer-v2',
+                        position: 'top',
+                        name: 'Villager',
+                        voiceId: 'inn_liubo_intro_01',
                         text: {
                             en: "The road is dangerous, friend. Sit for a game of Liubo before you chase trouble?",
                             zh: "路上凶险，朋友。追着麻烦走之前，坐下博一局如何？"
@@ -1136,6 +1149,8 @@ export const NARRATIVE_SCRIPTS = {
                         options: [
                             {
                                 buttonText: { en: "Play Liubo.", zh: "博一局。" },
+                                speaker: 'farmer',
+                                voiceId: 'inn_liubo_accept_01',
                                 text: {
                                     en: "Very well. Let us play.",
                                     zh: "好。我们博一局。"
@@ -1146,6 +1161,8 @@ export const NARRATIVE_SCRIPTS = {
                             },
                             {
                                 buttonText: { en: "Not now.", zh: "现在不玩。" },
+                                speaker: 'farmer',
+                                voiceId: 'inn_liubo_decline_01',
                                 text: {
                                     en: "Another time.",
                                     zh: "改日吧。"
@@ -1156,6 +1173,7 @@ export const NARRATIVE_SCRIPTS = {
                                         portraitKey: 'farmer-v2',
                                         position: 'top',
                                         name: 'Villager',
+                                        voiceId: 'inn_liubo_decline_reply_01',
                                         text: {
                                             en: "The board will wait. The rebels, perhaps not.",
                                             zh: "棋盘会等你。黄巾贼可未必。"
@@ -1173,6 +1191,7 @@ export const NARRATIVE_SCRIPTS = {
                         portraitKey: 'farmer-v2',
                         position: 'top',
                         name: 'Villager',
+                        voiceId: 'inn_liubo_repeat_01',
                         text: {
                             en: "Back to the board? Good. A second game tells more truth than the first.",
                             zh: "又来棋盘前了？好。第二局比第一局更见真章。"
@@ -1186,6 +1205,8 @@ export const NARRATIVE_SCRIPTS = {
                         options: [
                             {
                                 buttonText: { en: "Play again.", zh: "再博一局。" },
+                                speaker: 'farmer',
+                                voiceId: 'inn_liubo_accept_repeat_01',
                                 text: {
                                     en: "Set the pieces again.",
                                     zh: "再摆一局。"
@@ -1196,6 +1217,8 @@ export const NARRATIVE_SCRIPTS = {
                             },
                             {
                                 buttonText: { en: "Not now.", zh: "现在不玩。" },
+                                speaker: 'farmer',
+                                voiceId: 'inn_liubo_decline_01',
                                 text: {
                                     en: "Another time.",
                                     zh: "改日吧。"
@@ -1206,6 +1229,7 @@ export const NARRATIVE_SCRIPTS = {
                                         portraitKey: 'farmer-v2',
                                         position: 'top',
                                         name: 'Villager',
+                                        voiceId: 'inn_liubo_decline_reply_02',
                                         text: {
                                             en: "Then keep your eyes sharp. The road plays rougher games than mine.",
                                             zh: "那就把眼睛放亮些。路上的局，比我这棋盘更狠。"
