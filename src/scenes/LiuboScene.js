@@ -407,25 +407,28 @@ export class LiuboScene extends BaseScene {
         const white = this.getCupAnchor('white', layout);
         const black = this.getCupAnchor('black', layout);
         const active = this.getCupPosition(layout);
+        const x = Math.floor(white.x);
+        const top = Math.floor(Math.min(white.y, black.y));
+        const h = Math.floor(Math.abs(black.y - white.y));
         ctx.save();
         ctx.globalAlpha = 0.7;
         ctx.fillStyle = '#2d211a';
-        ctx.fillRect(Math.floor(Math.min(white.x, black.x) - 16), Math.floor(white.y - 3), Math.floor(Math.abs(black.x - white.x) + 32), 6);
+        ctx.fillRect(x - 3, top - 14, 6, h + 28);
         ctx.strokeStyle = '#60472c';
-        ctx.strokeRect(Math.floor(Math.min(white.x, black.x) - 16) + 0.5, Math.floor(white.y - 3) + 0.5, Math.floor(Math.abs(black.x - white.x) + 32), 6);
+        ctx.strokeRect(x - 3.5, top - 14.5, 6, h + 28);
         ctx.fillStyle = this.state.currentPlayer === 'white' ? '#f0dfc2' : '#b98f6b';
         ctx.globalAlpha = 0.3;
-        ctx.fillRect(Math.floor(active.x - 18), Math.floor(active.y - 5), 36, 10);
+        ctx.fillRect(Math.floor(active.x - 18), Math.floor(active.y - 10), 36, 20);
         ctx.restore();
     }
 
     getCupAnchor(player, layout) {
-        const left = layout.panelX + (layout.portrait ? 56 : 38);
-        const right = layout.panelX + layout.panelW - (layout.portrait ? 56 : 38);
-        const y = layout.panelY + (layout.portrait ? 109 : 174);
+        const x = layout.panelX + layout.panelW / 2;
+        const topY = layout.panelY + (layout.portrait ? 78 : 107);
+        const bottomY = layout.panelY + layout.panelH - (layout.portrait ? 25 : 39);
         return {
-            x: player === 'white' ? left : right,
-            y
+            x,
+            y: player === 'white' ? bottomY : topY
         };
     }
 
@@ -435,10 +438,11 @@ export class LiuboScene extends BaseScene {
         const to = this.getCupAnchor(this.cupPassAnimation.toPlayer, layout);
         const progress = Math.max(0, Math.min(1, this.cupPassAnimation.age / this.cupPassAnimation.duration));
         const eased = easeInOut(progress);
-        const arc = Math.sin(progress * Math.PI) * 12;
+        const arc = Math.sin(progress * Math.PI) * 10;
         return {
             x: from.x + (to.x - from.x) * eased,
-            y: from.y + (to.y - from.y) * eased - arc
+            y: from.y + (to.y - from.y) * eased,
+            tilt: arc
         };
     }
 
@@ -458,10 +462,14 @@ export class LiuboScene extends BaseScene {
 
         const shake = isRolling ? Math.sin(this.rollAnimation.age * 0.045) * 3 : 0;
         const lift = isRolling ? Math.sin(this.rollAnimation.age * 0.028) * 2 : 0;
+        const flip = this.getCupFacingPlayer() === 'black';
         ctx.save();
         ctx.globalAlpha = canRoll || isRolling ? 1 : 0.58;
         if (cup) {
-            ctx.drawImage(cup, Math.floor(cx - cup.width / 2 + shake), Math.floor(cy - cup.height / 2 + lift));
+            ctx.translate(Math.floor(cx + shake), Math.floor(cy + lift));
+            ctx.rotate(((this.getCupPosition(this.boardLayout || this.getLayout(this.manager.canvas)).tilt || 0) * Math.PI) / 180);
+            if (flip) ctx.scale(-1, -1);
+            ctx.drawImage(cup, Math.floor(-cup.width / 2), Math.floor(-cup.height / 2));
         } else {
             ctx.fillStyle = '#754125';
             ctx.fillRect(Math.floor(cx - 15 + shake), Math.floor(cy - 10 + lift), 30, 22);
@@ -475,8 +483,8 @@ export class LiuboScene extends BaseScene {
         const progress = Math.max(0, Math.min(1, this.rollAnimation.age / ROLL_ANIMATION_MS));
         const eased = easeInOut(progress);
         const direction = this.getStickThrowDirection();
-        const launchX = cx + 10 * direction;
-        const launchY = cy - 6;
+        const launchX = cx + 10;
+        const launchY = cy - 6 * direction;
         for (let i = 0; i < 6; i++) {
             const target = this.getStickLandingPoint(i);
             const spin = (1.7 + i * 0.17) * (i % 2 ? -1 : 1);
@@ -491,10 +499,10 @@ export class LiuboScene extends BaseScene {
 
     renderSticks(ctx, layout) {
         const direction = this.getStickThrowDirection();
-        const labelOffset = (layout.portrait ? 61 : 64) * direction;
+        const labelX = this.rollRect.x + this.rollRect.w / 2 + (layout.portrait ? 52 : 56);
+        const labelY = this.rollRect.y + this.rollRect.h / 2 + 31 * direction;
         if (this.rollAnimation) {
-            const labelX = this.rollRect.x + this.rollRect.w / 2 + labelOffset;
-            this.drawPixelText(ctx, '- / -', labelX, this.rollRect.y + 30, {
+            this.drawPixelText(ctx, '- / -', labelX, labelY, {
                 color: '#8b7559',
                 font: '8px Silkscreen',
                 align: 'center'
@@ -504,9 +512,7 @@ export class LiuboScene extends BaseScene {
 
         const sticks = this.state.phase === 'roll' ? [] : (this.rollAnimation?.sticks || this.state.sticks || []);
         if (!sticks.length && !this.rollAnimation) {
-            const cx = this.rollRect.x + this.rollRect.w / 2 + 62 * direction;
-            const cy = this.rollRect.y - 6;
-            this.drawPixelText(ctx, '- / -', cx, cy + 29, {
+            this.drawPixelText(ctx, '- / -', labelX, labelY, {
                 color: '#8b7559',
                 font: '8px Silkscreen',
                 align: 'center'
@@ -519,8 +525,7 @@ export class LiuboScene extends BaseScene {
             this.drawLiuboStick(ctx, target.x, target.y, target.rotation, (sticks[i] || 2) === 3, i >= 3);
         }
         const values = this.state.moveValues?.length ? this.state.moveValues.join(' / ') : '- / -';
-        const labelX = this.rollRect.x + this.rollRect.w / 2 + labelOffset;
-        this.drawPixelText(ctx, values, labelX, this.rollRect.y + 30, {
+        this.drawPixelText(ctx, values, labelX, labelY, {
             color: '#ffd77a',
             font: '8px Silkscreen',
             align: 'center'
@@ -530,24 +535,26 @@ export class LiuboScene extends BaseScene {
     getStickLandingPoint(i) {
         const cx = this.rollRect.x + this.rollRect.w / 2;
         const direction = this.getStickThrowDirection();
-        const baseX = cx + 40 * direction;
-        const baseY = this.rollRect.y - 10;
+        const baseX = cx + 8;
+        const baseY = this.rollRect.y + this.rollRect.h / 2 + 34 * direction;
         const points = [
-            { x: baseX - 5 * direction, y: baseY + 2, rotation: -0.18 },
-            { x: baseX + 16 * direction, y: baseY + 8, rotation: 0.08 },
-            { x: baseX + 37 * direction, y: baseY + 3, rotation: -0.1 },
-            { x: baseX + 1 * direction, y: baseY + 16, rotation: 0.14 },
-            { x: baseX + 22 * direction, y: baseY + 21, rotation: -0.06 },
-            { x: baseX + 43 * direction, y: baseY + 15, rotation: 0.18 }
+            { x: baseX - 22, y: baseY - 8 * direction, rotation: -0.18 },
+            { x: baseX - 2, y: baseY - 3 * direction, rotation: 0.08 },
+            { x: baseX + 18, y: baseY - 9 * direction, rotation: -0.1 },
+            { x: baseX - 18, y: baseY + 7 * direction, rotation: 0.14 },
+            { x: baseX + 3, y: baseY + 10 * direction, rotation: -0.06 },
+            { x: baseX + 23, y: baseY + 4 * direction, rotation: 0.18 }
         ];
         return points[i] || points[0];
     }
 
     getStickThrowDirection() {
-        const layout = this.boardLayout || this.getLayout(this.manager.canvas);
-        const cupCenter = this.getCupPosition(layout).x;
-        const laneCenter = layout.panelX + layout.panelW / 2;
-        return cupCenter > laneCenter ? -1 : 1;
+        return this.getCupFacingPlayer() === 'black' ? 1 : -1;
+    }
+
+    getCupFacingPlayer() {
+        if (this.cupPassAnimation) return this.cupPassAnimation.toPlayer;
+        return this.cupCarrier || this.state.currentPlayer;
     }
 
     drawLiuboStick(ctx, x, y, rotation, faceUp, darkSet) {
