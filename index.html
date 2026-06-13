@@ -8,7 +8,7 @@
 </head>
 <body>
     <div id="game-container">
-        <div id="boot-loader" role="status" aria-live="polite">
+        <div id="boot-loader" role="status" aria-live="polite" aria-label="Loading Three Kingdoms: Stratagem">
             <div class="boot-loader__panel">
                 <div class="boot-loader__title-wrap">
                     <img
@@ -19,14 +19,12 @@
                         height="89"
                     >
                 </div>
-                <div class="boot-loader__track" aria-hidden="true">
-                    <span></span>
+                <div class="boot-loader__spinner" aria-hidden="true">
                     <span></span>
                     <span></span>
                     <span></span>
                     <span></span>
                 </div>
-                <div class="boot-loader__text">LOADING</div>
             </div>
         </div>
         <canvas id="game-canvas"></canvas>

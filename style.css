@@ -48,24 +48,8 @@ body {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background:
-        linear-gradient(90deg, rgba(236, 188, 83, 0.06) 1px, transparent 1px),
-        linear-gradient(0deg, rgba(236, 188, 83, 0.04) 1px, transparent 1px),
-        #15110e;
-    background-size: 16px 16px, 16px 16px, auto;
-    color: #f2d99d;
-    font-family: monospace;
+    background: #000;
     transition: opacity 280ms ease, visibility 280ms ease;
-}
-
-#boot-loader::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 38%),
-        linear-gradient(0deg, rgba(0, 0, 0, 0.28), transparent 34%);
-    pointer-events: none;
 }
 
 .boot-loader--hidden {
@@ -81,7 +65,7 @@ body {
     flex-direction: column;
     align-items: center;
     width: min(220px, 72vw);
-    gap: 10px;
+    gap: 18px;
     image-rendering: pixelated;
 }
 
@@ -89,20 +73,6 @@ body {
     position: relative;
     width: min(256px, 78vw);
     aspect-ratio: 256 / 89;
-    animation: boot-title-breathe 1600ms ease-in-out infinite;
-}
-
-.boot-loader__title-wrap::after {
-    content: "";
-    position: absolute;
-    top: 10%;
-    bottom: 10%;
-    left: -28%;
-    width: 18%;
-    background: rgba(255, 229, 164, 0.34);
-    filter: blur(4px);
-    transform: skewX(-18deg);
-    animation: boot-title-glint 2100ms ease-in-out infinite;
 }
 
 .boot-loader__title {
@@ -111,53 +81,41 @@ body {
     height: 100%;
     object-fit: contain;
     image-rendering: pixelated;
-    filter: drop-shadow(0 5px 0 rgba(0, 0, 0, 0.38));
 }
 
-.boot-loader__track {
+.boot-loader__spinner {
     display: grid;
-    grid-template-columns: repeat(5, 18px);
-    gap: 5px;
-    height: 16px;
-    align-items: center;
+    grid-template-columns: repeat(2, 7px);
+    grid-template-rows: repeat(2, 7px);
+    gap: 4px;
 }
 
-.boot-loader__track span {
-    width: 18px;
-    height: 8px;
-    background: #46352b;
-    box-shadow: 0 0 0 2px #241914 inset;
-    animation: boot-step 1000ms steps(1, end) infinite;
+.boot-loader__spinner span {
+    width: 7px;
+    height: 7px;
+    background: #555;
+    animation: boot-spinner 900ms steps(1, end) infinite;
 }
 
-.boot-loader__track span:nth-child(1) {
+.boot-loader__spinner span:nth-child(1) {
     animation-delay: 0ms;
 }
 
-.boot-loader__track span:nth-child(2) {
-    animation-delay: 150ms;
+.boot-loader__spinner span:nth-child(2) {
+    animation-delay: -675ms;
 }
 
-.boot-loader__track span:nth-child(3) {
-    animation-delay: 300ms;
+.boot-loader__spinner span:nth-child(3) {
+    animation-delay: -225ms;
 }
 
-.boot-loader__track span:nth-child(4) {
-    animation-delay: 450ms;
+.boot-loader__spinner span:nth-child(4) {
+    animation-delay: -450ms;
 }
 
-.boot-loader__track span:nth-child(5) {
-    animation-delay: 600ms;
-}
-
-.boot-loader__text {
-    color: #cfc1a2;
-    font-size: 12px;
-    line-height: 1;
-}
-
-.boot-loader--error .boot-loader__text {
-    color: #ffb3a1;
+.boot-loader--error .boot-loader__spinner span {
+    background: #aa3b2c;
+    animation: none;
 }
 
 canvas {
@@ -174,46 +132,22 @@ canvas {
     object-fit: contain;
 }
 
-@keyframes boot-title-breathe {
-    0%, 100% {
-        transform: translateY(0) scale(1);
+@keyframes boot-spinner {
+    0%, 24% {
+        background: #fff;
     }
 
-    50% {
-        transform: translateY(-2px) scale(1.015);
-    }
-}
-
-@keyframes boot-title-glint {
-    0%, 35% {
-        left: -28%;
-        opacity: 0;
-    }
-
-    48% {
-        opacity: 1;
-    }
-
-    65%, 100% {
-        left: 110%;
-        opacity: 0;
-    }
-}
-
-@keyframes boot-step {
-    0%, 100% {
-        background: #46352b;
-    }
-
-    50% {
-        background: #e0b75c;
+    25%, 100% {
+        background: #555;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .boot-loader__title-wrap,
-    .boot-loader__title-wrap::after,
-    .boot-loader__track span {
+    .boot-loader__spinner span {
         animation: none;
+    }
+
+    .boot-loader__spinner span:first-child {
+        background: #fff;
     }
 }
