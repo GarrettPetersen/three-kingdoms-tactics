@@ -1104,7 +1104,7 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'animate', id: 'zhangfei', animation: 'recovery' },
         { type: 'command', action: 'addActor', id: 'farmer', imgKey: 'farmer', x: 198, y: 204, flip: true },
         { type: 'command', action: 'animate', id: 'farmer', animation: 'recovery' },
-        { type: 'command', action: 'addProp', id: 'liubo_table', imgKey: 'liubo_table', x: 174, y: 178, sortY: 226 },
+        { type: 'command', action: 'addProp', id: 'liubo_table', imgKey: 'liubo_table', x: 174, y: 138, sortY: 226 },
         
         { type: 'command', action: 'fade', target: 0, speed: 0.002 },
         
@@ -1114,7 +1114,7 @@ export const NARRATIVE_SCRIPTS = {
             'liubo_table': {
                 liuboActivityId: 'inn_first_liubo',
                 x: 166,
-                y: 150,
+                y: 110,
                 w: 78,
                 h: 78,
                 onClick: [
