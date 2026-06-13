@@ -41,8 +41,8 @@ export const LIUBO_SPACES = {
 };
 
 export const LIUBO_ENTRY_SPACES = {
-    white: ['l_bottom_left', 'l_bottom_right'],
-    black: ['l_top_left', 'l_top_right']
+    white: ['corner_sw_bottom', 'corner_se_bottom'],
+    black: ['corner_nw_top', 'corner_ne_top']
 };
 
 export const LIUBO_SCORING_NESTS = {
