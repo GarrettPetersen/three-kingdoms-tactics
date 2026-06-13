@@ -27,6 +27,7 @@ const OWL_H = 18;
 const MOVE_SEGMENT_MS = 150;
 const MOVE_MIN_MS = 260;
 const ROLL_ANIMATION_MS = 760;
+const CUP_PASS_MS = 560;
 
 export class LiuboScene extends BaseScene {
     constructor() {
@@ -53,6 +54,8 @@ export class LiuboScene extends BaseScene {
         this.lastTime = 0;
         this.moveAnimations = [];
         this.floatTexts = [];
+        this.cupCarrier = this.state.currentPlayer;
+        this.cupPassAnimation = null;
     }
 
     enter(params = {}) {
@@ -86,15 +89,19 @@ export class LiuboScene extends BaseScene {
         this.lastTime = 0;
         this.moveAnimations = [];
         this.floatTexts = [];
+        this.cupCarrier = this.state.currentPlayer;
+        this.cupPassAnimation = null;
     }
 
     update(timestamp) {
         const dt = timestamp - (this.lastTime || timestamp);
         this.lastTime = timestamp;
+        this.updateCupPassAnimation(dt);
         this.updateMoveAnimations(dt);
         this.updateFloatTexts(dt);
         this.updateRollAnimation(dt);
         if (this.confirmReturn) return;
+        if (this.cupPassAnimation) return;
         if (this.rollAnimation) return;
         if (this.moveAnimations.length) return;
         if (this.state.winner) return;
@@ -379,8 +386,10 @@ export class LiuboScene extends BaseScene {
 
         this.renderPieceBenches(ctx, panelX, panelW, panelY + 36, layout.portrait);
 
-        this.rollRect = { x: Math.floor(panelX + panelW / 2 - (layout.portrait ? 76 : 74)), y: panelY + (layout.portrait ? 101 : 168), w: 48, h: 34 };
-        const canRoll = this.state.phase === 'roll' && this.state.currentPlayer === this.state.humanPlayer && !this.state.winner;
+        this.renderCupLane(ctx, layout);
+        const cupPos = this.getCupPosition(layout);
+        this.rollRect = { x: Math.floor(cupPos.x - 24), y: Math.floor(cupPos.y - 17), w: 48, h: 34 };
+        const canRoll = this.state.phase === 'roll' && this.state.currentPlayer === this.state.humanPlayer && !this.state.winner && !this.cupPassAnimation;
         this.renderRollCup(ctx, canRoll);
         this.renderSticks(ctx, layout);
 
@@ -392,6 +401,45 @@ export class LiuboScene extends BaseScene {
                 align: 'center'
             });
         }
+    }
+
+    renderCupLane(ctx, layout) {
+        const white = this.getCupAnchor('white', layout);
+        const black = this.getCupAnchor('black', layout);
+        const active = this.getCupPosition(layout);
+        ctx.save();
+        ctx.globalAlpha = 0.7;
+        ctx.fillStyle = '#2d211a';
+        ctx.fillRect(Math.floor(Math.min(white.x, black.x) - 16), Math.floor(white.y - 3), Math.floor(Math.abs(black.x - white.x) + 32), 6);
+        ctx.strokeStyle = '#60472c';
+        ctx.strokeRect(Math.floor(Math.min(white.x, black.x) - 16) + 0.5, Math.floor(white.y - 3) + 0.5, Math.floor(Math.abs(black.x - white.x) + 32), 6);
+        ctx.fillStyle = this.state.currentPlayer === 'white' ? '#f0dfc2' : '#b98f6b';
+        ctx.globalAlpha = 0.3;
+        ctx.fillRect(Math.floor(active.x - 18), Math.floor(active.y - 5), 36, 10);
+        ctx.restore();
+    }
+
+    getCupAnchor(player, layout) {
+        const left = layout.panelX + (layout.portrait ? 56 : 38);
+        const right = layout.panelX + layout.panelW - (layout.portrait ? 56 : 38);
+        const y = layout.panelY + (layout.portrait ? 109 : 174);
+        return {
+            x: player === 'white' ? left : right,
+            y
+        };
+    }
+
+    getCupPosition(layout) {
+        if (!this.cupPassAnimation) return this.getCupAnchor(this.cupCarrier || this.state.currentPlayer, layout);
+        const from = this.getCupAnchor(this.cupPassAnimation.fromPlayer, layout);
+        const to = this.getCupAnchor(this.cupPassAnimation.toPlayer, layout);
+        const progress = Math.max(0, Math.min(1, this.cupPassAnimation.age / this.cupPassAnimation.duration));
+        const eased = easeInOut(progress);
+        const arc = Math.sin(progress * Math.PI) * 12;
+        return {
+            x: from.x + (to.x - from.x) * eased,
+            y: from.y + (to.y - from.y) * eased - arc
+        };
     }
 
     renderRollCup(ctx, canRoll) {
@@ -426,7 +474,8 @@ export class LiuboScene extends BaseScene {
     renderRollingStickBurst(ctx, cx, cy) {
         const progress = Math.max(0, Math.min(1, this.rollAnimation.age / ROLL_ANIMATION_MS));
         const eased = easeInOut(progress);
-        const launchX = cx + 10;
+        const direction = this.getStickThrowDirection();
+        const launchX = cx + 10 * direction;
         const launchY = cy - 6;
         for (let i = 0; i < 6; i++) {
             const target = this.getStickLandingPoint(i);
@@ -441,8 +490,10 @@ export class LiuboScene extends BaseScene {
     }
 
     renderSticks(ctx, layout) {
+        const direction = this.getStickThrowDirection();
+        const labelOffset = (layout.portrait ? 61 : 64) * direction;
         if (this.rollAnimation) {
-            const labelX = this.rollRect.x + this.rollRect.w / 2 + (layout.portrait ? 61 : 64);
+            const labelX = this.rollRect.x + this.rollRect.w / 2 + labelOffset;
             this.drawPixelText(ctx, '- / -', labelX, this.rollRect.y + 30, {
                 color: '#8b7559',
                 font: '8px Silkscreen',
@@ -451,9 +502,9 @@ export class LiuboScene extends BaseScene {
             return;
         }
 
-        const sticks = this.rollAnimation?.sticks || this.state.sticks || [];
+        const sticks = this.state.phase === 'roll' ? [] : (this.rollAnimation?.sticks || this.state.sticks || []);
         if (!sticks.length && !this.rollAnimation) {
-            const cx = this.rollRect.x + this.rollRect.w / 2 + 62;
+            const cx = this.rollRect.x + this.rollRect.w / 2 + 62 * direction;
             const cy = this.rollRect.y - 6;
             this.drawPixelText(ctx, '- / -', cx, cy + 29, {
                 color: '#8b7559',
@@ -468,7 +519,7 @@ export class LiuboScene extends BaseScene {
             this.drawLiuboStick(ctx, target.x, target.y, target.rotation, (sticks[i] || 2) === 3, i >= 3);
         }
         const values = this.state.moveValues?.length ? this.state.moveValues.join(' / ') : '- / -';
-        const labelX = this.rollRect.x + this.rollRect.w / 2 + (layout.portrait ? 61 : 64);
+        const labelX = this.rollRect.x + this.rollRect.w / 2 + labelOffset;
         this.drawPixelText(ctx, values, labelX, this.rollRect.y + 30, {
             color: '#ffd77a',
             font: '8px Silkscreen',
@@ -478,17 +529,25 @@ export class LiuboScene extends BaseScene {
 
     getStickLandingPoint(i) {
         const cx = this.rollRect.x + this.rollRect.w / 2;
-        const baseX = cx + 40;
+        const direction = this.getStickThrowDirection();
+        const baseX = cx + 40 * direction;
         const baseY = this.rollRect.y - 10;
         const points = [
-            { x: baseX - 5, y: baseY + 2, rotation: -0.18 },
-            { x: baseX + 16, y: baseY + 8, rotation: 0.08 },
-            { x: baseX + 37, y: baseY + 3, rotation: -0.1 },
-            { x: baseX + 1, y: baseY + 16, rotation: 0.14 },
-            { x: baseX + 22, y: baseY + 21, rotation: -0.06 },
-            { x: baseX + 43, y: baseY + 15, rotation: 0.18 }
+            { x: baseX - 5 * direction, y: baseY + 2, rotation: -0.18 },
+            { x: baseX + 16 * direction, y: baseY + 8, rotation: 0.08 },
+            { x: baseX + 37 * direction, y: baseY + 3, rotation: -0.1 },
+            { x: baseX + 1 * direction, y: baseY + 16, rotation: 0.14 },
+            { x: baseX + 22 * direction, y: baseY + 21, rotation: -0.06 },
+            { x: baseX + 43 * direction, y: baseY + 15, rotation: 0.18 }
         ];
         return points[i] || points[0];
+    }
+
+    getStickThrowDirection() {
+        const layout = this.boardLayout || this.getLayout(this.manager.canvas);
+        const cupCenter = this.getCupPosition(layout).x;
+        const laneCenter = layout.panelX + layout.panelW / 2;
+        return cupCenter > laneCenter ? -1 : 1;
     }
 
     drawLiuboStick(ctx, x, y, rotation, faceUp, darkSet) {
@@ -752,8 +811,10 @@ export class LiuboScene extends BaseScene {
             isOwl: piece.isOwl,
             state: 'board'
         };
+        const previousPlayer = this.state.currentPlayer;
         const result = applyLiuboMove(this.state, move);
         if (!result) return false;
+        this.startCupPassIfTurnChanged(previousPlayer);
         this.saveState();
 
         const destination = route[route.length - 1] || this.boardToScreen(getBoardPointPosition(move.toSpaceId));
@@ -804,8 +865,33 @@ export class LiuboScene extends BaseScene {
             moveValues: this.rollAnimation.moveValues
         };
         this.rollAnimation = null;
+        const previousPlayer = this.state.currentPlayer;
         beginTurnRoll(this.state, Math.random, rolled);
+        this.startCupPassIfTurnChanged(previousPlayer);
         this.saveState();
+    }
+
+    startCupPassIfTurnChanged(previousPlayer) {
+        if (!previousPlayer || previousPlayer === this.state.currentPlayer || this.state.winner) {
+            this.cupCarrier = this.state.currentPlayer;
+            this.cupPassAnimation = null;
+            return;
+        }
+        this.cupCarrier = previousPlayer;
+        this.cupPassAnimation = {
+            fromPlayer: previousPlayer,
+            toPlayer: this.state.currentPlayer,
+            age: 0,
+            duration: CUP_PASS_MS
+        };
+    }
+
+    updateCupPassAnimation(dt) {
+        if (!this.cupPassAnimation) return;
+        this.cupPassAnimation.age += dt;
+        if (this.cupPassAnimation.age < this.cupPassAnimation.duration) return;
+        this.cupCarrier = this.cupPassAnimation.toPlayer;
+        this.cupPassAnimation = null;
     }
 
     updateMoveAnimations(dt) {
@@ -940,7 +1026,7 @@ export class LiuboScene extends BaseScene {
             return;
         }
         if (this.state.winner) return;
-        if (this.state.currentPlayer !== this.state.humanPlayer || this.moveAnimations.length) return;
+        if (this.state.currentPlayer !== this.state.humanPlayer || this.moveAnimations.length || this.cupPassAnimation) return;
 
         if (this.state.phase === 'roll' && this.rollRect && pointInRect(x, y, this.rollRect)) {
             if (this.startStickRoll()) assets.playSound('ui_click', 0.4);
@@ -1007,6 +1093,8 @@ export class LiuboScene extends BaseScene {
         this.rollAnimation = null;
         this.moveAnimations = [];
         this.floatTexts = [];
+        this.cupCarrier = this.state.currentPlayer;
+        this.cupPassAnimation = null;
         this.confirmReturn = false;
         this.resultPlayAgainRect = null;
         this.resultReturnRect = null;
