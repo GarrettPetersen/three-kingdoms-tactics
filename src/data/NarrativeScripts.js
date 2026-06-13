@@ -1102,7 +1102,7 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 120, y: 200, flip: true },
         { type: 'command', action: 'animate', id: 'liubei', animation: 'recovery' },
         { type: 'command', action: 'animate', id: 'zhangfei', animation: 'recovery' },
-        { type: 'command', action: 'addActor', id: 'farmer', imgKey: 'farmer', x: 198, y: 119, flip: true },
+        { type: 'command', action: 'addActor', id: 'farmer', imgKey: 'farmer', x: 198, y: 158, flip: true },
         { type: 'command', action: 'animate', id: 'farmer', animation: 'recovery' },
         { type: 'command', action: 'addProp', id: 'liubo_table', imgKey: 'liubo_table', x: 174, y: 138, sortY: 226 },
         
