@@ -85,39 +85,33 @@ body {
     image-rendering: pixelated;
 }
 
-.boot-loader__banners {
-    display: flex;
-    align-items: flex-end;
-    gap: 8px;
-    height: 31px;
+.boot-loader__title-wrap {
+    position: relative;
+    width: min(256px, 78vw);
+    aspect-ratio: 256 / 89;
+    animation: boot-title-breathe 1600ms ease-in-out infinite;
 }
 
-.boot-loader__banners span {
-    width: 12px;
-    height: 21px;
-    background: #b93f2c;
-    border: 2px solid #351e18;
-    box-shadow: 0 4px 0 #6f2a21 inset, 0 -4px 0 #e4a84f inset;
-    animation: boot-banner 900ms steps(2, end) infinite;
-}
-
-.boot-loader__banners span:nth-child(2) {
-    height: 27px;
-    background: #d19a3a;
-    box-shadow: 0 4px 0 #7b4b1d inset, 0 -4px 0 #f0cf72 inset;
-    animation-delay: 120ms;
-}
-
-.boot-loader__banners span:nth-child(3) {
-    animation-delay: 240ms;
+.boot-loader__title-wrap::after {
+    content: "";
+    position: absolute;
+    top: 10%;
+    bottom: 10%;
+    left: -28%;
+    width: 18%;
+    background: rgba(255, 229, 164, 0.34);
+    filter: blur(4px);
+    transform: skewX(-18deg);
+    animation: boot-title-glint 2100ms ease-in-out infinite;
 }
 
 .boot-loader__title {
-    color: #f6dda4;
-    font-size: 18px;
-    line-height: 1;
-    text-align: center;
-    text-shadow: 2px 2px 0 #332017;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 5px 0 rgba(0, 0, 0, 0.38));
 }
 
 .boot-loader__track {
@@ -180,13 +174,29 @@ canvas {
     object-fit: contain;
 }
 
-@keyframes boot-banner {
+@keyframes boot-title-breathe {
     0%, 100% {
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 
     50% {
-        transform: translateY(-4px);
+        transform: translateY(-2px) scale(1.015);
+    }
+}
+
+@keyframes boot-title-glint {
+    0%, 35% {
+        left: -28%;
+        opacity: 0;
+    }
+
+    48% {
+        opacity: 1;
+    }
+
+    65%, 100% {
+        left: 110%;
+        opacity: 0;
     }
 }
 
@@ -201,9 +211,9 @@ canvas {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .boot-loader__banners span,
+    .boot-loader__title-wrap,
+    .boot-loader__title-wrap::after,
     .boot-loader__track span {
         animation: none;
     }
 }
-
