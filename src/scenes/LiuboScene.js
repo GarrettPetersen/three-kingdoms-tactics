@@ -4,6 +4,7 @@ import { getCurrentLanguage, getLocalizedText } from '../core/Language.js';
 import { UI_TEXT } from '../data/Translations.js';
 import {
     LIUBO_BOARD_PADDED_SIZE,
+    getLiuboFeatureId,
     getBoardPointPosition
 } from '../minigames/liubo/LiuboBoard.js';
 import {
@@ -423,9 +424,9 @@ export class LiuboScene extends BaseScene {
     }
 
     getCupAnchor(player, layout) {
-        const x = layout.panelX + layout.panelW / 2;
-        const topY = layout.panelY + (layout.portrait ? 78 : 107);
-        const bottomY = layout.panelY + layout.panelH - (layout.portrait ? 25 : 39);
+        const x = layout.panelX + layout.panelW - (layout.portrait ? 47 : 45);
+        const topY = layout.panelY + (layout.portrait ? 18 : 27);
+        const bottomY = layout.panelY + layout.panelH - (layout.portrait ? 21 : 26);
         return {
             x,
             y: player === 'white' ? bottomY : topY
@@ -499,7 +500,7 @@ export class LiuboScene extends BaseScene {
 
     renderSticks(ctx, layout) {
         const direction = this.getStickThrowDirection();
-        const labelX = this.rollRect.x + this.rollRect.w / 2 + (layout.portrait ? 52 : 56);
+        const labelX = this.rollRect.x + this.rollRect.w / 2 - (layout.portrait ? 48 : 54);
         const labelY = this.rollRect.y + this.rollRect.h / 2 + 31 * direction;
         if (this.rollAnimation) {
             this.drawPixelText(ctx, '- / -', labelX, labelY, {
@@ -535,7 +536,7 @@ export class LiuboScene extends BaseScene {
     getStickLandingPoint(i) {
         const cx = this.rollRect.x + this.rollRect.w / 2;
         const direction = this.getStickThrowDirection();
-        const baseX = cx + 8;
+        const baseX = cx - 12;
         const baseY = this.rollRect.y + this.rollRect.h / 2 + 34 * direction;
         const points = [
             { x: baseX - 22, y: baseY - 8 * direction, rotation: -0.18 },
@@ -1227,6 +1228,14 @@ function classifyLiuboMove(state, move) {
     ));
     const friendly = pieces.filter(piece => piece.player === mover.player);
     const enemies = pieces.filter(piece => piece.player !== mover.player);
+    const targetFeature = getLiuboFeatureId(move.toSpaceId);
+    const featureEnemies = state.pieces.filter(piece => (
+        piece.state === 'board'
+        && piece.player !== mover.player
+        && piece.id !== mover.id
+        && getLiuboFeatureId(piece.spaceId) === targetFeature
+    ));
+    if (featureEnemies.some(piece => piece.isOwl !== mover.isOwl)) return 'capture';
     if (enemies.length) {
         if (friendly.length === 1) return 'capture';
         if (enemies.some(piece => piece.isOwl !== mover.isOwl)) return 'capture';
