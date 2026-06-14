@@ -12914,13 +12914,16 @@ export class TacticsScene extends BaseScene {
         const meta = this.tacticsMap?.cityGateMeta;
         if (!unit || !meta || meta.orientation !== 'top_rampart') return false;
         const rampartRows = meta.rampartRows || 0;
-        if ((unit.r || 0) >= rampartRows) return true;
         if (unit.isMoving && Array.isArray(unit.path)) {
             const start = unit.path[unit.pathIndex];
             const end = unit.path[unit.pathIndex + 1];
-            if ((start?.r ?? -1) >= rampartRows || (end?.r ?? -1) >= rampartRows) return true;
+            const crossesGateLine = (start?.r ?? -1) < rampartRows && (end?.r ?? -1) >= rampartRows;
+            const entersGateLine = (start?.r ?? -1) >= rampartRows && (end?.r ?? -1) < rampartRows;
+            if (crossesGateLine || entersGateLine) {
+                return (unit.currentSortR ?? unit.r ?? 0) >= rampartRows;
+            }
         }
-        return false;
+        return (unit.r || 0) >= rampartRows;
     }
 
     redrawGroundUnitsOverCityGatehouse(ctx) {
