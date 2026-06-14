@@ -3225,6 +3225,7 @@ export class TacticsScene extends BaseScene {
                 level: cell.level,
                 elevation: cell.elevation,
                 impassable: cell.impassable,
+                omitted: !!cell.omitted,
                 gateState: cell.gateState || null,
                 gateDefenderSide: cell.gateDefenderSide || null,
                 gateInside: cell.gateInside ?? null,
@@ -3475,6 +3476,7 @@ export class TacticsScene extends BaseScene {
                     cell.level = savedCell.level;
                     cell.elevation = savedCell.elevation;
                     cell.impassable = savedCell.impassable;
+                    cell.omitted = !!savedCell.omitted;
                     cell.gateState = savedCell.gateState || null;
                     cell.gateDefenderSide = savedCell.gateDefenderSide || null;
                     cell.gateInside = savedCell.gateInside ?? null;
@@ -3947,6 +3949,7 @@ export class TacticsScene extends BaseScene {
                 cell.level = savedCell.level;
                 cell.elevation = savedCell.elevation;
                 cell.impassable = savedCell.impassable;
+                cell.omitted = !!savedCell.omitted;
                 cell.gateState = savedCell.gateState || null;
                 cell.gateDefenderSide = savedCell.gateDefenderSide || null;
                 cell.gateInside = savedCell.gateInside ?? null;
@@ -7278,7 +7281,7 @@ export class TacticsScene extends BaseScene {
                 for (let r = 0; r < this.manager.config.mapHeight; r++) {
                     for (let q = 0; q < this.manager.config.mapWidth; q++) {
                         const cell = this.tacticsMap.getCell(r, q);
-                        if (!cell || cell.impassable) continue;
+                        if (!cell || cell.omitted || cell.impassable) continue;
                         if (cell.terrain === 'wall_01' || this.isGateTerrain(cell.terrain)) continue;
                         const target = this.tacticsMap.isCityGateInsideCell(r, q) ? insideCells : outsideCells;
                         target.push({ r, q });
@@ -8459,6 +8462,7 @@ export class TacticsScene extends BaseScene {
             const xOffset = (Math.abs(r) % 2 === 1) ? config.horizontalSpacing / 2 : 0;
             for (let q = 0; q < config.mapWidth; q++) {
                 const cell = this.tacticsMap.getCell(r, q);
+                if (!cell || cell.omitted) continue;
                 const hx = this.startX + q * config.horizontalSpacing + xOffset;
                 const hy = this.startY + r * config.verticalSpacing - (cell.elevation || 0);
                 const dist = Math.sqrt((x - hx)**2 + (y - hy)**2);
@@ -8487,6 +8491,8 @@ export class TacticsScene extends BaseScene {
             const coneRange = Math.min(maxRange, targetDepth);
             for (let r = 0; r < this.manager.config.mapHeight; r++) {
                 for (let q = 0; q < this.manager.config.mapWidth; q++) {
+                    const cell = this.tacticsMap.getCell(r, q);
+                    if (!cell || cell.omitted) continue;
                     if (this.isCellInShoutCone(origin.r, origin.q, targetR, targetQ, r, q, coneRange)) {
                         affected.push({ r, q });
                     }
@@ -8757,8 +8763,9 @@ export class TacticsScene extends BaseScene {
         // 1. Collect hexes
         for (let r = 0; r < config.mapHeight; r++) {
             for (let q = 0; q < config.mapWidth; q++) {
-                const pos = this.getPixelPos(r, q);
                 const cell = this.tacticsMap.getCell(r, q);
+                if (!cell || cell.omitted) continue;
+                const pos = this.getPixelPos(r, q);
                 const terrainForLayer = this.isGateTerrain(cell.terrain) ? 'mud_01' : cell.terrain;
                 
                 const hexCall = {
@@ -13208,6 +13215,7 @@ export class TacticsScene extends BaseScene {
             origins.forEach(o => {
                 const neighbors = this.tacticsMap.getNeighbors(o.r, o.q);
                 neighbors.forEach(n => {
+                    if (n.omitted) return;
                     const k = `${n.r},${n.q}`;
                     // Don't allow targeting your own occupied hex.
                     if (originKeys.has(k)) return;
@@ -13221,6 +13229,8 @@ export class TacticsScene extends BaseScene {
             // Find all hexes within distance range and >= minRange
             for (let r = 0; r < this.manager.config.mapHeight; r++) {
                 for (let q = 0; q < this.manager.config.mapWidth; q++) {
+                    const cell = this.tacticsMap.getCell(r, q);
+                    if (!cell || cell.omitted) continue;
                     const k = `${r},${q}`;
                     if (originKeys.has(k)) continue;
                     const inRange = origins.some(o => {

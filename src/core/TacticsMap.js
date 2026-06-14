@@ -20,6 +20,7 @@ export class TacticsMap {
                     elevation: 0, // pixels (level * elevationStep)
                     unit: null,
                     impassable: false,
+                    omitted: false,
                     baseTerrain: null,
                     gateState: null,
                     gateDefenderSide: null,
@@ -101,7 +102,7 @@ export class TacticsMap {
             // We ignore map edges (where n is null) as players know they can't leave.
             if (n) {
                 const isDeepWater = n.terrain && n.terrain.includes('water_deep');
-                if ((n.impassable && !isDeepWater) || Math.abs((n.level || 0) - (cell.level || 0)) > 1) {
+                if (!n.omitted && ((n.impassable && !isDeepWater) || Math.abs((n.level || 0) - (cell.level || 0)) > 1)) {
                     status[label] = true;
                 } else {
                     status[label] = false;
@@ -312,6 +313,7 @@ export class TacticsMap {
                 cell.level = 0;
                 cell.elevation = 0;
                 cell.impassable = false;
+                cell.omitted = false;
                 cell.gateState = null;
                 cell.gateDefenderSide = null;
                 cell.gateInside = null;
@@ -404,6 +406,15 @@ export class TacticsMap {
                 cell.gateDefenderSide = null;
                 cell.cityGateSegment = null;
                 cell.cityGateStair = false;
+                cell.omitted = r === 0;
+
+                if (cell.omitted) {
+                    cell.terrain = 'brick_01';
+                    cell.level = 6;
+                    cell.elevation = cell.level * this.elevationStep;
+                    cell.impassable = true;
+                    continue;
+                }
 
                 if (inside) {
                     cell.terrain = stairKeys.has(`${r},${q}`) ? 'brick_staircase' : 'brick_01';
@@ -556,6 +567,7 @@ export class TacticsMap {
 
     canUnitTraverseCell(cell, movingUnit = null) {
         if (!cell) return false;
+        if (cell.omitted) return false;
         const terrain = cell.terrain || '';
         const isGate = terrain.startsWith('gate_');
         if (!isGate) return !cell.impassable;
