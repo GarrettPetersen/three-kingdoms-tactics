@@ -860,67 +860,157 @@
   },
   {
     "id": "inn_liubo_accept_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "Very well. Let us play.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_liubo_accept_repeat_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "Set the pieces again.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_liubo_decline_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "Another time.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_liubo_decline_reply_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "The board will wait. The rebels, perhaps not.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_liubo_decline_reply_02",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "Then keep your eyes sharp. The road plays rougher games than mine.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_liubo_intro_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "The road is dangerous, friend. Sit for a game of Liubo before you chase trouble?",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_liubo_loss_first_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "No shame in losing the first game. Liubo rewards patience more than pride.",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_loss_repeat_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "The board has humbled many travelers. Come back after your battles and we will set the pieces again.",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_repeat_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "Back to the board? Good. A second game tells more truth than the first.",
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "inn_liubo_tutorial_block_01",
+    "char": "unknown",
+    "text": "These two birds together have blocked a perch.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_block_02",
+    "char": "unknown",
+    "text": "Other birds can't get past them.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_contest_01",
+    "char": "unknown",
+    "text": "This perch is contested.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_contest_02",
+    "char": "unknown",
+    "text": "The next bird to move there will capture the opposing player's bird.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_goal_01",
+    "char": "unknown",
+    "text": "The goal of the game is to get 6 points.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_goal_02",
+    "char": "unknown",
+    "text": "You can get a point by capturing the opponent's birds.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_goal_03",
+    "char": "unknown",
+    "text": "You can also catch a fish in the central pond.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_goal_04",
+    "char": "unknown",
+    "text": "Deposit that fish in the opponent's nest to score.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_goal_05",
+    "char": "unknown",
+    "text": "A bird with a fish becomes an owl. Simple!",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_move_01",
+    "char": "unknown",
+    "text": "You get to move two of your birds on your turn.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_move_02",
+    "char": "unknown",
+    "text": "The number of face up sticks determines the distance.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_owl_01",
+    "char": "unknown",
+    "text": "This piece has caught a fish and become an owl.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_owl_02",
+    "char": "unknown",
+    "text": "Owls and birds can capture each other by landing in the same perch.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_owl_03",
+    "char": "unknown",
+    "text": "The owl can also score by reaching a nest on the opponent's side.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_start_01",
+    "char": "unknown",
+    "text": "You start the game by throwing your sticks.",
+    "source": "LiuboScene.js"
+  },
+  {
     "id": "inn_liubo_win_first_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "Ha! A fine first game. You saw the Owl's path before I did.",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_win_repeat_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "Again! You read the sticks like a market scale. I will have to stop wagering with you.",
     "source": "LiuboScene.js"
   },

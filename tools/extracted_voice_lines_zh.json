@@ -847,67 +847,157 @@
   },
   {
     "id": "inn_liubo_accept_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "好。我们博一局。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_liubo_accept_repeat_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "再摆一局。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_liubo_decline_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "改日吧。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_liubo_decline_reply_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "棋盘会等你。黄巾贼可未必。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_liubo_decline_reply_02",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "那就把眼睛放亮些。路上的局，比我这棋盘更狠。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_liubo_intro_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "路上凶险，朋友。追着麻烦走之前，坐下博一局如何？",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_liubo_loss_first_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "第一局输了不丢人。六博赏的是耐心，不是骄气。",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_loss_repeat_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "这棋盘让许多过客低头。打完仗再来，我们再摆一局。",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_repeat_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "又来棋盘前了？好。第二局比第一局更见真章。",
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "inn_liubo_tutorial_block_01",
+    "char": "unknown",
+    "text": "这两只鸟一起堵住了这个栖位。",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_block_02",
+    "char": "unknown",
+    "text": "其他鸟不能从这里通过。",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_contest_01",
+    "char": "unknown",
+    "text": "这个栖位正在争夺中。",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_contest_02",
+    "char": "unknown",
+    "text": "下一只移动到这里的鸟会吃掉对方的鸟。",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_goal_01",
+    "char": "unknown",
+    "text": "游戏的目标是得到六分。",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_goal_02",
+    "char": "unknown",
+    "text": "吃掉对手的鸟可以得一分。",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_goal_03",
+    "char": "unknown",
+    "text": "你也可以到中央池塘捕鱼。",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_goal_04",
+    "char": "unknown",
+    "text": "把鱼送到对手的巢里，也能得分。",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_goal_05",
+    "char": "unknown",
+    "text": "叼着鱼的鸟会变成枭。很简单！",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_move_01",
+    "char": "unknown",
+    "text": "每回合你可以移动两只鸟。",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_move_02",
+    "char": "unknown",
+    "text": "朝上的箸数决定移动距离。",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_owl_01",
+    "char": "unknown",
+    "text": "这枚棋子捉到鱼，变成了枭。",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_owl_02",
+    "char": "unknown",
+    "text": "枭和鸟落在同一栖位时可以互相吃掉。",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_owl_03",
+    "char": "unknown",
+    "text": "枭也能到达对手一侧的巢来得分。",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_liubo_tutorial_start_01",
+    "char": "unknown",
+    "text": "你先掷箸，游戏就从这里开始。",
+    "source": "LiuboScene.js"
+  },
+  {
     "id": "inn_liubo_win_first_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "哈！第一局便下得漂亮。枭棋的路数，你比我还先看出来。",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_win_repeat_01",
-    "char": "farmer",
+    "char": "xiaoer",
     "text": "又赢了！你看箸如看秤。我可不能再同你下注了。",
     "source": "LiuboScene.js"
   },

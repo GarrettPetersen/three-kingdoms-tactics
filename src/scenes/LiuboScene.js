@@ -37,30 +37,123 @@ const LIUBO_PLAYER_DIALOGUE = {
     name: 'Liubo Player'
 };
 const INN_LIUBO_TUTORIAL_LINES = {
-    before_first_action: {
-        en: 'You start the game by throwing your sticks.',
-        zh: '你先掷箸，游戏就从这里开始。'
-    },
-    after_throw_move: {
-        en: 'You get to move two of your birds on your turn, and the number of face up sticks determines the distance.',
-        zh: '每回合你可以移动两只鸟，朝上的箸数决定距离。'
-    },
-    after_throw_goal: {
-        en: 'The goal of the game is to get 6 points. You can get a point by capturing the opponent\'s birds or by catching a fish in the central pond and depositing it in the opponent\'s nest. A bird with a fish becomes an owl. Simple!',
-        zh: '目标是得到六分。吃掉对手的鸟可得一分，去中央池塘捕鱼，再送到对手巢中也可得一分。叼着鱼的鸟会变成枭。很简单！'
-    },
-    first_block: {
-        en: 'These two birds together have blocked a perch. Other birds can\'t get past them.',
-        zh: '这两只鸟一起堵住了这个栖位。其他鸟不能从这里通过。'
-    },
-    first_contest: {
-        en: 'This perch is contested. The next bird to move there will capture the opposing player\'s bird.',
-        zh: '这个栖位正在争夺中。下一只移动到这里的鸟会吃掉对方的鸟。'
-    },
-    first_owl: {
-        en: 'This piece has caught a fish and become an owl. Owls and birds can capture each other by landing in the same perch. The owl can also score a point by getting to one of the nests on the opponent\'s side of the board.',
-        zh: '这枚棋子捉到鱼，变成了枭。枭和鸟落在同一栖位时可以互相吃掉。枭也能到达对手一侧的巢来得分。'
-    }
+    before_first_action: [
+        {
+            voiceId: 'inn_liubo_tutorial_start_01',
+            text: {
+                en: 'You start the game by throwing your sticks.',
+                zh: '你先掷箸，游戏就从这里开始。'
+            }
+        }
+    ],
+    after_throw_move: [
+        {
+            voiceId: 'inn_liubo_tutorial_move_01',
+            text: {
+                en: 'You get to move two of your birds on your turn.',
+                zh: '每回合你可以移动两只鸟。'
+            }
+        },
+        {
+            voiceId: 'inn_liubo_tutorial_move_02',
+            text: {
+                en: 'The number of face up sticks determines the distance.',
+                zh: '朝上的箸数决定移动距离。'
+            }
+        }
+    ],
+    after_throw_goal: [
+        {
+            voiceId: 'inn_liubo_tutorial_goal_01',
+            text: {
+                en: 'The goal of the game is to get 6 points.',
+                zh: '游戏的目标是得到六分。'
+            }
+        },
+        {
+            voiceId: 'inn_liubo_tutorial_goal_02',
+            text: {
+                en: 'You can get a point by capturing the opponent\'s birds.',
+                zh: '吃掉对手的鸟可以得一分。'
+            }
+        },
+        {
+            voiceId: 'inn_liubo_tutorial_goal_03',
+            text: {
+                en: 'You can also catch a fish in the central pond.',
+                zh: '你也可以到中央池塘捕鱼。'
+            }
+        },
+        {
+            voiceId: 'inn_liubo_tutorial_goal_04',
+            text: {
+                en: 'Deposit that fish in the opponent\'s nest to score.',
+                zh: '把鱼送到对手的巢里，也能得分。'
+            }
+        },
+        {
+            voiceId: 'inn_liubo_tutorial_goal_05',
+            text: {
+                en: 'A bird with a fish becomes an owl. Simple!',
+                zh: '叼着鱼的鸟会变成枭。很简单！'
+            }
+        }
+    ],
+    first_block: [
+        {
+            voiceId: 'inn_liubo_tutorial_block_01',
+            text: {
+                en: 'These two birds together have blocked a perch.',
+                zh: '这两只鸟一起堵住了这个栖位。'
+            }
+        },
+        {
+            voiceId: 'inn_liubo_tutorial_block_02',
+            text: {
+                en: 'Other birds can\'t get past them.',
+                zh: '其他鸟不能从这里通过。'
+            }
+        }
+    ],
+    first_contest: [
+        {
+            voiceId: 'inn_liubo_tutorial_contest_01',
+            text: {
+                en: 'This perch is contested.',
+                zh: '这个栖位正在争夺中。'
+            }
+        },
+        {
+            voiceId: 'inn_liubo_tutorial_contest_02',
+            text: {
+                en: 'The next bird to move there will capture the opposing player\'s bird.',
+                zh: '下一只移动到这里的鸟会吃掉对方的鸟。'
+            }
+        }
+    ],
+    first_owl: [
+        {
+            voiceId: 'inn_liubo_tutorial_owl_01',
+            text: {
+                en: 'This piece has caught a fish and become an owl.',
+                zh: '这枚棋子捉到鱼，变成了枭。'
+            }
+        },
+        {
+            voiceId: 'inn_liubo_tutorial_owl_02',
+            text: {
+                en: 'Owls and birds can capture each other by landing in the same perch.',
+                zh: '枭和鸟落在同一栖位时可以互相吃掉。'
+            }
+        },
+        {
+            voiceId: 'inn_liubo_tutorial_owl_03',
+            text: {
+                en: 'The owl can also score by reaching a nest on the opponent\'s side.',
+                zh: '枭也能到达对手一侧的巢来得分。'
+            }
+        }
+    ]
 };
 
 export class LiuboScene extends BaseScene {
@@ -1224,14 +1317,17 @@ export class LiuboScene extends BaseScene {
 
     queueInnLiuboTutorialLine(flagId) {
         if (!this.shouldUseInnLiuboTutorial()) return;
-        const text = INN_LIUBO_TUTORIAL_LINES[flagId];
-        if (!text) return;
+        const lines = INN_LIUBO_TUTORIAL_LINES[flagId];
+        if (!lines?.length) return;
         const flags = this.getInnLiuboTutorialFlags();
         if (!flags || flags[flagId]) return;
         flags[flagId] = true;
-        this.tutorialQueue.push({
-            ...LIUBO_PLAYER_DIALOGUE,
-            text: { ...text }
+        lines.forEach(line => {
+            this.tutorialQueue.push({
+                ...LIUBO_PLAYER_DIALOGUE,
+                voiceId: line.voiceId,
+                text: { ...line.text }
+            });
         });
         this.manager.gameState.save();
         this.saveState();

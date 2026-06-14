@@ -2242,7 +2242,7 @@
     },
     "en:inn_liubo_accept_01": {
         "id": "inn_liubo_accept_01",
-        "character": "farmer",
+        "character": "xiaoer",
         "original_text": "Very well. Let us play.",
         "stt_output": "",
         "wer": 0,
@@ -2251,7 +2251,7 @@
     },
     "en:inn_liubo_accept_repeat_01": {
         "id": "inn_liubo_accept_repeat_01",
-        "character": "farmer",
+        "character": "xiaoer",
         "original_text": "Set the pieces again.",
         "stt_output": "",
         "wer": 0,
@@ -2260,7 +2260,7 @@
     },
     "en:inn_liubo_decline_01": {
         "id": "inn_liubo_decline_01",
-        "character": "farmer",
+        "character": "xiaoer",
         "original_text": "Another time.",
         "stt_output": "",
         "wer": 0,
@@ -2269,7 +2269,7 @@
     },
     "en:inn_liubo_decline_reply_01": {
         "id": "inn_liubo_decline_reply_01",
-        "character": "farmer",
+        "character": "xiaoer",
         "original_text": "The board will wait. The rebels, perhaps not.",
         "stt_output": "",
         "wer": 0,
@@ -2278,7 +2278,7 @@
     },
     "en:inn_liubo_decline_reply_02": {
         "id": "inn_liubo_decline_reply_02",
-        "character": "farmer",
+        "character": "xiaoer",
         "original_text": "Then keep your eyes sharp. The road plays rougher games than mine.",
         "stt_output": "",
         "wer": 0,
@@ -2287,7 +2287,7 @@
     },
     "en:inn_liubo_intro_01": {
         "id": "inn_liubo_intro_01",
-        "character": "farmer",
+        "character": "xiaoer",
         "original_text": "The road is dangerous, friend. Sit for a game of Liubo before you chase trouble?",
         "stt_output": "",
         "wer": 0,
@@ -2296,7 +2296,7 @@
     },
     "en:inn_liubo_repeat_01": {
         "id": "inn_liubo_repeat_01",
-        "character": "farmer",
+        "character": "xiaoer",
         "original_text": "Back to the board? Good. A second game tells more truth than the first.",
         "stt_output": "",
         "wer": 0,
@@ -2341,36 +2341,171 @@
     },
     "en:inn_liubo_loss_first_01": {
         "id": "inn_liubo_loss_first_01",
-        "character": "farmer",
+        "character": "xiaoer",
         "original_text": "No shame in losing the first game. Liubo rewards patience more than pride.",
-        "stt_output": "No shame in losing the first game. Legal rewards patience more than pride.",
-        "wer": 0.07692307692307693,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
     "en:inn_liubo_loss_repeat_01": {
         "id": "inn_liubo_loss_repeat_01",
-        "character": "farmer",
+        "character": "xiaoer",
         "original_text": "The board has humbled many travelers. Come back after your battles and we will set the pieces again.",
-        "stt_output": "The board has humbled many travellers. Come back after your battles and we will set the pieces again.",
-        "wer": 0.05555555555555555,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
     "en:inn_liubo_win_first_01": {
         "id": "inn_liubo_win_first_01",
-        "character": "farmer",
+        "character": "xiaoer",
         "original_text": "Ha! A fine first game. You saw the Owl's path before I did.",
-        "stt_output": "Ha! K! A fine first gay. You saw the owl's path before I did.",
-        "wer": 0.15384615384615385,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
     "en:inn_liubo_win_repeat_01": {
         "id": "inn_liubo_win_repeat_01",
-        "character": "farmer",
+        "character": "xiaoer",
         "original_text": "Again! You read the sticks like a market scale. I will have to stop wagering with you.",
-        "stt_output": "Again! You read the sticks like a market scale. I will have to stop wagering with you.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_liubo_tutorial_block_01": {
+        "id": "inn_liubo_tutorial_block_01",
+        "character": "unknown",
+        "original_text": "These two birds together have blocked a perch.",
+        "stt_output": "These two birds together have blocked a perch.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_liubo_tutorial_block_02": {
+        "id": "inn_liubo_tutorial_block_02",
+        "character": "unknown",
+        "original_text": "Other birds can't get past them.",
+        "stt_output": "Other birds can't get past them.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_liubo_tutorial_contest_01": {
+        "id": "inn_liubo_tutorial_contest_01",
+        "character": "unknown",
+        "original_text": "This perch is contested.",
+        "stt_output": "This purchase contested.",
+        "wer": 0.5,
+        "is_bad": true,
+        "language": "en"
+    },
+    "en:inn_liubo_tutorial_contest_02": {
+        "id": "inn_liubo_tutorial_contest_02",
+        "character": "unknown",
+        "original_text": "The next bird to move there will capture the opposing player's bird.",
+        "stt_output": "next bird to move there will capture the opposing players bird.",
+        "wer": 0.08333333333333333,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_liubo_tutorial_goal_01": {
+        "id": "inn_liubo_tutorial_goal_01",
+        "character": "unknown",
+        "original_text": "The goal of the game is to get 6 points.",
+        "stt_output": "The goal of the game is to get 6 points.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_liubo_tutorial_goal_02": {
+        "id": "inn_liubo_tutorial_goal_02",
+        "character": "unknown",
+        "original_text": "You can get a point by capturing the opponent's birds.",
+        "stt_output": "You can get a point by capturing the opponent's birds.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_liubo_tutorial_goal_03": {
+        "id": "inn_liubo_tutorial_goal_03",
+        "character": "unknown",
+        "original_text": "You can also catch a fish in the central pond.",
+        "stt_output": "You can also catch a fish in the central pond.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_liubo_tutorial_goal_04": {
+        "id": "inn_liubo_tutorial_goal_04",
+        "character": "unknown",
+        "original_text": "Deposit that fish in the opponent's nest to score.",
+        "stt_output": "deposit that fish in the opponent's nest to score.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_liubo_tutorial_goal_05": {
+        "id": "inn_liubo_tutorial_goal_05",
+        "character": "unknown",
+        "original_text": "A bird with a fish becomes an owl. Simple!",
+        "stt_output": "A bird with a fish becomes an owl. Simple! Ha ha! Tell! Punni! Ha! Chutty! Why ye?",
+        "wer": 0.8888888888888888,
+        "is_bad": true,
+        "language": "en"
+    },
+    "en:inn_liubo_tutorial_move_01": {
+        "id": "inn_liubo_tutorial_move_01",
+        "character": "unknown",
+        "original_text": "You get to move two of your birds on your turn.",
+        "stt_output": "You get to move two of your birds on your turn.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_liubo_tutorial_move_02": {
+        "id": "inn_liubo_tutorial_move_02",
+        "character": "unknown",
+        "original_text": "The number of face up sticks determines the distance.",
+        "stt_output": "The number of face-up sticks determines the distance.",
+        "wer": 0.2222222222222222,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_liubo_tutorial_owl_01": {
+        "id": "inn_liubo_tutorial_owl_01",
+        "character": "unknown",
+        "original_text": "This piece has caught a fish and become an owl.",
+        "stt_output": "this piece has caught a fish and become an owl.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_liubo_tutorial_owl_02": {
+        "id": "inn_liubo_tutorial_owl_02",
+        "character": "unknown",
+        "original_text": "Owls and birds can capture each other by landing in the same perch.",
+        "stt_output": "owls and birds can capture each other by landing in the same perch.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_liubo_tutorial_owl_03": {
+        "id": "inn_liubo_tutorial_owl_03",
+        "character": "unknown",
+        "original_text": "The owl can also score by reaching a nest on the opponent's side.",
+        "stt_output": "The owl can also score by reaching a nest on the opponent's side.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_liubo_tutorial_start_01": {
+        "id": "inn_liubo_tutorial_start_01",
+        "character": "unknown",
+        "original_text": "You start the game by throwing your sticks.",
+        "stt_output": "You start the game by throwing your sticks.",
         "wer": 0.0,
         "is_bad": false,
         "language": "en"
