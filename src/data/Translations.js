@@ -52,6 +52,10 @@ export const UI_TEXT = {
         en: 'OFF',
         zh: '未入'
     },
+    'ON': {
+        en: 'ON',
+        zh: '开'
+    },
     'HELD': {
         en: 'HELD',
         zh: '待返'
@@ -123,6 +127,26 @@ export const UI_TEXT = {
     'PALETTE': {
         en: 'PALETTE',
         zh: '调色板'
+    },
+    'FULLSCREEN': {
+        en: 'FULLSCREEN',
+        zh: '全屏'
+    },
+    'EXIT FULLSCREEN': {
+        en: 'EXIT FULL',
+        zh: '退出全屏'
+    },
+    'SCALE MODE': {
+        en: 'SCALE',
+        zh: '缩放'
+    },
+    'PIXEL PERFECT': {
+        en: 'PIXEL',
+        zh: '像素'
+    },
+    'FIT SCREEN': {
+        en: 'FIT',
+        zh: '适屏'
     },
     'CLOSE': {
         en: 'CLOSE',

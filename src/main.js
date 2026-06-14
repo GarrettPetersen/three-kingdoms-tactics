@@ -16,6 +16,7 @@ import { OptionsOverlay } from './scenes/OptionsOverlay.js';
 import { LiuboScene } from './scenes/LiuboScene.js';
 
 const canvas = document.getElementById('game-canvas');
+const gameContainer = document.getElementById('game-container');
 const ctx = canvas.getContext('2d');
 
 function hideBootLoader() {
@@ -71,7 +72,10 @@ const config = {
     horizontalSpacing: Math.round(BASE_HEX_HORIZONTAL_SPACING * HEX_SPACING_SCALE),
     verticalSpacing: Math.round(BASE_HEX_VERTICAL_SPACING * HEX_SPACING_SCALE),
     mapWidth: LEGACY_MAP_WIDTH,
-    mapHeight: LEGACY_MAP_HEIGHT
+    mapHeight: LEGACY_MAP_HEIGHT,
+    scaleMode: 'pixel',
+    isFullscreen: false,
+    supportsFullscreen: !!document.fullscreenEnabled
 };
 
 const TERRAIN_TYPES = [
@@ -102,19 +106,56 @@ function setupCanvas() {
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
     const hasCoarsePointer = window.matchMedia?.('(pointer: coarse)').matches || false;
+    const isFullscreen = document.fullscreenElement === gameContainer;
+    const useFitScreen = isFullscreen || config.scaleMode === 'fit';
     const isPortrait = screenHeight > screenWidth;
-    const shouldRotate = hasCoarsePointer && isPortrait;
+    const shouldRotate = hasCoarsePointer && isPortrait && useFitScreen;
     const fitWidth = shouldRotate ? config.virtualHeight : config.virtualWidth;
     const fitHeight = shouldRotate ? config.virtualWidth : config.virtualHeight;
     const maxScale = Math.min(screenWidth / fitWidth, screenHeight / fitHeight);
-    const scale = Math.max(1, Math.floor(maxScale));
+    const scale = Math.max(1, useFitScreen ? maxScale : Math.floor(maxScale));
     config.displayRotation = shouldRotate ? 90 : 0;
     config.displayScale = scale;
     config.hasCoarsePointer = hasCoarsePointer;
+    config.isFullscreen = isFullscreen;
+    config.scaleMode = useFitScreen ? 'fit' : 'pixel';
     canvas.style.width = `${config.virtualWidth * scale}px`;
     canvas.style.height = `${config.virtualHeight * scale}px`;
     canvas.style.transform = shouldRotate ? 'rotate(90deg)' : '';
     canvas.style.transformOrigin = 'center center';
+}
+
+async function lockLandscapeIfPossible() {
+    try {
+        if (screen.orientation?.lock) await screen.orientation.lock('landscape');
+    } catch (err) {
+        // Mobile browsers often reject orientation lock outside installed/fullscreen contexts.
+    }
+}
+
+async function toggleFullscreenFit() {
+    if (!document.fullscreenElement) {
+        config.scaleMode = 'fit';
+        if (gameContainer?.requestFullscreen) {
+            try {
+                await gameContainer.requestFullscreen();
+            } catch (err) {
+                config.scaleMode = 'pixel';
+                setupCanvas();
+                throw err;
+            }
+            await lockLandscapeIfPossible();
+        }
+    } else {
+        if (document.exitFullscreen) await document.exitFullscreen();
+        config.scaleMode = 'pixel';
+    }
+    setupCanvas();
+}
+
+function setScaleMode(mode) {
+    config.scaleMode = mode === 'fit' ? 'fit' : 'pixel';
+    setupCanvas();
 }
 
 /**
@@ -238,8 +279,17 @@ async function takeScreenshots(ctx, canvas, config, sceneManager) {
 async function init() {
     setupCanvas();
     window.addEventListener('resize', setupCanvas);
+    document.addEventListener('fullscreenchange', setupCanvas);
+    screen.orientation?.addEventListener?.('change', setupCanvas);
 
     const sceneManager = new SceneManager(ctx, canvas, config);
+    sceneManager.setDisplayControls({
+        toggleFullscreenFit,
+        setScaleMode,
+        getScaleMode: () => config.scaleMode,
+        isFullscreen: () => document.fullscreenElement === gameContainer,
+        supportsFullscreen: () => !!document.fullscreenEnabled
+    });
     sceneManager.addScene('title', new TitleScene());
     sceneManager.addScene('custom_battle', new CustomBattleMenuScene());
     sceneManager.addScene('liubo', new LiuboScene());

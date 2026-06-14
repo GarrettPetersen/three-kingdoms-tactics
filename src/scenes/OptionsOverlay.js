@@ -14,7 +14,7 @@ export class OptionsOverlay extends BaseScene {
         this.checkboxRects = {};
         this.activeSliderKey = null;
         this.volumeKeys = ['master', 'music', 'sfx', 'voice'];
-        this.rowKeys = ['mute', ...this.volumeKeys, 'language', 'palette'];
+        this.rowKeys = ['fullscreen', 'scale', 'mute', ...this.volumeKeys, 'language', 'palette'];
         this._onPointerUp = () => {
             this.activeSliderKey = null;
         };
@@ -107,7 +107,40 @@ export class OptionsOverlay extends BaseScene {
         }
     }
 
+    isFullscreen() {
+        return !!this.manager?.displayControls?.isFullscreen?.();
+    }
+
+    getScaleMode() {
+        return this.manager?.displayControls?.getScaleMode?.() || this.manager?.config?.scaleMode || 'pixel';
+    }
+
+    getScaleModeLabel() {
+        return getLocalizedText(this.getScaleMode() === 'fit' ? UI_TEXT['FIT SCREEN'] : UI_TEXT['PIXEL PERFECT']);
+    }
+
+    toggleFullscreen() {
+        const toggle = this.manager?.displayControls?.toggleFullscreenFit;
+        if (!toggle) return;
+        assets.playSound('ui_click', 0.45);
+        Promise.resolve(toggle()).catch(() => assets.playSound('ui_error', 0.35));
+    }
+
+    toggleScaleMode() {
+        const setScaleMode = this.manager?.displayControls?.setScaleMode;
+        if (!setScaleMode || this.isFullscreen()) return;
+        const next = this.getScaleMode() === 'fit' ? 'pixel' : 'fit';
+        setScaleMode(next);
+        assets.playSound('ui_click', 0.45);
+    }
+
     activateRow(rowKey) {
+        if (rowKey === 'fullscreen') {
+            this.toggleFullscreen();
+        }
+        if (rowKey === 'scale') {
+            this.toggleScaleMode();
+        }
         if (rowKey === 'language') {
             this.cycleLanguage(1);
         }
@@ -146,6 +179,14 @@ export class OptionsOverlay extends BaseScene {
             }
             if (rowKey === 'mute') {
                 this.toggleMute();
+                return true;
+            }
+            if (rowKey === 'fullscreen') {
+                this.toggleFullscreen();
+                return true;
+            }
+            if (rowKey === 'scale') {
+                this.toggleScaleMode();
                 return true;
             }
             if (rowKey === 'language') {
@@ -307,9 +348,11 @@ export class OptionsOverlay extends BaseScene {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         const panelW = Math.min(360, canvas.width - 20);
-        const panelH = 218;
+        const rowH = 22;
+        const panelH = Math.min(canvas.height - 12, 36 + this.rowKeys.length * rowH);
         const panelX = Math.floor((canvas.width - panelW) / 2);
         const panelY = Math.floor((canvas.height - panelH) / 2);
+        const startY = panelY + 28;
         this.panelRect = { x: panelX, y: panelY, w: panelW, h: panelH };
 
         ctx.fillStyle = '#101010';
@@ -349,9 +392,6 @@ export class OptionsOverlay extends BaseScene {
         this.checkboxRects = {};
         const rowX = panelX + 10;
         const rowW = panelW - 20;
-        const rowH = 24;
-        const startY = panelY + 28;
-
         const labels = {
             master: getLocalizedText(UI_TEXT['MASTER VOLUME']),
             music: getLocalizedText(UI_TEXT['MUSIC VOLUME']),
@@ -359,7 +399,9 @@ export class OptionsOverlay extends BaseScene {
             voice: getLocalizedText(UI_TEXT['VOICE VOLUME']),
             language: getLocalizedText(UI_TEXT['LANGUAGE']),
             palette: getLocalizedText(UI_TEXT['PALETTE']),
-            mute: getLocalizedText(UI_TEXT['MUTE'])
+            mute: getLocalizedText(UI_TEXT['MUTE']),
+            fullscreen: getLocalizedText(this.isFullscreen() ? UI_TEXT['EXIT FULLSCREEN'] : UI_TEXT['FULLSCREEN']),
+            scale: getLocalizedText(UI_TEXT['SCALE MODE'])
         };
 
         for (let i = 0; i < this.rowKeys.length; i++) {
@@ -377,6 +419,31 @@ export class OptionsOverlay extends BaseScene {
 
             if (rowKey === 'mute') {
                 this.drawMuteRow(ctx, rowRect, labels.mute, !!settings.muted, isHighlighted);
+                continue;
+            }
+            if (rowKey === 'fullscreen') {
+                this.drawPixelText(ctx, labels.fullscreen, rowRect.x + 8, rowRect.y + 6, {
+                    color: isHighlighted ? '#ffffff' : '#ffd700',
+                    font: '8px Silkscreen'
+                });
+                this.drawPixelText(ctx, this.isFullscreen() ? getLocalizedText(UI_TEXT['ON']) : getLocalizedText(UI_TEXT['OFF']), rowRect.x + rowRect.w - 12, rowRect.y + 6, {
+                    color: '#eeeeee',
+                    font: '8px Silkscreen',
+                    align: 'right'
+                });
+                continue;
+            }
+            if (rowKey === 'scale') {
+                const locked = this.isFullscreen();
+                this.drawPixelText(ctx, labels.scale, rowRect.x + 8, rowRect.y + 6, {
+                    color: isHighlighted ? '#ffffff' : '#ffd700',
+                    font: '8px Silkscreen'
+                });
+                this.drawPixelText(ctx, `< ${this.getScaleModeLabel()} >`, rowRect.x + rowRect.w - 12, rowRect.y + 6, {
+                    color: locked ? '#777777' : '#eeeeee',
+                    font: '8px Silkscreen',
+                    align: 'right'
+                });
                 continue;
             }
             if (this.volumeKeys.includes(rowKey)) {

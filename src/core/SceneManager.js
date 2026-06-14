@@ -43,6 +43,10 @@ export class SceneManager {
         });
     }
 
+    setDisplayControls(controls = {}) {
+        this.displayControls = controls;
+    }
+
     getCanvasLogicalPoint(e) {
         const rect = this.canvas.getBoundingClientRect();
         const relX = e.clientX - rect.left;
@@ -207,13 +211,7 @@ export class SceneManager {
 
     getLogicalPointFromEvent(e) {
         if (e && Number.isFinite(e.clientX) && Number.isFinite(e.clientY)) {
-            const rect = this.canvas.getBoundingClientRect();
-            const scaleX = this.canvas.width / rect.width;
-            const scaleY = this.canvas.height / rect.height;
-            return {
-                x: (e.clientX - rect.left) * scaleX,
-                y: (e.clientY - rect.top) * scaleY
-            };
+            return this.getCanvasLogicalPoint(e);
         }
         return { x: this.logicalMouseX, y: this.logicalMouseY };
     }
