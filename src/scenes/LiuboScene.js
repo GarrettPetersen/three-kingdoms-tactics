@@ -222,6 +222,11 @@ export class LiuboScene extends BaseScene {
         this.cupCarrier = this.state.currentPlayer;
         this.cupPassAnimation = null;
         this.queueInnLiuboTutorialLine('before_first_action');
+        this.playActiveTutorialVoice();
+    }
+
+    exit() {
+        if (this.activeTutorialDialogue?.voiceId) assets.stopVoice();
     }
 
     update(timestamp) {
@@ -1351,7 +1356,15 @@ export class LiuboScene extends BaseScene {
         if (this.activeTutorialDialogue || !this.tutorialQueue.length) return;
         this.activeTutorialDialogue = this.tutorialQueue.shift();
         this.tutorialSubStep = 0;
+        this.activeTutorialDialogue._voicePlayed = false;
+        this.playActiveTutorialVoice();
         this.saveState();
+    }
+
+    playActiveTutorialVoice() {
+        if (!this.activeTutorialDialogue?.voiceId || this.activeTutorialDialogue._voicePlayed) return;
+        this.activeTutorialDialogue._voicePlayed = true;
+        assets.playVoice(this.activeTutorialDialogue.voiceId);
     }
 
     advanceTutorialDialogue() {
