@@ -1,7 +1,11 @@
 import { BATTLES, UNIT_TEMPLATES } from '../src/data/Battles.js';
 import { GameState } from '../src/core/GameState.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const failures = [];
+const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 function assertRule(condition, message) {
     if (!condition) failures.push(message);
@@ -159,10 +163,65 @@ function checkZhuoTrainingBattle() {
         'training dummy template should break to dummy_broken.');
 }
 
+function listJsFiles(dir) {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    return entries.flatMap(entry => {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) return listJsFiles(fullPath);
+        return entry.isFile() && entry.name.endsWith('.js') ? [fullPath] : [];
+    });
+}
+
+function checkCanvasTextRendering() {
+    const srcRoot = path.join(projectRoot, 'src');
+    const files = listJsFiles(srcRoot);
+    const allowedFontSizes = {
+        Silkscreen: new Set([8, 16]),
+        Tiny5: new Set([8]),
+        Dogica: new Set([8]),
+        zpix: new Set([12, 24])
+    };
+
+    files.forEach(filePath => {
+        const relPath = path.relative(projectRoot, filePath);
+        const source = fs.readFileSync(filePath, 'utf8');
+        const lines = source.split(/\r?\n/);
+
+        lines.forEach((line, index) => {
+            if (/\.\s*(fillText|strokeText)\s*\(/.test(line) && relPath !== 'src/scenes/BaseScene.js') {
+                failures.push(`${relPath}:${index + 1} must draw on-screen text through BaseScene.drawPixelText(), not direct canvas text APIs.`);
+            }
+        });
+
+        const fontLiteralPattern = /['"`](\d+)px\s+(Silkscreen|Tiny5|Dogica|zpix)['"`]/g;
+        let match;
+        while ((match = fontLiteralPattern.exec(source)) !== null) {
+            const size = Number(match[1]);
+            const family = match[2];
+            if (!allowedFontSizes[family]?.has(size)) {
+                const lineNo = source.slice(0, match.index).split(/\r?\n/).length;
+                failures.push(`${relPath}:${lineNo} uses ${size}px ${family}; allowed pixel-font sizes are ${[...allowedFontSizes[family]].join(', ')}px.`);
+            }
+        }
+    });
+
+    const baseScene = fs.readFileSync(path.join(srcRoot, 'scenes', 'BaseScene.js'), 'utf8');
+    const drawPixelTextMatch = baseScene.match(/drawPixelText\(ctx, text, x, y, options = \{\}\) \{[\s\S]*?\n    \}/);
+    assertRule(!!drawPixelTextMatch, 'BaseScene.drawPixelText must exist as the canonical canvas text path.');
+    const drawPixelTextSource = drawPixelTextMatch?.[0] || '';
+    assertRule(drawPixelTextSource.includes('Math.round(x)') && drawPixelTextSource.includes('Math.round(y)'),
+        'BaseScene.drawPixelText must round text coordinates to canvas pixels.');
+    assertRule(drawPixelTextSource.includes("ctx.textBaseline = 'top'"),
+        'BaseScene.drawPixelText must use top baseline for predictable pixel alignment.');
+    assertRule(drawPixelTextSource.includes('getFontForLanguage(font)'),
+        'BaseScene.drawPixelText must route fonts through getFontForLanguage().');
+}
+
 checkSharedForceState();
 checkLegacyForceMigration();
 checkBattleRows();
 checkZhuoTrainingBattle();
+checkCanvasTextRendering();
 
 if (failures.length > 0) {
     console.error('Design rule validation failed:');

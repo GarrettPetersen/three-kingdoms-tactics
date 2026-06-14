@@ -12050,19 +12050,15 @@ export class TacticsScene extends BaseScene {
             
             const turnFont = isChinese ? '12px zpix' : '8px Silkscreen';
             const turnFontSize = isChinese ? 12 : 8;
+            const smallButtonTextH = isChinese ? 12 : 8;
             const turnTextY = endTurnY + (endTurnH - turnFontSize) / 2;
-            ctx.save();
-            ctx.font = turnFont;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'top';
-            ctx.fillStyle = '#fff';
-            if (hasActedAll) {
-                ctx.strokeStyle = '#000';
-                ctx.lineWidth = 2;
-                ctx.strokeText(endTurnText, endTurnX + endTurnW / 2, turnTextY);
-            }
-            ctx.fillText(endTurnText, endTurnX + endTurnW / 2, turnTextY);
-            ctx.restore();
+            this.drawPixelText(ctx, endTurnText, endTurnX + endTurnW / 2, turnTextY, {
+                color: '#fff',
+                font: turnFont,
+                align: 'center',
+                outline: hasActedAll,
+                outlineColor: '#000'
+            });
             ctx.restore();
             
             this.endTurnRect = { x: endTurnX, y: endTurnY, w: endTurnW, h: endTurnH };
@@ -12072,13 +12068,11 @@ export class TacticsScene extends BaseScene {
             ctx.fillRect(orderX, orderY, orderW, orderH);
             ctx.strokeStyle = this.showAttackOrder ? '#0f0' : '#888';
             ctx.strokeRect(orderX + 0.5, orderY + 0.5, orderW - 1, orderH - 1);
-            ctx.save();
-            ctx.font = getFontForLanguage('8px Silkscreen');
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillStyle = '#fff';
-            ctx.fillText(orderText, orderX + orderW / 2, orderY + orderH / 2);
-            ctx.restore();
+            this.drawPixelText(ctx, orderText, orderX + orderW / 2, orderY + Math.floor((orderH - smallButtonTextH) / 2), {
+                color: '#fff',
+                font: '8px Silkscreen',
+                align: 'center'
+            });
             this.attackOrderRect = { x: orderX, y: orderY, w: orderW, h: orderH };
 
             // RESET button (row 3 left, square-ish)
@@ -12086,13 +12080,11 @@ export class TacticsScene extends BaseScene {
             ctx.fillRect(resetX, resetY, resetW, resetH);
             ctx.strokeStyle = '#fff';
             ctx.strokeRect(resetX + 0.5, resetY + 0.5, resetW - 1, resetH - 1);
-            ctx.save();
-            ctx.font = '8px Tiny5';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillStyle = '#eee';
-            ctx.fillText(resetText, resetX + resetW / 2, resetY + resetH / 2);
-            ctx.restore();
+            this.drawPixelText(ctx, resetText, resetX + resetW / 2, resetY + Math.floor((resetH - smallButtonTextH) / 2), {
+                color: '#eee',
+                font: '8px Tiny5',
+                align: 'center'
+            });
             this.resetTurnRect = { x: resetX, y: resetY, w: resetW, h: resetH };
 
             // UNDO button (row 3 right, square-ish)
@@ -12101,13 +12093,11 @@ export class TacticsScene extends BaseScene {
             ctx.fillRect(undoX, undoY, undoW, undoH);
             ctx.strokeStyle = canUndo ? '#fff' : '#444';
             ctx.strokeRect(undoX + 0.5, undoY + 0.5, undoW - 1, undoH - 1);
-            ctx.save();
-            ctx.font = '8px Tiny5';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillStyle = canUndo ? '#eee' : '#666';
-            ctx.fillText(undoText, undoX + undoW / 2, undoY + undoH / 2);
-            ctx.restore();
+            this.drawPixelText(ctx, undoText, undoX + undoW / 2, undoY + Math.floor((undoH - smallButtonTextH) / 2), {
+                color: canUndo ? '#eee' : '#666',
+                font: '8px Tiny5',
+                align: 'center'
+            });
             this.undoRect = { x: undoX, y: undoY, w: undoW, h: undoH };
         } else {
             this.endTurnRect = null;

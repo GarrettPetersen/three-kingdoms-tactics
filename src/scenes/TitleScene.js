@@ -701,18 +701,8 @@ export class TitleScene extends BaseScene {
         const enColor = currentLang === 'en' ? '#ffd700' : '#888';
         const zhColor = currentLang === 'zh' ? '#ffd700' : '#888';
         
-        // Always use 12px zpix - draw directly to bypass getFontForLanguage processing
-        ctx.save();
-        ctx.font = '12px zpix';
-        ctx.textAlign = 'left';
-        ctx.textBaseline = 'top';
-        
-        ctx.fillStyle = enColor;
-        ctx.fillText(enText, toggleX + 6, toggleY + 2);
-        
-        ctx.fillStyle = zhColor;
-        ctx.fillText(zhText, toggleX + 32, toggleY + 2);
-        ctx.restore();
+        this.drawPixelText(ctx, enText, toggleX + 6, toggleY + 2, { color: enColor, font: '12px zpix' });
+        this.drawPixelText(ctx, zhText, toggleX + 32, toggleY + 2, { color: zhColor, font: '12px zpix' });
         
         // Store toggle rect for click detection
         this.languageToggleRect = { x: toggleX, y: toggleY, w: toggleW, h: toggleH };
