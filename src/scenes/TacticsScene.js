@@ -7746,12 +7746,62 @@ export class TacticsScene extends BaseScene {
 
     prepareUnitForPathMovement(unit, path) {
         if (!unit || !this.pathUsesCityGateTransition(path, unit)) return;
-        if (!this.isCityGateDestroyed() && this.isUnitDefenderForCityGate(unit)) {
-            this.openCityGateTemporarily();
-        }
+        unit._cityGatePassage = {
+            segmentIndex: -1,
+            holdMs: 260,
+            elapsedMs: 0,
+            openTriggered: false
+        };
         if (unit.onHorse) {
             this.dismountUnitLeaveHorse(unit);
         }
+    }
+
+    getCurrentCityGateTransition(unit) {
+        if (!unit?.isMoving || !Array.isArray(unit.path) || !this.tacticsMap?.canUseCityGateTransition) return null;
+        const start = unit.path[unit.pathIndex];
+        const end = unit.path[unit.pathIndex + 1];
+        if (!start || !end) return null;
+        const fromCell = this.tacticsMap.getCell(start.r, start.q);
+        const toCell = this.tacticsMap.getCell(end.r, end.q);
+        if (!this.tacticsMap.canUseCityGateTransition(fromCell, toCell, unit)) return null;
+        return {
+            fromCell,
+            toCell,
+            fromStair: this.tacticsMap.isCityGateStairCell(fromCell),
+            toStair: this.tacticsMap.isCityGateStairCell(toCell)
+        };
+    }
+
+    applyCityGatePassageDelay(unit, dt) {
+        const transition = this.getCurrentCityGateTransition(unit);
+        if (!transition || this.isCityGateDestroyed() || !this.isUnitDefenderForCityGate(unit)) {
+            if (unit?._cityGatePassage && !transition) unit._cityGatePassage = null;
+            return dt;
+        }
+
+        if (!unit._cityGatePassage) {
+            unit._cityGatePassage = { segmentIndex: -1, holdMs: 260, elapsedMs: 0, openTriggered: false };
+        }
+        const passage = unit._cityGatePassage;
+        if (passage.segmentIndex !== unit.pathIndex) {
+            passage.segmentIndex = unit.pathIndex;
+            passage.elapsedMs = 0;
+            passage.openTriggered = false;
+        }
+
+        if (passage.elapsedMs < passage.holdMs) {
+            passage.elapsedMs += dt;
+            unit._hiddenBehindCityGatehouse = true;
+            return 0;
+        }
+
+        if (!passage.openTriggered) {
+            this.openCityGateTemporarily();
+            passage.openTriggered = true;
+        }
+        unit._hiddenBehindCityGatehouse = false;
+        return dt;
     }
 
     tryAutoMount(unit, enteredR, enteredQ) {
@@ -8038,7 +8088,12 @@ export class TacticsScene extends BaseScene {
             const cell = this.tacticsMap.getCell(u.r, u.q);
             const terrainType = cell ? cell.terrain : 'grass_01';
             
-            u.update(dt, (r, q) => this.getPixelPos(r, q), shouldAnimate, terrainType);
+            const movementDt = this.applyCityGatePassageDelay(u, dt);
+            u.update(movementDt, (r, q) => this.getPixelPos(r, q), shouldAnimate, terrainType);
+            if (!u.isMoving) {
+                u._cityGatePassage = null;
+                u._hiddenBehindCityGatehouse = false;
+            }
             const cellKeyAfter = `${u.r},${u.q}`;
             if (u._tacticsPrevCellKey !== undefined && u._tacticsPrevCellKey !== cellKeyAfter) {
                 this.onUnitEnteredHexCell(u, u._tacticsPrevCellKey, cellKeyAfter);
@@ -8723,6 +8778,7 @@ export class TacticsScene extends BaseScene {
 
         this.units.forEach(u => {
             if (u.isGone) return;
+            if (u._hiddenBehindCityGatehouse) return;
             const pos = this.getPixelPos(u.r, u.q); // for stationary reference
                     drawCalls.push({
                         type: 'unit',
