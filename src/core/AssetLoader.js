@@ -5,7 +5,8 @@ const DEFAULT_AUDIO_SETTINGS = {
     master: 1.0,
     music: 0.5,
     sfx: 0.5,
-    voice: 0.5
+    voice: 0.5,
+    muted: false
 };
 const MUSIC_CROSSFADE_MS = 1100;
 
@@ -44,6 +45,7 @@ export class AssetLoader {
         this.musicUserVolume = audioSettings.music;
         this.sfxUserVolume = audioSettings.sfx;
         this.voiceUserVolume = audioSettings.voice;
+        this.masterMutedByUser = !!audioSettings.muted;
     }
 
     _clamp01(value) {
@@ -62,7 +64,8 @@ export class AssetLoader {
                 master: this._clamp01(parsed?.master ?? DEFAULT_AUDIO_SETTINGS.master),
                 music: this._clamp01(parsed?.music ?? DEFAULT_AUDIO_SETTINGS.music),
                 sfx: this._clamp01(parsed?.sfx ?? DEFAULT_AUDIO_SETTINGS.sfx),
-                voice: this._clamp01(parsed?.voice ?? DEFAULT_AUDIO_SETTINGS.voice)
+                voice: this._clamp01(parsed?.voice ?? DEFAULT_AUDIO_SETTINGS.voice),
+                muted: !!(parsed?.muted ?? DEFAULT_AUDIO_SETTINGS.muted)
             };
         } catch (_err) {
             return { ...DEFAULT_AUDIO_SETTINGS };
@@ -81,7 +84,7 @@ export class AssetLoader {
     _getEffectiveMusicVolume(rawVolume) {
         const requested = this._clamp01(rawVolume);
         const scaled = requested * this._clamp01(this.masterUserVolume) * this._clamp01(this.musicUserVolume);
-        return this.musicMutedByUser ? 0 : this._clamp01(scaled);
+        return (this.musicMutedByUser || this.masterMutedByUser) ? 0 : this._clamp01(scaled);
     }
 
     getAudioSettings() {
@@ -89,7 +92,8 @@ export class AssetLoader {
             master: this._clamp01(this.masterUserVolume),
             music: this._clamp01(this.musicUserVolume),
             sfx: this._clamp01(this.sfxUserVolume),
-            voice: this._clamp01(this.voiceUserVolume)
+            voice: this._clamp01(this.voiceUserVolume),
+            muted: !!this.masterMutedByUser
         };
     }
 
@@ -106,19 +110,22 @@ export class AssetLoader {
         if (Object.prototype.hasOwnProperty.call(partial, 'voice')) {
             this.voiceUserVolume = this._clamp01(partial.voice);
         }
+        if (Object.prototype.hasOwnProperty.call(partial, 'muted')) {
+            this.masterMutedByUser = !!partial.muted;
+        }
         this._saveAudioSettings();
 
         const rawMusic = this.currentVoice ? this.baseMusicVolume * 0.3 : this.baseMusicVolume;
         this.setMusicVolume(rawMusic);
 
         if (this.currentVoice) {
-            this.currentVoice.volume = this._clamp01(this.currentVoiceBaseVolume * this.masterUserVolume * this.voiceUserVolume);
+            this.currentVoice.volume = this.masterMutedByUser ? 0 : this._clamp01(this.currentVoiceBaseVolume * this.masterUserVolume * this.voiceUserVolume);
         }
 
         this.loopingSounds.forEach(entry => {
             if (!entry || !entry.audio) return;
             const baseVolume = this._clamp01(entry.baseVolume ?? 1.0);
-            entry.audio.volume = this._clamp01(baseVolume * this.masterUserVolume * this.sfxUserVolume);
+            entry.audio.volume = this.masterMutedByUser ? 0 : this._clamp01(baseVolume * this.masterUserVolume * this.sfxUserVolume);
         });
         return this.getAudioSettings();
     }
@@ -162,7 +169,7 @@ export class AssetLoader {
             const audio = this.voices[voiceId] || new Audio(src);
             this.voices[voiceId] = audio;
             this.currentVoiceBaseVolume = this._clamp01(volume);
-            audio.volume = this._clamp01(this.currentVoiceBaseVolume * this.masterUserVolume * this.voiceUserVolume);
+            audio.volume = this.masterMutedByUser ? 0 : this._clamp01(this.currentVoiceBaseVolume * this.masterUserVolume * this.voiceUserVolume);
             this.currentVoice = audio;
 
             this.fadeMusicVolume(this.baseMusicVolume * 0.3, 200);
@@ -626,7 +633,7 @@ export class AssetLoader {
     _playLoadedSound(sound, volume) {
         if (!sound) return;
         const clone = sound.cloneNode();
-        clone.volume = this._clamp01(volume * this.masterUserVolume * this.sfxUserVolume);
+        clone.volume = this.masterMutedByUser ? 0 : this._clamp01(volume * this.masterUserVolume * this.sfxUserVolume);
         clone.play().catch(e => {
             this.audioUnlocked = false;
             console.log("Sound play prevented:", e);
@@ -715,7 +722,7 @@ export class AssetLoader {
         }
 
         const baseVolume = this._clamp01(volume);
-        const targetVolume = this._clamp01(baseVolume * this.masterUserVolume * this.sfxUserVolume);
+        const targetVolume = this.masterMutedByUser ? 0 : this._clamp01(baseVolume * this.masterUserVolume * this.sfxUserVolume);
         const existing = this.loopingSounds.get(key);
         if (existing) {
             if (existing.fadeInterval) {

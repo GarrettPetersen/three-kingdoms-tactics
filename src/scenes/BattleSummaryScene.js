@@ -2,6 +2,7 @@ import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 import { getLocalizedText } from '../core/Language.js';
 import { UI_TEXT } from '../data/Translations.js';
+import { returnToBattleRetry } from '../core/BattleOutcomes.js';
 
 export class BattleSummaryScene extends BaseScene {
     constructor() {
@@ -162,6 +163,7 @@ export class BattleSummaryScene extends BaseScene {
                     isEndGame: isEndGame,
                     isCustom: isCustom,
                     battleId: this.stats.battleId,
+                    won: this.stats.won,
                     onComplete: this.onComplete
                 });
             } else if (this.stats.levelUps && this.stats.levelUps.length > 0) {
@@ -170,6 +172,7 @@ export class BattleSummaryScene extends BaseScene {
                     isEndGame: isEndGame,
                     isCustom: isCustom,
                     battleId: this.stats.battleId,
+                    won: this.stats.won,
                     onComplete: this.onComplete
                 });
             } else if (this.onComplete) {
@@ -179,7 +182,7 @@ export class BattleSummaryScene extends BaseScene {
             } else if (isCustom) {
                 this.manager.switchTo('title');
             } else if (!this.stats.won) {
-                this.manager.switchTo('map', { afterEvent: 'defeat' });
+                returnToBattleRetry(this.manager, this.stats.battleId);
             } else if (this.stats.battleId === 'daxing' && this.stats.won) {
                 this.manager.switchTo('narrative', {
                     scriptId: 'daxing_messenger',
@@ -202,4 +205,3 @@ export class BattleSummaryScene extends BaseScene {
         }
     }
 }
-

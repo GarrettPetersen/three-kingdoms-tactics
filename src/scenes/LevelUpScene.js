@@ -4,6 +4,7 @@ import { UPGRADE_PATHS, ATTACKS } from '../core/Constants.js';
 import { getLocalizedText } from '../core/Language.js';
 import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
 import { getMaxHpForLevel as getUnitMaxHpForLevel } from '../data/UnitRules.js';
+import { returnToBattleRetry } from '../core/BattleOutcomes.js';
 
 export class LevelUpScene extends BaseScene {
     constructor() {
@@ -29,6 +30,7 @@ export class LevelUpScene extends BaseScene {
             this.isEndGame = !!savedState.isEndGame;
             this.isCustom = !!savedState.isCustom;
             this.battleId = savedState.battleId || null;
+            this.won = savedState.won !== false;
             this.currentIndex = Math.max(0, Math.min(savedState.currentIndex || 0, this.levelUps.length - 1));
             this.timer = Math.max(0, savedState.timer || 0);
             this.lastTime = 0;
@@ -45,6 +47,7 @@ export class LevelUpScene extends BaseScene {
         this.isEndGame = params.isEndGame || false;
         this.isCustom = params.isCustom || false;
         this.battleId = params.battleId || null;
+        this.won = params.won !== false;
         this.currentIndex = 0;
         this.timer = 0;
         this.lastTime = 0;
@@ -74,7 +77,8 @@ export class LevelUpScene extends BaseScene {
             promotionType: this.promotionType,
             isEndGame: this.isEndGame,
             isCustom: this.isCustom,
-            battleId: this.battleId
+            battleId: this.battleId,
+            won: this.won
         });
     }
 
@@ -390,6 +394,8 @@ export class LevelUpScene extends BaseScene {
             }
             if (this.isEndGame) {
                 this.manager.switchTo('credits');
+            } else if (!this.won && !this.isCustom) {
+                returnToBattleRetry(this.manager, this.battleId);
             } else if (this.battleId === 'qingzhou_siege') {
                 this.manager.switchTo('tactics', { battleId: 'qingzhou_cleanup' });
             } else if (this.isCustom) {
@@ -447,4 +453,3 @@ export class LevelUpScene extends BaseScene {
         }
     }
 }
-

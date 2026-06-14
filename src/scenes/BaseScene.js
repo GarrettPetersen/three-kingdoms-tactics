@@ -1215,17 +1215,19 @@ export class BaseScene {
         ctx.save();
         // Use language-appropriate font
         ctx.font = getFontForLanguage(font);
-        ctx.textAlign = align; 
+        const drawX = Math.round(x);
+        const drawY = Math.round(y);
+        ctx.textAlign = align;
         ctx.textBaseline = 'top'; 
         
         if (outline) {
             ctx.strokeStyle = outlineColor;
             ctx.lineWidth = 2;
-            ctx.strokeText(text, x, y);
+            ctx.strokeText(text, drawX, drawY);
         }
         
         ctx.fillStyle = color;
-        ctx.fillText(text, x, y);
+        ctx.fillText(text, drawX, drawY);
         const metrics = ctx.measureText(text);
         ctx.restore();
         return metrics;

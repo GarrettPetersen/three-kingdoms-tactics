@@ -433,7 +433,7 @@ export class CampaignSelectionScene extends BaseScene {
         }
 
         // Header Title
-        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['STORY SELECTION']), canvas.width / 2, 10, { color: '#fff', font: '8px Silkscreen', align: 'center' });
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['STORY SELECTION']), Math.round(canvas.width / 2), 10, { color: '#fff', font: '8px Tiny5', align: 'center' });
         
         // Back Button
         const optionsLayout = this.manager.getOptionsButtonLayout ? this.manager.getOptionsButtonLayout() : null;

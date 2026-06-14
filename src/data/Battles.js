@@ -83,7 +83,14 @@ export const BATTLES = {
             { portraitKey: 'dengmao', name: 'Deng Mao', voiceId: 'dx_dm_01', text: { en: "Imperial dogs! You dare stand in the way of the Lord of Heaven?", zh: "朝廷走狗！你们敢阻挡天公将军？" } },
             { portraitKey: 'chengyuanzhi', name: 'Cheng Yuanzhi', voiceId: 'dx_cyz_01', text: { en: "Slay them all! The Han is dead, the Yellow Heavens shall rise!", zh: "杀光他们！汉室已亡，黄天当立！" } },
             { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'dx_lb_02', text: { en: "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!", zh: "他们意志薄弱。若我们击败这些头目，其余必溃散！" } }
-        ]
+        ],
+        defeat: {
+            retry: { scene: 'tactics', params: { battleId: 'daxing' } },
+            script: [
+                { bg: 'army_camp', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "Daxing cannot be left to the rebels. Gather the volunteers; we strike again before they scatter into the county.", zh: "大兴不可任贼侵扰。收拢义勇，趁贼未散，再战一次。" } },
+                { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', text: { en: "Good. I owe those captains another meeting.", zh: "好。俺也正要再会会那两个贼首。" } }
+            ]
+        }
     },
     'qingzhou_prelude': {
         name: "Ambush at Qingzhou",
@@ -120,7 +127,14 @@ export const BATTLES = {
             { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'qz_lb_02', text: { en: "They are many and we but few. We cannot prevail in a direct assault.", zh: "敌众我寡。我们不能正面强攻。" } },
             { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'qz_lb_03', text: { en: "Guan Yu, Zhang Fei—take half our forces and hide behind the hills. When the gongs beat, strike from the flanks!", zh: "云长、翼德——带一半人马埋伏在山后。锣声一响，从两翼夹击！" } },
             { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'qz_gy_01', text: { en: "A superior strategy, brother. We go at once.", zh: "妙计，兄长。我们即刻出发。" } }
-        ]
+        ],
+        defeat: {
+            retry: { scene: 'tactics', params: { battleId: 'qingzhou_prelude' } },
+            script: [
+                { bg: 'army_camp', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "The pass swallowed our formation before the ambush could be set. We return to the ridge and prepare the signal again.", zh: "山道乱了阵脚，伏兵未成。退回岭上，重新布置信号。" } },
+                { type: 'dialogue', portraitKey: 'guan-yu', name: 'Guan Yu', text: { en: "This time the flanks will move as one.", zh: "此番两翼必同时而动。" } }
+            ]
+        }
     },
     'qingzhou_siege': {
         name: "Relief of Qingzhou",
@@ -145,7 +159,14 @@ export const BATTLES = {
         reinforcements: 'qingzhou',
         introScript: [
             { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'qz_bt_lb_03', text: { en: "I must reach the flag to signal the ambush!", zh: "我必须到达旗帜处，发出伏击信号！" } }
-        ]
+        ],
+        defeat: {
+            retry: { scene: 'tactics', params: { battleId: 'qingzhou_siege' } },
+            script: [
+                { bg: 'army_camp', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "The signal failed and the pass fell into confusion. We return to the mouth of the gorge and run the ambush again.", zh: "旗号未成，山道大乱。退回谷口，重整伏击。" } },
+                { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', text: { en: "Let me hear that gong properly this time.", zh: "这回锣声可要响个痛快。" } }
+            ]
+        }
     },
     'qingzhou_cleanup': {
         name: 'Qingzhou Gate - Victory',
@@ -339,7 +360,14 @@ export const BATTLES = {
             { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_01', text: { en: "This is outrage! Let me slay these dogs and free you, Master!", zh: "这真是岂有此理！让我杀了这些走狗，救您出来，将军！" } }
         ],
         // Choice will be handled by TacticsScene after intro dialogue
-        hasChoice: true
+        hasChoice: true,
+        defeat: {
+            retry: { scene: 'tactics', params: { battleId: 'guangzong_encounter' } },
+            script: [
+                { bg: 'dirt_road_city_in_distance', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "The escort overcame us before Master Lu could be freed. We return to the road and make the choice again with steadier hands.", zh: "押送兵先胜一阵，卢师未能脱困。回到路上，再作决断。" } },
+                { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', text: { en: "Then let me start closer to the cage.", zh: "那就让俺离牢笼近些再打。" } }
+            ]
+        }
     },
     'guangzong_escort': {
         name: 'Free Lu Zhi',
@@ -378,7 +406,14 @@ export const BATTLES = {
             { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_free_01', text: { en: "HA! Now you're talking, brother! Come on!", zh: "哈！这才像话，兄长！来吧！" } },
             { speaker: 'guanyu', portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'gz_gy_free_01', text: { en: "Brother, there may be consequences for this...", zh: "兄长，此举可能带来后果..." } },
             { speaker: 'liubei', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_lb_free_02', text: { en: "We have made our choice. Now we fight!", zh: "我们已经做出选择。现在，战斗！" } }
-        ]
+        ],
+        defeat: {
+            retry: { scene: 'tactics', params: { battleId: 'guangzong_escort' } },
+            script: [
+                { bg: 'dirt_road_city_in_distance', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "If we choose to free Master Lu, hesitation will only shame us. Reform the line and break the escort cleanly.", zh: "既要救卢师，迟疑只会自辱。重整阵势，破开押送兵。" } },
+                { type: 'dialogue', portraitKey: 'guan-yu', name: 'Guan Yu', text: { en: "Then we must strike without harming the innocent.", zh: "既如此，更要出手有度，不伤无辜。" } }
+            ]
+        }
     },
     'dongzhuo_battle': {
         name: 'Rescue Dong Zhuo',
@@ -458,7 +493,14 @@ export const BATTLES = {
             { speaker: 'liubei', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_lb_attack_01', text: { en: "That banner reads 'Zhang Jue, Lord of Heaven!' Government soldiers are losing! Brothers, we attack!", zh: "那旗帜上写着'张角，天公将军'！官军正在败退！兄弟们，我们进攻！" } },
             { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_attack_01', text: { en: "HA! Finally some Yellow Turbans to smash! Let's go!", zh: "哈！终于有黄巾贼可以痛打了！我们走！" } }
         ],
-        hasVictoryDialogue: true  // Flag to trigger on-map victory dialogue
+        hasVictoryDialogue: true,  // Flag to trigger on-map victory dialogue
+        defeat: {
+            retry: { scene: 'tactics', params: { battleId: 'dongzhuo_battle' } },
+            script: [
+                { bg: 'dirt_road_city_in_distance', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "Dong Zhuo's column is still under threat. Whatever his manners, we cannot let the rebels destroy an imperial force.", zh: "董卓军仍在危急之中。无论其人如何，不能坐视官军覆灭。" } },
+                { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', text: { en: "Saving him twice had better be worth it.", zh: "救他两回，最好别白费。" } }
+            ]
+        }
     },
     'chapter2_oath_dongzhuo_choice': {
         name: 'Chapter 2 Opening - Brothers and Dong Zhuo',
@@ -494,7 +536,14 @@ export const BATTLES = {
             { speaker: 'liubei', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_lb_office_01', text: { en: "None.", zh: "无。" } },
             { speaker: 'dongzhuo', portraitKey: 'dong-zhuo', name: 'Dong Zhuo', voiceId: 'gz_dz_02', text: { en: "Hmph. Common men with no rank. You may go.", zh: "哼。无官无职的平民。你们可以走了。" } },
             { speaker: 'zhangfei', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_zf_rage_01', text: { en: "We have just rescued this menial in a bloody fight, and now he is rude to us! Nothing but his death can slake my anger.", zh: "我们刚刚在一场血战中救了这个小人物，现在他却对我们无礼！只有他的死才能平息我的怒火。" } }
-        ]
+        ],
+        defeat: {
+            retry: { scene: 'tactics', params: { battleId: 'chapter2_oath_dongzhuo_choice' } },
+            script: [
+                { bg: 'dirt_road_city_in_distance', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "Dong Zhuo is not worth the ruin of our oath. We return to the moment and choose our course with clear minds.", zh: "董卓不值得毁我兄弟之义。回到此刻，冷静决断。" } },
+                { type: 'dialogue', portraitKey: 'guan-yu', name: 'Guan Yu', text: { en: "Anger must answer to righteousness.", zh: "怒气也须听从义理。" } }
+            ]
+        }
     },
     'chapter2_zhangbao_probe': {
         name: 'Yingchuan - First Clash with Zhang Bao',
@@ -553,7 +602,14 @@ export const BATTLES = {
                     zh: "稳住阵脚。先破高升，再逼张宝。"
                 }
             }
-        ]
+        ],
+        defeat: {
+            retry: { scene: 'tactics', params: { battleId: 'chapter2_zhangbao_probe' } },
+            script: [
+                { bg: 'army_camp', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "Zhang Bao's line broke our advance before we understood his method. Reform the vanguard; we test him again.", zh: "未明张宝妖法，前军先乱。重整先锋，再试其阵。" } },
+                { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', text: { en: "Let him throw thunder. I will still close the distance.", zh: "任他使雷，俺也去近前会他。" } }
+            ]
+        }
     },
     'caocao_yingchuan_intercept': {
         name: 'Yingchuan - Cavalry Intercept',
@@ -712,7 +768,14 @@ export const BATTLES = {
             }
         ],
         nextScene: 'tactics',
-        nextParams: { battleId: 'caocao_yingchuan_debrief' }
+        nextParams: { battleId: 'caocao_yingchuan_debrief' },
+        defeat: {
+            retry: { scene: 'tactics', params: { battleId: 'caocao_yingchuan_intercept' } },
+            script: [
+                { bg: 'army_camp', type: 'dialogue', portraitKey: 'cao-cao', name: 'Cao Cao', text: { en: "The intercept failed because we let speed become disorder. Form the cavalry again and close the road properly.", zh: "截击失利，是快而无序。重整骑军，严封道路。" } },
+                { type: 'dialogue', portraitKey: 'cao-ren', name: 'Cao Ren', text: { en: "Understood. The next charge will leave them no gap.", zh: "明白。下次冲阵，不留缺口。" } }
+            ]
+        }
     },
     'caocao_yingchuan_debrief': {
         name: 'Yingchuan - After The Intercept',

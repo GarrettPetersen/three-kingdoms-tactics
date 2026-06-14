@@ -112,6 +112,10 @@ export const UI_TEXT = {
         en: 'VOICE VOLUME',
         zh: '语音音量'
     },
+    'MUTE': {
+        en: 'MUTE',
+        zh: '静音'
+    },
     'LANGUAGE': {
         en: 'LANGUAGE',
         zh: '语言'

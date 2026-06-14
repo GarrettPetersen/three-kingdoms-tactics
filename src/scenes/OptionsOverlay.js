@@ -11,12 +11,19 @@ export class OptionsOverlay extends BaseScene {
         this.closeButtonRect = null;
         this.rowRects = [];
         this.sliderRects = {};
+        this.checkboxRects = {};
+        this.activeSliderKey = null;
         this.volumeKeys = ['master', 'music', 'sfx', 'voice'];
-        this.rowKeys = [...this.volumeKeys, 'language', 'palette'];
+        this.rowKeys = ['mute', ...this.volumeKeys, 'language', 'palette'];
+        this._onPointerUp = () => {
+            this.activeSliderKey = null;
+        };
     }
 
     open() {
         this.isOpen = true;
+        window.addEventListener('pointerup', this._onPointerUp);
+        window.addEventListener('pointercancel', this._onPointerUp);
         const existingIndex = this.selection?.highlightedIndex ?? 0;
         this.initSelection({
             defaultIndex: Math.max(0, Math.min(this.rowKeys.length - 1, existingIndex)),
@@ -30,6 +37,10 @@ export class OptionsOverlay extends BaseScene {
         this.closeButtonRect = null;
         this.rowRects = [];
         this.sliderRects = {};
+        this.checkboxRects = {};
+        this.activeSliderKey = null;
+        window.removeEventListener('pointerup', this._onPointerUp);
+        window.removeEventListener('pointercancel', this._onPointerUp);
     }
 
     clamp01(value) {
@@ -56,6 +67,11 @@ export class OptionsOverlay extends BaseScene {
 
     setVolumeFromRatio(key, ratio) {
         assets.setAudioSettings({ [key]: this.clamp01(ratio) });
+    }
+
+    toggleMute() {
+        const settings = assets.getAudioSettings();
+        assets.setAudioSettings({ muted: !settings.muted });
         assets.playSound('ui_click', 0.35);
     }
 
@@ -98,6 +114,9 @@ export class OptionsOverlay extends BaseScene {
         if (rowKey === 'palette') {
             this.cyclePalette(1);
         }
+        if (rowKey === 'mute') {
+            this.toggleMute();
+        }
     }
 
     handleKeyDown(e) {
@@ -123,6 +142,10 @@ export class OptionsOverlay extends BaseScene {
             const dir = e.key === 'ArrowRight' ? 1 : -1;
             if (this.volumeKeys.includes(rowKey)) {
                 this.adjustVolume(rowKey, dir * 0.05);
+                return true;
+            }
+            if (rowKey === 'mute') {
+                this.toggleMute();
                 return true;
             }
             if (rowKey === 'language') {
@@ -172,9 +195,16 @@ export class OptionsOverlay extends BaseScene {
         for (const key of this.volumeKeys) {
             const hit = this.sliderRects[key];
             if (hit && x >= hit.x && x <= hit.x + hit.w && y >= hit.y && y <= hit.y + hit.h) {
+                this.activeSliderKey = key;
                 this.setVolumeFromRatio(key, (x - hit.x) / hit.w);
                 return true;
             }
+        }
+
+        const muteHit = this.checkboxRects.mute;
+        if (muteHit && x >= muteHit.x && x <= muteHit.x + muteHit.w && y >= muteHit.y && y <= muteHit.y + muteHit.h) {
+            this.toggleMute();
+            return true;
         }
 
         if (rowIndex >= 0) {
@@ -201,11 +231,46 @@ export class OptionsOverlay extends BaseScene {
         }
     }
 
+    onMouseInput(x, y) {
+        if (!this.isOpen) return;
+        if (this.activeSliderKey) {
+            const hit = this.sliderRects[this.activeSliderKey];
+            if (hit) this.setVolumeFromRatio(this.activeSliderKey, (x - hit.x) / hit.w);
+        }
+    }
+
+    drawMuteRow(ctx, rowRect, label, isMuted, isHighlighted) {
+        const rowTextY = rowRect.y + 6;
+        this.drawPixelText(ctx, label, rowRect.x + 8, rowTextY, {
+            color: isHighlighted ? '#ffffff' : '#ffd700',
+            font: '8px Tiny5'
+        });
+
+        const boxSize = 10;
+        const boxX = rowRect.x + rowRect.w - boxSize - 12;
+        const boxY = rowRect.y + Math.floor((rowRect.h - boxSize) / 2);
+        this.checkboxRects.mute = { x: boxX, y: boxY, w: boxSize, h: boxSize };
+
+        ctx.fillStyle = isMuted ? '#66ccff' : '#202020';
+        ctx.fillRect(boxX, boxY, boxSize, boxSize);
+        ctx.strokeStyle = isHighlighted ? '#ffffff' : '#777777';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(boxX + 0.5, boxY + 0.5, boxSize - 1, boxSize - 1);
+        if (isMuted) {
+            ctx.strokeStyle = '#001018';
+            ctx.beginPath();
+            ctx.moveTo(boxX + 2, boxY + 5);
+            ctx.lineTo(boxX + 4, boxY + 8);
+            ctx.lineTo(boxX + 8, boxY + 2);
+            ctx.stroke();
+        }
+    }
+
     drawVolumeRow(ctx, rowRect, label, value, isHighlighted, sliderKey) {
         const rowTextY = rowRect.y + 6;
         this.drawPixelText(ctx, label, rowRect.x + 8, rowTextY, {
             color: isHighlighted ? '#ffffff' : '#ffd700',
-            font: '8px Silkscreen'
+            font: '8px Tiny5'
         });
 
         const sliderW = Math.max(80, Math.floor(rowRect.w * 0.45));
@@ -228,7 +293,7 @@ export class OptionsOverlay extends BaseScene {
 
         this.drawPixelText(ctx, `${Math.round(value * 100)}%`, sliderX + sliderW + 8, rowTextY, {
             color: '#eeeeee',
-            font: '8px Silkscreen'
+            font: '8px Tiny5'
         });
     }
 
@@ -242,7 +307,7 @@ export class OptionsOverlay extends BaseScene {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         const panelW = Math.min(360, canvas.width - 20);
-        const panelH = 194;
+        const panelH = 218;
         const panelX = Math.floor((canvas.width - panelW) / 2);
         const panelY = Math.floor((canvas.height - panelH) / 2);
         this.panelRect = { x: panelX, y: panelY, w: panelW, h: panelH };
@@ -281,6 +346,7 @@ export class OptionsOverlay extends BaseScene {
 
         this.rowRects = [];
         this.sliderRects = {};
+        this.checkboxRects = {};
         const rowX = panelX + 10;
         const rowW = panelW - 20;
         const rowH = 24;
@@ -292,7 +358,8 @@ export class OptionsOverlay extends BaseScene {
             sfx: getLocalizedText(UI_TEXT['SFX VOLUME']),
             voice: getLocalizedText(UI_TEXT['VOICE VOLUME']),
             language: getLocalizedText(UI_TEXT['LANGUAGE']),
-            palette: getLocalizedText(UI_TEXT['PALETTE'])
+            palette: getLocalizedText(UI_TEXT['PALETTE']),
+            mute: getLocalizedText(UI_TEXT['MUTE'])
         };
 
         for (let i = 0; i < this.rowKeys.length; i++) {
@@ -308,6 +375,10 @@ export class OptionsOverlay extends BaseScene {
             ctx.lineWidth = 1;
             ctx.strokeRect(rowRect.x + 0.5, rowRect.y + 0.5, rowRect.w - 1, rowRect.h - 1);
 
+            if (rowKey === 'mute') {
+                this.drawMuteRow(ctx, rowRect, labels.mute, !!settings.muted, isHighlighted);
+                continue;
+            }
             if (this.volumeKeys.includes(rowKey)) {
                 this.drawVolumeRow(ctx, rowRect, labels[rowKey], settings[rowKey], isHighlighted, rowKey);
                 continue;

@@ -2,6 +2,7 @@ import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 import { getLocalizedText } from '../core/Language.js';
 import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
+import { returnToBattleRetry } from '../core/BattleOutcomes.js';
 
 const RECOVERY_DIALOGUE = {
     'liubei': {
@@ -34,6 +35,7 @@ export class RecoveryScene extends BaseScene {
         this.isEndGame = params.isEndGame || false;
         this.isCustom = params.isCustom || false;
         this.battleId = params.battleId;
+        this.won = params.won !== false;
         this.currentIndex = 0;
         this.timer = 0;
         this.lastTime = 0;
@@ -194,12 +196,15 @@ export class RecoveryScene extends BaseScene {
                 isEndGame: this.isEndGame,
                 isCustom: this.isCustom,
                 battleId: this.battleId,
+                won: this.won,
                 onComplete: this.onComplete
             });
         } else if (this.onComplete) {
             this.onComplete();
         } else if (this.isEndGame) {
             this.manager.switchTo('credits');
+        } else if (!this.won && !this.isCustom) {
+            returnToBattleRetry(this.manager, this.battleId);
         } else if (this.battleId === 'qingzhou_siege') {
             this.manager.switchTo('tactics', { battleId: 'qingzhou_cleanup' });
         } else if (this.isCustom) {
@@ -220,4 +225,3 @@ export class RecoveryScene extends BaseScene {
         }
     }
 }
-
