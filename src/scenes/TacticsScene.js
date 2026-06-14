@@ -11,6 +11,7 @@ import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
 
 /** Vertical offset for drawing horse + rider (was 10; 6 moves them up 4px so they are not "underground"). */
 const MOUNTED_Y_OFFSET = 6;
+const CITY_GATEHOUSE_Y_OFFSET = 33;
 const DRAW_CALL_PRIORITIES = {
     hex: 0,
     particle: 1,
@@ -13035,7 +13036,7 @@ export class TacticsScene extends BaseScene {
         const drawW = Math.max(1, Math.round(img.width * scale));
         const drawH = Math.max(1, Math.round(img.height * scale));
         const x = Math.floor(gatePos.x - drawW / 2);
-        const y = Math.floor(((gatePos.y + stairPos.y) / 2) - drawH + 28 + introYOffset);
+        const y = Math.floor(((gatePos.y + stairPos.y) / 2) - drawH + CITY_GATEHOUSE_Y_OFFSET + introYOffset);
         const canvas = this.manager.canvas;
         if (
             x + drawW < 0 ||
