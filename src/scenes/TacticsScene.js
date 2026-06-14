@@ -7800,8 +7800,23 @@ export class TacticsScene extends BaseScene {
             this.openCityGateTemporarily();
             passage.openTriggered = true;
         }
+        if (transition.toCell) {
+            const destination = transition.toCell;
+            const destinationPos = this.getPixelPos(destination.r, destination.q);
+            unit.pathIndex++;
+            unit.moveProgress = 0;
+            unit.setPosition(destination.r, destination.q);
+            unit.visualX = destinationPos.x;
+            unit.visualY = destinationPos.y;
+            unit.currentSortR = destination.r;
+            if (unit.pathIndex >= unit.path.length - 1) {
+                unit.isMoving = false;
+                unit.action = 'standby';
+                unit.path = [];
+            }
+        }
         unit._hiddenBehindCityGatehouse = false;
-        return dt;
+        return 0;
     }
 
     tryAutoMount(unit, enteredR, enteredQ) {
