@@ -52,12 +52,14 @@ const terrainSources = {
     sand: 'sand_01',
     snow: 'snow_01',
     rock: 'mountain_stone_01',
+    brick: 'brick_01',
     water_shallow: 'water_shallow_01',
     water_deep: 'water_deep_01_01'
 };
 
 const terrainVariantDiffs = [-1, 0, 1];
 const terrainDiffsByGroup = {
+    brick: geometry.heightDiffs,
     water_shallow: terrainVariantDiffs,
     water_deep: terrainVariantDiffs
 };
@@ -140,7 +142,7 @@ function applyTint(baseColor, tintAmount) {
 
 function getFill(terrainColors, terrain, direction, diff) {
     const isWaterBeachEdge = (terrain === 'water_shallow' || terrain === 'water_deep') && Math.abs(diff) === 1;
-    const sourceTerrain = Math.abs(diff) >= 2 ? 'rock' : (isWaterBeachEdge ? 'sand' : terrain);
+    const sourceTerrain = Math.abs(diff) >= 2 && terrain !== 'brick' ? 'rock' : (isWaterBeachEdge ? 'sand' : terrain);
     const baseColor = terrainColors[sourceTerrain] || '#808080';
     return applyTint(baseColor, getLightTintAmount(direction, diff));
 }
@@ -310,7 +312,7 @@ async function main() {
             'Rows are rasterized from the real polygon between the current hex edge and the adjacent hex edge, using the same 29x23 spacing and 3px elevation step as the map renderer.',
             'This generator is non-destructive by default: existing PNGs are skipped. Pass --force to overwrite placeholder art.',
             'Hand-edited terrain groups are protected even with --force. Pass --force-hand-edited only when you really want to replace those PNGs.',
-            'heightDiff is neighbor.level - current.level. Diffs -1/+1 are walkable slopes; absolute diffs >=2 use the shared rocky_cliff set because they are impassable.'
+            'heightDiff is neighbor.level - current.level. Diffs -1/+1 are walkable slopes; absolute diffs >=2 use the shared rocky_cliff set because they are impassable, except brick which has its own steep rampart faces.'
         ],
         geometry,
         terrainVariantDiffs,

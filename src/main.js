@@ -88,7 +88,7 @@ const TERRAIN_TYPES = [
     'forest_deciduous_01', 'forest_deciduous_02', 'forest_broadleaf_01', 'forest_broadleaf_02', 'forest_broadleaf_03',
     'earth_cracked', 'earth_rocky',
     'mountain_stone_01', 'mountain_stone_02', 'mountain_stone_03', 'earth_stone',
-    'house_01', 'house_damaged_01', 'house_destroyed_01', 'wall_01', 'gate_01', 'gate_cracked_01', 'gate_open_01',
+    'house_01', 'house_damaged_01', 'house_destroyed_01', 'wall_01', 'brick_01', 'brick_staircase', 'gate_01', 'gate_cracked_01', 'gate_open_01',
     'tent',
     'mud_01', 'mud_02', 'mud_03', 'mud_04', 'mud_05', 'mud_06', 'mud_07',
     'jungle_dense_01', 'jungle_dense_02', 'jungle_dense_03', 'jungle_palm_01', 'jungle_palm_02', 'jungle_palm_03',
@@ -596,9 +596,11 @@ async function init() {
         });
         const edgeTrapezoidAssets = {};
         const edgeTerrainGroups = ['grass', 'earth', 'mud', 'sand', 'snow', 'rock'];
+        const edgeAllDiffTerrainGroups = ['brick'];
         const edgeWaterTerrainGroups = ['water_shallow', 'water_deep'];
         const edgeDirections = ['w', 'sw', 'se'];
         const edgeTerrainDiffs = [-1, 0, 1];
+        const edgeAllDiffs = [-3, -2, -1, 0, 1, 2, 3];
         const edgeCliffDiffs = [-3, -2, 2, 3];
         const getEdgeDiffName = (diff) => diff > 0 ? `plus${diff}` : diff < 0 ? `minus${Math.abs(diff)}` : 'zero';
         edgeTerrainGroups.forEach(terrain => {
@@ -613,6 +615,15 @@ async function init() {
         edgeWaterTerrainGroups.forEach(terrain => {
             edgeDirections.forEach(direction => {
                 edgeTerrainDiffs.forEach(diff => {
+                    const diffName = getEdgeDiffName(diff);
+                    edgeTrapezoidAssets[`edge_trapezoid_${terrain}_${direction}_${diffName}`] =
+                        `assets/terrain/edge_trapezoids/${terrain}/${direction}_${diffName}.png`;
+                });
+            });
+        });
+        edgeAllDiffTerrainGroups.forEach(terrain => {
+            edgeDirections.forEach(direction => {
+                edgeAllDiffs.forEach(diff => {
                     const diffName = getEdgeDiffName(diff);
                     edgeTrapezoidAssets[`edge_trapezoid_${terrain}_${direction}_${diffName}`] =
                         `assets/terrain/edge_trapezoids/${terrain}/${direction}_${diffName}.png`;
@@ -774,6 +785,11 @@ async function init() {
                 cage_damaged: 'assets/terrain/individual/cage_damaged.png',
                 cage_more_damaged: 'assets/terrain/individual/cage_more_damaged.png',
                 cage_destroyed: 'assets/terrain/individual/cage_destroyed.png',
+                city_gate_2wide: 'assets/terrain/city_gate_2wide.png',
+                city_gate_2wide_cracked: 'assets/terrain/city_gate_2wide_cracked.png',
+                city_gate_2wide_open: 'assets/terrain/city_gate_2wide_open.png',
+                city_gate_2wide_cracked_open: 'assets/terrain/city_gate_2wide_cracked_open.png',
+                city_gate_2wide_destroyed: 'assets/terrain/city_gate_2wide_destroyed.png',
                 fire_yellow_01: 'assets/fire/fire_yellow_01.png',
                 fire_yellow_02: 'assets/fire/fire_yellow_02.png',
                 fire_yellow_03: 'assets/fire/fire_yellow_03.png',

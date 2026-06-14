@@ -1104,6 +1104,7 @@ export class MapScene extends BaseScene {
             mapGen: {
                 biome: 'central',
                 layout: 'city_gate',
+                cityGateDefenderSide: 'enemy',
                 forestDensity: 0.05,
                 mountainDensity: 0.0,
                 riverDensity: 0.0,

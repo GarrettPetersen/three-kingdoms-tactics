@@ -222,6 +222,7 @@ export const BATTLES = {
             biome: 'central',
             layout: 'city_gate',
             seed: 'qingzhou_gate',
+            cityGateDefenderSide: 'player',
             forestDensity: 0.1,
             mountainDensity: 0.1,
             riverDensity: 0.0,

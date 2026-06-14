@@ -1,8 +1,8 @@
 {
   "generatedBy": "generate_hex_edge_trapezoids.js",
-  "forceOverwrite": false,
+  "forceOverwrite": true,
   "forceHandEdited": false,
-  "onlyTerrain": null,
+  "onlyTerrain": "brick",
   "protectedTerrains": [
     "grass"
   ],
@@ -12,7 +12,7 @@
     "Rows are rasterized from the real polygon between the current hex edge and the adjacent hex edge, using the same 29x23 spacing and 3px elevation step as the map renderer.",
     "This generator is non-destructive by default: existing PNGs are skipped. Pass --force to overwrite placeholder art.",
     "Hand-edited terrain groups are protected even with --force. Pass --force-hand-edited only when you really want to replace those PNGs.",
-    "heightDiff is neighbor.level - current.level. Diffs -1/+1 are walkable slopes; absolute diffs >=2 use the shared rocky_cliff set because they are impassable."
+    "heightDiff is neighbor.level - current.level. Diffs -1/+1 are walkable slopes; absolute diffs >=2 use the shared rocky_cliff set because they are impassable, except brick which has its own steep rampart faces."
   ],
   "geometry": {
     "tileWidth": 36,
@@ -85,6 +85,15 @@
     1
   ],
   "terrainDiffsByGroup": {
+    "brick": [
+      -3,
+      -2,
+      -1,
+      0,
+      1,
+      2,
+      3
+    ],
     "water_shallow": [
       -1,
       0,
@@ -109,6 +118,7 @@
     "sand": "sand_01",
     "snow": "snow_01",
     "rock": "mountain_stone_01",
+    "brick": "brick_01",
     "water_shallow": "water_shallow_01",
     "water_deep": "water_deep_01_01"
   },
@@ -119,6 +129,7 @@
     "sand": "#f8d97b",
     "snow": "#eae9e9",
     "rock": "#7e7976",
+    "brick": "#c39155",
     "water_shallow": "#87bfbc",
     "water_deep": "#276468"
   },
@@ -5358,6 +5369,2253 @@
           "y": 42,
           "start": 29,
           "end": 33
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": -3,
+      "file": "assets/terrain/edge_trapezoids/brick/w_minus3.png",
+      "points": [
+        [
+          15,
+          21
+        ],
+        [
+          17,
+          21
+        ],
+        [
+          11,
+          43
+        ],
+        [
+          9,
+          43
+        ]
+      ],
+      "rows": [
+        {
+          "y": 21,
+          "start": 15,
+          "end": 17
+        },
+        {
+          "y": 22,
+          "start": 14,
+          "end": 17
+        },
+        {
+          "y": 23,
+          "start": 14,
+          "end": 17
+        },
+        {
+          "y": 24,
+          "start": 13,
+          "end": 17
+        },
+        {
+          "y": 25,
+          "start": 12,
+          "end": 17
+        },
+        {
+          "y": 26,
+          "start": 11,
+          "end": 17
+        },
+        {
+          "y": 27,
+          "start": 10,
+          "end": 17
+        },
+        {
+          "y": 28,
+          "start": 10,
+          "end": 17
+        },
+        {
+          "y": 29,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 30,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 31,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 32,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 33,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 34,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 35,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 36,
+          "start": 9,
+          "end": 16
+        },
+        {
+          "y": 37,
+          "start": 9,
+          "end": 16
+        },
+        {
+          "y": 38,
+          "start": 9,
+          "end": 15
+        },
+        {
+          "y": 39,
+          "start": 9,
+          "end": 14
+        },
+        {
+          "y": 40,
+          "start": 9,
+          "end": 13
+        },
+        {
+          "y": 41,
+          "start": 9,
+          "end": 12
+        },
+        {
+          "y": 42,
+          "start": 9,
+          "end": 12
+        },
+        {
+          "y": 43,
+          "start": 9,
+          "end": 11
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": -2,
+      "file": "assets/terrain/edge_trapezoids/brick/w_minus2.png",
+      "points": [
+        [
+          15,
+          21
+        ],
+        [
+          17,
+          21
+        ],
+        [
+          11,
+          40
+        ],
+        [
+          9,
+          40
+        ]
+      ],
+      "rows": [
+        {
+          "y": 21,
+          "start": 15,
+          "end": 17
+        },
+        {
+          "y": 22,
+          "start": 14,
+          "end": 17
+        },
+        {
+          "y": 23,
+          "start": 13,
+          "end": 17
+        },
+        {
+          "y": 24,
+          "start": 11,
+          "end": 17
+        },
+        {
+          "y": 25,
+          "start": 10,
+          "end": 17
+        },
+        {
+          "y": 26,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 28,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 29,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 30,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 31,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 32,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 33,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 34,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 35,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 36,
+          "start": 9,
+          "end": 16
+        },
+        {
+          "y": 37,
+          "start": 9,
+          "end": 15
+        },
+        {
+          "y": 38,
+          "start": 9,
+          "end": 13
+        },
+        {
+          "y": 39,
+          "start": 9,
+          "end": 12
+        },
+        {
+          "y": 40,
+          "start": 9,
+          "end": 11
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/brick/w_minus1.png",
+      "points": [
+        [
+          14,
+          21
+        ],
+        [
+          17,
+          21
+        ],
+        [
+          12,
+          37
+        ],
+        [
+          9,
+          37
+        ]
+      ],
+      "rows": [
+        {
+          "y": 21,
+          "start": 14,
+          "end": 17
+        },
+        {
+          "y": 22,
+          "start": 12,
+          "end": 17
+        },
+        {
+          "y": 23,
+          "start": 10,
+          "end": 17
+        },
+        {
+          "y": 24,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 25,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 26,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 28,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 29,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 30,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 31,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 32,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 33,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 34,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 35,
+          "start": 9,
+          "end": 16
+        },
+        {
+          "y": 36,
+          "start": 9,
+          "end": 14
+        },
+        {
+          "y": 37,
+          "start": 9,
+          "end": 12
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/brick/w_zero.png",
+      "points": [
+        [
+          9,
+          21
+        ],
+        [
+          17,
+          21
+        ],
+        [
+          17,
+          34
+        ],
+        [
+          9,
+          34
+        ]
+      ],
+      "rows": [
+        {
+          "y": 21,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 22,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 23,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 24,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 25,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 26,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 28,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 29,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 30,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 31,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 32,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 33,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 34,
+          "start": 9,
+          "end": 17
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/brick/w_plus1.png",
+      "points": [
+        [
+          9,
+          18
+        ],
+        [
+          12,
+          18
+        ],
+        [
+          17,
+          34
+        ],
+        [
+          14,
+          34
+        ]
+      ],
+      "rows": [
+        {
+          "y": 18,
+          "start": 9,
+          "end": 12
+        },
+        {
+          "y": 19,
+          "start": 9,
+          "end": 14
+        },
+        {
+          "y": 20,
+          "start": 9,
+          "end": 16
+        },
+        {
+          "y": 21,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 22,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 23,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 24,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 25,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 26,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 28,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 29,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 30,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 31,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 32,
+          "start": 10,
+          "end": 17
+        },
+        {
+          "y": 33,
+          "start": 12,
+          "end": 17
+        },
+        {
+          "y": 34,
+          "start": 14,
+          "end": 17
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 2,
+      "file": "assets/terrain/edge_trapezoids/brick/w_plus2.png",
+      "points": [
+        [
+          9,
+          15
+        ],
+        [
+          11,
+          15
+        ],
+        [
+          17,
+          34
+        ],
+        [
+          15,
+          34
+        ]
+      ],
+      "rows": [
+        {
+          "y": 15,
+          "start": 9,
+          "end": 11
+        },
+        {
+          "y": 16,
+          "start": 9,
+          "end": 12
+        },
+        {
+          "y": 17,
+          "start": 9,
+          "end": 13
+        },
+        {
+          "y": 18,
+          "start": 9,
+          "end": 15
+        },
+        {
+          "y": 19,
+          "start": 9,
+          "end": 16
+        },
+        {
+          "y": 20,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 21,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 22,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 23,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 24,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 25,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 26,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 27,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 28,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 29,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 30,
+          "start": 10,
+          "end": 17
+        },
+        {
+          "y": 31,
+          "start": 11,
+          "end": 17
+        },
+        {
+          "y": 32,
+          "start": 13,
+          "end": 17
+        },
+        {
+          "y": 33,
+          "start": 14,
+          "end": 17
+        },
+        {
+          "y": 34,
+          "start": 15,
+          "end": 17
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "w",
+      "directionLabel": "W",
+      "heightDiff": 3,
+      "file": "assets/terrain/edge_trapezoids/brick/w_plus3.png",
+      "points": [
+        [
+          9,
+          12
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          17,
+          34
+        ],
+        [
+          15,
+          34
+        ]
+      ],
+      "rows": [
+        {
+          "y": 12,
+          "start": 9,
+          "end": 11
+        },
+        {
+          "y": 13,
+          "start": 9,
+          "end": 12
+        },
+        {
+          "y": 14,
+          "start": 9,
+          "end": 12
+        },
+        {
+          "y": 15,
+          "start": 9,
+          "end": 13
+        },
+        {
+          "y": 16,
+          "start": 9,
+          "end": 14
+        },
+        {
+          "y": 17,
+          "start": 9,
+          "end": 15
+        },
+        {
+          "y": 18,
+          "start": 9,
+          "end": 16
+        },
+        {
+          "y": 19,
+          "start": 9,
+          "end": 16
+        },
+        {
+          "y": 20,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 21,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 22,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 23,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 24,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 25,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 26,
+          "start": 9,
+          "end": 17
+        },
+        {
+          "y": 27,
+          "start": 10,
+          "end": 17
+        },
+        {
+          "y": 28,
+          "start": 10,
+          "end": 17
+        },
+        {
+          "y": 29,
+          "start": 11,
+          "end": 17
+        },
+        {
+          "y": 30,
+          "start": 12,
+          "end": 17
+        },
+        {
+          "y": 31,
+          "start": 13,
+          "end": 17
+        },
+        {
+          "y": 32,
+          "start": 14,
+          "end": 17
+        },
+        {
+          "y": 33,
+          "start": 14,
+          "end": 17
+        },
+        {
+          "y": 34,
+          "start": 15,
+          "end": 17
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": -3,
+      "file": "assets/terrain/edge_trapezoids/brick/sw_minus3.png",
+      "points": [
+        [
+          15,
+          33
+        ],
+        [
+          18,
+          33
+        ],
+        [
+          25,
+          54
+        ],
+        [
+          22,
+          54
+        ]
+      ],
+      "rows": [
+        {
+          "y": 33,
+          "start": 15,
+          "end": 18
+        },
+        {
+          "y": 34,
+          "start": 15,
+          "end": 20
+        },
+        {
+          "y": 35,
+          "start": 15,
+          "end": 22
+        },
+        {
+          "y": 36,
+          "start": 15,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 14,
+          "end": 26
+        },
+        {
+          "y": 38,
+          "start": 14,
+          "end": 28
+        },
+        {
+          "y": 39,
+          "start": 14,
+          "end": 28
+        },
+        {
+          "y": 40,
+          "start": 14,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 42,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 43,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 44,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 45,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 46,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 47,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 48,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 49,
+          "start": 13,
+          "end": 26
+        },
+        {
+          "y": 50,
+          "start": 15,
+          "end": 26
+        },
+        {
+          "y": 51,
+          "start": 17,
+          "end": 26
+        },
+        {
+          "y": 52,
+          "start": 18,
+          "end": 26
+        },
+        {
+          "y": 53,
+          "start": 20,
+          "end": 25
+        },
+        {
+          "y": 54,
+          "start": 22,
+          "end": 25
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": -2,
+      "file": "assets/terrain/edge_trapezoids/brick/sw_minus2.png",
+      "points": [
+        [
+          15,
+          33
+        ],
+        [
+          18,
+          33
+        ],
+        [
+          25,
+          51
+        ],
+        [
+          22,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 33,
+          "start": 15,
+          "end": 18
+        },
+        {
+          "y": 34,
+          "start": 15,
+          "end": 20
+        },
+        {
+          "y": 35,
+          "start": 15,
+          "end": 22
+        },
+        {
+          "y": 36,
+          "start": 14,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 14,
+          "end": 26
+        },
+        {
+          "y": 38,
+          "start": 14,
+          "end": 28
+        },
+        {
+          "y": 39,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 42,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 43,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 44,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 45,
+          "start": 12,
+          "end": 27
+        },
+        {
+          "y": 46,
+          "start": 13,
+          "end": 27
+        },
+        {
+          "y": 47,
+          "start": 15,
+          "end": 26
+        },
+        {
+          "y": 48,
+          "start": 17,
+          "end": 26
+        },
+        {
+          "y": 49,
+          "start": 18,
+          "end": 26
+        },
+        {
+          "y": 50,
+          "start": 20,
+          "end": 25
+        },
+        {
+          "y": 51,
+          "start": 22,
+          "end": 25
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/brick/sw_minus1.png",
+      "points": [
+        [
+          15,
+          33
+        ],
+        [
+          18,
+          33
+        ],
+        [
+          25,
+          48
+        ],
+        [
+          22,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 33,
+          "start": 15,
+          "end": 18
+        },
+        {
+          "y": 34,
+          "start": 15,
+          "end": 20
+        },
+        {
+          "y": 35,
+          "start": 14,
+          "end": 22
+        },
+        {
+          "y": 36,
+          "start": 14,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 14,
+          "end": 26
+        },
+        {
+          "y": 38,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 39,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 40,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 42,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 43,
+          "start": 13,
+          "end": 27
+        },
+        {
+          "y": 44,
+          "start": 15,
+          "end": 27
+        },
+        {
+          "y": 45,
+          "start": 17,
+          "end": 27
+        },
+        {
+          "y": 46,
+          "start": 18,
+          "end": 26
+        },
+        {
+          "y": 47,
+          "start": 20,
+          "end": 26
+        },
+        {
+          "y": 48,
+          "start": 22,
+          "end": 25
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/brick/sw_zero.png",
+      "points": [
+        [
+          15,
+          33
+        ],
+        [
+          18,
+          33
+        ],
+        [
+          25,
+          45
+        ],
+        [
+          22,
+          45
+        ]
+      ],
+      "rows": [
+        {
+          "y": 33,
+          "start": 15,
+          "end": 18
+        },
+        {
+          "y": 34,
+          "start": 14,
+          "end": 20
+        },
+        {
+          "y": 35,
+          "start": 14,
+          "end": 22
+        },
+        {
+          "y": 36,
+          "start": 13,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 12,
+          "end": 26
+        },
+        {
+          "y": 38,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 39,
+          "start": 12,
+          "end": 28
+        },
+        {
+          "y": 40,
+          "start": 13,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 15,
+          "end": 28
+        },
+        {
+          "y": 42,
+          "start": 17,
+          "end": 27
+        },
+        {
+          "y": 43,
+          "start": 18,
+          "end": 27
+        },
+        {
+          "y": 44,
+          "start": 20,
+          "end": 26
+        },
+        {
+          "y": 45,
+          "start": 22,
+          "end": 25
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/brick/sw_plus1.png",
+      "points": [
+        [
+          15,
+          33
+        ],
+        [
+          18,
+          33
+        ],
+        [
+          26,
+          42
+        ],
+        [
+          22,
+          42
+        ]
+      ],
+      "rows": [
+        {
+          "y": 33,
+          "start": 15,
+          "end": 18
+        },
+        {
+          "y": 34,
+          "start": 13,
+          "end": 20
+        },
+        {
+          "y": 35,
+          "start": 13,
+          "end": 22
+        },
+        {
+          "y": 36,
+          "start": 13,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 13,
+          "end": 26
+        },
+        {
+          "y": 38,
+          "start": 15,
+          "end": 28
+        },
+        {
+          "y": 39,
+          "start": 17,
+          "end": 28
+        },
+        {
+          "y": 40,
+          "start": 18,
+          "end": 28
+        },
+        {
+          "y": 41,
+          "start": 20,
+          "end": 28
+        },
+        {
+          "y": 42,
+          "start": 22,
+          "end": 26
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 2,
+      "file": "assets/terrain/edge_trapezoids/brick/sw_plus2.png",
+      "points": [
+        [
+          13,
+          32
+        ],
+        [
+          16,
+          32
+        ],
+        [
+          28,
+          40
+        ],
+        [
+          25,
+          40
+        ]
+      ],
+      "rows": [
+        {
+          "y": 32,
+          "start": 13,
+          "end": 16
+        },
+        {
+          "y": 33,
+          "start": 13,
+          "end": 18
+        },
+        {
+          "y": 34,
+          "start": 13,
+          "end": 20
+        },
+        {
+          "y": 35,
+          "start": 15,
+          "end": 22
+        },
+        {
+          "y": 36,
+          "start": 17,
+          "end": 24
+        },
+        {
+          "y": 37,
+          "start": 18,
+          "end": 26
+        },
+        {
+          "y": 38,
+          "start": 20,
+          "end": 28
+        },
+        {
+          "y": 39,
+          "start": 22,
+          "end": 28
+        },
+        {
+          "y": 40,
+          "start": 25,
+          "end": 28
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "sw",
+      "directionLabel": "SW",
+      "heightDiff": 3,
+      "file": "assets/terrain/edge_trapezoids/brick/sw_plus3.png",
+      "points": [
+        [
+          12,
+          29
+        ],
+        [
+          15,
+          29
+        ],
+        [
+          28,
+          40
+        ],
+        [
+          26,
+          40
+        ]
+      ],
+      "rows": [
+        {
+          "y": 29,
+          "start": 12,
+          "end": 15
+        },
+        {
+          "y": 30,
+          "start": 12,
+          "end": 17
+        },
+        {
+          "y": 31,
+          "start": 12,
+          "end": 19
+        },
+        {
+          "y": 32,
+          "start": 13,
+          "end": 20
+        },
+        {
+          "y": 33,
+          "start": 14,
+          "end": 22
+        },
+        {
+          "y": 34,
+          "start": 15,
+          "end": 24
+        },
+        {
+          "y": 35,
+          "start": 16,
+          "end": 25
+        },
+        {
+          "y": 36,
+          "start": 18,
+          "end": 26
+        },
+        {
+          "y": 37,
+          "start": 20,
+          "end": 27
+        },
+        {
+          "y": 38,
+          "start": 22,
+          "end": 28
+        },
+        {
+          "y": 39,
+          "start": 24,
+          "end": 28
+        },
+        {
+          "y": 40,
+          "start": 26,
+          "end": 28
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": -3,
+      "file": "assets/terrain/edge_trapezoids/brick/se_minus3.png",
+      "points": [
+        [
+          37,
+          33
+        ],
+        [
+          40,
+          33
+        ],
+        [
+          33,
+          54
+        ],
+        [
+          30,
+          54
+        ]
+      ],
+      "rows": [
+        {
+          "y": 33,
+          "start": 37,
+          "end": 40
+        },
+        {
+          "y": 34,
+          "start": 35,
+          "end": 40
+        },
+        {
+          "y": 35,
+          "start": 33,
+          "end": 40
+        },
+        {
+          "y": 36,
+          "start": 31,
+          "end": 40
+        },
+        {
+          "y": 37,
+          "start": 29,
+          "end": 41
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 41
+        },
+        {
+          "y": 39,
+          "start": 27,
+          "end": 41
+        },
+        {
+          "y": 40,
+          "start": 27,
+          "end": 41
+        },
+        {
+          "y": 41,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 43,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 44,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 45,
+          "start": 28,
+          "end": 43
+        },
+        {
+          "y": 46,
+          "start": 28,
+          "end": 43
+        },
+        {
+          "y": 47,
+          "start": 28,
+          "end": 43
+        },
+        {
+          "y": 48,
+          "start": 28,
+          "end": 43
+        },
+        {
+          "y": 49,
+          "start": 29,
+          "end": 42
+        },
+        {
+          "y": 50,
+          "start": 29,
+          "end": 40
+        },
+        {
+          "y": 51,
+          "start": 29,
+          "end": 38
+        },
+        {
+          "y": 52,
+          "start": 29,
+          "end": 37
+        },
+        {
+          "y": 53,
+          "start": 30,
+          "end": 35
+        },
+        {
+          "y": 54,
+          "start": 30,
+          "end": 33
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": -2,
+      "file": "assets/terrain/edge_trapezoids/brick/se_minus2.png",
+      "points": [
+        [
+          37,
+          33
+        ],
+        [
+          40,
+          33
+        ],
+        [
+          33,
+          51
+        ],
+        [
+          30,
+          51
+        ]
+      ],
+      "rows": [
+        {
+          "y": 33,
+          "start": 37,
+          "end": 40
+        },
+        {
+          "y": 34,
+          "start": 35,
+          "end": 40
+        },
+        {
+          "y": 35,
+          "start": 33,
+          "end": 40
+        },
+        {
+          "y": 36,
+          "start": 31,
+          "end": 41
+        },
+        {
+          "y": 37,
+          "start": 29,
+          "end": 41
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 41
+        },
+        {
+          "y": 39,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 42,
+          "start": 27,
+          "end": 43
+        },
+        {
+          "y": 43,
+          "start": 27,
+          "end": 43
+        },
+        {
+          "y": 44,
+          "start": 28,
+          "end": 43
+        },
+        {
+          "y": 45,
+          "start": 28,
+          "end": 43
+        },
+        {
+          "y": 46,
+          "start": 28,
+          "end": 42
+        },
+        {
+          "y": 47,
+          "start": 29,
+          "end": 40
+        },
+        {
+          "y": 48,
+          "start": 29,
+          "end": 38
+        },
+        {
+          "y": 49,
+          "start": 29,
+          "end": 37
+        },
+        {
+          "y": 50,
+          "start": 30,
+          "end": 35
+        },
+        {
+          "y": 51,
+          "start": 30,
+          "end": 33
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": -1,
+      "file": "assets/terrain/edge_trapezoids/brick/se_minus1.png",
+      "points": [
+        [
+          37,
+          33
+        ],
+        [
+          40,
+          33
+        ],
+        [
+          33,
+          48
+        ],
+        [
+          30,
+          48
+        ]
+      ],
+      "rows": [
+        {
+          "y": 33,
+          "start": 37,
+          "end": 40
+        },
+        {
+          "y": 34,
+          "start": 35,
+          "end": 40
+        },
+        {
+          "y": 35,
+          "start": 33,
+          "end": 41
+        },
+        {
+          "y": 36,
+          "start": 31,
+          "end": 41
+        },
+        {
+          "y": 37,
+          "start": 29,
+          "end": 41
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 39,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 40,
+          "start": 27,
+          "end": 43
+        },
+        {
+          "y": 41,
+          "start": 27,
+          "end": 43
+        },
+        {
+          "y": 42,
+          "start": 27,
+          "end": 43
+        },
+        {
+          "y": 43,
+          "start": 28,
+          "end": 42
+        },
+        {
+          "y": 44,
+          "start": 28,
+          "end": 40
+        },
+        {
+          "y": 45,
+          "start": 28,
+          "end": 38
+        },
+        {
+          "y": 46,
+          "start": 29,
+          "end": 37
+        },
+        {
+          "y": 47,
+          "start": 29,
+          "end": 35
+        },
+        {
+          "y": 48,
+          "start": 30,
+          "end": 33
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 0,
+      "file": "assets/terrain/edge_trapezoids/brick/se_zero.png",
+      "points": [
+        [
+          37,
+          33
+        ],
+        [
+          40,
+          33
+        ],
+        [
+          33,
+          45
+        ],
+        [
+          30,
+          45
+        ]
+      ],
+      "rows": [
+        {
+          "y": 33,
+          "start": 37,
+          "end": 40
+        },
+        {
+          "y": 34,
+          "start": 35,
+          "end": 41
+        },
+        {
+          "y": 35,
+          "start": 33,
+          "end": 41
+        },
+        {
+          "y": 36,
+          "start": 31,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 29,
+          "end": 43
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 43
+        },
+        {
+          "y": 39,
+          "start": 27,
+          "end": 43
+        },
+        {
+          "y": 40,
+          "start": 27,
+          "end": 42
+        },
+        {
+          "y": 41,
+          "start": 27,
+          "end": 40
+        },
+        {
+          "y": 42,
+          "start": 28,
+          "end": 38
+        },
+        {
+          "y": 43,
+          "start": 28,
+          "end": 37
+        },
+        {
+          "y": 44,
+          "start": 29,
+          "end": 35
+        },
+        {
+          "y": 45,
+          "start": 30,
+          "end": 33
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 1,
+      "file": "assets/terrain/edge_trapezoids/brick/se_plus1.png",
+      "points": [
+        [
+          37,
+          33
+        ],
+        [
+          40,
+          33
+        ],
+        [
+          33,
+          42
+        ],
+        [
+          29,
+          42
+        ]
+      ],
+      "rows": [
+        {
+          "y": 33,
+          "start": 37,
+          "end": 40
+        },
+        {
+          "y": 34,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 33,
+          "end": 42
+        },
+        {
+          "y": 36,
+          "start": 31,
+          "end": 42
+        },
+        {
+          "y": 37,
+          "start": 29,
+          "end": 42
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 40
+        },
+        {
+          "y": 39,
+          "start": 27,
+          "end": 38
+        },
+        {
+          "y": 40,
+          "start": 27,
+          "end": 37
+        },
+        {
+          "y": 41,
+          "start": 27,
+          "end": 35
+        },
+        {
+          "y": 42,
+          "start": 29,
+          "end": 33
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 2,
+      "file": "assets/terrain/edge_trapezoids/brick/se_plus2.png",
+      "points": [
+        [
+          39,
+          32
+        ],
+        [
+          42,
+          32
+        ],
+        [
+          30,
+          40
+        ],
+        [
+          27,
+          40
+        ]
+      ],
+      "rows": [
+        {
+          "y": 32,
+          "start": 39,
+          "end": 42
+        },
+        {
+          "y": 33,
+          "start": 37,
+          "end": 42
+        },
+        {
+          "y": 34,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 35,
+          "start": 33,
+          "end": 40
+        },
+        {
+          "y": 36,
+          "start": 31,
+          "end": 38
+        },
+        {
+          "y": 37,
+          "start": 29,
+          "end": 37
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 35
+        },
+        {
+          "y": 39,
+          "start": 27,
+          "end": 33
+        },
+        {
+          "y": 40,
+          "start": 27,
+          "end": 30
+        }
+      ]
+    },
+    {
+      "terrain": "brick",
+      "direction": "se",
+      "directionLabel": "SE",
+      "heightDiff": 3,
+      "file": "assets/terrain/edge_trapezoids/brick/se_plus3.png",
+      "points": [
+        [
+          40,
+          29
+        ],
+        [
+          43,
+          29
+        ],
+        [
+          29,
+          40
+        ],
+        [
+          27,
+          40
+        ]
+      ],
+      "rows": [
+        {
+          "y": 29,
+          "start": 40,
+          "end": 43
+        },
+        {
+          "y": 30,
+          "start": 38,
+          "end": 43
+        },
+        {
+          "y": 31,
+          "start": 36,
+          "end": 43
+        },
+        {
+          "y": 32,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "y": 33,
+          "start": 33,
+          "end": 41
+        },
+        {
+          "y": 34,
+          "start": 31,
+          "end": 40
+        },
+        {
+          "y": 35,
+          "start": 30,
+          "end": 39
+        },
+        {
+          "y": 36,
+          "start": 29,
+          "end": 37
+        },
+        {
+          "y": 37,
+          "start": 28,
+          "end": 35
+        },
+        {
+          "y": 38,
+          "start": 27,
+          "end": 33
+        },
+        {
+          "y": 39,
+          "start": 27,
+          "end": 31
+        },
+        {
+          "y": 40,
+          "start": 27,
+          "end": 29
         }
       ]
     },

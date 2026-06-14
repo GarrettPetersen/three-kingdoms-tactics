@@ -4,6 +4,7 @@ export class TacticsMap {
         this.height = height;
         this.elevationStep = 3; // Visual height difference between levels
         this.grid = [];
+        this.cityGateMeta = null;
         this.initialize();
     }
 
@@ -18,7 +19,13 @@ export class TacticsMap {
                     level: 0, // discrete level (0, 1, 2...)
                     elevation: 0, // pixels (level * elevationStep)
                     unit: null,
-                    impassable: false
+                    impassable: false,
+                    baseTerrain: null,
+                    gateState: null,
+                    gateDefenderSide: null,
+                    gateInside: null,
+                    cityGateSegment: null,
+                    cityGateStair: false
                 });
             }
             this.grid.push(row);
@@ -308,8 +315,11 @@ export class TacticsMap {
                 cell.gateState = null;
                 cell.gateDefenderSide = null;
                 cell.gateInside = null;
+                cell.cityGateSegment = null;
+                cell.cityGateStair = false;
             }
         }
+        this.cityGateMeta = null;
 
         if (layout === 'river') {
             this.generateRiver();
@@ -354,63 +364,64 @@ export class TacticsMap {
     }
 
     generateCityGate() {
-        // Build a diagonal wall (two possible diagonal families in odd-r offset):
-        // - x = constant
-        // - (x + z) = constant
-        // where x = q - floor(r/2), z = r
-        const orient = Math.random() < 0.5 ? 'x_const' : 'x_plus_z_const';
-        const midR = Math.floor(this.height / 2);
-        const midQ = Math.floor(this.width / 2);
-        const midX = midQ - Math.floor(midR / 2);
-        const lineValue = orient === 'x_const'
-            ? midX
-            : (midQ - Math.floor(midR / 2) + midR);
+        const defenderSide = this.params?.cityGateDefenderSide || 'player';
+        const rampartRows = Math.min(3, Math.max(2, this.height - 5));
+        const gateRow = Math.max(0, rampartRows - 1);
+        const approachRow = Math.min(this.height - 1, rampartRows);
+        const gateLeftQ = Math.max(1, Math.min(this.width - 3, Math.floor(this.width / 2) - 1));
+        const gateRightQ = gateLeftQ + 1;
+        const gateGroundCells = [
+            { r: approachRow, q: gateLeftQ },
+            { r: approachRow, q: gateRightQ }
+        ];
+        const stairCells = [
+            { r: gateRow, q: gateLeftQ },
+            { r: gateRow, q: gateRightQ }
+        ];
 
-        const wallCells = [];
-        for (let r = 0; r < this.height; r++) {
-            const q = orient === 'x_const'
-                ? (lineValue + Math.floor(r / 2))
-                : (lineValue - r + Math.floor(r / 2));
-            const cell = this.getCell(r, q);
-            if (cell) wallCells.push(cell);
-        }
-        if (!wallCells.length) return;
-
-        // Pick which side is "inside city" so we can divide mud/houses vs grass/trees.
-        const insideIsGreater = Math.random() < 0.5;
         this.cityGateMeta = {
-            orientation: orient,
-            lineValue,
-            insideIsGreater,
-            gateR: null,
-            gateQ: null
+            orientation: 'top_rampart',
+            defenderSide,
+            rampartRows,
+            gateRow,
+            approachRow,
+            gateState: 'closed',
+            gateGroundCells,
+            stairCells
         };
 
-        // Select a single gate cell near the center of the wall line.
-        const gateCell = wallCells[Math.floor(wallCells.length / 2)];
-        this.cityGateMeta.gateR = gateCell.r;
-        this.cityGateMeta.gateQ = gateCell.q;
+        const gateKeys = new Set(gateGroundCells.map(c => `${c.r},${c.q}`));
+        const stairKeys = new Set(stairCells.map(c => `${c.r},${c.q}`));
 
-        // Paint non-wall terrain first (inside vs outside).
         for (let r = 0; r < this.height; r++) {
             for (let q = 0; q < this.width; q++) {
                 const cell = this.getCell(r, q);
                 if (!cell) continue;
-                const inside = this.isCityGateInsideCell(r, q);
+                const inside = r < rampartRows;
                 cell.gateInside = inside;
+                cell.baseTerrain = null;
+                cell.gateState = null;
+                cell.gateDefenderSide = null;
+                cell.cityGateSegment = null;
+                cell.cityGateStair = false;
+
                 if (inside) {
-                    // Inside city: mud + dense houses.
-                    cell.terrain = 'mud_01';
-                    const nearWall = Math.abs((q - Math.floor(r / 2)) - (orient === 'x_const' ? lineValue : (lineValue - r))) <= 1;
-                    if (!nearWall && Math.random() < 0.18) {
-                        cell.baseTerrain = cell.terrain;
-                        cell.terrain = 'house_01';
-                        cell.impassable = true;
-                    }
+                    cell.terrain = stairKeys.has(`${r},${q}`) ? 'brick_staircase' : 'brick_01';
+                    cell.level = 3;
+                    cell.elevation = cell.level * this.elevationStep;
+                    cell.impassable = false;
                 } else {
-                    // Outside city: grass + trees.
-                    cell.terrain = this.getDefaultGrass();
-                    if (Math.random() < 0.16) {
+                    cell.level = 0;
+                    cell.elevation = 0;
+                    if (gateKeys.has(`${r},${q}`)) {
+                        cell.terrain = 'mud_01';
+                    } else if (r <= rampartRows + 1) {
+                        cell.terrain = 'mud_01';
+                    } else {
+                        cell.terrain = this.getDefaultGrass();
+                    }
+                    cell.impassable = false;
+                    if (r > rampartRows + 1 && Math.random() < 0.12) {
                         const forestVariants = this.biome === 'northern'
                             ? ['pine_forest_01', 'forest_deciduous_01']
                             : (this.biome === 'northern_snowy'
@@ -424,27 +435,123 @@ export class TacticsMap {
             }
         }
 
-        // Paint the wall and gate on top.
-        const defenderSide = this.params?.cityGateDefenderSide || 'player';
-        wallCells.forEach(c => {
-            c.baseTerrain = c.terrain;
-            c.terrain = 'wall_01';
-            c.impassable = true;
-            c.gateState = null;
-            c.gateDefenderSide = null;
+        gateGroundCells.forEach((pos, index) => {
+            const cell = this.getCell(pos.r, pos.q);
+            if (!cell) return;
+            cell.cityGateSegment = index === 0 ? 'left' : 'right';
+            cell.gateState = 'closed';
+            cell.gateDefenderSide = defenderSide;
         });
-        gateCell.terrain = 'gate_01';
-        gateCell.impassable = false; // passability is handled by canUnitTraverseCell() using gate state + faction
-        gateCell.gateState = 'closed';
-        gateCell.gateDefenderSide = defenderSide;
+        stairCells.forEach(pos => {
+            const cell = this.getCell(pos.r, pos.q);
+            if (!cell) return;
+            cell.terrain = 'brick_staircase';
+            cell.cityGateStair = true;
+            cell.gateDefenderSide = defenderSide;
+        });
     }
 
     isCityGateInsideCell(r, q) {
         if (!this.cityGateMeta) return false;
+        if (this.cityGateMeta.orientation === 'top_rampart') {
+            return r < (this.cityGateMeta.rampartRows || 0);
+        }
         const x = q - Math.floor(r / 2);
         const v = this.cityGateMeta.orientation === 'x_const' ? x : (x + r);
         if (this.cityGateMeta.insideIsGreater) return v > this.cityGateMeta.lineValue;
         return v < this.cityGateMeta.lineValue;
+    }
+
+    isCityGateDefender(unit) {
+        const side = this.cityGateMeta?.defenderSide || this.params?.cityGateDefenderSide || 'player';
+        const faction = unit?.faction || null;
+        return side === 'enemy'
+            ? faction === 'enemy'
+            : (faction === 'player' || faction === 'allied');
+    }
+
+    getCityGateState() {
+        return this.cityGateMeta?.gateState || 'closed';
+    }
+
+    setCityGateState(state) {
+        if (!this.cityGateMeta) return;
+        this.cityGateMeta.gateState = state;
+        for (const pos of this.cityGateMeta.gateGroundCells || []) {
+            const cell = this.getCell(pos.r, pos.q);
+            if (cell) cell.gateState = state;
+        }
+    }
+
+    getCityGateGroundCells() {
+        return (this.cityGateMeta?.gateGroundCells || [])
+            .map(pos => this.getCell(pos.r, pos.q))
+            .filter(Boolean);
+    }
+
+    getCityGateStairCells() {
+        return (this.cityGateMeta?.stairCells || [])
+            .map(pos => this.getCell(pos.r, pos.q))
+            .filter(Boolean);
+    }
+
+    isCityGateGroundCell(cell) {
+        return !!(cell && cell.cityGateSegment);
+    }
+
+    isCityGateStairCell(cell) {
+        return !!(cell && cell.cityGateStair);
+    }
+
+    getCityGateEntryCells() {
+        const entries = new Map();
+        for (const gateCell of this.getCityGateGroundCells()) {
+            entries.set(`${gateCell.r},${gateCell.q}`, gateCell);
+            for (const n of this.getNeighbors(gateCell.r, gateCell.q)) {
+                if (!n) continue;
+                if (this.isCityGateStairCell(n)) continue;
+                if ((n.level || 0) >= 3) continue;
+                entries.set(`${n.r},${n.q}`, n);
+            }
+        }
+        return [...entries.values()];
+    }
+
+    isCityGateEntryCell(cell) {
+        if (!cell) return false;
+        return this.getCityGateEntryCells().some(c => c.r === cell.r && c.q === cell.q);
+    }
+
+    canUseCityGateTransition(fromCell, toCell, movingUnit = null) {
+        if (!this.cityGateMeta) return false;
+        const fromStair = this.isCityGateStairCell(fromCell);
+        const toStair = this.isCityGateStairCell(toCell);
+        if (fromStair === toStair) return false;
+        const other = fromStair ? toCell : fromCell;
+        if (!this.isCityGateEntryCell(other)) return false;
+        const state = this.getCityGateState();
+        if (state === 'destroyed') return true;
+        return this.isCityGateDefender(movingUnit);
+    }
+
+    getMovementNeighbors(r, q, movingUnit = null) {
+        const cell = this.getCell(r, q);
+        const neighbors = this.getNeighbors(r, q).map(n => ({ cell: n, cityGateTransition: false }));
+        if (!cell || !this.cityGateMeta) return neighbors;
+
+        const addSpecial = (target) => {
+            if (!target) return;
+            if (!this.canUseCityGateTransition(cell, target, movingUnit)) return;
+            if (neighbors.some(n => n.cell.r === target.r && n.cell.q === target.q)) return;
+            neighbors.push({ cell: target, cityGateTransition: true });
+        };
+
+        if (this.isCityGateStairCell(cell)) {
+            this.getCityGateEntryCells().forEach(addSpecial);
+        } else if (this.isCityGateEntryCell(cell)) {
+            this.getCityGateStairCells().forEach(addSpecial);
+        }
+        return neighbors;
     }
 
     canUnitTraverseCell(cell, movingUnit = null) {
@@ -1249,8 +1356,8 @@ export class TacticsMap {
 
             if (current.cost >= range) continue;
 
-            const neighbors = this.getNeighbors(current.r, current.q);
-            neighbors.forEach(n => {
+            const neighbors = this.getMovementNeighbors(current.r, current.q, movingUnit);
+            neighbors.forEach(({ cell: n, cityGateTransition }) => {
                 if (!this.canUnitTraverseCell(n, movingUnit)) return;
 
                 // Living units block movement; corpses do not.
@@ -1272,7 +1379,7 @@ export class TacticsMap {
                 const nLevel = (n.level !== undefined) ? n.level : 0;
                 const cLevel = (current.level !== undefined) ? current.level : 0;
                 const levelDiff = Math.abs(nLevel - cLevel);
-                if (levelDiff > 1) return;
+                if (!cityGateTransition && levelDiff > 1) return;
 
                 // Difficult terrain costs 2, normal costs 1
                 const isDifficult = n.terrain.includes('forest') || n.terrain.includes('water_shallow');

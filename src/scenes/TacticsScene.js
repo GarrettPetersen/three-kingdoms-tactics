@@ -2738,6 +2738,11 @@ export class TacticsScene extends BaseScene {
             const filtered = new Map();
             validDestinations.forEach((data, key) => {
                 const [r, q] = key.split(',').map(Number);
+                const pathToDestination = this.tacticsMap.getPath(unit.r, unit.q, r, q, unit.moveRange, unit);
+                if (this.pathUsesCityGateTransition(pathToDestination, unit)) {
+                    filtered.set(key, { ...data, mountedFlip: unit.flip });
+                    return;
+                }
                 // Determine which way the horse will face when arriving at (r, q)
                 let plannedFlip = unit.flip;
                 if (data.parent) {
@@ -2943,8 +2948,9 @@ export class TacticsScene extends BaseScene {
 
         const path = this.tacticsMap.getPath(unit.r, unit.q, bestTile.r, bestTile.q, unit.moveRange, unit);
         if (path && path.length > 1) {
+            const crossesCityGate = this.pathUsesCityGateTransition(path, unit);
             // Unit needs to move
-            if (unit.onHorse) {
+            if (unit.onHorse && !crossesCityGate) {
                 let plannedFlip = unit.flip;
                 if (path.length >= 2) {
                     const prev = path[path.length - 2];
@@ -2979,6 +2985,13 @@ export class TacticsScene extends BaseScene {
 
             const oldCell = this.tacticsMap.getCell(unit.r, unit.q);
             if (oldCell) oldCell.unit = null;
+            if (unit.onHorse) {
+                const horse = this.getHorseById(unit.horseId);
+                if (horse) {
+                    this.clearHorseFromCells(horse);
+                }
+            }
+            this.prepareUnitForPathMovement(unit, path);
             if (unit.onHorse) {
                 const horse = this.getHorseById(unit.horseId);
                 if (horse) {
@@ -3203,6 +3216,7 @@ export class TacticsScene extends BaseScene {
             reachedFlag: !!this.reachedFlag,
             weatherType: this.weatherType,
             mapGen: this.mapGenParams,
+            cityGateMeta: this.tacticsMap?.cityGateMeta ? JSON.parse(JSON.stringify(this.tacticsMap.cityGateMeta)) : null,
             grid: this.tacticsMap.grid.map(row => row.map(cell => ({
                 terrain: cell.terrain,
                 level: cell.level,
@@ -3210,7 +3224,9 @@ export class TacticsScene extends BaseScene {
                 impassable: cell.impassable,
                 gateState: cell.gateState || null,
                 gateDefenderSide: cell.gateDefenderSide || null,
-                gateInside: cell.gateInside ?? null
+                gateInside: cell.gateInside ?? null,
+                cityGateSegment: cell.cityGateSegment || null,
+                cityGateStair: !!cell.cityGateStair
             }))),
             // Horse entities (mounted + riderless)
             horses: (this.horses || []).map(h => ({
@@ -3443,6 +3459,7 @@ export class TacticsScene extends BaseScene {
         this.ambushTriggered = !!state.ambushTriggered;
         this.reachedFlag = !!state.reachedFlag;
         this.weatherType = state.weatherType;
+        this.tacticsMap.cityGateMeta = state.cityGateMeta ? JSON.parse(JSON.stringify(state.cityGateMeta)) : this.tacticsMap.cityGateMeta;
         this.horses = [];
         
         // Restore Grid
@@ -3458,6 +3475,8 @@ export class TacticsScene extends BaseScene {
                     cell.gateState = savedCell.gateState || null;
                     cell.gateDefenderSide = savedCell.gateDefenderSide || null;
                     cell.gateInside = savedCell.gateInside ?? null;
+                    cell.cityGateSegment = savedCell.cityGateSegment || null;
+                    cell.cityGateStair = !!savedCell.cityGateStair;
                 }
                 cell.unit = null; // Clear all units first
                 cell.horse = null; // Clear all horses first
@@ -3913,6 +3932,7 @@ export class TacticsScene extends BaseScene {
         this.turnNumber = state.turnNumber;
         this.caocaoSecondWaveSpawned = !!state.caocaoSecondWaveSpawned;
         this.weatherType = state.weatherType;
+        this.tacticsMap.cityGateMeta = state.cityGateMeta ? JSON.parse(JSON.stringify(state.cityGateMeta)) : this.tacticsMap.cityGateMeta;
         this.horses = [];
         
         // Restore Grid
@@ -3927,6 +3947,8 @@ export class TacticsScene extends BaseScene {
                 cell.gateState = savedCell.gateState || null;
                 cell.gateDefenderSide = savedCell.gateDefenderSide || null;
                 cell.gateInside = savedCell.gateInside ?? null;
+                cell.cityGateSegment = savedCell.cityGateSegment || null;
+                cell.cityGateStair = !!savedCell.cityGateStair;
                 cell.unit = null; // Clear all units first
                 cell.horse = null; // Clear all horses first
             }
@@ -5344,6 +5366,14 @@ export class TacticsScene extends BaseScene {
         return typeof terrain === 'string' && terrain.startsWith('gate_');
     }
 
+    isCityGateCell(cell) {
+        return !!(cell && cell.cityGateSegment);
+    }
+
+    isCityGateDestroyed() {
+        return this.tacticsMap?.getCityGateState?.() === 'destroyed';
+    }
+
     isUnitOnDefenderSideForGate(unit, cell) {
         if (!unit || !cell) return false;
         const defenderSide = cell.gateDefenderSide || this.mapGenParams?.cityGateDefenderSide || 'player';
@@ -5351,8 +5381,15 @@ export class TacticsScene extends BaseScene {
         return unit.faction === 'player' || unit.faction === 'allied';
     }
 
+    isUnitDefenderForCityGate(unit) {
+        return !!this.tacticsMap?.isCityGateDefender?.(unit);
+    }
+
     getAttackableGateCellsForUnit(unit) {
         if (!unit || !this.tacticsMap) return [];
+        if (this.tacticsMap.cityGateMeta && !this.isCityGateDestroyed() && !this.isUnitDefenderForCityGate(unit)) {
+            return this.tacticsMap.getCityGateGroundCells();
+        }
         const gates = [];
         for (let r = 0; r < this.manager.config.mapHeight; r++) {
             for (let q = 0; q < this.manager.config.mapWidth; q++) {
@@ -5387,14 +5424,25 @@ export class TacticsScene extends BaseScene {
         }
 
         const ignoreWallLOS = this.canAttackIgnoreWallLOS(attackKey);
+        if (!this.canAttackTraverseElevation(attackKey, fromR, fromQ, toR, toQ)) return false;
         if (!ignoreWallLOS && this.hasWallBlockingBetween(fromR, fromQ, toR, toQ)) return false;
         return true;
     }
 
     onUnitEnteredHexCell(unit, fromKey, toKey) {
         if (!unit || unit.hp <= 0 || unit.isGone) return;
+        const [fromR, fromQ] = fromKey.split(',').map(Number);
         const [toR, toQ] = toKey.split(',').map(Number);
+        const fromCell = this.tacticsMap.getCell(fromR, fromQ);
         const cell = this.tacticsMap.getCell(toR, toQ);
+        if (
+            this.tacticsMap.canUseCityGateTransition?.(fromCell, cell, unit) &&
+            this.isUnitDefenderForCityGate(unit) &&
+            !this.isCityGateDestroyed()
+        ) {
+            this.openCityGateTemporarily();
+            return;
+        }
         if (!cell || !this.isGateTerrain(cell.terrain) || cell.gateState === 'broken') return;
         if (!this.isUnitOnDefenderSideForGate(unit, cell)) return;
         assets.playSound('heavy_door_unlocking', 0.85);
@@ -5403,6 +5451,7 @@ export class TacticsScene extends BaseScene {
 
     isCellDestructibleStructure(cell) {
         if (!cell || !cell.terrain) return false;
+        if (this.isCityGateCell(cell)) return !this.isCityGateDestroyed();
         if (this.isGateTerrain(cell.terrain)) {
             return cell.gateState !== 'broken';
         }
@@ -5411,13 +5460,48 @@ export class TacticsScene extends BaseScene {
             && !cell.terrain.includes('broken');
     }
 
+    openCityGateTemporarily() {
+        if (!this.tacticsMap?.cityGateMeta || this.isCityGateDestroyed()) return;
+        const now = Date.now();
+        const wasOpen = (this.tacticsMap.cityGateMeta.gateTransientOpenUntil || 0) > now;
+        const until = now + 850;
+        this.tacticsMap.cityGateMeta.gateTransientOpenUntil = until;
+        this.tacticsMap.getCityGateGroundCells().forEach(cell => {
+            cell.gateTransientOpenUntil = until;
+        });
+        if (!wasOpen) assets.playSound('heavy_door_unlocking', 0.85);
+    }
+
+    damageCityGate(r, q) {
+        if (!this.tacticsMap?.cityGateMeta || this.isCityGateDestroyed()) return;
+        if (this._cityGateDamageActionActive && this._cityGateDamagedThisAttack) return;
+        if (this._cityGateDamageActionActive) this._cityGateDamagedThisAttack = true;
+        const state = this.tacticsMap.getCityGateState();
+        const nextState = state === 'cracked' ? 'destroyed' : 'cracked';
+        this.tacticsMap.setCityGateState(nextState);
+        this.tacticsMap.cityGateMeta.gateTransientOpenUntil = 0;
+        this.tacticsMap.getCityGateGroundCells().forEach(cell => {
+            cell.gateTransientOpenUntil = 0;
+        });
+        this.invalidateBattlefieldRenderCaches();
+
+        const pos = this.getPixelPos(r, q);
+        const text = nextState === 'destroyed'
+            ? getLocalizedText({ en: "DESTROYED", zh: "摧毁" })
+            : getLocalizedText({ en: "CRACKED", zh: "开裂" });
+        this.addDamageNumber(pos.x, pos.y - 20, text);
+        assets.playSound('building_damage', nextState === 'destroyed' ? 0.9 : 0.75);
+    }
+
     damageCell(r, q) {
         const cell = this.tacticsMap.getCell(r, q);
         if (!cell) return;
 
         this.triggerHexDamageWave(r, q);
 
-        if (cell.terrain === 'house_01') {
+        if (this.isCityGateCell(cell)) {
+            this.damageCityGate(r, q);
+        } else if (cell.terrain === 'house_01') {
             cell.terrain = 'house_damaged_01';
             this.invalidateBattlefieldRenderCaches();
             const pos = this.getPixelPos(r, q);
@@ -5486,6 +5570,8 @@ export class TacticsScene extends BaseScene {
         // Mark which units were alive at the very start of this logical action
         // to determine if a collision should occur vs sliding over a corpse.
         this.units.forEach(u => u._aliveAtStartOfAction = u.hp > 0);
+        this._cityGateDamageActionActive = true;
+        this._cityGateDamagedThisAttack = false;
 
         if (this.manager.actionRecorder?.armed) {
             this.manager.actionRecorder.onUserActionStart();
@@ -5499,6 +5585,8 @@ export class TacticsScene extends BaseScene {
 
         // Safety check: Only player can trigger attacks via this method during their turn
         if (this.turn === 'player' && attacker.faction !== 'player') {
+            this._cityGateDamageActionActive = false;
+            this._cityGateDamagedThisAttack = false;
             if (onComplete) onComplete();
             return;
         }
@@ -5508,6 +5596,8 @@ export class TacticsScene extends BaseScene {
         const wrappedOnComplete = () => {
             if (completed) return;
             completed = true;
+            this._cityGateDamageActionActive = false;
+            this._cityGateDamagedThisAttack = false;
             if (onComplete) onComplete();
         };
         setTimeout(() => {
@@ -7154,7 +7244,7 @@ export class TacticsScene extends BaseScene {
             const unitClasses = gs.getCampaignVar('unitClasses') || {};
             let customCityGateSpawnById = null;
 
-            if (this.isCustom && this.mapGenParams?.layout === 'city_gate' && Array.isArray(unitsToPlace) && unitsToPlace.length > 0) {
+            if (this.mapGenParams?.layout === 'city_gate' && Array.isArray(unitsToPlace) && unitsToPlace.length > 0) {
                 const defenderSide = this.mapGenParams?.cityGateDefenderSide || 'player';
                 const insideCells = [];
                 const outsideCells = [];
@@ -7641,6 +7731,26 @@ export class TacticsScene extends BaseScene {
         unit.onHorse = false;
         unit.horseId = null;
         unit.moveRange = unit.baseMoveRange;
+    }
+
+    pathUsesCityGateTransition(path, unit) {
+        if (!Array.isArray(path) || path.length < 2 || !this.tacticsMap?.canUseCityGateTransition) return false;
+        for (let i = 0; i < path.length - 1; i++) {
+            const from = this.tacticsMap.getCell(path[i].r, path[i].q);
+            const to = this.tacticsMap.getCell(path[i + 1].r, path[i + 1].q);
+            if (this.tacticsMap.canUseCityGateTransition(from, to, unit)) return true;
+        }
+        return false;
+    }
+
+    prepareUnitForPathMovement(unit, path) {
+        if (!unit || !this.pathUsesCityGateTransition(path, unit)) return;
+        if (!this.isCityGateDestroyed() && this.isUnitDefenderForCityGate(unit)) {
+            this.openCityGateTemporarily();
+        }
+        if (unit.onHorse) {
+            this.dismountUnitLeaveHorse(unit);
+        }
     }
 
     tryAutoMount(unit, enteredR, enteredQ) {
@@ -8974,6 +9084,8 @@ export class TacticsScene extends BaseScene {
             }
         }
 
+        this.drawCityGateOverlay(ctx);
+
         // Telegraph pass: draw telegraphs on an offscreen layer, punch out where the telegraphing unit's sprite is, then composite on top
         if (!this.isIntroAnimating && this._telegraphPunchList && this._telegraphPunchList.length > 0) {
             const cw = this.manager.canvas.width;
@@ -10155,8 +10267,10 @@ export class TacticsScene extends BaseScene {
                 let destR = clickedCell.r;
                 let destQ = clickedCell.q;
                 let plannedFlip = this.selectedUnit.flip;
+                let path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, destR, destQ, this.selectedUnit.moveRange, this.selectedUnit);
+                const dismountsForGate = this.selectedUnit.onHorse && this.pathUsesCityGateTransition(path, this.selectedUnit);
 
-                if (this.selectedUnit.onHorse) {
+                if (this.selectedUnit.onHorse && !dismountsForGate) {
                     const plan = this.getMountedPlanForClickedCell(clickedCell.r, clickedCell.q);
                     if (!plan) {
                         assets.playSound('ui_error', 0.4);
@@ -10169,12 +10283,12 @@ export class TacticsScene extends BaseScene {
                     destR = plan.r;
                     destQ = plan.q;
                     plannedFlip = plan.plannedFlip;
+                    path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, destR, destQ, this.selectedUnit.moveRange, this.selectedUnit);
                 }
-
-                const path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, destR, destQ, this.selectedUnit.moveRange, this.selectedUnit);
 
                 if (path) {
                     this.isProcessingTurn = true;
+                    this.prepareUnitForPathMovement(this.selectedUnit, path);
                     const oldCell = this.tacticsMap.getCell(this.selectedUnit.r, this.selectedUnit.q);
                     if (oldCell) oldCell.unit = null;
                     if (this.selectedUnit.onHorse) {
@@ -11420,6 +11534,7 @@ export class TacticsScene extends BaseScene {
         if (terrainType.includes('snow') || terrainType.includes('ice')) return 'snow';
         if (terrainType.includes('sand')) return 'sand';
         if (terrainType.includes('mud')) return 'mud';
+        if (terrainType.includes('brick')) return 'brick';
         if (terrainType.includes('earth')) return 'earth';
         if (terrainType.includes('mountain') || terrainType.includes('stone') || terrainType.includes('rock') || terrainType.includes('wall')) return 'rock';
         return 'grass';
@@ -11436,6 +11551,18 @@ export class TacticsScene extends BaseScene {
         return terrain;
     }
 
+    getEdgeTrapezoidSourceTerrainForEdge(terrainType, currentCell, neighborCell) {
+        const currentSource = this.getEdgeTrapezoidSourceTerrain(terrainType, currentCell);
+        const neighborSource = this.getEdgeTrapezoidSourceTerrain(neighborCell?.terrain, neighborCell);
+        if (
+            this.getEdgeTrapezoidTerrainGroup(currentSource) === 'brick' ||
+            this.getEdgeTrapezoidTerrainGroup(neighborSource) === 'brick'
+        ) {
+            return 'brick_01';
+        }
+        return currentSource;
+    }
+
     isEdgeStructureTerrain(terrainType) {
         const terrain = terrainType || '';
         return terrain.includes('house') ||
@@ -11446,8 +11573,12 @@ export class TacticsScene extends BaseScene {
 
     getEdgeTrapezoidImageKey(terrainType, direction, levelDiff) {
         const clampedDiff = Math.max(-3, Math.min(3, Math.round(levelDiff || 0)));
+        const terrainGroup = this.getEdgeTrapezoidTerrainGroup(terrainType);
+        if (terrainGroup === 'brick') {
+            const diffName = clampedDiff > 0 ? `plus${clampedDiff}` : clampedDiff < 0 ? `minus${Math.abs(clampedDiff)}` : 'zero';
+            return `edge_trapezoid_brick_${direction}_${diffName}`;
+        }
         if (clampedDiff === 0 || Math.abs(clampedDiff) === 1) {
-            const terrainGroup = this.getEdgeTrapezoidTerrainGroup(terrainType);
             const diffName = clampedDiff > 0 ? `plus${clampedDiff}` : clampedDiff < 0 ? `minus${Math.abs(clampedDiff)}` : 'zero';
             return `edge_trapezoid_${terrainGroup}_${direction}_${diffName}`;
         }
@@ -11565,7 +11696,7 @@ export class TacticsScene extends BaseScene {
             if (options.skipFlatNatural && isFlatNaturalEdge) return;
             if (options.onlyFlatNatural && !isFlatNaturalEdge) return;
 
-            const sourceTerrain = this.getEdgeTrapezoidSourceTerrain(terrainType, currentCell);
+            const sourceTerrain = this.getEdgeTrapezoidSourceTerrainForEdge(terrainType, currentCell, neighbor);
             const key = this.getEdgeTrapezoidImageKey(sourceTerrain, edge.assetDirection, levelDiff);
             const img = assets.getImage(key);
             if (!img) return;
@@ -12674,6 +12805,7 @@ export class TacticsScene extends BaseScene {
         const candidates = (this.tacticsMap.getNeighbors(origin.r, origin.q) || [])
             .filter(cell => `${cell.r},${cell.q}` !== primaryKey)
             .filter(cell => !(cell.r === unit.r && cell.q === unit.q))
+            .filter(cell => this.canAttackTraverseElevation(attackKey, origin.r, origin.q, cell.r, cell.q))
             .filter(cell => !this.hasWallBlockingBetween(origin.r, origin.q, cell.r, cell.q));
 
         let best = null;
@@ -12729,10 +12861,64 @@ export class TacticsScene extends BaseScene {
         return 'gate_01';
     }
 
+    getCityGateOverlayKey() {
+        const meta = this.tacticsMap?.cityGateMeta;
+        if (!meta) return null;
+        const state = meta.gateState || 'closed';
+        if (state === 'destroyed') return 'city_gate_2wide_destroyed';
+        const isOpen = !!(meta.gateTransientOpenUntil && Date.now() < meta.gateTransientOpenUntil);
+        if (state === 'cracked') return isOpen ? 'city_gate_2wide_cracked_open' : 'city_gate_2wide_cracked';
+        return isOpen ? 'city_gate_2wide_open' : 'city_gate_2wide';
+    }
+
+    drawCityGateOverlay(ctx) {
+        const meta = this.tacticsMap?.cityGateMeta;
+        if (!meta || meta.orientation !== 'top_rampart') return;
+        const img = assets.getImage(this.getCityGateOverlayKey());
+        if (!img) return;
+        const gateCells = this.tacticsMap.getCityGateGroundCells();
+        const stairCells = this.tacticsMap.getCityGateStairCells();
+        if (gateCells.length === 0 || stairCells.length === 0) return;
+
+        const avg = (cells) => {
+            const points = cells.map(c => this.getPixelPos(c.r, c.q));
+            return {
+                x: points.reduce((sum, p) => sum + p.x, 0) / points.length,
+                y: points.reduce((sum, p) => sum + p.y, 0) / points.length
+            };
+        };
+        const gatePos = avg(gateCells);
+        const stairPos = avg(stairCells);
+        const x = Math.floor(gatePos.x - img.width / 2);
+        const y = Math.floor(((gatePos.y + stairPos.y) / 2) - img.height + 28);
+        ctx.drawImage(img, x, y);
+    }
+
     canAttackIgnoreWallLOS(attackKey) {
         const type = ATTACKS[attackKey]?.type;
         // Archers (projectile) and magical AoE can ignore wall line-of-sight for targeting.
         return type === 'projectile' || type === 'lightning_aoe' || type === 'command';
+    }
+
+    isRangedOrMagicAttack(attackKey) {
+        const type = ATTACKS[attackKey]?.type;
+        return type === 'projectile' ||
+            type === 'directional_projectile' ||
+            type === 'lightning_aoe' ||
+            type === 'command';
+    }
+
+    canAttackTraverseElevation(attackKey, fromR, fromQ, toR, toQ) {
+        if (this.isRangedOrMagicAttack(attackKey)) return true;
+        const line = this.tacticsMap.getLine(fromR, fromQ, toR, toQ);
+        if (!line || line.length < 2) return true;
+        for (let i = 0; i < line.length - 1; i++) {
+            const a = this.tacticsMap.getCell(line[i].r, line[i].q);
+            const b = this.tacticsMap.getCell(line[i + 1].r, line[i + 1].q);
+            if (!a || !b) continue;
+            if (Math.abs((a.level || 0) - (b.level || 0)) >= 3) return false;
+        }
+        return true;
     }
 
     hasWallBlockingBetween(fromR, fromQ, toR, toQ) {
@@ -12818,6 +13004,7 @@ export class TacticsScene extends BaseScene {
                 tiles.forEach(t => {
                     const k = `${t.r},${t.q}`;
                     if (originKeys.has(k)) return;
+                    if (!this.canAttackTraverseElevation(this.selectedAttack, o.r, o.q, t.r, t.q)) return;
                     if (!ignoreWallLOS && this.hasWallBlockingBetween(o.r, o.q, t.r, t.q)) return;
                     this.attackTiles.set(k, true);
                 });
@@ -12833,6 +13020,7 @@ export class TacticsScene extends BaseScene {
                     // Don't allow targeting your own occupied hex.
                     if (originKeys.has(k)) return;
                     if (n.unit === this.selectedUnit) return;
+                    if (!this.canAttackTraverseElevation(this.selectedAttack, o.r, o.q, n.r, n.q)) return;
                     if (!ignoreWallLOS && this.hasWallBlockingBetween(o.r, o.q, n.r, n.q)) return;
                     this.attackTiles.set(k, true);
                 });
@@ -12846,6 +13034,7 @@ export class TacticsScene extends BaseScene {
                     const inRange = origins.some(o => {
                         const dist = this.tacticsMap.getDistance(o.r, o.q, r, q);
                         if (!(dist >= minRange && dist <= range && dist > 0)) return false;
+                        if (!this.canAttackTraverseElevation(this.selectedAttack, o.r, o.q, r, q)) return false;
                         if (!ignoreWallLOS && this.hasWallBlockingBetween(o.r, o.q, r, q)) return false;
                         return true;
                     });
@@ -12869,6 +13058,7 @@ export class TacticsScene extends BaseScene {
                 if (key === firstKey) return;
                 if (originKeys.has(key)) return;
                 if (n.unit === this.selectedUnit) return;
+                if (!this.canAttackTraverseElevation(this.selectedAttack, o.r, o.q, n.r, n.q)) return;
                 if (this.hasWallBlockingBetween(o.r, o.q, n.r, n.q)) return;
                 this.attackTiles.set(key, true);
             });
@@ -13344,8 +13534,10 @@ export class TacticsScene extends BaseScene {
                 let destR = clickedCell.r;
                 let destQ = clickedCell.q;
                 let plannedFlip = this.selectedUnit.flip;
+                let path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, destR, destQ, this.selectedUnit.moveRange, this.selectedUnit);
+                const dismountsForGate = this.selectedUnit.onHorse && this.pathUsesCityGateTransition(path, this.selectedUnit);
 
-                if (this.selectedUnit.onHorse) {
+                if (this.selectedUnit.onHorse && !dismountsForGate) {
                     const plan = this.getMountedPlanForClickedCell(clickedCell.r, clickedCell.q);
                     if (!plan) {
                         assets.playSound('ui_error', 0.4);
@@ -13358,12 +13550,12 @@ export class TacticsScene extends BaseScene {
                     destR = plan.r;
                     destQ = plan.q;
                     plannedFlip = plan.plannedFlip;
+                    path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, destR, destQ, this.selectedUnit.moveRange, this.selectedUnit);
                 }
-
-                const path = this.tacticsMap.getPath(this.selectedUnit.r, this.selectedUnit.q, destR, destQ, this.selectedUnit.moveRange, this.selectedUnit);
 
                 if (path) {
                     this.isProcessingTurn = true; // Lock turn during move
+                    this.prepareUnitForPathMovement(this.selectedUnit, path);
                     const oldCell = this.tacticsMap.getCell(this.selectedUnit.r, this.selectedUnit.q);
                     if (oldCell) oldCell.unit = null;
                     if (this.selectedUnit.onHorse) {
