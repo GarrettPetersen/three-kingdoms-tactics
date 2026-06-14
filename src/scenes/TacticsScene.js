@@ -18,6 +18,7 @@ const DRAW_CALL_PRIORITIES = {
     flag: 1.5,
     overkill_effect: 1.9,
     horse: 1.95,
+    city_gatehouse: 1.98,
     unit: 2,
     gate_overlay: 2.2
 };
@@ -8692,6 +8693,15 @@ export class TacticsScene extends BaseScene {
             }
         }
 
+        const cityGateMeta = this.tacticsMap?.cityGateMeta;
+        if (cityGateMeta?.orientation === 'top_rampart') {
+            drawCalls.push({
+                type: 'city_gatehouse',
+                r: cityGateMeta.approachRow ?? 0,
+                q: (cityGateMeta.gateGroundCells || []).reduce((sum, c) => sum + (c.q || 0), 0) / Math.max(1, (cityGateMeta.gateGroundCells || []).length)
+            });
+        }
+
         // 2. Collect units (using their fractional sort row for depth)
         // Include dead units so their death animation/corpse is visible
         // 2a. Riderless horses (rendered as props between two adjacent hexes)
@@ -9001,6 +9011,9 @@ export class TacticsScene extends BaseScene {
                 const edgeStatus = this.tacticsMap.getEdgeStatus(call.r, call.q);
                 const slopeInfo = this.tacticsMap.getSlopeInfo(call.r, call.q);
                 this.drawTile(call.terrain, call.x, surfaceY, call.elevation, call.r, call.q, edgeStatus, slopeInfo);
+            } else if (call.type === 'city_gatehouse') {
+                ctx.globalAlpha = 1;
+                this.drawCityGateOverlay(ctx);
             } else if (call.type === 'horse') {
                 const h = call.horse;
                 const keys = this.getHorseSpriteKeys(h.type || 'brown');
@@ -9083,8 +9096,6 @@ export class TacticsScene extends BaseScene {
                 ctx.restore();
             }
         }
-
-        this.drawCityGateOverlay(ctx);
 
         // Telegraph pass: draw telegraphs on an offscreen layer, punch out where the telegraphing unit's sprite is, then composite on top
         if (!this.isIntroAnimating && this._telegraphPunchList && this._telegraphPunchList.length > 0) {
