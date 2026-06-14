@@ -49,6 +49,10 @@ export class TacticsScene extends BaseScene {
         this.hoveredMountedAttackRegions = null;
         this.damageNumbers = []; // { x, y, value, timer, maxTime }
         this.hexDamageWaves = new Map(); // key "r,q" -> { elapsedMs, durationMs, amplitudePx }
+        this._pixelPosCache = new Map();
+        this._pixelPosCacheSignature = '';
+        this._waterEffectMaskDirty = true;
+        this._waterEffectMaskActiveFrame = false;
         this.projectiles = []; // { startX, startY, targetX, targetY, progress, type, duration }
         this.particles = []; // { x, y, r, type, vx, vy, life, targetY }
         this.overkillEffects = [];
@@ -218,7 +222,16 @@ export class TacticsScene extends BaseScene {
         const lastRowCenterTargetY = canvas.height - this.uiBottomReserve - walkableBottom;
         const desiredStartY = lastRowCenterTargetY - (Math.max(1, config.mapHeight) - 1) * spacingY;
         const minStartY = Math.max(this.uiTopReserve, halfTileH);
-        this.startY = Math.floor(Math.max(minStartY, desiredStartY));
+        const nextStartY = Math.floor(Math.max(minStartY, desiredStartY));
+        const nextStartX = this.startX;
+        if (nextStartX !== this._lastBattlefieldStartX || nextStartY !== this._lastBattlefieldStartY) {
+            this._pixelPosCache = new Map();
+            this._pixelPosCacheSignature = '';
+            this._waterEffectMaskDirty = true;
+            this._lastBattlefieldStartX = nextStartX;
+            this._lastBattlefieldStartY = nextStartY;
+        }
+        this.startY = nextStartY;
     }
 
     cloneScriptSteps(steps) {
@@ -455,6 +468,11 @@ export class TacticsScene extends BaseScene {
         this.onChoiceFight = params.onChoiceFight || null; // Callback for fight choice
         this.onFightVictory = params.onFightVictory || null; // Callback for cage-break victory
         this._unitHexDriftMap = new Map(); // unit -> { x, y, isMoving }
+        this._pixelPosCache = new Map();
+        this._pixelPosCacheSignature = '';
+        this._waterEffectMaskDirty = true;
+        this._waterEffectMaskActiveFrame = false;
+        this._waterEffectMaskIntroBucket = -1;
         this.controllerNavTargets = [];
         this.controllerNavIndex = -1;
         this.controllerNavMouseEnabled = true;
@@ -590,6 +608,7 @@ export class TacticsScene extends BaseScene {
                     }
                 }
             }
+            this.invalidateBattlefieldRenderCaches();
         }
 
         if (battleDef && battleDef.flagPos) {
@@ -3416,6 +3435,7 @@ export class TacticsScene extends BaseScene {
         if (!state) return;
         const config = this.manager.config;
         this.overkillEffects = [];
+        this.invalidateBattlefieldRenderCaches();
         
         this.turn = state.turn;
         this.turnNumber = state.turnNumber;
@@ -3887,6 +3907,7 @@ export class TacticsScene extends BaseScene {
         if (!state) return;
         const config = this.manager.config;
         this.overkillEffects = [];
+        this.invalidateBattlefieldRenderCaches();
         
         this.turn = state.turn;
         this.turnNumber = state.turnNumber;
@@ -5177,6 +5198,7 @@ export class TacticsScene extends BaseScene {
             setTimeout(() => {
                 assets.playSound('drown');
                 nextCell.terrain = 'water_shallow_01';
+                this.invalidateBattlefieldRenderCaches();
                 boulder.isGone = true;
                 nextCell.unit = null;
             }, 250);
@@ -5279,15 +5301,23 @@ export class TacticsScene extends BaseScene {
             angularFreq: Number.isFinite(options.angularFreq) ? options.angularFreq : 17.0,
             fadeOutStart: Number.isFinite(options.fadeOutStart) ? Math.max(0, Math.min(0.98, options.fadeOutStart)) : null
         });
+        this._pixelPosCache = new Map();
+        this._pixelPosCacheSignature = '';
     }
 
     updateHexDamageWaves(dt) {
         if (!this.hexDamageWaves || this.hexDamageWaves.size === 0) return;
+        let removedWave = false;
         for (const [key, wave] of this.hexDamageWaves.entries()) {
             wave.elapsedMs += dt;
             if (wave.elapsedMs >= wave.durationMs) {
                 this.hexDamageWaves.delete(key);
+                removedWave = true;
             }
+        }
+        if (removedWave && this.hexDamageWaves.size === 0) {
+            this._pixelPosCache = new Map();
+            this._pixelPosCacheSignature = '';
         }
     }
 
@@ -5389,18 +5419,21 @@ export class TacticsScene extends BaseScene {
 
         if (cell.terrain === 'house_01') {
             cell.terrain = 'house_damaged_01';
+            this.invalidateBattlefieldRenderCaches();
             const pos = this.getPixelPos(r, q);
             this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "DAMAGED", zh: "受损" }));
             assets.playSound('building_damage');
         } else if (cell.terrain === 'house_damaged_01') {
             cell.terrain = 'house_destroyed_01';
             cell.impassable = false;
+            this.invalidateBattlefieldRenderCaches();
             const pos = this.getPixelPos(r, q);
             this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "DESTROYED", zh: "摧毁" }));
             assets.playSound('building_damage', 1.0); // Clamped to max 1.0
         } else if (cell.terrain === 'tent' || cell.terrain === 'tent_white' || cell.terrain === 'tent_burning' || cell.terrain === 'tent_white_burning') {
             cell.terrain = 'mud_01';
             cell.impassable = false;
+            this.invalidateBattlefieldRenderCaches();
             const pos = this.getPixelPos(r, q);
             this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "BURNED", zh: "焚毁" }));
             assets.playSound('building_damage', 0.85);
@@ -5408,6 +5441,7 @@ export class TacticsScene extends BaseScene {
             cell.terrain = 'gate_cracked_01';
             cell.gateState = 'cracked';
             cell.impassable = false;
+            this.invalidateBattlefieldRenderCaches();
             const pos = this.getPixelPos(r, q);
             this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "CRACKED", zh: "开裂" }));
             assets.playSound('building_damage', 0.75);
@@ -5416,6 +5450,7 @@ export class TacticsScene extends BaseScene {
             cell.terrain = 'gate_open_01';
             cell.gateState = 'broken';
             cell.impassable = false;
+            this.invalidateBattlefieldRenderCaches();
             const pos = this.getPixelPos(r, q);
             this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "BROKEN", zh: "破碎" }));
             assets.playSound('building_damage', 0.9);
@@ -5424,12 +5459,14 @@ export class TacticsScene extends BaseScene {
             assets.playSound('building_damage', 0.6);
         } else if (cell.terrain === 'ice_01') {
             cell.terrain = 'ice_cracked_01';
+            this.invalidateBattlefieldRenderCaches();
             const pos = this.getPixelPos(r, q);
             this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "CRACKED", zh: "开裂" }));
             assets.playSound('ice_crack');
         } else if (cell.terrain === 'ice_cracked_01') {
             cell.terrain = 'water_deep_01_01';
             cell.impassable = true;
+            this.invalidateBattlefieldRenderCaches();
             const pos = this.getPixelPos(r, q);
             this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "BROKEN", zh: "破碎" }));
             assets.playSound('ice_break');
@@ -6904,6 +6941,7 @@ export class TacticsScene extends BaseScene {
                             if (victim.name === 'Boulder') {
                                 assets.playSound('drown');
                                 pushCell.terrain = 'water_shallow_01'; // Fill in deep water with boulder
+                                this.invalidateBattlefieldRenderCaches();
                                 victim.isGone = true;
                                 pushCell.unit = null;
                             } else {
@@ -7327,12 +7365,39 @@ export class TacticsScene extends BaseScene {
     }
 
     getPixelPos(r, q) {
+        const config = this.manager.config;
+        const hasDamageWave = !!(this.hexDamageWaves && this.hexDamageWaves.size > 0);
+        const signature = `${this.startX}:${this.startY}:${config.horizontalSpacing}:${config.verticalSpacing}`;
+        if (!hasDamageWave) {
+            if (this._pixelPosCacheSignature !== signature) {
+                this._pixelPosCacheSignature = signature;
+                this._pixelPosCache = new Map();
+            }
+            const key = `${r},${q}`;
+            const cached = this._pixelPosCache.get(key);
+            if (cached) return cached;
+        }
+
         const xOffset = (Math.abs(r) % 2 === 1) ? this.manager.config.horizontalSpacing / 2 : 0;
         const quakeOffsetY = this.getHexDamageYOffset(r, q);
-        return {
+        const pos = {
             x: this.startX + q * this.manager.config.horizontalSpacing + xOffset,
             y: this.startY + r * this.manager.config.verticalSpacing - (this.tacticsMap.getCell(r, q)?.elevation || 0) + quakeOffsetY
         };
+        if (!hasDamageWave) {
+            this._pixelPosCache.set(`${r},${q}`, pos);
+        }
+        return pos;
+    }
+
+    invalidateBattlefieldRenderCaches() {
+        this._pixelPosCache = new Map();
+        this._pixelPosCacheSignature = '';
+        this.invalidateWaterEffectMask();
+    }
+
+    invalidateWaterEffectMask() {
+        this._waterEffectMaskDirty = true;
     }
 
     isValidMountedDestination(unit, r, q, plannedFlip = null) {
@@ -7833,6 +7898,7 @@ export class TacticsScene extends BaseScene {
             const currentCell = this.tacticsMap.getCell(u.r, u.q);
             if (currentCell && currentCell.terrain === 'snow_01') {
                 currentCell.terrain = 'snow_footprints_01';
+                this.invalidateBattlefieldRenderCaches();
             }
 
             // Only animate player units that haven't acted, or units currently moving
@@ -8624,12 +8690,11 @@ export class TacticsScene extends BaseScene {
             return a.r - b.r;
         });
 
-        this.buildWaterEffectMask(drawCalls);
-
         this._telegraphPunchList = [];
         this._terrainOverlayHexOutlines = [];
         this._unitOutlineItems = [];
         this._renderedUnitSprites = [];
+        this._waterEffectMaskActiveFrame = false;
         const unitHexDriftMap = this._unitHexDriftMap || new Map();
         const drawWestEdgesForRow = (row) => {
             const hexCalls = hexCallsByRow.get(row) || [];
@@ -8752,7 +8817,7 @@ export class TacticsScene extends BaseScene {
                     drawOptions.sinkOffset = 2;
                     drawOptions.hideBottom = 27;
                 }
-                if (drawOptions.isSubmerged && this.waterEffectMaskCanvas) {
+                if (drawOptions.isSubmerged && this.ensureWaterEffectMaskForFrame(drawCalls)) {
                     drawOptions.waterMaskCanvas = this.waterEffectMaskCanvas;
                     drawOptions.waterEffectTime = timestamp;
                 }
@@ -8839,6 +8904,7 @@ export class TacticsScene extends BaseScene {
                     const midX = Math.floor(pos.x);
                     const hexCell = this.tacticsMap.getCell(h.r, h.q);
                     const isShallow = !!(hexCell && hexCell.terrain?.includes('water_shallow'));
+                    if (isShallow) this.ensureWaterEffectMaskForFrame(drawCalls);
                     const sink = isShallow ? 4 : 0;
                     const midY = Math.floor(pos.y) + effect.yOffset + sink;
                     this.drawRiderlessHorse(ctx, h, midX, midY, effect, timestamp);
@@ -11404,8 +11470,27 @@ export class TacticsScene extends BaseScene {
         if (this.waterEffectMaskCanvas.width !== canvas.width || this.waterEffectMaskCanvas.height !== canvas.height) {
             this.waterEffectMaskCanvas.width = canvas.width;
             this.waterEffectMaskCanvas.height = canvas.height;
+            this._waterEffectMaskDirty = true;
         }
         return this.waterEffectMaskCtx;
+    }
+
+    ensureWaterEffectMaskForFrame(drawCalls) {
+        const introBucket = this.isIntroAnimating ? Math.floor((this.introTimer || 0) / 80) : -1;
+        if (
+            this.waterEffectMaskCanvas &&
+            !this._waterEffectMaskDirty &&
+            this._waterEffectMaskIntroBucket === introBucket
+        ) {
+            this._waterEffectMaskActiveFrame = true;
+            return true;
+        }
+
+        this._waterEffectMaskIntroBucket = introBucket;
+        this.buildWaterEffectMask(drawCalls);
+        this._waterEffectMaskDirty = false;
+        this._waterEffectMaskActiveFrame = true;
+        return !!this.waterEffectMaskCanvas;
     }
 
     buildWaterEffectMask(drawCalls) {

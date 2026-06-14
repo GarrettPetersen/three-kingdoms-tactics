@@ -6,6 +6,10 @@ import { getLocalizedCharacterName } from '../data/Translations.js';
 export class BaseScene {
     constructor() {
         this.manager = null;
+        this._outlineImageIds = new WeakMap();
+        this._nextOutlineImageId = 1;
+        this._characterOutlineCache = new Map();
+        this._imageFrameOutlineCache = new Map();
     }
 
     enter(params) {}
@@ -599,28 +603,65 @@ export class BaseScene {
         const sx = (frameIdx % 8) * sourceSize;
         const sy = Math.floor(frameIdx / 8) * sourceSize;
 
-        if (!this._outlineSrcCanvas) {
-            this._outlineSrcCanvas = document.createElement('canvas');
-            this._outlineSrcCanvas.width = sourceSize;
-            this._outlineSrcCanvas.height = sourceSize;
-            this._outlineSrcCtx = this._outlineSrcCanvas.getContext('2d', { willReadFrequently: true });
-            this._outlineDstCanvas = document.createElement('canvas');
-            this._outlineDstCanvas.width = sourceSize;
-            this._outlineDstCanvas.height = sourceSize;
-            this._outlineDstCtx = this._outlineDstCanvas.getContext('2d');
+        const outlineCanvas = this.getCachedPixelOutlineCanvas(
+            img,
+            sx,
+            sy,
+            sourceSize,
+            sourceSize,
+            color,
+            alphaThreshold,
+            this._characterOutlineCache,
+            256
+        );
+        if (!outlineCanvas) return;
+
+        ctx.save();
+        ctx.translate(Math.floor(x), Math.floor(y + sinkOffset));
+        if (flip) ctx.scale(-1, 1);
+        ctx.drawImage(outlineCanvas, -36, feetY, sourceSize, sourceSize);
+        ctx.restore();
+    }
+
+    getOutlineImageId(img) {
+        if (!img || (typeof img !== 'object' && typeof img !== 'function')) return 'none';
+        let id = this._outlineImageIds.get(img);
+        if (!id) {
+            id = this._nextOutlineImageId++;
+            this._outlineImageIds.set(img, id);
+        }
+        return id;
+    }
+
+    getCachedPixelOutlineCanvas(img, sx, sy, sw, sh, color, alphaThreshold, cache, maxEntries = 256) {
+        if (!img || sw <= 0 || sh <= 0) return null;
+        const imageId = this.getOutlineImageId(img);
+        const key = `${imageId}:${sx}:${sy}:${sw}:${sh}:${color}:${alphaThreshold}`;
+        const cached = cache.get(key);
+        if (cached) {
+            cache.delete(key);
+            cache.set(key, cached);
+            return cached;
         }
 
-        const srcCtx = this._outlineSrcCtx;
-        const dstCtx = this._outlineDstCtx;
-        srcCtx.clearRect(0, 0, sourceSize, sourceSize);
-        dstCtx.clearRect(0, 0, sourceSize, sourceSize);
-        srcCtx.drawImage(img, sx, sy, sourceSize, sourceSize, 0, 0, sourceSize, sourceSize);
+        const srcCanvas = document.createElement('canvas');
+        srcCanvas.width = sw;
+        srcCanvas.height = sh;
+        const srcCtx = srcCanvas.getContext('2d', { willReadFrequently: true });
+        const dstCanvas = document.createElement('canvas');
+        dstCanvas.width = sw;
+        dstCanvas.height = sh;
+        const dstCtx = dstCanvas.getContext('2d');
 
-        const srcData = srcCtx.getImageData(0, 0, sourceSize, sourceSize);
-        const outData = dstCtx.createImageData(sourceSize, sourceSize);
+        srcCtx.clearRect(0, 0, sw, sh);
+        dstCtx.clearRect(0, 0, sw, sh);
+        srcCtx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
+
+        const srcData = srcCtx.getImageData(0, 0, sw, sh);
+        const outData = dstCtx.createImageData(sw, sh);
         const rgb = this._hexToRgb(color);
-        const w = sourceSize;
-        const h = sourceSize;
+        const w = sw;
+        const h = sh;
 
         for (let py = 0; py < h; py++) {
             for (let px = 0; px < w; px++) {
@@ -653,12 +694,12 @@ export class BaseScene {
         }
 
         dstCtx.putImageData(outData, 0, 0);
-
-        ctx.save();
-        ctx.translate(Math.floor(x), Math.floor(y + sinkOffset));
-        if (flip) ctx.scale(-1, 1);
-        ctx.drawImage(this._outlineDstCanvas, -36, feetY, sourceSize, sourceSize);
-        ctx.restore();
+        cache.set(key, dstCanvas);
+        while (cache.size > maxEntries) {
+            const oldest = cache.keys().next().value;
+            cache.delete(oldest);
+        }
+        return dstCanvas;
     }
 
     drawImageFramePixelOutline(ctx, img, srcX, srcY, srcW, srcH, destX, destY, options = {}) {
@@ -666,70 +707,26 @@ export class BaseScene {
         const { flip = false, color = '#ffd700', alphaThreshold = 178 } = options;
         if (srcW <= 0 || srcH <= 0) return;
 
-        if (
-            !this._outlineFrameSrcCanvas ||
-            this._outlineFrameSrcCanvas.width !== srcW ||
-            this._outlineFrameSrcCanvas.height !== srcH
-        ) {
-            this._outlineFrameSrcCanvas = document.createElement('canvas');
-            this._outlineFrameSrcCanvas.width = srcW;
-            this._outlineFrameSrcCanvas.height = srcH;
-            this._outlineFrameSrcCtx = this._outlineFrameSrcCanvas.getContext('2d', { willReadFrequently: true });
-            this._outlineFrameDstCanvas = document.createElement('canvas');
-            this._outlineFrameDstCanvas.width = srcW;
-            this._outlineFrameDstCanvas.height = srcH;
-            this._outlineFrameDstCtx = this._outlineFrameDstCanvas.getContext('2d');
-        }
-
-        const srcCtx = this._outlineFrameSrcCtx;
-        const dstCtx = this._outlineFrameDstCtx;
-        srcCtx.clearRect(0, 0, srcW, srcH);
-        dstCtx.clearRect(0, 0, srcW, srcH);
-        srcCtx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, srcW, srcH);
-
-        const srcData = srcCtx.getImageData(0, 0, srcW, srcH);
-        const outData = dstCtx.createImageData(srcW, srcH);
-        const rgb = this._hexToRgb(color);
-
-        for (let py = 0; py < srcH; py++) {
-            for (let px = 0; px < srcW; px++) {
-                const idx = (py * srcW + px) * 4;
-                const a = srcData.data[idx + 3];
-                if (a > alphaThreshold) continue;
-
-                let edge = false;
-                for (let oy = -1; oy <= 1 && !edge; oy++) {
-                    for (let ox = -1; ox <= 1; ox++) {
-                        if (ox === 0 && oy === 0) continue;
-                        const nx = px + ox;
-                        const ny = py + oy;
-                        if (nx < 0 || nx >= srcW || ny < 0 || ny >= srcH) continue;
-                        const nIdx = (ny * srcW + nx) * 4;
-                        if (srcData.data[nIdx + 3] > alphaThreshold) {
-                            edge = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (edge) {
-                    outData.data[idx] = rgb.r;
-                    outData.data[idx + 1] = rgb.g;
-                    outData.data[idx + 2] = rgb.b;
-                    outData.data[idx + 3] = 255;
-                }
-            }
-        }
-
-        dstCtx.putImageData(outData, 0, 0);
+        const outlineCanvas = this.getCachedPixelOutlineCanvas(
+            img,
+            srcX,
+            srcY,
+            srcW,
+            srcH,
+            color,
+            alphaThreshold,
+            this._imageFrameOutlineCache,
+            128
+        );
+        if (!outlineCanvas) return;
 
         ctx.save();
         if (flip) {
             ctx.translate(Math.floor(destX + srcW), Math.floor(destY));
             ctx.scale(-1, 1);
-            ctx.drawImage(this._outlineFrameDstCanvas, 0, 0, srcW, srcH);
+            ctx.drawImage(outlineCanvas, 0, 0, srcW, srcH);
         } else {
-            ctx.drawImage(this._outlineFrameDstCanvas, Math.floor(destX), Math.floor(destY), srcW, srcH);
+            ctx.drawImage(outlineCanvas, Math.floor(destX), Math.floor(destY), srcW, srcH);
         }
         ctx.restore();
     }
