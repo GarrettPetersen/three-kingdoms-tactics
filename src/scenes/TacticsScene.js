@@ -12890,12 +12890,28 @@ export class TacticsScene extends BaseScene {
         };
         const gatePos = avg(gateCells);
         const stairPos = avg(stairCells);
-        const scale = 0.5;
+        const introEffects = gateCells.map(c => this.getIntroEffect(c.r, c.q));
+        const introYOffset = introEffects.reduce((sum, e) => sum + e.yOffset, 0) / introEffects.length;
+        const introAlpha = introEffects.reduce((sum, e) => sum + e.alpha, 0) / introEffects.length;
+        if (introAlpha <= 0) return;
+        const scale = 1;
         const drawW = Math.max(1, Math.round(img.width * scale));
         const drawH = Math.max(1, Math.round(img.height * scale));
         const x = Math.floor(gatePos.x - drawW / 2);
-        const y = Math.floor(((gatePos.y + stairPos.y) / 2) - drawH + 28);
+        const y = Math.floor(((gatePos.y + stairPos.y) / 2) - drawH + 28 + introYOffset);
+        const canvas = this.manager.canvas;
+        if (
+            x + drawW < 0 ||
+            y + drawH < 0 ||
+            x > canvas.width ||
+            y > canvas.height
+        ) {
+            return;
+        }
+        ctx.save();
+        ctx.globalAlpha *= introAlpha;
         ctx.drawImage(img, x, y, drawW, drawH);
+        ctx.restore();
     }
 
     canAttackIgnoreWallLOS(attackKey) {
