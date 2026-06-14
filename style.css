@@ -127,9 +127,8 @@ canvas {
     -moz-osx-font-smoothing: grayscale;
     font-smooth: never;
     background-color: #000;
-    max-width: 100%;
-    max-height: 100%;
     object-fit: contain;
+    touch-action: none;
 }
 
 @keyframes boot-spinner {

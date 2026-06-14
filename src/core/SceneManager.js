@@ -30,12 +30,9 @@ export class SceneManager {
         window.addEventListener('pointermove', (e) => {
             this.lastPointerX = e.clientX;
             this.lastPointerY = e.clientY;
-            
-            const rect = this.canvas.getBoundingClientRect();
-            const scaleX = this.canvas.width / rect.width;
-            const scaleY = this.canvas.height / rect.height;
-            this.logicalMouseX = (e.clientX - rect.left) * scaleX;
-            this.logicalMouseY = (e.clientY - rect.top) * scaleY;
+            const pos = this.getCanvasLogicalPoint(e);
+            this.logicalMouseX = pos.x;
+            this.logicalMouseY = pos.y;
             if (this.isOptionsOverlayActive()) {
                 if (this.optionsOverlay && this.optionsOverlay.onMouseInput) {
                     this.optionsOverlay.onMouseInput(this.logicalMouseX, this.logicalMouseY);
@@ -44,6 +41,26 @@ export class SceneManager {
                 this.currentScene.onMouseInput(this.logicalMouseX, this.logicalMouseY);
             }
         });
+    }
+
+    getCanvasLogicalPoint(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        const relX = e.clientX - rect.left;
+        const relY = e.clientY - rect.top;
+        if (this.config?.displayRotation === 90) {
+            const x = relY * (this.canvas.width / rect.height);
+            const y = this.canvas.height - (relX * (this.canvas.height / rect.width));
+            return {
+                x: Math.max(0, Math.min(this.canvas.width, x)),
+                y: Math.max(0, Math.min(this.canvas.height, y))
+            };
+        }
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
+        return {
+            x: (e.clientX - rect.left) * scaleX,
+            y: (e.clientY - rect.top) * scaleY
+        };
     }
 
     setOptionsOverlay(overlayInstance) {

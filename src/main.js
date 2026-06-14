@@ -101,10 +101,20 @@ function setupCanvas() {
     // Use uniform integer scale to keep pixels square and avoid distortion/blur.
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
-    const maxScale = Math.min(screenWidth / config.virtualWidth, screenHeight / config.virtualHeight);
+    const hasCoarsePointer = window.matchMedia?.('(pointer: coarse)').matches || false;
+    const isPortrait = screenHeight > screenWidth;
+    const shouldRotate = hasCoarsePointer && isPortrait;
+    const fitWidth = shouldRotate ? config.virtualHeight : config.virtualWidth;
+    const fitHeight = shouldRotate ? config.virtualWidth : config.virtualHeight;
+    const maxScale = Math.min(screenWidth / fitWidth, screenHeight / fitHeight);
     const scale = Math.max(1, Math.floor(maxScale));
+    config.displayRotation = shouldRotate ? 90 : 0;
+    config.displayScale = scale;
+    config.hasCoarsePointer = hasCoarsePointer;
     canvas.style.width = `${config.virtualWidth * scale}px`;
     canvas.style.height = `${config.virtualHeight * scale}px`;
+    canvas.style.transform = shouldRotate ? 'rotate(90deg)' : '';
+    canvas.style.transformOrigin = 'center center';
 }
 
 /**

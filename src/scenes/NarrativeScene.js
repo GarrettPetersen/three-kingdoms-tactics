@@ -1539,11 +1539,12 @@ export class NarrativeScene extends BaseScene {
         const { ctx, canvas } = this.manager;
         const options = step.options || [];
         const currentLang = getCurrentLanguage();
+        const isTouchLayout = !!this.manager?.config?.hasCoarsePointer;
         const padding = 10;
         const lineSpacing = currentLang === 'zh' ? 14 : 12;
-        const optionInnerPadY = 2;
-        const optionSpacing = 6;
-        const panelWidth = Math.max(220, Math.min(360, Math.floor(canvas.width * 0.84)));
+        const optionInnerPadY = isTouchLayout ? 7 : 2;
+        const optionSpacing = isTouchLayout ? 8 : 6;
+        const panelWidth = Math.max(220, Math.min(400, Math.floor(canvas.width * (isTouchLayout ? 0.9 : 0.84))));
         
         // Pre-calculate wrapped lines and total height
         const wrappedOptions = options.map(opt => {

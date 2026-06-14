@@ -98,6 +98,9 @@ export class BaseScene {
     }
 
     getMousePos(e) {
+        if (this.manager?.getCanvasLogicalPoint) {
+            return this.manager.getCanvasLogicalPoint(e);
+        }
         const { canvas } = this.manager;
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
