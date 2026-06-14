@@ -4,7 +4,8 @@ import { getCurrentLanguage, getLocalizedText } from '../core/Language.js';
 import { UI_TEXT } from '../data/Translations.js';
 import {
     LIUBO_BOARD_PADDED_SIZE,
-    getBoardPointPosition
+    getBoardPointPosition,
+    isLiuboNest
 } from '../minigames/liubo/LiuboBoard.js';
 import {
     applyLiuboMove,
@@ -28,6 +29,39 @@ const MOVE_SEGMENT_MS = 150;
 const MOVE_MIN_MS = 260;
 const ROLL_ANIMATION_MS = 760;
 const CUP_PASS_MS = 560;
+const INN_LIUBO_TUTORIAL_ACTIVITY = 'inn_first_liubo';
+const LIUBO_PLAYER_DIALOGUE = {
+    speaker: 'xiaoer',
+    portraitKey: 'xiaoer',
+    position: 'bottom',
+    name: 'Liubo Player'
+};
+const INN_LIUBO_TUTORIAL_LINES = {
+    before_first_action: {
+        en: 'You start the game by throwing your sticks.',
+        zh: '你先掷箸，游戏就从这里开始。'
+    },
+    after_throw_move: {
+        en: 'You get to move two of your birds on your turn, and the number of face up sticks determines the distance.',
+        zh: '每回合你可以移动两只鸟，朝上的箸数决定距离。'
+    },
+    after_throw_goal: {
+        en: 'The goal of the game is to get 6 points. You can get a point by capturing the opponent\'s birds or by catching a fish in the central pond and depositing it in the opponent\'s nest. A bird with a fish becomes an owl. Simple!',
+        zh: '目标是得到六分。吃掉对手的鸟可得一分，去中央池塘捕鱼，再送到对手巢中也可得一分。叼着鱼的鸟会变成枭。很简单！'
+    },
+    first_block: {
+        en: 'These two birds together have blocked a perch. Other birds can\'t get past them.',
+        zh: '这两只鸟一起堵住了这个栖位。其他鸟不能从这里通过。'
+    },
+    first_contest: {
+        en: 'This perch is contested. The next bird to move there will capture the opposing player\'s bird.',
+        zh: '这个栖位正在争夺中。下一只移动到这里的鸟会吃掉对方的鸟。'
+    },
+    first_owl: {
+        en: 'This piece has caught a fish and become an owl. Owls and birds can capture each other by landing in the same perch. The owl can also score a point by getting to one of the nests on the opponent\'s side of the board.',
+        zh: '这枚棋子捉到鱼，变成了枭。枭和鸟落在同一栖位时可以互相吃掉。枭也能到达对手一侧的巢来得分。'
+    }
+};
 
 export class LiuboScene extends BaseScene {
     constructor() {
@@ -56,6 +90,9 @@ export class LiuboScene extends BaseScene {
         this.floatTexts = [];
         this.cupCarrier = this.state.currentPlayer;
         this.cupPassAnimation = null;
+        this.tutorialQueue = [];
+        this.activeTutorialDialogue = null;
+        this.tutorialSubStep = 0;
     }
 
     enter(params = {}) {
@@ -91,6 +128,7 @@ export class LiuboScene extends BaseScene {
         this.floatTexts = [];
         this.cupCarrier = this.state.currentPlayer;
         this.cupPassAnimation = null;
+        this.queueInnLiuboTutorialLine('before_first_action');
     }
 
     update(timestamp) {
@@ -100,6 +138,10 @@ export class LiuboScene extends BaseScene {
         this.updateMoveAnimations(dt);
         this.updateFloatTexts(dt);
         this.updateRollAnimation(dt);
+        if (this.activeTutorialDialogue || this.tutorialQueue.length) {
+            this.startNextTutorialDialogue();
+            return;
+        }
         if (this.confirmReturn) return;
         if (this.cupPassAnimation) return;
         if (this.rollAnimation) return;
@@ -146,6 +188,7 @@ export class LiuboScene extends BaseScene {
         this.renderLog(ctx, canvas, layout);
         if (this.state.winner) this.renderResultOverlay(ctx, canvas);
         if (this.confirmReturn) this.renderReturnConfirm(ctx, canvas);
+        if (this.activeTutorialDialogue) this.renderTutorialDialogue(ctx, canvas);
         ctx.restore();
     }
 
@@ -837,6 +880,7 @@ export class LiuboScene extends BaseScene {
         const result = applyLiuboMove(this.state, move);
         if (!result) return false;
         this.startCupPassIfTurnChanged(previousPlayer);
+        this.queueInnLiuboTutorialForMoveResult(result);
         this.saveState();
 
         const destination = route[route.length - 1] || this.boardToScreen(getBoardPointPosition(move.toSpaceId));
@@ -890,6 +934,10 @@ export class LiuboScene extends BaseScene {
         const previousPlayer = this.state.currentPlayer;
         beginTurnRoll(this.state, Math.random, rolled);
         this.startCupPassIfTurnChanged(previousPlayer);
+        if (previousPlayer === this.state.humanPlayer) {
+            this.queueInnLiuboTutorialLine('after_throw_move');
+            this.queueInnLiuboTutorialLine('after_throw_goal');
+        }
         this.saveState();
     }
 
@@ -1012,6 +1060,10 @@ export class LiuboScene extends BaseScene {
 
     handleInput(e) {
         const { x, y } = this.getMousePos(e);
+        if (this.activeTutorialDialogue) {
+            this.advanceTutorialDialogue();
+            return;
+        }
         if (this.confirmReturn) {
             if (this.confirmYesRect && pointInRect(x, y, this.confirmYesRect)) {
                 assets.playSound('ui_click', 0.4);
@@ -1075,6 +1127,12 @@ export class LiuboScene extends BaseScene {
     }
 
     handleKeyDown(e) {
+        if (this.activeTutorialDialogue) {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                this.advanceTutorialDialogue();
+            }
+            return;
+        }
         if (e.key === 'Escape') {
             if (this.isCampaignMode()) return;
             if (this.confirmReturn) {
@@ -1146,6 +1204,81 @@ export class LiuboScene extends BaseScene {
         return this.mode === 'campaign';
     }
 
+    shouldUseInnLiuboTutorial() {
+        return this.isCampaignMode()
+            && this.activityId === INN_LIUBO_TUTORIAL_ACTIVITY
+            && this.previousActivityPlays === 0
+            && !this.campaignComplete;
+    }
+
+    getInnLiuboTutorialFlags() {
+        if (!this.shouldUseInnLiuboTutorial() || !this.manager?.gameState) return null;
+        const record = this.manager.gameState.getCampaignLiuboRecord();
+        if (!record.activities[this.activityId]) {
+            record.activities[this.activityId] = { played: 0, wins: 0, losses: 0 };
+        }
+        const activity = record.activities[this.activityId];
+        activity.tutorialFlags = activity.tutorialFlags || {};
+        return activity.tutorialFlags;
+    }
+
+    queueInnLiuboTutorialLine(flagId) {
+        if (!this.shouldUseInnLiuboTutorial()) return;
+        const text = INN_LIUBO_TUTORIAL_LINES[flagId];
+        if (!text) return;
+        const flags = this.getInnLiuboTutorialFlags();
+        if (!flags || flags[flagId]) return;
+        flags[flagId] = true;
+        this.tutorialQueue.push({
+            ...LIUBO_PLAYER_DIALOGUE,
+            text: { ...text }
+        });
+        this.manager.gameState.save();
+        this.saveState();
+        this.startNextTutorialDialogue();
+    }
+
+    queueInnLiuboTutorialForMoveResult(result) {
+        if (!this.shouldUseInnLiuboTutorial()) return;
+        if (result?.promotedToOwl) {
+            this.queueInnLiuboTutorialLine('first_owl');
+        }
+        if (hasBlockedPerch(this.state)) {
+            this.queueInnLiuboTutorialLine('first_block');
+        }
+        if (hasContestedPerch(this.state)) {
+            this.queueInnLiuboTutorialLine('first_contest');
+        }
+    }
+
+    startNextTutorialDialogue() {
+        if (this.activeTutorialDialogue || !this.tutorialQueue.length) return;
+        this.activeTutorialDialogue = this.tutorialQueue.shift();
+        this.tutorialSubStep = 0;
+        this.saveState();
+    }
+
+    advanceTutorialDialogue() {
+        if (!this.activeTutorialDialogue) return;
+        if (this.activeTutorialDialogue.hasNextChunk) {
+            this.tutorialSubStep += 1;
+        } else {
+            this.activeTutorialDialogue = null;
+            this.tutorialSubStep = 0;
+            this.startNextTutorialDialogue();
+        }
+        assets.playSound('ui_click', 0.35);
+        this.saveState();
+    }
+
+    renderTutorialDialogue(ctx, canvas) {
+        if (!this.activeTutorialDialogue) return;
+        const renderInfo = this.renderDialogueBox(ctx, canvas, this.activeTutorialDialogue, {
+            subStep: this.tutorialSubStep
+        });
+        this.activeTutorialDialogue.hasNextChunk = !!renderInfo?.hasNextChunk;
+    }
+
     saveState() {
         if (!this.isCampaignMode() || this.campaignComplete || !this.manager?.gameState) return;
         this.manager.gameState.setSceneState('liubo', {
@@ -1154,7 +1287,10 @@ export class LiuboScene extends BaseScene {
             startOptions: this.startOptions,
             state: this.clonePlain(this.state),
             resultRecorded: this.resultRecorded,
-            previousActivityPlays: this.previousActivityPlays
+            previousActivityPlays: this.previousActivityPlays,
+            tutorialQueue: this.clonePlain(this.tutorialQueue || []),
+            activeTutorialDialogue: this.clonePlain(this.activeTutorialDialogue || null),
+            tutorialSubStep: this.tutorialSubStep || 0
         });
         this.manager.gameState.setLastScene('liubo');
     }
@@ -1167,6 +1303,9 @@ export class LiuboScene extends BaseScene {
         this.state = savedState.state || createLiuboState(this.startOptions);
         this.resultRecorded = !!savedState.resultRecorded;
         this.previousActivityPlays = savedState.previousActivityPlays || 0;
+        this.tutorialQueue = savedState.tutorialQueue || [];
+        this.activeTutorialDialogue = savedState.activeTutorialDialogue || null;
+        this.tutorialSubStep = savedState.tutorialSubStep || 0;
     }
 
     clonePlain(value) {
@@ -1198,7 +1337,7 @@ function buildCampaignLiuboResultScript({ won, previousActivityPlays = 0 }) {
     let result;
     if (won && returning) {
         result = {
-            speaker: 'farmer',
+            speaker: 'xiaoer',
             voiceId: 'inn_liubo_win_repeat_01',
             text: {
                 en: "Again! You read the sticks like a market scale. I will have to stop wagering with you.",
@@ -1207,7 +1346,7 @@ function buildCampaignLiuboResultScript({ won, previousActivityPlays = 0 }) {
         };
     } else if (won) {
         result = {
-            speaker: 'farmer',
+            speaker: 'xiaoer',
             voiceId: 'inn_liubo_win_first_01',
             text: {
                 en: "Ha! A fine first game. You saw the Owl's path before I did.",
@@ -1216,7 +1355,7 @@ function buildCampaignLiuboResultScript({ won, previousActivityPlays = 0 }) {
         };
     } else if (returning) {
         result = {
-            speaker: 'farmer',
+            speaker: 'xiaoer',
             voiceId: 'inn_liubo_loss_repeat_01',
             text: {
                 en: "The board has humbled many travelers. Come back after your battles and we will set the pieces again.",
@@ -1225,7 +1364,7 @@ function buildCampaignLiuboResultScript({ won, previousActivityPlays = 0 }) {
         };
     } else {
         result = {
-            speaker: 'farmer',
+            speaker: 'xiaoer',
             voiceId: 'inn_liubo_loss_first_01',
             text: {
                 en: "No shame in losing the first game. Liubo rewards patience more than pride.",
@@ -1236,10 +1375,11 @@ function buildCampaignLiuboResultScript({ won, previousActivityPlays = 0 }) {
     return [
         {
             type: 'dialogue',
-            portraitKey: 'farmer-v2',
+            portraitKey: 'xiaoer',
             position: 'top',
-            name: 'Villager',
+            name: 'Liubo Player',
             voiceId: result.voiceId,
+            speaker: result.speaker,
             text: result.text
         },
         { type: 'command', action: 'resumeSavedNarrative' }
@@ -1269,6 +1409,34 @@ function classifyLiuboMove(state, move) {
     }
     if (friendly.length) return 'block';
     return 'move';
+}
+
+function getPerchPieces(state) {
+    return (state.pieces || []).filter(piece => (
+        piece.state === 'board'
+        && piece.spaceId
+        && piece.spaceId !== 'pond'
+        && !isLiuboNest(piece.spaceId)
+    ));
+}
+
+function hasBlockedPerch(state) {
+    const counts = new Map();
+    getPerchPieces(state).forEach(piece => {
+        const key = `${piece.spaceId}:${piece.player}`;
+        counts.set(key, (counts.get(key) || 0) + 1);
+    });
+    return [...counts.values()].some(count => count >= 2);
+}
+
+function hasContestedPerch(state) {
+    const grouped = new Map();
+    getPerchPieces(state).forEach(piece => {
+        const key = `${piece.spaceId}:${piece.isOwl ? 'owl' : 'bird'}`;
+        if (!grouped.has(key)) grouped.set(key, new Set());
+        grouped.get(key).add(piece.player);
+    });
+    return [...grouped.values()].some(players => players.has('white') && players.has('black'));
 }
 
 function sampleRoute(route, amount) {

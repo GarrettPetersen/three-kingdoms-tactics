@@ -1104,8 +1104,8 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'animate', id: 'zhangfei', animation: 'recovery' },
         { type: 'command', action: 'addActor', id: 'bar_farmer', imgKey: 'farmer', x: 36, y: 194 },
         { type: 'command', action: 'animate', id: 'bar_farmer', animation: 'recovery' },
-        { type: 'command', action: 'addActor', id: 'farmer', imgKey: 'farmer', x: 198, y: 158, flip: true },
-        { type: 'command', action: 'animate', id: 'farmer', animation: 'recovery' },
+        { type: 'command', action: 'addActor', id: 'liubo_player', imgKey: 'xiaoer', x: 198, y: 158, flip: true },
+        { type: 'command', action: 'animate', id: 'liubo_player', animation: 'recovery' },
         { type: 'command', action: 'addProp', id: 'liubo_table', imgKey: 'liubo_table', x: 174, y: 138, sortY: 226 },
         
         { type: 'command', action: 'fade', target: 0, speed: 0.002 },
@@ -1122,9 +1122,9 @@ export const NARRATIVE_SCRIPTS = {
                 onClick: [
                     {
                         type: 'dialogue',
-                        portraitKey: 'farmer-v2',
+                        portraitKey: 'xiaoer',
                         position: 'top',
-                        name: 'Villager',
+                        name: 'Liubo Player',
                         voiceId: 'inn_liubo_intro_01',
                         text: {
                             en: "The road is dangerous, friend. Sit for a game of Liubo before you chase trouble?",
@@ -1134,12 +1134,12 @@ export const NARRATIVE_SCRIPTS = {
                     },
                     {
                         type: 'choice',
-                        portraitKey: 'farmer-v2',
-                        name: 'Villager',
+                        portraitKey: 'xiaoer',
+                        name: 'Liubo Player',
                         options: [
                             {
                                 buttonText: { en: "Play Liubo.", zh: "博一局。" },
-                                speaker: 'farmer',
+                                speaker: 'xiaoer',
                                 voiceId: 'inn_liubo_accept_01',
                                 text: {
                                     en: "Very well. Let us play.",
@@ -1151,7 +1151,7 @@ export const NARRATIVE_SCRIPTS = {
                             },
                             {
                                 buttonText: { en: "Not now.", zh: "现在不玩。" },
-                                speaker: 'farmer',
+                                speaker: 'xiaoer',
                                 voiceId: 'inn_liubo_decline_01',
                                 text: {
                                     en: "Another time.",
@@ -1160,9 +1160,9 @@ export const NARRATIVE_SCRIPTS = {
                                 result: [
                                     {
                                         type: 'dialogue',
-                                        portraitKey: 'farmer-v2',
+                                        portraitKey: 'xiaoer',
                                         position: 'top',
-                                        name: 'Villager',
+                                        name: 'Liubo Player',
                                         voiceId: 'inn_liubo_decline_reply_01',
                                         text: {
                                             en: "The board will wait. The rebels, perhaps not.",
@@ -1178,9 +1178,9 @@ export const NARRATIVE_SCRIPTS = {
                 onClickRepeat: [
                     {
                         type: 'dialogue',
-                        portraitKey: 'farmer-v2',
+                        portraitKey: 'xiaoer',
                         position: 'top',
-                        name: 'Villager',
+                        name: 'Liubo Player',
                         voiceId: 'inn_liubo_repeat_01',
                         text: {
                             en: "Back to the board? Good. A second game tells more truth than the first.",
@@ -1190,12 +1190,12 @@ export const NARRATIVE_SCRIPTS = {
                     },
                     {
                         type: 'choice',
-                        portraitKey: 'farmer-v2',
-                        name: 'Villager',
+                        portraitKey: 'xiaoer',
+                        name: 'Liubo Player',
                         options: [
                             {
                                 buttonText: { en: "Play again.", zh: "再博一局。" },
-                                speaker: 'farmer',
+                                speaker: 'xiaoer',
                                 voiceId: 'inn_liubo_accept_repeat_01',
                                 text: {
                                     en: "Set the pieces again.",
@@ -1207,7 +1207,7 @@ export const NARRATIVE_SCRIPTS = {
                             },
                             {
                                 buttonText: { en: "Not now.", zh: "现在不玩。" },
-                                speaker: 'farmer',
+                                speaker: 'xiaoer',
                                 voiceId: 'inn_liubo_decline_01',
                                 text: {
                                     en: "Another time.",
@@ -1216,9 +1216,9 @@ export const NARRATIVE_SCRIPTS = {
                                 result: [
                                     {
                                         type: 'dialogue',
-                                        portraitKey: 'farmer-v2',
+                                        portraitKey: 'xiaoer',
                                         position: 'top',
-                                        name: 'Villager',
+                                        name: 'Liubo Player',
                                         voiceId: 'inn_liubo_decline_reply_02',
                                         text: {
                                             en: "Then keep your eyes sharp. The road plays rougher games than mine.",
@@ -1271,13 +1271,13 @@ export const NARRATIVE_SCRIPTS = {
                     }
                 ]
             },
-            'farmer': {
+            'liubo_player': {
                 onClick: [
                     {
                         type: 'dialogue',
-                        portraitKey: 'farmer-v2',
+                        portraitKey: 'xiaoer',
                         position: 'top',
-                        name: 'Villager',
+                        name: 'Liubo Player',
                         voiceId: 'inn_liubo_intro_01',
                         text: {
                             en: "The road is dangerous, friend. Sit for a game of Liubo before you chase trouble?",
@@ -1287,12 +1287,12 @@ export const NARRATIVE_SCRIPTS = {
                     },
                     {
                         type: 'choice',
-                        portraitKey: 'farmer-v2',
-                        name: 'Villager',
+                        portraitKey: 'xiaoer',
+                        name: 'Liubo Player',
                         options: [
                             {
                                 buttonText: { en: "Play Liubo.", zh: "博一局。" },
-                                speaker: 'farmer',
+                                speaker: 'xiaoer',
                                 voiceId: 'inn_liubo_accept_01',
                                 text: {
                                     en: "Very well. Let us play.",
@@ -1304,7 +1304,7 @@ export const NARRATIVE_SCRIPTS = {
                             },
                             {
                                 buttonText: { en: "Not now.", zh: "现在不玩。" },
-                                speaker: 'farmer',
+                                speaker: 'xiaoer',
                                 voiceId: 'inn_liubo_decline_01',
                                 text: {
                                     en: "Another time.",
@@ -1313,9 +1313,9 @@ export const NARRATIVE_SCRIPTS = {
                                 result: [
                                     {
                                         type: 'dialogue',
-                                        portraitKey: 'farmer-v2',
+                                        portraitKey: 'xiaoer',
                                         position: 'top',
-                                        name: 'Villager',
+                                        name: 'Liubo Player',
                                         voiceId: 'inn_liubo_decline_reply_01',
                                         text: {
                                             en: "The board will wait. The rebels, perhaps not.",
