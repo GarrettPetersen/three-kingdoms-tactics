@@ -637,6 +637,8 @@ async function init() {
                 soldier: 'assets/characters/081_shibing001.png',
                 butcher: 'assets/characters/082_tufu01.png',
                 flag_01: 'assets/misc/flag_01.png',
+                dummy: 'assets/misc/dummy.png',
+                dummy_broken: 'assets/misc/dummy_broken.png',
                 boulder: 'assets/misc/boulder.png',
                 boulder_cracked: 'assets/misc/boulder_cracked.png',
                 boulder_destroyed: 'assets/misc/boulder_destroyed.png',

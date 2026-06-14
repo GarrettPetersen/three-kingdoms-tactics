@@ -1629,6 +1629,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "rec_lb_train_no_01",
+    "char": "liubei",
+    "text": "No. We know enough to begin, and the county cannot wait.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "rec_vol_01",
     "char": "soldierv2",
     "text": "We have heard of your brotherhood! We are but simple men, but we will follow you to the death!",
@@ -1638,6 +1644,18 @@
     "id": "rec_zf_01",
     "char": "zhangfei",
     "text": "CITIZENS OF ZHUO! The Yellow Turbans are coming! Who among you is brave enough to fight for your homes?",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "rec_zf_train_prompt_01",
+    "char": "zhangfei",
+    "text": "Should we pause to do some training?",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "rec_zf_train_yes_01",
+    "char": "zhangfei",
+    "text": "Good. Better to strike wood now than miss rebels later.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1657,6 +1675,114 @@
     "char": "zhangfei",
     "text": "Bah! Those rascals got a lucky hit in! Next time, they won't be so fortunate!",
     "source": "RecoveryScene.js"
+  },
+  {
+    "id": "train_gy_01",
+    "char": "guanyu",
+    "text": "Red marks enemies. Blue marks allies. Green marks the heroes under your command.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_gy_02",
+    "char": "guanyu",
+    "text": "Each brother strikes in a different pattern.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_gy_03",
+    "char": "guanyu",
+    "text": "My Green Dragon Crescent Blade sweeps an arc at a range of one or two hexes.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_gy_watch_01",
+    "char": "guanyu",
+    "text": "In real battle, watch the hexes other units are targeting.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "train_lb_01",
+    "char": "liubei",
+    "text": "Before battle, watch how the field breathes.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_lb_02",
+    "char": "liubei",
+    "text": "Enemies and allies move first. They show where they mean to strike.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_lb_03",
+    "char": "liubei",
+    "text": "Those attacks do not land until you end your turn.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_lb_04",
+    "char": "liubei",
+    "text": "A hero may move, then attack. You may also attack without moving.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_lb_05",
+    "char": "liubei",
+    "text": "Click a hero, then click a highlighted yellow hex to move there.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_lb_06",
+    "char": "liubei",
+    "text": "With an attack selected, click a highlighted red hex to strike.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_lb_07",
+    "char": "liubei",
+    "text": "My double swords cut in two opposite directions and push the targets back.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_lb_end_turn_01",
+    "char": "liubei",
+    "text": "Good. All three heroes have attacked.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "train_lb_end_turn_02",
+    "char": "liubei",
+    "text": "Now hit the End Turn button.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "train_zf_01",
+    "char": "zhangfei",
+    "text": "If your hand slips, use the buttons in the bottom right.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_zf_02",
+    "char": "zhangfei",
+    "text": "One button undoes your last action. One resets the whole turn.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_zf_03",
+    "char": "zhangfei",
+    "text": "My Serpent Spear thrusts one or two spaces in a straight line.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_zf_04",
+    "char": "zhangfei",
+    "text": "It can damage both spaces, and it pushes the farther target.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_zf_finish_01",
+    "char": "zhangfei",
+    "text": "Now go ahead and smash the rest of these dummies.",
+    "source": "TacticsScene.js"
   },
   {
     "id": "yc_af_hfs_01",

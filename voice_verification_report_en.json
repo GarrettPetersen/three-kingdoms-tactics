@@ -2379,8 +2379,8 @@
         "id": "inn_liubo_tutorial_block_01",
         "character": "unknown",
         "original_text": "These two birds together have blocked a perch.",
-        "stt_output": "These two birds together have blocked a perch.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2388,8 +2388,8 @@
         "id": "inn_liubo_tutorial_block_02",
         "character": "unknown",
         "original_text": "Other birds can't get past them.",
-        "stt_output": "Other birds can't get past them.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2397,17 +2397,17 @@
         "id": "inn_liubo_tutorial_contest_01",
         "character": "unknown",
         "original_text": "This perch is contested.",
-        "stt_output": "This purchase contested.",
-        "wer": 0.5,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "en"
     },
     "en:inn_liubo_tutorial_contest_02": {
         "id": "inn_liubo_tutorial_contest_02",
         "character": "unknown",
         "original_text": "The next bird to move there will capture the opposing player's bird.",
-        "stt_output": "next bird to move there will capture the opposing players bird.",
-        "wer": 0.08333333333333333,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2415,8 +2415,8 @@
         "id": "inn_liubo_tutorial_goal_01",
         "character": "unknown",
         "original_text": "The goal of the game is to get 6 points.",
-        "stt_output": "The goal of the game is to get 6 points.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2424,8 +2424,8 @@
         "id": "inn_liubo_tutorial_goal_02",
         "character": "unknown",
         "original_text": "You can get a point by capturing the opponent's birds.",
-        "stt_output": "You can get a point by capturing the opponent's birds.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2433,8 +2433,8 @@
         "id": "inn_liubo_tutorial_goal_03",
         "character": "unknown",
         "original_text": "You can also catch a fish in the central pond.",
-        "stt_output": "You can also catch a fish in the central pond.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2442,8 +2442,8 @@
         "id": "inn_liubo_tutorial_goal_04",
         "character": "unknown",
         "original_text": "Deposit that fish in the opponent's nest to score.",
-        "stt_output": "deposit that fish in the opponent's nest to score.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2451,17 +2451,17 @@
         "id": "inn_liubo_tutorial_goal_05",
         "character": "unknown",
         "original_text": "A bird with a fish becomes an owl. Simple!",
-        "stt_output": "A bird with a fish becomes an owl. Simple! Ha ha! Tell! Punni! Ha! Chutty! Why ye?",
-        "wer": 0.8888888888888888,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "en"
     },
     "en:inn_liubo_tutorial_move_01": {
         "id": "inn_liubo_tutorial_move_01",
         "character": "unknown",
         "original_text": "You get to move two of your birds on your turn.",
-        "stt_output": "You get to move two of your birds on your turn.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2469,8 +2469,8 @@
         "id": "inn_liubo_tutorial_move_02",
         "character": "unknown",
         "original_text": "The number of face up sticks determines the distance.",
-        "stt_output": "The number of face-up sticks determines the distance.",
-        "wer": 0.2222222222222222,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2478,8 +2478,8 @@
         "id": "inn_liubo_tutorial_owl_01",
         "character": "unknown",
         "original_text": "This piece has caught a fish and become an owl.",
-        "stt_output": "this piece has caught a fish and become an owl.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2487,8 +2487,8 @@
         "id": "inn_liubo_tutorial_owl_02",
         "character": "unknown",
         "original_text": "Owls and birds can capture each other by landing in the same perch.",
-        "stt_output": "owls and birds can capture each other by landing in the same perch.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2496,8 +2496,8 @@
         "id": "inn_liubo_tutorial_owl_03",
         "character": "unknown",
         "original_text": "The owl can also score by reaching a nest on the opponent's side.",
-        "stt_output": "The owl can also score by reaching a nest on the opponent's side.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2505,7 +2505,196 @@
         "id": "inn_liubo_tutorial_start_01",
         "character": "unknown",
         "original_text": "You start the game by throwing your sticks.",
-        "stt_output": "You start the game by throwing your sticks.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:rec_lb_train_no_01": {
+        "id": "rec_lb_train_no_01",
+        "character": "liubei",
+        "original_text": "No. We know enough to begin, and the county cannot wait.",
+        "stt_output": "No, got any? That's it. We know enough to begin. And the county cannot wait.",
+        "wer": 0.36363636363636365,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:rec_zf_train_prompt_01": {
+        "id": "rec_zf_train_prompt_01",
+        "character": "zhangfei",
+        "original_text": "Should we pause to do some training?",
+        "stt_output": "Should we pause to do some training?",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:rec_zf_train_yes_01": {
+        "id": "rec_zf_train_yes_01",
+        "character": "zhangfei",
+        "original_text": "Good. Better to strike wood now than miss rebels later.",
+        "stt_output": "Good. Better to strike wood now than this rebels later.",
+        "wer": 0.1,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_gy_01": {
+        "id": "train_gy_01",
+        "character": "guanyu",
+        "original_text": "Red marks enemies. Blue marks allies. Green marks the heroes under your command.",
+        "stt_output": "Red marks enemies, Blue marks allies, Green marks the heroes under your command.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_gy_02": {
+        "id": "train_gy_02",
+        "character": "guanyu",
+        "original_text": "Each brother strikes in a different pattern.",
+        "stt_output": "each brother strikes in a different pattern.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_gy_03": {
+        "id": "train_gy_03",
+        "character": "guanyu",
+        "original_text": "My Green Dragon Crescent Blade sweeps an arc at a range of one or two hexes.",
+        "stt_output": "My green dragon, crescent blade, sweeps an arc at a range of one or two hexes.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_gy_watch_01": {
+        "id": "train_gy_watch_01",
+        "character": "guanyu",
+        "original_text": "In real battle, watch the hexes other units are targeting.",
+        "stt_output": "In real battle, watch the hex's other units are targeting.",
+        "wer": 0.1,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_lb_01": {
+        "id": "train_lb_01",
+        "character": "liubei",
+        "original_text": "Before battle, watch how the field breathes.",
+        "stt_output": "Before battle, watch how the field breathes.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_lb_02": {
+        "id": "train_lb_02",
+        "character": "liubei",
+        "original_text": "Enemies and allies move first. They show where they mean to strike.",
+        "stt_output": "Enemies and allies move first. They show where they mean to stride.",
+        "wer": 0.08333333333333333,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_lb_03": {
+        "id": "train_lb_03",
+        "character": "liubei",
+        "original_text": "Those attacks do not land until you end your turn.",
+        "stt_output": "Those attacks do not land until you end your turn.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_lb_04": {
+        "id": "train_lb_04",
+        "character": "liubei",
+        "original_text": "A hero may move, then attack. You may also attack without moving.",
+        "stt_output": "A hero may move, then attack. You may also attack without moving.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_lb_05": {
+        "id": "train_lb_05",
+        "character": "liubei",
+        "original_text": "Click a hero, then click a highlighted yellow hex to move there.",
+        "stt_output": "Click a hero, then click a highlighted yellow hex to move there.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_lb_06": {
+        "id": "train_lb_06",
+        "character": "liubei",
+        "original_text": "With an attack selected, click a highlighted red hex to strike.",
+        "stt_output": "With an attack selected, click a highlighted red hex to strike.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_lb_07": {
+        "id": "train_lb_07",
+        "character": "liubei",
+        "original_text": "My double swords cut in two opposite directions and push the targets back.",
+        "stt_output": "My double swords cut in two opposite directions and push the targets back.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_lb_end_turn_01": {
+        "id": "train_lb_end_turn_01",
+        "character": "liubei",
+        "original_text": "Good. All three heroes have attacked.",
+        "stt_output": "Good! All three heroes have attack.",
+        "wer": 0.16666666666666666,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_lb_end_turn_02": {
+        "id": "train_lb_end_turn_02",
+        "character": "liubei",
+        "original_text": "Now hit the End Turn button.",
+        "stt_output": "Now, hit the intern button.",
+        "wer": 0.3333333333333333,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_zf_01": {
+        "id": "train_zf_01",
+        "character": "zhangfei",
+        "original_text": "If your hand slips, use the buttons in the bottom right.",
+        "stt_output": "If your hand slips, use the buttons in the bottom right.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_zf_02": {
+        "id": "train_zf_02",
+        "character": "zhangfei",
+        "original_text": "One button undoes your last action. One resets the whole turn.",
+        "stt_output": "One button. Undoose your last action. One resets the whole turn.",
+        "wer": 0.09090909090909091,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_zf_03": {
+        "id": "train_zf_03",
+        "character": "zhangfei",
+        "original_text": "My Serpent Spear thrusts one or two spaces in a straight line.",
+        "stt_output": "My serpent spear thrusts one or two spaces in a straight line.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_zf_04": {
+        "id": "train_zf_04",
+        "character": "zhangfei",
+        "original_text": "It can damage both spaces, and it pushes the farther target.",
+        "stt_output": "It can damage both spaces and it pushes the farther target.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_zf_finish_01": {
+        "id": "train_zf_finish_01",
+        "character": "zhangfei",
+        "original_text": "Now go ahead and smash the rest of these dummies.",
+        "stt_output": "Now, go ahead and smash the rest of these dummies.",
         "wer": 0.0,
         "is_bad": false,
         "language": "en"

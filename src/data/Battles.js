@@ -92,6 +92,64 @@ export const BATTLES = {
             ]
         }
     },
+    'zhuo_training': {
+        name: "Zhuo County Training",
+        map: {
+            biome: 'northern',
+            layout: 'foothills',
+            seed: 'zhuo_training',
+            forestDensity: 0.0,
+            mountainDensity: 0.0,
+            riverDensity: 0.0,
+            houseDensity: 0.0,
+            weather: 'none'
+        },
+        playerFaction: 'liu_bei_volunteers',
+        baseXP: 0,
+        units: [
+            { id: 'liubei', r: 2, q: 3, type: 'hero' },
+            { id: 'guanyu', r: 3, q: 2, type: 'hero' },
+            { id: 'zhangfei', r: 3, q: 4, type: 'hero' },
+            { id: 'ally1', r: 1, q: 2, type: 'allied_soldier' },
+            { id: 'ally2', r: 1, q: 4, type: 'allied_soldier' },
+            { id: 'dummy1', r: 6, q: 2, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy2', r: 6, q: 3, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy3', r: 6, q: 4, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy4', r: 7, q: 3, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy5', r: 7, q: 5, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy6', r: 8, q: 4, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy7', r: 5, q: 1, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy8', r: 5, q: 5, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy9', r: 7, q: 1, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy10', r: 8, q: 6, type: 'training_dummy', templateId: 'dummy' }
+        ],
+        victoryCondition: {
+            type: 'defeat_all_enemies',
+            mustSurvive: ['liubei', 'guanyu', 'zhangfei']
+        },
+        introScript: [
+            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_01', text: { en: "Before battle, watch how the field breathes.", zh: "临战之前，先看清战场如何运转。" } },
+            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_02', text: { en: "Enemies and allies move first. They show where they mean to strike.", zh: "敌人与友军会先行动，并标出他们准备攻击的位置。" } },
+            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_03', text: { en: "Those attacks do not land until you end your turn.", zh: "只有你结束回合之后，那些攻击才会真正落下。" } },
+            { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'train_gy_01', text: { en: "Red marks enemies. Blue marks allies. Green marks the heroes under your command.", zh: "红色代表敌人，蓝色代表友军，绿色代表由你指挥的英雄。" } },
+            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_04', text: { en: "A hero may move, then attack. You may also attack without moving.", zh: "英雄可以先移动再攻击，也可以不移动直接出手。" } },
+            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_05', text: { en: "Click a hero, then click a highlighted yellow hex to move there.", zh: "点击一名英雄，再点击黄色高亮格，就能移动到那里。" } },
+            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_06', text: { en: "With an attack selected, click a highlighted red hex to strike.", zh: "选择攻击后，点击红色高亮格即可出招。" } },
+            { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_zf_01', text: { en: "If your hand slips, use the buttons in the bottom right.", zh: "若是手滑，就用右下角的按钮。" } },
+            { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_zf_02', text: { en: "One button undoes your last action. One resets the whole turn.", zh: "一个可以撤销上一步，一个可以重置整个回合。" } },
+            { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'train_gy_02', text: { en: "Each brother strikes in a different pattern.", zh: "三兄弟各有不同的攻击路数。" } },
+            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_07', text: { en: "My double swords cut in two opposite directions and push the targets back.", zh: "我的双股剑可向前后两方出击，并将目标击退。" } },
+            { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'train_gy_03', text: { en: "My Green Dragon Crescent Blade sweeps an arc at a range of one or two hexes.", zh: "我的青龙偃月刀可在一到两格外横扫成弧。" } },
+            { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_zf_03', text: { en: "My Serpent Spear thrusts one or two spaces in a straight line.", zh: "我的丈八蛇矛可直刺一格或两格。" } },
+            { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_zf_04', text: { en: "It can damage both spaces, and it pushes the farther target.", zh: "它能伤到直线上的两个位置，并击退较远的目标。" } }
+        ],
+        defeat: {
+            retry: { scene: 'tactics', params: { battleId: 'zhuo_training' } },
+            script: [
+                { bg: 'noticeboard', type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', text: { en: "Wooden dummies got the better of us? Again!", zh: "木桩都能占上风？再来！" } }
+            ]
+        }
+    },
     'qingzhou_prelude': {
         name: "Ambush at Qingzhou",
         map: {
@@ -627,7 +685,7 @@ export const BATTLES = {
             { id: 'caocao', r: 6, q: 9, type: 'caocao_force', onHorse: true, horseType: 'black', flip: true },
             { id: 'caoren', r: 5, q: 9, type: 'caocao_force', onHorse: true, horseType: 'brown', flip: true },
             { id: 'rider1', r: 7, q: 9, type: 'caocao_force', onHorse: true, horseType: 'brown', flip: true },
-            { id: 'rider2', r: 6, q: 8, type: 'caocao_force', onHorse: true, horseType: 'white', flip: true },
+            { id: 'rider2', r: 6, q: 8, type: 'caocao_force', onHorse: true, flip: true },
             { id: 'rider3', r: 5, q: 8, type: 'caocao_force', onHorse: true, horseType: 'brown', flip: true },
 
             // Government troops in pursuit from the rear.
@@ -919,6 +977,20 @@ export const UNIT_TEMPLATES = {
     'imperial_soldier': {
         'soldier': { ...SOLDIER_VARIANTS.imperial_soldier },
         'escort': { ...SOLDIER_VARIANTS.imperial_escort }
+    },
+    'training_dummy': {
+        'dummy': {
+            name: 'Training Dummy',
+            imgKey: 'dummy',
+            hp: 1,
+            moveRange: 0,
+            attacks: [],
+            faction: 'enemy',
+            level: 1,
+            isProp: true,
+            breaksToImgKey: 'dummy_broken',
+            keepBrokenOnDefeat: true
+        }
     },
     // Generic custom-battle soldier option.
     'soldier': {

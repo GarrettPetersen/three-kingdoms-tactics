@@ -4,8 +4,9 @@
   "main": "electron-main.js",
   "scripts": {
     "export-trailer": "node tools/export_trailer.js",
+    "validate:design": "node tools/validate_design_rules.mjs",
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run validate:design && vite build",
     "preview": "vite preview",
     "electron": "electron .",
     "electron:dev": "NODE_ENV=development electron .",

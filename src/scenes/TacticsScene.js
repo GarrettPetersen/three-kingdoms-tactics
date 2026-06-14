@@ -78,6 +78,8 @@ export class TacticsScene extends BaseScene {
         this.commandTutorialStep = null;
         this.commandTutorialTargetId = null;
         this.commandTutorialCompleted = false;
+        this.zhuoTrainingEndTurnPromptShown = false;
+        this.zhuoTrainingFreePracticePromptShown = false;
         this.battlePaletteKeys = [];
         this.activeBattlePaletteIndex = 0;
         this.paletteToastText = '';
@@ -411,7 +413,7 @@ export class TacticsScene extends BaseScene {
         this.isRetreating = false;
         this.turnNumber = 1;
         this.turn = 'player';
-        this.baseXP = 5; // Baseline XP for victory
+        this.baseXP = Number.isFinite(battleDef?.baseXP) ? battleDef.baseXP : 5; // Baseline XP for victory
         this.caocaoSecondWaveSpawned = false;
         this.dialogueElapsed = 0;
         this.dialogueStep = 0;
@@ -456,6 +458,8 @@ export class TacticsScene extends BaseScene {
         this.commandTutorialStep = null;
         this.commandTutorialTargetId = null;
         this.commandTutorialCompleted = false;
+        this.zhuoTrainingEndTurnPromptShown = false;
+        this.zhuoTrainingFreePracticePromptShown = false;
         this.battlePaletteKeys = ['off', ...Object.keys(assets.palettes || {}).sort()];
         this.activeBattlePaletteIndex = Math.max(0, this.battlePaletteKeys.indexOf('off'));
         this.paletteToastText = '';
@@ -505,6 +509,12 @@ export class TacticsScene extends BaseScene {
                 } else {
                     this.manager.switchTo('map', { afterEvent: 'dongzhuo_battle' });
                 }
+            };
+        }
+
+        if (this.battleId === 'zhuo_training' && !this.onVictoryCallback) {
+            this.onVictoryCallback = () => {
+                this.manager.switchTo('narrative', { scriptId: 'noticeboard_after_training' });
             };
         }
 
@@ -1494,6 +1504,7 @@ export class TacticsScene extends BaseScene {
         const unit = new Unit(id, {
             id, name, imgKey: finalImgKey, r: finalCell.r, q: finalCell.q,
             level, hp: finalMaxHp, maxHp: finalMaxHp,
+            allyPartyOwnerId: this.getAllyPartyOwnerId(id),
             faction: faction, 
             moveRange: (unitClass === 'archer' ? 3 : 4), 
             attacks: finalAttacks,
@@ -3176,6 +3187,8 @@ export class TacticsScene extends BaseScene {
                 q: u.q,
                 hp: u.hp,
                 maxHp: u.maxHp,
+                allyPartyOwnerId: u.allyPartyOwnerId || null,
+                traits: u.traits ? { ...u.traits } : {},
                 moveRange: u.moveRange,
                 baseMoveRange: u.baseMoveRange,
                 onHorse: !!u.onHorse,
@@ -3196,6 +3209,9 @@ export class TacticsScene extends BaseScene {
                 immortalPendingCause: u.immortalPendingCause || null,
                 shieldResistBase: Number.isFinite(u.shieldResistBase) ? u.shieldResistBase : 0,
                 shieldResistPerLevel: Number.isFinite(u.shieldResistPerLevel) ? u.shieldResistPerLevel : 0,
+                isProp: !!u.isProp,
+                breaksToImgKey: u.breaksToImgKey || null,
+                keepBrokenOnDefeat: !!u.keepBrokenOnDefeat,
                 caged: u.caged,
                 cageHp: u.cageHp,
                 cageSprite: u.cageSprite,
@@ -3229,7 +3245,9 @@ export class TacticsScene extends BaseScene {
             commandTutorialPendingStart: !!this.commandTutorialPendingStart,
             commandTutorialStep: this.commandTutorialStep || null,
             commandTutorialTargetId: this.commandTutorialTargetId || null,
-            commandTutorialCompleted: !!this.commandTutorialCompleted
+            commandTutorialCompleted: !!this.commandTutorialCompleted,
+            zhuoTrainingEndTurnPromptShown: !!this.zhuoTrainingEndTurnPromptShown,
+            zhuoTrainingFreePracticePromptShown: !!this.zhuoTrainingFreePracticePromptShown
         };
     }
 
@@ -3414,6 +3432,8 @@ export class TacticsScene extends BaseScene {
                     q: uData.q,
                     hp: uData.hp,
                     maxHp: uData.maxHp,
+                    allyPartyOwnerId: uData.allyPartyOwnerId || null,
+                    traits: uData.traits ? { ...uData.traits } : {},
                     moveRange: uData.moveRange,
                     baseMoveRange: uData.baseMoveRange !== undefined ? uData.baseMoveRange : uData.moveRange,
                     onHorse: !!uData.onHorse,
@@ -3434,6 +3454,9 @@ export class TacticsScene extends BaseScene {
                     immortalPendingCause: uData.immortalPendingCause || null,
                     shieldResistBase: Number.isFinite(uData.shieldResistBase) ? uData.shieldResistBase : 0,
                     shieldResistPerLevel: Number.isFinite(uData.shieldResistPerLevel) ? uData.shieldResistPerLevel : 0,
+                    isProp: !!uData.isProp,
+                    breaksToImgKey: uData.breaksToImgKey || null,
+                    keepBrokenOnDefeat: !!uData.keepBrokenOnDefeat,
                     caged: !!uData.caged,
                     cageHp: uData.cageHp,
                     cageSprite: uData.cageSprite,
@@ -3449,6 +3472,8 @@ export class TacticsScene extends BaseScene {
             u.q = uData.q;
             u.hp = uData.hp;
             u.maxHp = uData.maxHp;
+            u.allyPartyOwnerId = uData.allyPartyOwnerId || this.getAllyPartyOwnerId(uData.id);
+            u.traits = uData.traits ? { ...uData.traits } : this.getPersistentUnitTraits(uData.id);
             u.moveRange = uData.moveRange !== undefined ? uData.moveRange : u.moveRange;
             u.baseMoveRange = uData.baseMoveRange !== undefined ? uData.baseMoveRange : (u.baseMoveRange !== undefined ? u.baseMoveRange : u.moveRange);
             u.onHorse = !!uData.onHorse;
@@ -3457,6 +3482,9 @@ export class TacticsScene extends BaseScene {
             u.imgKey = uData.imgKey;
             u.img = assets.getImage(uData.imgKey);
             u.isDestroyedBoulder = !!(uData.isDestroyedBoulder || (u.name === 'Boulder' && uData.imgKey === 'boulder_destroyed'));
+            u.isProp = !!uData.isProp;
+            u.breaksToImgKey = uData.breaksToImgKey || u.breaksToImgKey || null;
+            u.keepBrokenOnDefeat = !!uData.keepBrokenOnDefeat;
             u.overkillEffectStarted = false;
             u.hasMoved = uData.hasMoved;
             u.hasAttacked = uData.hasAttacked;
@@ -3547,6 +3575,8 @@ export class TacticsScene extends BaseScene {
         this.commandTutorialStep = state.commandTutorialStep || null;
         this.commandTutorialTargetId = state.commandTutorialTargetId || null;
         this.commandTutorialCompleted = !!state.commandTutorialCompleted;
+        this.zhuoTrainingEndTurnPromptShown = !!state.zhuoTrainingEndTurnPromptShown;
+        this.zhuoTrainingFreePracticePromptShown = !!state.zhuoTrainingFreePracticePromptShown;
         this.isChoiceActive = !!state.isChoiceActive;
         if (state.isCutscene !== undefined) {
             this.isCutscene = !!state.isCutscene;
@@ -3862,6 +3892,8 @@ export class TacticsScene extends BaseScene {
             u.q = uData.q;
             u.hp = uData.hp;
             u.maxHp = uData.maxHp;
+            u.allyPartyOwnerId = uData.allyPartyOwnerId || this.getAllyPartyOwnerId(uData.id);
+            u.traits = uData.traits ? { ...uData.traits } : this.getPersistentUnitTraits(uData.id);
             u.faction = uData.faction || u.faction;
             u.moveRange = uData.moveRange !== undefined ? uData.moveRange : u.moveRange;
             u.baseMoveRange = uData.baseMoveRange !== undefined ? uData.baseMoveRange : (u.baseMoveRange !== undefined ? u.baseMoveRange : u.moveRange);
@@ -3871,6 +3903,9 @@ export class TacticsScene extends BaseScene {
             u.imgKey = uData.imgKey;
             u.img = assets.getImage(uData.imgKey);
             u.isDestroyedBoulder = !!(uData.isDestroyedBoulder || (u.name === 'Boulder' && uData.imgKey === 'boulder_destroyed'));
+            u.isProp = !!uData.isProp;
+            u.breaksToImgKey = uData.breaksToImgKey || u.breaksToImgKey || null;
+            u.keepBrokenOnDefeat = !!uData.keepBrokenOnDefeat;
             u.overkillEffectStarted = false;
             u.attacks = Array.isArray(uData.attacks) ? [...uData.attacks] : u.attacks;
             u.hasMoved = uData.hasMoved;
@@ -3941,6 +3976,8 @@ export class TacticsScene extends BaseScene {
         this.commandTutorialStep = state.commandTutorialStep || null;
         this.commandTutorialTargetId = state.commandTutorialTargetId || null;
         this.commandTutorialCompleted = !!state.commandTutorialCompleted;
+        this.zhuoTrainingEndTurnPromptShown = !!state.zhuoTrainingEndTurnPromptShown;
+        this.zhuoTrainingFreePracticePromptShown = !!state.zhuoTrainingFreePracticePromptShown;
         if (this.commandTutorialPendingStart && this.isCleanupDialogueActive && !this.cleanupDialogueOnComplete) {
             this.cleanupDialogueOnComplete = () => this.activatePendingCommandTutorial();
         }
@@ -4396,6 +4433,70 @@ export class TacticsScene extends BaseScene {
         this.pushHistory(); // Save start of turn state
         this.saveBattleState();
         this.maybeStartCommandTutorial();
+        this.maybeShowZhuoTrainingFreePracticePrompt();
+    }
+
+    maybeShowZhuoTrainingEndTurnPrompt() {
+        if (this.battleId !== 'zhuo_training') return;
+        if (this.zhuoTrainingEndTurnPromptShown || this.isGameOver || this.isCleanupDialogueActive) return;
+        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.isGone);
+        if (enemies.length === 0) return;
+        const heroes = ['liubei', 'guanyu', 'zhangfei']
+            .map(id => this.units.find(u => u.id === id && u.hp > 0 && !u.isGone))
+            .filter(Boolean);
+        if (heroes.length === 0 || !heroes.every(hero => hero.hasAttacked)) return;
+        this.zhuoTrainingEndTurnPromptShown = true;
+        this.startBattleEndDialogue([
+            {
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'train_lb_end_turn_01',
+                text: {
+                    en: "Good. All three heroes have attacked.",
+                    zh: "好。三位英雄都已经出手。"
+                }
+            },
+            {
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'train_lb_end_turn_02',
+                text: {
+                    en: "Now hit the End Turn button.",
+                    zh: "现在点击结束回合。"
+                }
+            }
+        ]);
+        this.saveBattleState();
+    }
+
+    maybeShowZhuoTrainingFreePracticePrompt() {
+        if (this.battleId !== 'zhuo_training') return;
+        if (!this.zhuoTrainingEndTurnPromptShown || this.zhuoTrainingFreePracticePromptShown) return;
+        if (this.turnNumber < 2 || this.isGameOver || this.isCleanupDialogueActive) return;
+        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.isGone);
+        if (enemies.length === 0) return;
+        this.zhuoTrainingFreePracticePromptShown = true;
+        this.startBattleEndDialogue([
+            {
+                portraitKey: 'guan-yu',
+                name: 'Guan Yu',
+                voiceId: 'train_gy_watch_01',
+                text: {
+                    en: "In real battle, watch the hexes other units are targeting.",
+                    zh: "实战中，要留心其他单位瞄准的格子。"
+                }
+            },
+            {
+                portraitKey: 'zhang-fei',
+                name: 'Zhang Fei',
+                voiceId: 'train_zf_finish_01',
+                text: {
+                    en: "Now go ahead and smash the rest of these dummies.",
+                    zh: "现在放手去，把剩下的木桩都打碎！"
+                }
+            }
+        ]);
+        this.saveBattleState();
     }
 
     startExecutionPhase() {
@@ -6355,6 +6456,23 @@ export class TacticsScene extends BaseScene {
                 overkillEffectStarted = this.startOverkillEffect(victim);
             }
             victim.hp = 0;
+            if (victim.breaksToImgKey) {
+                victim.imgKey = victim.breaksToImgKey;
+                victim.img = assets.getImage(victim.breaksToImgKey);
+                victim.keepBrokenOnDefeat = true;
+                victim.isGone = false;
+                victim.action = 'standby';
+                victim.currentAnimAction = 'standby';
+                victim.frame = 0;
+                victim.intent = null;
+                const currentCell = sourceCell || this.tacticsMap.getCell(victim.r, victim.q);
+                if (currentCell && currentCell.unit === victim) currentCell.unit = null;
+                if (victim.faction === 'enemy') {
+                    this.enemiesKilled++;
+                }
+                assets.playSound('building_damage', 0.7);
+                return finalDamage;
+            }
             // Cracked boulder: destroy (no roll, use boulder_destroyed sprite; doesn't block)
             if (victim.name === 'Boulder' && victim.imgKey === 'boulder_cracked') {
                 victim.imgKey = 'boulder_destroyed';
@@ -6765,6 +6883,31 @@ export class TacticsScene extends BaseScene {
         return 2.5 * level * level + 2.5 * level - 5;
     }
 
+    getAllyPartyOwnerId(unitId) {
+        if (!unitId) return null;
+        const gs = this.manager?.gameState;
+        if (gs && typeof gs.getAllyPartyOwner === 'function') {
+            return gs.getAllyPartyOwner(unitId) || null;
+        }
+        const parties = gs?.getCampaignVar?.('allyParties') || {};
+        return Object.keys(parties).find(ownerId => (parties[ownerId] || []).includes(unitId)) || null;
+    }
+
+    getPersistentUnitTraits(unitId) {
+        const gs = this.manager?.gameState;
+        if (gs && typeof gs.getUnitTraits === 'function') {
+            return gs.getUnitTraits(unitId) || {};
+        }
+        const traits = gs?.getCampaignVar?.('unitTraits') || {};
+        return traits?.[unitId] || {};
+    }
+
+    resolvePersistentHorseType(unit, traits) {
+        if (traits?.horseType) return traits.horseType;
+        if (traits?.hasWhiteHorse) return 'white';
+        return unit?.horseType || 'brown';
+    }
+
     placeInitialUnits(specifiedUnits) {
         this.units = [];
         let unitsToPlace = specifiedUnits;
@@ -6866,6 +7009,9 @@ export class TacticsScene extends BaseScene {
             }
 
             unitsToPlace.forEach(u => {
+                const allyPartyOwnerId = u.allyPartyOwnerId || this.getAllyPartyOwnerId(u.id);
+                const traits = { ...(u.traits || {}), ...this.getPersistentUnitTraits(u.id) };
+                const resolvedHorseType = this.resolvePersistentHorseType(u, traits);
                 const mapped = this.remapLegacyCoordToCurrent(u.r, u.q);
                 let finalR = mapped.r;
                 let finalQ = mapped.q;
@@ -6881,7 +7027,7 @@ export class TacticsScene extends BaseScene {
 
                 if (wantsHorseSpawn) {
                     mountedSpawnPick = this.findNearestMountedDestination(
-                        { ...u, onHorse: true, flip: !!u.flip },
+                        { ...u, onHorse: true, horseType: resolvedHorseType, flip: !!u.flip },
                         finalR,
                         finalQ,
                         8,
@@ -6973,6 +7119,8 @@ export class TacticsScene extends BaseScene {
 
             const unit = new Unit(u.id, {
                 ...u,
+                    allyPartyOwnerId,
+                    traits,
                     imgKey: imgKey,
                 r: finalR,
                 q: finalQ,
@@ -6982,6 +7130,7 @@ export class TacticsScene extends BaseScene {
                     maxHp: finalMaxHp,
                     attacks: attacks,
                     img: assets.getImage(imgKey),
+                    horseType: resolvedHorseType,
                     action: u.isDead ? 'death' : 'standby',
                     currentAnimAction: u.isDead ? 'death' : 'standby',
                     frame: u.isDead ? 100 : 0 // Ensure it's at the end of death anim
@@ -7738,7 +7887,7 @@ export class TacticsScene extends BaseScene {
                 } else if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, hx, hy, { 
                         flip: u.flip, 
                         sinkOffset,
-                        isProp: u.name === 'Boulder'
+                        isProp: u.name === 'Boulder' || u.isProp
                     })) {
                     hoveredUnit = u;
                     hoveredUnitCell = this.tacticsMap.getCell(u.r, u.q);
@@ -8382,7 +8531,7 @@ export class TacticsScene extends BaseScene {
                 
                 let drawOptions = { 
                     flip: u.flip,
-                    isProp: u.name === 'Boulder'
+                    isProp: u.name === 'Boulder' || u.isProp
                 };
 
                 // Raise living units if they are standing on a corpse
@@ -9407,7 +9556,7 @@ export class TacticsScene extends BaseScene {
         this.drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp);
         ctx.restore();
 
-        if (!u.img) return;
+        if (!u.img || u.isProp) return;
         const driftX = drawOptions?.hexOffsetX || 0;
         const driftY = drawOptions?.hexOffsetY || 0;
         const sinkOffset = drawOptions?.sinkOffset || 0;
@@ -10105,7 +10254,7 @@ export class TacticsScene extends BaseScene {
                 u.frame,
                 u.visualX + u.visualOffsetX + hexOffsetX,
                 surfaceY + u.visualOffsetY + hexOffsetY,
-                drawOptions
+                { ...drawOptions, isProp: !!u.isProp }
             );
         }
         if (u.caged) {
@@ -12784,7 +12933,7 @@ export class TacticsScene extends BaseScene {
             if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, x, y, { 
                 flip: u.flip, 
                 sinkOffset,
-                isProp: u.name === 'Boulder'
+                isProp: u.name === 'Boulder' || u.isProp
             })) {
                 spriteUnit = u;
                 spriteHitCell = this.tacticsMap.getCell(u.r, u.q);
@@ -12841,6 +12990,7 @@ export class TacticsScene extends BaseScene {
                         this.pushHistory(); // Capture state AFTER attack
                     }
                     this.isProcessingTurn = false; // Unlock turn
+                    this.maybeShowZhuoTrainingEndTurnPrompt();
                 }, secondaryTarget ? { secondaryTarget } : {});
                 return;
             }

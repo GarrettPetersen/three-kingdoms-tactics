@@ -1795,6 +1795,49 @@ export const NARRATIVE_SCRIPTS = {
         },
         {
             type: 'dialogue',
+            portraitKey: 'zhang-fei',
+            position: 'top',
+            name: 'Zhang Fei',
+            voiceId: 'rec_zf_train_prompt_01',
+            text: {
+                en: "Should we pause to do some training?",
+                zh: "要不要先停下来操练一番？"
+            }
+        },
+        {
+            type: 'choice',
+            portraitKey: 'zhang-fei',
+            name: 'Zhang Fei',
+            options: [
+                {
+                    buttonText: { en: "Yes.", zh: "操练。" },
+                    speaker: 'zhangfei',
+                    voiceId: 'rec_zf_train_yes_01',
+                    text: {
+                        en: "Good. Better to strike wood now than miss rebels later.",
+                        zh: "好。现在砍木桩，总好过上阵时砍空。"
+                    },
+                    result: [
+                        { type: 'command', action: 'startBattle', battleId: 'zhuo_training' }
+                    ]
+                },
+                {
+                    buttonText: { en: "No.", zh: "不必。" },
+                    speaker: 'liubei',
+                    voiceId: 'rec_lb_train_no_01',
+                    text: {
+                        en: "No. We know enough to begin, and the county cannot wait.",
+                        zh: "不必。我们足以出发，县中也等不得。"
+                    },
+                    result: [
+                        { type: 'command', action: 'jump', label: 'post_recruit_training' }
+                    ]
+                }
+            ]
+        },
+        { type: 'label', name: 'post_recruit_training' },
+        {
+            type: 'dialogue',
             portraitKey: 'liu-bei',
             position: 'top',
             name: 'Liu Bei',
@@ -1806,6 +1849,38 @@ export const NARRATIVE_SCRIPTS = {
         },
         { type: 'command', action: 'fade', target: 1, speed: 0.0005 },
         { 
+            type: 'title',
+            text: {
+                en: "CHAPTER ONE: THE VOLUNTEER ARMY",
+                zh: "第一章：志愿军"
+            },
+            subtext: {
+                en: "The Journey Begins",
+                zh: "征程开始"
+            },
+            duration: 3000
+        }
+    ],
+    'noticeboard_after_training': [
+        { bg: 'noticeboard', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 100, y: 210 },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 60, y: 210 },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 140, y: 210 },
+        { type: 'command', action: 'addActor', id: 'volunteer1', imgKey: 'soldier', x: 50, y: 220 },
+        { type: 'command', action: 'addActor', id: 'volunteer2', imgKey: 'soldier', x: 200, y: 215, flip: true },
+        {
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            position: 'top',
+            name: 'Liu Bei',
+            voiceId: 'rec_lb_02',
+            text: {
+                en: "Let us march! Our first destination: the headquarters of the local Magistrate.",
+                zh: "让我们出发！我们的第一个目的地：当地县令的总部。"
+            }
+        },
+        { type: 'command', action: 'fade', target: 1, speed: 0.0005 },
+        {
             type: 'title',
             text: {
                 en: "CHAPTER ONE: THE VOLUNTEER ARMY",

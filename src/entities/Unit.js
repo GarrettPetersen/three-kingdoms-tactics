@@ -15,7 +15,7 @@ export class Unit {
         // Stats
         this.hp = (config.hp !== undefined) ? config.hp : 10;
         this.maxHp = (config.maxHp !== undefined) ? config.maxHp : (config.hp || 10);
-        this.moveRange = config.moveRange || 3;
+        this.moveRange = (config.moveRange !== undefined) ? config.moveRange : 3;
         // Preserve the unmodified base for effects like mounts
         this.baseMoveRange = (config.baseMoveRange !== undefined) ? config.baseMoveRange : this.moveRange;
 
@@ -65,10 +65,15 @@ export class Unit {
         this.immortalPendingCause = config.immortalPendingCause || null; // 'damage' | 'drown'
         this.stepTimer = 0;
         this.level = config.level || 1;
+        this.allyPartyOwnerId = config.allyPartyOwnerId || null;
+        this.traits = config.traits ? { ...config.traits } : {};
         this.shieldResistBase = Number.isFinite(config.shieldResistBase) ? config.shieldResistBase : 0;
         this.shieldResistPerLevel = Number.isFinite(config.shieldResistPerLevel) ? config.shieldResistPerLevel : 0;
         this.caged = config.caged || false;  // For cage overlay rendering
         this.isPreDead = config.isPreDead || false; // Started the mission dead (don't count for casualties)
+        this.isProp = !!config.isProp;
+        this.breaksToImgKey = config.breaksToImgKey || null;
+        this.keepBrokenOnDefeat = !!config.keepBrokenOnDefeat;
     }
 
     playDeathSoundOnce() {
@@ -139,6 +144,16 @@ export class Unit {
         }
 
         // Ensure hp=0 units stay in death animation
+        if (this.hp <= 0 && this.keepBrokenOnDefeat) {
+            this.action = 'standby';
+            this.currentAnimAction = 'standby';
+            this.frame = 0;
+            const pos = getPixelPos(this.r, this.q);
+            this.visualX = pos.x;
+            this.visualY = pos.y;
+            this.currentSortR = this.r;
+            return;
+        }
         if (this.hp <= 0 && this.action !== 'death') {
             this.action = 'death';
             this.frame = 0;

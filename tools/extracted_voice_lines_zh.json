@@ -1608,6 +1608,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "rec_lb_train_no_01",
+    "char": "liubei",
+    "text": "不必。我们足以出发，县中也等不得。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "rec_vol_01",
     "char": "soldierv2",
     "text": "我们听说了你们的结义！我们只是普通人，但我们会跟随你们至死！",
@@ -1617,6 +1623,18 @@
     "id": "rec_zf_01",
     "char": "zhangfei",
     "text": "涿县百姓！黄巾军来了！你们中有谁有勇气为家园而战？",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "rec_zf_train_prompt_01",
+    "char": "zhangfei",
+    "text": "要不要先停下来操练一番？",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "rec_zf_train_yes_01",
+    "char": "zhangfei",
+    "text": "好。现在砍木桩，总好过上阵时砍空。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1636,6 +1654,114 @@
     "char": "zhangfei",
     "text": "呸！那些混蛋只是侥幸得手！下次，他们就没这么幸运了！",
     "source": "RecoveryScene.js"
+  },
+  {
+    "id": "train_gy_01",
+    "char": "guanyu",
+    "text": "红色代表敌人，蓝色代表友军，绿色代表由你指挥的英雄。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_gy_02",
+    "char": "guanyu",
+    "text": "三兄弟各有不同的攻击路数。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_gy_03",
+    "char": "guanyu",
+    "text": "我的青龙偃月刀可在一到两格外横扫成弧。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_gy_watch_01",
+    "char": "guanyu",
+    "text": "实战中，要留心其他单位瞄准的格子。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "train_lb_01",
+    "char": "liubei",
+    "text": "临战之前，先看清战场如何运转。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_lb_02",
+    "char": "liubei",
+    "text": "敌人与友军会先行动，并标出他们准备攻击的位置。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_lb_03",
+    "char": "liubei",
+    "text": "只有你结束回合之后，那些攻击才会真正落下。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_lb_04",
+    "char": "liubei",
+    "text": "英雄可以先移动再攻击，也可以不移动直接出手。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_lb_05",
+    "char": "liubei",
+    "text": "点击一名英雄，再点击黄色高亮格，就能移动到那里。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_lb_06",
+    "char": "liubei",
+    "text": "选择攻击后，点击红色高亮格即可出招。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_lb_07",
+    "char": "liubei",
+    "text": "我的双股剑可向前后两方出击，并将目标击退。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_lb_end_turn_01",
+    "char": "liubei",
+    "text": "好。三位英雄都已经出手。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "train_lb_end_turn_02",
+    "char": "liubei",
+    "text": "现在点击结束回合。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "train_zf_01",
+    "char": "zhangfei",
+    "text": "若是手滑，就用右下角的按钮。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_zf_02",
+    "char": "zhangfei",
+    "text": "一个可以撤销上一步，一个可以重置整个回合。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_zf_03",
+    "char": "zhangfei",
+    "text": "我的丈八蛇矛可直刺一格或两格。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_zf_04",
+    "char": "zhangfei",
+    "text": "它能伤到直线上的两个位置，并击退较远的目标。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "train_zf_finish_01",
+    "char": "zhangfei",
+    "text": "现在放手去，把剩下的木桩都打碎！",
+    "source": "TacticsScene.js"
   },
   {
     "id": "yc_af_hfs_01",

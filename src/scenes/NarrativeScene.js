@@ -650,6 +650,12 @@ export class NarrativeScene extends BaseScene {
                 humanPlayer: cmd.humanPlayer || 'white',
                 firstPlayer: cmd.firstPlayer || 'white'
             });
+        } else if (cmd.action === 'startBattle') {
+            this.saveNarrativeState();
+            this.manager.switchTo('tactics', {
+                battleId: cmd.battleId,
+                ...(cmd.params || {})
+            });
         } else if (cmd.action === 'resumeSavedNarrative') {
             const resumeState = this.manager.gameState.getCampaignVar('narrativeResumeAfterLiubo');
             if (resumeState) {
@@ -2174,6 +2180,7 @@ export class NarrativeScene extends BaseScene {
             'caocao_dunqiu_intro': 'map',
             'caocao_ch1_end_card': 'campaign_selection',
             'noticeboard': 'narrative', // Goes to inn scene next
+            'noticeboard_after_training': 'narrative',
             'inn': 'map',
             'qingzhou_victory': 'narrative', // Goes to qingzhou_gate_return next (but this is called from battle, so handled differently)
             'qingzhou_gate_return': 'map',
@@ -2204,6 +2211,7 @@ export class NarrativeScene extends BaseScene {
             'caocao_dunqiu_intro': { campaignId: 'caocao', partyX: 168, partyY: 98 },
             'caocao_ch1_end_card': {},
             'noticeboard': { scriptId: 'inn' }, // Chain to inn scene
+            'noticeboard_after_training': { scriptId: 'inn' },
             'inn': {}, // After inn, goes to map (milestone added in onComplete)
             'qingzhou_victory': { scriptId: 'qingzhou_gate_return' }, // Chain to gate return
             'qingzhou_gate_return': {}, // After gate return, goes to map

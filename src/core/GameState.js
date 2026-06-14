@@ -3,6 +3,39 @@ import { CHAPTERS } from '../data/Chapters.js';
 
 const SAVE_VERSION = 4;
 const SCENE_STATE_KEYS = ['map', 'tactics', 'narrative', 'levelup', 'liubo'];
+const FORCE_IDS = {
+    LIU_BEI: 'liuBei',
+    CAO_CAO: 'caoCao'
+};
+const SHARED_FORCE_ROUTES = {
+    liubei: FORCE_IDS.LIU_BEI,
+    chapter2_oath: FORCE_IDS.LIU_BEI,
+    caocao: FORCE_IDS.CAO_CAO
+};
+const SHARED_FORCE_ROUTE_ORDER = {
+    [FORCE_IDS.LIU_BEI]: ['liubei', 'chapter2_oath'],
+    [FORCE_IDS.CAO_CAO]: ['caocao']
+};
+const SHARED_FORCE_KEYS = new Set(['unitXP', 'unitClasses', 'unitLevelsSeen', 'allyParties', 'unitTraits']);
+const DEFAULT_ALLY_PARTIES_BY_FORCE = {
+    [FORCE_IDS.LIU_BEI]: {
+        liubei: ['ally1'],
+        guanyu: ['ally2'],
+        zhangfei: ['ally3']
+    },
+    [FORCE_IDS.CAO_CAO]: {
+        caocao: ['rider1', 'rider2', 'rider3']
+    }
+};
+const DEFAULT_UNIT_TRAITS_BY_FORCE = {
+    [FORCE_IDS.LIU_BEI]: {},
+    [FORCE_IDS.CAO_CAO]: {
+        rider2: {
+            hasWhiteHorse: true,
+            horseType: 'white'
+        }
+    }
+};
 
 function createSceneStates() {
     return Object.fromEntries(SCENE_STATE_KEYS.map(key => [key, null]));
@@ -10,6 +43,11 @@ function createSceneStates() {
 
 function uniqueList(values = []) {
     return [...new Set(values.filter(Boolean))];
+}
+
+function clonePlain(value) {
+    if (value === undefined) return undefined;
+    return JSON.parse(JSON.stringify(value));
 }
 
 export class GameState {
@@ -27,7 +65,8 @@ export class GameState {
                 unlockedYears: ['184'],
                 flags: {},
                 choices: {},
-                completedRoutes: {}
+                completedRoutes: {},
+                forceState: {}
             },
             session: {
                 lastScene: 'title',
@@ -92,6 +131,92 @@ export class GameState {
         run.inventory = { ...(run.inventory || {}) };
     }
 
+    repairWorldShape() {
+        const defaults = this.getDefaults().world;
+        this.data.world = {
+            ...defaults,
+            ...(this.data.world || {}),
+            flags: { ...(this.data.world?.flags || {}) },
+            choices: { ...(this.data.world?.choices || {}) },
+            completedRoutes: { ...(this.data.world?.completedRoutes || {}) },
+            forceState: { ...(this.data.world?.forceState || {}) },
+            unlockedYears: this.data.world?.unlockedYears || defaults.unlockedYears
+        };
+    }
+
+    getSharedForceId(routeId = null) {
+        const resolvedRouteId = routeId || this.getCurrentCampaign();
+        return SHARED_FORCE_ROUTES[resolvedRouteId] || null;
+    }
+
+    getSharedForceRouteOrder(forceId, preferredRouteId = null) {
+        const order = [];
+        const add = (routeId) => {
+            if (routeId && !order.includes(routeId)) order.push(routeId);
+        };
+        (SHARED_FORCE_ROUTE_ORDER[forceId] || []).forEach(add);
+        add(preferredRouteId);
+        return order;
+    }
+
+    mergeLegacyForceVar(key, forceId, preferredRouteId = null) {
+        const merged = {};
+        this.getSharedForceRouteOrder(forceId, preferredRouteId).forEach(routeId => {
+            const legacy = this.data.runs?.[routeId]?.state?.[key];
+            if (legacy && typeof legacy === 'object' && !Array.isArray(legacy)) {
+                Object.assign(merged, legacy);
+            }
+        });
+        return merged;
+    }
+
+    getSharedForceState(forceId = FORCE_IDS.LIU_BEI, preferredRouteId = null) {
+        this.repairWorldShape();
+        if (!this.data.world.forceState[forceId]) {
+            this.data.world.forceState[forceId] = {};
+        }
+        const force = this.data.world.forceState[forceId];
+        force.unitXP = {
+            ...this.mergeLegacyForceVar('unitXP', forceId, preferredRouteId),
+            ...(force.unitXP || {})
+        };
+        force.unitClasses = {
+            ...this.mergeLegacyForceVar('unitClasses', forceId, preferredRouteId),
+            ...(force.unitClasses || {})
+        };
+        force.unitLevelsSeen = {
+            ...this.mergeLegacyForceVar('unitLevelsSeen', forceId, preferredRouteId),
+            ...(force.unitLevelsSeen || {})
+        };
+        force.allyParties = {
+            ...clonePlain(DEFAULT_ALLY_PARTIES_BY_FORCE[forceId] || {}),
+            ...(force.allyParties || {})
+        };
+        force.unitTraits = {
+            ...clonePlain(DEFAULT_UNIT_TRAITS_BY_FORCE[forceId] || {}),
+            ...this.mergeLegacyForceVar('unitTraits', forceId, preferredRouteId),
+            ...(force.unitTraits || {})
+        };
+        return force;
+    }
+
+    getAllyParties(campaignId = null) {
+        const forceId = this.getSharedForceId(campaignId);
+        if (!forceId) return {};
+        return this.getSharedForceState(forceId, campaignId).allyParties;
+    }
+
+    getAllyPartyOwner(unitId, campaignId = null) {
+        const parties = this.getAllyParties(campaignId);
+        return Object.keys(parties).find(ownerId => (parties[ownerId] || []).includes(unitId)) || null;
+    }
+
+    getUnitTraits(unitId, campaignId = null) {
+        const forceId = this.getSharedForceId(campaignId);
+        if (!forceId || !unitId) return {};
+        return { ...(this.getSharedForceState(forceId, campaignId).unitTraits?.[unitId] || {}) };
+    }
+
     save() {
         localStorage.setItem(this.saveKey, JSON.stringify(this.data));
     }
@@ -121,6 +246,7 @@ export class GameState {
                     flags: { ...(parsed.world?.flags || {}) },
                     choices: { ...(parsed.world?.choices || {}) },
                     completedRoutes: { ...(parsed.world?.completedRoutes || {}) },
+                    forceState: { ...(parsed.world?.forceState || {}) },
                     unlockedYears: parsed.world?.unlockedYears || defaults.world.unlockedYears
                 },
                 session: {
@@ -136,6 +262,7 @@ export class GameState {
             for (const [routeId, run] of Object.entries(this.data.runs)) {
                 this.repairRunShape(run, routeId);
             }
+            this.repairWorldShape();
             this.save();
             return true;
         } catch (e) {
@@ -177,6 +304,14 @@ export class GameState {
     }
 
     setCampaignVar(key, value, campaignId = null) {
+        const resolvedRouteId = campaignId || this.getCurrentCampaign();
+        const forceId = SHARED_FORCE_KEYS.has(key) ? this.getSharedForceId(resolvedRouteId) : null;
+        if (forceId) {
+            const force = this.getSharedForceState(forceId, resolvedRouteId);
+            force[key] = (value && typeof value === 'object') ? clonePlain(value) : value;
+            this.save();
+            return;
+        }
         const run = this.getRunState(campaignId);
         if (!run) return;
         if (key === 'partyX' || key === 'partyY') {
@@ -188,6 +323,12 @@ export class GameState {
     }
 
     getCampaignVar(key, campaignId = null) {
+        const resolvedRouteId = campaignId || this.getCurrentCampaign();
+        const forceId = SHARED_FORCE_KEYS.has(key) ? this.getSharedForceId(resolvedRouteId) : null;
+        if (forceId) {
+            const force = this.getSharedForceState(forceId, resolvedRouteId);
+            return force[key];
+        }
         const run = this.getRunState(campaignId, { create: false });
         if (key === 'partyX' || key === 'partyY') return run?.party?.[key];
         return run?.state?.[key];
