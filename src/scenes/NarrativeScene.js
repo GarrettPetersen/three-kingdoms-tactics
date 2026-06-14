@@ -1540,11 +1540,12 @@ export class NarrativeScene extends BaseScene {
         const options = step.options || [];
         const currentLang = getCurrentLanguage();
         const isTouchLayout = !!this.manager?.config?.hasCoarsePointer;
-        const padding = 10;
+        const padding = isTouchLayout ? 12 : 10;
         const lineSpacing = currentLang === 'zh' ? 14 : 12;
-        const optionInnerPadY = isTouchLayout ? 7 : 2;
-        const optionSpacing = isTouchLayout ? 8 : 6;
-        const panelWidth = Math.max(220, Math.min(400, Math.floor(canvas.width * (isTouchLayout ? 0.9 : 0.84))));
+        const optionInnerPadY = isTouchLayout ? 10 : 2;
+        const optionSpacing = isTouchLayout ? 10 : 6;
+        const minOptionHeight = isTouchLayout ? 42 : 0;
+        const panelWidth = Math.max(220, Math.min(420, Math.floor(canvas.width * (isTouchLayout ? 0.94 : 0.84))));
         
         // Pre-calculate wrapped lines and total height
         const wrappedOptions = options.map(opt => {
@@ -1561,10 +1562,16 @@ export class NarrativeScene extends BaseScene {
             return lines;
         });
 
+        const optionHeights = wrappedOptions.map(lines => Math.max(
+            minOptionHeight,
+            lines.length * lineSpacing + optionInnerPadY * 2
+        ));
+
         let totalContentHeight = 0;
-        wrappedOptions.forEach(lines => {
-            totalContentHeight += lines.length * lineSpacing + optionSpacing;
+        optionHeights.forEach(optionHeight => {
+            totalContentHeight += optionHeight + optionSpacing;
         });
+        if (optionHeights.length > 0) totalContentHeight -= optionSpacing;
         
         const panelHeight = Math.min(totalContentHeight + padding * 2, canvas.height - 24);
         const px = Math.floor((canvas.width - panelWidth) / 2);
@@ -1580,7 +1587,9 @@ export class NarrativeScene extends BaseScene {
         let currentY = py + padding;
         wrappedOptions.forEach((lines, i) => {
             const optionTopY = currentY;
-            const optionHeight = lines.length * lineSpacing + optionInnerPadY * 2;
+            const optionHeight = optionHeights[i];
+            const textBlockHeight = lines.length * lineSpacing;
+            const textY = Math.round(optionTopY + (optionHeight - textBlockHeight) / 2);
             
             // Check if mouse is over this option
             const isMouseOver = this.lastMouseX >= px && this.lastMouseX <= px + panelWidth &&
@@ -1600,7 +1609,7 @@ export class NarrativeScene extends BaseScene {
             }
 
             lines.forEach((line, lineIdx) => {
-                this.drawPixelText(ctx, line, px + 10, optionTopY + optionInnerPadY + lineIdx * lineSpacing, { 
+                this.drawPixelText(ctx, line, px + 10, textY + lineIdx * lineSpacing, {
                     color: isHovered ? '#fff' : '#ccc', 
                     font: '8px Dogica' 
                 });
@@ -1610,7 +1619,7 @@ export class NarrativeScene extends BaseScene {
         });
 
         // Store panel metadata for input handling
-        step._panelMetadata = { px, py, panelWidth, panelHeight, wrappedOptions, padding, lineSpacing, optionSpacing, optionInnerPadY };
+        step._panelMetadata = { px, py, panelWidth, panelHeight, wrappedOptions, optionHeights, padding, lineSpacing, optionSpacing, optionInnerPadY };
     }
 
     renderTitleCard(step) {
@@ -1822,7 +1831,7 @@ export class NarrativeScene extends BaseScene {
                 
                 step.options.forEach((opt, i) => {
                     const lines = m.wrappedOptions[i];
-                    const optionHeight = lines.length * m.lineSpacing + (m.optionInnerPadY || 0) * 2;
+                    const optionHeight = m.optionHeights?.[i] ?? (lines.length * m.lineSpacing + (m.optionInnerPadY || 0) * 2);
                     
                     if (x >= m.px && x <= m.px + m.panelWidth && 
                         y >= currentY && y <= currentY + optionHeight) {

@@ -17,6 +17,7 @@ import { LiuboScene } from './scenes/LiuboScene.js';
 
 const canvas = document.getElementById('game-canvas');
 const gameContainer = document.getElementById('game-container');
+const webFullscreenToggle = document.getElementById('web-fullscreen-toggle');
 const ctx = canvas.getContext('2d');
 
 function hideBootLoader() {
@@ -133,6 +134,25 @@ async function lockLandscapeIfPossible() {
     }
 }
 
+function unlockOrientationIfPossible() {
+    try {
+        if (screen.orientation?.unlock) screen.orientation.unlock();
+    } catch (err) {
+        // Some browsers expose lock without unlock, or throw when not locked.
+    }
+}
+
+async function refreshFullscreenDisplayState() {
+    const isGameFullscreen = document.fullscreenElement === gameContainer;
+    if (!isGameFullscreen) {
+        unlockOrientationIfPossible();
+        if (config.scaleMode === 'fit') config.scaleMode = 'pixel';
+    } else if (!document.hidden) {
+        await lockLandscapeIfPossible();
+    }
+    setupCanvas();
+}
+
 async function toggleFullscreenFit() {
     if (!document.fullscreenElement) {
         config.scaleMode = 'fit';
@@ -156,6 +176,41 @@ async function toggleFullscreenFit() {
 function setScaleMode(mode) {
     config.scaleMode = mode === 'fit' ? 'fit' : 'pixel';
     setupCanvas();
+}
+
+function isWebFullscreenToggleAvailable() {
+    const ua = navigator.userAgent || '';
+    const isElectronShell = /\bElectron\b/i.test(ua);
+    return !!webFullscreenToggle && !!document.fullscreenEnabled && !isElectronShell;
+}
+
+function updateWebFullscreenToggle() {
+    if (!webFullscreenToggle) return;
+    const shouldShow = isWebFullscreenToggleAvailable();
+    webFullscreenToggle.hidden = !shouldShow;
+    if (!shouldShow) return;
+
+    const isActive = document.fullscreenElement === gameContainer;
+    webFullscreenToggle.classList.toggle('web-fullscreen-toggle--active', isActive);
+    const label = isActive ? 'Exit fullscreen' : 'Enter fullscreen';
+    webFullscreenToggle.setAttribute('aria-label', label);
+    webFullscreenToggle.title = label;
+}
+
+function setupWebFullscreenToggle() {
+    if (!webFullscreenToggle) return;
+    updateWebFullscreenToggle();
+    webFullscreenToggle.addEventListener('click', async () => {
+        webFullscreenToggle.disabled = true;
+        try {
+            await toggleFullscreenFit();
+        } catch (err) {
+            console.warn('Fullscreen toggle failed:', err);
+        } finally {
+            webFullscreenToggle.disabled = false;
+            updateWebFullscreenToggle();
+        }
+    });
 }
 
 /**
@@ -278,8 +333,19 @@ async function takeScreenshots(ctx, canvas, config, sceneManager) {
 
 async function init() {
     setupCanvas();
+    setupWebFullscreenToggle();
     window.addEventListener('resize', setupCanvas);
-    document.addEventListener('fullscreenchange', setupCanvas);
+    document.addEventListener('fullscreenchange', () => {
+        refreshFullscreenDisplayState();
+        updateWebFullscreenToggle();
+    });
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) unlockOrientationIfPossible();
+        else refreshFullscreenDisplayState();
+        updateWebFullscreenToggle();
+    });
+    window.addEventListener('pagehide', unlockOrientationIfPossible);
+    window.addEventListener('blur', unlockOrientationIfPossible);
     screen.orientation?.addEventListener?.('change', setupCanvas);
 
     const sceneManager = new SceneManager(ctx, canvas, config);

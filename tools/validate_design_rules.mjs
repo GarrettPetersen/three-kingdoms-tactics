@@ -209,8 +209,16 @@ function checkCanvasTextRendering() {
     const drawPixelTextMatch = baseScene.match(/drawPixelText\(ctx, text, x, y, options = \{\}\) \{[\s\S]*?\n    \}/);
     assertRule(!!drawPixelTextMatch, 'BaseScene.drawPixelText must exist as the canonical canvas text path.');
     const drawPixelTextSource = drawPixelTextMatch?.[0] || '';
-    assertRule(drawPixelTextSource.includes('Math.round(x)') && drawPixelTextSource.includes('Math.round(y)'),
-        'BaseScene.drawPixelText must round text coordinates to canvas pixels.');
+    assertRule(drawPixelTextSource.includes('ctx.measureText(text)'),
+        'BaseScene.drawPixelText must measure text before drawing so aligned text can be snapped.');
+    assertRule(drawPixelTextSource.includes("align === 'center'") && drawPixelTextSource.includes('width / 2'),
+        'BaseScene.drawPixelText must snap centered text from its actual glyph origin, not only its anchor.');
+    assertRule(drawPixelTextSource.includes("align === 'right'") && drawPixelTextSource.includes("align === 'end'"),
+        'BaseScene.drawPixelText must snap right-aligned text from its actual glyph origin.');
+    assertRule(drawPixelTextSource.includes("ctx.textAlign = 'left'"),
+        'BaseScene.drawPixelText must draw from a snapped left origin after resolving alignment.');
+    assertRule(drawPixelTextSource.includes('Math.round(x') && drawPixelTextSource.includes('Math.round(y)'),
+        'BaseScene.drawPixelText must round text draw coordinates to canvas pixels.');
     assertRule(drawPixelTextSource.includes("ctx.textBaseline = 'top'"),
         'BaseScene.drawPixelText must use top baseline for predictable pixel alignment.');
     assertRule(drawPixelTextSource.includes('getFontForLanguage(font)'),

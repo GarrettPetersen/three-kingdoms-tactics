@@ -1218,9 +1218,17 @@ export class BaseScene {
         ctx.save();
         // Use language-appropriate font
         ctx.font = getFontForLanguage(font);
-        const drawX = Math.round(x);
+        const metrics = ctx.measureText(text);
+        const width = Number.isFinite(metrics.width) ? metrics.width : 0;
+        const anchorX = Math.round(x);
         const drawY = Math.round(y);
-        ctx.textAlign = align;
+        let drawX = anchorX;
+        if (align === 'center') {
+            drawX = Math.round(x - width / 2);
+        } else if (align === 'right' || align === 'end') {
+            drawX = Math.round(x - width);
+        }
+        ctx.textAlign = 'left';
         ctx.textBaseline = 'top'; 
         
         if (outline) {
@@ -1231,8 +1239,17 @@ export class BaseScene {
         
         ctx.fillStyle = color;
         ctx.fillText(text, drawX, drawY);
-        const metrics = ctx.measureText(text);
         ctx.restore();
-        return metrics;
+        return {
+            width,
+            actualBoundingBoxLeft: metrics.actualBoundingBoxLeft || 0,
+            actualBoundingBoxRight: metrics.actualBoundingBoxRight || width,
+            actualBoundingBoxAscent: metrics.actualBoundingBoxAscent || 0,
+            actualBoundingBoxDescent: metrics.actualBoundingBoxDescent || 0,
+            drawX,
+            drawY,
+            anchorX,
+            anchorY: drawY
+        };
     }
 }

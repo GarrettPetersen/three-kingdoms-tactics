@@ -9281,14 +9281,22 @@ export class TacticsScene extends BaseScene {
         const { ctx, canvas } = this.manager;
         const choiceState = this.getActiveChoiceState();
         const isNarrativeChoice = !!(choiceState && choiceState.kind === 'narrative');
+        const isTouchLayout = !!this.manager?.config?.hasCoarsePointer;
         
+        const optionWidth = isTouchLayout ? Math.min(300, canvas.width - 32) : 100;
+        const optionHeight = isTouchLayout ? 42 : 36;
+        const spacing = isTouchLayout ? 8 : 16;
+        const promptY = isTouchLayout ? canvas.height - 56 - (optionHeight + spacing) * Math.max(0, (choiceState?.options?.length || 2) - 1) : canvas.height - 98;
+        const optionY = isTouchLayout ? promptY + 26 : canvas.height - 56;
+        const overlayH = isTouchLayout
+            ? Math.min(canvas.height, canvas.height - Math.max(0, promptY - 18))
+            : 120;
+
         // Semi-transparent overlay - tall enough for prompt + choice boxes (extra space for Chinese)
-        const overlayH = 120;
         ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
         ctx.fillRect(0, canvas.height - overlayH, canvas.width, overlayH);
         
         // Choice prompt (moved up so it doesn't overlap option boxes in Chinese)
-        const promptY = canvas.height - overlayH + 22;
         const promptText = isNarrativeChoice
             ? getLocalizedText({ en: 'Choose your reply', zh: '请选择回复' })
             : getLocalizedText({ en: "What will you do?", zh: "你要怎么做？" });
@@ -9310,34 +9318,33 @@ export class TacticsScene extends BaseScene {
                         ? (buttonText || fullText || getLocalizedText({ en: `Choice ${i + 1}`, zh: `选项 ${i + 1}` }))
                         : (fullText || buttonText || getLocalizedText({ en: `Choice ${i + 1}`, zh: `选项 ${i + 1}` })));
                 return {
-                    lines: this.wrapText(ctx, displayText, 94, '8px Silkscreen').slice(0, 2),
+                    lines: this.wrapText(ctx, displayText, optionWidth - 12, '8px Silkscreen').slice(0, isTouchLayout ? 3 : 2),
                     color: '#ffd700',
                     hoverColor: '#ffffff'
                 };
             })
             : ((choiceState && choiceState.options) ? choiceState.options : []);
         
-        const optionWidth = 100;
-        const optionHeight = 36;
-        const spacing = 16;
-        const startX = canvas.width / 2 - (options.length * optionWidth + (options.length - 1) * spacing) / 2;
-        const optionY = canvas.height - 56;
+        const startX = isTouchLayout
+            ? Math.floor((canvas.width - optionWidth) / 2)
+            : canvas.width / 2 - (options.length * optionWidth + (options.length - 1) * spacing) / 2;
         
         this.choiceRects = [];
         
         options.forEach((opt, i) => {
-            const ox = startX + i * (optionWidth + spacing);
+            const ox = isTouchLayout ? startX : startX + i * (optionWidth + spacing);
+            const oy = isTouchLayout ? optionY + i * (optionHeight + spacing) : optionY;
             const isHovered = this.choiceHovered === i;
             
             // Store rect for hit detection
-            this.choiceRects.push({ x: ox, y: optionY, w: optionWidth, h: optionHeight, index: i });
+            this.choiceRects.push({ x: ox, y: oy, w: optionWidth, h: optionHeight, index: i });
             
             // Draw option box
             ctx.fillStyle = isHovered ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.7)';
-            ctx.fillRect(ox, optionY, optionWidth, optionHeight);
+            ctx.fillRect(ox, oy, optionWidth, optionHeight);
             ctx.strokeStyle = isHovered ? opt.hoverColor : opt.color;
             ctx.lineWidth = 1;
-            ctx.strokeRect(ox + 0.5, optionY + 0.5, optionWidth - 1, optionHeight - 1);
+            ctx.strokeRect(ox + 0.5, oy + 0.5, optionWidth - 1, optionHeight - 1);
             
             // Draw text - two lines (resolve localized lines if opt.lines is { en: [...], zh: [...] })
             const lineHeight = 10;
@@ -9345,8 +9352,9 @@ export class TacticsScene extends BaseScene {
             const lines = (opt.lines && typeof opt.lines === 'object' && !Array.isArray(opt.lines))
                 ? (opt.lines[LANGUAGE.current] || opt.lines['en'] || [])
                 : (Array.isArray(opt.lines) ? opt.lines : []);
+            const textY = Math.round(oy + (optionHeight - lines.length * lineHeight) / 2);
             lines.forEach((line, lineIdx) => {
-                this.drawPixelText(ctx, line, ox + optionWidth / 2, optionY + 8 + lineIdx * lineHeight, {
+                this.drawPixelText(ctx, line, ox + optionWidth / 2, textY + lineIdx * lineHeight, {
                     color: textColor,
                     align: 'center',
                     font: '8px Silkscreen'

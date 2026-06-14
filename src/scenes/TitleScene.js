@@ -350,8 +350,9 @@ export class TitleScene extends BaseScene {
                 align: 'center' 
             });
             ctx.restore();
+            const rectX = metrics?.drawX ?? (cx - metrics.width / 2);
             this[entry.rectKey] = {
-                x: Math.floor(cx - metrics.width / 2 - 10),
+                x: Math.floor(rectX - 10),
                 y: y - 10,
                 w: Math.floor(metrics.width + 20),
                 h: 20

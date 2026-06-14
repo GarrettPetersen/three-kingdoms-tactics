@@ -137,6 +137,66 @@ canvas {
     touch-action: none;
 }
 
+.web-fullscreen-toggle {
+    position: fixed;
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    z-index: 4;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.68);
+    color: #fff;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 2px 0 #000, 0 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+.web-fullscreen-toggle[hidden] {
+    display: none;
+}
+
+.web-fullscreen-toggle:hover,
+.web-fullscreen-toggle:focus-visible {
+    background: rgba(30, 30, 30, 0.88);
+    border-color: #fff;
+    outline: none;
+}
+
+.web-fullscreen-toggle:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 0 #000, 0 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+.web-fullscreen-toggle__icon {
+    position: absolute;
+    inset: 10px;
+    display: block;
+    background:
+        linear-gradient(currentColor, currentColor) left top / 9px 2px no-repeat,
+        linear-gradient(currentColor, currentColor) left top / 2px 9px no-repeat,
+        linear-gradient(currentColor, currentColor) right top / 9px 2px no-repeat,
+        linear-gradient(currentColor, currentColor) right top / 2px 9px no-repeat,
+        linear-gradient(currentColor, currentColor) left bottom / 9px 2px no-repeat,
+        linear-gradient(currentColor, currentColor) left bottom / 2px 9px no-repeat,
+        linear-gradient(currentColor, currentColor) right bottom / 9px 2px no-repeat,
+        linear-gradient(currentColor, currentColor) right bottom / 2px 9px no-repeat;
+}
+
+.web-fullscreen-toggle--active .web-fullscreen-toggle__icon {
+    background:
+        linear-gradient(currentColor, currentColor) 3px 3px / 7px 2px no-repeat,
+        linear-gradient(currentColor, currentColor) 3px 3px / 2px 7px no-repeat,
+        linear-gradient(currentColor, currentColor) calc(100% - 10px) 3px / 7px 2px no-repeat,
+        linear-gradient(currentColor, currentColor) calc(100% - 5px) 3px / 2px 7px no-repeat,
+        linear-gradient(currentColor, currentColor) 3px calc(100% - 5px) / 7px 2px no-repeat,
+        linear-gradient(currentColor, currentColor) 3px calc(100% - 10px) / 2px 7px no-repeat,
+        linear-gradient(currentColor, currentColor) calc(100% - 10px) calc(100% - 5px) / 7px 2px no-repeat,
+        linear-gradient(currentColor, currentColor) calc(100% - 5px) calc(100% - 10px) / 2px 7px no-repeat;
+}
+
 @keyframes boot-spinner {
     0%, 24% {
         background: #fff;
