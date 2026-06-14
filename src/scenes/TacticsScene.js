@@ -8814,6 +8814,8 @@ export class TacticsScene extends BaseScene {
         this._terrainOverlayHexOutlines = [];
         this._unitOutlineItems = [];
         this._renderedUnitSprites = [];
+        this._cityGatehouseDrawBounds = null;
+        this._cityGatehouseDrawOrder = null;
         this._waterEffectMaskActiveFrame = false;
         const unitHexDriftMap = this._unitHexDriftMap || new Map();
         const drawWestEdgesForRow = (row) => {
@@ -9013,7 +9015,8 @@ export class TacticsScene extends BaseScene {
                 this.drawTile(call.terrain, call.x, surfaceY, call.elevation, call.r, call.q, edgeStatus, slopeInfo);
             } else if (call.type === 'city_gatehouse') {
                 ctx.globalAlpha = 1;
-                this.drawCityGateOverlay(ctx);
+                this._cityGatehouseDrawOrder = callOrder;
+                this._cityGatehouseDrawBounds = this.drawCityGateOverlay(ctx);
             } else if (call.type === 'horse') {
                 const h = call.horse;
                 const keys = this.getHorseSpriteKeys(h.type || 'brown');
@@ -9084,6 +9087,8 @@ export class TacticsScene extends BaseScene {
             }
             ctx.restore();
         }
+
+        this.redrawGroundUnitsOverCityGatehouse(ctx);
 
         // Outline pass for highlighted hexes (reachable/attack/hover/etc), drawn after terrain to remain visible
         // when walls/structures obscure filled highlights.
@@ -12883,6 +12888,53 @@ export class TacticsScene extends BaseScene {
         return isOpen ? 'city_gate_2wide_open' : 'city_gate_2wide';
     }
 
+    rectsOverlap(a, b) {
+        if (!a || !b) return false;
+        return a.x < b.x + b.w &&
+            a.x + a.w > b.x &&
+            a.y < b.y + b.h &&
+            a.y + a.h > b.y;
+    }
+
+    getRenderedUnitSpriteBounds(item) {
+        const u = item?.unit;
+        if (!u) return null;
+        const hexOffsetX = item.drawOptions?.hexOffsetX || 0;
+        const hexOffsetY = item.drawOptions?.hexOffsetY || 0;
+        const x = Math.floor((u.visualX || 0) + (u.visualOffsetX || 0) + hexOffsetX);
+        const y = Math.floor((item.surfaceY || 0) + (u.visualOffsetY || 0) + hexOffsetY);
+        if (u.onHorse) return { x: x - 40, y: y - 80, w: 80, h: 100 };
+        if (u.name === 'Boulder' && u.img) {
+            return { x: Math.floor(x - u.img.width / 2), y: Math.floor(y - u.img.height), w: u.img.width, h: u.img.height };
+        }
+        return { x: x - 36, y: y - 72, w: 72, h: 84 };
+    }
+
+    isGroundSideCityGateUnit(unit) {
+        const meta = this.tacticsMap?.cityGateMeta;
+        if (!unit || !meta || meta.orientation !== 'top_rampart') return false;
+        const rampartRows = meta.rampartRows || 0;
+        if ((unit.r || 0) >= rampartRows) return true;
+        if (unit.isMoving && Array.isArray(unit.path)) {
+            const start = unit.path[unit.pathIndex];
+            const end = unit.path[unit.pathIndex + 1];
+            if ((start?.r ?? -1) >= rampartRows || (end?.r ?? -1) >= rampartRows) return true;
+        }
+        return false;
+    }
+
+    redrawGroundUnitsOverCityGatehouse(ctx) {
+        const bounds = this._cityGatehouseDrawBounds;
+        const gateOrder = this._cityGatehouseDrawOrder;
+        if (!bounds || gateOrder === null || gateOrder === undefined) return;
+        for (const item of this._renderedUnitSprites || []) {
+            if (!item || item.order > gateOrder) continue;
+            if (!this.isGroundSideCityGateUnit(item.unit)) continue;
+            if (!this.rectsOverlap(this.getRenderedUnitSpriteBounds(item), bounds)) continue;
+            this.drawUnitSpriteOnly(ctx, item.unit, item.surfaceY, item.drawOptions, item.cell, item.timestamp);
+        }
+    }
+
     drawCityGateOverlay(ctx) {
         const meta = this.tacticsMap?.cityGateMeta;
         if (!meta || meta.orientation !== 'top_rampart') return;
@@ -12923,6 +12975,7 @@ export class TacticsScene extends BaseScene {
         ctx.globalAlpha *= introAlpha;
         ctx.drawImage(img, x, y, drawW, drawH);
         ctx.restore();
+        return { x, y, w: drawW, h: drawH };
     }
 
     canAttackIgnoreWallLOS(attackKey) {
