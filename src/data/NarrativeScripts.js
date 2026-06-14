@@ -1810,7 +1810,7 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Zhang Fei',
             options: [
                 {
-                    buttonText: { en: "Yes.", zh: "操练。" },
+                    buttonText: { en: "Yes. (play combat tutorial)", zh: "操练。（进入战斗教程）" },
                     speaker: 'zhangfei',
                     voiceId: 'rec_zf_train_yes_01',
                     text: {
@@ -1822,7 +1822,7 @@ export const NARRATIVE_SCRIPTS = {
                     ]
                 },
                 {
-                    buttonText: { en: "No.", zh: "不必。" },
+                    buttonText: { en: "No. (skip combat tutorial)", zh: "不必。（跳过战斗教程）" },
                     speaker: 'liubei',
                     voiceId: 'rec_lb_train_no_01',
                     text: {

@@ -78,6 +78,13 @@ export class TacticsScene extends BaseScene {
         this.commandTutorialStep = null;
         this.commandTutorialTargetId = null;
         this.commandTutorialCompleted = false;
+        this.zhuoTrainingMovePromptShown = false;
+        this.zhuoTrainingAwaitingFirstMove = false;
+        this.zhuoTrainingUndoPromptShown = false;
+        this.zhuoTrainingAwaitingUndo = false;
+        this.zhuoTrainingUndoUsed = false;
+        this.zhuoTrainingAttackPromptShown = {};
+        this.zhuoTrainingAttackInstructionShown = false;
         this.zhuoTrainingEndTurnPromptShown = false;
         this.zhuoTrainingFreePracticePromptShown = false;
         this.battlePaletteKeys = [];
@@ -458,6 +465,13 @@ export class TacticsScene extends BaseScene {
         this.commandTutorialStep = null;
         this.commandTutorialTargetId = null;
         this.commandTutorialCompleted = false;
+        this.zhuoTrainingMovePromptShown = false;
+        this.zhuoTrainingAwaitingFirstMove = false;
+        this.zhuoTrainingUndoPromptShown = false;
+        this.zhuoTrainingAwaitingUndo = false;
+        this.zhuoTrainingUndoUsed = false;
+        this.zhuoTrainingAttackPromptShown = {};
+        this.zhuoTrainingAttackInstructionShown = false;
         this.zhuoTrainingEndTurnPromptShown = false;
         this.zhuoTrainingFreePracticePromptShown = false;
         this.battlePaletteKeys = ['off', ...Object.keys(assets.palettes || {}).sort()];
@@ -3246,6 +3260,13 @@ export class TacticsScene extends BaseScene {
             commandTutorialStep: this.commandTutorialStep || null,
             commandTutorialTargetId: this.commandTutorialTargetId || null,
             commandTutorialCompleted: !!this.commandTutorialCompleted,
+            zhuoTrainingMovePromptShown: !!this.zhuoTrainingMovePromptShown,
+            zhuoTrainingAwaitingFirstMove: !!this.zhuoTrainingAwaitingFirstMove,
+            zhuoTrainingUndoPromptShown: !!this.zhuoTrainingUndoPromptShown,
+            zhuoTrainingAwaitingUndo: !!this.zhuoTrainingAwaitingUndo,
+            zhuoTrainingUndoUsed: !!this.zhuoTrainingUndoUsed,
+            zhuoTrainingAttackPromptShown: { ...(this.zhuoTrainingAttackPromptShown || {}) },
+            zhuoTrainingAttackInstructionShown: !!this.zhuoTrainingAttackInstructionShown,
             zhuoTrainingEndTurnPromptShown: !!this.zhuoTrainingEndTurnPromptShown,
             zhuoTrainingFreePracticePromptShown: !!this.zhuoTrainingFreePracticePromptShown
         };
@@ -3575,6 +3596,13 @@ export class TacticsScene extends BaseScene {
         this.commandTutorialStep = state.commandTutorialStep || null;
         this.commandTutorialTargetId = state.commandTutorialTargetId || null;
         this.commandTutorialCompleted = !!state.commandTutorialCompleted;
+        this.zhuoTrainingMovePromptShown = !!state.zhuoTrainingMovePromptShown;
+        this.zhuoTrainingAwaitingFirstMove = !!state.zhuoTrainingAwaitingFirstMove;
+        this.zhuoTrainingUndoPromptShown = !!state.zhuoTrainingUndoPromptShown;
+        this.zhuoTrainingAwaitingUndo = !!state.zhuoTrainingAwaitingUndo;
+        this.zhuoTrainingUndoUsed = !!state.zhuoTrainingUndoUsed;
+        this.zhuoTrainingAttackPromptShown = state.zhuoTrainingAttackPromptShown ? { ...state.zhuoTrainingAttackPromptShown } : {};
+        this.zhuoTrainingAttackInstructionShown = !!state.zhuoTrainingAttackInstructionShown;
         this.zhuoTrainingEndTurnPromptShown = !!state.zhuoTrainingEndTurnPromptShown;
         this.zhuoTrainingFreePracticePromptShown = !!state.zhuoTrainingFreePracticePromptShown;
         this.isChoiceActive = !!state.isChoiceActive;
@@ -3976,6 +4004,13 @@ export class TacticsScene extends BaseScene {
         this.commandTutorialStep = state.commandTutorialStep || null;
         this.commandTutorialTargetId = state.commandTutorialTargetId || null;
         this.commandTutorialCompleted = !!state.commandTutorialCompleted;
+        this.zhuoTrainingMovePromptShown = !!state.zhuoTrainingMovePromptShown;
+        this.zhuoTrainingAwaitingFirstMove = !!state.zhuoTrainingAwaitingFirstMove;
+        this.zhuoTrainingUndoPromptShown = !!state.zhuoTrainingUndoPromptShown;
+        this.zhuoTrainingAwaitingUndo = !!state.zhuoTrainingAwaitingUndo;
+        this.zhuoTrainingUndoUsed = !!state.zhuoTrainingUndoUsed;
+        this.zhuoTrainingAttackPromptShown = state.zhuoTrainingAttackPromptShown ? { ...state.zhuoTrainingAttackPromptShown } : {};
+        this.zhuoTrainingAttackInstructionShown = !!state.zhuoTrainingAttackInstructionShown;
         this.zhuoTrainingEndTurnPromptShown = !!state.zhuoTrainingEndTurnPromptShown;
         this.zhuoTrainingFreePracticePromptShown = !!state.zhuoTrainingFreePracticePromptShown;
         if (this.commandTutorialPendingStart && this.isCleanupDialogueActive && !this.cleanupDialogueOnComplete) {
@@ -3995,6 +4030,7 @@ export class TacticsScene extends BaseScene {
 
     undo() {
         if (this.history.length <= 1) return;
+        const wasZhuoTrainingAwaitingUndo = this.blocksZhuoTrainingActionsForUndo();
         
         // Ensure we stop any active selection/tiles immediately
         this.selectedUnit = null;
@@ -4012,6 +4048,7 @@ export class TacticsScene extends BaseScene {
         this.history.pop(); // Remove current state
         const prevState = this.history[this.history.length - 1];
         this.restoreState(prevState);
+        if (wasZhuoTrainingAwaitingUndo) this.noteZhuoTrainingUndoUsed(true);
         assets.playSound('ui_click', 0.5);
     }
 
@@ -4433,7 +4470,116 @@ export class TacticsScene extends BaseScene {
         this.pushHistory(); // Save start of turn state
         this.saveBattleState();
         this.maybeStartCommandTutorial();
+        this.maybeShowZhuoTrainingMovePrompt();
         this.maybeShowZhuoTrainingFreePracticePrompt();
+    }
+
+    isZhuoTrainingTutorialBattle() {
+        return this.battleId === 'zhuo_training';
+    }
+
+    maybeShowZhuoTrainingMovePrompt() {
+        if (!this.isZhuoTrainingTutorialBattle()) return;
+        if (this.zhuoTrainingMovePromptShown || this.isGameOver || this.isCleanupDialogueActive) return;
+        if (this.turn !== 'player' || this.turnNumber !== 1) return;
+        const heroes = ['liubei', 'guanyu', 'zhangfei']
+            .map(id => this.units.find(u => u.id === id && u.hp > 0 && !u.isGone))
+            .filter(Boolean);
+        if (heroes.length === 0) return;
+
+        this.zhuoTrainingMovePromptShown = true;
+        this.zhuoTrainingAwaitingFirstMove = true;
+        this.startBattleEndDialogue([
+            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_04', text: { en: "A hero may move, then attack. You may also attack without moving.", zh: "英雄可以先移动再攻击，也可以不移动直接出手。" } },
+            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_05', text: { en: "Click a hero, then click a highlighted yellow hex to move there.", zh: "点击一名英雄，再点击黄色高亮格，就能移动到那里。" } }
+        ]);
+        this.saveBattleState();
+    }
+
+    getZhuoTrainingAttackScript(unit) {
+        if (!unit) return null;
+        if (unit.id === 'liubei') {
+            return [
+                { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_07', text: { en: "My double swords cut in two opposite directions and push the targets back.", zh: "我的双股剑可向前后两方出击，并将目标击退。" } }
+            ];
+        }
+        if (unit.id === 'guanyu') {
+            return [
+                { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'train_gy_03', text: { en: "My Green Dragon Crescent Blade sweeps an arc at a range of one or two hexes.", zh: "我的青龙偃月刀可在一到两格外横扫成弧。" } }
+            ];
+        }
+        if (unit.id === 'zhangfei') {
+            return [
+                { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_zf_03', text: { en: "My Serpent Spear thrusts one or two spaces in a straight line.", zh: "我的丈八蛇矛可直刺一格或两格。" } },
+                { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_zf_04', text: { en: "It can damage both spaces, and it pushes the farther target.", zh: "它能伤到直线上的两个位置，并击退较远的目标。" } }
+            ];
+        }
+        return null;
+    }
+
+    maybeShowZhuoTrainingAttackPrompt(unit) {
+        if (!this.isZhuoTrainingTutorialBattle()) return false;
+        if (!unit || unit.faction !== 'player' || unit.hp <= 0 || unit.isGone) return false;
+        if (!unit.hasMoved || unit.hasAttacked || unit.hasActed) return false;
+        if (!this.zhuoTrainingUndoUsed || this.zhuoTrainingAwaitingUndo) return false;
+        if (this.zhuoTrainingAttackPromptShown?.[unit.id]) return false;
+        const script = this.getZhuoTrainingAttackScript(unit);
+        if (!script) return false;
+
+        const fullScript = [];
+        if (!this.zhuoTrainingAttackInstructionShown) {
+            this.zhuoTrainingAttackInstructionShown = true;
+            fullScript.push(
+                { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'train_gy_02', text: { en: "Each brother strikes in a different pattern.", zh: "三兄弟各有不同的攻击路数。" } },
+                { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_06', text: { en: "With an attack selected, click a highlighted red hex to strike.", zh: "选择攻击后，点击红色高亮格即可出招。" } }
+            );
+        }
+        fullScript.push(...script);
+        this.zhuoTrainingAttackPromptShown = { ...(this.zhuoTrainingAttackPromptShown || {}), [unit.id]: true };
+        this.startBattleEndDialogue(fullScript, () => {
+            const current = this.units.find(u => u.id === unit.id && u.hp > 0 && !u.isGone);
+            if (this.turn === 'player' && current && current.hasMoved && !current.hasAttacked && !current.hasActed) {
+                this.selectTargetUnit(current);
+                if (this.selectedUnit === current && current.attacks.length > 0) this.selectAttack(current.attacks[0]);
+            }
+        });
+        this.saveBattleState();
+        return true;
+    }
+
+    handleZhuoTrainingHeroMoved(unit) {
+        if (!this.isZhuoTrainingTutorialBattle()) return false;
+        if (!unit || unit.faction !== 'player') return false;
+
+        if (this.zhuoTrainingAwaitingFirstMove && !this.zhuoTrainingUndoPromptShown) {
+            this.zhuoTrainingAwaitingFirstMove = false;
+            this.zhuoTrainingUndoPromptShown = true;
+            this.zhuoTrainingAwaitingUndo = true;
+            this.selectedAttack = null;
+            this.attackTiles.clear();
+            this.startBattleEndDialogue([
+                { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_zf_01', text: { en: "If your hand slips, use the buttons in the bottom right.", zh: "若是手滑，就用右下角的按钮。" } },
+                { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_zf_02', text: { en: "One button undoes your last action. One resets the whole turn.", zh: "一个可以撤销上一步，一个可以重置整个回合。" } }
+            ]);
+            this.saveBattleState();
+            return true;
+        }
+
+        return this.maybeShowZhuoTrainingAttackPrompt(unit);
+    }
+
+    noteZhuoTrainingUndoUsed(force = false) {
+        if (!this.isZhuoTrainingTutorialBattle()) return;
+        if (!force && !this.zhuoTrainingAwaitingUndo) return;
+        this.zhuoTrainingAwaitingUndo = false;
+        this.zhuoTrainingUndoUsed = true;
+        this.selectedAttack = null;
+        this.attackTiles.clear();
+        this.saveBattleState();
+    }
+
+    blocksZhuoTrainingActionsForUndo() {
+        return this.isZhuoTrainingTutorialBattle() && this.zhuoTrainingAwaitingUndo && !this.isCleanupDialogueActive;
     }
 
     maybeShowZhuoTrainingEndTurnPrompt() {
@@ -6775,6 +6921,7 @@ export class TacticsScene extends BaseScene {
     resetTurn() {
         if (this.turn !== 'player' || this.isProcessingTurn) return;
         if (this.history.length === 0) return;
+        const wasZhuoTrainingAwaitingUndo = this.blocksZhuoTrainingActionsForUndo();
 
         // Reset to the very first state in history (start of turn)
         const startState = this.history[0];
@@ -6782,6 +6929,7 @@ export class TacticsScene extends BaseScene {
         
         // Keep only the start state in history
         this.history = [startState];
+        if (wasZhuoTrainingAwaitingUndo) this.noteZhuoTrainingUndoUsed(true);
         assets.playSound('ui_click', 0.5);
     }
 
@@ -9770,6 +9918,10 @@ export class TacticsScene extends BaseScene {
     }
 
     activateUiTarget(uiId) {
+        if (this.blocksZhuoTrainingActionsForUndo() && uiId !== 'ui:reset' && uiId !== 'ui:undo') {
+            assets.playSound('ui_error', 0.4);
+            return;
+        }
         if (uiId === 'ui:end_turn') {
             if (this.allUnitsActed()) {
                 this.startExecutionPhase();
@@ -9839,6 +9991,10 @@ export class TacticsScene extends BaseScene {
     }
 
     activateCellTarget(r, q, type) {
+        if (this.blocksZhuoTrainingActionsForUndo()) {
+            assets.playSound('ui_error', 0.4);
+            return;
+        }
         const clickedCell = this.tacticsMap.getCell(r, q);
         if (!clickedCell) return;
         this.hoveredCell = clickedCell;
@@ -9871,6 +10027,7 @@ export class TacticsScene extends BaseScene {
                         this.pushHistory();
                     }
                     this.isProcessingTurn = false;
+                    this.maybeShowZhuoTrainingEndTurnPrompt();
                 }, secondaryTarget ? { secondaryTarget } : {});
             }
             return;
@@ -9934,9 +10091,12 @@ export class TacticsScene extends BaseScene {
                                 this.syncMountedOccupancy(movingUnit);
                             }
                             if (!movingUnit.onHorse) this.tryAutoMount(movingUnit, movingUnit.r, movingUnit.q);
-                            if (this.selectedUnit === movingUnit && movingUnit.attacks.length > 0) this.selectAttack(movingUnit.attacks[0]);
                             this.pushHistory();
                             this.isProcessingTurn = false;
+                            if (this.selectedUnit === movingUnit && movingUnit.attacks.length > 0) {
+                                const handledByTraining = this.handleZhuoTrainingHeroMoved(movingUnit);
+                                if (!handledByTraining) this.selectAttack(movingUnit.attacks[0]);
+                            }
                         } else setTimeout(checkArrival, 100);
                     };
                     checkArrival();
@@ -9950,6 +10110,14 @@ export class TacticsScene extends BaseScene {
         if (this.controllerNavIndex < 0 || this.controllerNavIndex >= this.controllerNavTargets.length) return;
         const t = this.controllerNavTargets[this.controllerNavIndex];
         if (!t) return;
+        if (this.blocksZhuoTrainingActionsForUndo()) {
+            if (t.type === 'ui' && (t.id === 'ui:reset' || t.id === 'ui:undo')) {
+                this.activateUiTarget(t.id);
+            } else {
+                assets.playSound('ui_error', 0.4);
+            }
+            return;
+        }
         if (t.type === 'choice') {
             this.activateChoiceTarget(t.choiceIndex);
             return;
@@ -10049,6 +10217,7 @@ export class TacticsScene extends BaseScene {
                 }
             } else {
                 this.reachableTiles.clear();
+                if (this.maybeShowZhuoTrainingAttackPrompt(this.selectedUnit)) return;
                 if (this.selectedUnit.attacks.length > 0) this.selectAttack(this.selectedUnit.attacks[0]);
             }
         } else this.reachableTiles.clear();
@@ -11954,6 +12123,7 @@ export class TacticsScene extends BaseScene {
         this.renderCommandTutorialFocusOverlay(ctx, canvas);
         this.renderCommandTutorialArrows(ctx);
         this.renderCommandTutorialPrompt(ctx, canvas);
+        this.renderZhuoTrainingUndoFocus(ctx, canvas);
 
         // End Turn Confirmation Dialog
         if (this.showEndTurnConfirm) {
@@ -12160,6 +12330,28 @@ export class TacticsScene extends BaseScene {
             this.drawPixelText(ctx, line, boxX + boxW / 2, ty, { color: '#fff', font: '8px Tiny5', align: 'center' });
             ty += lineHeight;
         });
+        ctx.restore();
+    }
+
+    renderZhuoTrainingUndoFocus(ctx, canvas) {
+        if (!this.blocksZhuoTrainingActionsForUndo()) return;
+        if (!this.resetTurnRect || !this.undoRect) return;
+        const pad = 7;
+        const x0 = Math.max(0, Math.floor(Math.min(this.resetTurnRect.x, this.undoRect.x) - pad));
+        const y0 = Math.max(0, Math.floor(Math.min(this.resetTurnRect.y, this.undoRect.y) - pad));
+        const x1 = Math.min(canvas.width, Math.ceil(Math.max(this.resetTurnRect.x + this.resetTurnRect.w, this.undoRect.x + this.undoRect.w) + pad));
+        const y1 = Math.min(canvas.height, Math.ceil(Math.max(this.resetTurnRect.y + this.resetTurnRect.h, this.undoRect.y + this.undoRect.h) + pad));
+        if (x1 <= x0 || y1 <= y0) return;
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.34)';
+        ctx.fillRect(0, 0, canvas.width, y0);
+        ctx.fillRect(0, y1, canvas.width, canvas.height - y1);
+        ctx.fillRect(0, y0, x0, y1 - y0);
+        ctx.fillRect(x1, y0, canvas.width - x1, y1 - y0);
+        this.drawPixelRectOutline(ctx, x0 - 1, y0 - 1, (x1 - x0) + 2, (y1 - y0) + 2, '#ffd700');
+        this.drawBouncingArrow(ctx, this.resetTurnRect.x + this.resetTurnRect.w / 2, this.resetTurnRect.y - 2);
+        this.drawBouncingArrow(ctx, this.undoRect.x + this.undoRect.w / 2, this.undoRect.y - 2);
         ctx.restore();
     }
 
@@ -12447,6 +12639,10 @@ export class TacticsScene extends BaseScene {
 
     selectAttack(attackKey) {
         if (!this.selectedUnit || this.selectedUnit.faction !== 'player' || this.selectedUnit.hasAttacked) return;
+        if (this.blocksZhuoTrainingActionsForUndo()) {
+            assets.playSound('ui_error', 0.4);
+            return;
+        }
         
         this.selectedAttack = attackKey;
         this.doubleBladesFirstTarget = null;
@@ -12828,6 +13024,10 @@ export class TacticsScene extends BaseScene {
         // 1. Check UI Buttons (End/Reset/Order)
         if (tutorialStep !== 'target' && this.endTurnRect && x >= this.endTurnRect.x && x <= this.endTurnRect.x + this.endTurnRect.w &&
             y >= this.endTurnRect.y && y <= this.endTurnRect.y + this.endTurnRect.h) {
+            if (this.blocksZhuoTrainingActionsForUndo()) {
+                assets.playSound('ui_error', 0.4);
+                return;
+            }
             
             if (this.allUnitsActed()) {
             this.startExecutionPhase();
@@ -12851,6 +13051,11 @@ export class TacticsScene extends BaseScene {
         if (tutorialStep !== 'target' && this.undoRect && x >= this.undoRect.x && x <= this.undoRect.x + this.undoRect.w &&
             y >= this.undoRect.y && y <= this.undoRect.y + this.undoRect.h) {
             this.undo();
+            return;
+        }
+
+        if (this.blocksZhuoTrainingActionsForUndo()) {
+            assets.playSound('ui_error', 0.4);
             return;
         }
 
@@ -13076,11 +13281,12 @@ export class TacticsScene extends BaseScene {
                             if (!movingUnit.onHorse) {
                                 this.tryAutoMount(movingUnit, movingUnit.r, movingUnit.q);
                             }
-                            if (this.selectedUnit === movingUnit) {
-                                if (movingUnit.attacks.length > 0) this.selectAttack(movingUnit.attacks[0]);
-                            }
                             this.pushHistory(); // Capture state AFTER move completes
                             this.isProcessingTurn = false; // Unlock turn
+                            if (this.selectedUnit === movingUnit && movingUnit.attacks.length > 0) {
+                                const handledByTraining = this.handleZhuoTrainingHeroMoved(movingUnit);
+                                if (!handledByTraining) this.selectAttack(movingUnit.attacks[0]);
+                            }
                         } else setTimeout(checkArrival, 100);
                     };
                     checkArrival();
