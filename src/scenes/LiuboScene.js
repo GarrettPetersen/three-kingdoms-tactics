@@ -542,7 +542,6 @@ export class LiuboScene extends BaseScene {
 
         this.renderPieceBenches(ctx, panelX, panelW, panelY + 36, layout.portrait);
 
-        this.renderCupLane(ctx, layout);
         const cupPos = this.getCupPosition(layout);
         this.rollRect = { x: Math.floor(cupPos.x - 24), y: Math.floor(cupPos.y - 17), w: 48, h: 34 };
         const canRoll = this.state.phase === 'roll' && this.state.currentPlayer === this.state.humanPlayer && !this.state.winner && !this.cupPassAnimation;
@@ -557,25 +556,6 @@ export class LiuboScene extends BaseScene {
                 align: 'center'
             });
         }
-    }
-
-    renderCupLane(ctx, layout) {
-        const white = this.getCupAnchor('white', layout);
-        const black = this.getCupAnchor('black', layout);
-        const active = this.getCupPosition(layout);
-        const x = Math.floor(white.x);
-        const top = Math.floor(Math.min(white.y, black.y));
-        const h = Math.floor(Math.abs(black.y - white.y));
-        ctx.save();
-        ctx.globalAlpha = 0.7;
-        ctx.fillStyle = '#2d211a';
-        ctx.fillRect(x - 3, top - 14, 6, h + 28);
-        ctx.strokeStyle = '#60472c';
-        ctx.strokeRect(x - 3.5, top - 14.5, 6, h + 28);
-        ctx.fillStyle = this.state.currentPlayer === 'white' ? '#f0dfc2' : '#b98f6b';
-        ctx.globalAlpha = 0.3;
-        ctx.fillRect(Math.floor(active.x - 18), Math.floor(active.y - 10), 36, 20);
-        ctx.restore();
     }
 
     getCupAnchor(player, layout) {
