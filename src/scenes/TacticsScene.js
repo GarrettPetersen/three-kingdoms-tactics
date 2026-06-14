@@ -447,6 +447,8 @@ export class TacticsScene extends BaseScene {
         this.horseRunElapsedMs = 0;
         this.boulderRollSoundKey = null;
         this.boulderRollStartTime = 0;
+        assets.stopLoopingSound('boulder_roll', 0);
+        assets.stopLoopingSound('boulder_roll_2', 0);
         this.horseRunCycleIndex = -1;
         this.horseRunCues = { snortA: false, neigh: false, snortB: false };
         this.commandTutorialActive = false;
@@ -4821,10 +4823,9 @@ export class TacticsScene extends BaseScene {
     stopBoulderRollSoundIfDone() {
         const anyStillRolling = this.units.some(u => u.name === 'Boulder' && u.rollData && !u.rollData.bounceBack && !u.rollData.bounceComplete);
         if (anyStillRolling) return;
-        if (this.boulderRollSoundKey) {
-            assets.stopLoopingSound(this.boulderRollSoundKey, 300);
-            this.boulderRollSoundKey = null;
-        }
+        assets.stopLoopingSound('boulder_roll', 300);
+        assets.stopLoopingSound('boulder_roll_2', 300);
+        this.boulderRollSoundKey = null;
     }
 
     /** Called after unit updates when a boulder has rollData.segmentComplete. Applies bump/crush/water and advances or clears roll. */
