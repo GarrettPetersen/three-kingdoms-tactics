@@ -2728,6 +2728,7 @@ export class TacticsScene extends BaseScene {
         reachableData.forEach((data, key) => {
             const [r, q] = key.split(',').map(Number);
             const cell = this.tacticsMap.getCell(r, q);
+            if (!this.canStopOnCell(unit, cell)) return;
             const blockedByLiving = !!this.getLivingUnitOccupyingCell(r, q, unit);
             const blockedByHorse = !!(cell?.horse && cell.horse.riderId && (!unit.onHorse || cell.horse.id !== unit.horseId));
             if (!blockedByLiving && !blockedByHorse) {
@@ -5033,6 +5034,11 @@ export class TacticsScene extends BaseScene {
             const levelDiff = nextLevel - curLevel;
             const isDeepWater = next.terrain && next.terrain.includes('water_deep');
 
+            if (this.isSolidCityGatehouseCell(next)) {
+                path.push({ r: next.r, q: next.q });
+                bumpAtEnd = true;
+                break;
+            }
             if (levelDiff > 1) {
                 bumpAtEnd = true;
                 break;
@@ -5085,6 +5091,7 @@ export class TacticsScene extends BaseScene {
         const nextLevel = (nextCell.level !== undefined) ? nextCell.level : 0;
         const levelDiff = nextLevel - curLevel;
         const isDeepWater = nextCell.terrain && nextCell.terrain.includes('water_deep');
+        if (this.isSolidCityGatehouseCell(nextCell)) return true;
         if (levelDiff > 1) return true;
         if (nextCell.impassable && !isDeepWater) return true;
         const occupant = this.getLivingUnitOccupyingCell(to.r, to.q) || (nextCell.unit ? nextCell.unit : null);
@@ -5179,6 +5186,11 @@ export class TacticsScene extends BaseScene {
         };
 
         if (!nextCell) {
+            if (roll.collisionAtSegmentEnd) startBounceBack();
+            else doCollision();
+            return;
+        }
+        if (this.isSolidCityGatehouseCell(nextCell)) {
             if (roll.collisionAtSegmentEnd) startBounceBack();
             else doCollision();
             return;
@@ -5370,6 +5382,18 @@ export class TacticsScene extends BaseScene {
 
     isCityGateCell(cell) {
         return !!(cell && cell.cityGateSegment);
+    }
+
+    canStopOnCell(unit, cell) {
+        if (!cell) return false;
+        // Gatehouse cells are transit-only. Units can path through them, but should not
+        // end a move there because the gatehouse itself is the attackable object.
+        if (this.isCityGateCell(cell)) return false;
+        return true;
+    }
+
+    isSolidCityGatehouseCell(cell) {
+        return this.isCityGateCell(cell);
     }
 
     isCityGateDestroyed() {
@@ -6963,11 +6987,12 @@ export class TacticsScene extends BaseScene {
                 // 1. COLLISION (Pushing into a wall/high cliff or another living unit)
                 const isHighCliff = levelDiff > 1;
                 const isImpassable = pushCell.impassable && !isDeepWater;
+                const isSolidGatehouse = this.isSolidCityGatehouseCell(pushCell);
                 const liveOccupant = this.getLivingUnitOccupyingCell(pushCell.r, pushCell.q, victim);
                 const isOccupiedByLiving = !!liveOccupant;
                 const isOccupiedByHorse = !!pushCell.horse; // riderless or ridden horses occupy hexes too
 
-                if (isHighCliff || isImpassable || isOccupiedByLiving || isOccupiedByHorse) {
+                if (isHighCliff || isImpassable || isSolidGatehouse || isOccupiedByLiving || isOccupiedByHorse) {
 
                     // Blocked push: bump damage + bounce, but stay mounted (no displacement).
                     victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, true, 0); // true = bounce
@@ -7495,6 +7520,7 @@ export class TacticsScene extends BaseScene {
     isValidMountedDestination(unit, r, q, plannedFlip = null) {
         const cell = this.tacticsMap.getCell(r, q);
         if (!cell || !this.tacticsMap.canUnitTraverseCell(cell, unit)) return false;
+        if (!this.canStopOnCell(unit, cell)) return false;
 
         const isSolidHouse = (cell) => cell && cell.terrain && (cell.terrain.includes('house') || cell.terrain.includes('tent')) && !cell.terrain.includes('destroyed');
         if (isSolidHouse(cell)) return false;
@@ -7524,6 +7550,7 @@ export class TacticsScene extends BaseScene {
             const [r, q] = key.split(',').map(Number);
             const cell = this.tacticsMap.getCell(r, q);
             if (!cell) return;
+            if (!this.canStopOnCell(unit, cell)) return;
 
             // Destination must be free (or this unit).
             if (this.getLivingUnitOccupyingCell(r, q, unit)) return;
@@ -10349,6 +10376,10 @@ export class TacticsScene extends BaseScene {
         }
 
         if (type === 'move_cell' && this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && this.reachableTiles.has(`${r},${q}`)) {
+            if (!this.canStopOnCell(this.selectedUnit, clickedCell)) {
+                assets.playSound('ui_error', 0.4);
+                return;
+            }
             const blockedByLiving = !!this.getLivingUnitOccupyingCell(clickedCell.r, clickedCell.q, this.selectedUnit);
             const blockedByHorse = this.isCellBlockedByOtherHorse(this.selectedUnit, clickedCell.r, clickedCell.q, true);
             if (!blockedByLiving && !blockedByHorse) {
@@ -10511,6 +10542,8 @@ export class TacticsScene extends BaseScene {
                 this.reachableTiles = new Map();
                 rawReachable.forEach((data, key) => {
                     const [r, q] = key.split(',').map(Number);
+                    const cell = this.tacticsMap.getCell(r, q);
+                    if (!this.canStopOnCell(this.selectedUnit, cell)) return;
                     const blockedByLiving = !!this.getLivingUnitOccupyingCell(r, q, this.selectedUnit);
                     if (this.selectedUnit.onHorse) {
                         // Mounted movement uses a single occupied destination hex.
@@ -13686,6 +13719,10 @@ export class TacticsScene extends BaseScene {
 
         // B. MOVE UNIT (Priority if move is valid, even if clicking a sprite)
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && clickedCell && this.reachableTiles.has(`${clickedCell.r},${clickedCell.q}`)) {
+            if (!this.canStopOnCell(this.selectedUnit, clickedCell)) {
+                assets.playSound('ui_error', 0.4);
+                return;
+            }
             // Check landing spot (cannot land on another unit)
             const blockedByLiving = !!this.getLivingUnitOccupyingCell(clickedCell.r, clickedCell.q, this.selectedUnit);
             const blockedByHorse = this.isCellBlockedByOtherHorse(this.selectedUnit, clickedCell.r, clickedCell.q, true);
