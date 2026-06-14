@@ -11572,8 +11572,9 @@ export class TacticsScene extends BaseScene {
     }
 
     getEdgeTrapezoidImageKey(terrainType, direction, levelDiff) {
-        const clampedDiff = Math.max(-3, Math.min(3, Math.round(levelDiff || 0)));
         const terrainGroup = this.getEdgeTrapezoidTerrainGroup(terrainType);
+        const maxDiff = terrainGroup === 'brick' ? 6 : 3;
+        const clampedDiff = Math.max(-maxDiff, Math.min(maxDiff, Math.round(levelDiff || 0)));
         if (terrainGroup === 'brick') {
             const diffName = clampedDiff > 0 ? `plus${clampedDiff}` : clampedDiff < 0 ? `minus${Math.abs(clampedDiff)}` : 'zero';
             return `edge_trapezoid_brick_${direction}_${diffName}`;
@@ -11724,7 +11725,7 @@ export class TacticsScene extends BaseScene {
         const sourceHeight = img.height;
         
         const silhouette = img.silhouette;
-        const elevationStep = this.tacticsMap.elevationStep; // Height difference per level (3 pixels)
+        const elevationStep = this.tacticsMap.elevationStep; // Height difference per level
         
         // Get neighbor positions for slope calculations
         const getNeighborElevation = (direction) => {
@@ -12889,9 +12890,12 @@ export class TacticsScene extends BaseScene {
         };
         const gatePos = avg(gateCells);
         const stairPos = avg(stairCells);
-        const x = Math.floor(gatePos.x - img.width / 2);
-        const y = Math.floor(((gatePos.y + stairPos.y) / 2) - img.height + 28);
-        ctx.drawImage(img, x, y);
+        const scale = 0.5;
+        const drawW = Math.max(1, Math.round(img.width * scale));
+        const drawH = Math.max(1, Math.round(img.height * scale));
+        const x = Math.floor(gatePos.x - drawW / 2);
+        const y = Math.floor(((gatePos.y + stairPos.y) / 2) - drawH + 28);
+        ctx.drawImage(img, x, y, drawW, drawH);
     }
 
     canAttackIgnoreWallLOS(attackKey) {

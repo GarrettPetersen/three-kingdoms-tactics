@@ -2,7 +2,7 @@ export class TacticsMap {
     constructor(width, height) {
         this.width = width;
         this.height = height;
-        this.elevationStep = 3; // Visual height difference between levels
+        this.elevationStep = 6; // Visual height difference between levels
         this.grid = [];
         this.cityGateMeta = null;
         this.initialize();
@@ -407,7 +407,7 @@ export class TacticsMap {
 
                 if (inside) {
                     cell.terrain = stairKeys.has(`${r},${q}`) ? 'brick_staircase' : 'brick_01';
-                    cell.level = 3;
+                    cell.level = 6;
                     cell.elevation = cell.level * this.elevationStep;
                     cell.impassable = false;
                 } else {

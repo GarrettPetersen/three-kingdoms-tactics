@@ -600,7 +600,7 @@ async function init() {
         const edgeWaterTerrainGroups = ['water_shallow', 'water_deep'];
         const edgeDirections = ['w', 'sw', 'se'];
         const edgeTerrainDiffs = [-1, 0, 1];
-        const edgeAllDiffs = [-3, -2, -1, 0, 1, 2, 3];
+        const edgeAllDiffs = [-6, -3, -2, -1, 0, 1, 2, 3, 6];
         const edgeCliffDiffs = [-3, -2, 2, 3];
         const getEdgeDiffName = (diff) => diff > 0 ? `plus${diff}` : diff < 0 ? `minus${Math.abs(diff)}` : 'zero';
         edgeTerrainGroups.forEach(terrain => {

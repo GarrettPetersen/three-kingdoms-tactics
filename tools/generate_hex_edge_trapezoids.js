@@ -11,15 +11,15 @@ const HAND_EDITED_TERRAINS = new Set(['grass']);
 const geometry = {
     tileWidth: 36,
     tileHeight: 36,
-    padding: 10,
-    canvasWidth: 56,
-    canvasHeight: 56,
-    center: { x: 28, y: 28 },
+    padding: 28,
+    canvasWidth: 92,
+    canvasHeight: 92,
+    center: { x: 46, y: 46 },
     horizontalSpacing: 29,
     verticalSpacing: 23,
     baseDepth: 6,
-    elevationStep: 3,
-    heightDiffs: [-3, -2, -1, 0, 1, 2, 3],
+    elevationStep: 6,
+    heightDiffs: [-6, -3, -2, -1, 0, 1, 2, 3, 6],
     coveragePad: 1,
     surfaceVertices: {
         N: { x: 18, y: 6 },
@@ -307,9 +307,9 @@ async function main() {
         onlyTerrain: ONLY_TERRAIN,
         protectedTerrains: [...HAND_EDITED_TERRAINS],
         notes: [
-            'Transparent 56x56 PNGs with a 36x36 tile footprint inset at x=10,y=10.',
+            'Transparent 92x92 PNGs with a 36x36 tile footprint inset at x=28,y=28.',
             'Draw centered at the same logical hex center as terrain tiles.',
-            'Rows are rasterized from the real polygon between the current hex edge and the adjacent hex edge, using the same 29x23 spacing and 3px elevation step as the map renderer.',
+            'Rows are rasterized from the real polygon between the current hex edge and the adjacent hex edge, using the same 29x23 spacing and 6px elevation step as the map renderer.',
             'This generator is non-destructive by default: existing PNGs are skipped. Pass --force to overwrite placeholder art.',
             'Hand-edited terrain groups are protected even with --force. Pass --force-hand-edited only when you really want to replace those PNGs.',
             'heightDiff is neighbor.level - current.level. Diffs -1/+1 are walkable slopes; absolute diffs >=2 use the shared rocky_cliff set because they are impassable, except brick which has its own steep rampart faces.'
