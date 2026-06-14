@@ -11,6 +11,16 @@ import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
 
 /** Vertical offset for drawing horse + rider (was 10; 6 moves them up 4px so they are not "underground"). */
 const MOUNTED_Y_OFFSET = 6;
+const DRAW_CALL_PRIORITIES = {
+    hex: 0,
+    particle: 1,
+    fire_smoke: 1.1,
+    flag: 1.5,
+    overkill_effect: 1.9,
+    horse: 1.95,
+    unit: 2,
+    gate_overlay: 2.2
+};
 
 export class TacticsScene extends BaseScene {
     constructor() {
@@ -7866,6 +7876,7 @@ export class TacticsScene extends BaseScene {
 
         const unitHexDriftTargets = this.buildUnitHexDriftMap();
         this.updateUnitHexDriftAnimation(unitHexDriftTargets, dt);
+        this.rebuildCorpseCellCounts();
 
         this.units.forEach(u => {
             if (u.name === 'Boulder' && u.rollData && u.rollData.bounceComplete) {
@@ -7970,76 +7981,77 @@ export class TacticsScene extends BaseScene {
             
             let hoveredUnit = null;
             let hoveredUnitCell = null;
-            const activeUnits = this.units.filter(u => u.hp > 0 && !u.isGone);
-            // Match draw order (bottom-to-top) for picking
-            activeUnits.sort((a, b) => b.currentSortR - a.currentSortR);
-            
-            for (let u of activeUnits) {
-                const ux = u.visualX;
-                const uy = u.visualY + (u.onHorse ? MOUNTED_Y_OFFSET : 0);
-                let sinkOffset = 0;
-                if (u.isDrowning) sinkOffset = Math.min(1, u.drownTimer / 2000) * 40;
-                else {
-                    const cell = this.tacticsMap.getCell(u.r, u.q);
-                    if (cell && cell.terrain.includes('water_shallow')) sinkOffset = 4;
-                    
-                    // Standing on corpse? Raise hit box by 4px
-                    if (u.hp > 0 && !u.isMoving && !u.pushData) {
-                        const hasCorpse = this.units.some(other => other !== u && other.r === u.r && other.q === u.q && other.hp <= 0 && !other.isGone);
-                        if (hasCorpse) sinkOffset -= 4;
+            if (!this.manager?.config?.hasCoarsePointer) {
+                const activeUnits = this.units.filter(u => u.hp > 0 && !u.isGone);
+                // Match draw order (bottom-to-top) for picking
+                activeUnits.sort((a, b) => b.currentSortR - a.currentSortR);
+
+                for (let u of activeUnits) {
+                    const ux = u.visualX;
+                    const uy = u.visualY + (u.onHorse ? MOUNTED_Y_OFFSET : 0);
+                    let sinkOffset = 0;
+                    if (u.isDrowning) sinkOffset = Math.min(1, u.drownTimer / 2000) * 40;
+                    else {
+                        const cell = this.tacticsMap.getCell(u.r, u.q);
+                        if (cell && cell.terrain.includes('water_shallow')) sinkOffset = 4;
+
+                        // Standing on corpse? Raise hit box by 4px
+                        if (u.hp > 0 && !u.isMoving && !u.pushData && this.hasCorpseAtCell(u.r, u.q, u)) {
+                            sinkOffset -= 4;
+                        }
                     }
-                }
-                // Mounted hover: match the mounted click logic (rider OR horse), but allow click-through on transparent pixels
-                if (u.onHorse) {
-                    const anchorX = ux;
-                    const anchorY = uy + sinkOffset;
-                    const midX = Math.floor(anchorX);
-                    const midY = anchorY;
+                    // Mounted hover: match the mounted click logic (rider OR horse), but allow click-through on transparent pixels
+                    if (u.onHorse) {
+                        const anchorX = ux;
+                        const anchorY = uy + sinkOffset;
+                        const midX = Math.floor(anchorX);
+                        const midY = anchorY;
 
-                    const riderX = midX;
-                    const riderY = midY - 14;
+                        const riderX = midX;
+                        const riderY = midY - 14;
 
-                    const riderHit = this.checkCharacterHit(u.img, (u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action), u.frame, riderX, riderY, hx, hy, {
-                        flip: u.flip,
-                        sinkOffset: 0,
-                        isProp: false
-                    });
+                        const riderHit = this.checkCharacterHit(u.img, (u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action), u.frame, riderX, riderY, hx, hy, {
+                            flip: u.flip,
+                            sinkOffset: 0,
+                            isProp: false
+                        });
 
-                    // Pixel-perfect horse hit (48x48 frame), so transparent pixels don't block what’s behind
-                    const keys = this.getHorseSpriteKeys(u.horseType || 'brown');
-                    const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
-                    const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
-                    const isRunning = (u.isMoving || u.action === 'walk') && horseRun;
-                    const horseImg = isRunning ? horseRun : horseStand;
+                        // Pixel-perfect horse hit (48x48 frame), so transparent pixels don't block what’s behind
+                        const keys = this.getHorseSpriteKeys(u.horseType || 'brown');
+                        const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
+                        const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
+                        const isRunning = (u.isMoving || u.action === 'walk') && horseRun;
+                        const horseImg = isRunning ? horseRun : horseStand;
 
-                    let horseHit = false;
-                    if (horseImg) {
-                        const frameW = 48;
-                        const frameH = 48;
-                        const frameCount = Math.max(1, Math.floor((horseImg.width || frameW) / frameW));
-                        const f = isRunning ? (Math.floor(Date.now() / 70) % frameCount) : 0;
-                        const srcX = f * frameW;
-                        const srcY = 0;
+                        let horseHit = false;
+                        if (horseImg) {
+                            const frameW = 48;
+                            const frameH = 48;
+                            const frameCount = Math.max(1, Math.floor((horseImg.width || frameW) / frameW));
+                            const f = isRunning ? (Math.floor(Date.now() / 70) % frameCount) : 0;
+                            const srcX = f * frameW;
+                            const srcY = 0;
 
-                        const horseFeetY = 12;
-                        const destX = midX - frameW / 2;
-                        const destY = midY + (horseFeetY - frameH);
-                        horseHit = this.checkImageFrameHit(horseImg, srcX, srcY, frameW, frameH, destX, destY, hx, hy, { flip: u.flip });
-                    }
+                            const horseFeetY = 12;
+                            const destX = midX - frameW / 2;
+                            const destY = midY + (horseFeetY - frameH);
+                            horseHit = this.checkImageFrameHit(horseImg, srcX, srcY, frameW, frameH, destX, destY, hx, hy, { flip: u.flip });
+                        }
 
-                    if (riderHit || horseHit) {
+                        if (riderHit || horseHit) {
+                            hoveredUnit = u;
+                            hoveredUnitCell = this.getMountedTargetCellFromPointer(u, hx, hy, sinkOffset);
+                            break;
+                        }
+                    } else if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, hx, hy, {
+                            flip: u.flip,
+                            sinkOffset,
+                            isProp: u.name === 'Boulder' || u.isProp
+                        })) {
                         hoveredUnit = u;
-                        hoveredUnitCell = this.getMountedTargetCellFromPointer(u, hx, hy, sinkOffset);
+                        hoveredUnitCell = this.tacticsMap.getCell(u.r, u.q);
                         break;
                     }
-                } else if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, hx, hy, { 
-                        flip: u.flip, 
-                        sinkOffset,
-                        isProp: u.name === 'Boulder' || u.isProp
-                    })) {
-                    hoveredUnit = u;
-                    hoveredUnitCell = this.tacticsMap.getCell(u.r, u.q);
-                    break;
                 }
             }
 
@@ -8389,6 +8401,27 @@ export class TacticsScene extends BaseScene {
         return this.units.filter(u => u.faction === 'player' && u.hp > 0 && !u.isGone).every(u => u.hasActed);
     }
 
+    rebuildCorpseCellCounts() {
+        const counts = new Map();
+        for (const u of this.units) {
+            if (u.hp > 0 || u.isGone) continue;
+            const key = `${u.r},${u.q}`;
+            counts.set(key, (counts.get(key) || 0) + 1);
+        }
+        this._corpseCellCounts = counts;
+        return counts;
+    }
+
+    hasCorpseAtCell(r, q, exceptUnit = null) {
+        const counts = this._corpseCellCounts || this.rebuildCorpseCellCounts();
+        const key = `${r},${q}`;
+        const count = counts.get(key) || 0;
+        if (!exceptUnit || exceptUnit.hp > 0 || exceptUnit.isGone || exceptUnit.r !== r || exceptUnit.q !== q) {
+            return count > 0;
+        }
+        return count > 1;
+    }
+
     render(timestamp) {
         const { ctx, canvas, config } = this.manager;
         ctx.fillStyle = '#000';
@@ -8396,6 +8429,8 @@ export class TacticsScene extends BaseScene {
         this.updateBattlefieldAnchor();
 
         const drawCalls = [];
+        const hexCallsByRow = new Map();
+        const corpseCellCounts = this._corpseCellCounts || this.rebuildCorpseCellCounts();
 
         // Determine which units and tiles are being targeted by telegraphed attacks
         const targetedUnits = new Set();
@@ -8451,7 +8486,7 @@ export class TacticsScene extends BaseScene {
                 const cell = this.tacticsMap.getCell(r, q);
                 const terrainForLayer = this.isGateTerrain(cell.terrain) ? 'mud_01' : cell.terrain;
                 
-                drawCalls.push({
+                const hexCall = {
                     type: 'hex',
                     r, q, x: pos.x, y: pos.y + (cell.elevation || 0), priority: 0,
                     terrain: cell.terrain,
@@ -8463,7 +8498,10 @@ export class TacticsScene extends BaseScene {
                     isTelegraphed: telegraphedTiles.has(`${r},${q}`),
                     isHovered: this.hoveredCell === cell,
                     isMovePreview: movePreviewTiles.has(`${r},${q}`)
-                });
+                };
+                drawCalls.push(hexCall);
+                if (!hexCallsByRow.has(r)) hexCallsByRow.set(r, []);
+                hexCallsByRow.get(r).push(hexCall);
                 if (this.isGateTerrain(cell.terrain)) {
                     drawCalls.push({
                         type: 'gate_overlay',
@@ -8566,8 +8604,9 @@ export class TacticsScene extends BaseScene {
             if (depthA !== depthB) return depthA - depthB;
             
             // Priority within same depth
-            const priorities = { 'hex': 0, 'particle': 1, 'fire_smoke': 1.1, 'flag': 1.5, 'overkill_effect': 1.9, 'unit': 2, 'gate_overlay': 2.2 };
-            if (priorities[a.type] !== priorities[b.type]) return priorities[a.type] - priorities[b.type];
+            if (DRAW_CALL_PRIORITIES[a.type] !== DRAW_CALL_PRIORITIES[b.type]) {
+                return DRAW_CALL_PRIORITIES[a.type] - DRAW_CALL_PRIORITIES[b.type];
+            }
             
             // Within same type and row:
             if (a.type === 'unit' && b.type === 'unit') {
@@ -8593,8 +8632,8 @@ export class TacticsScene extends BaseScene {
         this._renderedUnitSprites = [];
         const unitHexDriftMap = this._unitHexDriftMap || new Map();
         const drawWestEdgesForRow = (row) => {
-            for (const call of drawCalls) {
-                if (call.type !== 'hex' || call.r !== row) continue;
+            const hexCalls = hexCallsByRow.get(row) || [];
+            for (const call of hexCalls) {
                 const effect = this.getIntroEffect(Math.floor(call.r), call.q || 0);
                 if (effect.alpha <= 0) continue;
                 const surfaceY = call.y - call.elevation + effect.yOffset;
@@ -8684,7 +8723,7 @@ export class TacticsScene extends BaseScene {
 
                 // Raise living units if they are standing on a corpse
                 if (u.hp > 0 && !u.isMoving && !u.pushData) {
-                    const hasCorpse = this.units.some(other => other !== u && other.r === u.r && other.q === u.q && other.hp <= 0 && !other.isGone);
+                    const hasCorpse = (corpseCellCounts.get(`${u.r},${u.q}`) || 0) > 0;
                     if (hasCorpse) {
                         surfaceY -= 4; // Standing on top of the body
                     }
@@ -8980,7 +9019,9 @@ export class TacticsScene extends BaseScene {
         this.drawCommandTargetDimming(ctx, this.manager.canvas, timestamp);
 
         this.drawUI();
-        this.rebuildControllerNavTargets();
+        if (!this.controllerNavMouseEnabled || this.commandTutorialActive) {
+            this.rebuildControllerNavTargets();
+        }
         this.drawControllerNavFocus(ctx, timestamp);
 
         if (this.selectedAttack && this.hoveredMountedAttackRegions && this.hoveredMountedAttackRegions.length > 0) {
