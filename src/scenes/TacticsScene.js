@@ -17,8 +17,8 @@ const DRAW_CALL_PRIORITIES = {
     fire_smoke: 1.1,
     flag: 1.5,
     overkill_effect: 1.9,
+    city_gatehouse: 1.94,
     horse: 1.95,
-    city_gatehouse: 1.98,
     unit: 2,
     gate_overlay: 2.2
 };
@@ -12928,7 +12928,7 @@ export class TacticsScene extends BaseScene {
         const gateOrder = this._cityGatehouseDrawOrder;
         if (!bounds || gateOrder === null || gateOrder === undefined) return;
         for (const item of this._renderedUnitSprites || []) {
-            if (!item || item.order > gateOrder) continue;
+            if (!item) continue;
             if (!this.isGroundSideCityGateUnit(item.unit)) continue;
             if (!this.rectsOverlap(this.getRenderedUnitSpriteBounds(item), bounds)) continue;
             this.drawUnitSpriteOnly(ctx, item.unit, item.surfaceY, item.drawOptions, item.cell, item.timestamp);
