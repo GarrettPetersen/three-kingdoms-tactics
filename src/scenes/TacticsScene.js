@@ -1320,9 +1320,9 @@ export class TacticsScene extends BaseScene {
 
             // After kills, oath brothers walk towards Gong Jing
             setTimeout(() => {
-                const liubeiTarget = this.remapLegacyCoordToCurrent(4, 4);
-                const guanyuTarget = this.remapLegacyCoordToCurrent(5, 4);
-                const zhangfeiTarget = this.remapLegacyCoordToCurrent(4, 6);
+                const liubeiTarget = this.remapLegacyCoordToCurrent(5, 4);
+                const guanyuTarget = this.remapLegacyCoordToCurrent(6, 3);
+                const zhangfeiTarget = this.remapLegacyCoordToCurrent(6, 5);
                 // Move Liu Bei towards Gong Jing
                 if (liubei) {
                     const pathLiubei = this.tacticsMap.getPath(liubei.r, liubei.q, liubeiTarget.r, liubeiTarget.q, 10, liubei);
@@ -7319,8 +7319,12 @@ export class TacticsScene extends BaseScene {
                     const isDefender = defenderSide === 'enemy'
                         ? (u.faction === 'enemy')
                         : (u.faction === 'player' || u.faction === 'allied');
-                    const preferredPool = isDefender ? insideCells : outsideCells;
-                    const fallbackPool = isDefender ? outsideCells : insideCells;
+                    const forcedSide = u.cityGateSide === 'inside' || u.cityGateSide === 'outside'
+                        ? u.cityGateSide
+                        : null;
+                    const preferInside = forcedSide ? forcedSide === 'inside' : isDefender;
+                    const preferredPool = preferInside ? insideCells : outsideCells;
+                    const fallbackPool = preferInside ? outsideCells : insideCells;
                     const spawn = pickSpawn(preferredPool, pref.r, pref.q) || pickSpawn(fallbackPool, pref.r, pref.q);
                     if (spawn) {
                         customCityGateSpawnById.set(u.id || `idx_${idx}`, spawn);

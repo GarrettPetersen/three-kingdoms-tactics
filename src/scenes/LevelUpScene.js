@@ -216,10 +216,14 @@ export class LevelUpScene extends BaseScene {
                     const upgradedAttackKey = upgrade.attack || upgrade.secondaryAttack;
                     const attackName = getLocalizedText(ATTACKS[upgradedAttackKey]?.name || { en: "New Technique", zh: "新招式" });
                     const upgradeText = getLocalizedText(upgrade.text || '');
-                    bonuses.push(getLocalizedText({
-                        en: `Learned ${attackName}: ${upgradeText}`,
-                        zh: `习得 ${attackName}：${upgradeText}`
-                    }));
+                    const isLearnedText = /^\s*(Learned|习得)\b/i.test(upgradeText);
+                    bonuses.push(isLearnedText
+                        ? upgradeText
+                        : getLocalizedText({
+                            en: `${attackName}: ${upgradeText}`,
+                            zh: `${attackName}：${upgradeText}`
+                        })
+                    );
                 }
 
                 if (this.chosenClass === 'soldier') {

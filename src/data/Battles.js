@@ -153,19 +153,23 @@ export const BATTLES = {
         },
         playerFaction: 'liu_bei_volunteers',
         units: [
-            { id: 'liubei', r: 1, q: 1, type: 'hero' },
-            { id: 'guanyu', r: 2, q: 1, type: 'hero' },
-            { id: 'zhangfei', r: 1, q: 2, type: 'hero' },
-            { id: 'ally1', r: 2, q: 2, type: 'allied_soldier' },
-            { id: 'ally2', r: 1, q: 0, type: 'allied_soldier' },
-            { id: 'ally3', r: 0, q: 1, type: 'allied_soldier' },
+            { id: 'liubei', r: 4, q: 1, type: 'hero', cityGateSide: 'outside' },
+            { id: 'guanyu', r: 5, q: 1, type: 'hero', cityGateSide: 'outside' },
+            { id: 'zhangfei', r: 4, q: 2, type: 'hero', cityGateSide: 'outside' },
+            { id: 'ally1', r: 5, q: 2, type: 'allied_soldier', cityGateSide: 'outside' },
+            { id: 'ally2', r: 4, q: 0, type: 'allied_soldier', cityGateSide: 'outside' },
+            { id: 'ally3', r: 5, q: 3, type: 'allied_soldier', cityGateSide: 'outside' },
+            { id: 'gongjing', r: 1, q: 5, type: 'commander', cityGateSide: 'inside' },
+            { id: 'qz_guard1', r: 1, q: 4, type: 'allied_soldier', cityGateSide: 'inside' },
+            { id: 'qz_guard2', r: 2, q: 5, type: 'allied_soldier', cityGateSide: 'inside' },
             // Generate 20 rebels - half weak, half normal; ~1/5 are archers (at least 1)
             ...Array.from({length: 20}, (_, i) => ({ 
                 id: `rebel_pre_${i}`, 
                 r: 6 + Math.floor(i / 5), 
                 q: 1 + (i % 8), 
                 type: i % 2 === 0 ? 'enemy_soldier_weak' : 'enemy_soldier',
-                templateId: i % 5 === 0 ? 'rebel_archer' : 'rebel'
+                templateId: i % 5 === 0 ? 'rebel_archer' : 'rebel',
+                cityGateSide: 'outside'
             }))
         ],
         victoryCondition: {
@@ -230,21 +234,21 @@ export const BATTLES = {
         },
         units: [
             // Oath brothers and remaining rebels are outside the city gate.
-            { id: 'liubei', r: 5, q: 2, type: 'hero' },
-            { id: 'guanyu', r: 6, q: 2, type: 'hero' },
-            { id: 'zhangfei', r: 5, q: 3, type: 'hero' },
+            { id: 'liubei', r: 5, q: 2, type: 'hero', cityGateSide: 'outside' },
+            { id: 'guanyu', r: 6, q: 2, type: 'hero', cityGateSide: 'outside' },
+            { id: 'zhangfei', r: 5, q: 3, type: 'hero', cityGateSide: 'outside' },
             // Guards and Gong Jing near the gate
-            { id: 'guard1', r: 6, q: 4, type: 'allied_soldier' },
-            { id: 'guard2', r: 6, q: 6, type: 'allied_soldier' },
-            { id: 'gongjing', r: 5, q: 5, type: 'commander' },
+            { id: 'guard1', r: 6, q: 4, type: 'allied_soldier', cityGateSide: 'outside' },
+            { id: 'guard2', r: 6, q: 6, type: 'allied_soldier', cityGateSide: 'outside' },
+            { id: 'gongjing', r: 5, q: 5, type: 'commander', cityGateSide: 'outside' },
             // Dead yellow turbans scattered around
-            { id: 'rebel_corpse1', r: 7, q: 3, type: 'enemy_soldier', isDead: true },
-            { id: 'rebel_corpse2', r: 8, q: 6, type: 'enemy_soldier', isDead: true },
-            { id: 'rebel_corpse3', r: 9, q: 4, type: 'enemy_soldier', isDead: true },
-            { id: 'rebel_corpse4', r: 10, q: 5, type: 'enemy_soldier', isDead: true },
+            { id: 'rebel_corpse1', r: 7, q: 3, type: 'enemy_soldier', isDead: true, cityGateSide: 'outside' },
+            { id: 'rebel_corpse2', r: 8, q: 6, type: 'enemy_soldier', isDead: true, cityGateSide: 'outside' },
+            { id: 'rebel_corpse3', r: 9, q: 4, type: 'enemy_soldier', isDead: true, cityGateSide: 'outside' },
+            { id: 'rebel_corpse4', r: 10, q: 5, type: 'enemy_soldier', isDead: true, cityGateSide: 'outside' },
             // Rebels that will be executed in the cutscene (one archer)
-            { id: 'rebel_cleanup1', r: 7, q: 4, type: 'enemy_soldier', templateId: 'rebel_archer' },
-            { id: 'rebel_cleanup2', r: 8, q: 5, type: 'enemy_soldier' }
+            { id: 'rebel_cleanup1', r: 7, q: 4, type: 'enemy_soldier', templateId: 'rebel_archer', cityGateSide: 'outside' },
+            { id: 'rebel_cleanup2', r: 8, q: 5, type: 'enemy_soldier', cityGateSide: 'outside' }
         ],
         isCutscene: true,
         nextScene: 'narrative',
