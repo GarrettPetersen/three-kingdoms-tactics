@@ -229,10 +229,10 @@ export const BATTLES = {
             houseDensity: 0.0
         },
         units: [
-            // Oath brothers start at top left
-            { id: 'liubei', r: 2, q: 2, type: 'hero' },
-            { id: 'guanyu', r: 3, q: 2, type: 'hero' },
-            { id: 'zhangfei', r: 2, q: 3, type: 'hero' },
+            // Oath brothers and remaining rebels are outside the city gate.
+            { id: 'liubei', r: 5, q: 2, type: 'hero' },
+            { id: 'guanyu', r: 6, q: 2, type: 'hero' },
+            { id: 'zhangfei', r: 5, q: 3, type: 'hero' },
             // Guards and Gong Jing near the gate
             { id: 'guard1', r: 6, q: 4, type: 'allied_soldier' },
             { id: 'guard2', r: 6, q: 6, type: 'allied_soldier' },
@@ -244,7 +244,7 @@ export const BATTLES = {
             { id: 'rebel_corpse4', r: 10, q: 5, type: 'enemy_soldier', isDead: true },
             // Rebels that will be executed in the cutscene (one archer)
             { id: 'rebel_cleanup1', r: 7, q: 4, type: 'enemy_soldier', templateId: 'rebel_archer' },
-            { id: 'rebel_cleanup2', r: 7, q: 6, type: 'enemy_soldier' }
+            { id: 'rebel_cleanup2', r: 8, q: 5, type: 'enemy_soldier' }
         ],
         isCutscene: true,
         nextScene: 'narrative',
@@ -991,8 +991,8 @@ export const UNIT_TEMPLATES = {
         'crossbowman': { name: 'Crossbowman', imgKey: 'crossbowman', hp: 2, moveRange: 4, attacks: ['crossbow_bolt'], faction: 'allied' }
     },
     'enemy_captain': {
-        'dengmao': { name: 'Deng Mao', imgKey: 'dengmao', hp: 5, moveRange: 3, attacks: ['generic_spear'], faction: 'enemy', level: 1 },
-        'chengyuanzhi': { name: 'Cheng Yuanzhi', imgKey: 'chengyuanzhi', hp: 5, moveRange: 3, attacks: ['polearm_sweep'], faction: 'enemy', level: 2 },
+        'dengmao': { name: 'Deng Mao', imgKey: 'dengmao', hp: 4, moveRange: 3, attacks: ['generic_spear'], faction: 'enemy', level: 1 },
+        'chengyuanzhi': { name: 'Cheng Yuanzhi', imgKey: 'chengyuanzhi', hp: 4, moveRange: 3, attacks: ['polearm_sweep'], faction: 'enemy', level: 2 },
         'gaosheng': { name: 'Gao Sheng', imgKey: 'yellowturban', hp: 5, moveRange: 3, attacks: ['generic_spear'], faction: 'enemy', level: 2 },
         'zhang_jue_captain': { name: 'Yellow Turban Captain', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['bash'], faction: 'enemy' }
     },

@@ -1,6 +1,8 @@
 import { GameState } from './GameState.js';
 import { assets } from './AssetLoader.js';
 
+const GLOBAL_PALETTE_STORAGE_KEY = 'three_kingdoms_tactics_palette';
+
 export class SceneManager {
     constructor(ctx, canvas, config) {
         this.ctx = ctx;
@@ -12,6 +14,7 @@ export class SceneManager {
         this.optionsButtonRect = null;
         this.gameState = new GameState();
         this.gameState.load();
+        this.globalPaletteKey = this.loadGlobalPaletteKey();
         
         this.lastPointerX = 0;
         this.lastPointerY = 0;
@@ -45,6 +48,54 @@ export class SceneManager {
 
     setDisplayControls(controls = {}) {
         this.displayControls = controls;
+    }
+
+    loadGlobalPaletteKey() {
+        if (typeof localStorage === 'undefined') return 'off';
+        return localStorage.getItem(GLOBAL_PALETTE_STORAGE_KEY) || 'off';
+    }
+
+    saveGlobalPaletteKey() {
+        if (typeof localStorage === 'undefined') return;
+        localStorage.setItem(GLOBAL_PALETTE_STORAGE_KEY, this.globalPaletteKey || 'off');
+    }
+
+    getGlobalPaletteKeys() {
+        return ['off', ...Object.keys(assets.palettes || {}).sort()];
+    }
+
+    getGlobalPaletteKey() {
+        const keys = this.getGlobalPaletteKeys();
+        return keys.includes(this.globalPaletteKey) ? this.globalPaletteKey : 'off';
+    }
+
+    getGlobalPaletteLabel() {
+        const key = this.getGlobalPaletteKey();
+        return key === 'off' ? 'OFF' : key;
+    }
+
+    getGlobalPaletteColors() {
+        const key = this.getGlobalPaletteKey();
+        return key === 'off' ? [] : (assets.palettes?.[key] || []);
+    }
+
+    setGlobalPaletteKey(key, options = {}) {
+        const keys = this.getGlobalPaletteKeys();
+        const nextKey = keys.includes(key) ? key : 'off';
+        this.globalPaletteKey = nextKey;
+        this.saveGlobalPaletteKey();
+        if (this.currentScene && typeof this.currentScene.syncPaletteFromManager === 'function') {
+            this.currentScene.syncPaletteFromManager(options.showToast !== false);
+        }
+        return true;
+    }
+
+    cycleGlobalPalette(direction = 1, options = {}) {
+        const keys = this.getGlobalPaletteKeys();
+        if (keys.length === 0) return false;
+        const currentIndex = Math.max(0, keys.indexOf(this.getGlobalPaletteKey()));
+        const nextIndex = (currentIndex + direction + keys.length) % keys.length;
+        return this.setGlobalPaletteKey(keys[nextIndex], options);
     }
 
     getCanvasLogicalPoint(e) {

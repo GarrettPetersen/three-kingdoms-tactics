@@ -1847,19 +1847,7 @@ export const NARRATIVE_SCRIPTS = {
                 zh: "让我们出发！我们的第一个目的地：当地县令的总部。"
             }
         },
-        { type: 'command', action: 'fade', target: 1, speed: 0.0005 },
-        { 
-            type: 'title',
-            text: {
-                en: "CHAPTER ONE: THE VOLUNTEER ARMY",
-                zh: "第一章：志愿军"
-            },
-            subtext: {
-                en: "The Journey Begins",
-                zh: "征程开始"
-            },
-            duration: 3000
-        }
+        { type: 'command', action: 'fade', target: 1, speed: 0.0005 }
     ],
     'noticeboard_after_training': [
         { bg: 'noticeboard', type: 'command', action: 'clearActors' },
@@ -1879,19 +1867,7 @@ export const NARRATIVE_SCRIPTS = {
                 zh: "让我们出发！我们的第一个目的地：当地县令的总部。"
             }
         },
-        { type: 'command', action: 'fade', target: 1, speed: 0.0005 },
-        {
-            type: 'title',
-            text: {
-                en: "CHAPTER ONE: THE VOLUNTEER ARMY",
-                zh: "第一章：志愿军"
-            },
-            subtext: {
-                en: "The Journey Begins",
-                zh: "征程开始"
-            },
-            duration: 3000
-        }
+        { type: 'command', action: 'fade', target: 1, speed: 0.0005 }
     ],
     'caocao_dunqiu_intro': [
         {

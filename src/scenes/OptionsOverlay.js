@@ -98,21 +98,16 @@ export class OptionsOverlay extends BaseScene {
         }
     }
 
-    getPaletteScene() {
-        const scene = this.manager?.currentScene;
-        return scene && typeof scene.cycleBattlePalette === 'function' ? scene : null;
+    getPaletteLabel() {
+        return this.manager?.getGlobalPaletteLabel?.() || 'OFF';
     }
 
-    getPaletteLabel() {
-        const scene = this.getPaletteScene();
-        if (!scene || typeof scene.getBattlePaletteLabel !== 'function') return 'OFF';
-        return scene.getBattlePaletteLabel();
+    getPaletteColors() {
+        return this.manager?.getGlobalPaletteColors?.() || [];
     }
 
     cyclePalette(direction = 1) {
-        const scene = this.getPaletteScene();
-        if (!scene) return;
-        if (scene.cycleBattlePalette(direction, true)) {
+        if (this.manager?.cycleGlobalPalette?.(direction, { showToast: true })) {
             assets.playSound('ui_click', 0.45);
         }
     }
@@ -485,6 +480,39 @@ export class OptionsOverlay extends BaseScene {
         });
     }
 
+    drawPaletteSwatches(ctx, x, y, w, h) {
+        const colors = this.getPaletteColors();
+        ctx.fillStyle = '#202020';
+        ctx.fillRect(x, y, w, h);
+        ctx.strokeStyle = '#666666';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+
+        if (!colors.length) {
+            ctx.strokeStyle = '#777777';
+            ctx.beginPath();
+            ctx.moveTo(x + 3, y + h - 3);
+            ctx.lineTo(x + w - 3, y + 3);
+            ctx.stroke();
+            return;
+        }
+
+        const cols = 10;
+        const rows = 2;
+        const sw = Math.max(2, Math.floor((w - 2) / cols));
+        const sh = Math.max(2, Math.floor((h - 2) / rows));
+        const sampleCount = cols * rows;
+        for (let i = 0; i < sampleCount; i++) {
+            const colorIndex = Math.floor(i * colors.length / sampleCount);
+            const c = colors[colorIndex];
+            if (!c) continue;
+            const sx = x + 1 + (i % cols) * sw;
+            const sy = y + 1 + Math.floor(i / cols) * sh;
+            ctx.fillStyle = `rgb(${c.r}, ${c.g}, ${c.b})`;
+            ctx.fillRect(sx, sy, sw, sh);
+        }
+    }
+
     drawConfirmButton(ctx, rect, label, isHighlighted, fill, textColor) {
         ctx.fillStyle = isHighlighted ? '#3a3324' : fill;
         ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
@@ -670,8 +698,9 @@ export class OptionsOverlay extends BaseScene {
                     color: isHighlighted ? '#ffffff' : '#ffd700',
                     font: '8px Silkscreen'
                 });
+                this.drawPaletteSwatches(ctx, rowRect.x + 70, rowRect.y + 4, 50, 10);
                 this.drawPixelText(ctx, `< ${this.getPaletteLabel()} >`, rowRect.x + rowRect.w - 12, rowRect.y + 6, {
-                    color: this.getPaletteScene() ? '#eeeeee' : '#777777',
+                    color: '#eeeeee',
                     font: '8px Silkscreen',
                     align: 'right'
                 });

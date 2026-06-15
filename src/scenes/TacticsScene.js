@@ -505,8 +505,8 @@ export class TacticsScene extends BaseScene {
         this.zhuoTrainingAttackInstructionShown = false;
         this.zhuoTrainingEndTurnPromptShown = false;
         this.zhuoTrainingFreePracticePromptShown = false;
-        this.battlePaletteKeys = ['off', ...Object.keys(assets.palettes || {}).sort()];
-        this.activeBattlePaletteIndex = Math.max(0, this.battlePaletteKeys.indexOf('off'));
+        this.battlePaletteKeys = this.manager?.getGlobalPaletteKeys?.() || ['off', ...Object.keys(assets.palettes || {}).sort()];
+        this.activeBattlePaletteIndex = Math.max(0, this.battlePaletteKeys.indexOf(this.manager?.getGlobalPaletteKey?.() || 'off'));
         this.paletteToastText = '';
         this.paletteToastUntil = 0;
         this.environmentPaletteImageKeys = [];
@@ -677,6 +677,8 @@ export class TacticsScene extends BaseScene {
             // Restore saved battle state
             this.restoreBattleState(savedState);
         }
+
+        this.syncPaletteFromManager(false);
 
         this.particles = [];
         this.overkillEffects = [];
@@ -4815,6 +4817,7 @@ export class TacticsScene extends BaseScene {
     }
 
     checkDaxingReinforcements() {
+        if (this.turnNumber <= 1) return;
         const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
         const aliveCaptains = enemies.filter(u => u.id === 'dengmao' || u.id === 'chengyuanzhi');
         
@@ -9729,11 +9732,10 @@ export class TacticsScene extends BaseScene {
         return key === 'off' ? 'OFF' : key;
     }
 
-    setBattlePaletteByIndex(index, showToast = true) {
-        if (!this.battlePaletteKeys || this.battlePaletteKeys.length === 0) return false;
-        const total = this.battlePaletteKeys.length;
-        this.activeBattlePaletteIndex = (index + total) % total;
-        const key = this.getBattlePaletteKey();
+    syncPaletteFromManager(showToast = false) {
+        this.battlePaletteKeys = this.manager?.getGlobalPaletteKeys?.() || ['off', ...Object.keys(assets.palettes || {}).sort()];
+        const key = this.manager?.getGlobalPaletteKey?.() || 'off';
+        this.activeBattlePaletteIndex = Math.max(0, this.battlePaletteKeys.indexOf(key));
         this.applyBattleEnvironmentPalette(key);
         if (showToast) {
             this.paletteToastText = key === 'off'
@@ -9742,6 +9744,19 @@ export class TacticsScene extends BaseScene {
             this.paletteToastUntil = performance.now() + 5000;
         }
         return true;
+    }
+
+    setBattlePaletteByIndex(index, showToast = true) {
+        if (!this.battlePaletteKeys || this.battlePaletteKeys.length === 0) return false;
+        const total = this.battlePaletteKeys.length;
+        const nextIndex = (index + total) % total;
+        const key = this.battlePaletteKeys[nextIndex] || 'off';
+        if (this.manager?.setGlobalPaletteKey) {
+            return this.manager.setGlobalPaletteKey(key, { showToast });
+        }
+        this.activeBattlePaletteIndex = nextIndex;
+        this.applyBattleEnvironmentPalette(key);
+        return this.syncPaletteFromManager(showToast);
     }
 
     cycleBattlePalette(direction = 1, showToast = true) {
@@ -12117,8 +12132,11 @@ export class TacticsScene extends BaseScene {
             if (relIx >= 7 && relIx <= 17) edgeY = 25 + Math.floor((relIx - 7) * (30 - 25) / 10);
             else if (relIx >= 18 && relIx <= 28) edgeY = 30 + Math.floor((relIx - 18) * (25 - 30) / 10);
 
-            // Check if this column is on a sloped edge
-            const edge = getEdgeForColumn(ix);
+            // Edge connector PNGs now draw the slope/depth between neighboring hexes.
+            // Keep the top tile art unwarped; stretching columns turns small terrain
+            // detail pixels into visible red/blue streaks on grass slopes.
+            const useLegacySlopeColumnStretch = false;
+            const edge = useLegacySlopeColumnStretch ? getEdgeForColumn(ix) : null;
             let slopeOffset = 0;
             let hasSlope = false;
             

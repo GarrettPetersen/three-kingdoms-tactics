@@ -13,8 +13,8 @@
 - ZH: 灵帝病逝，储位暗争。何进避过宦官陷阱，扶立刘辩即位，却在太后、外戚、士人和宦官之间摇摆，迟迟不能定下清君侧之策。
 
 ## Route Premise
-- He Jin is not a battlefield hero route. His chapter should play as court crisis management: audience scenes, council choices, palace-security tactical encounters, and map pressure around Luoyang.
-- The core tragedy should stay intact. Branches alter who trusts He Jin, how much blood is spilled early, and what resources carry into chapter 3, but they should not let He Jin cleanly avert the succession crisis.
+- He Jin is not a battlefield hero route. His chapter should play as court crisis management: audience scenes, council choices, palace-security pressure, and map decisions around Luoyang.
+- The source-faithful path can be completely combat-free. Branches alter who trusts He Jin, how publicly force is displayed, and what political flags carry into chapter 3, but the player must be able to follow the novel's event order without invented battles.
 
 ## Full Scene Arc
 
@@ -26,11 +26,11 @@
      - "Enter at once" increases boldness but risks Jian Shuo's trap.
      - "Question the summons" gives Pan Yin a chance to warn him more cleanly.
 
-2) [narrative + small tactical escape] Jian Shuo's palace-gate trap.
+2) [narrative] Jian Shuo's palace-gate trap.
    - Setting: palace gate / covered approach.
    - Source beats: Jian Shuo plans to kill He Jin before Prince Xie can be blocked; Pan Yin warns He Jin not to enter; He Jin retreats to his residence.
-   - Gameplay: short escape map with He Jin, guards, and palace attendants; objective is retreat to the outer gate, not defeat everyone.
-   - Loss outcome: guards pull He Jin out through a side gate, but his prestige/resource score drops.
+   - Gameplay: dialogue and timing pressure only; He Jin never has to fight his way out.
+   - Required result: Pan Yin's warning prevents He Jin from entering the trap.
    - Branch effect: if the player delayed in scene 1, Pan Yin starts closer and gives a cleaner escape.
 
 3) [narrative] He Jin's residence council after the failed trap.
@@ -46,21 +46,21 @@
    - Gameplay purpose: move from survival to initiative.
    - Required result: He Jin chooses to enter with force and enthrone Prince Bian.
 
-5) [tactical palace operation] Escort the ministers and enthrone Liu Bian.
+5) [narrative / ceremony] Enter the palace and enthrone Liu Bian.
    - Setting: imperial palace corridors / coffin hall.
    - Source beats: Yuan Shao volunteers 5,000 elite troops; He Jin enters with He Yong, Xun You, Zheng Tai, and others; Liu Bian is raised before Lingdi's coffin.
-   - Gameplay: palace-security battle, mostly nonlethal unless attacked; objective is escort minister units to the coffin hall and hold doors for a set number of turns.
-   - Branch tactical objective:
-     - Protect all ministers for stronger court legitimacy.
-     - Rush the coffin hall faster but lose some legitimacy if ministers are scattered.
+   - Gameplay: ceremonial procession and council staging; Yuan Shao's troops are political pressure and protection, not a playable battle.
+   - Branch objective:
+     - Enter with strict discipline for stronger court legitimacy.
+     - Enter with a heavier show of force for higher eunuch hostility.
 
-6) [tactical/narrative] Yuan Shao seizes Jian Shuo.
+6) [narrative event] Yuan Shao seizes Jian Shuo.
    - Setting: imperial garden shadows.
    - Source beats: Yuan Shao enters to arrest Jian Shuo; Jian Shuo flees into the imperial garden and is killed by Guo Sheng; Jian Shuo's forbidden troops submit.
-   - Gameplay: chase/contain map; Jian Shuo should die by event if cornered, preserving the source.
+   - Gameplay: event scene or report; Jian Shuo should die by Guo Sheng's hand, preserving the source.
    - Branch effect:
      - If He Jin ordered strict discipline, more forbidden troops surrender.
-     - If He Jin ordered vengeance, more guards fight and eunuch hostility rises.
+     - If He Jin ordered vengeance, more palace fear and eunuch hostility are recorded.
 
 7) [narrative choice] The first purge debate.
    - Setting: palace council chamber.
@@ -78,13 +78,13 @@
      - "Counsel restraint to Empress He" reduces bloodshed later.
      - "Encourage her to strike first" increases He faction control but worsens legitimacy.
 
-9) [tactical siege/police action] Surround Dong Zhong's residence.
+9) [narrative / order scene] Surround Dong Zhong's residence.
    - Setting: Luoyang noble residence / military street.
    - Source beats: He Jin has ministers force Dong Taikou back to Hejian and sends forbidden troops to surround Dong Zhong's residence; Dong Zhong kills himself.
-   - Gameplay: control-point mission around a mansion; objective is seize seals and prevent Dong loyalists from escaping with letters.
+   - Gameplay: orders, messenger reports, and a residence exterior scene; no playable siege is required.
    - Branch effect:
-     - Capture the seals cleanly: He faction authority rises.
-     - Heavy casualties or house burning: rumors against He Jin grow.
+     - Handle the seals cleanly: He faction authority rises.
+     - Make a harsher public display: rumors against He Jin grow.
 
 10) [narrative] Poison at Hejian and the eunuchs' bribery net.
     - Setting: He Jin residence at night / messenger reports.
@@ -134,31 +134,13 @@
 - `hejin_he_family_loyalty`: grows when He Jin yields to Empress He / He Miao.
 - `hejin_summons_order`: which outside commanders were called first.
 
-## Battles / Interactive Scenes
+## Combat / Interaction Notes
 
-1) Palace Gate Escape
-   - Player units: He Jin, 2-3 guards.
-   - Enemy units: Jian Shuo palace guards, blocking troops.
-   - Objective: reach outer gate with He Jin.
-   - Rules: low lethality, palace guards prefer blocking and surrounding.
-
-2) Coffin Hall Escort
-   - Player units: He Jin, Yuan Shao, guards.
-   - Allied civilians/ministers: He Yong, Xun You, Zheng Tai, generic ministers.
-   - Objective: escort ministers to the coffin hall and hold until enthronement completes.
-   - Failure retry dialogue: He Jin cannot let the succession be decided by forged orders.
-
-3) Imperial Garden Arrest
-   - Player units: Yuan Shao, palace guards.
-   - Target: Jian Shuo.
-   - Objective: corner Jian Shuo; Guo Sheng event kills him once trapped.
-   - Rule: Jian Shuo should not become a normal kill target unless we intentionally diverge from source.
-
-4) Dong Zhong Residence
-   - Player units: He Jin guards, optional Yuan Shao detachment.
-   - Enemy units: Dong Zhong retainers.
-   - Objective: seize seals / surround residence / prevent courier escape.
-   - Source-preserving event: Dong Zhong kills himself after residence is sealed.
+- There is no direct He Jin combat in this source span. A faithful playthrough should be allowed to complete the route without any tactical battle.
+- Do not implement Palace Gate Escape, Coffin Hall Escort, Imperial Garden Arrest, or Dong Zhong Residence as required battles for the source-faithful path.
+- Usable interactions here are dialogue choices, council responses, ceremonial staging, map/courier priorities, and public-versus-private order tone.
+- Branches should affect trust, legitimacy, hostility, rumors, and chapter 3 setup. They should not insert a battle or let He Jin avert the succession crisis.
+- If we later add any tactics map in this route, label it clearly as adaptation-only and keep the novel-exact route available.
 
 ## Required New Settings
 
