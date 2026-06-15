@@ -17,7 +17,7 @@ export class OptionsOverlay extends BaseScene {
         this.exitConfirmYesRect = null;
         this.exitConfirmNoRect = null;
         this.volumeKeys = ['master', 'music', 'sfx', 'voice'];
-        this.rowKeys = ['fullscreen', 'scale', 'mute', ...this.volumeKeys, 'language', 'palette', 'exit'];
+        this.rowKeys = ['fullscreen', 'scale', ...this.volumeKeys, 'language', 'palette', 'exit'];
         this._onPointerUp = () => {
             this.activeSliderKey = null;
         };
@@ -73,7 +73,10 @@ export class OptionsOverlay extends BaseScene {
     }
 
     setVolumeFromRatio(key, ratio) {
-        assets.setAudioSettings({ [key]: this.clamp01(ratio) });
+        let value = this.clamp01(ratio);
+        if (value <= 0.05) value = 0;
+        else if (value >= 0.95) value = 1;
+        assets.setAudioSettings({ [key]: value });
     }
 
     toggleMute() {
@@ -153,9 +156,6 @@ export class OptionsOverlay extends BaseScene {
         }
         if (rowKey === 'palette') {
             this.cyclePalette(1);
-        }
-        if (rowKey === 'mute') {
-            this.toggleMute();
         }
         if (rowKey === 'exit') {
             this.requestExitToMainMenu();
@@ -247,10 +247,6 @@ export class OptionsOverlay extends BaseScene {
             const dir = e.key === 'ArrowRight' ? 1 : -1;
             if (this.volumeKeys.includes(rowKey)) {
                 this.adjustVolume(rowKey, dir * 0.05);
-                return true;
-            }
-            if (rowKey === 'mute') {
-                this.toggleMute();
                 return true;
             }
             if (rowKey === 'fullscreen') {
@@ -422,16 +418,17 @@ export class OptionsOverlay extends BaseScene {
         }
     }
 
-    drawVolumeRow(ctx, rowRect, label, value, isHighlighted, sliderKey) {
+    drawVolumeRow(ctx, rowRect, label, value, isHighlighted, sliderKey, options = {}) {
         const rowTextY = rowRect.y + 6;
         this.drawPixelText(ctx, label, rowRect.x + 8, rowTextY, {
             color: isHighlighted ? '#ffffff' : '#ffd700',
             font: '8px Tiny5'
         });
 
-        const sliderW = Math.max(80, Math.floor(rowRect.w * 0.45));
+        const hasMute = !!options.showMute;
+        const sliderW = hasMute ? Math.max(74, Math.floor(rowRect.w * 0.34)) : Math.max(80, Math.floor(rowRect.w * 0.45));
         const sliderH = 8;
-        const sliderX = rowRect.x + rowRect.w - sliderW - 44;
+        const sliderX = hasMute ? rowRect.x + Math.floor(rowRect.w * 0.35) : rowRect.x + rowRect.w - sliderW - 44;
         const sliderY = rowRect.y + Math.floor((rowRect.h - sliderH) / 2);
         this.sliderRects[sliderKey] = { x: sliderX, y: sliderY, w: sliderW, h: sliderH };
 
@@ -451,6 +448,34 @@ export class OptionsOverlay extends BaseScene {
             color: '#eeeeee',
             font: '8px Tiny5'
         });
+
+        if (!hasMute) return;
+
+        const muteLabel = getLocalizedText(UI_TEXT['MUTE']);
+        const boxSize = 10;
+        const boxX = rowRect.x + rowRect.w - boxSize - 10;
+        const boxY = rowRect.y + Math.floor((rowRect.h - boxSize) / 2);
+        const labelX = boxX - 6;
+        this.checkboxRects.mute = { x: boxX - 38, y: rowRect.y, w: 48, h: rowRect.h };
+        this.drawPixelText(ctx, muteLabel, labelX, rowTextY, {
+            color: options.isMuted ? '#66ccff' : '#d0c0a0',
+            font: '8px Tiny5',
+            align: 'right'
+        });
+
+        ctx.fillStyle = options.isMuted ? '#66ccff' : '#202020';
+        ctx.fillRect(boxX, boxY, boxSize, boxSize);
+        ctx.strokeStyle = isHighlighted ? '#ffffff' : '#777777';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(boxX + 0.5, boxY + 0.5, boxSize - 1, boxSize - 1);
+        if (options.isMuted) {
+            ctx.strokeStyle = '#001018';
+            ctx.beginPath();
+            ctx.moveTo(boxX + 2, boxY + 5);
+            ctx.lineTo(boxX + 4, boxY + 8);
+            ctx.lineTo(boxX + 8, boxY + 2);
+            ctx.stroke();
+        }
     }
 
     drawSimpleRow(ctx, rowRect, label, isHighlighted, color = '#ffd700') {
@@ -582,7 +607,7 @@ export class OptionsOverlay extends BaseScene {
             language: getLocalizedText(UI_TEXT['LANGUAGE']),
             palette: getLocalizedText(UI_TEXT['PALETTE']),
             mute: getLocalizedText(UI_TEXT['MUTE']),
-            fullscreen: getLocalizedText(this.isFullscreen() ? UI_TEXT['EXIT FULLSCREEN'] : UI_TEXT['FULLSCREEN']),
+            fullscreen: getLocalizedText(this.isFullscreen() ? UI_TEXT['EXIT FULLSCREEN'] : UI_TEXT['ENTER FULLSCREEN']),
             scale: getLocalizedText(UI_TEXT['SCALE MODE']),
             exit: this.getExitLabel()
         };
@@ -600,19 +625,10 @@ export class OptionsOverlay extends BaseScene {
             ctx.lineWidth = 1;
             ctx.strokeRect(rowRect.x + 0.5, rowRect.y + 0.5, rowRect.w - 1, rowRect.h - 1);
 
-            if (rowKey === 'mute') {
-                this.drawMuteRow(ctx, rowRect, labels.mute, !!settings.muted, isHighlighted);
-                continue;
-            }
             if (rowKey === 'fullscreen') {
                 this.drawPixelText(ctx, labels.fullscreen, rowRect.x + 8, rowRect.y + 6, {
                     color: isHighlighted ? '#ffffff' : '#ffd700',
                     font: '8px Silkscreen'
-                });
-                this.drawPixelText(ctx, this.isFullscreen() ? getLocalizedText(UI_TEXT['ON']) : getLocalizedText(UI_TEXT['OFF']), rowRect.x + rowRect.w - 12, rowRect.y + 6, {
-                    color: '#eeeeee',
-                    font: '8px Silkscreen',
-                    align: 'right'
                 });
                 continue;
             }
@@ -630,7 +646,10 @@ export class OptionsOverlay extends BaseScene {
                 continue;
             }
             if (this.volumeKeys.includes(rowKey)) {
-                this.drawVolumeRow(ctx, rowRect, labels[rowKey], settings[rowKey], isHighlighted, rowKey);
+                this.drawVolumeRow(ctx, rowRect, labels[rowKey], settings[rowKey], isHighlighted, rowKey, {
+                    showMute: rowKey === 'master',
+                    isMuted: !!settings.muted
+                });
                 continue;
             }
             if (rowKey === 'language') {

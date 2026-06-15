@@ -107,7 +107,7 @@ export class SceneManager {
         const isCampaign = !isDisposable && (hasCampaign || isCampaignLiubo);
 
         return {
-            labelKey: isCampaign ? 'SAVE AND EXIT' : 'EXIT',
+            labelKey: isCampaign ? 'SAVE AND RETURN TO TITLE' : 'RETURN TO TITLE',
             requiresConfirmation: !isCampaign,
             isCampaign,
             isDisposable

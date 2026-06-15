@@ -112,13 +112,21 @@ export const UI_TEXT = {
         en: 'SAVE AND EXIT',
         zh: '保存并退出'
     },
+    'SAVE AND RETURN TO TITLE': {
+        en: 'SAVE + TITLE',
+        zh: '保存回标题'
+    },
     'EXIT': {
         en: 'EXIT',
         zh: '退出'
     },
+    'RETURN TO TITLE': {
+        en: 'TITLE SCREEN',
+        zh: '返回标题'
+    },
     'EXIT TO MAIN MENU?': {
-        en: 'EXIT TO MAIN MENU?',
-        zh: '退出到主菜单？'
+        en: 'RETURN TO TITLE?',
+        zh: '返回标题？'
     },
     'MASTER VOLUME': {
         en: 'MASTER VOLUME',
@@ -151,6 +159,10 @@ export const UI_TEXT = {
     'FULLSCREEN': {
         en: 'FULLSCREEN',
         zh: '全屏'
+    },
+    'ENTER FULLSCREEN': {
+        en: 'ENTER FULL',
+        zh: '进入全屏'
     },
     'EXIT FULLSCREEN': {
         en: 'EXIT FULL',
