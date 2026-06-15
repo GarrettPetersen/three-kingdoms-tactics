@@ -1036,15 +1036,57 @@ export class TacticsScene extends BaseScene {
             unit.isGone = true;
             if (fleeCfg.endBattle && typeof fleeCfg.endBattle.won === 'boolean') {
                 const won = !!fleeCfg.endBattle.won;
-                // Dong Zhuo rescue: after Zhang Jue flees, show victory dialogue (Dong Zhuo "What offices...") then end
+                // Dong Zhuo rescue: Zhang Jue orders the whole Yellow Turban force to withdraw.
                 if (this.battleId === 'dongzhuo_battle' && unit.id === 'zhangjue' && won) {
-                    this.startDongZhuoVictoryDialogue();
+                    this.retreatDongZhuoYellowTurbansThenVictory();
                 } else {
                     this.endBattle(won);
                 }
             }
         };
         waitUntilGone();
+    }
+
+    retreatDongZhuoYellowTurbansThenVictory() {
+        if (this.dongZhuoYellowTurbanRetreatStarted) return;
+        this.dongZhuoYellowTurbanRetreatStarted = true;
+        this.isProcessingTurn = true;
+
+        const retreaters = this.units.filter(u =>
+            u.faction === 'enemy' &&
+            u.id !== 'zhangjue' &&
+            u.hp > 0 &&
+            !u.isDead &&
+            !u.isGone
+        );
+
+        if (retreaters.length === 0) {
+            this.startDongZhuoVictoryDialogue();
+            return;
+        }
+
+        retreaters
+            .slice()
+            .sort((a, b) => (b.q - a.q) || (a.r - b.r))
+            .forEach((u, idx) => {
+                setTimeout(() => {
+                    if (!u || u.isGone || u.hp <= 0) return;
+                    this.makeUnitFleeOffscreen(u, {
+                        edge: 'right',
+                        extraTiles: 5
+                    });
+                }, idx * 120);
+            });
+
+        const checkDone = () => {
+            const anyPresent = retreaters.some(u => u && !u.isGone);
+            if (!anyPresent) {
+                this.startDongZhuoVictoryDialogue();
+                return;
+            }
+            setTimeout(checkDone, 100);
+        };
+        setTimeout(checkDone, 500);
     }
 
     triggerImmortalBehavior(unit, cause = 'damage') {
@@ -7228,6 +7270,32 @@ export class TacticsScene extends BaseScene {
         return unit?.horseType || 'brown';
     }
 
+    hasPersistentHorse(unit, traits) {
+        return !!(
+            unit?.onHorse ||
+            traits?.hasHorse ||
+            traits?.hasWhiteHorse ||
+            traits?.horseType
+        );
+    }
+
+    persistCampaignHorseOwnership(unitId, horseType) {
+        if (this.isCustom || !unitId) return;
+        const gs = this.manager?.gameState;
+        if (!gs || typeof gs.getCampaignVar !== 'function' || typeof gs.setCampaignVar !== 'function') return;
+
+        const allTraits = { ...(gs.getCampaignVar('unitTraits') || {}) };
+        const current = { ...(allTraits[unitId] || {}) };
+        const resolvedType = horseType || current.horseType || (current.hasWhiteHorse ? 'white' : 'brown');
+        allTraits[unitId] = {
+            ...current,
+            hasHorse: true,
+            horseType: resolvedType
+        };
+        if (resolvedType === 'white') allTraits[unitId].hasWhiteHorse = true;
+        gs.setCampaignVar('unitTraits', allTraits);
+    }
+
     placeInitialUnits(specifiedUnits) {
         this.units = [];
         let unitsToPlace = specifiedUnits;
@@ -7340,7 +7408,7 @@ export class TacticsScene extends BaseScene {
                 let finalR = mapped.r;
                 let finalQ = mapped.q;
                 let mountedSpawnPick = null;
-                const wantsHorseSpawn = !!u.onHorse;
+                const wantsHorseSpawn = this.hasPersistentHorse(u, traits);
                 if (customCityGateSpawnById) {
                     const forced = customCityGateSpawnById.get(u.id);
                     if (forced) {
@@ -7463,14 +7531,17 @@ export class TacticsScene extends BaseScene {
                 if (u.isDead) unit.isGone = false; // We want corpses to stay visible
 
                 // Mount (custom battles): +move bonus on a single occupied hex.
-                const wantsHorse = !!u.onHorse;
+                const wantsHorse = wantsHorseSpawn;
                 if (wantsHorse) {
                     unit.onHorse = true;
                     unit.baseMoveRange = unit.moveRange;
-                    unit.horseType = u.horseType || 'brown';
+                    unit.horseType = resolvedHorseType;
                     unit.moveRange = unit.baseMoveRange + this.getHorseMoveBonus(unit.horseType);
                     unit.horseId = `horse_${unit.id}`;
                     if (mountedSpawnPick) unit.flip = !!mountedSpawnPick.flip;
+                    if (unit.faction === 'player' || unit.faction === 'allied') {
+                        this.persistCampaignHorseOwnership(unit.id, unit.horseType);
+                    }
                 }
                 
             this.units.push(unit);

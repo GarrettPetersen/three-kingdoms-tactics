@@ -1302,7 +1302,7 @@ export class MapScene extends BaseScene {
                 portraitKey: 'narrator',
                 voiceId: 'ch1_end_01',
                 text: {
-                    en: "But slaying the ungrateful would\nMean many deaths a year.\n\nDong Zhuo's fate will be unrolled in later chapters...",
+                    en: "But slaying the ungrateful would\nmean many deaths a year.\n\nDong Zhuo's fate will be unrolled in later chapters...",
                     zh: "若尽诛忘恩之徒，\n一年不知要杀多少人。\n\n董卓的命运，将在后续章节展开……"
                 }
             },
