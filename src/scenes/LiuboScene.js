@@ -620,7 +620,7 @@ export class LiuboScene extends BaseScene {
         const bottomY = layout.panelY + layout.panelH - (layout.portrait ? 21 : 26);
         return {
             x,
-            y: player === 'white' ? bottomY : topY
+            y: player === this.state.humanPlayer ? bottomY : topY
         };
     }
 
@@ -777,12 +777,16 @@ export class LiuboScene extends BaseScene {
 
     renderPieceBenches(ctx, panelX, panelW, y, portrait) {
         const selectablePieces = this.getSelectablePieceIds();
-        for (const player of ['white', 'black']) {
+        const humanPlayer = this.state.humanPlayer || 'white';
+        const opponentPlayer = humanPlayer === 'white' ? 'black' : 'white';
+        const playerOrder = [opponentPlayer, humanPlayer];
+        for (let playerIndex = 0; playerIndex < playerOrder.length; playerIndex++) {
+            const player = playerOrder[playerIndex];
             const x = portrait
-                ? (player === 'white' ? panelX + 14 : panelX + panelW - 88)
+                ? (playerIndex === 0 ? panelX + 14 : panelX + panelW - 88)
                 : panelX + 10;
             const lineGap = getCurrentLanguage() === 'zh' ? 15 : 12;
-            const blockY = portrait ? y : y + (player === 'white' ? 0 : 64);
+            const blockY = portrait ? y : y + (playerIndex === 0 ? 0 : 64);
             const label = this.getPlayerLabel(player);
             this.drawPixelText(ctx, label, x + 38, blockY, {
                 color: player === 'white' ? '#f0dfc2' : '#b98f6b',

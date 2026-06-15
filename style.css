@@ -152,6 +152,12 @@ canvas {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
     box-shadow: 0 2px 0 #000, 0 0 0 2px rgba(0, 0, 0, 0.3);
+    opacity: 1;
+    transition: opacity 260ms ease, background-color 160ms ease, border-color 160ms ease, transform 80ms ease, box-shadow 80ms ease;
+}
+
+.web-fullscreen-toggle--idle {
+    opacity: 0.15;
 }
 
 .web-fullscreen-toggle[hidden] {

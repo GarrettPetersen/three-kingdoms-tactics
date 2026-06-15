@@ -19,6 +19,9 @@ const canvas = document.getElementById('game-canvas');
 const gameContainer = document.getElementById('game-container');
 const webFullscreenToggle = document.getElementById('web-fullscreen-toggle');
 const ctx = canvas.getContext('2d');
+const WEB_FULLSCREEN_IDLE_MS = 3200;
+const WEB_FULLSCREEN_PROXIMITY_PX = 96;
+let webFullscreenIdleTimer = null;
 
 function hideBootLoader() {
     const loader = document.getElementById('boot-loader');
@@ -188,6 +191,8 @@ function updateWebFullscreenToggle() {
     if (!webFullscreenToggle) return;
     const shouldShow = isWebFullscreenToggleAvailable();
     webFullscreenToggle.hidden = !shouldShow;
+    webFullscreenToggle.classList.remove('web-fullscreen-toggle--idle');
+    window.clearTimeout(webFullscreenIdleTimer);
     if (!shouldShow) return;
 
     const isActive = document.fullscreenElement === gameContainer;
@@ -195,6 +200,27 @@ function updateWebFullscreenToggle() {
     const label = isActive ? 'Exit fullscreen' : 'Enter fullscreen';
     webFullscreenToggle.setAttribute('aria-label', label);
     webFullscreenToggle.title = label;
+    refreshWebFullscreenToggleVisibility();
+}
+
+function refreshWebFullscreenToggleVisibility() {
+    if (!isWebFullscreenToggleAvailable() || webFullscreenToggle.hidden) return;
+    webFullscreenToggle.classList.remove('web-fullscreen-toggle--idle');
+    window.clearTimeout(webFullscreenIdleTimer);
+    webFullscreenIdleTimer = window.setTimeout(() => {
+        if (!webFullscreenToggle.matches(':hover, :focus-visible')) {
+            webFullscreenToggle.classList.add('web-fullscreen-toggle--idle');
+        }
+    }, WEB_FULLSCREEN_IDLE_MS);
+}
+
+function isPointerNearWebFullscreenToggle(clientX, clientY) {
+    if (!webFullscreenToggle || webFullscreenToggle.hidden) return false;
+    const rect = webFullscreenToggle.getBoundingClientRect();
+    return clientX >= rect.left - WEB_FULLSCREEN_PROXIMITY_PX
+        && clientX <= rect.right + WEB_FULLSCREEN_PROXIMITY_PX
+        && clientY >= rect.top - WEB_FULLSCREEN_PROXIMITY_PX
+        && clientY <= rect.bottom + WEB_FULLSCREEN_PROXIMITY_PX;
 }
 
 function setupWebFullscreenToggle() {
@@ -211,6 +237,18 @@ function setupWebFullscreenToggle() {
             updateWebFullscreenToggle();
         }
     });
+    webFullscreenToggle.addEventListener('pointerenter', refreshWebFullscreenToggleVisibility);
+    webFullscreenToggle.addEventListener('focus', refreshWebFullscreenToggleVisibility);
+    window.addEventListener('pointermove', (e) => {
+        if (isPointerNearWebFullscreenToggle(e.clientX, e.clientY)) {
+            refreshWebFullscreenToggleVisibility();
+        }
+    }, { passive: true });
+    window.addEventListener('pointerdown', (e) => {
+        if (isPointerNearWebFullscreenToggle(e.clientX, e.clientY)) {
+            refreshWebFullscreenToggleVisibility();
+        }
+    }, { passive: true });
 }
 
 /**
