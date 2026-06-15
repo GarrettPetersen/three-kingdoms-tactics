@@ -517,10 +517,10 @@ export class TacticsMap {
     getCityGateEntryCells() {
         const entries = new Map();
         for (const gateCell of this.getCityGateGroundCells()) {
-            entries.set(`${gateCell.r},${gateCell.q}`, gateCell);
             for (const n of this.getNeighbors(gateCell.r, gateCell.q)) {
                 if (!n) continue;
                 if (this.isCityGateStairCell(n)) continue;
+                if (this.isCityGateGroundCell(n)) continue;
                 if ((n.level || 0) >= 3) continue;
                 entries.set(`${n.r},${n.q}`, n);
             }
@@ -531,6 +531,11 @@ export class TacticsMap {
     isCityGateEntryCell(cell) {
         if (!cell) return false;
         return this.getCityGateEntryCells().some(c => c.r === cell.r && c.q === cell.q);
+    }
+
+    getCityGateSideForCell(cell) {
+        if (!cell || !this.cityGateMeta) return null;
+        return this.isCityGateInsideCell(cell.r, cell.q) ? 'inside' : 'outside';
     }
 
     canUseCityGateTransition(fromCell, toCell, movingUnit = null) {
@@ -568,6 +573,7 @@ export class TacticsMap {
     canUnitTraverseCell(cell, movingUnit = null) {
         if (!cell) return false;
         if (cell.omitted) return false;
+        if (this.isCityGateGroundCell(cell)) return false;
         const terrain = cell.terrain || '';
         const isGate = terrain.startsWith('gate_');
         if (!isGate) return !cell.impassable;
@@ -1358,8 +1364,8 @@ export class TacticsMap {
         if (!startCell) return new Map();
 
         const data = new Map(); // key: "r,q", value: { cost, parent: "r,q" }
-        const queue = [{ r: startR, q: startQ, cost: 0, level: startCell.level }];
-        data.set(`${startR},${startQ}`, { cost: 0, parent: null });
+        const queue = [{ r: startR, q: startQ, cost: 0, level: startCell.level, gatePassageEntrySide: null }];
+        data.set(`${startR},${startQ}`, { cost: 0, parent: null, gatePassageEntrySide: null });
 
         while (queue.length > 0) {
             // Sort by cost for Dijkstra
@@ -1371,6 +1377,20 @@ export class TacticsMap {
             const neighbors = this.getMovementNeighbors(current.r, current.q, movingUnit);
             neighbors.forEach(({ cell: n, cityGateTransition }) => {
                 if (!this.canUnitTraverseCell(n, movingUnit)) return;
+                let gatePassageEntrySide = current.gatePassageEntrySide || null;
+                if (cityGateTransition) {
+                    const currentCell = this.getCell(current.r, current.q);
+                    const fromSide = this.getCityGateSideForCell(currentCell);
+                    const toSide = this.getCityGateSideForCell(n);
+                    if (this.isCityGateStairCell(currentCell)) {
+                        if (gatePassageEntrySide && toSide === gatePassageEntrySide) return;
+                        gatePassageEntrySide = null;
+                    } else if (this.isCityGateStairCell(n)) {
+                        gatePassageEntrySide = fromSide;
+                    }
+                } else if (!this.isCityGateStairCell(n)) {
+                    gatePassageEntrySide = null;
+                }
 
                 // Living units block movement; corpses do not.
                 if (n.unit && n.unit !== movingUnit && n.unit.hp > 0 && !n.unit.isGone) {
@@ -1402,8 +1422,8 @@ export class TacticsMap {
 
                 const key = `${n.r},${n.q}`;
                 if (!data.has(key) || data.get(key).cost > newCost) {
-                    data.set(key, { cost: newCost, parent: `${current.r},${current.q}` });
-                    queue.push({ r: n.r, q: n.q, cost: newCost, level: n.level });
+                    data.set(key, { cost: newCost, parent: `${current.r},${current.q}`, gatePassageEntrySide });
+                    queue.push({ r: n.r, q: n.q, cost: newCost, level: n.level, gatePassageEntrySide });
                 }
             });
         }

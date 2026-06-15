@@ -21,6 +21,7 @@ const DRAW_CALL_PRIORITIES = {
     city_gatehouse: 1.94,
     horse: 1.95,
     unit: 2,
+    front_edge: 2.05,
     gate_overlay: 2.2
 };
 
@@ -7779,9 +7780,11 @@ export class TacticsScene extends BaseScene {
         if (!unit || !this.pathUsesCityGateTransition(path, unit)) return;
         unit._cityGatePassage = {
             segmentIndex: -1,
-            holdMs: 260,
+            durationMs: 620,
             elapsedMs: 0,
-            openTriggered: false
+            openTriggered: false,
+            fromCell: null,
+            exitCell: null
         };
         if (unit.onHorse) {
             this.dismountUnitLeaveHorse(unit);
@@ -7795,7 +7798,14 @@ export class TacticsScene extends BaseScene {
         if (!start || !end) return null;
         const fromCell = this.tacticsMap.getCell(start.r, start.q);
         const toCell = this.tacticsMap.getCell(end.r, end.q);
-        if (!this.tacticsMap.canUseCityGateTransition(fromCell, toCell, unit)) return null;
+        const isTransition = this.tacticsMap.canUseCityGateTransition(fromCell, toCell, unit);
+        const nextStep = unit.path[unit.pathIndex + 2];
+        const nextCell = nextStep ? this.tacticsMap.getCell(nextStep.r, nextStep.q) : null;
+        const entersStairBeforeTransition = !isTransition &&
+            this.tacticsMap.isCityGateStairCell(toCell) &&
+            nextCell &&
+            this.tacticsMap.canUseCityGateTransition(toCell, nextCell, unit);
+        if (!isTransition && !entersStairBeforeTransition) return null;
         return {
             fromCell,
             toCell,
@@ -7804,37 +7814,107 @@ export class TacticsScene extends BaseScene {
         };
     }
 
-    applyCityGatePassageDelay(unit, dt) {
+    getCityGatePassageExit(unit) {
         const transition = this.getCurrentCityGateTransition(unit);
-        if (!transition || this.isCityGateDestroyed() || !this.isUnitDefenderForCityGate(unit)) {
-            if (unit?._cityGatePassage && !transition) unit._cityGatePassage = null;
+        if (!transition) return null;
+
+        let exitIndex = unit.pathIndex + 1;
+        let exitCell = transition.toCell;
+
+        // A real gate passage often has two graph edges: ground -> stair -> rampart,
+        // or rampart -> stair -> ground. Consume the whole chain while hidden so
+        // the unit does not visibly jump up to the stair cell and back down.
+        while (
+            exitCell &&
+            this.tacticsMap.isCityGateStairCell(exitCell) &&
+            Array.isArray(unit.path) &&
+            exitIndex < unit.path.length - 1
+        ) {
+            const nextStep = unit.path[exitIndex + 1];
+            const nextCell = this.tacticsMap.getCell(nextStep.r, nextStep.q);
+            const continuesGateTransition = this.tacticsMap.canUseCityGateTransition(exitCell, nextCell, unit);
+            const exitsStair = nextCell &&
+                !this.tacticsMap.isCityGateStairCell(nextCell) &&
+                !this.tacticsMap.isCityGateGroundCell(nextCell);
+            if (!continuesGateTransition && !exitsStair) break;
+            exitIndex++;
+            exitCell = nextCell;
+        }
+
+        return { ...transition, exitIndex, exitCell };
+    }
+
+    applyCityGatePassageDelay(unit, dt) {
+        const transition = this.getCityGatePassageExit(unit);
+        if (!transition) {
+            if (unit?._cityGatePassage && !transition) {
+                unit._cityGatePassage = null;
+                unit._cityGateLayer = null;
+            }
             return dt;
         }
 
         if (!unit._cityGatePassage) {
-            unit._cityGatePassage = { segmentIndex: -1, holdMs: 260, elapsedMs: 0, openTriggered: false };
+            unit._cityGatePassage = { segmentIndex: -1, durationMs: 620, elapsedMs: 0, openTriggered: false, fromCell: null, exitCell: null };
         }
         const passage = unit._cityGatePassage;
         if (passage.segmentIndex !== unit.pathIndex) {
             passage.segmentIndex = unit.pathIndex;
             passage.elapsedMs = 0;
             passage.openTriggered = false;
-        }
-
-        if (passage.elapsedMs < passage.holdMs) {
-            passage.elapsedMs += dt;
-            unit._hiddenBehindCityGatehouse = true;
-            return 0;
+            passage.fromCell = transition.fromCell;
+            passage.exitCell = transition.exitCell;
         }
 
         if (!passage.openTriggered) {
             this.openCityGateTemporarily();
             passage.openTriggered = true;
         }
-        if (transition.toCell) {
-            const destination = transition.toCell;
+
+        const fromCell = passage.fromCell || transition.fromCell;
+        const destination = passage.exitCell || transition.exitCell;
+        if (fromCell && destination) {
+            const fromPos = this.getPixelPos(fromCell.r, fromCell.q);
             const destinationPos = this.getPixelPos(destination.r, destination.q);
-            unit.pathIndex++;
+            const duration = Math.max(1, passage.durationMs || 620);
+            passage.elapsedMs = Math.min(duration, passage.elapsedMs + dt);
+            const rawProgress = Math.max(0, Math.min(1, passage.elapsedMs / duration));
+            const progress = rawProgress < 0.5
+                ? 2 * rawProgress * rawProgress
+                : 1 - Math.pow(-2 * rawProgress + 2, 2) / 2;
+            const fromInside = this.tacticsMap.isCityGateInsideCell(fromCell.r, fromCell.q);
+            const toInside = this.tacticsMap.isCityGateInsideCell(destination.r, destination.q);
+            const goingDown = fromInside && !toInside;
+            const goingUp = !fromInside && toInside;
+
+            unit.action = 'walk';
+            unit.visualX = fromPos.x + (destinationPos.x - fromPos.x) * progress;
+            unit.visualY = fromPos.y + (destinationPos.y - fromPos.y) * progress;
+            if (destinationPos.x < fromPos.x) unit.flip = true;
+            if (destinationPos.x > fromPos.x) unit.flip = false;
+
+            const meta = this.tacticsMap?.cityGateMeta;
+            const rampartRows = meta?.rampartRows || 0;
+            const approachRow = meta?.approachRow ?? rampartRows;
+            if (goingDown) {
+                unit._cityGateLayer = rawProgress < 0.82 ? 'behind' : 'front';
+            } else if (goingUp) {
+                unit._cityGateLayer = rawProgress < 0.18 ? 'front' : 'behind';
+            } else {
+                unit._cityGateLayer = 'behind';
+            }
+            unit.currentSortR = unit._cityGateLayer === 'front'
+                ? approachRow
+                : Math.max(0, rampartRows - 0.1);
+
+            if (rawProgress < 1) {
+                return 0;
+            }
+        }
+
+        if (destination) {
+            const destinationPos = this.getPixelPos(destination.r, destination.q);
+            unit.pathIndex = transition.exitIndex;
             unit.moveProgress = 0;
             unit.setPosition(destination.r, destination.q);
             unit.visualX = destinationPos.x;
@@ -7845,8 +7925,9 @@ export class TacticsScene extends BaseScene {
                 unit.action = 'standby';
                 unit.path = [];
             }
+            unit._cityGateLayer = null;
+            return 0;
         }
-        unit._hiddenBehindCityGatehouse = false;
         return 0;
     }
 
@@ -8139,6 +8220,7 @@ export class TacticsScene extends BaseScene {
             if (!u.isMoving) {
                 u._cityGatePassage = null;
                 u._hiddenBehindCityGatehouse = false;
+                u._cityGateLayer = null;
             }
             const cellKeyAfter = `${u.r},${u.q}`;
             if (u._tacticsPrevCellKey !== undefined && u._tacticsPrevCellKey !== cellKeyAfter) {
@@ -8782,6 +8864,15 @@ export class TacticsScene extends BaseScene {
                     isMovePreview: movePreviewTiles.has(`${r},${q}`)
                 };
                 drawCalls.push(hexCall);
+                drawCalls.push({
+                    type: 'front_edge',
+                    r,
+                    q,
+                    x: pos.x,
+                    y: pos.y + (cell.elevation || 0),
+                    terrain: cell.terrain,
+                    elevation: cell.elevation || 0
+                });
                 if (!hexCallsByRow.has(r)) hexCallsByRow.set(r, []);
                 hexCallsByRow.get(r).push(hexCall);
                 if (this.isGateTerrain(cell.terrain)) {
@@ -8963,7 +9054,7 @@ export class TacticsScene extends BaseScene {
                 const edgeStatus = this.tacticsMap.getEdgeStatus(call.r, call.q);
                 const slopeInfo = this.tacticsMap.getSlopeInfo(call.r, call.q);
                 const baseTerrain = this.isGateTerrain(call.terrain) ? 'mud_01' : call.terrain;
-                this.drawTile(baseTerrain, call.x, surfaceY, call.elevation, call.r, call.q, edgeStatus, slopeInfo);
+                this.drawTile(baseTerrain, call.x, surfaceY, call.elevation, call.r, call.q, edgeStatus, slopeInfo, { drawFrontEdges: false });
                 let outlineRgba = null;
                 
                 if (call.isReachable) {
@@ -9119,6 +9210,13 @@ export class TacticsScene extends BaseScene {
                 const edgeStatus = this.tacticsMap.getEdgeStatus(call.r, call.q);
                 const slopeInfo = this.tacticsMap.getSlopeInfo(call.r, call.q);
                 this.drawTile(call.terrain, call.x, surfaceY, call.elevation, call.r, call.q, edgeStatus, slopeInfo);
+            } else if (call.type === 'front_edge') {
+                const surfaceY = call.y - call.elevation + effect.yOffset;
+                const baseTerrain = this.isGateTerrain(call.terrain) ? 'mud_01' : call.terrain;
+                const directions = this.tacticsMap.getDirections(call.r);
+                const labels = ['NE', 'E', 'SE', 'SW', 'W', 'NW'];
+                const currentCell = this.tacticsMap.getCell(call.r, call.q);
+                this.drawEdgeTrapezoids(baseTerrain, call.x, surfaceY, call.r, call.q, directions, labels, currentCell, ['SW', 'SE']);
             } else if (call.type === 'city_gatehouse') {
                 ctx.globalAlpha = 1;
                 this._cityGatehouseDrawOrder = callOrder;
@@ -11834,7 +11932,7 @@ export class TacticsScene extends BaseScene {
         });
     }
 
-    drawTile(terrainType, x, y, elevation = 0, r = 0, q = 0, edgeStatus = {}, slopeInfo = {}) {
+    drawTile(terrainType, x, y, elevation = 0, r = 0, q = 0, edgeStatus = {}, slopeInfo = {}, options = {}) {
         const { ctx, config } = this.manager;
         const isBurningTent = terrainType === 'tent_burning' || terrainType === 'tent_white_burning';
         const baseTerrain = terrainType === 'tent_white_burning' ? 'tent_white' : (terrainType === 'tent_burning' ? 'tent' : terrainType);
@@ -12112,7 +12210,9 @@ export class TacticsScene extends BaseScene {
             }
         }
 
-        this.drawEdgeTrapezoids(baseTerrain, x, y, r, q, directions, labels, currentCell, ['SW', 'SE']);
+        if (options.drawFrontEdges !== false) {
+            this.drawEdgeTrapezoids(baseTerrain, x, y, r, q, directions, labels, currentCell, ['SW', 'SE']);
+        }
 
         if (isBurningTent) {
             const fireKey = this.getAnimatedTerrain('fire_yellow_01', r, q);
@@ -13025,6 +13125,8 @@ export class TacticsScene extends BaseScene {
     isGroundSideCityGateUnit(unit) {
         const meta = this.tacticsMap?.cityGateMeta;
         if (!unit || !meta || meta.orientation !== 'top_rampart') return false;
+        if (unit._cityGateLayer === 'behind') return false;
+        if (unit._cityGateLayer === 'front') return true;
         const rampartRows = meta.rampartRows || 0;
         if (unit.isMoving && Array.isArray(unit.path)) {
             const start = unit.path[unit.pathIndex];
