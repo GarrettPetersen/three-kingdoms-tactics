@@ -93,6 +93,39 @@ export class SceneManager {
         else this.openOptionsOverlay(params);
     }
 
+    getOptionsExitInfo() {
+        const sceneKey = this.currentSceneKey;
+        const scene = this.currentScene;
+        const isCustomBattle = sceneKey === 'tactics' && (scene?.isCustom || scene?.battleId === 'custom');
+        const isLiubo = sceneKey === 'liubo';
+        const isCampaignLiubo = isLiubo && (
+            (typeof scene?.isCampaignMode === 'function' && scene.isCampaignMode()) ||
+            scene?.mode === 'campaign'
+        );
+        const isDisposable = sceneKey === 'custom_battle' || isCustomBattle || (isLiubo && !isCampaignLiubo);
+        const hasCampaign = !!this.gameState?.getCurrentCampaign?.();
+        const isCampaign = !isDisposable && (hasCampaign || isCampaignLiubo);
+
+        return {
+            labelKey: isCampaign ? 'SAVE AND EXIT' : 'EXIT',
+            requiresConfirmation: !isCampaign,
+            isCampaign,
+            isDisposable
+        };
+    }
+
+    exitToMainMenuFromOptions() {
+        const exitInfo = this.getOptionsExitInfo();
+        if (exitInfo.isCampaign && this.currentScene && typeof this.currentScene.saveState === 'function') {
+            try {
+                this.currentScene.saveState();
+            } catch (e) {
+                console.error('Error saving scene state before exit:', e);
+            }
+        }
+        this.switchTo('title', { fromOptionsExit: true });
+    }
+
     addScene(name, sceneInstance) {
         this.scenes[name] = sceneInstance;
         sceneInstance.manager = this;
@@ -188,6 +221,10 @@ export class SceneManager {
         if (e && e.key === 'Escape') {
             if (this.isOptionsOverlayActive()) {
                 if (typeof e.preventDefault === 'function') e.preventDefault();
+                if (this.optionsOverlay?.exitConfirmOpen && this.optionsOverlay.handleKeyDown) {
+                    this.optionsOverlay.handleKeyDown(e);
+                    return;
+                }
                 this.closeOptionsOverlay();
                 return;
             }
@@ -350,7 +387,9 @@ export class SceneManager {
         state.nextRepeatAt = timestamp + (allowRepeat ? (state.nextRepeatAt ? repeatDelay : initialDelay) : Number.POSITIVE_INFINITY);
         this._padRepeatState.set(id, state);
 
-        if (this.currentScene && this.currentScene.onNonMouseInput) {
+        if (this.isOptionsOverlayActive() && this.optionsOverlay?.onNonMouseInput) {
+            this.optionsOverlay.onNonMouseInput();
+        } else if (this.currentScene && this.currentScene.onNonMouseInput) {
             this.currentScene.onNonMouseInput();
         }
         this.handleKeyDown({

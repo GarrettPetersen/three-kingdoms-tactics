@@ -28,6 +28,10 @@ export const UI_TEXT = {
         en: 'LIUBO',
         zh: '六博'
     },
+    'RULES': {
+        en: 'RULES',
+        zh: '规则'
+    },
     'ROLL STICKS': {
         en: 'ROLL STICKS',
         zh: '掷箸'
@@ -96,9 +100,25 @@ export const UI_TEXT = {
         en: 'CURRENT GAME WILL BE LOST',
         zh: '本局将会丢失'
     },
+    'CURRENT GAME WILL NOT BE SAVED': {
+        en: 'CURRENT GAME WILL NOT BE SAVED',
+        zh: '当前游戏不会保存'
+    },
     'OPTIONS': {
         en: 'OPTIONS',
         zh: '选项'
+    },
+    'SAVE AND EXIT': {
+        en: 'SAVE AND EXIT',
+        zh: '保存并退出'
+    },
+    'EXIT': {
+        en: 'EXIT',
+        zh: '退出'
+    },
+    'EXIT TO MAIN MENU?': {
+        en: 'EXIT TO MAIN MENU?',
+        zh: '退出到主菜单？'
     },
     'MASTER VOLUME': {
         en: 'MASTER VOLUME',

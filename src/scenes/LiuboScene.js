@@ -36,6 +36,21 @@ const LIUBO_PLAYER_DIALOGUE = {
     position: 'bottom',
     name: 'Liubo Player'
 };
+const LIUBO_RULE_LINES = [
+    { en: 'Goal: 6 points.', zh: '目标：六分。' },
+    { en: 'Throw sticks for two move values.', zh: '掷箸得到两个步数。' },
+    { en: 'Move up to two different birds.', zh: '最多移动两只不同的鸟。' },
+    { en: 'Birds enter from your two corner gates.', zh: '鸟从己方两个角门入场。' },
+    { en: 'Corners connect to nests and outer L perches.', zh: '角位连巢和外侧L位。' },
+    { en: 'Outer L -> inner L -> T -> pond.', zh: '外L到内L，再到T和池塘。' },
+    { en: 'Most perches hold 2. Nests hold 1. Pond holds 6.', zh: '多数栖位容二；巢容一；池塘容六。' },
+    { en: 'Two same-side birds block a perch.', zh: '同方两鸟会堵住栖位。' },
+    { en: 'One bird vs one bird contests; a helper captures.', zh: '一鸟对一鸟为争夺；同伴再入则吃子。' },
+    { en: 'Captures score 1 and send targets off-board.', zh: '吃子得一分，并送对方出局重入。' },
+    { en: 'Cross the pond to catch a fish and become an owl.', zh: '过池捕鱼，鸟变为枭。' },
+    { en: 'Owls score by reaching an enemy nest.', zh: '枭到敌方巢可得分。' },
+    { en: 'Birds and owls can capture each other.', zh: '鸟和枭可以互相吃掉。' }
+];
 const INN_LIUBO_TUTORIAL_LINES = {
     before_first_action: [
         {
@@ -164,6 +179,8 @@ export class LiuboScene extends BaseScene {
         this.moveRects = [];
         this.rollRect = null;
         this.rollAnimation = null;
+        this.rulesRect = null;
+        this.showRules = false;
         this.returnRect = null;
         this.confirmReturn = false;
         this.confirmYesRect = null;
@@ -209,6 +226,8 @@ export class LiuboScene extends BaseScene {
         }
         this.pieceRects = [];
         this.moveRects = [];
+        this.rulesRect = null;
+        this.showRules = false;
         this.confirmReturn = false;
         this.confirmYesRect = null;
         this.confirmNoRect = null;
@@ -287,6 +306,7 @@ export class LiuboScene extends BaseScene {
         if (this.state.winner) this.renderResultOverlay(ctx, canvas);
         if (this.confirmReturn) this.renderReturnConfirm(ctx, canvas);
         if (this.activeTutorialDialogue) this.renderTutorialDialogue(ctx, canvas);
+        if (this.showRules) this.renderRulesOverlay(ctx, canvas);
         ctx.restore();
     }
 
@@ -335,15 +355,30 @@ export class LiuboScene extends BaseScene {
             align: 'center'
         });
 
+        const topButtonY = 1;
+        const topButtonW = 48;
+        const topButtonH = 16;
+        const returnVisible = !this.isCampaignMode();
+        const returnX = canvas.width - 68;
+        const rulesX = returnVisible ? returnX - topButtonW - 5 : returnX;
+        this.rulesRect = { x: rulesX, y: topButtonY, w: topButtonW, h: topButtonH };
+        this.drawLiuboTopButton(ctx, this.rulesRect, getLocalizedText(UI_TEXT['RULES']), this.showRules);
+
         if (this.isCampaignMode()) {
             this.returnRect = null;
             return;
         }
 
-        this.returnRect = { x: canvas.width - 68, y: 1, w: 48, h: 16 };
-        ctx.fillStyle = 'rgba(0,0,0,0.4)';
-        ctx.fillRect(this.returnRect.x, this.returnRect.y, this.returnRect.w, this.returnRect.h);
-        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['RETURN']), this.returnRect.x + this.returnRect.w / 2, this.returnRect.y + 4, {
+        this.returnRect = { x: returnX, y: topButtonY, w: topButtonW, h: topButtonH };
+        this.drawLiuboTopButton(ctx, this.returnRect, getLocalizedText(UI_TEXT['RETURN']), false);
+    }
+
+    drawLiuboTopButton(ctx, rect, label, active = false) {
+        ctx.fillStyle = active ? 'rgba(116, 66, 38, 0.82)' : 'rgba(0,0,0,0.4)';
+        ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+        ctx.strokeStyle = active ? '#ffd77a' : 'rgba(214, 194, 153, 0.45)';
+        ctx.strokeRect(rect.x + 0.5, rect.y + 0.5, rect.w - 1, rect.h - 1);
+        this.drawPixelText(ctx, fitText(label, getCurrentLanguage() === 'zh' ? 4 : 7), rect.x + rect.w / 2, rect.y + 4, {
             color: '#d6c299',
             font: '8px Tiny5',
             align: 'center'
@@ -876,6 +911,39 @@ export class LiuboScene extends BaseScene {
         ctx.restore();
     }
 
+    renderRulesOverlay(ctx, canvas) {
+        const lang = getCurrentLanguage();
+        const isZh = lang === 'zh';
+        const w = Math.min(isZh ? 214 : 238, canvas.width - 20);
+        const lineH = isZh ? 12 : 11;
+        const h = Math.min(canvas.height - 22, 34 + LIUBO_RULE_LINES.length * lineH);
+        const x = Math.floor((canvas.width - w) / 2);
+        const y = Math.floor((canvas.height - h) / 2);
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(8, 6, 5, 0.82)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#221815';
+        ctx.fillRect(x, y, w, h);
+        ctx.strokeStyle = '#ffd77a';
+        ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['RULES']), x + w / 2, y + 10, {
+            color: '#ffe254',
+            font: '8px Silkscreen',
+            align: 'center'
+        });
+
+        const maxChars = isZh ? 25 : 42;
+        LIUBO_RULE_LINES.forEach((line, index) => {
+            const text = line[lang] || line.en;
+            this.drawPixelText(ctx, fitText(text, maxChars), x + 10, y + 27 + index * lineH, {
+                color: '#d6c299',
+                font: '8px Tiny5'
+            });
+        });
+        ctx.restore();
+    }
+
     drawDialogButton(ctx, rect, label, fill, color) {
         ctx.fillStyle = fill;
         ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
@@ -1138,6 +1206,16 @@ export class LiuboScene extends BaseScene {
 
     handleInput(e) {
         const { x, y } = this.getMousePos(e);
+        if (this.rulesRect && pointInRect(x, y, this.rulesRect)) {
+            this.showRules = !this.showRules;
+            assets.playSound('ui_click', 0.35);
+            return;
+        }
+        if (this.showRules) {
+            this.showRules = false;
+            assets.playSound('ui_click', 0.35);
+            return;
+        }
         if (this.activeTutorialDialogue) {
             this.advanceTutorialDialogue();
             return;
@@ -1205,6 +1283,18 @@ export class LiuboScene extends BaseScene {
     }
 
     handleKeyDown(e) {
+        if (e.key === '?' || e.key === 'h' || e.key === 'H') {
+            this.showRules = !this.showRules;
+            assets.playSound('ui_click', 0.35);
+            return;
+        }
+        if (this.showRules) {
+            if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                this.showRules = false;
+                assets.playSound('ui_click', 0.35);
+            }
+            return;
+        }
         if (this.activeTutorialDialogue) {
             if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
                 this.advanceTutorialDialogue();
