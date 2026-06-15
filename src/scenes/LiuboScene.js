@@ -36,20 +36,40 @@ const LIUBO_PLAYER_DIALOGUE = {
     position: 'bottom',
     name: 'Liubo Player'
 };
-const LIUBO_RULE_LINES = [
-    { en: 'Goal: 6 points.', zh: '目标：六分。' },
-    { en: 'Throw sticks for two move values.', zh: '掷箸得到两个步数。' },
-    { en: 'Move up to two different birds.', zh: '最多移动两只不同的鸟。' },
-    { en: 'Birds enter from your two corner gates.', zh: '鸟从己方两个角门入场。' },
-    { en: 'Corners connect to nests and outer L perches.', zh: '角位连巢和外侧L位。' },
-    { en: 'Outer L -> inner L -> T -> pond.', zh: '外L到内L，再到T和池塘。' },
-    { en: 'Most perches hold 2. Nests hold 1. Pond holds 6.', zh: '多数栖位容二；巢容一；池塘容六。' },
-    { en: 'Two same-side birds block a perch.', zh: '同方两鸟会堵住栖位。' },
-    { en: 'One bird vs one bird contests; a helper captures.', zh: '一鸟对一鸟为争夺；同伴再入则吃子。' },
-    { en: 'Captures score 1 and send targets off-board.', zh: '吃子得一分，并送对方出局重入。' },
-    { en: 'Cross the pond to catch a fish and become an owl.', zh: '过池捕鱼，鸟变为枭。' },
-    { en: 'Owls score by reaching an enemy nest.', zh: '枭到敌方巢可得分。' },
-    { en: 'Birds and owls can capture each other.', zh: '鸟和枭可以互相吃掉。' }
+const LIUBO_RULE_SECTIONS = [
+    {
+        title: { en: 'TURN', zh: '回合' },
+        lines: [
+            { en: 'Throw sticks for two move values.', zh: '掷箸得到两个步数。' },
+            { en: 'Move up to two different birds.', zh: '最多移动两只不同的鸟。' },
+            { en: 'Birds enter from your two corner gates.', zh: '鸟从己方两个角门入场。' }
+        ]
+    },
+    {
+        title: { en: 'BOARD', zh: '棋盘' },
+        lines: [
+            { en: 'Corners connect to nests and outer L perches.', zh: '角位连巢和外侧L位。' },
+            { en: 'Outer L -> inner L -> T -> pond.', zh: '外L到内L，再到T和池塘。' },
+            { en: 'Capacity: perches 2, nests 1, pond 6.', zh: '容量：栖位二，巢一，池塘六。' }
+        ]
+    },
+    {
+        title: { en: 'BLOCKS', zh: '堵塞' },
+        lines: [
+            { en: 'Two same-side birds block a perch.', zh: '同方两鸟会堵住栖位。' },
+            { en: 'One bird vs one bird contests; a helper captures.', zh: '一鸟对一鸟为争夺；同伴再入则吃子。' }
+        ]
+    },
+    {
+        title: { en: 'SCORE', zh: '得分' },
+        lines: [
+            { en: 'Goal: 6 points.', zh: '目标：六分。' },
+            { en: 'Captures score 1 and send targets off-board.', zh: '吃子得一分，并送对方出局重入。' },
+            { en: 'Cross the pond to catch a fish and become an owl.', zh: '过池捕鱼，鸟变为枭。' },
+            { en: 'Owls score by reaching an enemy nest.', zh: '枭到敌方巢可得分。' },
+            { en: 'Birds and owls can capture each other.', zh: '鸟和枭可以互相吃掉。' }
+        ]
+    }
 ];
 const INN_LIUBO_TUTORIAL_LINES = {
     before_first_action: [
@@ -358,10 +378,8 @@ export class LiuboScene extends BaseScene {
         const topButtonY = 1;
         const topButtonW = 48;
         const topButtonH = 16;
-        const returnVisible = !this.isCampaignMode();
         const returnX = canvas.width - 68;
-        const rulesX = returnVisible ? returnX - topButtonW - 5 : returnX;
-        this.rulesRect = { x: rulesX, y: topButtonY, w: topButtonW, h: topButtonH };
+        this.rulesRect = { x: 4, y: topButtonY, w: topButtonW, h: topButtonH };
         this.drawLiuboTopButton(ctx, this.rulesRect, getLocalizedText(UI_TEXT['RULES']), this.showRules);
 
         if (this.isCampaignMode()) {
@@ -914,9 +932,15 @@ export class LiuboScene extends BaseScene {
     renderRulesOverlay(ctx, canvas) {
         const lang = getCurrentLanguage();
         const isZh = lang === 'zh';
-        const w = Math.min(isZh ? 214 : 238, canvas.width - 20);
-        const lineH = isZh ? 12 : 11;
-        const h = Math.min(canvas.height - 22, 34 + LIUBO_RULE_LINES.length * lineH);
+        const w = Math.min(isZh ? 224 : 246, canvas.width - 20);
+        const lineH = isZh ? 11 : 10;
+        const bodyMaxChars = isZh ? 24 : 32;
+        const sections = LIUBO_RULE_SECTIONS.map(section => ({
+            title: section.title[lang] || section.title.en,
+            lines: section.lines.flatMap(line => wrapRuleText(line[lang] || line.en, bodyMaxChars, isZh))
+        }));
+        const contentLines = sections.reduce((sum, section) => sum + 1 + section.lines.length, 0);
+        const h = Math.min(canvas.height - 18, 48 + contentLines * lineH + (sections.length - 1) * 5);
         const x = Math.floor((canvas.width - w) / 2);
         const y = Math.floor((canvas.height - h) / 2);
 
@@ -933,14 +957,66 @@ export class LiuboScene extends BaseScene {
             align: 'center'
         });
 
-        const maxChars = isZh ? 25 : 42;
-        LIUBO_RULE_LINES.forEach((line, index) => {
-            const text = line[lang] || line.en;
-            this.drawPixelText(ctx, fitText(text, maxChars), x + 10, y + 27 + index * lineH, {
-                color: '#d6c299',
-                font: '8px Tiny5'
+        this.drawLiuboRulesLegend(ctx, x + 12, y + 23, w - 24, lang);
+
+        let textY = y + 43;
+        for (const section of sections) {
+            this.drawPixelText(ctx, section.title, x + 10, textY, {
+                color: '#ffd77a',
+                font: '8px Silkscreen'
             });
+            textY += lineH + 1;
+            for (const line of section.lines) {
+                this.drawPixelText(ctx, line.first ? '-' : ' ', x + 12, textY, {
+                    color: '#c8b08d',
+                    font: '8px Tiny5'
+                });
+                this.drawPixelText(ctx, line.text, x + 22, textY, {
+                    color: '#d6c299',
+                    font: '8px Tiny5'
+                });
+                textY += lineH;
+            }
+            textY += 5;
+        }
+        ctx.restore();
+    }
+
+    drawLiuboRulesLegend(ctx, x, y, w, lang) {
+        const bird = { player: 'white', isOwl: false };
+        const owl = { player: 'white', isOwl: true };
+        const birdImg = this.getPieceImage(bird, false);
+        const owlImg = this.getPieceImage(owl, true);
+        const birdDims = this.getPieceDimensions(bird, birdImg);
+        const owlDims = this.getPieceDimensions(owl, owlImg);
+        const birdX = x + Math.floor(w * 0.22) - Math.floor(birdDims.w / 2);
+        const owlX = x + Math.floor(w * 0.62) - Math.floor(owlDims.w / 2);
+        const baselineY = y + 14;
+
+        ctx.save();
+        if (birdImg) ctx.drawImage(birdImg, birdX, baselineY - birdDims.h);
+        else {
+            ctx.fillStyle = '#eee0c7';
+            ctx.fillRect(birdX, baselineY - birdDims.h, birdDims.w, birdDims.h);
+        }
+        if (owlImg) ctx.drawImage(owlImg, owlX, baselineY - owlDims.h);
+        else {
+            ctx.fillStyle = '#eee0c7';
+            ctx.fillRect(owlX, baselineY - owlDims.h, owlDims.w, owlDims.h);
+        }
+        this.drawPixelText(ctx, lang === 'zh' ? '鸟' : 'bird', birdX + birdDims.w + 5, y + 2, {
+            color: '#d6c299',
+            font: '8px Tiny5'
         });
+        this.drawPixelText(ctx, lang === 'zh' ? '枭' : 'owl + fish', owlX + owlDims.w + 5, y + 2, {
+            color: '#d6c299',
+            font: '8px Tiny5'
+        });
+        ctx.strokeStyle = 'rgba(214, 194, 153, 0.38)';
+        ctx.beginPath();
+        ctx.moveTo(x, y + 18.5);
+        ctx.lineTo(x + w, y + 18.5);
+        ctx.stroke();
         ctx.restore();
     }
 
@@ -1651,4 +1727,31 @@ function fitText(text, maxChars) {
     const value = String(text || '');
     if (value.length <= maxChars) return value;
     return `${value.slice(0, Math.max(0, maxChars - 3))}...`;
+}
+
+function wrapRuleText(text, maxChars, isZh = false) {
+    const value = String(text || '').trim();
+    if (!value) return [];
+    if (isZh) {
+        const lines = [];
+        for (let i = 0; i < value.length; i += maxChars) {
+            lines.push({ text: value.slice(i, i + maxChars), first: i === 0 });
+        }
+        return lines;
+    }
+
+    const words = value.split(/\s+/);
+    const lines = [];
+    let current = '';
+    for (const word of words) {
+        const next = current ? `${current} ${word}` : word;
+        if (next.length <= maxChars) {
+            current = next;
+            continue;
+        }
+        if (current) lines.push(current);
+        current = word.length > maxChars ? word.slice(0, maxChars) : word;
+    }
+    if (current) lines.push(current);
+    return lines.map((line, index) => ({ text: line, first: index === 0 }));
 }
