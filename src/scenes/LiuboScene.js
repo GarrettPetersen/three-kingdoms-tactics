@@ -361,25 +361,28 @@ export class LiuboScene extends BaseScene {
     }
 
     renderHeader(ctx, canvas, layout) {
-        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['LIUBO']), layout.titleX, layout.titleY, {
+        const titleX = layout.portrait ? 10 : layout.panelX;
+        this.drawPixelText(ctx, getLocalizedText(UI_TEXT['LIUBO']), titleX, layout.titleY, {
             color: '#ffd77a',
             font: '16px Silkscreen',
-            align: 'center'
+            align: 'left'
         });
         const turnText = this.state.winner
             ? `${this.getPlayerLabel(this.state.winner)} WINS`
             : this.getStatusText();
-        this.drawPixelText(ctx, fitText(turnText, layout.portrait ? 28 : 24), layout.titleX, layout.titleY + 20, {
+        this.drawPixelText(ctx, fitText(turnText, layout.portrait ? 28 : 24), titleX, layout.titleY + 20, {
             color: this.state.currentPlayer === 'white' ? '#f0dfc2' : '#b98f6b',
             font: '8px Tiny5',
-            align: 'center'
+            align: 'left'
         });
 
         const topButtonY = 1;
         const topButtonW = 48;
         const topButtonH = 16;
+        const returnVisible = !this.isCampaignMode();
         const returnX = canvas.width - 68;
-        this.rulesRect = { x: 4, y: topButtonY, w: topButtonW, h: topButtonH };
+        const rulesX = returnVisible ? returnX - topButtonW - 5 : returnX;
+        this.rulesRect = { x: rulesX, y: topButtonY, w: topButtonW, h: topButtonH };
         this.drawLiuboTopButton(ctx, this.rulesRect, getLocalizedText(UI_TEXT['RULES']), this.showRules);
 
         if (this.isCampaignMode()) {
@@ -932,15 +935,23 @@ export class LiuboScene extends BaseScene {
     renderRulesOverlay(ctx, canvas) {
         const lang = getCurrentLanguage();
         const isZh = lang === 'zh';
-        const w = Math.min(isZh ? 224 : 246, canvas.width - 20);
+        const w = Math.min(canvas.width - 12, isZh ? 244 : 270);
         const lineH = isZh ? 11 : 10;
-        const bodyMaxChars = isZh ? 24 : 32;
+        const gutter = 8;
+        const innerW = w - 20;
+        const colW = Math.floor((innerW - gutter) / 2);
+        const bodyMaxChars = isZh ? 12 : 16;
         const sections = LIUBO_RULE_SECTIONS.map(section => ({
             title: section.title[lang] || section.title.en,
             lines: section.lines.flatMap(line => wrapRuleText(line[lang] || line.en, bodyMaxChars, isZh))
         }));
-        const contentLines = sections.reduce((sum, section) => sum + 1 + section.lines.length, 0);
-        const h = Math.min(canvas.height - 18, 48 + contentLines * lineH + (sections.length - 1) * 5);
+        const scoreIndex = Math.max(1, sections.findIndex(section => section.title === (isZh ? '得分' : 'SCORE')));
+        const columns = [sections.slice(0, scoreIndex), sections.slice(scoreIndex)];
+        const columnHeight = column => column.reduce((sum, section) => (
+            sum + (lineH + 1) + section.lines.length * lineH + 5
+        ), 0);
+        const contentH = Math.max(...columns.map(columnHeight));
+        const h = Math.min(canvas.height - 18, 48 + contentH);
         const x = Math.floor((canvas.width - w) / 2);
         const y = Math.floor((canvas.height - h) / 2);
 
@@ -959,26 +970,29 @@ export class LiuboScene extends BaseScene {
 
         this.drawLiuboRulesLegend(ctx, x + 12, y + 23, w - 24, lang);
 
-        let textY = y + 43;
-        for (const section of sections) {
-            this.drawPixelText(ctx, section.title, x + 10, textY, {
-                color: '#ffd77a',
-                font: '8px Silkscreen'
-            });
-            textY += lineH + 1;
-            for (const line of section.lines) {
-                this.drawPixelText(ctx, line.first ? '-' : ' ', x + 12, textY, {
-                    color: '#c8b08d',
-                    font: '8px Tiny5'
+        columns.forEach((column, colIndex) => {
+            const colX = x + 10 + colIndex * (colW + gutter);
+            let textY = y + 43;
+            for (const section of column) {
+                this.drawPixelText(ctx, section.title, colX, textY, {
+                    color: '#ffd77a',
+                    font: '8px Silkscreen'
                 });
-                this.drawPixelText(ctx, line.text, x + 22, textY, {
-                    color: '#d6c299',
-                    font: '8px Tiny5'
-                });
-                textY += lineH;
+                textY += lineH + 1;
+                for (const line of section.lines) {
+                    this.drawPixelText(ctx, line.first ? '-' : ' ', colX + 2, textY, {
+                        color: '#c8b08d',
+                        font: '8px Tiny5'
+                    });
+                    this.drawPixelText(ctx, line.text, colX + 10, textY, {
+                        color: '#d6c299',
+                        font: '8px Tiny5'
+                    });
+                    textY += lineH;
+                }
+                textY += 5;
             }
-            textY += 5;
-        }
+        });
         ctx.restore();
     }
 
