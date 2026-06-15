@@ -173,6 +173,8 @@ function drawHorse(ctx, canvas, horseImg, panX, scale, sizeName) {
         horseYOffset = 5 * scale; // Less offset for vertical to reduce gap
     } else if (sizeName === 'library_capsule') {
         horseYOffset = 5 * scale; // Less offset for library capsule to reduce gap
+    } else if (sizeName === 'social_share') {
+        horseYOffset = 0; // Keep the horseman tight to the top edge on social cards
     } else if (sizeName === 'shortcut_icon') {
         horseYOffset = 4 * scale; // Keep horse reaching the top edge on 256x256
     }
@@ -184,6 +186,8 @@ function drawHorse(ctx, canvas, horseImg, panX, scale, sizeName) {
         baseExtraHeight = 10; // More extension for vertical
     } else if (sizeName === 'library_capsule') {
         baseExtraHeight = 10; // More extension for library capsule
+    } else if (sizeName === 'social_share') {
+        baseExtraHeight = 12; // Prevent a black gap above the horseman in 1200x630 cards
     } else if (sizeName === 'shortcut_icon') {
         baseExtraHeight = 10; // Match tighter top extension used on tall compositions
     }
