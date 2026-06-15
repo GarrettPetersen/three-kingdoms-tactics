@@ -62,6 +62,7 @@ const LIBRARY_SIZES = [
 
 const LIBRARY_LOGO_SIZE = { width: 1280, height: 720 }; // Aspect ratio maintained
 const SHORTCUT_ICON_SIZE = { width: 256, height: 256, name: 'shortcut_icon' };
+const SOCIAL_SHARE_SIZE = { width: 1200, height: 630, name: 'social_share' };
 
 /**
  * Copy title as-is (e.g. white brush text on transparency). No dark-pixel extraction.
@@ -701,6 +702,65 @@ async function generateCapsules() {
     fs.writeFileSync(logoZhFile, logoZhBuffer);
     console.log(`  ✓ library_logo_schinese.png (${logoZhMeta.width}x${logoZhMeta.height})`);
 
+    // Social sharing image (1200x630) - Open Graph / Twitter large-card aspect ratio.
+    console.log('\nGenerating social sharing image...');
+    const socialScaleX = SOCIAL_SHARE_SIZE.width / ORIGINAL_WIDTH;
+    const socialScaleY = SOCIAL_SHARE_SIZE.height / ORIGINAL_HEIGHT;
+    const socialScale = Math.max(socialScaleX, socialScaleY);
+    const socialTitleScale = socialScale * 1.55;
+    const socialMaxTitleHeight = Math.floor(SOCIAL_SHARE_SIZE.height * 0.9);
+    const socialMaxTitleWidth = Math.floor(SOCIAL_SHARE_SIZE.width * 0.56);
+    const socialTitleEnDims = getTitleDimensions(processedTitleEn, socialTitleScale, socialMaxTitleWidth, socialMaxTitleHeight);
+    const socialTitleZhDims = getTitleDimensions(processedTitleZh, socialTitleScale, socialMaxTitleWidth, socialMaxTitleHeight);
+    const socialTitleEnBuffer = await scaleImage(
+        canvasToBuffer(processedTitleEn),
+        socialTitleEnDims.width,
+        socialTitleEnDims.height,
+        { smooth: true }
+    );
+    const socialTitleEn = await loadImage(socialTitleEnBuffer);
+    const socialTitleZhBuffer = await scaleImage(
+        canvasToBuffer(processedTitleZh),
+        socialTitleZhDims.width,
+        socialTitleZhDims.height
+    );
+    const socialTitleZh = await loadImage(socialTitleZhBuffer);
+
+    const socialBaseCanvas = createCanvas(ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
+    const socialBaseCtx = socialBaseCanvas.getContext('2d');
+    Object.assign(socialBaseCtx, pixelArtConfig);
+    drawLayers(socialBaseCtx, socialBaseCanvas, layerImages, PAN_X, true, -14);
+    const socialBaseBuffer = canvasToBuffer(socialBaseCanvas);
+    const socialScaledBaseBuffer = await scaleImage(socialBaseBuffer, SOCIAL_SHARE_SIZE.width, SOCIAL_SHARE_SIZE.height);
+    const socialScaledBase = await loadImage(socialScaledBaseBuffer);
+
+    const writeSocialShare = (language, titleImg) => {
+        const canvas = createCanvas(SOCIAL_SHARE_SIZE.width, SOCIAL_SHARE_SIZE.height);
+        const ctx = canvas.getContext('2d');
+        Object.assign(ctx, pixelArtConfig);
+        ctx.drawImage(socialScaledBase, 0, 0);
+        const horseRight = drawHorse(ctx, canvas, horseImg, PAN_X, socialScale, SOCIAL_SHARE_SIZE.name);
+        drawGuandao(ctx, canvas, guandaoImg, horseRight, horseImg, socialScale, SOCIAL_SHARE_SIZE.name);
+        const titlePos = getTitlePosition('right', SOCIAL_SHARE_SIZE.width, SOCIAL_SHARE_SIZE.height, titleImg.width, titleImg.height);
+        ctx.drawImage(titleImg, titlePos.x, titlePos.y);
+        const filename = `social_share_${language}.png`;
+        const file = path.join(outputDir, filename);
+        const buffer = canvas.toBuffer('image/png');
+        fs.writeFileSync(file, buffer);
+        console.log(`  ✓ ${filename} (${SOCIAL_SHARE_SIZE.width}x${SOCIAL_SHARE_SIZE.height})`);
+        return buffer;
+    };
+
+    const socialShareEnBuffer = writeSocialShare('en', socialTitleEn);
+    writeSocialShare('schinese', socialTitleZh);
+
+    const publicMiscDir = path.join(__dirname, '..', 'public', 'assets', 'misc');
+    if (!fs.existsSync(publicMiscDir)) {
+        fs.mkdirSync(publicMiscDir, { recursive: true });
+    }
+    fs.writeFileSync(path.join(publicMiscDir, 'social_share_en.png'), socialShareEnBuffer);
+    console.log(`  ✓ public/assets/misc/social_share_en.png (${SOCIAL_SHARE_SIZE.width}x${SOCIAL_SHARE_SIZE.height})`);
+
     // Shortcut icon (256x256) - same composition approach as capsules
     console.log('\nGenerating shortcut icon...');
     const iconScaleX = SHORTCUT_ICON_SIZE.width / ORIGINAL_WIDTH;
@@ -735,4 +795,3 @@ generateCapsules().catch(err => {
     console.error('Error generating capsules:', err);
     process.exit(1);
 });
-
