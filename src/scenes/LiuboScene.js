@@ -935,12 +935,15 @@ export class LiuboScene extends BaseScene {
     renderRulesOverlay(ctx, canvas) {
         const lang = getCurrentLanguage();
         const isZh = lang === 'zh';
-        const w = Math.min(canvas.width - 12, isZh ? 244 : 270);
+        const w = Math.max(
+            Math.min(canvas.width - 12, isZh ? 244 : 270),
+            Math.min(canvas.width - 12, 430)
+        );
         const lineH = isZh ? 11 : 10;
-        const gutter = 8;
+        const gutter = 12;
         const innerW = w - 20;
         const colW = Math.floor((innerW - gutter) / 2);
-        const bodyMaxChars = isZh ? 12 : 16;
+        const bodyMaxChars = Math.max(isZh ? 12 : 18, Math.floor((colW - 14) / (isZh ? 8 : 5)));
         const sections = LIUBO_RULE_SECTIONS.map(section => ({
             title: section.title[lang] || section.title.en,
             lines: section.lines.flatMap(line => wrapRuleText(line[lang] || line.en, bodyMaxChars, isZh))
