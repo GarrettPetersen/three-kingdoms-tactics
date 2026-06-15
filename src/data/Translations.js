@@ -113,8 +113,8 @@ export const UI_TEXT = {
         zh: '保存并退出'
     },
     'SAVE AND RETURN TO TITLE': {
-        en: 'SAVE + TITLE',
-        zh: '保存回标题'
+        en: 'SAVE AND EXIT TO TITLE',
+        zh: '保存并返回标题'
     },
     'EXIT': {
         en: 'EXIT',

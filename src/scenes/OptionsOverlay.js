@@ -67,15 +67,25 @@ export class OptionsOverlay extends BaseScene {
 
     adjustVolume(key, delta) {
         const current = assets.getAudioSettings();
-        const next = this.clamp01((current[key] ?? 0.5) + delta);
+        const nextPercent = Math.round(this.clamp01((current[key] ?? 0.5) + delta) * 100);
+        const next = nextPercent / 100;
         assets.setAudioSettings({ [key]: next });
         assets.playSound('ui_click', 0.35);
     }
 
     setVolumeFromRatio(key, ratio) {
-        let value = this.clamp01(ratio);
-        if (value <= 0.05) value = 0;
-        else if (value >= 0.95) value = 1;
+        const capRatio = 0.1;
+        const clamped = this.clamp01(ratio);
+        let percent;
+        if (clamped <= capRatio) {
+            percent = 0;
+        } else if (clamped >= 1 - capRatio) {
+            percent = 100;
+        } else {
+            const innerRatio = (clamped - capRatio) / (1 - capRatio * 2);
+            percent = 1 + Math.round(innerRatio * 98);
+        }
+        const value = this.clamp01(percent / 100);
         assets.setAudioSettings({ [key]: value });
     }
 
@@ -241,7 +251,7 @@ export class OptionsOverlay extends BaseScene {
             const rowKey = this.rowKeys[this.selection.highlightedIndex];
             const dir = e.key === 'ArrowRight' ? 1 : -1;
             if (this.volumeKeys.includes(rowKey)) {
-                this.adjustVolume(rowKey, dir * 0.05);
+                this.adjustVolume(rowKey, dir * 0.01);
                 return true;
             }
             if (rowKey === 'fullscreen') {
@@ -427,19 +437,40 @@ export class OptionsOverlay extends BaseScene {
         const sliderY = rowRect.y + Math.floor((rowRect.h - sliderH) / 2);
         this.sliderRects[sliderKey] = { x: sliderX, y: sliderY, w: sliderW, h: sliderH };
 
+        const capW = Math.max(7, Math.floor(sliderW * 0.1));
+        const leftCapW = capW;
+        const rightCapW = capW;
+        const innerX = sliderX + leftCapW;
+        const innerW = Math.max(1, sliderW - leftCapW - rightCapW);
+        const percent = Math.round(value * 100);
+
         ctx.fillStyle = '#202020';
         ctx.fillRect(sliderX, sliderY, sliderW, sliderH);
+        ctx.fillStyle = percent === 0 ? '#66ccff' : '#2b2b2b';
+        ctx.fillRect(sliderX, sliderY, leftCapW, sliderH);
+        ctx.fillStyle = percent === 100 ? '#66ccff' : '#2b2b2b';
+        ctx.fillRect(sliderX + sliderW - rightCapW, sliderY, rightCapW, sliderH);
         ctx.strokeStyle = isHighlighted ? '#ffffff' : '#777777';
         ctx.lineWidth = 1;
         ctx.strokeRect(sliderX + 0.5, sliderY + 0.5, sliderW - 1, sliderH - 1);
+        ctx.strokeStyle = '#101010';
+        ctx.beginPath();
+        ctx.moveTo(innerX + 0.5, sliderY + 1);
+        ctx.lineTo(innerX + 0.5, sliderY + sliderH - 1);
+        ctx.moveTo(innerX + innerW - 0.5, sliderY + 1);
+        ctx.lineTo(innerX + innerW - 0.5, sliderY + sliderH - 1);
+        ctx.stroke();
 
-        const fillW = Math.max(0, Math.min(sliderW, Math.floor(sliderW * value)));
-        if (fillW > 0) {
+        if (percent > 0 && percent < 100) {
+            const innerFillW = Math.max(1, Math.min(innerW, Math.floor(innerW * ((percent - 1) / 98))));
             ctx.fillStyle = '#66ccff';
-            ctx.fillRect(sliderX + 1, sliderY + 1, Math.max(0, fillW - 2), sliderH - 2);
+            ctx.fillRect(innerX, sliderY + 1, innerFillW, sliderH - 2);
+        } else if (percent === 100) {
+            ctx.fillStyle = '#66ccff';
+            ctx.fillRect(innerX, sliderY + 1, innerW, sliderH - 2);
         }
 
-        this.drawPixelText(ctx, `${Math.round(value * 100)}%`, sliderX + sliderW + 8, rowTextY, {
+        this.drawPixelText(ctx, `${percent}%`, sliderX + sliderW + 8, rowTextY, {
             color: '#eeeeee',
             font: '8px Tiny5'
         });

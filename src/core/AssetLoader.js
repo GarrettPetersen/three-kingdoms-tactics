@@ -298,6 +298,51 @@ export class AssetLoader {
         }, fadeStep);
     }
 
+    recoverMusicPlayback() {
+        if (!this.currentMusicKey || this.masterMutedByUser || this.musicMutedByUser) return;
+        if (this.masterUserVolume <= 0 || this.musicUserVolume <= 0 || this.baseMusicVolume <= 0) return;
+
+        const key = this.currentMusicKey;
+        const rawTarget = this.currentVoice ? this.baseMusicVolume * 0.3 : this.baseMusicVolume;
+        const targetVolume = this._getEffectiveMusicVolume(rawTarget);
+
+        if (this.currentIntro?.ended && this.currentLoop) {
+            this.currentIntro = null;
+            this.currentLoop.currentTime = 0;
+            this.currentLoop.volume = targetVolume;
+            this.currentLoop.play()
+                .then(() => {
+                    this.audioUnlocked = true;
+                })
+                .catch(e => {
+                    this.audioUnlocked = false;
+                    this.pendingMusic = { key, targetVolume: this.baseMusicVolume };
+                    if (this.currentMusicKey === key) this.currentMusicKey = null;
+                    console.log("Music recovery prevented:", e);
+                });
+            return;
+        }
+
+        const activeTrack = (this.currentIntro && !this.currentIntro.ended)
+            ? this.currentIntro
+            : (this.currentLoop || this.currentIntro);
+        if (!activeTrack) return;
+
+        activeTrack.volume = targetVolume;
+        if (!activeTrack.paused && !activeTrack.ended) return;
+
+        activeTrack.play()
+            .then(() => {
+                this.audioUnlocked = true;
+            })
+            .catch(e => {
+                this.audioUnlocked = false;
+                this.pendingMusic = { key, targetVolume: this.baseMusicVolume };
+                if (this.currentMusicKey === key) this.currentMusicKey = null;
+                console.log("Music recovery prevented:", e);
+            });
+    }
+
     async loadPalettes(paletteAssets) {
         const promises = Object.entries(paletteAssets).map(([key, src]) => {
             return fetch(src)
@@ -674,6 +719,8 @@ export class AssetLoader {
                 this.pendingMusic = null;
                 this.currentMusicKey = null; // force restart even if key matches
                 this.playMusic(pending.key, pending.targetVolume);
+            } else {
+                this.recoverMusicPlayback();
             }
             return;
         }
@@ -709,6 +756,8 @@ export class AssetLoader {
             this.pendingMusic = null;
             this.currentMusicKey = null; // force replay of blocked request
             this.playMusic(pending.key, pending.targetVolume);
+        } else {
+            this.recoverMusicPlayback();
         }
     }
 
@@ -804,6 +853,7 @@ export class AssetLoader {
             this.baseMusicVolume = targetVolume;
             const rawTarget = this.currentVoice ? targetVolume * 0.3 : targetVolume;
             this.setMusicVolume(rawTarget);
+            this.recoverMusicPlayback();
             return;
         }
 

@@ -379,9 +379,14 @@ async function init() {
     });
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) unlockOrientationIfPossible();
-        else refreshFullscreenDisplayState();
+        else {
+            refreshFullscreenDisplayState();
+            assets.recoverMusicPlayback();
+        }
         updateWebFullscreenToggle();
     });
+    window.addEventListener('focus', () => assets.recoverMusicPlayback());
+    window.addEventListener('pageshow', () => assets.recoverMusicPlayback());
     window.addEventListener('pagehide', unlockOrientationIfPossible);
     window.addEventListener('blur', unlockOrientationIfPossible);
     screen.orientation?.addEventListener?.('change', setupCanvas);
