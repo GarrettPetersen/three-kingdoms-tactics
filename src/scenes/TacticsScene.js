@@ -7844,6 +7844,46 @@ export class TacticsScene extends BaseScene {
         return { ...transition, exitIndex, exitCell };
     }
 
+    getCityGatePassageVisualPoint(kind) {
+        const meta = this.tacticsMap?.cityGateMeta;
+        if (!meta) return null;
+        const avg = (cells) => {
+            const valid = (cells || []).filter(Boolean);
+            if (valid.length === 0) return null;
+            const points = valid.map(c => this.getPixelPos(c.r, c.q));
+            return {
+                x: points.reduce((sum, p) => sum + p.x, 0) / points.length,
+                y: points.reduce((sum, p) => sum + p.y, 0) / points.length
+            };
+        };
+        const gatePoint = avg(this.tacticsMap.getCityGateGroundCells?.() || []);
+        const stairPoint = avg(this.tacticsMap.getCityGateStairCells?.() || []);
+        if (kind === 'ground') return gatePoint;
+        if (kind === 'middle' && gatePoint && stairPoint) {
+            return {
+                x: (gatePoint.x + stairPoint.x) / 2,
+                y: (gatePoint.y + stairPoint.y) / 2
+            };
+        }
+        return stairPoint || gatePoint;
+    }
+
+    sampleCityGatePassagePath(points, progress) {
+        const valid = points.filter(p => p && Number.isFinite(p.x) && Number.isFinite(p.y));
+        if (valid.length === 0) return { x: 0, y: 0 };
+        if (valid.length === 1) return valid[0];
+        const clamped = Math.max(0, Math.min(1, progress));
+        const scaled = clamped * (valid.length - 1);
+        const index = Math.min(valid.length - 2, Math.floor(scaled));
+        const local = scaled - index;
+        const start = valid[index];
+        const end = valid[index + 1];
+        return {
+            x: start.x + (end.x - start.x) * local,
+            y: start.y + (end.y - start.y) * local
+        };
+    }
+
     applyCityGatePassageDelay(unit, dt) {
         const transition = this.getCityGatePassageExit(unit);
         if (!transition) {
@@ -7879,17 +7919,35 @@ export class TacticsScene extends BaseScene {
             const duration = Math.max(1, passage.durationMs || 620);
             passage.elapsedMs = Math.min(duration, passage.elapsedMs + dt);
             const rawProgress = Math.max(0, Math.min(1, passage.elapsedMs / duration));
-            const progress = rawProgress < 0.5
-                ? 2 * rawProgress * rawProgress
-                : 1 - Math.pow(-2 * rawProgress + 2, 2) / 2;
+            const holdStart = 0.42;
+            const holdEnd = 0.58;
+            let motionProgress;
+            if (rawProgress < holdStart) {
+                motionProgress = (rawProgress / holdStart) * 0.48;
+            } else if (rawProgress < holdEnd) {
+                motionProgress = 0.5;
+            } else {
+                motionProgress = 0.52 + ((rawProgress - holdEnd) / (1 - holdEnd)) * 0.48;
+            }
+            const progress = motionProgress < 0.5
+                ? 2 * motionProgress * motionProgress
+                : 1 - Math.pow(-2 * motionProgress + 2, 2) / 2;
             const fromInside = this.tacticsMap.isCityGateInsideCell(fromCell.r, fromCell.q);
             const toInside = this.tacticsMap.isCityGateInsideCell(destination.r, destination.q);
             const goingDown = fromInside && !toInside;
             const goingUp = !fromInside && toInside;
 
             unit.action = 'walk';
-            unit.visualX = fromPos.x + (destinationPos.x - fromPos.x) * progress;
-            unit.visualY = fromPos.y + (destinationPos.y - fromPos.y) * progress;
+            const groundPoint = this.getCityGatePassageVisualPoint('ground');
+            const middlePoint = this.getCityGatePassageVisualPoint('middle');
+            const visualPoint = this.sampleCityGatePassagePath([
+                fromPos,
+                goingDown ? middlePoint : groundPoint,
+                goingDown ? groundPoint : middlePoint,
+                destinationPos
+            ], progress);
+            unit.visualX = visualPoint.x;
+            unit.visualY = visualPoint.y;
             if (destinationPos.x < fromPos.x) unit.flip = true;
             if (destinationPos.x > fromPos.x) unit.flip = false;
 
@@ -7897,15 +7955,15 @@ export class TacticsScene extends BaseScene {
             const rampartRows = meta?.rampartRows || 0;
             const approachRow = meta?.approachRow ?? rampartRows;
             if (goingDown) {
-                unit._cityGateLayer = rawProgress < 0.82 ? 'behind' : 'front';
+                unit._cityGateLayer = progress < 0.66 ? 'behind' : 'front';
             } else if (goingUp) {
-                unit._cityGateLayer = rawProgress < 0.18 ? 'front' : 'behind';
+                unit._cityGateLayer = progress < 0.34 ? 'front' : 'behind';
             } else {
                 unit._cityGateLayer = 'behind';
             }
             unit.currentSortR = unit._cityGateLayer === 'front'
                 ? approachRow
-                : Math.max(0, rampartRows - 0.1);
+                : Math.max(0, rampartRows - 1);
 
             if (rawProgress < 1) {
                 return 0;
@@ -11900,6 +11958,18 @@ export class TacticsScene extends BaseScene {
         maskCtx.restore();
     }
 
+    getLowestVisibleMapLevel() {
+        if (!this.tacticsMap?.grid) return 0;
+        let lowest = Infinity;
+        for (const row of this.tacticsMap.grid) {
+            for (const cell of row) {
+                if (!cell || cell.omitted) continue;
+                lowest = Math.min(lowest, cell.level || 0);
+            }
+        }
+        return Number.isFinite(lowest) ? lowest : 0;
+    }
+
     drawEdgeTrapezoids(terrainType, x, y, r, q, directions, labels, currentCell, edgeLabels = ['W', 'SW', 'SE'], options = {}) {
         const ctx = options.ctx || this.manager.ctx;
         if (!currentCell || !directions || !labels) return;
@@ -11910,13 +11980,18 @@ export class TacticsScene extends BaseScene {
             { label: 'SE', assetDirection: 'se' }
         ];
         const visibleEdges = allVisibleEdges.filter(edge => edgeLabels.includes(edge.label));
+        const lowestMapLevel = this.getLowestVisibleMapLevel();
 
         visibleEdges.forEach(edge => {
             const direction = directions[labels.indexOf(edge.label)];
             if (!direction) return;
 
             const neighbor = this.tacticsMap.getCell(r + direction.dr, q + direction.dq);
-            const levelDiff = neighbor ? ((neighbor.level || 0) - (currentCell.level || 0)) : 0;
+            const currentLevel = currentCell.level || 0;
+            const isPlayerFacingMapEdge = !neighbor && (edge.label === 'SW' || edge.label === 'SE');
+            const levelDiff = neighbor
+                ? ((neighbor.level || 0) - currentLevel)
+                : (isPlayerFacingMapEdge && currentLevel > lowestMapLevel ? lowestMapLevel - currentLevel : 0);
             const isFlatNaturalEdge = levelDiff === 0 &&
                 !this.isEdgeStructureTerrain(currentCell?.terrain) &&
                 !this.isEdgeStructureTerrain(neighbor?.terrain);
