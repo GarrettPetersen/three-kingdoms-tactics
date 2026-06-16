@@ -697,6 +697,7 @@ export const NARRATIVE_SCRIPTS = {
                         },
                         {
                             type: 'dialogue',
+                            bg: 'valley_aerial_shot',
                             portraitKey: 'zhang-fei',
                             name: 'Zhang Fei',
                             position: 'top',
@@ -708,6 +709,7 @@ export const NARRATIVE_SCRIPTS = {
                         },
                         {
                             type: 'dialogue',
+                            bg: 'valley_aerial_shot',
                             portraitKey: 'narrator',
                             voiceId: 'qz_vic_nar_pursue_01',
                             text: {
@@ -717,6 +719,7 @@ export const NARRATIVE_SCRIPTS = {
                         },
                         {
                             type: 'dialogue',
+                            bg: 'valley_aerial_shot',
                             portraitKey: 'liu-bei',
                             name: 'Liu Bei',
                             position: 'top',

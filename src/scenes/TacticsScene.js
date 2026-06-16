@@ -345,6 +345,41 @@ export class TacticsScene extends BaseScene {
         this.completeBaseDialogueIfNeeded();
     }
 
+    processActiveDialogueCommands() {
+        for (let i = 0; i < 20; i++) {
+            const activeDialogue = this.getActiveDialogueState();
+            const script = activeDialogue?.script;
+            const dialogueIndex = activeDialogue?.index ?? 0;
+            const step = script?.[dialogueIndex];
+            if (!step || step.type !== 'command') return;
+
+            if (step.action === 'setStoryChoice' && step.key) {
+                const routeId = step.routeId || this.manager.gameState.getCurrentCampaign() || null;
+                this.manager.gameState.setStoryChoice(step.key, step.value, routeId);
+            } else {
+                console.warn('Skipping unsupported battle dialogue command:', step);
+            }
+            this.advanceActiveDialogueStep();
+        }
+        console.warn('Stopped processing battle dialogue commands after too many consecutive command steps.');
+    }
+
+    drawDialogueCutawayBackground(ctx, canvas, img) {
+        if (!img) return;
+        ctx.save();
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.imageSmoothingEnabled = false;
+
+        const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+        const drawW = Math.max(1, Math.floor(img.width * scale));
+        const drawH = Math.max(1, Math.floor(img.height * scale));
+        const x = Math.floor((canvas.width - drawW) / 2);
+        const y = Math.floor((canvas.height - drawH) / 2);
+        ctx.drawImage(img, x, y, drawW, drawH);
+        ctx.restore();
+    }
+
     closeCompletedDialogueFrames() {
         if (!Array.isArray(this.dialogueFrames)) return;
         while (this.dialogueFrames.length > 0) {
@@ -9770,6 +9805,7 @@ export class TacticsScene extends BaseScene {
         }
 
         if ((this.isIntroDialogueActive && this.introScript) || (this.isVictoryDialogueActive && this.victoryScript)) {
+            this.processActiveDialogueCommands();
             const dialogueState = this.getActiveDialogueState();
             const script = dialogueState?.script;
             const dialogueIndex = dialogueState?.index ?? 0;
@@ -9791,11 +9827,15 @@ export class TacticsScene extends BaseScene {
                     step._voicePlayed = true;
                 }
                 if (step.type !== 'choice') {
+                    const bgImg = step.bg ? assets.getImage(step.bg) : null;
+                    if (bgImg) {
+                        this.drawDialogueCutawayBackground(ctx, canvas, bgImg);
+                    }
                     this.renderDialogueBox(ctx, canvas, {
                         portraitKey: step.portraitKey,
                         name: step.name,
                         text: step.text
-                    }, { subStep: this.subStep || 0 });
+                    }, { subStep: this.subStep || 0, bgImg });
                 }
             }
         }
@@ -13770,6 +13810,7 @@ export class TacticsScene extends BaseScene {
 
         if (this.isIntroDialogueActive || this.isVictoryDialogueActive) {
             if (this.dialogueElapsed < 250) return;
+            this.processActiveDialogueCommands();
             const dialogueState = this.getActiveDialogueState();
             const script = dialogueState?.script;
             const dialogueIndex = dialogueState?.index ?? 0;
