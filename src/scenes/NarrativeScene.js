@@ -61,10 +61,26 @@ export class NarrativeScene extends BaseScene {
     createChoiceDialogueStep(step, opt) {
         const fallbackText = opt?.buttonText || '';
         const dialogueText = opt?.text !== undefined && opt?.text !== null ? opt.text : fallbackText;
+        const speakerKey = opt?.speaker ? String(opt.speaker).trim().toLowerCase() : '';
+        const speakerDefaults = {
+            liubei: { portraitKey: 'liu-bei', name: 'Liu Bei' },
+            guanyu: { portraitKey: 'guan-yu', name: 'Guan Yu' },
+            zhangfei: { portraitKey: 'zhang-fei', name: 'Zhang Fei' },
+            caocao: { portraitKey: 'cao-cao', name: 'Cao Cao' },
+            caoren: { portraitKey: 'cao-ren', name: 'Cao Ren' },
+            dongzhuo: { portraitKey: 'dong-zhuo', name: 'Dong Zhuo' },
+            hejin: { portraitKey: 'hejin', name: 'He Jin' },
+            luzhi: { portraitKey: 'lu-zhi', name: 'Lu Zhi' },
+            zhoujing: { portraitKey: 'zhou-jing', name: 'Zhou Jing' },
+            gongjing: { portraitKey: 'gong-jing', name: 'Gong Jing' },
+            xiaoer: { portraitKey: 'xiaoer', name: 'Liubo Player' }
+        };
+        const speakerDefault = speakerDefaults[speakerKey] || {};
         return {
             type: 'dialogue',
-            portraitKey: step.portraitKey || 'liubei',
-            name: step.name || 'Liu Bei',
+            speaker: opt?.speaker || step.speaker,
+            portraitKey: opt?.portraitKey || speakerDefault.portraitKey || step.portraitKey || 'liubei',
+            name: opt?.name || speakerDefault.name || step.name || 'Liu Bei',
             text: dialogueText,
             voiceId: opt?.voiceId,
             _isChoiceInserted: true
@@ -1892,6 +1908,7 @@ export class NarrativeScene extends BaseScene {
                         });
                         choiceDialogue._isInserted = true;
                         this.script.splice(this.currentStep + 1, 0, choiceDialogue, ...resultSteps);
+                        this.buildLabelMap();
                         if (this.isInteractive && this.insertedStepsStartIndex >= 0) {
                             this.insertedStepsCount += 1 + resultSteps.length;
                         }
@@ -2144,6 +2161,7 @@ export class NarrativeScene extends BaseScene {
                     });
                     choiceDialogue._isInserted = true;
                     this.script.splice(this.currentStep + 1, 0, choiceDialogue, ...resultSteps);
+                    this.buildLabelMap();
                     if (this.isInteractive && this.insertedStepsStartIndex >= 0) {
                         this.insertedStepsCount += 1 + resultSteps.length;
                     }
