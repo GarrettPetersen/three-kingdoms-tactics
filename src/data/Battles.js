@@ -144,12 +144,12 @@ export const BATTLES = {
         name: "Ambush at Qingzhou",
         map: {
             biome: 'central',
-            layout: 'mountain_pass',
-            orientation: 'ns',
-            forestDensity: 0.1,
-            mountainDensity: 0.15,
+            layout: 'city_gate',
+            cityGateDefenderSide: 'player',
+            forestDensity: 0.05,
+            mountainDensity: 0.0,
             riverDensity: 0.0,
-            houseDensity: 0.0
+            houseDensity: 0.2
         },
         playerFaction: 'liu_bei_volunteers',
         units: [

@@ -7315,6 +7315,7 @@ export class TacticsScene extends BaseScene {
                         id: uDef.id,
                         r: uDef.r,
                         q: uDef.q,
+                        cityGateSide: uDef.cityGateSide,
                         onHorse: !!uDef.onHorse,
                         horseType: uDef.horseType || template.horseType || 'brown',
                         flip: uDef.flip !== undefined ? !!uDef.flip : !!template.flip,

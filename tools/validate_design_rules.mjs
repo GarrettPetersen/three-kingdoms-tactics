@@ -163,6 +163,34 @@ function checkZhuoTrainingBattle() {
         'training dummy template should break to dummy_broken.');
 }
 
+function checkQingzhouCityGatePrelude() {
+    const battle = BATTLES.qingzhou_prelude;
+    assertRule(!!battle, 'qingzhou_prelude battle must exist.');
+    if (!battle) return;
+
+    assertRule(battle.map?.layout === 'city_gate',
+        'qingzhou_prelude should use the city_gate layout.');
+    assertRule(battle.map?.cityGateDefenderSide === 'player',
+        'Qingzhou city gate should be defended by the player/allied side.');
+
+    const units = battle.units || [];
+    const byId = new Map(units.map(unit => [unit.id, unit]));
+    ['liubei', 'guanyu', 'zhangfei', 'ally1', 'ally2', 'ally3'].forEach(id => {
+        assertRule(byId.get(id)?.cityGateSide === 'outside',
+            `qingzhou_prelude.${id} should start outside the Qingzhou walls.`);
+    });
+    ['gongjing', 'qz_guard1', 'qz_guard2'].forEach(id => {
+        assertRule(byId.get(id)?.cityGateSide === 'inside',
+            `qingzhou_prelude.${id} should start on the Qingzhou wall side.`);
+    });
+    units
+        .filter(unit => unit.id?.startsWith('rebel_pre_'))
+        .forEach(unit => {
+            assertRule(unit.cityGateSide === 'outside',
+                `qingzhou_prelude.${unit.id} should besiege from outside the walls.`);
+        });
+}
+
 function listJsFiles(dir) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     return entries.flatMap(entry => {
@@ -229,6 +257,7 @@ checkSharedForceState();
 checkLegacyForceMigration();
 checkBattleRows();
 checkZhuoTrainingBattle();
+checkQingzhouCityGatePrelude();
 checkCanvasTextRendering();
 
 if (failures.length > 0) {
