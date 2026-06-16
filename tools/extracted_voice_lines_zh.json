@@ -180,6 +180,84 @@
     "source": "MapScene.js"
   },
   {
+    "id": "ch2_hj_choice_enter",
+    "char": "hejin",
+    "text": "我乃大将军。蹇硕若敢，便让他露出手来。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_choice_return",
+    "char": "hejin",
+    "text": "我不入蹇硕之刃。即刻归宅，召集诸大臣。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_eunuch_01",
+    "char": "eunuch",
+    "text": "大将军何进，陛下在宫中相候。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_guard_01",
+    "char": "eunuchguard",
+    "text": "闭宫门。蹇硕有令。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_hejin_01",
+    "char": "hejin",
+    "text": "谋杀我？就在宫门之前？",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_narrator_01",
+    "char": "narrator",
+    "text": "中平六年四月，灵帝病笃。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_narrator_02",
+    "char": "narrator",
+    "text": "帝召大将军何进入宫，商议后事。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_narrator_03",
+    "char": "narrator",
+    "text": "蹇硕与宦官密议：若欲立皇子协，必先诛何进，以绝后患。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_narrator_04",
+    "char": "narrator",
+    "text": "何进大惊，急归私宅，召诸大臣，欲尽诛宦官。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_narrator_bad_end",
+    "char": "narrator",
+    "text": "此非史书所载。重返宫门，再作抉择。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_panyin_01",
+    "char": "panyin",
+    "text": "不可入宫。蹇硕欲谋杀公。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_panyin_02",
+    "char": "panyin",
+    "text": "速去。宫墙有耳，而耳目皆属宦官。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_panyin_03",
+    "char": "panyin",
+    "text": "公不可。此正中其计。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_oath_dz_restrain_01",
     "char": "dongzhuo",
     "text": "认清自己的身份，草民。能让本官同你们说话，已是恩典。",
@@ -792,6 +870,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "inn_gy_choice_unlawful_01",
+    "char": "guanyu",
+    "text": "你说得对。我因那一刀流亡至今。愿让我以效力汉室来赎前罪。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "inn_lb_01",
     "char": "liubei",
     "text": "确实。荣誉和责任在召唤我们。",
@@ -831,6 +915,12 @@
     "id": "inn_lb_choice_02",
     "char": "liubei",
     "text": "我们不为荣耀而战，而是为在这乱世中受苦的百姓。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_lb_choice_unlawful_01",
+    "char": "liubei",
+    "text": "即使那人该受惩处，私自杀人也不合法。义愤也必须服从汉法。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1665,13 +1755,13 @@
     "id": "train_gy_02",
     "char": "guanyu",
     "text": "三兄弟各有不同的攻击路数。",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_gy_03",
     "char": "guanyu",
     "text": "我的青龙偃月刀可在一到两格外横扫成弧。",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_gy_watch_01",
@@ -1701,25 +1791,25 @@
     "id": "train_lb_04",
     "char": "liubei",
     "text": "英雄可以先移动再攻击，也可以不移动直接出手。",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_lb_05",
     "char": "liubei",
     "text": "点击一名英雄，再点击黄色高亮格，就能移动到那里。",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_lb_06",
     "char": "liubei",
     "text": "选择攻击后，点击红色高亮格即可出招。",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_lb_07",
     "char": "liubei",
     "text": "我的双股剑可向前后两方出击，并将目标击退。",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_lb_end_turn_01",
@@ -1737,25 +1827,25 @@
     "id": "train_zf_01",
     "char": "zhangfei",
     "text": "若是手滑，就用右下角的按钮。",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_zf_02",
     "char": "zhangfei",
     "text": "一个可以撤销上一步，一个可以重置整个回合。",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_zf_03",
     "char": "zhangfei",
     "text": "我的丈八蛇矛可直刺一格或两格。",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_zf_04",
     "char": "zhangfei",
     "text": "它能伤到直线上的两个位置，并击退较远的目标。",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_zf_finish_01",

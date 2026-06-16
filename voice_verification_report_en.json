@@ -2,7 +2,7 @@
     "en:ch1_end_01": {
         "id": "ch1_end_01",
         "character": "narrator",
-        "original_text": "But slaying the ungrateful would\nMean many deaths a year.\n\nDong Zhuo's fate will be unrolled in later chapters...",
+        "original_text": "But slaying the ungrateful would\nmean many deaths a year.\n\nDong Zhuo's fate will be unrolled in later chapters...",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -2514,8 +2514,8 @@
         "id": "rec_lb_train_no_01",
         "character": "liubei",
         "original_text": "No. We know enough to begin, and the county cannot wait.",
-        "stt_output": "No, got any? That's it. We know enough to begin. And the county cannot wait.",
-        "wer": 0.36363636363636365,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2523,8 +2523,8 @@
         "id": "rec_zf_train_prompt_01",
         "character": "zhangfei",
         "original_text": "Should we pause to do some training?",
-        "stt_output": "Should we pause to do some training?",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2532,8 +2532,8 @@
         "id": "rec_zf_train_yes_01",
         "character": "zhangfei",
         "original_text": "Good. Better to strike wood now than miss rebels later.",
-        "stt_output": "Good. Better to strike wood now than this rebels later.",
-        "wer": 0.1,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2541,8 +2541,8 @@
         "id": "train_gy_01",
         "character": "guanyu",
         "original_text": "Red marks enemies. Blue marks allies. Green marks the heroes under your command.",
-        "stt_output": "Red marks enemies, Blue marks allies, Green marks the heroes under your command.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2550,8 +2550,8 @@
         "id": "train_gy_02",
         "character": "guanyu",
         "original_text": "Each brother strikes in a different pattern.",
-        "stt_output": "each brother strikes in a different pattern.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2559,8 +2559,8 @@
         "id": "train_gy_03",
         "character": "guanyu",
         "original_text": "My Green Dragon Crescent Blade sweeps an arc at a range of one or two hexes.",
-        "stt_output": "My green dragon, crescent blade, sweeps an arc at a range of one or two hexes.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2568,8 +2568,8 @@
         "id": "train_gy_watch_01",
         "character": "guanyu",
         "original_text": "In real battle, watch the hexes other units are targeting.",
-        "stt_output": "In real battle, watch the hex's other units are targeting.",
-        "wer": 0.1,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2577,8 +2577,8 @@
         "id": "train_lb_01",
         "character": "liubei",
         "original_text": "Before battle, watch how the field breathes.",
-        "stt_output": "Before battle, watch how the field breathes.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2586,8 +2586,8 @@
         "id": "train_lb_02",
         "character": "liubei",
         "original_text": "Enemies and allies move first. They show where they mean to strike.",
-        "stt_output": "Enemies and allies move first. They show where they mean to stride.",
-        "wer": 0.08333333333333333,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2595,8 +2595,8 @@
         "id": "train_lb_03",
         "character": "liubei",
         "original_text": "Those attacks do not land until you end your turn.",
-        "stt_output": "Those attacks do not land until you end your turn.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2604,8 +2604,8 @@
         "id": "train_lb_04",
         "character": "liubei",
         "original_text": "A hero may move, then attack. You may also attack without moving.",
-        "stt_output": "A hero may move, then attack. You may also attack without moving.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2613,8 +2613,8 @@
         "id": "train_lb_05",
         "character": "liubei",
         "original_text": "Click a hero, then click a highlighted yellow hex to move there.",
-        "stt_output": "Click a hero, then click a highlighted yellow hex to move there.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2622,8 +2622,8 @@
         "id": "train_lb_06",
         "character": "liubei",
         "original_text": "With an attack selected, click a highlighted red hex to strike.",
-        "stt_output": "With an attack selected, click a highlighted red hex to strike.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2631,8 +2631,8 @@
         "id": "train_lb_07",
         "character": "liubei",
         "original_text": "My double swords cut in two opposite directions and push the targets back.",
-        "stt_output": "My double swords cut in two opposite directions and push the targets back.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2640,8 +2640,8 @@
         "id": "train_lb_end_turn_01",
         "character": "liubei",
         "original_text": "Good. All three heroes have attacked.",
-        "stt_output": "Good! All three heroes have attack.",
-        "wer": 0.16666666666666666,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2649,8 +2649,8 @@
         "id": "train_lb_end_turn_02",
         "character": "liubei",
         "original_text": "Now hit the End Turn button.",
-        "stt_output": "Now, hit the intern button.",
-        "wer": 0.3333333333333333,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2658,8 +2658,8 @@
         "id": "train_zf_01",
         "character": "zhangfei",
         "original_text": "If your hand slips, use the buttons in the bottom right.",
-        "stt_output": "If your hand slips, use the buttons in the bottom right.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2667,8 +2667,8 @@
         "id": "train_zf_02",
         "character": "zhangfei",
         "original_text": "One button undoes your last action. One resets the whole turn.",
-        "stt_output": "One button. Undoose your last action. One resets the whole turn.",
-        "wer": 0.09090909090909091,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2676,8 +2676,8 @@
         "id": "train_zf_03",
         "character": "zhangfei",
         "original_text": "My Serpent Spear thrusts one or two spaces in a straight line.",
-        "stt_output": "My serpent spear thrusts one or two spaces in a straight line.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2685,8 +2685,8 @@
         "id": "train_zf_04",
         "character": "zhangfei",
         "original_text": "It can damage both spaces, and it pushes the farther target.",
-        "stt_output": "It can damage both spaces and it pushes the farther target.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2694,8 +2694,143 @@
         "id": "train_zf_finish_01",
         "character": "zhangfei",
         "original_text": "Now go ahead and smash the rest of these dummies.",
-        "stt_output": "Now, go ahead and smash the rest of these dummies.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_choice_enter": {
+        "id": "ch2_hj_choice_enter",
+        "character": "hejin",
+        "original_text": "I am General-in-Chief. Let Jian Shuo show his hand if he dares.",
+        "stt_output": "I am General in Chief, let John Shuo show his hand if he dares.",
+        "wer": 0.3333333333333333,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_choice_return": {
+        "id": "ch2_hj_choice_return",
+        "character": "hejin",
+        "original_text": "I will not step blindly into Jian Shuo's knife. I return home and summon the ministers.",
+        "stt_output": "I will not step blindly into Gian<|it|> and summon the ministers.",
+        "wer": 0.375,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_eunuch_01": {
+        "id": "ch2_hj_eunuch_01",
+        "character": "eunuch",
+        "original_text": "General-in-Chief He Jin, His Majesty awaits within.",
+        "stt_output": "General in chief, he gin. His majesty awaits with it.",
+        "wer": 0.8571428571428571,
+        "is_bad": true,
+        "language": "en"
+    },
+    "en:ch2_hj_guard_01": {
+        "id": "ch2_hj_guard_01",
+        "character": "eunuchguard",
+        "original_text": "Seal the gate. Jian Shuo commands it.",
+        "stt_output": "Seal the gate. Shan, Shu-o, come and sit.",
+        "wer": 0.5714285714285714,
+        "is_bad": true,
+        "language": "en"
+    },
+    "en:ch2_hj_hejin_01": {
+        "id": "ch2_hj_hejin_01",
+        "character": "hejin",
+        "original_text": "Murder me? At the very gate?",
+        "stt_output": "Mar�a me! At the very gate!",
+        "wer": 0.16666666666666666,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_narrator_01": {
+        "id": "ch2_hj_narrator_01",
+        "character": "narrator",
+        "original_text": "In the fourth month of Zhongping year six, Emperor Ling lay gravely ill.",
+        "stt_output": "In the fourth month of Jumping Year 6, Emperor Lane lay gravely ill.",
+        "wer": 0.23076923076923078,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_narrator_02": {
+        "id": "ch2_hj_narrator_02",
+        "character": "narrator",
+        "original_text": "He summoned General-in-Chief He Jin to the palace to settle the matter of succession.",
+        "stt_output": "Eseman General in chief he ginned to the palace to settle the matter of succession. Shall be re-e-e-e!",
+        "wer": 0.5714285714285714,
+        "is_bad": true,
+        "language": "en"
+    },
+    "en:ch2_hj_narrator_03": {
+        "id": "ch2_hj_narrator_03",
+        "character": "narrator",
+        "original_text": "But Jian Shuo and the palace eunuchs had already made their counsel plain: if Prince Xie was to be enthroned, He Jin must first be killed.",
+        "stt_output": "But John Shuo and the palace unix had already made their council plain. If Prince Cherry was to be enthroned, Ejinn must first be killed.",
+        "wer": 0.23076923076923078,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_narrator_04": {
+        "id": "ch2_hj_narrator_04",
+        "character": "narrator",
+        "original_text": "Shaken, He Jin returned to his residence and summoned the ministers, intent on destroying the eunuchs.",
+        "stt_output": "Shaken, Ejin returned to his residence and summoned the ministers, intent on destroying the Unix.",
+        "wer": 0.1875,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_narrator_bad_end": {
+        "id": "ch2_hj_narrator_bad_end",
+        "character": "narrator",
+        "original_text": "This was not how the chronicle records it. Return to the palace gate.",
+        "stt_output": "This was not how the Chronicle records it. Return to the Palace Gate.",
         "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_panyin_01": {
+        "id": "ch2_hj_panyin_01",
+        "character": "panyin",
+        "original_text": "Do not enter the palace. Jian Shuo means to murder you.",
+        "stt_output": "Do not enter the palace. Jan Shuo means to murder you.",
+        "wer": 0.09090909090909091,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_panyin_02": {
+        "id": "ch2_hj_panyin_02",
+        "character": "panyin",
+        "original_text": "Go quickly. The palace walls have ears, and every ear belongs to the eunuchs.",
+        "stt_output": "Go quickly, the palace walls have ears, and every ear belongs to the eunuchs.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_panyin_03": {
+        "id": "ch2_hj_panyin_03",
+        "character": "panyin",
+        "original_text": "My lord, no. This is exactly what they want.",
+        "stt_output": "My lord, NO! This is exactly what they want!",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_gy_choice_unlawful_01": {
+        "id": "inn_gy_choice_unlawful_01",
+        "character": "guanyu",
+        "original_text": "You speak rightly. I have lived as a fugitive for that deed. Let me seek redemption through service to the Han.",
+        "stt_output": "You speak rightly. I have lived as a fugitive for that deed. Let me seek redemption through service to the Han.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_lb_choice_unlawful_01": {
+        "id": "inn_lb_choice_unlawful_01",
+        "character": "liubei",
+        "original_text": "Even when a man deserves punishment, private killing is not lawful. Righteous anger must still answer to the Han.",
+        "stt_output": "even when a man deserves punishment. Private killing is not lawful. Right, Chisanga must still answer to the heart.",
+        "wer": 0.15789473684210525,
         "is_bad": false,
         "language": "en"
     }

@@ -1482,6 +1482,31 @@ export const NARRATIVE_SCRIPTS = {
                             }
                         }
                     ]
+                },
+                { 
+                    buttonText: {
+                        en: "Do not kill unlawfully.",
+                        zh: "不可私杀"
+                    },
+                    text: {
+                        en: "Even when a man deserves punishment, private killing is not lawful. Righteous anger must still answer to the Han.",
+                        zh: "即使那人该受惩处，私自杀人也不合法。义愤也必须服从汉法。"
+                    },
+                    voiceId: 'inn_lb_choice_unlawful_01',
+                    speaker: 'liubei',
+                    result: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'guan-yu',
+                            name: 'Guan Yu',
+                            position: 'top',
+                            voiceId: 'inn_gy_choice_unlawful_01',
+                            text: {
+                                en: "You speak rightly. I have lived as a fugitive for that deed. Let me seek redemption through service to the Han.",
+                                zh: "你说得对。我因那一刀流亡至今。愿让我以效力汉室来赎前罪。"
+                            }
+                        }
+                    ]
                 }
             ]
         },

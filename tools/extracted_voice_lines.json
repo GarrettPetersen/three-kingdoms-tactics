@@ -179,9 +179,87 @@
   {
     "id": "ch1_end_01",
     "char": "narrator",
-    "text": "But slaying the ungrateful would\nMean many deaths a year.\n\nDong Zhuo's fate will be unrolled in later chapters...",
+    "text": "But slaying the ungrateful would\nmean many deaths a year.\n\nDong Zhuo's fate will be unrolled in later chapters...",
     "source": "MapScene.js",
     "phonetic_text": "But slaying the ungrateful would Mean many deaths a year. Dong Jwoh's fate will be unrolled in later chapters."
+  },
+  {
+    "id": "ch2_hj_choice_enter",
+    "char": "hejin",
+    "text": "I am General-in-Chief. Let Jian Shuo show his hand if he dares.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_choice_return",
+    "char": "hejin",
+    "text": "I will not step blindly into Jian Shuo's knife. I return home and summon the ministers.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_eunuch_01",
+    "char": "eunuch",
+    "text": "General-in-Chief He Jin, His Majesty awaits within.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_guard_01",
+    "char": "eunuchguard",
+    "text": "Seal the gate. Jian Shuo commands it.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_hejin_01",
+    "char": "hejin",
+    "text": "Murder me? At the very gate?",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_narrator_01",
+    "char": "narrator",
+    "text": "In the fourth month of Zhongping year six, Emperor Ling lay gravely ill.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_narrator_02",
+    "char": "narrator",
+    "text": "He summoned General-in-Chief He Jin to the palace to settle the matter of succession.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_narrator_03",
+    "char": "narrator",
+    "text": "But Jian Shuo and the palace eunuchs had already made their counsel plain: if Prince Xie was to be enthroned, He Jin must first be killed.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_narrator_04",
+    "char": "narrator",
+    "text": "Shaken, He Jin returned to his residence and summoned the ministers, intent on destroying the eunuchs.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_narrator_bad_end",
+    "char": "narrator",
+    "text": "This was not how the chronicle records it. Return to the palace gate.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_panyin_01",
+    "char": "panyin",
+    "text": "Do not enter the palace. Jian Shuo means to murder you.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_panyin_02",
+    "char": "panyin",
+    "text": "Go quickly. The palace walls have ears, and every ear belongs to the eunuchs.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_panyin_03",
+    "char": "panyin",
+    "text": "My lord, no. This is exactly what they want.",
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_oath_dz_restrain_01",
@@ -805,6 +883,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "inn_gy_choice_unlawful_01",
+    "char": "guanyu",
+    "text": "You speak rightly. I have lived as a fugitive for that deed. Let me seek redemption through service to the Han.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "inn_lb_01",
     "char": "liubei",
     "text": "Indeed. Honor and duty call us.",
@@ -844,6 +928,12 @@
     "id": "inn_lb_choice_02",
     "char": "liubei",
     "text": "We fight not for glory, but for the people who suffer under this chaos.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "inn_lb_choice_unlawful_01",
+    "char": "liubei",
+    "text": "Even when a man deserves punishment, private killing is not lawful. Righteous anger must still answer to the Han.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1686,13 +1776,13 @@
     "id": "train_gy_02",
     "char": "guanyu",
     "text": "Each brother strikes in a different pattern.",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_gy_03",
     "char": "guanyu",
     "text": "My Green Dragon Crescent Blade sweeps an arc at a range of one or two hexes.",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_gy_watch_01",
@@ -1722,25 +1812,25 @@
     "id": "train_lb_04",
     "char": "liubei",
     "text": "A hero may move, then attack. You may also attack without moving.",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_lb_05",
     "char": "liubei",
     "text": "Click a hero, then click a highlighted yellow hex to move there.",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_lb_06",
     "char": "liubei",
     "text": "With an attack selected, click a highlighted red hex to strike.",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_lb_07",
     "char": "liubei",
     "text": "My double swords cut in two opposite directions and push the targets back.",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_lb_end_turn_01",
@@ -1758,25 +1848,25 @@
     "id": "train_zf_01",
     "char": "zhangfei",
     "text": "If your hand slips, use the buttons in the bottom right.",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_zf_02",
     "char": "zhangfei",
     "text": "One button undoes your last action. One resets the whole turn.",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_zf_03",
     "char": "zhangfei",
     "text": "My Serpent Spear thrusts one or two spaces in a straight line.",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_zf_04",
     "char": "zhangfei",
     "text": "It can damage both spaces, and it pushes the farther target.",
-    "source": "Battles.js"
+    "source": "TacticsScene.js"
   },
   {
     "id": "train_zf_finish_01",
