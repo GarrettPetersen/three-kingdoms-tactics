@@ -195,6 +195,7 @@ export class NarrativeScene extends BaseScene {
             name: opt?.name || speakerDefault.name || step.name || 'Liu Bei',
             text: dialogueText,
             voiceId: opt?.voiceId,
+            position: opt?.position || step.position,
             _isChoiceInserted: true
         };
     }

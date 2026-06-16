@@ -642,8 +642,8 @@ export const BATTLES = {
                 name: 'Zhang Bao',
                 voiceId: 'ch2_probe_zb_01',
                 text: {
-                    en: "You are Liu Xuande? Good. Taste the art of the Yellow Heaven.",
-                    zh: "你便是刘玄德？好，且尝黄天道法。"
+                    en: "You are Liu Xuande? Good. Taste the thunder of the Yellow Heaven.",
+                    zh: "你便是刘玄德？好，且尝黄天之雷。"
                 }
             },
             {
@@ -660,7 +660,7 @@ export const BATTLES = {
         defeat: {
             retry: { scene: 'tactics', params: { battleId: 'chapter2_zhangbao_probe' } },
             script: [
-                { bg: 'army_camp', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "Zhang Bao's line broke our advance before we understood his method. Reform the vanguard; we test him again.", zh: "未明张宝妖法，前军先乱。重整先锋，再试其阵。" } },
+                { bg: 'army_camp', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "Zhang Bao's lightning broke our advance before we understood his method. Reform the vanguard; we test him again.", zh: "未明张宝雷法，前军先乱。重整先锋，再试其阵。" } },
                 { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', text: { en: "Let him throw thunder. I will still close the distance.", zh: "任他使雷，俺也去近前会他。" } }
             ]
         }
@@ -669,13 +669,14 @@ export const BATTLES = {
         name: 'Yingchuan - The Yangcheng Approach',
         map: {
             biome: 'northern',
-            layout: 'foothills',
+            layout: 'mountain_pass',
+            orientation: 'ns',
             seed: 'chapter2_zhangbao_counter',
             weather: 'rain',
-            forestDensity: 0.08,
-            mountainDensity: 0.08,
+            forestDensity: 0.06,
+            mountainDensity: 0.16,
             riverDensity: 0.0,
-            houseDensity: 0.02
+            houseDensity: 0.0
         },
         units: [
             { id: 'liubei', r: 7, q: 2, type: 'hero' },
@@ -690,6 +691,7 @@ export const BATTLES = {
                 q: 9,
                 type: 'zhang_bao',
                 level: 4,
+                attacks: ['slash', 'heavenly_lightning'],
                 immortal: {
                     enabled: true,
                     triggerHp: 2,
@@ -717,11 +719,20 @@ export const BATTLES = {
                     }
                 }
             },
-            { id: 'gaosheng_remnant', r: 5, q: 8, type: 'enemy_captain', templateId: 'gaosheng' },
+            { id: 'gaosheng_remnant', r: 5, q: 8, type: 'enemy_captain', templateId: 'gaosheng', storyCasualtyKey: 'chapter2_zhangbao_probe:gaosheng' },
             { id: 'rebel1', r: 4, q: 8, type: 'enemy_soldier', templateId: 'rebel_archer' },
             { id: 'rebel2', r: 5, q: 9, type: 'enemy_soldier' },
             { id: 'rebel3', r: 3, q: 9, type: 'enemy_soldier' },
             { id: 'rebel4', r: 6, q: 8, type: 'enemy_soldier' }
+        ],
+        scenarioAttacks: [
+            {
+                attackKey: 'throw_filth',
+                unitIds: ['liubei', 'guanyu', 'zhangfei'],
+                targetUnitIds: ['zhangbao'],
+                removeAfterUse: true,
+                disableTargetAttacks: ['heavenly_lightning']
+            }
         ],
         introScript: [
             {
@@ -730,8 +741,8 @@ export const BATTLES = {
                 name: 'Zhang Bao',
                 voiceId: 'ch2_counter_zb_01',
                 text: {
-                    en: "Again you come? Then again Heaven will answer me!",
-                    zh: "汝等又来？黄天仍为我应！"
+                    en: "Again you come? Then Heaven's lightning will answer me again!",
+                    zh: "汝等又来？黄天天雷仍为我应！"
                 }
             },
             {
@@ -740,8 +751,8 @@ export const BATTLES = {
                 name: 'Guan Yu',
                 voiceId: 'ch2_counter_gy_01',
                 text: {
-                    en: "The hidden troops are ready on the high ground. When he calls the storm, give the signal.",
-                    zh: "伏兵已在高冈。待其作法，即发号炮。"
+                    en: "The hidden troops are ready on the high ground. When he calls the lightning, give the signal.",
+                    zh: "伏兵已在高冈。待其召雷，即发号炮。"
                 }
             },
             {
@@ -750,8 +761,8 @@ export const BATTLES = {
                 name: 'Liu Bei',
                 voiceId: 'ch2_counter_lb_01',
                 text: {
-                    en: "Hold until the black air rises. Then foul the false shapes and strike from both wings.",
-                    zh: "待黑气漫天，再以秽物破其纸人草马，两翼齐出。"
+                    en: "Hold until the thunder breaks and the black air rises. Then foul the false shapes and strike from both wings.",
+                    zh: "待雷声大作、黑气漫天，再以秽物破其纸人草马，两翼齐出。"
                 }
             }
         ],

@@ -426,6 +426,15 @@ export const ATTACKS = {
         animation: 'attack_2',
         description: { en: 'Strikes a hex and all adjacent hexes, reducing units to 1 HP.', zh: '劈击目标格与相邻六格，将单位生命压至 1。' }
     },
+    throw_filth: {
+        name: { en: 'Throw Filth', zh: '掷秽物' },
+        damage: 0,
+        minRange: 1,
+        range: 3,
+        type: 'filth',
+        animation: 'attack_1',
+        description: { en: "Prepared filth used to foul Zhang Bao's lightning spell.", zh: '以预备秽物污破张宝雷法。' }
+    },
     blade_sweep_1: {
         name: { en: 'Blade Sweep I', zh: '刀锋横扫 I' },
         damage: 1,

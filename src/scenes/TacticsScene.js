@@ -1426,8 +1426,8 @@ export class TacticsScene extends BaseScene {
                 portraitKey: 'zhang-bao',
                 name: zhangbao.name,
                 text: {
-                    en: "You cannot kill me in this storm. Behold the thunder of Heaven!",
-                    zh: "风雨之中，尔等岂能杀我？且看天雷！"
+                    en: "You cannot kill me while Heaven's lightning answers my command!",
+                    zh: "天雷听我号令，尔等岂能杀我！"
                 },
                 voiceId: 'ch2_probe_zb_sorcery_01'
             });
@@ -1440,8 +1440,8 @@ export class TacticsScene extends BaseScene {
                         portraitKey: 'liu-bei',
                         name: 'Liu Bei',
                         text: {
-                            en: "Brothers, withdraw! We cannot break his sorcery head-on today!",
-                            zh: "二弟、三弟，先撤！今日不可与其妖法硬拼！"
+                            en: "Brothers, withdraw! We cannot break that lightning head-on today!",
+                            zh: "二弟、三弟，先撤！今日不可与其天雷硬拼！"
                         },
                         voiceId: 'ch2_probe_lb_retreat_01'
                     }], () => {
@@ -1978,6 +1978,9 @@ export class TacticsScene extends BaseScene {
             });
             gs.setCampaignVar('unitXP', unitXP);
             gs.setCampaignVar('unitLevelsSeen', unitLevelsSeen);
+        }
+        if (won) {
+            this.recordStoryBattleCasualties();
         }
 
         this.finalStats = {
@@ -3588,6 +3591,7 @@ export class TacticsScene extends BaseScene {
                 hasActed: u.hasActed,
                 attackOrder: Number.isFinite(u.attackOrder) ? u.attackOrder : null,
                 attacks: u.attacks,
+                scenarioAttackRules: u.scenarioAttackRules ? JSON.parse(JSON.stringify(u.scenarioAttackRules)) : null,
                 intent: u.intent ? { ...u.intent } : null,
                 action: u.action,
                 isDrowning: u.isDrowning,
@@ -3846,6 +3850,7 @@ export class TacticsScene extends BaseScene {
                     hasActed: !!uData.hasActed,
                     attackOrder: Number.isFinite(uData.attackOrder) ? uData.attackOrder : null,
                     attacks: uData.attacks || [],
+                    scenarioAttackRules: uData.scenarioAttackRules ? JSON.parse(JSON.stringify(uData.scenarioAttackRules)) : null,
                     intent: uData.intent ? { ...uData.intent } : null,
                     action: uData.action || 'standby',
                     isDrowning: !!uData.isDrowning,
@@ -3888,6 +3893,10 @@ export class TacticsScene extends BaseScene {
             u.breaksToImgKey = uData.breaksToImgKey || u.breaksToImgKey || null;
             u.keepBrokenOnDefeat = !!uData.keepBrokenOnDefeat;
             u.overkillEffectStarted = false;
+            u.attacks = Array.isArray(uData.attacks) ? [...uData.attacks] : u.attacks;
+            u.scenarioAttackRules = uData.scenarioAttackRules
+                ? JSON.parse(JSON.stringify(uData.scenarioAttackRules))
+                : (u.scenarioAttackRules || {});
             u.hasMoved = uData.hasMoved;
             u.hasAttacked = uData.hasAttacked;
             u.hasActed = uData.hasActed;
@@ -4323,6 +4332,9 @@ export class TacticsScene extends BaseScene {
             u.keepBrokenOnDefeat = !!uData.keepBrokenOnDefeat;
             u.overkillEffectStarted = false;
             u.attacks = Array.isArray(uData.attacks) ? [...uData.attacks] : u.attacks;
+            u.scenarioAttackRules = uData.scenarioAttackRules
+                ? JSON.parse(JSON.stringify(uData.scenarioAttackRules))
+                : (u.scenarioAttackRules || {});
             u.hasMoved = uData.hasMoved;
             u.hasAttacked = uData.hasAttacked;
             u.hasActed = uData.hasActed;
@@ -5967,6 +5979,11 @@ export class TacticsScene extends BaseScene {
 
         attacker.intent = null; // Clear intent so arrow disappears
         const attack = ATTACKS[attackKey];
+        if (!attack || !this.isScenarioAttackAllowedOnCell(attacker, attackKey, targetR, targetQ)) {
+            assets.playSound('ui_error', 0.4);
+            wrappedOnComplete();
+            return;
+        }
 
         const targetCell = this.tacticsMap.getCell(targetR, targetQ);
         const victim = targetCell ? this.getRiderUnitFromCell(targetCell) : null;
@@ -6021,6 +6038,8 @@ export class TacticsScene extends BaseScene {
             this.executeGreenDragonSlash(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
         } else if (attack.type === 'lightning_aoe') {
             this.executeHeavenlyLightning(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
+        } else if (attack.type === 'filth') {
+            this.executeThrowFilth(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
         } else if (this.isShoutAttack(attackKey)) {
             this.executeShout(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
         } else if (isDirectionalBolt) {
@@ -6030,6 +6049,105 @@ export class TacticsScene extends BaseScene {
         } else {
             // Standard single-target attack (Bash, etc.)
             this.executeStandardAttack(attacker, attackKey, targetR, targetQ, wrappedOnComplete);
+        }
+    }
+
+    executeThrowFilth(attacker, attackKey, targetR, targetQ, onComplete) {
+        const attack = ATTACKS[attackKey] || ATTACKS.throw_filth;
+        attacker.action = attack.animation || 'attack_1';
+        attacker.frame = 0;
+
+        let released = false;
+        const checkRelease = () => {
+            if (released) return;
+            if (attacker.action !== (attack.animation || 'attack_1')) return;
+            if (attacker.frame >= 1) {
+                released = true;
+                assets.playSound('splash', 0.65);
+                this.spawnFilthSplash(attacker, targetR, targetQ);
+                this.resolveScenarioFilthHit(attacker, attackKey, targetR, targetQ);
+                setTimeout(() => {
+                    attacker.action = 'standby';
+                    if (onComplete) onComplete();
+                }, 700);
+                return;
+            }
+            setTimeout(checkRelease, 16);
+        };
+        setTimeout(checkRelease, 16);
+    }
+
+    spawnFilthSplash(attacker, targetR, targetQ) {
+        const origin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
+        const start = this.getPixelPos(origin.r, origin.q);
+        const end = this.getPixelPos(targetR, targetQ);
+        const colors = ['#21160f', '#3d2618', '#5d3820', '#11100d', '#7a2118', '#8f3b24'];
+        const dx = end.x - start.x;
+        const dy = (end.y - 14) - (start.y - 18);
+        const len = Math.max(1, Math.hypot(dx, dy));
+        const dirX = dx / len;
+        const dirY = dy / len;
+
+        for (let i = 0; i < 44; i++) {
+            const side = (Math.random() - 0.5) * 0.22;
+            const speed = 0.08 + Math.random() * 0.08;
+            const lift = -0.18 - Math.random() * 0.1;
+            this.particles.push({
+                type: 'filth',
+                x: start.x + (Math.random() - 0.5) * 5,
+                y: start.y - 18 + (Math.random() - 0.5) * 5,
+                r: targetR + 0.92,
+                vx: dirX * speed + (-dirY * side),
+                vy: dirY * speed + lift + (dirX * side),
+                gravity: 0.00055 + Math.random() * 0.00025,
+                targetY: end.y - 5 + (Math.random() - 0.5) * 9,
+                life: 1,
+                settleMs: 600 + Math.random() * 420,
+                alpha: 0.92,
+                size: Math.random() < 0.28 ? 2 : 1,
+                color: colors[Math.floor(Math.random() * colors.length)]
+            });
+        }
+        this.triggerHexDamageWave(targetR, targetQ, 2.2, 380, 0, {
+            damping: 0.35,
+            angularFreq: 18,
+            fadeOutStart: 0.45
+        });
+    }
+
+    resolveScenarioFilthHit(attacker, attackKey, targetR, targetQ) {
+        const rule = attacker?.scenarioAttackRules?.[attackKey] || {};
+        const targetCell = this.tacticsMap.getCell(targetR, targetQ);
+        const target = targetCell ? this.getRiderUnitFromCell(targetCell) : null;
+        if (!target) return;
+
+        const disableAttacks = Array.isArray(rule.disableTargetAttacks) ? rule.disableTargetAttacks : [];
+        if (disableAttacks.length > 0 && Array.isArray(target.attacks)) {
+            target.attacks = target.attacks.filter(key => !disableAttacks.includes(key));
+            if (target.intent && disableAttacks.includes(target.intent.attackKey)) {
+                target.intent = null;
+            }
+        }
+
+        if (rule.removeAfterUse !== false) {
+            this.units.forEach(unit => {
+                if (!unit?.scenarioAttackRules?.[attackKey]) return;
+                unit.attacks = (unit.attacks || []).filter(key => key !== attackKey);
+                delete unit.scenarioAttackRules[attackKey];
+            });
+        }
+
+        if (target.id === 'zhangbao') {
+            this.startBattleEndDialogue([{
+                speaker: 'zhangbao',
+                portraitKey: 'zhang-bao',
+                name: 'Zhang Bao',
+                voiceId: 'ch2_counter_zb_filth_01',
+                text: {
+                    en: "Filth! You dare foul Heaven's spell? The thunder... it will not answer!",
+                    zh: "秽物！汝等竟敢污我雷法？天雷……竟不应了！"
+                }
+            }]);
         }
     }
 
@@ -7579,6 +7697,62 @@ export class TacticsScene extends BaseScene {
         gs.setCampaignVar('unitTraits', allTraits);
     }
 
+    getStoryBattleCasualties() {
+        const casualties = this.manager?.gameState?.getCampaignVar?.('storyBattleCasualties') || {};
+        return casualties && typeof casualties === 'object' ? casualties : {};
+    }
+
+    isStoryBattleCasualtyRecorded(key) {
+        if (!key) return false;
+        return !!this.getStoryBattleCasualties()[key];
+    }
+
+    recordStoryBattleCasualty(key) {
+        if (!key || this.isCustom) return;
+        const gs = this.manager?.gameState;
+        if (!gs || typeof gs.getCampaignVar !== 'function' || typeof gs.setCampaignVar !== 'function') return;
+        const casualties = { ...this.getStoryBattleCasualties() };
+        casualties[key] = true;
+        gs.setCampaignVar('storyBattleCasualties', casualties);
+    }
+
+    recordStoryBattleCasualties() {
+        if (this.battleId !== 'chapter2_zhangbao_probe') return;
+        const gaosheng = this.units.find(u => u.id === 'gaosheng');
+        if (gaosheng && (gaosheng.hp <= 0 || gaosheng.isGone)) {
+            this.recordStoryBattleCasualty('chapter2_zhangbao_probe:gaosheng');
+        }
+    }
+
+    getScenarioAttackConfigsForUnit(unitId) {
+        const entries = Array.isArray(this.battleDef?.scenarioAttacks) ? this.battleDef.scenarioAttacks : [];
+        return entries.filter(entry => {
+            if (!entry || !entry.attackKey) return false;
+            if (!Array.isArray(entry.unitIds) || entry.unitIds.length === 0) return true;
+            return entry.unitIds.includes('*') || entry.unitIds.includes(unitId);
+        });
+    }
+
+    applyScenarioAttackRulesToUnit(unit) {
+        if (!unit) return;
+        const scenarioAttacks = this.getScenarioAttackConfigsForUnit(unit.id);
+        if (scenarioAttacks.length === 0) {
+            unit.scenarioAttackRules = unit.scenarioAttackRules || {};
+            return;
+        }
+
+        unit.scenarioAttackRules = { ...(unit.scenarioAttackRules || {}) };
+        scenarioAttacks.forEach(entry => {
+            if (!ATTACKS[entry.attackKey]) return;
+            if (!unit.attacks.includes(entry.attackKey)) unit.attacks.push(entry.attackKey);
+            unit.scenarioAttackRules[entry.attackKey] = {
+                targetUnitIds: Array.isArray(entry.targetUnitIds) ? [...entry.targetUnitIds] : [],
+                removeAfterUse: entry.removeAfterUse !== false,
+                disableTargetAttacks: Array.isArray(entry.disableTargetAttacks) ? [...entry.disableTargetAttacks] : []
+            };
+        });
+    }
+
     placeInitialUnits(specifiedUnits) {
         this.units = [];
         let unitsToPlace = specifiedUnits;
@@ -7598,6 +7772,9 @@ export class TacticsScene extends BaseScene {
                         id: uDef.id,
                         r: uDef.r,
                         q: uDef.q,
+                        level: uDef.level !== undefined ? uDef.level : template.level,
+                        attacks: uDef.attacks ? [...uDef.attacks] : [...(template.attacks || [])],
+                        storyCasualtyKey: uDef.storyCasualtyKey || null,
                         cityGateSide: uDef.cityGateSide,
                         onHorse: !!uDef.onHorse,
                         horseType: uDef.horseType || template.horseType || 'brown',
@@ -7685,6 +7862,9 @@ export class TacticsScene extends BaseScene {
             }
 
             unitsToPlace.forEach(u => {
+                if (u.storyCasualtyKey && this.isStoryBattleCasualtyRecorded(u.storyCasualtyKey)) {
+                    return;
+                }
                 const allyPartyOwnerId = u.allyPartyOwnerId || this.getAllyPartyOwnerId(u.id);
                 const traits = { ...(u.traits || {}), ...this.getPersistentUnitTraits(u.id) };
                 const resolvedHorseType = this.resolvePersistentHorseType(u, traits);
@@ -7811,6 +7991,7 @@ export class TacticsScene extends BaseScene {
                     currentAnimAction: u.isDead ? 'death' : 'standby',
                     frame: u.isDead ? 100 : 0 // Ensure it's at the end of death anim
                 });
+                this.applyScenarioAttackRulesToUnit(unit);
                 
                 if (u.isDead) unit.isGone = false; // We want corpses to stay visible
 
@@ -8882,52 +9063,75 @@ export class TacticsScene extends BaseScene {
         this.updateRainAmbienceAudio();
         const forceRain = this.forceRainUntil && Date.now() < this.forceRainUntil;
         const effectiveWeather = forceRain ? 'rain' : this.weatherType;
-        if (!effectiveWeather) {
-            this.particles = [];
-            return;
-        }
 
         const { config, canvas } = this.manager;
         
         // 1. Spawn new particles (Slower spawn rates)
-        const spawnRate = effectiveWeather === 'rain' ? 0.15 : 0.03; // Much slower
-        const spawnCount = Math.floor(dt * spawnRate + Math.random());
-        for (let i = 0; i < spawnCount; i++) {
-            const r = Math.floor(Math.random() * config.mapHeight);
-            const q = Math.floor(Math.random() * config.mapWidth);
-            const pos = this.getPixelPos(r, q);
-            
-            if (effectiveWeather === 'rain') {
-                this.particles.push({
-                    type: 'rain',
-                    x: pos.x + (Math.random() - 0.5) * 20 - 30, // Start left for diagonal fall
-                    y: pos.y - 200,
-                    targetY: pos.y,
-                    r: r + 0.5,
-                    vx: 0.1,  // Slower diagonal
-                    vy: 0.4,  // Slower fall
-                    life: 1,
-                    alpha: 0.4 + Math.random() * 0.3
-                });
-            } else {
-                this.particles.push({
-                    type: 'snow',
-                    x: pos.x + (Math.random() - 0.5) * 40,
-                    y: pos.y - 200,
-                    targetY: pos.y,
-                    r: r + 0.5,
-                    vx: (Math.random() - 0.5) * 0.02,
-                    vy: 0.02 + Math.random() * 0.02, // Much slower fall
-                    life: 1,
-                    alpha: 0.6 + Math.random() * 0.4,
-                    driftTimer: Math.random() * Math.PI * 2
-                });
+        if (effectiveWeather) {
+            const spawnRate = effectiveWeather === 'rain' ? 0.15 : 0.03; // Much slower
+            const spawnCount = Math.floor(dt * spawnRate + Math.random());
+            for (let i = 0; i < spawnCount; i++) {
+                const r = Math.floor(Math.random() * config.mapHeight);
+                const q = Math.floor(Math.random() * config.mapWidth);
+                const pos = this.getPixelPos(r, q);
+                
+                if (effectiveWeather === 'rain') {
+                    this.particles.push({
+                        type: 'rain',
+                        x: pos.x + (Math.random() - 0.5) * 20 - 30, // Start left for diagonal fall
+                        y: pos.y - 200,
+                        targetY: pos.y,
+                        r: r + 0.5,
+                        vx: 0.1,  // Slower diagonal
+                        vy: 0.4,  // Slower fall
+                        life: 1,
+                        alpha: 0.4 + Math.random() * 0.3
+                    });
+                } else {
+                    this.particles.push({
+                        type: 'snow',
+                        x: pos.x + (Math.random() - 0.5) * 40,
+                        y: pos.y - 200,
+                        targetY: pos.y,
+                        r: r + 0.5,
+                        vx: (Math.random() - 0.5) * 0.02,
+                        vy: 0.02 + Math.random() * 0.02, // Much slower fall
+                        life: 1,
+                        alpha: 0.6 + Math.random() * 0.4,
+                        driftTimer: Math.random() * Math.PI * 2
+                    });
+                }
             }
         }
 
         // 2. Update existing particles
         for (let i = this.particles.length - 1; i >= 0; i--) {
             const p = this.particles[i];
+            if (p.type === 'filth') {
+                if (p.life > 0) {
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    p.vy += (p.gravity || 0.0006) * dt;
+                    if (p.y >= p.targetY) {
+                        p.y = p.targetY;
+                        p.vx *= 0.35;
+                        p.vy = -Math.abs(p.vy) * 0.18;
+                        if (Math.abs(p.vy) < 0.025) {
+                            p.life = 0;
+                            p.settleMs = p.settleMs || 650;
+                        }
+                    }
+                } else {
+                    p.settleMs -= dt;
+                    p.alpha = Math.max(0, p.settleMs / 650);
+                    if (p.settleMs <= 0) this.particles.splice(i, 1);
+                }
+                continue;
+            }
+            if ((p.type === 'rain' || p.type === 'snow') && !effectiveWeather) {
+                this.particles.splice(i, 1);
+                continue;
+            }
             
             if (p.life > 0) {
                 if (p.type === 'snow') {
@@ -9687,6 +9891,10 @@ export class TacticsScene extends BaseScene {
                             ctx.fillRect(px + 2, py - 1, 1, 1);
                         }
                     }
+                } else if (p.type === 'filth') {
+                    const size = Math.max(1, Math.floor(p.size || 1));
+                    ctx.fillStyle = p.color || '#3d2618';
+                    ctx.fillRect(px, py, size, size);
                 } else {
                     // Snow: simple pixel squares
                     const size = p.life > 0 ? 1 : 1;
@@ -13078,13 +13286,16 @@ export class TacticsScene extends BaseScene {
             
             const dw = 160;
             const dh = 60;
-            const dx = (canvas.width - dw) / 2;
-            const dy = (canvas.height - dh) / 2;
+            const dx = Math.floor((canvas.width - dw) / 2);
+            const dy = Math.floor((canvas.height - dh) / 2);
             
             ctx.fillStyle = '#222';
             ctx.fillRect(dx, dy, dw, dh);
-            ctx.strokeStyle = '#ffd700';
-            ctx.strokeRect(dx + 0.5, dy + 0.5, dw - 1, dh - 1);
+            ctx.fillStyle = '#ffd700';
+            ctx.fillRect(dx, dy, dw, 1);
+            ctx.fillRect(dx, dy + dh - 1, dw, 1);
+            ctx.fillRect(dx, dy, 1, dh);
+            ctx.fillRect(dx + dw - 1, dy, 1, dh);
             
             this.drawPixelText(ctx, getLocalizedText({ en: "UNFINISHED ACTIONS", zh: "尚有单位未行动" }), dx + dw / 2, dy + 10, { color: '#ff4444', font: '8px Silkscreen', align: 'center' });
             this.drawPixelText(ctx, getLocalizedText({ en: "Some units have not acted.", zh: "仍有单位尚未行动。" }), dx + dw / 2, dy + 22, { color: '#fff', font: '8px Tiny5', align: 'center' });
@@ -13099,8 +13310,11 @@ export class TacticsScene extends BaseScene {
             const yy = dy + 40;
             ctx.fillStyle = '#442222';
             ctx.fillRect(yx, yy, bw, bh);
-            ctx.strokeStyle = '#fff';
-            ctx.strokeRect(yx + 0.5, yy + 0.5, bw - 1, bh - 1);
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(yx, yy, bw, 1);
+            ctx.fillRect(yx, yy + bh - 1, bw, 1);
+            ctx.fillRect(yx, yy, 1, bh);
+            ctx.fillRect(yx + bw - 1, yy, 1, bh);
             this.drawPixelText(ctx, getLocalizedText({ en: "YES", zh: "是" }), yx + bw / 2, yy + 4, { color: '#fff', font: '8px Silkscreen', align: 'center' });
             this.confirmYesRect = { x: yx, y: yy, w: bw, h: bh };
             
@@ -13109,8 +13323,11 @@ export class TacticsScene extends BaseScene {
             const ny = dy + 40;
             ctx.fillStyle = '#222222';
             ctx.fillRect(nx, ny, bw, bh);
-            ctx.strokeStyle = '#fff';
-            ctx.strokeRect(nx + 0.5, ny + 0.5, bw - 1, bh - 1);
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(nx, ny, bw, 1);
+            ctx.fillRect(nx, ny + bh - 1, bw, 1);
+            ctx.fillRect(nx, ny, 1, bh);
+            ctx.fillRect(nx + bw - 1, ny, 1, bh);
             this.drawPixelText(ctx, getLocalizedText({ en: "NO", zh: "否" }), nx + bw / 2, ny + 4, { color: '#fff', font: '8px Silkscreen', align: 'center' });
             this.confirmNoRect = { x: nx, y: ny, w: bw, h: bh };
         }
@@ -13333,6 +13550,22 @@ export class TacticsScene extends BaseScene {
             }
         }
         return tiles;
+    }
+
+    isScenarioAttackAllowedOnCell(unit, attackKey, r, q) {
+        const rule = unit?.scenarioAttackRules?.[attackKey];
+        if (!rule) return true;
+        const targetUnitIds = Array.isArray(rule.targetUnitIds) ? rule.targetUnitIds : [];
+        if (targetUnitIds.length === 0) return true;
+        const cell = this.tacticsMap.getCell(r, q);
+        const target = cell ? this.getRiderUnitFromCell(cell) : null;
+        return !!(target && targetUnitIds.includes(target.id) && target.hp > 0 && !target.isGone);
+    }
+
+    addSelectedAttackTileIfAllowed(r, q) {
+        if (!this.selectedUnit || !this.selectedAttack) return;
+        if (!this.isScenarioAttackAllowedOnCell(this.selectedUnit, this.selectedAttack, r, q)) return;
+        this.attackTiles.set(`${r},${q}`, true);
     }
 
     isDirectionalBoltAttack(attackKey) {
@@ -13668,6 +13901,7 @@ export class TacticsScene extends BaseScene {
         return type === 'projectile' ||
             type === 'directional_projectile' ||
             type === 'lightning_aoe' ||
+            type === 'filth' ||
             type === 'command';
     }
 
@@ -13756,7 +13990,7 @@ export class TacticsScene extends BaseScene {
                         boltPath.path.forEach(cell => {
                             const k = `${cell.r},${cell.q}`;
                             if (originKeys.has(k)) return;
-                            this.attackTiles.set(k, true);
+                            this.addSelectedAttackTileIfAllowed(cell.r, cell.q);
                         });
                     }
                 });
@@ -13769,7 +14003,7 @@ export class TacticsScene extends BaseScene {
                     if (originKeys.has(k)) return;
                     if (!this.canAttackTraverseElevation(this.selectedAttack, o.r, o.q, t.r, t.q)) return;
                     if (!ignoreWallLOS && this.hasWallBlockingBetween(o.r, o.q, t.r, t.q)) return;
-                    this.attackTiles.set(k, true);
+                    this.addSelectedAttackTileIfAllowed(t.r, t.q);
                 });
             });
             return;
@@ -13786,7 +14020,7 @@ export class TacticsScene extends BaseScene {
                     if (n.unit === this.selectedUnit) return;
                     if (!this.canAttackTraverseElevation(this.selectedAttack, o.r, o.q, n.r, n.q)) return;
                     if (!ignoreWallLOS && this.hasWallBlockingBetween(o.r, o.q, n.r, n.q)) return;
-                    this.attackTiles.set(k, true);
+                    this.addSelectedAttackTileIfAllowed(n.r, n.q);
                 });
             });
         } else {
@@ -13804,7 +14038,7 @@ export class TacticsScene extends BaseScene {
                         if (!ignoreWallLOS && this.hasWallBlockingBetween(o.r, o.q, r, q)) return false;
                         return true;
                     });
-                    if (inRange) this.attackTiles.set(k, true);
+                    if (inRange) this.addSelectedAttackTileIfAllowed(r, q);
                 }
             }
         }

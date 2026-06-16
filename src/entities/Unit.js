@@ -35,6 +35,7 @@ export class Unit {
         this.hasAttacked = config.hasAttacked || false;
         this.hasActed = config.hasActed || false; // Turn is complete
         this.attacks = config.attacks || []; // Array of attack keys from ATTACKS
+        this.scenarioAttackRules = config.scenarioAttackRules ? JSON.parse(JSON.stringify(config.scenarioAttackRules)) : {};
         this.intent = config.intent || null; // { type: 'attack', r, q, attackKey }
         
         // Movement animation
