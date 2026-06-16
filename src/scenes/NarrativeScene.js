@@ -793,6 +793,9 @@ export class NarrativeScene extends BaseScene {
                 sortY: cmd.sortY !== undefined ? cmd.sortY : (cmd.y || 0),
                 imgKey: cmd.imgKey,
                 img: cmd.imgKey ? assets.getImage(cmd.imgKey) : null,
+                imgKeys: Array.isArray(cmd.imgKeys) ? cmd.imgKeys : null,
+                frameMs: Number.isFinite(cmd.frameMs) ? cmd.frameMs : 900,
+                frameOffsetMs: Number.isFinite(cmd.frameOffsetMs) ? cmd.frameOffsetMs : 0,
                 w: cmd.w,
                 h: cmd.h
             };
@@ -1454,11 +1457,20 @@ export class NarrativeScene extends BaseScene {
             }
         };
         const drawProp = (prop) => {
-            if (!prop.img && prop.imgKey) prop.img = assets.getImage(prop.imgKey);
-            if (!prop.img) return;
-            const w = prop.w || prop.img.width;
-            const h = prop.h || prop.img.height;
-            ctx.drawImage(prop.img, bgX + prop.x, bgY + prop.y, w, h);
+            let img = prop.img;
+            if (Array.isArray(prop.imgKeys) && prop.imgKeys.length > 0) {
+                const frameMs = Math.max(1, prop.frameMs || 900);
+                const frameIdx = Math.floor((Date.now() + (prop.frameOffsetMs || 0)) / frameMs) % prop.imgKeys.length;
+                const frameKey = prop.imgKeys[frameIdx];
+                img = assets.getImage(frameKey);
+            } else if (!img && prop.imgKey) {
+                img = assets.getImage(prop.imgKey);
+                prop.img = img;
+            }
+            if (!img) return;
+            const w = prop.w || img.width;
+            const h = prop.h || img.height;
+            ctx.drawImage(img, bgX + prop.x, bgY + prop.y, w, h);
         };
         const drawDrawable = (entry) => {
             if (entry.type === 'prop') drawProp(entry.item);

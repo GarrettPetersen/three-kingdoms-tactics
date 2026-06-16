@@ -2250,7 +2250,7 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ],
     'chapter2_hejin_gate': [
-        { bg: 'luoyang_aerial_shot', type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { bg: 'luoyang_aerial_shot', type: 'command', action: 'fade', target: 0, speed: 0.001, wait: false },
         {
             type: 'title',
             text: { en: 'LUOYANG', zh: '洛阳' },
@@ -2267,7 +2267,17 @@ export const NARRATIVE_SCRIPTS = {
         },
         { bg: 'imperial_chamber', type: 'command', action: 'clearActors' },
         { type: 'command', action: 'clearProps' },
-        { type: 'command', action: 'addProp', id: 'emperor_ling', imgKey: 'emperor_ling_deathbed', x: 92, y: 122, sortY: 154 },
+        {
+            type: 'command',
+            action: 'addProp',
+            id: 'emperor_ling',
+            imgKey: 'emperor_ling_deathbed',
+            imgKeys: ['emperor_ling_deathbed', 'emperor_ling_deathbed02'],
+            frameMs: 900,
+            x: 92,
+            y: 122,
+            sortY: 154
+        },
         {
             type: 'narrator',
             voiceId: 'ch2_hj_narrator_02',
@@ -2363,9 +2373,9 @@ export const NARRATIVE_SCRIPTS = {
                         { type: 'command', action: 'move', id: 'hejin', x: -36, y: 214, wait: true },
                         { type: 'command', action: 'removeActor', id: 'hejin' },
                         { type: 'command', action: 'removeActor', id: 'panyin' },
-                        { bg: 'luoyang_council_hall', type: 'command', action: 'clearActors' },
                         { type: 'command', action: 'fade', target: 1, speed: 0.001 },
                         { type: 'command', action: 'wait', duration: 300 },
+                        { bg: 'luoyang_council_hall', type: 'command', action: 'clearActors' },
                         { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: 128, y: 202 },
                         { type: 'command', action: 'addActor', id: 'minister_left', imgKey: 'caocao', x: 78, y: 202 },
                         { type: 'command', action: 'addActor', id: 'minister_right', imgKey: 'zhoujing', x: 178, y: 202, flip: true },

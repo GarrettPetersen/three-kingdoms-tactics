@@ -801,6 +801,7 @@ async function init() {
                 eunuch: 'assets/characters/086_xiaoer01.png',
                 eunuch_guard: 'assets/characters/087_chushi01.png',
                 emperor_ling_deathbed: 'assets/characters/emperor_ling_deathbed.png',
+                emperor_ling_deathbed02: 'assets/characters/emperor_ling_deathbed02.png',
                 caocao: 'assets/characters/031_caocao.png',
                 caoren: 'assets/characters/034_caoren.png',
                 liubei: 'assets/characters/048_liubei.png',
