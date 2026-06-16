@@ -50,7 +50,10 @@ export class BattleSummaryScene extends BaseScene {
         if (bg) {
             ctx.save();
             ctx.globalAlpha = 0.2;
-            ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+            const size = Math.min(canvas.width, canvas.height);
+            const x = Math.floor((canvas.width - size) / 2);
+            const y = Math.floor((canvas.height - size) / 2);
+            ctx.drawImage(bg, x, y, size, size);
             ctx.restore();
         }
 

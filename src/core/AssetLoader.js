@@ -31,6 +31,7 @@ export class AssetLoader {
         this.duckInterval = null; // For smooth music ducking when voice plays
         this.voices = {}; // Cache for recently played voices
         this.currentVoice = null;
+        this._voicePlaySeq = 0;
         this.baseMusicVolume = 0.5;
         this.loopingSounds = new Map(); // key -> { audio, fadeInterval }
         this.audioUnlocked = false;
@@ -147,6 +148,7 @@ export class AssetLoader {
     }
 
     async playVoice(voiceId, volume = 1.0) {
+        const playSeq = ++this._voicePlaySeq;
         if (!voiceId) {
             this.stopVoice();
             return;
@@ -165,9 +167,13 @@ export class AssetLoader {
         const lang = getCurrentLanguage();
         const src = `assets/audio/voices/${lang}/${voiceId}.ogg`;
         
+        let audio = null;
         try {
-            const audio = this.voices[voiceId] || new Audio(src);
+            audio = this.voices[voiceId] || new Audio(src);
             this.voices[voiceId] = audio;
+            audio.pause();
+            audio.onended = null;
+            audio.currentTime = 0;
             this.currentVoiceBaseVolume = this._clamp01(volume);
             audio.volume = this.masterMutedByUser ? 0 : this._clamp01(this.currentVoiceBaseVolume * this.masterUserVolume * this.voiceUserVolume);
             this.currentVoice = audio;
@@ -175,6 +181,7 @@ export class AssetLoader {
             this.fadeMusicVolume(this.baseMusicVolume * 0.3, 200);
 
             const fireVoiceEnd = () => {
+                if (playSeq !== this._voicePlaySeq) return;
                 if (this._voiceEndTimeout) {
                     clearTimeout(this._voiceEndTimeout);
                     this._voiceEndTimeout = null;
@@ -187,10 +194,11 @@ export class AssetLoader {
             };
 
             audio.onended = () => {
+                if (playSeq !== this._voicePlaySeq) return;
+                fireVoiceEnd();
                 if (this.currentVoice === audio) {
                     this.stopVoice();
                 }
-                fireVoiceEnd();
             };
 
             // Recorder stop: use known length + 0.25s so recording ends reliably when the line finishes
@@ -209,6 +217,9 @@ export class AssetLoader {
 
             await audio.play();
         } catch (e) {
+            if (playSeq !== this._voicePlaySeq || this.currentVoice !== audio) {
+                return;
+            }
             console.warn(`Voice line not found or playback failed: ${src}`, e);
             if (this.onNextVoiceEnd) {
                 const fn = this.onNextVoiceEnd;
@@ -220,6 +231,7 @@ export class AssetLoader {
     }
 
     stopVoice() {
+        this._voicePlaySeq++;
         if (this._voiceEndTimeout) {
             clearTimeout(this._voiceEndTimeout);
             this._voiceEndTimeout = null;
