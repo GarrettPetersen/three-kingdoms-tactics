@@ -248,18 +248,51 @@ export class TacticsScene extends BaseScene {
     }
 
     getActiveDialogueScript() {
-        if (this.isIntroDialogueActive && this.introScript) return this.introScript;
-        if (this.isVictoryDialogueActive && this.victoryScript) return this.victoryScript;
+        return this.getActiveDialogueState()?.script || null;
+    }
+
+    getActiveDialogueState() {
+        const frames = Array.isArray(this.dialogueFrames) ? this.dialogueFrames : [];
+        const frame = frames.length > 0 ? frames[frames.length - 1] : null;
+        if (frame && Array.isArray(frame.steps)) {
+            return {
+                kind: 'runtime',
+                sourceKind: frame.sourceKind || (this.isVictoryDialogueActive ? 'victory' : 'intro'),
+                script: frame.steps,
+                index: frame.index || 0,
+                frame
+            };
+        }
+        if (this.isIntroDialogueActive && this.introScript) {
+            return {
+                kind: 'base',
+                sourceKind: 'intro',
+                script: this.introScript,
+                index: this.dialogueStep || 0,
+                frame: null
+            };
+        }
+        if (this.isVictoryDialogueActive && this.victoryScript) {
+            return {
+                kind: 'base',
+                sourceKind: 'victory',
+                script: this.victoryScript,
+                index: this.dialogueStep || 0,
+                frame: null
+            };
+        }
         return null;
     }
 
     getActiveChoiceState() {
-        const activeScript = this.getActiveDialogueScript();
-        const activeStep = activeScript && activeScript[this.dialogueStep];
+        const activeDialogue = this.getActiveDialogueState();
+        const activeScript = activeDialogue?.script || null;
+        const activeStep = activeScript && activeScript[activeDialogue.index];
         if (activeStep && activeStep.type === 'choice' && Array.isArray(activeStep.options) && activeStep.options.length > 0) {
             return {
                 kind: 'narrative',
                 script: activeScript,
+                dialogue: activeDialogue,
                 step: activeStep,
                 options: activeStep.options
             };
@@ -275,6 +308,87 @@ export class TacticsScene extends BaseScene {
             };
         }
         return null;
+    }
+
+    pushBattleDialogueFrame(steps, sourceKind, parentIndex) {
+        const frameSteps = this.cloneScriptSteps(steps || []);
+        if (frameSteps.length === 0) return false;
+        if (!Array.isArray(this.dialogueFrames)) this.dialogueFrames = [];
+        const parentDialogue = this.getActiveDialogueState();
+        this.dialogueFrames.push({
+            sourceKind: sourceKind || (this.isVictoryDialogueActive ? 'victory' : 'intro'),
+            parentKind: parentDialogue?.kind || 'base',
+            parentFrameDepth: this.dialogueFrames.length,
+            parentIndex: Number.isFinite(parentIndex) ? parentIndex : (parentDialogue?.index || this.dialogueStep || 0),
+            index: 0,
+            steps: frameSteps
+        });
+        this.subStep = 0;
+        this.dialogueElapsed = 0;
+        return true;
+    }
+
+    advanceActiveDialogueStep() {
+        const activeDialogue = this.getActiveDialogueState();
+        if (!activeDialogue) return;
+
+        if (activeDialogue.kind === 'runtime') {
+            activeDialogue.frame.index = (activeDialogue.frame.index || 0) + 1;
+            this.subStep = 0;
+            this.dialogueElapsed = 0;
+            this.closeCompletedDialogueFrames();
+            return;
+        }
+
+        this.dialogueStep++;
+        this.dialogueElapsed = 0;
+        this.completeBaseDialogueIfNeeded();
+    }
+
+    closeCompletedDialogueFrames() {
+        if (!Array.isArray(this.dialogueFrames)) return;
+        while (this.dialogueFrames.length > 0) {
+            const frame = this.dialogueFrames[this.dialogueFrames.length - 1];
+            if (!frame || !Array.isArray(frame.steps) || (frame.index || 0) < frame.steps.length) break;
+            const completed = this.dialogueFrames.pop();
+            if (completed?.parentKind === 'runtime') {
+                const parentFrame = this.dialogueFrames[Math.max(0, (completed.parentFrameDepth || 1) - 1)];
+                if (parentFrame) parentFrame.index = (completed.parentIndex || 0) + 1;
+            } else {
+                this.dialogueStep = (completed?.parentIndex || 0) + 1;
+            }
+        }
+        this.completeBaseDialogueIfNeeded();
+    }
+
+    completeBaseDialogueIfNeeded() {
+        if (Array.isArray(this.dialogueFrames) && this.dialogueFrames.length > 0) return false;
+        const script = this.isIntroDialogueActive ? this.introScript : (this.isVictoryDialogueActive ? this.victoryScript : null);
+        if (!script || this.dialogueStep < script.length) return false;
+
+        if (this.isIntroDialogueActive) {
+            this.isIntroDialogueActive = false;
+            if (this.hasChoice && (this.onChoiceRestrain || this.onChoiceFight)) {
+                this.isChoiceActive = true;
+            } else if (this.battleId === 'qingzhou_prelude') {
+                this.checkWinLoss();
+            } else if (this.battleId === 'yellow_turban_rout') {
+                this.manager.switchTo('narrative', {
+                    scriptId: 'noticeboard',
+                    onComplete: () => {
+                        this.manager.gameState.addMilestone('prologue_complete');
+                        this.manager.switchTo('map');
+                    }
+                });
+            } else if (!this.isCutscene) {
+                this.startNpcPhase();
+            }
+        } else if (this.isVictoryDialogueActive) {
+            this.isVictoryDialogueActive = false;
+            this.isChoiceActive = false;
+            if (this.victoryOnComplete) this.victoryOnComplete();
+        }
+        return true;
     }
 
     _debugSkipCompleteCutscene() {
@@ -320,12 +434,15 @@ export class TacticsScene extends BaseScene {
 
         if (this.isChoiceActive) return true;
 
-        const activeScript = this.getActiveDialogueScript();
-        if (activeScript && this.dialogueStep < activeScript.length) {
-            for (let i = this.dialogueStep; i < activeScript.length; i++) {
+        const activeDialogue = this.getActiveDialogueState();
+        const activeScript = activeDialogue?.script || null;
+        const activeIndex = activeDialogue?.index || 0;
+        if (activeScript && activeIndex < activeScript.length) {
+            for (let i = activeIndex; i < activeScript.length; i++) {
                 const step = activeScript[i];
                 if (step && step.type === 'choice' && Array.isArray(step.options) && step.options.length > 0) {
-                    this.dialogueStep = i;
+                    if (activeDialogue.kind === 'runtime') activeDialogue.frame.index = i;
+                    else this.dialogueStep = i;
                     this.subStep = 0;
                     this.dialogueElapsed = 9999;
                     this.isChoiceActive = true;
@@ -450,6 +567,7 @@ export class TacticsScene extends BaseScene {
         this.caocaoSecondWaveSpawned = false;
         this.dialogueElapsed = 0;
         this.dialogueStep = 0;
+        this.dialogueFrames = [];
         this.subStep = 0;
         this.gameOverTimer = 0;
         this.isGameOver = false;
@@ -719,6 +837,7 @@ export class TacticsScene extends BaseScene {
 
     startIntroDialogue() {
         this.subStep = 0;
+        this.dialogueFrames = [];
         this.introScript = null;
         this.isPostCombatDialogue = false; // Intro dialogue, not post-combat
         const battleDef = BATTLES[this.battleId];
@@ -902,6 +1021,7 @@ export class TacticsScene extends BaseScene {
     startPostCombatDialogue() {
         const battleDef = BATTLES[this.battleId];
         if (battleDef && battleDef.postCombatScript) {
+            this.dialogueFrames = [];
             this.introScript = this.cloneScriptSteps(battleDef.postCombatScript);
             this.isIntroDialogueActive = true;
             this.isPostCombatDialogue = true; // Mark as post-combat dialogue
@@ -917,6 +1037,7 @@ export class TacticsScene extends BaseScene {
             return;
         }
         
+        this.dialogueFrames = [];
         this.isVictoryDialogueActive = true;
         this.victoryScript = this.cloneScriptSteps(NARRATIVE_SCRIPTS[scriptId]);
         this.dialogueStep = 0;
@@ -3332,6 +3453,7 @@ export class TacticsScene extends BaseScene {
             // Save intro/post-combat dialogue state
             isIntroDialogueActive: this.isIntroDialogueActive,
             dialogueStep: this.dialogueStep,
+            dialogueFrames: Array.isArray(this.dialogueFrames) ? this.cloneScriptSteps(this.dialogueFrames) : [],
             subStep: this.subStep,
             dialogueElapsed: this.dialogueElapsed,
             isIntroAnimating: this.isIntroAnimating,
@@ -3684,6 +3806,7 @@ export class TacticsScene extends BaseScene {
         // Restore intro/post-combat dialogue state
         this.isIntroDialogueActive = state.isIntroDialogueActive || false;
         this.dialogueStep = state.dialogueStep || 0;
+        this.dialogueFrames = Array.isArray(state.dialogueFrames) ? this.cloneScriptSteps(state.dialogueFrames) : [];
         this.subStep = state.subStep || 0;
         this.dialogueElapsed = state.dialogueElapsed || 0;
         this.isIntroAnimating = state.isIntroAnimating || false;
@@ -9647,13 +9770,15 @@ export class TacticsScene extends BaseScene {
         }
 
         if ((this.isIntroDialogueActive && this.introScript) || (this.isVictoryDialogueActive && this.victoryScript)) {
-            const script = this.isIntroDialogueActive ? this.introScript : this.victoryScript;
+            const dialogueState = this.getActiveDialogueState();
+            const script = dialogueState?.script;
+            const dialogueIndex = dialogueState?.index ?? 0;
             // Validate dialogueStep is within bounds
-            if (this.dialogueStep >= script.length) {
-                console.warn(`Render: dialogueStep ${this.dialogueStep} out of bounds for script length ${script.length}`);
+            if (!script || dialogueIndex >= script.length) {
+                console.warn(`Render: dialogueStep ${dialogueIndex} out of bounds for script length ${script ? script.length : 0}`);
                 return; // Don't render invalid dialogue
             }
-            const step = script[this.dialogueStep];
+            const step = script[dialogueIndex];
             if (step) {
                 if (step.type === 'choice') {
                     this.isChoiceActive = true;
@@ -10484,19 +10609,20 @@ export class TacticsScene extends BaseScene {
             if (!opt) return;
             const choiceDialogue = {
                 type: 'dialogue',
-                portraitKey: activeStep.portraitKey || 'liu-bei',
-                name: activeStep.name || 'Liu Bei',
+                portraitKey: opt.portraitKey || activeStep.portraitKey || 'liu-bei',
+                name: opt.name || activeStep.name || 'Liu Bei',
                 text: (opt.text !== undefined && opt.text !== null) ? opt.text : (opt.buttonText || ''),
                 voiceId: opt.voiceId
             };
             const resultSteps = Array.isArray(opt.result) ? this.cloneScriptSteps(opt.result) : [];
-            choiceState.script.splice(this.dialogueStep + 1, 0, choiceDialogue, ...resultSteps);
+            this.pushBattleDialogueFrame(
+                [choiceDialogue, ...resultSteps],
+                choiceState.dialogue?.sourceKind,
+                choiceState.dialogue?.index
+            );
             this.isChoiceActive = false;
             this.choiceHovered = -1;
             this.choiceRects = [];
-            this.subStep = 0;
-            this.dialogueStep++;
-            this.dialogueElapsed = 0;
             return;
         }
 
@@ -13644,10 +13770,12 @@ export class TacticsScene extends BaseScene {
 
         if (this.isIntroDialogueActive || this.isVictoryDialogueActive) {
             if (this.dialogueElapsed < 250) return;
-            const script = this.isIntroDialogueActive ? this.introScript : this.victoryScript;
-            if (!script || this.dialogueStep >= script.length) {
+            const dialogueState = this.getActiveDialogueState();
+            const script = dialogueState?.script;
+            const dialogueIndex = dialogueState?.index ?? 0;
+            if (!script || dialogueIndex >= script.length) {
                 // Script is missing or dialogueStep is out of bounds - something went wrong
-                console.error(`Dialogue error: script=${!!script}, dialogueStep=${this.dialogueStep}, scriptLength=${script ? script.length : 0}`);
+                console.error(`Dialogue error: script=${!!script}, dialogueStep=${dialogueIndex}, scriptLength=${script ? script.length : 0}`);
                 if (this.isIntroDialogueActive && this.isPostCombatDialogue && this.battleId === 'yellow_turban_rout') {
                     // Try to reload the post-combat script
                     const battleDef = BATTLES[this.battleId];
@@ -13659,9 +13787,9 @@ export class TacticsScene extends BaseScene {
                 }
                 return;
             }
-            const step = script[this.dialogueStep];
+            const step = script[dialogueIndex];
             if (!step) {
-                console.error(`Dialogue step ${this.dialogueStep} is null or undefined`);
+                console.error(`Dialogue step ${dialogueIndex} is null or undefined`);
                 return;
             }
             if (step.type === 'choice') {
@@ -13687,35 +13815,7 @@ export class TacticsScene extends BaseScene {
                 this.dialogueElapsed = 0;
             } else {
                 this.subStep = 0;
-            this.dialogueStep++;
-                this.dialogueElapsed = 0;
-                
-                if (this.dialogueStep >= script.length) {
-                    if (this.isIntroDialogueActive) {
-                this.isIntroDialogueActive = false;
-                        if (this.hasChoice && (this.onChoiceRestrain || this.onChoiceFight)) {
-                            // Show choice UI instead of starting battle
-                            this.isChoiceActive = true;
-                        } else if (this.battleId === 'qingzhou_prelude') {
-                            this.checkWinLoss(); // Trigger transition immediately
-                        } else if (this.battleId === 'yellow_turban_rout') {
-                            // Post-combat dialogue finished, transition to noticeboard
-                            this.manager.switchTo('narrative', {
-                                scriptId: 'noticeboard',
-                                onComplete: () => {
-                                    this.manager.gameState.addMilestone('prologue_complete');
-                                    this.manager.switchTo('map');
-                                }
-                            });
-                        } else if (!this.isCutscene) {
-                this.startNpcPhase();
-                        }
-                    } else if (this.isVictoryDialogueActive) {
-                        this.isVictoryDialogueActive = false;
-                        this.isChoiceActive = false;
-                        if (this.victoryOnComplete) this.victoryOnComplete();
-                    }
-                }
+                this.advanceActiveDialogueStep();
             }
             return;
         }

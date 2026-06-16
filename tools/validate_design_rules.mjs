@@ -262,6 +262,15 @@ function checkNarrativeScriptImmutability() {
         `${relPath} should execute choice and interactive branches through runtime frames.`);
 }
 
+function checkBattleDialogueScriptImmutability() {
+    const relPath = 'src/scenes/TacticsScene.js';
+    const source = fs.readFileSync(path.join(projectRoot, relPath), 'utf8');
+    assertRule(!source.includes('choiceState.script.splice('),
+        `${relPath} must not splice chosen battle dialogue branches into the active script; use dialogue frames instead.`);
+    assertRule(source.includes('pushBattleDialogueFrame('),
+        `${relPath} should execute battle dialogue choices through temporary dialogue frames.`);
+}
+
 checkSharedForceState();
 checkLegacyForceMigration();
 checkBattleRows();
@@ -269,6 +278,7 @@ checkZhuoTrainingBattle();
 checkQingzhouCityGatePrelude();
 checkCanvasTextRendering();
 checkNarrativeScriptImmutability();
+checkBattleDialogueScriptImmutability();
 
 if (failures.length > 0) {
     console.error('Design rule validation failed:');
