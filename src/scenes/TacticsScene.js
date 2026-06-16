@@ -2909,6 +2909,51 @@ export class TacticsScene extends BaseScene {
         return victim.faction === 'player' || victim.faction === 'allied';
     }
 
+    getTelegraphedFriendlyBoltDangerKeys(unit) {
+        const danger = new Set();
+        if (!unit || unit.faction !== 'allied') return danger;
+
+        this.units.forEach(shooter => {
+            if (!shooter || shooter === unit || shooter.hp <= 0 || shooter.isGone) return;
+            if (shooter.faction !== 'player' && shooter.faction !== 'allied') return;
+            if (!shooter.intent || shooter.intent.type !== 'attack') return;
+            if (!this.isDirectionalBoltAttack(shooter.intent.attackKey)) return;
+
+            const targetCell = this.getIntentTargetCell(shooter);
+            if (!targetCell) return;
+            const boltPath = this.getDirectionalBoltPath(shooter, targetCell.r, targetCell.q);
+            (boltPath?.path || []).forEach(cell => {
+                danger.add(`${cell.r},${cell.q}`);
+            });
+        });
+
+        return danger;
+    }
+
+    filterAlliedDestinationsForBoltSafety(unit, validDestinations) {
+        if (!unit || unit.faction !== 'allied' || !validDestinations || validDestinations.size <= 1) {
+            return validDestinations;
+        }
+
+        const dangerKeys = this.getTelegraphedFriendlyBoltDangerKeys(unit);
+        if (dangerKeys.size === 0) return validDestinations;
+
+        const safeDestinations = new Map();
+        validDestinations.forEach((data, key) => {
+            const [r, q] = key.split(',').map(Number);
+            if (dangerKeys.has(`${r},${q}`)) return;
+
+            const path = this.tacticsMap.getPath(unit.r, unit.q, r, q, unit.moveRange, unit);
+            const entersDanger = (path || []).some((step, index) => {
+                if (index === 0) return false;
+                return dangerKeys.has(`${step.r},${step.q}`);
+            });
+            if (!entersDanger) safeDestinations.set(key, data);
+        });
+
+        return safeDestinations.size > 0 ? safeDestinations : validDestinations;
+    }
+
     evaluateNpcAttackAt(unit, attackKey, fromR, fromQ, targetR, targetQ) {
         if (!unit) return { score: Number.NEGATIVE_INFINITY, desiredHits: 0, friendlyHits: 0 };
 
@@ -3030,6 +3075,12 @@ export class TacticsScene extends BaseScene {
             });
             validDestinations.clear();
             filtered.forEach((v, k) => validDestinations.set(k, v));
+        }
+
+        const safeDestinations = this.filterAlliedDestinationsForBoltSafety(unit, validDestinations);
+        if (safeDestinations !== validDestinations) {
+            validDestinations.clear();
+            safeDestinations.forEach((v, k) => validDestinations.set(k, v));
         }
 
         // 1. Check if we can reach a unit to attack it

@@ -163,7 +163,8 @@ const STORY_EVENTS = {
         portraitKey: 'liu-bei',
         name: 'Liu Bei',
         voiceId: 'map_lb_ch2_probe_01',
-        text: { en: "Zhang Bao's sorcery broke our first assault. We regroup at camp and plan a counter.", zh: "张宝妖术破了我军首战。先回营整军，再议破术之策。" }
+        text: { en: "Zhang Bao's sorcery broke our first assault. We regroup at camp and plan a counter.", zh: "张宝妖术破了我军首战。先回营整军，再议破术之策。" },
+        nextScene: 'campaign_selection'
     }
 };
 
@@ -898,11 +899,17 @@ export class MapScene extends BaseScene {
             this.dialogueElapsed = 0;
             return;
         }
+        const nextScene = (this.interactionSelected === 'story_event' && this.currentEvent)
+            ? this.currentEvent.nextScene
+            : null;
         this.interactionSelected = null;
         this.subStep = 0;
         this.currentEvent = null;
         this.currentReminder = null;
         this.dialogueElapsed = 0;
+        if (nextScene) {
+            this.manager.switchTo(nextScene);
+        }
     }
 
     handleInput(e) {
@@ -1140,8 +1147,9 @@ export class MapScene extends BaseScene {
                 this.manager.switchTo('tactics', {
                     battleId: 'chapter2_zhangbao_probe',
                     onVictory: () => {
-                        this.manager.gameState.setStoryCursor('chapter2_zhangbao_probe', CHAPTER2_ROUTE_ID);
+                        this.manager.gameState.setStoryCursor('chapter2_oath_complete', CHAPTER2_ROUTE_ID);
                         this.manager.gameState.addMilestone('chapter2_zhangbao_probe', CHAPTER2_ROUTE_ID);
+                        this.manager.gameState.addMilestone('chapter2_oath_complete', CHAPTER2_ROUTE_ID);
                         this.manager.switchTo('map', {
                             campaignId: CHAPTER2_ROUTE_ID,
                             partyX: 188,

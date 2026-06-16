@@ -39,7 +39,7 @@ export const CHAPTERS = {
             },
             hejin: {
                 id: 'hejin',
-                title: 'He Jin And The Eunuchs',
+                title: "The Eunuchs' Snare",
                 scenes: [
                     { id: 'chapter2_hejin_gate', type: 'narrative', scriptId: 'chapter2_hejin_gate' }
                 ]

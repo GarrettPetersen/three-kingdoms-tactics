@@ -297,16 +297,16 @@ export const UI_TEXT = {
         zh: '第二章：兄弟逆流而行'
     },
     'CH2 OATH ARC COMPLETE': {
-        en: 'CH2 OATH ARC COMPLETE',
-        zh: '第二章义兄弟线完成'
+        en: 'BROTHERS AGAINST THE TIDE COMPLETE',
+        zh: '兄弟逆流而行完成'
     },
     'CH2 HE JIN ARC': {
-        en: 'CHAPTER 2: HE JIN AND THE EUNUCHS',
-        zh: '第二章：何进谋诛宦竖'
+        en: "CHAPTER 2: THE EUNUCHS' SNARE",
+        zh: '第二章：宦竖设伏'
     },
     'CH2 HE JIN ARC COMPLETE': {
-        en: 'CH2 HE JIN ARC COMPLETE',
-        zh: '第二章何进线完成'
+        en: "THE EUNUCHS' SNARE COMPLETE",
+        zh: '宦竖设伏完成'
     },
     'CAMPAIGN LOCKED': {
         en: 'CAMPAIGN LOCKED',
@@ -353,8 +353,8 @@ export const UI_TEXT = {
         zh: '兄弟三人离开董卓战场后继续前行。是克制守义，还是怒火开路？'
     },
     'campaign_ch2_oath_complete': {
-        en: 'You have begun the Oath Brothers route of Chapter 2 and faced the first choice of honor and fury.',
-        zh: '你已开启第二章义兄弟线，并面对第一道在义与怒之间的抉择。'
+        en: 'The brothers have left Dong Zhuo behind, joined Zhu Jun at Yingchuan, and survived their first clash with Zhang Bao.',
+        zh: '兄弟三人离开董卓，投奔颍川朱儁，并撑过了与张宝的初战。'
     },
     'campaign_ch2_hejin_description': {
         en: 'At Luoyang, Emperor Ling lies dying. He Jin must decide whether to trust a warning at the palace gate.',
