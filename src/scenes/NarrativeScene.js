@@ -162,7 +162,7 @@ export class NarrativeScene extends BaseScene {
             : [{ steps: this.script, index: this.currentStep }];
         for (let frameIndex = frames.length - 1; frameIndex >= 0; frameIndex--) {
             const frame = frames[frameIndex];
-            const startIndex = frameIndex === frames.length - 1 ? frame.index : (frame.steps?.length || 0) - 1;
+            const startIndex = Math.min(frame.index || 0, Math.max(0, (frame.steps?.length || 1) - 1));
             for (let i = startIndex; i >= 0; i--) {
                 if (frame.steps?.[i]?.[propName]) return frame.steps[i][propName];
             }
