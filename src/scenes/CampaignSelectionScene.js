@@ -50,6 +50,21 @@ export class CampaignSelectionScene extends BaseScene {
                 nameOffsetX: -18,
                 nameOffsetY: -34,
                 locked: false
+            },
+            {
+                id: 'hejin',
+                chapters: ['2'],
+                nameKey: 'CH2 HE JIN ARC',
+                nameCompleteKey: 'CH2 HE JIN ARC COMPLETE',
+                charName: 'He Jin',
+                imgKey: 'hejin',
+                descriptionKey: 'campaign_ch2_hejin_description',
+                description: 'At Luoyang, Emperor Ling lies dying. He Jin must decide whether to trust a warning at the palace gate.',
+                x: 126,
+                y: 92,
+                nameOffsetX: 0,
+                nameOffsetY: -34,
+                locked: false
             }
         ];
         this.selectedIndex = 0;
@@ -75,6 +90,7 @@ export class CampaignSelectionScene extends BaseScene {
         const chapter2OathComplete = gs.isCampaignComplete('chapter2_oath');
         const freedLuZhi = gs.getStoryChoice('luzhi_outcome', null, 'liubei') === 'freed' || gs.hasMilestone('freed_luzhi', 'liubei');
         const caocao = this.campaigns.find(c => c.id === 'caocao');
+        const hejin = this.campaigns.find(c => c.id === 'hejin');
 
         if (selectedChapter === '2') {
             liubei.nameKey = 'CH2 OATH ARC';
@@ -90,6 +106,14 @@ export class CampaignSelectionScene extends BaseScene {
                 caocao.isInProgress = false;
                 caocao.locked = false;
                 caocao.description = getLocalizedText(UI_TEXT['campaign_caocao_description']);
+            }
+            if (hejin) {
+                hejin.nameKey = 'CH2 HE JIN ARC';
+                hejin.nameCompleteKey = 'CH2 HE JIN ARC COMPLETE';
+                hejin.isComplete = gs.isCampaignComplete('hejin');
+                hejin.isInProgress = gs.getCurrentCampaign() === 'hejin' && !hejin.isComplete;
+                hejin.locked = !chapter1Complete;
+                hejin.description = getLocalizedText(UI_TEXT[hejin.isComplete ? 'campaign_ch2_hejin_complete' : 'campaign_ch2_hejin_description']);
             }
             return;
         }
@@ -133,6 +157,15 @@ export class CampaignSelectionScene extends BaseScene {
                 caocao.description = getLocalizedText(UI_TEXT['campaign_caocao_description']);
             }
         }
+
+        if (hejin) {
+            hejin.nameKey = 'CH2 HE JIN ARC';
+            hejin.nameCompleteKey = 'CH2 HE JIN ARC COMPLETE';
+            hejin.isComplete = gs.isCampaignComplete('hejin');
+            hejin.isInProgress = false;
+            hejin.locked = !chapter1Complete;
+            hejin.description = getLocalizedText(UI_TEXT['campaign_ch2_hejin_description']);
+        }
     }
 
     startChapter2OathRoute() {
@@ -166,6 +199,33 @@ export class CampaignSelectionScene extends BaseScene {
             gs.startStoryRoute(routeId);
         }
         this.manager.switchTo('map', { campaignId: routeId });
+    }
+
+    startChapter2HeJinRoute() {
+        const gs = this.manager.gameState;
+        const routeId = 'hejin';
+        gs.setCurrentCampaign(routeId);
+
+        if (gs.getSceneState('narrative', routeId)) {
+            this.manager.switchTo('narrative', { isResume: true });
+            return;
+        }
+
+        const cursor = gs.getStoryCursor(routeId);
+        if (!cursor.nodeId) {
+            gs.startStoryRoute(routeId, 'chapter2_hejin_gate');
+        }
+
+        this.manager.switchTo('narrative', {
+            scriptId: 'chapter2_hejin_gate',
+            musicKey: 'narrative',
+            keepMusic: false,
+            onComplete: () => {
+                gs.setStoryCursor('chapter2_hejin_gate_complete', routeId);
+                gs.addMilestone('chapter2_hejin_gate_complete', routeId);
+                this.manager.switchTo('campaign_selection');
+            }
+        });
     }
 
     enter() {
@@ -590,6 +650,10 @@ export class CampaignSelectionScene extends BaseScene {
                 });
                 return;
             }
+            if (selected.id === 'hejin') {
+                this.startChapter2HeJinRoute();
+                return;
+            }
             if (selectedChapter === '2') {
                 this.startChapter2OathRoute();
                 return;
@@ -691,6 +755,10 @@ export class CampaignSelectionScene extends BaseScene {
                                     this.manager.switchTo('map', { campaignId: 'caocao', partyX: 168, partyY: 98 });
                                 }
                             });
+                            return;
+                        }
+                        if (c.id === 'hejin') {
+                            this.startChapter2HeJinRoute();
                             return;
                         }
                         if (selectedChapter === '2') {

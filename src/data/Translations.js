@@ -300,6 +300,14 @@ export const UI_TEXT = {
         en: 'CH2 OATH ARC COMPLETE',
         zh: '第二章义兄弟线完成'
     },
+    'CH2 HE JIN ARC': {
+        en: 'CHAPTER 2: HE JIN AND THE EUNUCHS',
+        zh: '第二章：何进谋诛宦竖'
+    },
+    'CH2 HE JIN ARC COMPLETE': {
+        en: 'CH2 HE JIN ARC COMPLETE',
+        zh: '第二章何进线完成'
+    },
     'CAMPAIGN LOCKED': {
         en: 'CAMPAIGN LOCKED',
         zh: '战役已锁定'
@@ -347,6 +355,14 @@ export const UI_TEXT = {
     'campaign_ch2_oath_complete': {
         en: 'You have begun the Oath Brothers route of Chapter 2 and faced the first choice of honor and fury.',
         zh: '你已开启第二章义兄弟线，并面对第一道在义与怒之间的抉择。'
+    },
+    'campaign_ch2_hejin_description': {
+        en: 'At Luoyang, Emperor Ling lies dying. He Jin must decide whether to trust a warning at the palace gate.',
+        zh: '洛阳宫中，灵帝病笃。宫门之前，何进必须决定是否相信一声警告。'
+    },
+    'campaign_ch2_hejin_complete': {
+        en: 'He Jin heeded Pan Yin and returned home to summon the ministers against the eunuchs.',
+        zh: '何进听从潘隐之言，急归私宅，召诸大臣谋诛宦官。'
     },
     'campaign_caocao_description': {
         en: 'When the realm nears chaos and Yellow Turbans rise like a tide, a cavalry commander rides from Dunqiu. In the smoke of war, his name begins to spread.',
@@ -785,6 +801,7 @@ export const CHARACTER_NAMES = {
     'Zhang Liang': { en: 'Zhang Liang', zh: '张梁' },
     'Cao Cao': { en: 'Cao Cao', zh: '曹操' },
     'Cao Ren': { en: 'Cao Ren', zh: '曹仁' },
+    'He Jin': { en: 'He Jin', zh: '何进' },
     'Cheng Yuanzhi': { en: 'Cheng Yuanzhi', zh: '程远志' },
     'Deng Mao': { en: 'Deng Mao', zh: '邓茂' },
     'Huangfu Song': { en: 'Huangfu Song', zh: '皇甫嵩' },

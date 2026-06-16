@@ -36,8 +36,14 @@ export const CHAPTERS = {
                     { id: 'chapter2_zhujun_camp', type: 'narrative' },
                     { id: 'chapter2_zhangbao_probe', type: 'battle', battleId: 'chapter2_zhangbao_probe' }
                 ]
+            },
+            hejin: {
+                id: 'hejin',
+                title: 'He Jin And The Eunuchs',
+                scenes: [
+                    { id: 'chapter2_hejin_gate', type: 'narrative', scriptId: 'chapter2_hejin_gate' }
+                ]
             }
         }
     }
 };
-

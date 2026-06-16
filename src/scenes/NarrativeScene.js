@@ -467,6 +467,45 @@ export class NarrativeScene extends BaseScene {
         this.returnStack = [];
         this.pendingInteractiveAdvance = false;
     }
+
+    restartScript(scriptId = this.scriptId) {
+        if (!scriptId || !NARRATIVE_SCRIPTS[scriptId]) {
+            console.warn('Cannot restart narrative script:', scriptId);
+            this.nextStep();
+            return;
+        }
+
+        this.script = this.cloneScriptSteps(NARRATIVE_SCRIPTS[scriptId]);
+        this.scriptId = scriptId;
+        this.currentStep = 0;
+        this.subStep = 0;
+        this.actors = {};
+        this.props = {};
+        this.isWaiting = false;
+        this.waitingForActorId = null;
+        this.timer = 0;
+        this.elapsedInStep = 0;
+        this.fadeAlpha = 1;
+        this.fadeTarget = 1;
+        this.fadeSpeed = 0.002;
+        this.isInteractive = false;
+        this.interactiveStepIndex = -1;
+        this.clickableActors = {};
+        this.clickableRegions = {};
+        this.hoveredActor = null;
+        this.hoveredRegion = null;
+        this.scriptLabels = {};
+        this.returnStack = [];
+        this.insertedStepsCount = 0;
+        this.insertedStepsStartIndex = -1;
+        this.interactiveNavTargets = [];
+        this.interactiveNavIndex = -1;
+        this.interactiveNavMouseEnabled = true;
+        this.pendingInteractiveAdvance = false;
+        this.buildLabelMap();
+        this.processStep();
+        this.saveNarrativeState();
+    }
     
     exit() {
         // Save narrative state when leaving (also saved on every step change)
@@ -664,6 +703,8 @@ export class NarrativeScene extends BaseScene {
             }
             this.skipNextExitSave = true;
             this.manager.switchTo('narrative', { isResume: true });
+        } else if (cmd.action === 'restartScript') {
+            this.restartScript(cmd.scriptId || this.scriptId);
         } else if (cmd.action === 'setStoryChoice') {
             const routeId = cmd.routeId || this.manager.gameState.getCurrentCampaign() || null;
             if (cmd.key) {
@@ -903,6 +944,9 @@ export class NarrativeScene extends BaseScene {
                 } else if (this.scriptId === 'caocao_ch1_end_card') {
                     this.manager.gameState.setStoryCursor('caocao_chapter1_complete', 'caocao');
                     this.manager.gameState.addMilestone('caocao_chapter1_complete');
+                } else if (this.scriptId === 'chapter2_hejin_gate') {
+                    this.manager.gameState.setStoryCursor('chapter2_hejin_gate_complete', 'hejin');
+                    this.manager.gameState.addMilestone('chapter2_hejin_gate_complete', 'hejin');
                 }
                 this.manager.switchTo(savedState.nextScene, savedState.nextParams || {});
                 return;
@@ -2189,6 +2233,7 @@ export class NarrativeScene extends BaseScene {
             'guangzong_arrival': 'map',
             'caocao_dunqiu_intro': 'map',
             'caocao_ch1_end_card': 'campaign_selection',
+            'chapter2_hejin_gate': 'campaign_selection',
             'noticeboard': 'narrative', // Goes to inn scene next
             'noticeboard_after_training': 'narrative',
             'inn': 'map',
@@ -2220,6 +2265,7 @@ export class NarrativeScene extends BaseScene {
             'guangzong_arrival': { campaignId: 'liubei' },
             'caocao_dunqiu_intro': { campaignId: 'caocao', partyX: 168, partyY: 98 },
             'caocao_ch1_end_card': {},
+            'chapter2_hejin_gate': {},
             'noticeboard': { scriptId: 'inn' }, // Chain to inn scene
             'noticeboard_after_training': { scriptId: 'inn' },
             'inn': {}, // After inn, goes to map (milestone added in onComplete)

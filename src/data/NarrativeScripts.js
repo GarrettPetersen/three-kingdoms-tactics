@@ -2144,6 +2144,197 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'setActorLoop', id: 'refugee_m_02', enabled: false },
         { type: 'command', action: 'setActorLoop', id: 'refugee_f_02', enabled: false }
     ],
+    'chapter2_hejin_gate': [
+        { bg: 'china_map', type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        {
+            type: 'title',
+            text: { en: 'LUOYANG', zh: '洛阳' },
+            subtext: { en: 'The Han Palace', zh: '汉宫' },
+            duration: 2400
+        },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_hj_narrator_01',
+            text: {
+                en: 'In the fourth month of Zhongping year six, Emperor Ling lay gravely ill.',
+                zh: '中平六年四月，灵帝病笃。'
+            }
+        },
+        { bg: 'imperial_chamber', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'addProp', id: 'emperor_ling', imgKey: 'emperor_ling_deathbed', x: 92, y: 102, sortY: 154 },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_hj_narrator_02',
+            text: {
+                en: 'He summoned General-in-Chief He Jin to the palace to settle the matter of succession.',
+                zh: '帝召大将军何进入宫，商议后事。'
+            }
+        },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_hj_narrator_03',
+            text: {
+                en: 'But Jian Shuo and the palace eunuchs had already made their counsel plain: if Prince Xie was to be enthroned, He Jin must first be killed.',
+                zh: '蹇硕与宦官密议：若欲立皇子协，必先诛何进，以绝后患。'
+            }
+        },
+        { type: 'command', action: 'fade', target: 1, speed: 0.001 },
+        { type: 'command', action: 'wait', duration: 350 },
+        { bg: 'luoyang_imperial_palace_gate', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'addActor', id: 'gate_eunuch', imgKey: 'eunuch', x: 178, y: 185, flip: true },
+        { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: -34, y: 214, actorAction: 'walk', speed: 0.72 },
+        { type: 'command', action: 'move', id: 'hejin', x: 94, y: 214, wait: true },
+        {
+            type: 'dialogue',
+            name: 'Palace Eunuch',
+            portraitKey: 'eunuch',
+            voiceId: 'ch2_hj_eunuch_01',
+            position: 'top',
+            text: {
+                en: 'General-in-Chief He Jin, His Majesty awaits within.',
+                zh: '大将军何进，陛下在宫中相候。'
+            }
+        },
+        { type: 'command', action: 'addActor', id: 'panyin', imgKey: 'panyin', x: 292, y: 212, actorAction: 'walk', speed: 0.92, flip: true },
+        { type: 'command', action: 'move', id: 'panyin', x: 148, y: 212, wait: true },
+        {
+            type: 'dialogue',
+            name: 'Pan Yin',
+            portraitKey: 'panyin',
+            voiceId: 'ch2_hj_panyin_01',
+            position: 'top',
+            text: {
+                en: 'Do not enter the palace. Jian Shuo means to murder you.',
+                zh: '不可入宫。蹇硕欲谋杀公。'
+            }
+        },
+        {
+            type: 'dialogue',
+            name: 'He Jin',
+            portraitKey: 'hejin',
+            voiceId: 'ch2_hj_hejin_01',
+            position: 'top',
+            text: {
+                en: 'Murder me? At the very gate?',
+                zh: '谋杀我？就在宫门之前？'
+            }
+        },
+        {
+            type: 'choice',
+            portraitKey: 'hejin',
+            name: 'He Jin',
+            options: [
+                {
+                    buttonText: { en: 'Return home.', zh: '急归私宅' },
+                    text: {
+                        en: 'I will not step blindly into Jian Shuo\'s knife. I return home and summon the ministers.',
+                        zh: '我不入蹇硕之刃。即刻归宅，召集诸大臣。'
+                    },
+                    voiceId: 'ch2_hj_choice_return',
+                    speaker: 'hejin',
+                    result: [
+                        {
+                            type: 'command',
+                            action: 'setStoryChoice',
+                            key: 'hejin_gate_warning',
+                            value: 'withdrew',
+                            routeId: 'hejin'
+                        },
+                        {
+                            type: 'dialogue',
+                            name: 'Pan Yin',
+                            portraitKey: 'panyin',
+                            voiceId: 'ch2_hj_panyin_02',
+                            position: 'top',
+                            text: {
+                                en: 'Go quickly. The palace walls have ears, and every ear belongs to the eunuchs.',
+                                zh: '速去。宫墙有耳，而耳目皆属宦官。'
+                            }
+                        },
+                        { type: 'command', action: 'move', id: 'panyin', x: 284, y: 212, wait: false },
+                        { type: 'command', action: 'move', id: 'hejin', x: -36, y: 214, wait: true },
+                        { type: 'command', action: 'removeActor', id: 'hejin' },
+                        { type: 'command', action: 'removeActor', id: 'panyin' },
+                        { bg: 'luoyang_council_hall', type: 'command', action: 'clearActors' },
+                        { type: 'command', action: 'fade', target: 1, speed: 0.001 },
+                        { type: 'command', action: 'wait', duration: 300 },
+                        { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: 128, y: 202 },
+                        { type: 'command', action: 'addActor', id: 'minister_left', imgKey: 'caocao', x: 78, y: 202 },
+                        { type: 'command', action: 'addActor', id: 'minister_right', imgKey: 'zhoujing', x: 178, y: 202, flip: true },
+                        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+                        {
+                            type: 'narrator',
+                            voiceId: 'ch2_hj_narrator_04',
+                            text: {
+                                en: 'Shaken, He Jin returned to his residence and summoned the ministers, intent on destroying the eunuchs.',
+                                zh: '何进大惊，急归私宅，召诸大臣，欲尽诛宦官。'
+                            }
+                        },
+                        { type: 'command', action: 'fade', target: 1, speed: 0.001 }
+                    ]
+                },
+                {
+                    buttonText: { en: 'Enter the palace.', zh: '径入宫门' },
+                    text: {
+                        en: 'I am General-in-Chief. Let Jian Shuo show his hand if he dares.',
+                        zh: '我乃大将军。蹇硕若敢，便让他露出手来。'
+                    },
+                    voiceId: 'ch2_hj_choice_enter',
+                    speaker: 'hejin',
+                    result: [
+                        {
+                            type: 'dialogue',
+                            name: 'Pan Yin',
+                            portraitKey: 'panyin',
+                            voiceId: 'ch2_hj_panyin_03',
+                            position: 'top',
+                            text: {
+                                en: 'My lord, no. This is exactly what they want.',
+                                zh: '公不可。此正中其计。'
+                            }
+                        },
+                        { type: 'command', action: 'move', id: 'hejin', x: 174, y: 186, wait: true },
+                        { type: 'command', action: 'addActor', id: 'guard_left', imgKey: 'eunuch_guard', x: 126, y: 184, actorAction: 'walk' },
+                        { type: 'command', action: 'addActor', id: 'guard_right', imgKey: 'eunuch_guard', x: 218, y: 184, actorAction: 'walk', flip: true },
+                        { type: 'command', action: 'move', id: 'guard_left', x: 152, y: 184, wait: false },
+                        { type: 'command', action: 'move', id: 'guard_right', x: 190, y: 184, wait: true },
+                        {
+                            type: 'dialogue',
+                            name: 'Palace Attendant',
+                            portraitKey: 'eunuch-guard',
+                            voiceId: 'ch2_hj_guard_01',
+                            position: 'top',
+                            text: {
+                                en: 'Seal the gate. Jian Shuo commands it.',
+                                zh: '闭宫门。蹇硕有令。'
+                            }
+                        },
+                        { type: 'command', action: 'animate', id: 'hejin', animation: 'hit', wait: false },
+                        { type: 'command', action: 'playSound', key: 'unsheath_sword', volume: 0.8 },
+                        { type: 'command', action: 'fade', target: 1, speed: 0.001 },
+                        {
+                            type: 'title',
+                            text: { en: 'BAD END', zh: '异史结局' },
+                            subtext: { en: 'He Jin ignored the warning.', zh: '何进未听潘隐之言。' },
+                            duration: 3200
+                        },
+                        {
+                            type: 'narrator',
+                            voiceId: 'ch2_hj_narrator_bad_end',
+                            text: {
+                                en: 'This was not how the chronicle records it. Return to the palace gate.',
+                                zh: '此非史书所载。重返宫门，再作抉择。'
+                            }
+                        },
+                        { type: 'command', action: 'restartScript', scriptId: 'chapter2_hejin_gate' }
+                    ]
+                }
+            ]
+        }
+    ],
     'caocao_ch1_end_card': [
         { bg: 'black', type: 'command', action: 'clearActors' },
         { type: 'command', action: 'fade', target: 0, speed: 0.0012 },

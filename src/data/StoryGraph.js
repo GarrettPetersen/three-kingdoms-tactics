@@ -37,6 +37,15 @@ export const STORY_ROUTES = {
             chapter2_zhangbao_probe: { next: 'chapter2_oath_complete' },
             chapter2_oath_complete: { next: null }
         }
+    },
+    hejin: {
+        id: 'hejin',
+        startNode: 'chapter2_hejin_gate',
+        terminalNode: 'chapter2_hejin_gate_complete',
+        nodes: {
+            chapter2_hejin_gate: { next: 'chapter2_hejin_gate_complete' },
+            chapter2_hejin_gate_complete: { next: null }
+        }
     }
 };
 
