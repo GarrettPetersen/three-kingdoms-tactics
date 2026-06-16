@@ -1536,12 +1536,6 @@
     "source": "TacticsScene.js"
   },
   {
-    "id": "qz_lb_01",
-    "char": "liubei",
-    "text": "我去。我们不能让青州百姓受苦。",
-    "source": "NarrativeScripts.js"
-  },
-  {
     "id": "qz_lb_02",
     "char": "liubei",
     "text": "敌众我寡。我们不能正面强攻。",
@@ -1560,9 +1554,15 @@
     "source": "TacticsScene.js"
   },
   {
-    "id": "qz_lb_choice_01",
+    "id": "qz_lb_ask_danger_01",
     "char": "liubei",
-    "text": "百姓呼唤援助。我们必须立即响应他们的呼唤。",
+    "text": "我们必去相救，但先说明险情。哪座城门最急？贼军由谁统领？",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_lb_ride_now_01",
+    "char": "liubei",
+    "text": "即刻驰援。青州若已危急，多说一刻，百姓便多死一分。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1575,6 +1575,12 @@
     "id": "qz_ms_01",
     "char": "volunteer",
     "text": "紧急！青州太守龚景被围困！城池即将陷落！",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_ms_ask_danger_01",
+    "char": "xiaoer",
+    "text": "西门受攻最急。贼旗不见名将，只是黄巾狂徒众多。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1632,15 +1638,27 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "qz_vic_lb_01",
-    "char": "liubei",
-    "text": "我们不要耽搁。城池仍在危险中。我们必须返回城门，确保太守安全。",
+    "id": "qz_vic_gy_secure_city_01",
+    "char": "guanyu",
+    "text": "兄长所断甚当。若身后城池失守，此处得胜也无意义。",
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "qz_vic_lb_choice_01",
+    "id": "qz_vic_lb_pursue_01",
     "char": "liubei",
-    "text": "一场漂亮的胜利，但我们必须保持警惕。城门在等待我们。",
+    "text": "若此刻追击，或可在贼众重整之前将其彻底击散。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_vic_lb_return_after_pursuit_01",
+    "char": "liubei",
+    "text": "够了。今夜他们再不能扰青州。现在回城，莫让城门前的人问我们为何迟来。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_vic_lb_secure_city_01",
+    "char": "liubei",
+    "text": "不可耽搁。城池仍在危急之中。先回城门，保住百姓。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1650,15 +1668,21 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "qz_vic_nar_pursue_01",
+    "char": "narrator",
+    "text": "三兄弟沿关道追击溃贼，击散试图重整的残部，将其余人马赶入山中。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "qz_vic_zf_01",
     "char": "zhangfei",
     "text": "看他们逃跑！像沉船上的老鼠！我们已经击垮了他们的士气。",
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "qz_vic_zf_choice_01",
+    "id": "qz_vic_zf_pursue_01",
     "char": "zhangfei",
-    "text": "你说得对，大哥！让我们确保城池真正安全。",
+    "text": "哈哈！这才痛快！给我冲一阵，我让他们逃到日落也不敢回头！",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1668,9 +1692,9 @@
     "source": "MapScene.js"
   },
   {
-    "id": "qz_zf_choice_01",
+    "id": "qz_zf_ride_now_01",
     "char": "zhangfei",
-    "text": "好样的，兄长！让我们向那些叛军展示我们的实力！",
+    "text": "好！空话破不了围，马蹄和刀锋才行！",
     "source": "NarrativeScripts.js"
   },
   {

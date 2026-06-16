@@ -566,22 +566,12 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: { en: "I will go.", zh: "我去" },
+                    buttonText: { en: "Ride at once.", zh: "即刻驰援" },
                     text: {
-                        en: "I will go. We cannot let the people of Qingzhou suffer.",
-                        zh: "我去。我们不能让青州百姓受苦。"
+                        en: "We ride at once. If Qingzhou is near falling, every moment we spend talking costs lives.",
+                        zh: "即刻驰援。青州若已危急，多说一刻，百姓便多死一分。"
                     },
-                    voiceId: 'qz_lb_01',
-                    speaker: 'liubei',
-                    result: []
-                },
-                { 
-                    buttonText: { en: "We'll help.", zh: "立即支援" },
-                    text: {
-                        en: "The people cry out for aid. We must answer their call at once.",
-                        zh: "百姓呼唤援助。我们必须立即响应他们的呼唤。"
-                    },
-                    voiceId: 'qz_lb_choice_01',
+                    voiceId: 'qz_lb_ride_now_01',
                     speaker: 'liubei',
                     result: [
                         {
@@ -589,10 +579,32 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'zhang-fei',
                             name: 'Zhang Fei',
                             position: 'top',
-                            voiceId: 'qz_zf_choice_01',
+                            voiceId: 'qz_zf_ride_now_01',
                             text: {
-                                en: "That's the spirit, brother! Let's show those rebels what we're made of!",
-                                zh: "好样的，兄长！让我们向那些叛军展示我们的实力！"
+                                en: "Good! Words will not break a siege. Hooves and blades will!",
+                                zh: "好！空话破不了围，马蹄和刀锋才行！"
+                            }
+                        }
+                    ]
+                },
+                { 
+                    buttonText: { en: "Tell us the danger.", zh: "先问险情" },
+                    text: {
+                        en: "We will help, but tell us the danger first. Which gate is hardest pressed, and who commands the rebels?",
+                        zh: "我们必去相救，但先说明险情。哪座城门最急？贼军由谁统领？"
+                    },
+                    voiceId: 'qz_lb_ask_danger_01',
+                    speaker: 'liubei',
+                    result: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'xiaoer',
+                            name: 'Messenger',
+                            position: 'top',
+                            voiceId: 'qz_ms_ask_danger_01',
+                            text: {
+                                en: "The western gate bends under their assault. Their banners name no famous general, only Yellow Turban zealots in great number.",
+                                zh: "西门受攻最急。贼旗不见名将，只是黄巾狂徒众多。"
                             }
                         }
                     ]
@@ -641,33 +653,77 @@ export const NARRATIVE_SCRIPTS = {
             name: 'Liu Bei',
             options: [
                 { 
-                    buttonText: { en: "To the gates.", zh: "回城门" },
+                    buttonText: { en: "Secure the city.", zh: "先保城池" },
                     text: {
-                        en: "Let us not tarry. The city is still in peril. We must return to the gates and ensure the Imperial Protector is safe.",
-                        zh: "我们不要耽搁。城池仍在危险中。我们必须返回城门，确保太守安全。"
+                        en: "Let us not tarry. The city is still in peril. We return to the gates and secure the people first.",
+                        zh: "不可耽搁。城池仍在危急之中。先回城门，保住百姓。"
                     },
-                    voiceId: 'qz_vic_lb_01',
-                    speaker: 'liubei',
-                    result: []
-                },
-                { 
-                    buttonText: { en: "Victory.", zh: "乘胜回城" },
-                    text: {
-                        en: "A fine victory, but we must remain vigilant. The city gates await us.",
-                        zh: "一场漂亮的胜利，但我们必须保持警惕。城门在等待我们。"
-                    },
-                    voiceId: 'qz_vic_lb_choice_01',
+                    voiceId: 'qz_vic_lb_secure_city_01',
                     speaker: 'liubei',
                     result: [
+                        {
+                            type: 'command',
+                            action: 'setStoryChoice',
+                            key: 'qingzhou_after_pass',
+                            value: 'secure_city'
+                        },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'guan-yu',
+                            name: 'Guan Yu',
+                            position: 'top',
+                            voiceId: 'qz_vic_gy_secure_city_01',
+                            text: {
+                                en: "A sound judgment. Victory in the pass means little if the city falls behind us.",
+                                zh: "兄长所断甚当。若身后城池失守，此处得胜也无意义。"
+                            }
+                        }
+                    ]
+                },
+                { 
+                    buttonText: { en: "Pursue them.", zh: "追击残敌" },
+                    text: {
+                        en: "If we pursue now, perhaps we can scatter them completely before they rally.",
+                        zh: "若此刻追击，或可在贼众重整之前将其彻底击散。"
+                    },
+                    voiceId: 'qz_vic_lb_pursue_01',
+                    speaker: 'liubei',
+                    result: [
+                        {
+                            type: 'command',
+                            action: 'setStoryChoice',
+                            key: 'qingzhou_after_pass',
+                            value: 'pursued_rebels'
+                        },
                         {
                             type: 'dialogue',
                             portraitKey: 'zhang-fei',
                             name: 'Zhang Fei',
                             position: 'top',
-                            voiceId: 'qz_vic_zf_choice_01',
+                            voiceId: 'qz_vic_zf_pursue_01',
                             text: {
-                                en: "Right you are, eldest brother! Let's make sure the city is truly secure.",
-                                zh: "你说得对，大哥！让我们确保城池真正安全。"
+                                en: "Ha! That is the fire I like. Give me one charge and I will send them running until sunset!",
+                                zh: "哈哈！这才痛快！给我冲一阵，我让他们逃到日落也不敢回头！"
+                            }
+                        },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'narrator',
+                            voiceId: 'qz_vic_nar_pursue_01',
+                            text: {
+                                en: "The brothers hunted the broken rebels through the pass, scattering those who tried to rally and driving the rest into the hills.",
+                                zh: "三兄弟沿关道追击溃贼，击散试图重整的残部，将其余人马赶入山中。"
+                            }
+                        },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'liu-bei',
+                            name: 'Liu Bei',
+                            position: 'top',
+                            voiceId: 'qz_vic_lb_return_after_pursuit_01',
+                            text: {
+                                en: "Enough. They will not trouble Qingzhou tonight. Now back to the city before the gates ask why we delayed.",
+                                zh: "够了。今夜他们再不能扰青州。现在回城，莫让城门前的人问我们为何迟来。"
                             }
                         }
                     ]

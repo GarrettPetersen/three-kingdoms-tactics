@@ -2703,8 +2703,8 @@
         "id": "ch2_hj_choice_enter",
         "character": "hejin",
         "original_text": "I am General-in-Chief. Let Jian Shuo show his hand if he dares.",
-        "stt_output": "I am General in Chief, let John Shuo show his hand if he dares.",
-        "wer": 0.3333333333333333,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2712,8 +2712,8 @@
         "id": "ch2_hj_choice_return",
         "character": "hejin",
         "original_text": "I will not step blindly into Jian Shuo's knife. I return home and summon the ministers.",
-        "stt_output": "I will not step blindly into Gian<|it|> and summon the ministers.",
-        "wer": 0.375,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2721,26 +2721,26 @@
         "id": "ch2_hj_eunuch_01",
         "character": "eunuch",
         "original_text": "General-in-Chief He Jin, His Majesty awaits within.",
-        "stt_output": "General in chief, he gin. His majesty awaits with it.",
-        "wer": 0.8571428571428571,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "en"
     },
     "en:ch2_hj_guard_01": {
         "id": "ch2_hj_guard_01",
         "character": "eunuchguard",
         "original_text": "Seal the gate. Jian Shuo commands it.",
-        "stt_output": "Seal the gate. Shan, Shu-o, come and sit.",
-        "wer": 0.5714285714285714,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "en"
     },
     "en:ch2_hj_hejin_01": {
         "id": "ch2_hj_hejin_01",
         "character": "hejin",
         "original_text": "Murder me? At the very gate?",
-        "stt_output": "Mar�a me! At the very gate!",
-        "wer": 0.16666666666666666,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2748,8 +2748,8 @@
         "id": "ch2_hj_narrator_01",
         "character": "narrator",
         "original_text": "In the fourth month of Zhongping year six, Emperor Ling lay gravely ill.",
-        "stt_output": "In the fourth month of Jumping Year 6, Emperor Lane lay gravely ill.",
-        "wer": 0.23076923076923078,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2757,17 +2757,17 @@
         "id": "ch2_hj_narrator_02",
         "character": "narrator",
         "original_text": "He summoned General-in-Chief He Jin to the palace to settle the matter of succession.",
-        "stt_output": "Eseman General in chief he ginned to the palace to settle the matter of succession. Shall be re-e-e-e!",
-        "wer": 0.5714285714285714,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "en"
     },
     "en:ch2_hj_narrator_03": {
         "id": "ch2_hj_narrator_03",
         "character": "narrator",
         "original_text": "But Jian Shuo and the palace eunuchs had already made their counsel plain: if Prince Xie was to be enthroned, He Jin must first be killed.",
-        "stt_output": "But John Shuo and the palace unix had already made their council plain. If Prince Cherry was to be enthroned, Ejinn must first be killed.",
-        "wer": 0.23076923076923078,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2775,8 +2775,8 @@
         "id": "ch2_hj_narrator_04",
         "character": "narrator",
         "original_text": "Shaken, He Jin returned to his residence and summoned the ministers, intent on destroying the eunuchs.",
-        "stt_output": "Shaken, Ejin returned to his residence and summoned the ministers, intent on destroying the Unix.",
-        "wer": 0.1875,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2784,8 +2784,8 @@
         "id": "ch2_hj_narrator_bad_end",
         "character": "narrator",
         "original_text": "This was not how the chronicle records it. Return to the palace gate.",
-        "stt_output": "This was not how the Chronicle records it. Return to the Palace Gate.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2793,8 +2793,8 @@
         "id": "ch2_hj_panyin_01",
         "character": "panyin",
         "original_text": "Do not enter the palace. Jian Shuo means to murder you.",
-        "stt_output": "Do not enter the palace. Jan Shuo means to murder you.",
-        "wer": 0.09090909090909091,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2802,8 +2802,8 @@
         "id": "ch2_hj_panyin_02",
         "character": "panyin",
         "original_text": "Go quickly. The palace walls have ears, and every ear belongs to the eunuchs.",
-        "stt_output": "Go quickly, the palace walls have ears, and every ear belongs to the eunuchs.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2811,8 +2811,8 @@
         "id": "ch2_hj_panyin_03",
         "character": "panyin",
         "original_text": "My lord, no. This is exactly what they want.",
-        "stt_output": "My lord, NO! This is exactly what they want!",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2820,8 +2820,8 @@
         "id": "inn_gy_choice_unlawful_01",
         "character": "guanyu",
         "original_text": "You speak rightly. I have lived as a fugitive for that deed. Let me seek redemption through service to the Han.",
-        "stt_output": "You speak rightly. I have lived as a fugitive for that deed. Let me seek redemption through service to the Han.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2829,8 +2829,98 @@
         "id": "inn_lb_choice_unlawful_01",
         "character": "liubei",
         "original_text": "Even when a man deserves punishment, private killing is not lawful. Righteous anger must still answer to the Han.",
-        "stt_output": "even when a man deserves punishment. Private killing is not lawful. Right, Chisanga must still answer to the heart.",
-        "wer": 0.15789473684210525,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_lb_ask_danger_01": {
+        "id": "qz_lb_ask_danger_01",
+        "character": "liubei",
+        "original_text": "We will help, but tell us the danger first. Which gate is hardest pressed, and who commands the rebels?",
+        "stt_output": "We will help, but tell us the danger first. Which gate is hardest pressed and who commands the rebels?",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_lb_ride_now_01": {
+        "id": "qz_lb_ride_now_01",
+        "character": "liubei",
+        "original_text": "We ride at once. If Qingzhou is near falling, every moment we spend talking costs lives.",
+        "stt_output": "We ride at once. If Ching-Zo is near falling, every moment we spend talking costs lives.",
+        "wer": 0.0625,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_ms_ask_danger_01": {
+        "id": "qz_ms_ask_danger_01",
+        "character": "xiaoer",
+        "original_text": "The western gate bends under their assault. Their banners name no famous general, only Yellow Turban zealots in great number.",
+        "stt_output": "The Western Gate, pens under their assault. Their banners name no famous general. Only yellow turbans, all it's in great number.",
+        "wer": 0.2,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_vic_gy_secure_city_01": {
+        "id": "qz_vic_gy_secure_city_01",
+        "character": "guanyu",
+        "original_text": "A sound judgment. Victory in the pass means little if the city falls behind us.",
+        "stt_output": "A sound judgment, victory in the past means little if the city falls behind us.",
+        "wer": 0.06666666666666667,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_vic_lb_pursue_01": {
+        "id": "qz_vic_lb_pursue_01",
+        "character": "liubei",
+        "original_text": "If we pursue now, perhaps we can scatter them completely before they rally.",
+        "stt_output": "If we pursue now, perhaps we can scatter them completely before they rally.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_vic_lb_return_after_pursuit_01": {
+        "id": "qz_vic_lb_return_after_pursuit_01",
+        "character": "liubei",
+        "original_text": "Enough. They will not trouble Qingzhou tonight. Now back to the city before the gates ask why we delayed.",
+        "stt_output": "Enough! They will not trouble Ching-Zo tonight. Now back to the city before the gates ask why we delayed.",
+        "wer": 0.05263157894736842,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_vic_lb_secure_city_01": {
+        "id": "qz_vic_lb_secure_city_01",
+        "character": "liubei",
+        "original_text": "Let us not tarry. The city is still in peril. We return to the gates and secure the people first.",
+        "stt_output": "Let us not, Terry. The city is still in peril. We return to the gates and secure the people first.",
+        "wer": 0.05,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_vic_nar_pursue_01": {
+        "id": "qz_vic_nar_pursue_01",
+        "character": "narrator",
+        "original_text": "The brothers hunted the broken rebels through the pass, scattering those who tried to rally and driving the rest into the hills.",
+        "stt_output": "The brothers hunted the broken rebels through the pass, scattering those who tried to rally and driving the rest into the hills.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_vic_zf_pursue_01": {
+        "id": "qz_vic_zf_pursue_01",
+        "character": "zhangfei",
+        "original_text": "Ha! That is the fire I like. Give me one charge and I will send them running until sunset!",
+        "stt_output": "Ha, that is the fire I like. Give me one charge, and I will send them running until sunset.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_zf_ride_now_01": {
+        "id": "qz_zf_ride_now_01",
+        "character": "zhangfei",
+        "original_text": "Good! Words will not break a siege. Hooves and blades will!",
+        "stt_output": "Good! Words will not break a sage. Hools and blades will!",
+        "wer": 0.18181818181818182,
         "is_bad": false,
         "language": "en"
     }

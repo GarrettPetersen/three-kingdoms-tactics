@@ -1556,12 +1556,6 @@
     "source": "TacticsScene.js"
   },
   {
-    "id": "qz_lb_01",
-    "char": "liubei",
-    "text": "I will go. We cannot let the people of Qingzhou suffer.",
-    "source": "NarrativeScripts.js"
-  },
-  {
     "id": "qz_lb_02",
     "char": "liubei",
     "text": "They are many and we but few. We cannot prevail in a direct assault.",
@@ -1580,9 +1574,15 @@
     "source": "TacticsScene.js"
   },
   {
-    "id": "qz_lb_choice_01",
+    "id": "qz_lb_ask_danger_01",
     "char": "liubei",
-    "text": "The people cry out for aid. We must answer their call at once.",
+    "text": "We will help, but tell us the danger first. Which gate is hardest pressed, and who commands the rebels?",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_lb_ride_now_01",
+    "char": "liubei",
+    "text": "We ride at once. If Qingzhou is near falling, every moment we spend talking costs lives.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1595,6 +1595,12 @@
     "id": "qz_ms_01",
     "char": "volunteer",
     "text": "URGENT! Imperial Protector Gong Jing of Qingzhou Region is under siege! The city is near falling!",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_ms_ask_danger_01",
+    "char": "xiaoer",
+    "text": "The western gate bends under their assault. Their banners name no famous general, only Yellow Turban zealots in great number.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1652,15 +1658,27 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "qz_vic_lb_01",
-    "char": "liubei",
-    "text": "Let us not tarry. The city is still in peril. We must return to the gates and ensure the Imperial Protector is safe.",
+    "id": "qz_vic_gy_secure_city_01",
+    "char": "guanyu",
+    "text": "A sound judgment. Victory in the pass means little if the city falls behind us.",
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "qz_vic_lb_choice_01",
+    "id": "qz_vic_lb_pursue_01",
     "char": "liubei",
-    "text": "A fine victory, but we must remain vigilant. The city gates await us.",
+    "text": "If we pursue now, perhaps we can scatter them completely before they rally.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_vic_lb_return_after_pursuit_01",
+    "char": "liubei",
+    "text": "Enough. They will not trouble Qingzhou tonight. Now back to the city before the gates ask why we delayed.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_vic_lb_secure_city_01",
+    "char": "liubei",
+    "text": "Let us not tarry. The city is still in peril. We return to the gates and secure the people first.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1670,15 +1688,21 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "qz_vic_nar_pursue_01",
+    "char": "narrator",
+    "text": "The brothers hunted the broken rebels through the pass, scattering those who tried to rally and driving the rest into the hills.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "qz_vic_zf_01",
     "char": "zhangfei",
     "text": "Look at them run! Like rats from a sinking ship! We've broken their spirit.",
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "qz_vic_zf_choice_01",
+    "id": "qz_vic_zf_pursue_01",
     "char": "zhangfei",
-    "text": "Right you are, eldest brother! Let's make sure the city is truly secure.",
+    "text": "Ha! That is the fire I like. Give me one charge and I will send them running until sunset!",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1688,9 +1712,9 @@
     "source": "MapScene.js"
   },
   {
-    "id": "qz_zf_choice_01",
+    "id": "qz_zf_ride_now_01",
     "char": "zhangfei",
-    "text": "That's the spirit, brother! Let's show those rebels what we're made of!",
+    "text": "Good! Words will not break a siege. Hooves and blades will!",
     "source": "NarrativeScripts.js"
   },
   {
