@@ -282,6 +282,12 @@
     "source": "TacticsScene.js"
   },
   {
+    "id": "ch2_oath_gy_strike_escape_after_01",
+    "char": "guanyu",
+    "text": "他性命得保，颜面尽失。兄长，我等不必再追。",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "ch2_oath_lb_restrain_01",
     "char": "liubei",
     "text": "三弟且住！一时之怒可胜一口气，正道却要胜一世。",
@@ -1586,13 +1592,13 @@
   {
     "id": "qz_ret_gj_01",
     "char": "gongjing",
-    "text": "英勇的兄弟们！你们救了青州！当你们的信号在山谷中回响时，我们从城门冲出。叛军被我们夹击，全军覆没。",
+    "text": "英勇的兄弟们！你们救了青州！当你们的信号响彻关隘，我们从城门冲出。叛军被我们夹击，尽数歼灭。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "qz_ret_gj_02",
     "char": "gongjing",
-    "text": "确实。我听说卢植中郎将在广宗被叛军首领张角本人围困。",
+    "text": "确实。我听说卢植将军在广宗被叛军首领张角本人围攻，处境艰难。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1610,7 +1616,7 @@
   {
     "id": "qz_ret_lb_01",
     "char": "liubei",
-    "text": "我们很高兴能为您效力，太守。这里恢复了和平，但叛乱仍在其他地方肆虐。",
+    "text": "能为州牧效力，我们深感荣幸。此地已恢复和平，但叛乱仍在其他地方肆虐。",
     "source": "NarrativeScripts.js"
   },
   {

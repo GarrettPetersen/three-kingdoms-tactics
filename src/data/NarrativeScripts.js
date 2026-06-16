@@ -749,7 +749,7 @@ export const NARRATIVE_SCRIPTS = {
             position: 'top',
             text: {
                 en: "Heroic brothers! You have saved Qingzhou! When your signal echoed through the pass, we charged from the gates. The rebels were caught between us and slaughtered.",
-                zh: "英勇的兄弟们！你们救了青州！当你们的信号在山谷中回响时，我们从城门冲出。叛军被我们夹击，全军覆没。"
+                zh: "英勇的兄弟们！你们救了青州！当你们的信号响彻关隘，我们从城门冲出。叛军被我们夹击，尽数歼灭。"
             }
         },
         {
@@ -761,7 +761,7 @@ export const NARRATIVE_SCRIPTS = {
                     buttonText: { en: "Peace restored.", zh: "平定此地" },
                     text: {
                         en: "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere.",
-                        zh: "我们很高兴能为您效力，太守。这里恢复了和平，但叛乱仍在其他地方肆虐。"
+                        zh: "能为州牧效力，我们深感荣幸。此地已恢复和平，但叛乱仍在其他地方肆虐。"
                     },
                     voiceId: 'qz_ret_lb_01',
                     speaker: 'liubei',
@@ -799,7 +799,7 @@ export const NARRATIVE_SCRIPTS = {
             position: 'top',
             text: {
                 en: "Indeed. I have heard that Commander Lu Zhi is hard-pressed at Guangzong by the chief rebel, Zhang Jue himself.",
-                zh: "确实。我听说卢植中郎将在广宗被叛军首领张角本人围困。"
+                zh: "确实。我听说卢植将军在广宗被叛军首领张角本人围攻，处境艰难。"
             }
         },
         {

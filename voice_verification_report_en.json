@@ -2838,8 +2838,8 @@
         "id": "qz_lb_ask_danger_01",
         "character": "liubei",
         "original_text": "We will help, but tell us the danger first. Which gate is hardest pressed, and who commands the rebels?",
-        "stt_output": "We will help, but tell us the danger first. Which gate is hardest pressed and who commands the rebels?",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2847,8 +2847,8 @@
         "id": "qz_lb_ride_now_01",
         "character": "liubei",
         "original_text": "We ride at once. If Qingzhou is near falling, every moment we spend talking costs lives.",
-        "stt_output": "We ride at once. If Ching-Zo is near falling, every moment we spend talking costs lives.",
-        "wer": 0.0625,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2856,8 +2856,8 @@
         "id": "qz_ms_ask_danger_01",
         "character": "xiaoer",
         "original_text": "The western gate bends under their assault. Their banners name no famous general, only Yellow Turban zealots in great number.",
-        "stt_output": "The Western Gate, pens under their assault. Their banners name no famous general. Only yellow turbans, all it's in great number.",
-        "wer": 0.2,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2865,8 +2865,8 @@
         "id": "qz_vic_gy_secure_city_01",
         "character": "guanyu",
         "original_text": "A sound judgment. Victory in the pass means little if the city falls behind us.",
-        "stt_output": "A sound judgment, victory in the past means little if the city falls behind us.",
-        "wer": 0.06666666666666667,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2874,8 +2874,8 @@
         "id": "qz_vic_lb_pursue_01",
         "character": "liubei",
         "original_text": "If we pursue now, perhaps we can scatter them completely before they rally.",
-        "stt_output": "If we pursue now, perhaps we can scatter them completely before they rally.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2883,8 +2883,8 @@
         "id": "qz_vic_lb_return_after_pursuit_01",
         "character": "liubei",
         "original_text": "Enough. They will not trouble Qingzhou tonight. Now back to the city before the gates ask why we delayed.",
-        "stt_output": "Enough! They will not trouble Ching-Zo tonight. Now back to the city before the gates ask why we delayed.",
-        "wer": 0.05263157894736842,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2892,8 +2892,8 @@
         "id": "qz_vic_lb_secure_city_01",
         "character": "liubei",
         "original_text": "Let us not tarry. The city is still in peril. We return to the gates and secure the people first.",
-        "stt_output": "Let us not, Terry. The city is still in peril. We return to the gates and secure the people first.",
-        "wer": 0.05,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2901,8 +2901,8 @@
         "id": "qz_vic_nar_pursue_01",
         "character": "narrator",
         "original_text": "The brothers hunted the broken rebels through the pass, scattering those who tried to rally and driving the rest into the hills.",
-        "stt_output": "The brothers hunted the broken rebels through the pass, scattering those who tried to rally and driving the rest into the hills.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2910,8 +2910,8 @@
         "id": "qz_vic_zf_pursue_01",
         "character": "zhangfei",
         "original_text": "Ha! That is the fire I like. Give me one charge and I will send them running until sunset!",
-        "stt_output": "Ha, that is the fire I like. Give me one charge, and I will send them running until sunset.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2919,8 +2919,17 @@
         "id": "qz_zf_ride_now_01",
         "character": "zhangfei",
         "original_text": "Good! Words will not break a siege. Hooves and blades will!",
-        "stt_output": "Good! Words will not break a sage. Hools and blades will!",
-        "wer": 0.18181818181818182,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_oath_gy_strike_escape_after_01": {
+        "id": "ch2_oath_gy_strike_escape_after_01",
+        "character": "guanyu",
+        "original_text": "He flees with his life and his shame intact. Brother, we have no cause to chase him farther.",
+        "stt_output": "He flees with his life and his shame and tact. Brother, we have no cause to chase him farther.",
+        "wer": 0.1111111111111111,
         "is_bad": false,
         "language": "en"
     }

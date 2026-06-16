@@ -2418,7 +2418,7 @@ export class TacticsScene extends BaseScene {
                 speaker: 'guanyu',
                 portraitKey: 'guan-yu',
                 name: 'Guan Yu',
-                voiceId: 'ch2_oath_gy_strike_after_01',
+                voiceId: 'ch2_oath_gy_strike_escape_after_01',
                 text: { en: "He flees with his life and his shame intact. Brother, we have no cause to chase him farther.", zh: "他性命得保，颜面尽失。兄长，我等不必再追。" }
             },
             {

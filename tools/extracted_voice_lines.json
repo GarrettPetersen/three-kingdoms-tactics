@@ -286,6 +286,12 @@
     "source": "TacticsScene.js"
   },
   {
+    "id": "ch2_oath_gy_strike_escape_after_01",
+    "char": "guanyu",
+    "text": "He flees with his life and his shame intact. Brother, we have no cause to chase him farther.",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "ch2_oath_lb_restrain_01",
     "char": "liubei",
     "text": "Brother, hold! Fury may win a breath, but righteousness must win the age.",
