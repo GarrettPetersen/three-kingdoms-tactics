@@ -795,7 +795,7 @@ async function init() {
                 city: 'assets/terrain/buildings/red_house.png',
                 lvbu: 'assets/characters/001_lvbu.png',
                 dongzhuo: 'assets/characters/002_dongzhuo.png',
-                hejin: 'assets/characters/025_zhangzhao.png',
+                hejin: 'assets/characters/101_hejin.png',
                 panyin: 'assets/characters/081_shibing001.png',
                 eunuch: 'assets/characters/086_xiaoer01.png',
                 eunuch_guard: 'assets/characters/087_chushi01.png',
