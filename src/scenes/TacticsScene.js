@@ -1156,9 +1156,7 @@ export class TacticsScene extends BaseScene {
         this.isCleanupDialogueActive = true;
         this.cleanupDialogueOnComplete = onComplete || null;
         const firstStep = this.cleanupDialogueScript[0];
-        if (firstStep && firstStep.voiceId) {
-            this.playBattleVoice(firstStep.voiceId);
-        }
+        this.playDialogueStepVoiceOnce(firstStep);
     }
 
     /** Play a voice line in battle; if recorder is armed, start recording and stop when voice ends. */
@@ -1171,6 +1169,12 @@ export class TacticsScene extends BaseScene {
             assets.onNextVoiceEnd = () => this.manager.actionRecorder?.signalActionEnd();
         }
         assets.playVoice(voiceId, volume);
+    }
+
+    playDialogueStepVoiceOnce(step, volume = 1) {
+        if (!step?.voiceId || step._voicePlayed) return;
+        step._voicePlayed = true;
+        this.playBattleVoice(step.voiceId, volume);
     }
 
     isImmortalUnit(unit) {
@@ -1677,9 +1681,7 @@ export class TacticsScene extends BaseScene {
         
         // Play voice for first step
         const firstStep = this.cleanupDialogueScript[0];
-        if (firstStep && firstStep.voiceId) {
-            this.playBattleVoice(firstStep.voiceId);
-        }
+        this.playDialogueStepVoiceOnce(firstStep);
     }
 
     triggerAmbush(surprised = false) {
@@ -2038,7 +2040,7 @@ export class TacticsScene extends BaseScene {
         
         // Play first voice line
         const firstStep = this.cleanupDialogueScript[0];
-        if (firstStep.voiceId) this.playBattleVoice(firstStep.voiceId);
+        this.playDialogueStepVoiceOnce(firstStep);
     }
 
     runCleanupTransition(transitionKey) {
@@ -2150,7 +2152,7 @@ export class TacticsScene extends BaseScene {
         
         // Play first voice line
         const firstStep = this.cleanupDialogueScript[0];
-        if (firstStep.voiceId) this.playBattleVoice(firstStep.voiceId);
+        this.playDialogueStepVoiceOnce(firstStep);
     }
 
     startChapter2DongZhuoChoiceDialogue(letHimStrike) {
@@ -2214,7 +2216,7 @@ export class TacticsScene extends BaseScene {
         };
 
         const firstStep = this.cleanupDialogueScript[0];
-        if (firstStep.voiceId) this.playBattleVoice(firstStep.voiceId);
+        this.playDialogueStepVoiceOnce(firstStep);
     }
 
     startChapter2DongZhuoFight() {
@@ -2322,7 +2324,7 @@ export class TacticsScene extends BaseScene {
         };
 
         const firstStep = this.cleanupDialogueScript[0];
-        if (firstStep.voiceId) this.playBattleVoice(firstStep.voiceId);
+        this.playDialogueStepVoiceOnce(firstStep);
     }
 
     spawnChapter2DongZhuoHorseReinforcements() {
@@ -2674,7 +2676,7 @@ export class TacticsScene extends BaseScene {
         };
 
         const firstStep = this.cleanupDialogueScript[0];
-        if (firstStep.voiceId) this.playBattleVoice(firstStep.voiceId);
+        this.playDialogueStepVoiceOnce(firstStep);
     }
     
     startDongZhuoVictoryDialogue() {
@@ -2764,7 +2766,7 @@ export class TacticsScene extends BaseScene {
         
         // Play first voice line
         const firstStep = this.cleanupDialogueScript[0];
-        if (firstStep.voiceId) this.playBattleVoice(firstStep.voiceId);
+        this.playDialogueStepVoiceOnce(firstStep);
     }
 
     startNpcPhase() {
@@ -9910,6 +9912,7 @@ export class TacticsScene extends BaseScene {
         if (this.isCleanupDialogueActive && this.cleanupDialogueScript) {
             const step = this.cleanupDialogueScript[this.cleanupDialogueStep];
             if (step) {
+                this.playDialogueStepVoiceOnce(step);
                 const portraitMap = {
                     'liubei': 'liu-bei',
                     'guanyu': 'guan-yu',
@@ -13986,9 +13989,7 @@ export class TacticsScene extends BaseScene {
                 } else {
                     // Play voice for next step
                     const nextStep = this.cleanupDialogueScript[this.cleanupDialogueStep];
-                    if (nextStep && nextStep.voiceId) {
-                        this.playBattleVoice(nextStep.voiceId);
-                    }
+                    this.playDialogueStepVoiceOnce(nextStep);
                 }
             }
             return;
