@@ -27,6 +27,8 @@ export class NarrativeScene extends BaseScene {
         this.hoveredActor = null; // Currently hovered actor ID
         this.hoveredRegion = null; // Currently hovered region ID
         this.scriptLabels = {}; // { labelName: stepIndex } - map of label names to script indices
+        this.baseScript = [];
+        this.executionFrames = [];
         this.returnStack = []; // Stack of return positions for branching
         this.insertedStepsCount = 0; // Track how many steps were inserted after interactive step
         this.insertedStepsStartIndex = -1; // Track where inserted steps start (for cleanup)
@@ -49,11 +51,121 @@ export class NarrativeScene extends BaseScene {
         }
     }
 
+    buildLabelMapForSteps(steps) {
+        const labels = {};
+        (steps || []).forEach((step, index) => {
+            if (step?.type === 'label' && step.name) labels[step.name] = index;
+        });
+        return labels;
+    }
+
+    syncActiveFrame() {
+        const frame = this.getActiveFrame();
+        if (!frame) return;
+        frame.steps = this.script;
+        frame.index = this.currentStep;
+        frame.labels = this.scriptLabels;
+    }
+
+    getActiveFrame() {
+        if (!Array.isArray(this.executionFrames) || this.executionFrames.length === 0) return null;
+        return this.executionFrames[this.executionFrames.length - 1];
+    }
+
+    activateFrame(frame) {
+        this.script = frame?.steps || [];
+        this.currentStep = frame?.index || 0;
+        this.scriptLabels = frame?.labels || this.buildLabelMapForSteps(this.script);
+        if (frame) frame.labels = this.scriptLabels;
+    }
+
+    resetExecutionFrames(script, startIndex = 0) {
+        this.baseScript = script || [];
+        const baseFrame = {
+            type: 'base',
+            steps: this.baseScript,
+            index: startIndex,
+            labels: this.buildLabelMapForSteps(this.baseScript)
+        };
+        this.executionFrames = [baseFrame];
+        this.activateFrame(baseFrame);
+    }
+
+    pushRuntimeFrame(steps, options = {}) {
+        const clonedSteps = this.cloneScriptSteps(steps || []);
+        clonedSteps.forEach(step => {
+            if (step && typeof step === 'object') step._isRuntimeFrameStep = true;
+        });
+        if (clonedSteps.length === 0) {
+            if (options.advanceParentAfter) this.nextStep();
+            return false;
+        }
+        this.syncActiveFrame();
+        const frame = {
+            type: 'runtime',
+            steps: clonedSteps,
+            index: 0,
+            labels: this.buildLabelMapForSteps(clonedSteps),
+            returnToInteractive: !!options.returnToInteractive,
+            advanceParentAfter: !!options.advanceParentAfter
+        };
+        this.executionFrames.push(frame);
+        this.activateFrame(frame);
+        this.subStep = 0;
+        this.isWaiting = false;
+        this.waitingForActorId = null;
+        this.timer = 0;
+        return true;
+    }
+
+    popRuntimeFrame() {
+        if (!this.executionFrames || this.executionFrames.length <= 1) return null;
+        const completed = this.executionFrames.pop();
+        const parent = this.getActiveFrame();
+        this.activateFrame(parent);
+        return completed;
+    }
+
+    findLabelFrame(labelName) {
+        if (!labelName || !Array.isArray(this.executionFrames)) return null;
+        this.syncActiveFrame();
+        for (let i = this.executionFrames.length - 1; i >= 0; i--) {
+            const frame = this.executionFrames[i];
+            const labels = frame.labels || this.buildLabelMapForSteps(frame.steps);
+            frame.labels = labels;
+            if (labels[labelName] !== undefined) {
+                return { frameIndex: i, index: labels[labelName] };
+            }
+        }
+        return null;
+    }
+
+    getFrameStep(frame = this.getActiveFrame(), offset = 0) {
+        if (!frame) return null;
+        return frame.steps?.[(frame.index || 0) + offset] || null;
+    }
+
+    clearInteractiveState() {
+        this.isInteractive = false;
+        this.clickableActors = {};
+        this.clickableRegions = {};
+        this.hoveredActor = null;
+        this.hoveredRegion = null;
+        this.interactiveNavTargets = [];
+        this.interactiveNavIndex = -1;
+        this.interactiveNavMouseEnabled = true;
+    }
+
     getActiveVisualKey(propName) {
-        const step = this.script?.[this.currentStep];
-        if (step && step[propName]) return step[propName];
-        for (let i = this.currentStep; i >= 0; i--) {
-            if (this.script[i]?.[propName]) return this.script[i][propName];
+        const frames = this.executionFrames?.length
+            ? this.executionFrames
+            : [{ steps: this.script, index: this.currentStep }];
+        for (let frameIndex = frames.length - 1; frameIndex >= 0; frameIndex--) {
+            const frame = frames[frameIndex];
+            const startIndex = frameIndex === frames.length - 1 ? frame.index : (frame.steps?.length || 0) - 1;
+            for (let i = startIndex; i >= 0; i--) {
+                if (frame.steps?.[i]?.[propName]) return frame.steps[i][propName];
+            }
         }
         return null;
     }
@@ -106,10 +218,10 @@ export class NarrativeScene extends BaseScene {
         
         if (!isResume) {
             if (params.scriptId && NARRATIVE_SCRIPTS[params.scriptId]) {
-                this.script = this.cloneScriptSteps(NARRATIVE_SCRIPTS[params.scriptId]);
+                this.resetExecutionFrames(this.cloneScriptSteps(NARRATIVE_SCRIPTS[params.scriptId]));
                 this.scriptId = params.scriptId;
             } else {
-                this.script = this.cloneScriptSteps(params.script || []);
+                this.resetExecutionFrames(this.cloneScriptSteps(params.script || []));
                 this.scriptId = null;
             }
 
@@ -160,12 +272,9 @@ export class NarrativeScene extends BaseScene {
         }
         
         this.scriptId = state.scriptId;
-        if (state.script && Array.isArray(state.script) && state.script.length > 0) {
-            // Prefer exact runtime snapshot when available.
-            this.script = this.cloneScriptSteps(state.script);
-        } else if (this.scriptId && NARRATIVE_SCRIPTS[this.scriptId]) {
-            // Restore from scriptId
-            this.script = this.cloneScriptSteps(NARRATIVE_SCRIPTS[this.scriptId]);
+        let restoredBaseScript = null;
+        if (this.scriptId && NARRATIVE_SCRIPTS[this.scriptId]) {
+            restoredBaseScript = this.cloneScriptSteps(NARRATIVE_SCRIPTS[this.scriptId]);
         } else if (this.scriptId && !NARRATIVE_SCRIPTS[this.scriptId]) {
             // scriptId exists but script doesn't exist in NARRATIVE_SCRIPTS
             console.error('Cannot restore: scriptId not found in NARRATIVE_SCRIPTS', {
@@ -181,7 +290,7 @@ export class NarrativeScene extends BaseScene {
             return;
         } else if (state.script && Array.isArray(state.script) && state.script.length > 0) {
             // Custom script (no scriptId) - only use if it's not empty
-            this.script = this.cloneScriptSteps(state.script);
+            restoredBaseScript = this.cloneScriptSteps(state.script);
         } else {
             // No valid script found - this includes empty arrays
             console.error('Cannot restore: invalid or empty script state', {
@@ -201,6 +310,29 @@ export class NarrativeScene extends BaseScene {
                 this.manager.switchTo('map');
             }, 100);
             return; // Don't continue if we can't restore the script
+        }
+        this.resetExecutionFrames(restoredBaseScript, state.currentStep || 0);
+        if (Array.isArray(state.executionFrames) && state.executionFrames.length > 0) {
+            const restoredFrames = state.executionFrames
+                .map((frame, index) => {
+                    const steps = index === 0
+                        ? this.baseScript
+                        : this.cloneScriptSteps(frame.steps || []);
+                    return {
+                        type: index === 0 ? 'base' : (frame.type || 'runtime'),
+                        steps,
+                        index: frame.index || 0,
+                        labels: this.buildLabelMapForSteps(steps),
+                        returnToInteractive: !!frame.returnToInteractive,
+                        advanceParentAfter: !!frame.advanceParentAfter
+                    };
+                })
+                .filter((frame, index) => index === 0 || frame.steps.length > 0);
+            if (restoredFrames.length > 0) {
+                this.executionFrames = restoredFrames;
+                this.baseScript = restoredFrames[0].steps;
+                this.activateFrame(restoredFrames[restoredFrames.length - 1]);
+            }
         }
         
         // Validate currentStep after restoring script
@@ -464,13 +596,8 @@ export class NarrativeScene extends BaseScene {
     }
 
     prepareNarrativeResumeAfterMinigame() {
-        if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
-            this.script.splice(this.insertedStepsStartIndex, this.insertedStepsCount);
-            if (this.currentStep >= this.insertedStepsStartIndex) {
-                this.currentStep = Math.max(0, this.currentStep - this.insertedStepsCount);
-            }
-            this.insertedStepsCount = 0;
-            this.insertedStepsStartIndex = -1;
+        while (this.executionFrames?.length > 1) {
+            this.popRuntimeFrame();
         }
         if (this.interactiveStepIndex >= 0) {
             this.currentStep = this.interactiveStepIndex;
@@ -491,7 +618,7 @@ export class NarrativeScene extends BaseScene {
             return;
         }
 
-        this.script = this.cloneScriptSteps(NARRATIVE_SCRIPTS[scriptId]);
+        this.resetExecutionFrames(this.cloneScriptSteps(NARRATIVE_SCRIPTS[scriptId]));
         this.scriptId = scriptId;
         this.currentStep = 0;
         this.subStep = 0;
@@ -510,7 +637,6 @@ export class NarrativeScene extends BaseScene {
         this.clickableRegions = {};
         this.hoveredActor = null;
         this.hoveredRegion = null;
-        this.scriptLabels = {};
         this.returnStack = [];
         this.insertedStepsCount = 0;
         this.insertedStepsStartIndex = -1;
@@ -518,7 +644,6 @@ export class NarrativeScene extends BaseScene {
         this.interactiveNavIndex = -1;
         this.interactiveNavMouseEnabled = true;
         this.pendingInteractiveAdvance = false;
-        this.buildLabelMap();
         this.processStep();
         this.saveNarrativeState();
     }
@@ -782,8 +907,14 @@ export class NarrativeScene extends BaseScene {
         } else if (cmd.action === 'jump') {
             // Jump to a label: { action: 'jump', label: 'labelName' }
             const labelName = cmd.label;
-            if (this.scriptLabels[labelName] !== undefined) {
-                this.currentStep = this.scriptLabels[labelName];
+            const target = this.findLabelFrame(labelName);
+            if (target) {
+                while (this.executionFrames.length - 1 > target.frameIndex) {
+                    this.executionFrames.pop();
+                }
+                const frame = this.executionFrames[target.frameIndex];
+                frame.index = target.index;
+                this.activateFrame(frame);
                 this.isWaiting = false;
                 this.timer = 0;
                 this.subStep = 0;
@@ -828,47 +959,9 @@ export class NarrativeScene extends BaseScene {
         const allowImmediateInteractiveAdvance = this.pendingInteractiveAdvance;
         this.pendingInteractiveAdvance = false;
         
-        // Don't advance past an interactive step - wait for user click
-        // EXCEPT: if we've inserted dialogue steps after the interactive step (for NPC clicks),
-        // we need to allow advancing to show that dialogue
         if (step && (step.type === 'interactive' || step.type === 'prompt') && this.isInteractive) {
-            // Check if there are inserted steps after this interactive step
-            // (NPC dialogue that was inserted via onClick)
-            if (this.currentStep + 1 < this.script.length) {
-                const nextStep = this.script[this.currentStep + 1];
-                // If the next step is dialogue/narrator, allow advancing to show it
-                if (nextStep && (nextStep.type === 'dialogue' || nextStep.type === 'narrator')) {
-                    // Allow advancing - we'll return to interactive step after dialogue
-                } else {
-                    if (allowImmediateInteractiveAdvance) {
-                        // Some interactive options are pure transitions and should advance directly.
-                        this.isInteractive = false;
-                        this.clickableActors = {};
-                        this.clickableRegions = {};
-                        this.hoveredActor = null;
-                        this.hoveredRegion = null;
-                        this.interactiveNavTargets = [];
-                        this.interactiveNavIndex = -1;
-                        this.interactiveNavMouseEnabled = true;
-                    } else {
-                        // No inserted dialogue and no explicit transition request.
-                        return;
-                    }
-                }
-            } else {
-                if (allowImmediateInteractiveAdvance) {
-                    this.isInteractive = false;
-                    this.clickableActors = {};
-                    this.clickableRegions = {};
-                    this.hoveredActor = null;
-                    this.hoveredRegion = null;
-                    this.interactiveNavTargets = [];
-                    this.interactiveNavIndex = -1;
-                    this.interactiveNavMouseEnabled = true;
-                } else {
-                    return;
-                }
-            }
+            if (!allowImmediateInteractiveAdvance) return;
+            this.clearInteractiveState();
         }
         
         if (step && (step.type === 'dialogue' || step.type === 'narrator')) {
@@ -886,60 +979,25 @@ export class NarrativeScene extends BaseScene {
         this.waitingForActorId = null;
         this.timer = 0;
 
-        // After advancing, check if we've passed inserted NPC dialogue
-        // If we were in interactive mode and have passed all inserted dialogue, return to interactive step
-        if (this.isInteractive && this.interactiveStepIndex >= 0 && this.currentStep > this.interactiveStepIndex) {
-            const currentStep = this.script[this.currentStep];
-            // Check if current step is NOT an inserted step (meaning we've reached original script)
-            // If it's not marked as inserted, we've passed all inserted dialogue
-            if (!currentStep || !currentStep._isInserted) {
-                // Check if the last inserted step (the one we just passed) was marked to advance the plot
-                // The last inserted step would be at insertedStepsStartIndex + insertedStepsCount - 1
-                const lastInsertedIndex = this.insertedStepsStartIndex >= 0 && this.insertedStepsCount > 0
-                    ? this.insertedStepsStartIndex + this.insertedStepsCount - 1
-                    : -1;
-                const shouldAdvance = lastInsertedIndex >= 0 && this.script[lastInsertedIndex]?._advanceAfterThis;
-                
-                // Remove all inserted steps
-                if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
-                    // Remove inserted steps from the script
-                    const startIdx = this.insertedStepsStartIndex;
-                    this.script.splice(startIdx, this.insertedStepsCount);
-                    // Adjust currentStep if it was affected by removal
-                    if (this.currentStep >= startIdx) {
-                        this.currentStep -= this.insertedStepsCount;
-                    }
-                    // Reset tracking
-                    this.insertedStepsCount = 0;
-                    this.insertedStepsStartIndex = -1;
+        if (this.currentStep >= this.script.length) {
+            if (this.executionFrames?.length > 1) {
+                const completed = this.popRuntimeFrame();
+                if (completed?.advanceParentAfter) {
+                    if (this.isInteractive) this.clearInteractiveState();
+                    this.nextStep();
+                    return;
                 }
-                
-                if (shouldAdvance) {
-                    // Exit interactive mode and continue with the script
-                    this.isInteractive = false;
-                    this.clickableActors = {};
-                    this.clickableRegions = {};
-                    this.hoveredActor = null;
-                    this.hoveredRegion = null;
-                    this.interactiveNavTargets = [];
-                    this.interactiveNavIndex = -1;
-                    this.interactiveNavMouseEnabled = true;
-                    // Continue processing the next step (which is now at currentStep after removal)
-                    // Don't return - let it continue to processStep() at the end
-                } else {
-                    // Return to interactive step - don't process it again, just set position
+                if (completed?.returnToInteractive && this.interactiveStepIndex >= 0) {
                     this.currentStep = this.interactiveStepIndex;
-                    // Don't call processStep() - we're already in interactive mode
-                    // Just ensure we're waiting for input
+                    this.isInteractive = true;
                     this.isWaiting = true;
-                    // Save state and return - don't continue to processStep() at the end
                     this.saveNarrativeState();
                     return;
                 }
+                this.saveNarrativeState();
+                this.processStep();
+                return;
             }
-        }
-
-        if (this.currentStep >= this.script.length) {
             // Clear narrative state when script completes
             const savedState = this.manager.gameState.getSceneState('narrative');
             this.manager.gameState.clearSceneState('narrative');
@@ -1023,6 +1081,7 @@ export class NarrativeScene extends BaseScene {
     saveNarrativeState() {
         // Save narrative state whenever it changes (for page refresh recovery)
         const gs = this.manager.gameState;
+        this.syncActiveFrame();
         
         // Don't save if script is empty or invalid
         if (!this.script || this.script.length === 0) {
@@ -1053,11 +1112,17 @@ export class NarrativeScene extends BaseScene {
         let nextScene = this.getNextSceneForScriptId(this.scriptId);
         let nextParams = this.getNextParamsForScriptId(this.scriptId);
         
-        const hasChoiceInsertions = Array.isArray(this.script) && this.script.some(step => !!step?._isChoiceInserted);
-        const includeRuntimeScript = !this.scriptId || this.isInteractive || this.insertedStepsCount > 0 || hasChoiceInsertions;
+        const serializedFrames = (this.executionFrames || []).map((frame, index) => ({
+            type: frame.type || (index === 0 ? 'base' : 'runtime'),
+            steps: index === 0 ? null : frame.steps,
+            index: frame.index || 0,
+            returnToInteractive: !!frame.returnToInteractive,
+            advanceParentAfter: !!frame.advanceParentAfter
+        }));
         const state = {
             scriptId: this.scriptId,
-            script: includeRuntimeScript && this.script && this.script.length > 0 ? this.script : null,
+            script: !this.scriptId && this.baseScript && this.baseScript.length > 0 ? this.baseScript : null,
+            executionFrames: serializedFrames,
             currentStep: this.currentStep,
             subStep: this.subStep,
             actors: this.actors,
@@ -1077,8 +1142,8 @@ export class NarrativeScene extends BaseScene {
             clickableActors: this.clickableActors || {},
             clickableRegions: this.clickableRegions || {},
             returnStack: this.returnStack ? [...this.returnStack] : [],
-            insertedStepsCount: this.insertedStepsCount || 0,
-            insertedStepsStartIndex: this.insertedStepsStartIndex !== undefined ? this.insertedStepsStartIndex : -1
+            insertedStepsCount: 0,
+            insertedStepsStartIndex: -1
         };
         gs.setSceneState('narrative', state);
         gs.setLastScene('narrative');
@@ -1450,15 +1515,7 @@ export class NarrativeScene extends BaseScene {
     
     renderClickableRegions(ctx, canvas, step) {
         // Get background position
-        let bgKey = step?.bg;
-        if (!bgKey) {
-            for (let i = this.currentStep; i >= 0; i--) {
-                if (this.script[i].bg) {
-                    bgKey = this.script[i].bg;
-                    break;
-                }
-            }
-        }
+        let bgKey = step?.bg || this.getActiveVisualKey('bg');
         
         let bgX = 0, bgY = 0;
         if (bgKey) {
@@ -1725,48 +1782,45 @@ export class NarrativeScene extends BaseScene {
 
         if (clickHandler) {
             if (Array.isArray(clickHandler)) {
-                if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
-                    this.script.splice(this.insertedStepsStartIndex, this.insertedStepsCount);
-                    this.insertedStepsCount = 0;
-                    this.insertedStepsStartIndex = -1;
+                const shouldAdvanceRegion = !!region.advanceOnClick || (!!region.promptStyle && !clickHandler);
+                if (this.pushRuntimeFrame(clickHandler, {
+                    returnToInteractive: !shouldAdvanceRegion,
+                    advanceParentAfter: shouldAdvanceRegion
+                })) {
+                    this.processStep();
+                    return true;
                 }
-                const insertIndex = this.currentStep + 1;
-                this.script.splice(insertIndex, 0, ...clickHandler);
-                for (let i = 0; i < clickHandler.length; i++) {
-                    if (this.script[insertIndex + i]) this.script[insertIndex + i]._isInserted = true;
-                }
-                this.insertedStepsCount = clickHandler.length;
-                this.insertedStepsStartIndex = insertIndex;
             } else if (clickHandler.branch) {
-                if (clickHandler.return !== false) this.returnStack.push(this.currentStep);
                 const branchSteps = clickHandler.branch;
                 if (Array.isArray(branchSteps)) {
-                    const stepsToInsert = clickHandler.return !== false ? [...branchSteps, { type: 'command', action: 'return' }] : branchSteps;
-                    this.script.splice(this.currentStep + 1, 0, ...stepsToInsert);
+                    const returnsToInteractive = clickHandler.return !== false;
+                    if (this.pushRuntimeFrame(branchSteps, {
+                        returnToInteractive: returnsToInteractive,
+                        advanceParentAfter: !returnsToInteractive
+                    })) {
+                        this.processStep();
+                        return true;
+                    }
                 } else if (typeof branchSteps === 'string') {
-                    this.script.splice(this.currentStep + 1, 0,
-                        { type: 'command', action: 'saveReturn' },
-                        { type: 'command', action: 'jump', label: branchSteps },
-                        { type: 'command', action: 'return' }
-                    );
+                    this.pushRuntimeFrame([{ type: 'command', action: 'jump', label: branchSteps }], {
+                        returnToInteractive: clickHandler.return !== false,
+                        advanceParentAfter: clickHandler.return === false
+                    });
+                    this.processStep();
+                    return true;
                 }
             } else if (typeof clickHandler === 'string') {
-                this.script.splice(this.currentStep + 1, 0,
-                    { type: 'command', action: 'saveReturn' },
-                    { type: 'command', action: 'jump', label: clickHandler },
-                    { type: 'command', action: 'return' }
-                );
+                this.pushRuntimeFrame([{ type: 'command', action: 'jump', label: clickHandler }], {
+                    returnToInteractive: true
+                });
+                this.processStep();
+                return true;
             }
         }
 
         const shouldAdvanceRegion = !!region.advanceOnClick || (!!region.promptStyle && !clickHandler);
         if (shouldAdvanceRegion) {
-            if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
-                const lastInsertedIndex = this.insertedStepsStartIndex + this.insertedStepsCount - 1;
-                if (this.script[lastInsertedIndex]) this.script[lastInsertedIndex]._advanceAfterThis = true;
-            } else {
-                this.pendingInteractiveAdvance = true;
-            }
+            this.pendingInteractiveAdvance = true;
         }
         this.nextStep();
         return true;
@@ -1780,47 +1834,43 @@ export class NarrativeScene extends BaseScene {
 
         if (clickHandler) {
             if (Array.isArray(clickHandler)) {
-                if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
-                    this.script.splice(this.insertedStepsStartIndex, this.insertedStepsCount);
-                    this.insertedStepsCount = 0;
-                    this.insertedStepsStartIndex = -1;
+                if (this.pushRuntimeFrame(clickHandler, {
+                    returnToInteractive: !actor.advanceOnClick,
+                    advanceParentAfter: !!actor.advanceOnClick
+                })) {
+                    this.processStep();
+                    return true;
                 }
-                const insertIndex = this.currentStep + 1;
-                this.script.splice(insertIndex, 0, ...clickHandler);
-                for (let i = 0; i < clickHandler.length; i++) {
-                    if (this.script[insertIndex + i]) this.script[insertIndex + i]._isInserted = true;
-                }
-                this.insertedStepsCount = clickHandler.length;
-                this.insertedStepsStartIndex = insertIndex;
             } else if (clickHandler.branch) {
-                if (clickHandler.return !== false) this.returnStack.push(this.currentStep);
                 const branchSteps = clickHandler.branch;
                 if (Array.isArray(branchSteps)) {
-                    const stepsToInsert = clickHandler.return !== false ? [...branchSteps, { type: 'command', action: 'return' }] : branchSteps;
-                    this.script.splice(this.currentStep + 1, 0, ...stepsToInsert);
+                    const returnsToInteractive = clickHandler.return !== false;
+                    if (this.pushRuntimeFrame(branchSteps, {
+                        returnToInteractive: returnsToInteractive,
+                        advanceParentAfter: !returnsToInteractive
+                    })) {
+                        this.processStep();
+                        return true;
+                    }
                 } else if (typeof branchSteps === 'string') {
-                    this.script.splice(this.currentStep + 1, 0,
-                        { type: 'command', action: 'saveReturn' },
-                        { type: 'command', action: 'jump', label: branchSteps },
-                        { type: 'command', action: 'return' }
-                    );
+                    this.pushRuntimeFrame([{ type: 'command', action: 'jump', label: branchSteps }], {
+                        returnToInteractive: clickHandler.return !== false,
+                        advanceParentAfter: clickHandler.return === false
+                    });
+                    this.processStep();
+                    return true;
                 }
             } else if (typeof clickHandler === 'string') {
-                this.script.splice(this.currentStep + 1, 0,
-                    { type: 'command', action: 'saveReturn' },
-                    { type: 'command', action: 'jump', label: clickHandler },
-                    { type: 'command', action: 'return' }
-                );
+                this.pushRuntimeFrame([{ type: 'command', action: 'jump', label: clickHandler }], {
+                    returnToInteractive: true
+                });
+                this.processStep();
+                return true;
             }
         }
 
         if (actor.advanceOnClick) {
-            if (this.insertedStepsCount > 0 && this.insertedStepsStartIndex >= 0) {
-                const lastInsertedIndex = this.insertedStepsStartIndex + this.insertedStepsCount - 1;
-                if (this.script[lastInsertedIndex]) this.script[lastInsertedIndex]._advanceAfterThis = true;
-            } else {
-                this.pendingInteractiveAdvance = true;
-            }
+            this.pendingInteractiveAdvance = true;
         }
         this.nextStep();
         return true;
@@ -1903,17 +1953,10 @@ export class NarrativeScene extends BaseScene {
                         resultSteps.forEach(s => {
                             if (s && typeof s === 'object') {
                                 s._isChoiceInserted = true;
-                                s._isInserted = true;
                             }
                         });
-                        choiceDialogue._isInserted = true;
-                        this.script.splice(this.currentStep + 1, 0, choiceDialogue, ...resultSteps);
-                        this.buildLabelMap();
-                        if (this.isInteractive && this.insertedStepsStartIndex >= 0) {
-                            this.insertedStepsCount += 1 + resultSteps.length;
-                        }
-                        
-                        this.nextStep();
+                        this.pushRuntimeFrame([choiceDialogue, ...resultSteps], { advanceParentAfter: true });
+                        this.processStep();
                     }
                     currentY += optionHeight + m.optionSpacing;
                 });
@@ -1943,15 +1986,7 @@ export class NarrativeScene extends BaseScene {
         if (!step) return null;
         
         // Get background position
-        let bgKey = step?.bg;
-        if (!bgKey) {
-            for (let i = this.currentStep; i >= 0; i--) {
-                if (this.script[i].bg) {
-                    bgKey = this.script[i].bg;
-                    break;
-                }
-            }
-        }
+        let bgKey = step?.bg || this.getActiveVisualKey('bg');
         
         const { canvas } = this.manager;
         let bgX = 0, bgY = 0;
@@ -1991,15 +2026,7 @@ export class NarrativeScene extends BaseScene {
         if (!step) return null;
         
         // Get background position
-        let bgKey = step?.bg;
-        if (!bgKey) {
-            for (let i = this.currentStep; i >= 0; i--) {
-                if (this.script[i].bg) {
-                    bgKey = this.script[i].bg;
-                    break;
-                }
-            }
-        }
+        let bgKey = step?.bg || this.getActiveVisualKey('bg');
         
         const { canvas } = this.manager;
         let bgX = 0, bgY = 0;
@@ -2029,15 +2056,7 @@ export class NarrativeScene extends BaseScene {
         const step = this.script[this.currentStep];
         if (!step) return { bgX: 0, bgY: 0 };
 
-        let bgKey = step?.bg;
-        if (!bgKey) {
-            for (let i = this.currentStep; i >= 0; i--) {
-                if (this.script[i].bg) {
-                    bgKey = this.script[i].bg;
-                    break;
-                }
-            }
-        }
+        let bgKey = step?.bg || this.getActiveVisualKey('bg');
 
         const { canvas } = this.manager;
         let bgX = 0, bgY = 0;
@@ -2156,17 +2175,10 @@ export class NarrativeScene extends BaseScene {
                     resultSteps.forEach(s => {
                         if (s && typeof s === 'object') {
                             s._isChoiceInserted = true;
-                            s._isInserted = true;
                         }
                     });
-                    choiceDialogue._isInserted = true;
-                    this.script.splice(this.currentStep + 1, 0, choiceDialogue, ...resultSteps);
-                    this.buildLabelMap();
-                    if (this.isInteractive && this.insertedStepsStartIndex >= 0) {
-                        this.insertedStepsCount += 1 + resultSteps.length;
-                    }
-                    
-                    this.nextStep();
+                    this.pushRuntimeFrame([choiceDialogue, ...resultSteps], { advanceParentAfter: true });
+                    this.processStep();
                 }
             });
             if (handled) return;

@@ -253,12 +253,22 @@ function checkCanvasTextRendering() {
         'BaseScene.drawPixelText must route fonts through getFontForLanguage().');
 }
 
+function checkNarrativeScriptImmutability() {
+    const relPath = 'src/scenes/NarrativeScene.js';
+    const source = fs.readFileSync(path.join(projectRoot, relPath), 'utf8');
+    assertRule(!source.includes('this.script.splice('),
+        `${relPath} must not splice runtime branch steps into the authored script; use execution frames instead.`);
+    assertRule(source.includes('pushRuntimeFrame('),
+        `${relPath} should execute choice and interactive branches through runtime frames.`);
+}
+
 checkSharedForceState();
 checkLegacyForceMigration();
 checkBattleRows();
 checkZhuoTrainingBattle();
 checkQingzhouCityGatePrelude();
 checkCanvasTextRendering();
+checkNarrativeScriptImmutability();
 
 if (failures.length > 0) {
     console.error('Design rule validation failed:');
