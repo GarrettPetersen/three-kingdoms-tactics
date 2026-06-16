@@ -698,6 +698,9 @@ export const NARRATIVE_SCRIPTS = {
                         {
                             type: 'dialogue',
                             bg: 'valley_aerial_shot',
+                            bgPaletteShift: 'sunset',
+                            bgPaletteStart: 0,
+                            bgPaletteEnd: 0.22,
                             portraitKey: 'zhang-fei',
                             name: 'Zhang Fei',
                             position: 'top',
@@ -710,6 +713,9 @@ export const NARRATIVE_SCRIPTS = {
                         {
                             type: 'dialogue',
                             bg: 'valley_aerial_shot',
+                            bgPaletteShift: 'sunset',
+                            bgPaletteStart: 0.22,
+                            bgPaletteEnd: 0.58,
                             portraitKey: 'narrator',
                             voiceId: 'qz_vic_nar_pursue_01',
                             text: {
@@ -720,6 +726,9 @@ export const NARRATIVE_SCRIPTS = {
                         {
                             type: 'dialogue',
                             bg: 'valley_aerial_shot',
+                            bgPaletteShift: 'sunset',
+                            bgPaletteStart: 0.58,
+                            bgPaletteEnd: 0.82,
                             portraitKey: 'liu-bei',
                             name: 'Liu Bei',
                             position: 'top',
@@ -735,6 +744,10 @@ export const NARRATIVE_SCRIPTS = {
         },
         {
             type: 'dialogue',
+            bg: 'valley_aerial_shot',
+            bgPaletteShift: 'sunset',
+            bgPaletteStart: 0.82,
+            bgPaletteEnd: 1,
             portraitKey: 'narrator',
             voiceId: 'qz_vic_nar_01',
             text: {

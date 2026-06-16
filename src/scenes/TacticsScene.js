@@ -364,6 +364,69 @@ export class TacticsScene extends BaseScene {
         console.warn('Stopped processing battle dialogue commands after too many consecutive command steps.');
     }
 
+    getDialogueCutawayPaletteProgress(step) {
+        if (!step || step.bgPaletteShift !== 'sunset') return 0;
+        const start = Number.isFinite(step.bgPaletteStart) ? step.bgPaletteStart : 0;
+        const end = Number.isFinite(step.bgPaletteEnd) ? step.bgPaletteEnd : start;
+        const voice = (assets.currentVoice && assets.currentVoice.duration > 0) ? assets.currentVoice : null;
+        const durationMs = voice ? Math.max(800, voice.duration * 1000) : 5000;
+        const t = Math.max(0, Math.min(1, (this.dialogueElapsed || 0) / durationMs));
+        return Math.max(0, Math.min(1, start + (end - start) * t));
+    }
+
+    getSunsetPaletteImage(img, progress) {
+        if (!img || progress <= 0) return img;
+        if (!this.dialogueCutawayPaletteCache) this.dialogueCutawayPaletteCache = new Map();
+        const bucket = Math.max(0, Math.min(24, Math.round(progress * 24)));
+        if (bucket <= 0) return img;
+        const key = `${img.src || img.width + 'x' + img.height}:sunset:${bucket}`;
+        if (this.dialogueCutawayPaletteCache.has(key)) {
+            return this.dialogueCutawayPaletteCache.get(key);
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const paletteCtx = canvas.getContext('2d', { willReadFrequently: true });
+        paletteCtx.imageSmoothingEnabled = false;
+        paletteCtx.drawImage(img, 0, 0);
+
+        try {
+            const imageData = paletteCtx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            const t = bucket / 24;
+            for (let i = 0; i < data.length; i += 4) {
+                if (data[i + 3] === 0) continue;
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+                const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                const shadow = Math.max(0, 1 - lum / 150);
+                const sunsetR = Math.min(255, lum * 1.08 + 58 + shadow * 18);
+                const sunsetG = Math.min(255, lum * 0.72 + 34 - shadow * 8);
+                const sunsetB = Math.min(255, lum * 0.44 + 22 + shadow * 32);
+                data[i] = Math.round(r + (sunsetR - r) * t);
+                data[i + 1] = Math.round(g + (sunsetG - g) * t);
+                data[i + 2] = Math.round(b + (sunsetB - b) * t);
+            }
+            paletteCtx.putImageData(imageData, 0, 0);
+        } catch (err) {
+            console.warn('Could not palette-shift dialogue cutaway background:', err);
+            return img;
+        }
+
+        this.dialogueCutawayPaletteCache.set(key, canvas);
+        return canvas;
+    }
+
+    getDialogueCutawayImage(step, img) {
+        if (!img) return null;
+        if (step?.bgPaletteShift === 'sunset') {
+            return this.getSunsetPaletteImage(img, this.getDialogueCutawayPaletteProgress(step));
+        }
+        return img;
+    }
+
     drawDialogueCutawayBackground(ctx, canvas, img) {
         if (!img) return;
         ctx.save();
@@ -9828,14 +9891,15 @@ export class TacticsScene extends BaseScene {
                 }
                 if (step.type !== 'choice') {
                     const bgImg = step.bg ? assets.getImage(step.bg) : null;
-                    if (bgImg) {
-                        this.drawDialogueCutawayBackground(ctx, canvas, bgImg);
+                    const cutawayImg = this.getDialogueCutawayImage(step, bgImg);
+                    if (cutawayImg) {
+                        this.drawDialogueCutawayBackground(ctx, canvas, cutawayImg);
                     }
                     this.renderDialogueBox(ctx, canvas, {
                         portraitKey: step.portraitKey,
                         name: step.name,
                         text: step.text
-                    }, { subStep: this.subStep || 0, bgImg });
+                    }, { subStep: this.subStep || 0, bgImg: cutawayImg || bgImg });
                 }
             }
         }
