@@ -163,8 +163,7 @@ const STORY_EVENTS = {
         portraitKey: 'liu-bei',
         name: 'Liu Bei',
         voiceId: 'map_lb_ch2_probe_01',
-        text: { en: "Zhang Bao's sorcery broke our first assault. We regroup at camp and plan a counter.", zh: "张宝妖术破了我军首战。先回营整军，再议破术之策。" },
-        nextScene: 'campaign_selection'
+        text: { en: "Zhang Bao's sorcery broke our first assault. We regroup at camp and plan a counter.", zh: "张宝妖术破了我军首战。先回营整军，再议破术之策。" }
     }
 };
 
@@ -1147,19 +1146,36 @@ export class MapScene extends BaseScene {
                 this.manager.switchTo('tactics', {
                     battleId: 'chapter2_zhangbao_probe',
                     onVictory: () => {
-                        this.manager.gameState.setStoryCursor('chapter2_oath_complete', CHAPTER2_ROUTE_ID);
+                        this.manager.gameState.setStoryCursor('chapter2_zhangbao_counter_council', CHAPTER2_ROUTE_ID);
                         this.manager.gameState.addMilestone('chapter2_zhangbao_probe', CHAPTER2_ROUTE_ID);
-                        this.manager.gameState.addMilestone('chapter2_oath_complete', CHAPTER2_ROUTE_ID);
-                        this.manager.switchTo('map', {
-                            campaignId: CHAPTER2_ROUTE_ID,
-                            partyX: 188,
-                            partyY: 92,
-                            afterEvent: 'chapter2_zhangbao_probe_end'
+                        this.manager.switchTo('narrative', {
+                            musicKey: 'oath',
+                            scriptId: 'chapter2_zhangbao_counter_council',
+                            onComplete: () => {
+                                this.manager.gameState.setStoryCursor('chapter2_zhangbao_counter', CHAPTER2_ROUTE_ID);
+                                this.manager.gameState.addMilestone('chapter2_zhangbao_counter_council', CHAPTER2_ROUTE_ID);
+                                this.manager.switchTo('tactics', {
+                                    battleId: 'chapter2_zhangbao_counter',
+                                    onVictory: () => {
+                                        this.manager.gameState.setStoryCursor('chapter2_oath_complete', CHAPTER2_ROUTE_ID);
+                                        this.manager.gameState.addMilestone('chapter2_zhangbao_counter', CHAPTER2_ROUTE_ID);
+                                        this.manager.gameState.addMilestone('chapter2_oath_complete', CHAPTER2_ROUTE_ID);
+                                        this.manager.switchTo('campaign_selection');
+                                    }
+                                });
+                            }
                         });
                     }
                 });
             },
             script: [
+                { bg: 'army_camp', type: 'command', action: 'clearActors' },
+                { type: 'command', action: 'clearProps' },
+                { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+                { type: 'command', action: 'addActor', id: 'zhujun', imgKey: 'zhujun_sprite', x: 136, y: 188 },
+                { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 72, y: 214 },
+                { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 42, y: 214 },
+                { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 12, y: 214 },
                 { type: 'title', text: { en: 'YINGCHUAN - ZHU JUN CAMP', zh: '颍川·朱儁军营' }, duration: 1800 },
                 {
                     type: 'dialogue',

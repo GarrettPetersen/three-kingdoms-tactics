@@ -353,8 +353,8 @@ export const UI_TEXT = {
         zh: '兄弟三人离开董卓战场后继续前行。是克制守义，还是怒火开路？'
     },
     'campaign_ch2_oath_complete': {
-        en: 'The brothers have left Dong Zhuo behind, joined Zhu Jun at Yingchuan, and survived their first clash with Zhang Bao.',
-        zh: '兄弟三人离开董卓，投奔颍川朱儁，并撑过了与张宝的初战。'
+        en: 'The brothers have left Dong Zhuo behind, joined Zhu Jun at Yingchuan, and broken Zhang Bao\'s sorcery on the road to Yangcheng.',
+        zh: '兄弟三人离开董卓，投奔颍川朱儁，并在阳城道上破了张宝妖法。'
     },
     'campaign_ch2_hejin_description': {
         en: 'At Luoyang, Emperor Ling lies dying. He Jin must decide whether to trust a warning at the palace gate.',

@@ -600,6 +600,7 @@ export const BATTLES = {
     },
     'chapter2_zhangbao_probe': {
         name: 'Yingchuan - First Clash with Zhang Bao',
+        baseXP: 0,
         map: {
             biome: 'northern',
             layout: 'foothills',
@@ -661,6 +662,104 @@ export const BATTLES = {
             script: [
                 { bg: 'army_camp', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "Zhang Bao's line broke our advance before we understood his method. Reform the vanguard; we test him again.", zh: "未明张宝妖法，前军先乱。重整先锋，再试其阵。" } },
                 { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', text: { en: "Let him throw thunder. I will still close the distance.", zh: "任他使雷，俺也去近前会他。" } }
+            ]
+        }
+    },
+    'chapter2_zhangbao_counter': {
+        name: 'Yingchuan - The Yangcheng Approach',
+        map: {
+            biome: 'northern',
+            layout: 'foothills',
+            seed: 'chapter2_zhangbao_counter',
+            weather: 'rain',
+            forestDensity: 0.08,
+            mountainDensity: 0.08,
+            riverDensity: 0.0,
+            houseDensity: 0.02
+        },
+        units: [
+            { id: 'liubei', r: 7, q: 2, type: 'hero' },
+            { id: 'guanyu', r: 6, q: 2, type: 'hero' },
+            { id: 'zhangfei', r: 8, q: 2, type: 'hero' },
+            { id: 'ally1', r: 7, q: 1, type: 'allied_soldier' },
+            { id: 'ally2', r: 6, q: 1, type: 'allied_soldier' },
+            { id: 'ally3', r: 8, q: 1, type: 'allied_soldier' },
+            {
+                id: 'zhangbao',
+                r: 4,
+                q: 9,
+                type: 'zhang_bao',
+                level: 4,
+                immortal: {
+                    enabled: true,
+                    triggerHp: 2,
+                    onNearDeath: {
+                        say: {
+                            speaker: 'zhangbao',
+                            portraitKey: 'zhang-bao',
+                            text: {
+                                en: "My spell is broken! Yangcheng - fall back to Yangcheng!",
+                                zh: "吾法已破！退入阳城，退入阳城！"
+                            },
+                            voiceId: 'ch2_counter_zb_retreat_01',
+                            durationMs: 2200
+                        },
+                        flee: {
+                            edge: 'right',
+                            delayMs: 1600,
+                            durationMs: 900,
+                            extraTiles: 5
+                        },
+                        endBattle: {
+                            won: true,
+                            delayMs: 3000
+                        }
+                    }
+                }
+            },
+            { id: 'gaosheng_remnant', r: 5, q: 8, type: 'enemy_captain', templateId: 'gaosheng' },
+            { id: 'rebel1', r: 4, q: 8, type: 'enemy_soldier', templateId: 'rebel_archer' },
+            { id: 'rebel2', r: 5, q: 9, type: 'enemy_soldier' },
+            { id: 'rebel3', r: 3, q: 9, type: 'enemy_soldier' },
+            { id: 'rebel4', r: 6, q: 8, type: 'enemy_soldier' }
+        ],
+        introScript: [
+            {
+                speaker: 'zhangbao',
+                portraitKey: 'zhang-bao',
+                name: 'Zhang Bao',
+                voiceId: 'ch2_counter_zb_01',
+                text: {
+                    en: "Again you come? Then again Heaven will answer me!",
+                    zh: "汝等又来？黄天仍为我应！"
+                }
+            },
+            {
+                speaker: 'guanyu',
+                portraitKey: 'guan-yu',
+                name: 'Guan Yu',
+                voiceId: 'ch2_counter_gy_01',
+                text: {
+                    en: "The hidden troops are ready on the high ground. When he calls the storm, give the signal.",
+                    zh: "伏兵已在高冈。待其作法，即发号炮。"
+                }
+            },
+            {
+                speaker: 'liu-bei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'ch2_counter_lb_01',
+                text: {
+                    en: "Hold until the black air rises. Then foul the false shapes and strike from both wings.",
+                    zh: "待黑气漫天，再以秽物破其纸人草马，两翼齐出。"
+                }
+            }
+        ],
+        defeat: {
+            retry: { scene: 'tactics', params: { battleId: 'chapter2_zhangbao_counter' } },
+            script: [
+                { bg: 'army_camp', type: 'dialogue', portraitKey: 'zhu-jun-generic', name: 'Zhu Jun', text: { en: "The signal failed. Reform the hidden troops and carry the blood and filth back to the ridge.", zh: "号令未成。重整伏兵，仍携血秽上冈。" } },
+                { type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "We know the method now. We return and execute it cleanly.", zh: "破法之策已明。再往，务必齐整。" } }
             ]
         }
     },

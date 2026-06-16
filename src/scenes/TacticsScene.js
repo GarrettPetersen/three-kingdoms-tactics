@@ -1408,8 +1408,15 @@ export class TacticsScene extends BaseScene {
         };
 
         const retreatAndEnd = () => {
-            const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.isGone);
-            enemies.forEach(e => this.makeUnitFleeOffscreen(e, { edge: 'right', extraTiles: 4 }));
+            const withdrawers = this.units.filter(u =>
+                (u.faction === 'player' || u.faction === 'allied')
+                && u.hp > 0
+                && !u.isGone
+            );
+            withdrawers.forEach(u => {
+                u.storyRetreat = true;
+                this.makeUnitFleeOffscreen(u, { edge: 'left', extraTiles: 4 });
+            });
             setTimeout(() => this.endBattle(true), 1200);
         };
 
@@ -1915,7 +1922,7 @@ export class TacticsScene extends BaseScene {
 
         const housesProtected = Math.max(0, this.initialHouseCount - housesDestroyed);
         const isPlayerSideUnit = (u) => u.faction === 'player' || u.faction === 'allied';
-        const isBattleCasualty = (u) => isPlayerSideUnit(u) && !u.isPreDead && (u.hp <= 0 || u.isGone);
+        const isBattleCasualty = (u) => isPlayerSideUnit(u) && !u.isPreDead && !u.storyRetreat && (u.hp <= 0 || u.isGone);
         const casualties = this.units.filter(isBattleCasualty).length;
         const xpGained = this.isCustom ? 0 : Math.max(0, this.baseXP + Math.min(3, housesProtected) - casualties);
 

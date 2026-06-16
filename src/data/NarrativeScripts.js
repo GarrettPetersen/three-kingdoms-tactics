@@ -2122,6 +2122,133 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'setActorLoop', id: 'refugee_m_02', enabled: false },
         { type: 'command', action: 'setActorLoop', id: 'refugee_f_02', enabled: false }
     ],
+    'chapter2_zhangbao_counter_council': [
+        { bg: 'army_camp', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'addActor', id: 'zhujun', imgKey: 'zhujun_sprite', x: 128, y: 184 },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: -36, y: 214, actorAction: 'walk', speed: 0.7 },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: -70, y: 214, actorAction: 'walk', speed: 0.7 },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: -104, y: 214, actorAction: 'walk', speed: 0.7 },
+        { type: 'command', action: 'move', id: 'liubei', x: 84, y: 214, wait: false },
+        { type: 'command', action: 'move', id: 'guanyu', x: 54, y: 214, wait: false },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 24, y: 214, wait: true },
+        {
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_counter_camp_lb_01',
+            text: {
+                en: "Zhang Bao's storm struck as if soldiers were falling from the sky. We could not force our way through.",
+                zh: "张宝作法，风雷砂石并起，似有人马自天而下。我军不能硬破。"
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhu-jun-generic',
+            name: 'Zhu Jun',
+            voiceId: 'ch2_counter_camp_zj_01',
+            text: {
+                en: "Then do not meet sorcery with spearpoints. The shapes are paper men and straw horses. Foul them, and the spell will fail.",
+                zh: "妖法不可只以兵刃相迎。其形乃纸人草马，污之则法自败。"
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'guan-yu',
+            name: 'Guan Yu',
+            voiceId: 'ch2_counter_camp_gy_01',
+            text: {
+                en: "Pig, sheep, and dog blood, with filthy matter besides. Hide it with our men on the high ridge.",
+                zh: "盛猪羊狗血，并备秽物。令伏兵携之，伏于山后高冈。"
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhang-fei',
+            name: 'Zhang Fei',
+            voiceId: 'ch2_counter_camp_zf_01',
+            text: {
+                en: "Ha! If thunder answers him, slop will answer thunder.",
+                zh: "哈哈！他以雷吓人，俺便以污秽泼雷！"
+            }
+        },
+        {
+            type: 'choice',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            options: [
+                {
+                    buttonText: { en: 'Use the plan.', zh: '依计而行' },
+                    text: {
+                        en: "If this breaks the false shapes and saves the men, we use it.",
+                        zh: "若能破其幻形，保全军士，便依此计。"
+                    },
+                    voiceId: 'ch2_counter_camp_choice_use',
+                    result: [
+                        {
+                            type: 'command',
+                            action: 'setStoryChoice',
+                            key: 'zhangbao_counter_plan',
+                            value: 'accepted',
+                            routeId: 'chapter2_oath'
+                        }
+                    ]
+                },
+                {
+                    buttonText: { en: 'Question it.', zh: '心有迟疑' },
+                    text: {
+                        en: "It sits poorly with me to answer darkness with such things. Yet lives weigh heavier than pride.",
+                        zh: "以秽物破妖，心中终觉不安。但军士性命，重于颜面。"
+                    },
+                    voiceId: 'ch2_counter_camp_choice_reluctant',
+                    result: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhu-jun-generic',
+                            name: 'Zhu Jun',
+                            voiceId: 'ch2_counter_camp_zj_02',
+                            text: {
+                                en: "This is not worship of sorcery. It is the unmasking of a trick.",
+                                zh: "此非奉妖，乃破其诈术。"
+                            }
+                        },
+                        {
+                            type: 'command',
+                            action: 'setStoryChoice',
+                            key: 'zhangbao_counter_plan',
+                            value: 'reluctant',
+                            routeId: 'chapter2_oath'
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_counter_camp_lb_02',
+            text: {
+                en: "Guan Yu, Zhang Fei: each take a thousand men. Hide behind the mountain. When I draw Zhang Bao past the ridge, fire the signal and pour it all at once.",
+                zh: "云长、翼德，各引一千军，伏于山后。待我引张宝过冈，号炮一起，齐泼秽物。"
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhu-jun-generic',
+            name: 'Zhu Jun',
+            voiceId: 'ch2_counter_camp_zj_03',
+            text: {
+                en: "Good. The road to Yangcheng opens beyond that ridge. Break him there, and he will have only the city walls left.",
+                zh: "善。过此山冈，便是阳城之路。此处破之，他只得退守城中。"
+            }
+        },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 320, y: 214, wait: false },
+        { type: 'command', action: 'move', id: 'guanyu', x: 350, y: 214, wait: false },
+        { type: 'command', action: 'move', id: 'liubei', x: 380, y: 214, wait: true },
+        { type: 'command', action: 'fade', target: 1, speed: 0.001 }
+    ],
     'chapter2_hejin_gate': [
         { bg: 'luoyang_aerial_shot', type: 'command', action: 'fade', target: 0, speed: 0.001 },
         {

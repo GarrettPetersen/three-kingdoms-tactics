@@ -34,7 +34,9 @@ export const CHAPTERS = {
                 scenes: [
                     { id: 'chapter2_oath_dongzhuo_choice', type: 'battle', battleId: 'chapter2_oath_dongzhuo_choice' },
                     { id: 'chapter2_zhujun_camp', type: 'narrative' },
-                    { id: 'chapter2_zhangbao_probe', type: 'battle', battleId: 'chapter2_zhangbao_probe' }
+                    { id: 'chapter2_zhangbao_probe', type: 'battle', battleId: 'chapter2_zhangbao_probe' },
+                    { id: 'chapter2_zhangbao_counter_council', type: 'narrative', scriptId: 'chapter2_zhangbao_counter_council' },
+                    { id: 'chapter2_zhangbao_counter', type: 'battle', battleId: 'chapter2_zhangbao_counter' }
                 ]
             },
             hejin: {

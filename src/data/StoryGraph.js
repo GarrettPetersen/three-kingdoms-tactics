@@ -34,7 +34,9 @@ export const STORY_ROUTES = {
         nodes: {
             chapter2_oath_dongzhuo_choice: { next: 'chapter2_zhujun_camp' },
             chapter2_zhujun_camp: { next: 'chapter2_zhangbao_probe' },
-            chapter2_zhangbao_probe: { next: 'chapter2_oath_complete' },
+            chapter2_zhangbao_probe: { next: 'chapter2_zhangbao_counter_council' },
+            chapter2_zhangbao_counter_council: { next: 'chapter2_zhangbao_counter' },
+            chapter2_zhangbao_counter: { next: 'chapter2_oath_complete' },
             chapter2_oath_complete: { next: null }
         }
     },
