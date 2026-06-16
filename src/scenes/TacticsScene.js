@@ -12343,11 +12343,11 @@ export class TacticsScene extends BaseScene {
             let hasSlope = false;
             
             // Handle blend zones (smooth transitions between edges)
-            if (edge === null && ix >= 11 && ix <= 13) {
+            if (useLegacySlopeColumnStretch && edge === null && ix >= 11 && ix <= 13) {
                 // Blend zone between NW and SW
                 slopeOffset = blendSlopeOffset(ix, 'NW', 'SW', 11, 13);
                 hasSlope = slopeOffset !== 0;
-            } else if (edge === null && ix >= 22 && ix <= 24) {
+            } else if (useLegacySlopeColumnStretch && edge === null && ix >= 22 && ix <= 24) {
                 // Blend zone between NE and SE
                 slopeOffset = blendSlopeOffset(ix, 'NE', 'SE', 22, 24);
                 hasSlope = slopeOffset !== 0;
