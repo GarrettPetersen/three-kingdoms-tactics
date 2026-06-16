@@ -2140,7 +2140,7 @@ export const NARRATIVE_SCRIPTS = {
         },
         { bg: 'imperial_chamber', type: 'command', action: 'clearActors' },
         { type: 'command', action: 'clearProps' },
-        { type: 'command', action: 'addProp', id: 'emperor_ling', imgKey: 'emperor_ling_deathbed', x: 92, y: 102, sortY: 154 },
+        { type: 'command', action: 'addProp', id: 'emperor_ling', imgKey: 'emperor_ling_deathbed', x: 92, y: 122, sortY: 154 },
         {
             type: 'narrator',
             voiceId: 'ch2_hj_narrator_02',
