@@ -1912,14 +1912,16 @@ export class TacticsScene extends BaseScene {
         }
 
         const housesProtected = Math.max(0, this.initialHouseCount - housesDestroyed);
-        const casualties = this.units.filter(u => (u.faction === 'player' || u.faction === 'allied') && u.hp <= 0 && !u.isPreDead).length;
+        const isPlayerSideUnit = (u) => u.faction === 'player' || u.faction === 'allied';
+        const isBattleCasualty = (u) => isPlayerSideUnit(u) && !u.isPreDead && (u.hp <= 0 || u.isGone);
+        const casualties = this.units.filter(isBattleCasualty).length;
         const xpGained = this.isCustom ? 0 : Math.max(0, this.baseXP + Math.min(3, housesProtected) - casualties);
 
         if (!this.isCustom) {
             // Process XP and Injuries
             this.units.forEach(u => {
-                if (u.faction === 'player' || u.faction === 'allied') {
-                    if (u.hp <= 0) {
+                if (isPlayerSideUnit(u)) {
+                    if (isBattleCasualty(u)) {
                         // Character DIED/INJURED
                         if (u.faction === 'player') {
                             const oldXP = unitXP[u.id] || 0;
