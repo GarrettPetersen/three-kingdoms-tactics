@@ -1107,7 +1107,7 @@ export const UNIT_TEMPLATES = {
     'enemy_captain': {
         'dengmao': { name: 'Deng Mao', imgKey: 'dengmao', hp: 4, moveRange: 3, attacks: ['generic_spear'], faction: 'enemy', level: 1 },
         'chengyuanzhi': { name: 'Cheng Yuanzhi', imgKey: 'chengyuanzhi', hp: 4, moveRange: 3, attacks: ['polearm_sweep'], faction: 'enemy', level: 2 },
-        'gaosheng': { name: 'Gao Sheng', imgKey: 'yellowturban', hp: 5, moveRange: 3, attacks: ['generic_spear'], faction: 'enemy', level: 2 },
+        'gaosheng': { name: 'Gao Sheng', imgKey: 'dengmao', hp: 5, moveRange: 3, attacks: ['generic_spear'], faction: 'enemy', level: 2 },
         'zhang_jue_captain': { name: 'Yellow Turban Captain', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['bash'], faction: 'enemy' }
     },
     'commander': {
