@@ -13512,7 +13512,7 @@ export class TacticsScene extends BaseScene {
             const a = this.tacticsMap.getCell(line[i].r, line[i].q);
             const b = this.tacticsMap.getCell(line[i + 1].r, line[i + 1].q);
             if (!a || !b) continue;
-            if (Math.abs((a.level || 0) - (b.level || 0)) >= 3) return false;
+            if (Math.abs((a.level || 0) - (b.level || 0)) >= 5) return false;
         }
         return true;
     }
