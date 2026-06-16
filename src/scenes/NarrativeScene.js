@@ -822,6 +822,8 @@ export class NarrativeScene extends BaseScene {
             assets.playSound(cmd.key, cmd.volume !== undefined ? cmd.volume : 1.0);
             this.nextStep();
         } else if (cmd.action === 'startCampaignLiubo') {
+            this.manager.gameState.clearSceneState('liubo');
+            this.manager.gameState.setCampaignVar('narrativeResumeAfterLiubo', null);
             this.prepareNarrativeResumeAfterMinigame();
             this.saveNarrativeState();
             this.manager.switchTo('liubo', {
