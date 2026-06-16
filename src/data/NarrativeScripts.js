@@ -2226,7 +2226,7 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'setActorLoop', id: 'refugee_f_02', enabled: false }
     ],
     'chapter2_hejin_gate': [
-        { bg: 'china_map', type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { bg: 'luoyang_aerial_shot', type: 'command', action: 'fade', target: 0, speed: 0.001 },
         {
             type: 'title',
             text: { en: 'LUOYANG', zh: '洛阳' },

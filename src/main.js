@@ -783,6 +783,7 @@ async function init() {
                 china_map: 'assets/settings/china_map.png',
                 imperial_chamber: 'assets/settings/imperial_chamber.png',
                 imperial_memorial: 'assets/settings/imperial_memorial.png',
+                luoyang_aerial_shot: 'assets/settings/luoyang_aerial_shot.png',
                 luoyang_council_hall: 'assets/settings/luoyang_council_hall.png',
                 luoyang_imperial_garden_night: 'assets/settings/luoyang_imperial_garden_night.png',
                 luoyang_imperial_palace_gate: 'assets/settings/luoyang_imperial_palace_gate.png',
