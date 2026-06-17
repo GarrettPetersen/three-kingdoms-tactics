@@ -2423,14 +2423,14 @@ export const NARRATIVE_SCRIPTS = {
                         },
                         { type: 'command', action: 'move', id: 'hejin', x: 147, y: 170, wait: true },
                         { type: 'command', action: 'setActorLayer', id: 'hejin', drawAboveForeground: false },
-                        { type: 'command', action: 'addActor', id: 'guard_left', imgKey: 'eunuch_guard', x: 92, y: 170, actorAction: 'walk', speed: 0.84 },
-                        { type: 'command', action: 'addActor', id: 'guard_right', imgKey: 'eunuch_guard', x: 232, y: 170, actorAction: 'walk', speed: 0.84, flip: true },
+                        { type: 'command', action: 'addActor', id: 'guard_left', imgKey: 'palace_assassin', x: 92, y: 170, actorAction: 'walk', speed: 0.84 },
+                        { type: 'command', action: 'addActor', id: 'guard_right', imgKey: 'palace_assassin', x: 232, y: 170, actorAction: 'walk', speed: 0.84, flip: true },
                         { type: 'command', action: 'move', id: 'guard_left', x: 132, y: 170, wait: false },
                         { type: 'command', action: 'move', id: 'guard_right', x: 162, y: 170, wait: true },
                         {
                             type: 'dialogue',
                             name: 'Palace Attendant',
-                            portraitKey: 'eunuch-guard',
+                            portraitKey: 'palace_assassin',
                             voiceId: 'ch2_hj_guard_01',
                             position: 'top',
                             text: {

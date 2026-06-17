@@ -160,11 +160,21 @@ export class NarrativeScene extends BaseScene {
         const frames = this.executionFrames?.length
             ? this.executionFrames
             : [{ steps: this.script, index: this.currentStep }];
+        let foregroundBgBoundary = null;
         for (let frameIndex = frames.length - 1; frameIndex >= 0; frameIndex--) {
             const frame = frames[frameIndex];
             const startIndex = Math.min(frame.index || 0, Math.max(0, (frame.steps?.length || 1) - 1));
             for (let i = startIndex; i >= 0; i--) {
-                if (frame.steps?.[i]?.[propName]) return frame.steps[i][propName];
+                const step = frame.steps?.[i];
+                if (!step) continue;
+                if (Object.prototype.hasOwnProperty.call(step, propName)) return step[propName];
+                if (propName === 'fg' && Object.prototype.hasOwnProperty.call(step, 'bg')) {
+                    if (foregroundBgBoundary === null) {
+                        foregroundBgBoundary = step.bg;
+                    } else if (step.bg !== foregroundBgBoundary) {
+                        return null;
+                    }
+                }
             }
         }
         return null;
