@@ -3288,9 +3288,9 @@
         "id": "ch2_wan_zj_01",
         "character": "zhujun",
         "original_text": "韩忠与余党据守宛城。张宝既死，彼等遣人请降。",
-        "stt_output": "寒中雨与党剧首晚城张宝寄死彼等前人请想",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:ch2_wan_zj_02": {
@@ -3315,7 +3315,25 @@
         "id": "map_lb_ch2_wan_01",
         "character": "liubei",
         "original_text": "朱儁将军下一步转向宛城。若贼众请降，四路围死之前，须先细思。",
-        "stt_output": "朱俊将军下一步转向晚城若在重情向四路为死之前需先洗死",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:inn_butcher_npc_01": {
+        "id": "inn_butcher_npc_01",
+        "character": "butcher",
+        "original_text": "张飞的酒烈，他的话也重。他说此誓为重，我信。",
+        "stt_output": "張飛的酒列,他的話也中他說此事未中,我信",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:inn_soldier_npc_01": {
+        "id": "inn_soldier_npc_01",
+        "character": "soldier",
+        "original_text": "三位若举旗，自有人追随。涿县百姓都在等第一个挺身而出的人。",
+        "stt_output": "三位落聚齐,自由人追隨,昨天百姓都在等第一個挺身而出的人。",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"

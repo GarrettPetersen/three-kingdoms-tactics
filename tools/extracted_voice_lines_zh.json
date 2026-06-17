@@ -573,25 +573,25 @@
     "id": "ch2_zj_camp_lb_01",
     "char": "liubei",
     "text": "领命。云长、翼德，整备军士，黎明出发。",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_zj_camp_zj_00",
     "char": "zhujun",
     "text": "玄德，你们当夜引军来投，甚好。",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_zj_camp_zj_01",
     "char": "zhujun",
     "text": "玄德，你为先锋，先与贼对敌。",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_zj_camp_zj_02",
     "char": "zhujun",
     "text": "我待汝军以厚礼。即刻合兵一处，进讨张宝。",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "daxing_gy_01",
@@ -1050,6 +1050,12 @@
     "source": "Battles.js"
   },
   {
+    "id": "inn_butcher_npc_01",
+    "char": "butcher",
+    "text": "张飞的酒烈，他的话也重。他说此誓为重，我信。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "inn_farmer_01",
     "char": "farmer",
     "text": "这些黄巾叛军...我想借酒消愁，但忧虑总是回来。我们该怎么办？",
@@ -1300,6 +1306,12 @@
     "char": "xiaoer",
     "text": "又赢了！你看箸如看秤。我可不能再同你下注了。",
     "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_soldier_npc_01",
+    "char": "soldier",
+    "text": "三位若举旗，自有人追随。涿县百姓都在等第一个挺身而出的人。",
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_zf_01",

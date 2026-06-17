@@ -1601,6 +1601,160 @@ export const NARRATIVE_SCRIPTS = {
                 zh: "我同意。我们在桃园结义。"
             }
         },
+        {
+            type: 'interactive',
+            promptOptions: [
+                { id: 'to_peach_garden', text: { en: 'TO PEACH GARDEN', zh: '前往桃园' }, position: 'right', y: 88, w: 118, h: 25, advanceOnClick: true }
+            ],
+            clickableActors: {
+                'bar_farmer': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'farmer-v2',
+                            position: 'top',
+                            name: 'Villager',
+                            voiceId: 'inn_farmer_01',
+                            text: {
+                                en: "These Yellow Turban rebels... I try to drink away my worries, but they always return. What will become of us?",
+                                zh: "这些黄巾叛军...我想借酒消愁，但忧虑总是回来。我们该怎么办？"
+                            }
+                        }
+                    ]
+                },
+                'liubo_player': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'xiaoer',
+                            position: 'top',
+                            name: 'Liubo Player',
+                            voiceId: 'inn_liubo_intro_01',
+                            text: {
+                                en: "The road is dangerous, friend. Sit for a game of Liubo before you chase trouble?",
+                                zh: "路上凶险，朋友。追着麻烦走之前，坐下博一局如何？"
+                            }
+                        },
+                        {
+                            type: 'choice',
+                            portraitKey: 'xiaoer',
+                            name: 'Liubo Player',
+                            options: [
+                                {
+                                    buttonText: { en: "Play Liubo.", zh: "博一局。" },
+                                    speaker: 'xiaoer',
+                                    voiceId: 'inn_liubo_accept_01',
+                                    text: {
+                                        en: "Very well. Let us play.",
+                                        zh: "好。我们博一局。"
+                                    },
+                                    result: [
+                                        { type: 'command', action: 'startCampaignLiubo', activityId: 'inn_first_liubo', humanPlayer: 'white', firstPlayer: 'white' }
+                                    ]
+                                },
+                                {
+                                    buttonText: { en: "Not now.", zh: "现在不玩。" },
+                                    speaker: 'xiaoer',
+                                    voiceId: 'inn_liubo_decline_01',
+                                    text: {
+                                        en: "Another time.",
+                                        zh: "改日吧。"
+                                    },
+                                    result: [
+                                        {
+                                            type: 'dialogue',
+                                            portraitKey: 'xiaoer',
+                                            position: 'top',
+                                            name: 'Liubo Player',
+                                            voiceId: 'inn_liubo_decline_reply_01',
+                                            text: {
+                                                en: "The board will wait. The rebels, perhaps not.",
+                                                zh: "棋盘会等你。黄巾贼可未必。"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                'liubei': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'liu-bei',
+                            position: 'top',
+                            name: 'Liu Bei',
+                            voiceId: 'inn_lb_click_01',
+                            text: {
+                                en: "The people suffer while we sit here. We must act soon.",
+                                zh: "百姓受苦，而我们却坐在这里。我们必须尽快行动。"
+                            }
+                        }
+                    ]
+                },
+                'zhangfei': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhang-fei',
+                            position: 'top',
+                            name: 'Zhang Fei',
+                            voiceId: 'inn_zf_06',
+                            text: {
+                                en: "Listen! Behind my farm is a peach garden. The flowers are in full bloom.",
+                                zh: "听我说！我庄后有一桃园，花开正盛。"
+                            }
+                        }
+                    ]
+                },
+                'guanyu': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'guan-yu',
+                            position: 'top',
+                            name: 'Guan Yu',
+                            voiceId: 'inn_gy_05',
+                            text: {
+                                en: "I agree. We swear by the peach garden.",
+                                zh: "我同意。我们在桃园结义。"
+                            }
+                        }
+                    ]
+                },
+                'soldier_npc': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'soldier',
+                            position: 'top',
+                            name: 'Volunteer',
+                            voiceId: 'inn_soldier_npc_01',
+                            text: {
+                                en: "If you three raise the banner, men will follow. The county is waiting for someone to stand first.",
+                                zh: "三位若举旗，自有人追随。涿县百姓都在等第一个挺身而出的人。"
+                            }
+                        }
+                    ]
+                },
+                'butcher_npc': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'butcher',
+                            position: 'top',
+                            name: 'Butcher',
+                            voiceId: 'inn_butcher_npc_01',
+                            text: {
+                                en: "Zhang Fei's wine is strong, and so is his word. If he calls this oath sacred, I believe him.",
+                                zh: "张飞的酒烈，他的话也重。他说此誓为重，我信。"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
         { type: 'command', action: 'fade', target: 1, speed: 0.0005 },
         
         // --- THE PEACH GARDEN OATH ---

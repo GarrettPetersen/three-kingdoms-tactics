@@ -577,25 +577,25 @@
     "id": "ch2_zj_camp_lb_01",
     "char": "liubei",
     "text": "Understood. Guan Yu, Zhang Fei - prepare the men. We march at first light.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_zj_camp_zj_00",
     "char": "zhujun",
     "text": "Xuande, you came by night to join my command. Good.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_zj_camp_zj_01",
     "char": "zhujun",
     "text": "Xuande, take the vanguard and engage the rebels first.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_zj_camp_zj_02",
     "char": "zhujun",
     "text": "I will receive your force with full trust. We combine our men as one host and advance against Zhang Bao.",
-    "source": "MapScene.js"
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "daxing_gy_01",
@@ -1063,6 +1063,12 @@
     "source": "Battles.js"
   },
   {
+    "id": "inn_butcher_npc_01",
+    "char": "butcher",
+    "text": "Zhang Fei's wine is strong, and so is his word. If he calls this oath sacred, I believe him.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "inn_farmer_01",
     "char": "farmer",
     "text": "These Yellow Turban rebels... I try to drink away my worries, but they always return. What will become of us?",
@@ -1313,6 +1319,12 @@
     "char": "xiaoer",
     "text": "Again! You read the sticks like a market scale. I will have to stop wagering with you.",
     "source": "LiuboScene.js"
+  },
+  {
+    "id": "inn_soldier_npc_01",
+    "char": "soldier",
+    "text": "If you three raise the banner, men will follow. The county is waiting for someone to stand first.",
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "inn_zf_01",

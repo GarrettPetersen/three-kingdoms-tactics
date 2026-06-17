@@ -3288,8 +3288,8 @@
         "id": "ch2_wan_zj_01",
         "character": "zhujun",
         "original_text": "The remaining rebels hold the city. Their messenger asks to surrender.",
-        "stt_output": "The remaining rebels hold the city. Their messenger asks to surrender.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3315,8 +3315,26 @@
         "id": "map_lb_ch2_wan_01",
         "character": "liubei",
         "original_text": "Our next march is south. If the rebels ask to surrender, we must think carefully before sealing every road.",
-        "stt_output": "Our next march is south. If the rebels ask to surrender, we must think carefully before sealing every rope.",
-        "wer": 0.05263157894736842,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_butcher_npc_01": {
+        "id": "inn_butcher_npc_01",
+        "character": "butcher",
+        "original_text": "Zhang Fei's wine is strong, and so is his word. If he calls this oath sacred, I believe him.",
+        "stt_output": "Chang Fai's wine is strong, and so is his word. If he caused this oath sacred, I believe him.",
+        "wer": 0.15789473684210525,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:inn_soldier_npc_01": {
+        "id": "inn_soldier_npc_01",
+        "character": "soldier",
+        "original_text": "If you three raise the banner, men will follow. The county is waiting for someone to stand first.",
+        "stt_output": "If you three raise the banner, men will follow. The county is waiting for someone to stand first.",
+        "wer": 0.0,
         "is_bad": false,
         "language": "en"
     }
