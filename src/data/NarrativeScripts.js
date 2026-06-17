@@ -2306,11 +2306,11 @@ export const NARRATIVE_SCRIPTS = {
         },
         { type: 'command', action: 'fade', target: 1, speed: 0.001 },
         { type: 'command', action: 'wait', duration: 350 },
-        { bg: 'luoyang_imperial_palace_gate', type: 'command', action: 'clearActors' },
+        { bg: 'luoyang_imperial_palace_gate', fg: 'luoyang_imperial_palace_gate_foreground', type: 'command', action: 'clearActors' },
         { type: 'command', action: 'clearProps' },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-        { type: 'command', action: 'addActor', id: 'gate_eunuch', imgKey: 'eunuch', x: 178, y: 185, flip: true },
-        { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: -34, y: 214, actorAction: 'walk', speed: 0.72 },
+        { type: 'command', action: 'addActor', id: 'gate_eunuch', imgKey: 'eunuch', x: 178, y: 185, flip: true, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: -34, y: 214, actorAction: 'walk', speed: 0.72, drawAboveForeground: true },
         { type: 'command', action: 'move', id: 'hejin', x: 94, y: 214, wait: true },
         {
             type: 'dialogue',
@@ -2323,7 +2323,7 @@ export const NARRATIVE_SCRIPTS = {
                 zh: '大将军何进，陛下在宫中相候。'
             }
         },
-        { type: 'command', action: 'addActor', id: 'panyin', imgKey: 'panyin', x: 292, y: 212, actorAction: 'walk', speed: 0.92, flip: true },
+        { type: 'command', action: 'addActor', id: 'panyin', imgKey: 'panyin', x: 292, y: 212, actorAction: 'walk', speed: 0.92, flip: true, drawAboveForeground: true },
         { type: 'command', action: 'move', id: 'panyin', x: 148, y: 212, wait: true },
         {
             type: 'dialogue',
@@ -2421,11 +2421,12 @@ export const NARRATIVE_SCRIPTS = {
                                 zh: '公不可。此正中其计。'
                             }
                         },
-                        { type: 'command', action: 'move', id: 'hejin', x: 174, y: 186, wait: true },
-                        { type: 'command', action: 'addActor', id: 'guard_left', imgKey: 'eunuch_guard', x: 126, y: 184, actorAction: 'walk' },
-                        { type: 'command', action: 'addActor', id: 'guard_right', imgKey: 'eunuch_guard', x: 218, y: 184, actorAction: 'walk', flip: true },
-                        { type: 'command', action: 'move', id: 'guard_left', x: 152, y: 184, wait: false },
-                        { type: 'command', action: 'move', id: 'guard_right', x: 190, y: 184, wait: true },
+                        { type: 'command', action: 'move', id: 'hejin', x: 147, y: 170, wait: true },
+                        { type: 'command', action: 'setActorLayer', id: 'hejin', drawAboveForeground: false },
+                        { type: 'command', action: 'addActor', id: 'guard_left', imgKey: 'eunuch_guard', x: 92, y: 170, actorAction: 'walk', speed: 0.84 },
+                        { type: 'command', action: 'addActor', id: 'guard_right', imgKey: 'eunuch_guard', x: 232, y: 170, actorAction: 'walk', speed: 0.84, flip: true },
+                        { type: 'command', action: 'move', id: 'guard_left', x: 132, y: 170, wait: false },
+                        { type: 'command', action: 'move', id: 'guard_right', x: 162, y: 170, wait: true },
                         {
                             type: 'dialogue',
                             name: 'Palace Attendant',

@@ -551,6 +551,11 @@ export class NarrativeScene extends BaseScene {
             if (actor) {
                 actor.flip = cmd.flip !== undefined ? cmd.flip : !actor.flip;
             }
+        } else if (cmd.action === 'setActorLayer') {
+            const actor = this.actors[cmd.id];
+            if (actor) {
+                actor.drawAboveForeground = !!cmd.drawAboveForeground;
+            }
         } else if (cmd.action === 'animate') {
             const actor = this.actors[cmd.id];
             if (actor) {
@@ -780,6 +785,12 @@ export class NarrativeScene extends BaseScene {
             this.isWaiting = true;
         } else if (cmd.action === 'flip') {
             if (this.actors[cmd.id]) this.actors[cmd.id].flip = cmd.flip;
+            this.nextStep();
+        } else if (cmd.action === 'setActorLayer') {
+            const actor = this.actors[cmd.id];
+            if (actor) {
+                actor.drawAboveForeground = !!cmd.drawAboveForeground;
+            }
             this.nextStep();
         } else if (cmd.action === 'removeActor') {
             delete this.actors[cmd.id];

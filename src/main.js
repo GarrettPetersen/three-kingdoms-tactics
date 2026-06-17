@@ -794,6 +794,7 @@ async function init() {
                 luoyang_council_hall: 'assets/settings/luoyang_council_hall.png',
                 luoyang_imperial_garden_night: 'assets/settings/luoyang_imperial_garden_night.png',
                 luoyang_imperial_palace_gate: 'assets/settings/luoyang_imperial_palace_gate.png',
+                luoyang_imperial_palace_gate_foreground: 'assets/settings/luoyang_imperial_palace_gate_foreground.png',
                 luoyang_inner_palace_banquet: 'assets/settings/luoyang_inner_palace_banquet.png',
                 luoyang_noble_residence_exterior: 'assets/settings/luoyang_noble_residence_exterior.png',
                 luoyang_courier_map: 'assets/settings/china_map.png',
