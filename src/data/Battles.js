@@ -944,6 +944,228 @@ export const BATTLES = {
             }
         ]
     },
+    'chapter2_wan_field': {
+        name: 'Wan - The Open Southeast Road',
+        map: {
+            biome: 'northern',
+            layout: 'road',
+            seed: 'chapter2_wan_field',
+            forestDensity: 0.08,
+            mountainDensity: 0.06,
+            riverDensity: 0.0,
+            houseDensity: 0.0
+        },
+        units: [
+            { id: 'liubei', r: 6, q: 2, type: 'hero_force', templateId: 'liubei' },
+            { id: 'guanyu', r: 5, q: 1, type: 'hero_force', templateId: 'guanyu' },
+            { id: 'zhangfei', r: 7, q: 1, type: 'hero_force', templateId: 'zhangfei' },
+            { id: 'ally1', r: 5, q: 2, type: 'allied_soldier' },
+            { id: 'ally2', r: 7, q: 2, type: 'allied_soldier' },
+            { id: 'zhujun', r: 6, q: 0, type: 'commander', templateId: 'zhujun' },
+            { id: 'imperial1', r: 4, q: 1, type: 'imperial_soldier' },
+            { id: 'imperial2', r: 8, q: 1, type: 'imperial_soldier' },
+            { id: 'hanzhong', r: 6, q: 8, type: 'enemy_captain', templateId: 'hanzhong' },
+            { id: 'rebel1', r: 5, q: 8, type: 'enemy_soldier', templateId: 'rebel_archer' },
+            { id: 'rebel2', r: 7, q: 8, type: 'enemy_soldier' },
+            { id: 'rebel3', r: 4, q: 9, type: 'enemy_soldier' },
+            { id: 'rebel4', r: 8, q: 9, type: 'enemy_soldier', templateId: 'rebel_archer' }
+        ],
+        victoryCondition: {
+            type: 'defeat_all_enemies',
+            mustSurvive: ['liubei', 'guanyu', 'zhangfei']
+        },
+        introScript: [
+            {
+                speaker: 'zhujun',
+                portraitKey: 'zhu-jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'ch2_wan_field_zj_01',
+                text: {
+                    en: "Han Zhong has taken the road. Hold discipline and cut through his disordered column.",
+                    zh: "韩忠果走此路。严整军阵，击破其散乱之队。"
+                }
+            },
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'ch2_wan_field_lb_01',
+                text: {
+                    en: "Do not let them turn desperation into courage. Break the captains and the rest will scatter.",
+                    zh: "不可令其绝望成勇。先破头目，其余自散。"
+                }
+            },
+            {
+                speaker: 'hanzhong',
+                portraitKey: 'yellowturban',
+                name: 'Han Zhong',
+                voiceId: 'ch2_wan_field_hz_01',
+                text: {
+                    en: "They opened the road to bait us. Fight through before the trap closes!",
+                    zh: "官军开路，果是诱我！趁伏兵未合，杀出去！"
+                }
+            }
+        ],
+        postCombatScript: [
+            {
+                speaker: 'zhujun',
+                portraitKey: 'zhu-jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'ch2_wan_field_zj_02',
+                text: {
+                    en: "The field is ours. Now Wan can be received without trusting a barred gate.",
+                    zh: "野战已胜。如此受宛城之降，便非轻信闭门之言。"
+                }
+            },
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'ch2_wan_field_lb_02',
+                text: {
+                    en: "A road left open saved more lives than a wall battered in anger.",
+                    zh: "留一路生门，胜过怒击城墙，可少伤性命。"
+                }
+            }
+        ],
+        defeat: {
+            retry: { scene: 'tactics', params: { battleId: 'chapter2_wan_field' } },
+            script: [
+                {
+                    bg: 'army_camp',
+                    type: 'dialogue',
+                    portraitKey: 'zhu-jun-generic',
+                    name: 'Zhu Jun',
+                    voiceId: 'ch2_wan_field_defeat_zj_01',
+                    text: {
+                        en: "Han Zhong slipped the trap because the road was opened without enough pressure. Reform the line and spring it again.",
+                        zh: "韩忠脱围，是开路而逼迫不足。重整军阵，再设此计。"
+                    }
+                },
+                {
+                    type: 'dialogue',
+                    portraitKey: 'liu-bei',
+                    name: 'Liu Bei',
+                    voiceId: 'ch2_wan_field_defeat_lb_01',
+                    text: {
+                        en: "The plan is still sound. We must meet him in the field before he regains courage.",
+                        zh: "此计仍可行。须在野外迎击，不令其复振。"
+                    }
+                }
+            ]
+        }
+    },
+    'chapter2_wan_gate': {
+        name: 'Wan - Assault the Gate',
+        map: {
+            biome: 'northern',
+            layout: 'city_gate',
+            seed: 'chapter2_wan_gate',
+            cityGateDefenderSide: 'enemy',
+            forestDensity: 0.0,
+            mountainDensity: 0.0,
+            riverDensity: 0.0,
+            houseDensity: 0.0
+        },
+        units: [
+            { id: 'liubei', r: 7, q: 3, type: 'hero_force', templateId: 'liubei', cityGateSide: 'outside' },
+            { id: 'guanyu', r: 7, q: 2, type: 'hero_force', templateId: 'guanyu', cityGateSide: 'outside' },
+            { id: 'zhangfei', r: 7, q: 6, type: 'hero_force', templateId: 'zhangfei', cityGateSide: 'outside' },
+            { id: 'ally1', r: 8, q: 2, type: 'allied_soldier', cityGateSide: 'outside' },
+            { id: 'ally2', r: 8, q: 6, type: 'allied_soldier', cityGateSide: 'outside' },
+            { id: 'zhujun', r: 6, q: 1, type: 'commander', templateId: 'zhujun', cityGateSide: 'outside' },
+            { id: 'imperial1', r: 6, q: 7, type: 'imperial_soldier', cityGateSide: 'outside' },
+            { id: 'hanzhong', r: 2, q: 4, type: 'enemy_captain', templateId: 'hanzhong', cityGateSide: 'inside' },
+            { id: 'wall_rebel1', r: 2, q: 2, type: 'enemy_soldier', cityGateSide: 'inside' },
+            { id: 'wall_rebel2', r: 2, q: 6, type: 'enemy_soldier', templateId: 'rebel_archer', cityGateSide: 'inside' },
+            { id: 'wall_rebel3', r: 1, q: 3, type: 'enemy_soldier', templateId: 'rebel_archer', cityGateSide: 'inside' },
+            { id: 'wall_rebel4', r: 1, q: 5, type: 'enemy_soldier', cityGateSide: 'inside' }
+        ],
+        victoryCondition: {
+            type: 'defeat_all_enemies',
+            mustSurvive: ['liubei', 'guanyu', 'zhangfei']
+        },
+        introScript: [
+            {
+                speaker: 'zhujun',
+                portraitKey: 'zhu-jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'ch2_wan_gate_zj_01',
+                text: {
+                    en: "Wan's gate stands before us. Break it, but keep the soldiers from plunder.",
+                    zh: "宛城城门在前。破门而入，但须禁军士焚掠。"
+                }
+            },
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'ch2_wan_gate_lb_01',
+                text: {
+                    en: "The rebels chose a closed gate over true surrender. Strike cleanly and end this quickly.",
+                    zh: "贼众闭门而不真降。速战速决，不可拖延。"
+                }
+            },
+            {
+                speaker: 'hanzhong',
+                portraitKey: 'yellowturban',
+                name: 'Han Zhong',
+                voiceId: 'ch2_wan_gate_hz_01',
+                text: {
+                    en: "They answer surrender with ladders and blades. Hold the wall!",
+                    zh: "官军以刀梯回应请降！守住城墙！"
+                }
+            }
+        ],
+        postCombatScript: [
+            {
+                speaker: 'zhujun',
+                portraitKey: 'zhu-jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'ch2_wan_gate_zj_02',
+                text: {
+                    en: "Wan is taken. This was harsher than the open road, but the city must now be kept in order.",
+                    zh: "宛城已取。此路较开东南为烈，城中更须安抚整肃。"
+                }
+            },
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'ch2_wan_gate_lb_02',
+                text: {
+                    en: "Then let the people see that Han order follows the soldiers through the gate.",
+                    zh: "便令百姓看见，汉军入城，随之而来的是法度。"
+                }
+            }
+        ],
+        defeat: {
+            retry: { scene: 'tactics', params: { battleId: 'chapter2_wan_gate' } },
+            script: [
+                {
+                    bg: 'army_camp',
+                    type: 'dialogue',
+                    portraitKey: 'zhu-jun-generic',
+                    name: 'Zhu Jun',
+                    voiceId: 'ch2_wan_gate_defeat_zj_01',
+                    text: {
+                        en: "A gate assault punishes disorder at once. Pull the men back, dress the ranks, and try again.",
+                        zh: "攻门最忌乱。收兵整队，再攻一次。"
+                    }
+                },
+                {
+                    type: 'dialogue',
+                    portraitKey: 'liu-bei',
+                    name: 'Liu Bei',
+                    voiceId: 'ch2_wan_gate_defeat_lb_01',
+                    text: {
+                        en: "We chose the harder road. Next time, keep pressure on the gate and protect the soldiers beside it.",
+                        zh: "既择险途，下次须紧逼城门，并护住门前军士。"
+                    }
+                }
+            ]
+        }
+    },
     'caocao_yingchuan_intercept': {
         name: 'Yingchuan - Cavalry Intercept',
         map: {
@@ -1278,6 +1500,7 @@ export const UNIT_TEMPLATES = {
         'dengmao': { name: 'Deng Mao', imgKey: 'dengmao', hp: 4, moveRange: 3, attacks: ['generic_spear'], faction: 'enemy', level: 1 },
         'chengyuanzhi': { name: 'Cheng Yuanzhi', imgKey: 'chengyuanzhi', hp: 4, moveRange: 3, attacks: ['polearm_sweep'], faction: 'enemy', level: 2 },
         'gaosheng': { name: 'Gao Sheng', imgKey: 'dengmao', hp: 5, moveRange: 3, attacks: ['generic_spear'], faction: 'enemy', level: 2 },
+        'hanzhong': { name: 'Han Zhong', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['bash'], faction: 'enemy', level: 2 },
         'zhang_jue_captain': { name: 'Yellow Turban Captain', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['bash'], faction: 'enemy' }
     },
     'commander': {

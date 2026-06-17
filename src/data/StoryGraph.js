@@ -38,7 +38,15 @@ export const STORY_ROUTES = {
             chapter2_zhangbao_counter_council: { next: 'chapter2_zhangbao_counter' },
             chapter2_zhangbao_counter: { next: 'chapter2_yangcheng_surrender' },
             chapter2_yangcheng_surrender: { next: 'chapter2_wan_strategy' },
-            chapter2_wan_strategy: { next: 'chapter2_oath_complete' },
+            chapter2_wan_strategy: {
+                transitions: [
+                    { choice: 'chapter2_wan_strategy', value: 'open_southeast', to: 'chapter2_wan_field' },
+                    { choice: 'chapter2_wan_strategy', value: 'assault_walls', to: 'chapter2_wan_gate' },
+                    { to: 'chapter2_wan_field' }
+                ]
+            },
+            chapter2_wan_field: { next: 'chapter2_oath_complete' },
+            chapter2_wan_gate: { next: 'chapter2_oath_complete' },
             chapter2_oath_complete: { next: null }
         }
     },

@@ -94,8 +94,25 @@ export function resolveStoryLaunchTarget(routeId, nodeId) {
     };
 }
 
-export function getNextStoryNodeId(routeId, nodeId) {
+function transitionMatches(transition, gameState, routeId) {
+    if (!transition) return false;
+    if (transition.choice) {
+        const actual = gameState?.getStoryChoice?.(transition.choice, undefined, routeId);
+        if (transition.value !== undefined) return actual === transition.value;
+        return actual !== undefined;
+    }
+    if (transition.milestone) {
+        return gameState?.hasMilestone?.(transition.milestone, routeId) === true;
+    }
+    return true;
+}
+
+export function getNextStoryNodeId(routeId, nodeId, gameState = null) {
     const node = STORY_ROUTES?.[routeId]?.nodes?.[nodeId];
+    if (Array.isArray(node?.transitions)) {
+        const transition = node.transitions.find(t => transitionMatches(t, gameState, routeId));
+        return transition?.to || null;
+    }
     const nextIds = getStoryNodeNextIds(node);
     return nextIds[0] || null;
 }
@@ -130,7 +147,7 @@ export function completeStoryNode(manager, routeId, nodeId) {
     const gs = manager.gameState;
     gs.addMilestone(nodeId, routeId);
 
-    const nextNodeId = getNextStoryNodeId(routeId, nodeId);
+    const nextNodeId = getNextStoryNodeId(routeId, nodeId, gs);
     if (!nextNodeId) {
         manager.switchTo('campaign_selection');
         return;

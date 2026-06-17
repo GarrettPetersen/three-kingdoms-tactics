@@ -2527,21 +2527,28 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ],
     'chapter2_wan_strategy': [
-        { bg: 'army_camp', type: 'command', action: 'clearActors' },
+        { bg: 'china_map', type: 'command', action: 'clearActors' },
         { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        {
+            type: 'title',
+            text: { en: 'THE MARCH TO WAN', zh: '进军宛城' },
+            subtext: { en: 'Zhu Jun turns south', zh: '朱儁南征' }
+        },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_wan_narrator_01',
+            text: {
+                en: "After Yangcheng opened its gates, Zhu Jun turned the army south. Han Zhong and the remaining Yellow Turbans had gathered in Wan.",
+                zh: "阳城开门归降之后，朱儁合兵南征。韩忠与黄巾余党退聚宛城。"
+            }
+        },
+        { bg: 'army_camp', type: 'command', action: 'clearActors' },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
         { type: 'command', action: 'addActor', id: 'zhujun', imgKey: 'zhujun_sprite', x: 164, y: 170 },
         { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 74, y: 184 },
         { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 42, y: 184 },
         { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 24, y: 184 },
-        {
-            type: 'narrator',
-            voiceId: 'ch2_wan_narrator_01',
-            text: {
-                en: "After the surrender, the army turned south toward the next rebel city.",
-                zh: "阳城既降，朱儁合兵南征，转向宛城。"
-            }
-        },
         {
             type: 'dialogue',
             portraitKey: 'zhu-jun-generic',
@@ -2549,8 +2556,8 @@ export const NARRATIVE_SCRIPTS = {
             voiceId: 'ch2_wan_zj_01',
             position: 'top',
             text: {
-                en: "The remaining rebels hold the city. Their messenger asks to surrender.",
-                zh: "韩忠与余党据守宛城。张宝既死，彼等遣人请降。"
+                en: "Han Zhong's messenger asks to surrender, yet the gate remains barred and his banners still stand on the wall.",
+                zh: "韩忠遣使请降，然而城门仍闭，城头旗帜未倒。"
             }
         },
         {
@@ -2560,8 +2567,19 @@ export const NARRATIVE_SCRIPTS = {
             voiceId: 'ch2_wan_zj_02',
             position: 'top',
             text: {
-                en: "They rose in rebellion, killed officials, and filled the commandery with fear. I will not accept empty words from behind a wall.",
-                zh: "彼等作乱，杀害官吏，使郡中惊惧。躲在城墙之后，空言请降，岂可轻信？"
+                en: "Yangcheng was different. Yan Zheng struck down Zhang Bao, opened the gate, and put the city in our hands.",
+                zh: "阳城不同。严政斩张宝，开城门，城池已在我军掌中。"
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhu-jun-generic',
+            name: 'Zhu Jun',
+            voiceId: 'ch2_wan_zj_04',
+            position: 'top',
+            text: {
+                en: "Here, empty words from behind a wall may only be a trick to buy time. I will not trust that alone.",
+                zh: "此处隔墙空言，或只是缓兵之计。单凭此言，不可轻信。"
             }
         },
         {
@@ -2571,66 +2589,108 @@ export const NARRATIVE_SCRIPTS = {
             voiceId: 'ch2_wan_lb_01',
             position: 'top',
             text: {
-                en: "General, if all four sides are sealed, men without hope will fight to the death.",
-                zh: "将军，若四面围死，贼众无路，必死战。"
+                en: "General, Wan is not Yangcheng. The question is how to make a false surrender become a real defeat.",
+                zh: "将军，宛城非阳城。此时所虑，是如何使诈降变成真败。"
             }
         },
         {
-            type: 'dialogue',
+            type: 'choice',
             portraitKey: 'liu-bei',
             name: 'Liu Bei',
-            voiceId: 'ch2_wan_lb_02',
             position: 'top',
-            text: {
-                en: "Leave the southeast road open. When their leader comes out, strike his broken ranks in the field.",
-                zh: "可独开东南一路。韩忠若出，便于野外击其散乱之阵。"
-            }
+            options: [
+                {
+                    buttonText: { en: "Open the southeast road.", zh: "开东南一路。" },
+                    voiceId: 'ch2_wan_lb_02',
+                    text: {
+                        en: "Leave the southeast road open. When Han Zhong comes out, strike his broken ranks in the field.",
+                        zh: "可独开东南一路。韩忠若出，便于野外击其散乱之阵。"
+                    },
+                    speaker: 'liubei',
+                    result: [
+                        { type: 'command', action: 'setStoryChoice', key: 'chapter2_wan_strategy', value: 'open_southeast', routeId: 'chapter2_oath' },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'guan-yu',
+                            name: 'Guan Yu',
+                            voiceId: 'ch2_wan_gy_01',
+                            position: 'top',
+                            text: {
+                                en: "A trapped army is iron. A fleeing army is reeds before the blade.",
+                                zh: "困兽之兵坚如铁，奔逃之众则如草芥。"
+                            }
+                        },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhang-fei',
+                            name: 'Zhang Fei',
+                            voiceId: 'ch2_wan_zf_01',
+                            position: 'top',
+                            text: {
+                                en: "Good! Let them think they have found a road, then I will close it with my spear.",
+                                zh: "好！让他们以为有路可走，俺再用蛇矛替他们截路！"
+                            }
+                        },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhu-jun-generic',
+                            name: 'Zhu Jun',
+                            voiceId: 'ch2_wan_zj_03',
+                            position: 'top',
+                            text: {
+                                en: "That counsel is wise. Loosen the siege at the southeast. Place our best troops at the narrow road.",
+                                zh: "玄德之言有理。东南稍解围势，精锐伏于狭路。"
+                            }
+                        }
+                    ]
+                },
+                {
+                    buttonText: { en: "Strike the walls now.", zh: "即刻攻城。" },
+                    voiceId: 'ch2_wan_lb_04',
+                    text: {
+                        en: "Then let us strike the walls now. If Han Zhong hides behind a false surrender, break the gate before he can profit from it.",
+                        zh: "那便即刻攻城。若韩忠借诈降藏身墙后，便先破其城门，使其无利可图。"
+                    },
+                    speaker: 'liubei',
+                    result: [
+                        { type: 'command', action: 'setStoryChoice', key: 'chapter2_wan_strategy', value: 'assault_walls', routeId: 'chapter2_oath' },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'guan-yu',
+                            name: 'Guan Yu',
+                            voiceId: 'ch2_wan_gy_02',
+                            position: 'top',
+                            text: {
+                                en: "A hard blow may end deceit quickly, if our men keep discipline at the gate.",
+                                zh: "若军心整肃，重击城门，也可速断其诈。"
+                            }
+                        },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhang-fei',
+                            name: 'Zhang Fei',
+                            voiceId: 'ch2_wan_zf_02',
+                            position: 'top',
+                            text: {
+                                en: "Ha! If they bar the door while begging mercy, I will knock loudly enough for all Wan to hear.",
+                                zh: "哈哈！一边求饶一边闭门，俺便敲得全宛城都听见！"
+                            }
+                        },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhu-jun-generic',
+                            name: 'Zhu Jun',
+                            voiceId: 'ch2_wan_zj_05',
+                            position: 'top',
+                            text: {
+                                en: "So be it. Form the assault column, but keep order. Wan is to be taken, not burned.",
+                                zh: "也罢。列攻城之阵，但须严整。取宛城，不许焚掠。"
+                            }
+                        }
+                    ]
+                }
+            ]
         },
-        {
-            type: 'dialogue',
-            portraitKey: 'guan-yu',
-            name: 'Guan Yu',
-            voiceId: 'ch2_wan_gy_01',
-            position: 'top',
-            text: {
-                en: "A trapped army is iron. A fleeing army is reeds before the blade.",
-                zh: "困兽之兵坚如铁，奔逃之众则如草芥。"
-            }
-        },
-        {
-            type: 'dialogue',
-            portraitKey: 'zhang-fei',
-            name: 'Zhang Fei',
-            voiceId: 'ch2_wan_zf_01',
-            position: 'top',
-            text: {
-                en: "Good! Let them think they have found a road, then I will close it with my spear.",
-                zh: "好！让他们以为有路可走，俺再用蛇矛替他们截路！"
-            }
-        },
-        {
-            type: 'dialogue',
-            portraitKey: 'zhu-jun-generic',
-            name: 'Zhu Jun',
-            voiceId: 'ch2_wan_zj_03',
-            position: 'top',
-            text: {
-                en: "That counsel is wise. Loosen the siege at the southeast. Place our best troops at the narrow road.",
-                zh: "玄德之言有理。东南稍解围势，精锐伏于狭路。"
-            }
-        },
-        {
-            type: 'dialogue',
-            portraitKey: 'liu-bei',
-            name: 'Liu Bei',
-            voiceId: 'ch2_wan_lb_03',
-            position: 'top',
-            text: {
-                en: "Then the city may fall without turning every desperate man into a corpse.",
-                zh: "如此取宛，不必令绝望之人尽成尸骨。"
-            }
-        },
-        { type: 'command', action: 'setStoryChoice', key: 'chapter2_wan_strategy', value: 'open_southeast', routeId: 'chapter2_oath' },
         { type: 'command', action: 'move', id: 'zhangfei', x: 320, y: 184, wait: false },
         { type: 'command', action: 'move', id: 'guanyu', x: 350, y: 184, wait: false },
         { type: 'command', action: 'move', id: 'liubei', x: 380, y: 184, wait: true },

@@ -38,7 +38,9 @@ export const CHAPTERS = {
                     { id: 'chapter2_zhangbao_counter_council', type: 'narrative', scriptId: 'chapter2_zhangbao_counter_council' },
                     { id: 'chapter2_zhangbao_counter', type: 'battle', battleId: 'chapter2_zhangbao_counter' },
                     { id: 'chapter2_yangcheng_surrender', type: 'battle', battleId: 'chapter2_yangcheng_surrender' },
-                    { id: 'chapter2_wan_strategy', type: 'narrative', scriptId: 'chapter2_wan_strategy' }
+                    { id: 'chapter2_wan_strategy', type: 'narrative', scriptId: 'chapter2_wan_strategy' },
+                    { id: 'chapter2_wan_field', type: 'battle', battleId: 'chapter2_wan_field' },
+                    { id: 'chapter2_wan_gate', type: 'battle', battleId: 'chapter2_wan_gate' }
                 ]
             },
             hejin: {

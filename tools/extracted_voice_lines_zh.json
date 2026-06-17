@@ -444,15 +444,105 @@
     "source": "TacticsScene.js"
   },
   {
+    "id": "ch2_wan_field_defeat_lb_01",
+    "char": "liubei",
+    "text": "此计仍可行。须在野外迎击，不令其复振。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_field_defeat_zj_01",
+    "char": "zhujun",
+    "text": "韩忠脱围，是开路而逼迫不足。重整军阵，再设此计。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_field_hz_01",
+    "char": "hanzhong",
+    "text": "官军开路，果是诱我！趁伏兵未合，杀出去！",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_field_lb_01",
+    "char": "liubei",
+    "text": "不可令其绝望成勇。先破头目，其余自散。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_field_lb_02",
+    "char": "liubei",
+    "text": "留一路生门，胜过怒击城墙，可少伤性命。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_field_zj_01",
+    "char": "zhujun",
+    "text": "韩忠果走此路。严整军阵，击破其散乱之队。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_field_zj_02",
+    "char": "zhujun",
+    "text": "野战已胜。如此受宛城之降，便非轻信闭门之言。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_gate_defeat_lb_01",
+    "char": "liubei",
+    "text": "既择险途，下次须紧逼城门，并护住门前军士。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_gate_defeat_zj_01",
+    "char": "zhujun",
+    "text": "攻门最忌乱。收兵整队，再攻一次。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_gate_hz_01",
+    "char": "hanzhong",
+    "text": "官军以刀梯回应请降！守住城墙！",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_gate_lb_01",
+    "char": "liubei",
+    "text": "贼众闭门而不真降。速战速决，不可拖延。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_gate_lb_02",
+    "char": "liubei",
+    "text": "便令百姓看见，汉军入城，随之而来的是法度。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_gate_zj_01",
+    "char": "zhujun",
+    "text": "宛城城门在前。破门而入，但须禁军士焚掠。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_gate_zj_02",
+    "char": "zhujun",
+    "text": "宛城已取。此路较开东南为烈，城中更须安抚整肃。",
+    "source": "Battles.js"
+  },
+  {
     "id": "ch2_wan_gy_01",
     "char": "guanyu",
     "text": "困兽之兵坚如铁，奔逃之众则如草芥。",
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_wan_gy_02",
+    "char": "guanyu",
+    "text": "若军心整肃，重击城门，也可速断其诈。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_wan_lb_01",
     "char": "liubei",
-    "text": "将军，若四面围死，贼众无路，必死战。",
+    "text": "将军，宛城非阳城。此时所虑，是如何使诈降变成真败。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -462,15 +552,15 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "ch2_wan_lb_03",
+    "id": "ch2_wan_lb_04",
     "char": "liubei",
-    "text": "如此取宛，不必令绝望之人尽成尸骨。",
+    "text": "那便即刻攻城。若韩忠借诈降藏身墙后，便先破其城门，使其无利可图。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_wan_narrator_01",
     "char": "narrator",
-    "text": "阳城既降，朱儁合兵南征，转向宛城。",
+    "text": "阳城开门归降之后，朱儁合兵南征。韩忠与黄巾余党退聚宛城。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -480,21 +570,39 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_wan_zf_02",
+    "char": "zhangfei",
+    "text": "哈哈！一边求饶一边闭门，俺便敲得全宛城都听见！",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_wan_zj_01",
     "char": "zhujun",
-    "text": "韩忠与余党据守宛城。张宝既死，彼等遣人请降。",
+    "text": "韩忠遣使请降，然而城门仍闭，城头旗帜未倒。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_wan_zj_02",
     "char": "zhujun",
-    "text": "彼等作乱，杀害官吏，使郡中惊惧。躲在城墙之后，空言请降，岂可轻信？",
+    "text": "阳城不同。严政斩张宝，开城门，城池已在我军掌中。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_wan_zj_03",
     "char": "zhujun",
     "text": "玄德之言有理。东南稍解围势，精锐伏于狭路。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_zj_04",
+    "char": "zhujun",
+    "text": "此处隔墙空言，或只是缓兵之计。单凭此言，不可轻信。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_zj_05",
+    "char": "zhujun",
+    "text": "也罢。列攻城之阵，但须严整。取宛城，不许焚掠。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1521,6 +1629,18 @@
     "id": "map_lb_ch2_wan_01",
     "char": "liubei",
     "text": "朱儁将军下一步转向宛城。若贼众请降，四路围死之前，须先细思。",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_wan_field_01",
+    "char": "liubei",
+    "text": "东南一路已开。韩忠出城，须趁其未整而击之。",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_wan_gate_01",
+    "char": "liubei",
+    "text": "宛城城门在前。速破其门，入城后须严整军纪。",
     "source": "MapScene.js"
   },
   {

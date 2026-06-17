@@ -448,33 +448,123 @@
     "source": "TacticsScene.js"
   },
   {
+    "id": "ch2_wan_field_defeat_lb_01",
+    "char": "liubei",
+    "text": "The plan is still sound. We must meet him in the field before he regains courage.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_field_defeat_zj_01",
+    "char": "zhujun",
+    "text": "Han Zhong slipped the trap because the road was opened without enough pressure. Reform the line and spring it again.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_field_hz_01",
+    "char": "hanzhong",
+    "text": "They opened the road to bait us. Fight through before the trap closes!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_field_lb_01",
+    "char": "liubei",
+    "text": "Do not let them turn desperation into courage. Break the captains and the rest will scatter.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_field_lb_02",
+    "char": "liubei",
+    "text": "A road left open saved more lives than a wall battered in anger.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_field_zj_01",
+    "char": "zhujun",
+    "text": "Han Zhong has taken the road. Hold discipline and cut through his disordered column.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_field_zj_02",
+    "char": "zhujun",
+    "text": "The field is ours. Now Wan can be received without trusting a barred gate.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_gate_defeat_lb_01",
+    "char": "liubei",
+    "text": "We chose the harder road. Next time, keep pressure on the gate and protect the soldiers beside it.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_gate_defeat_zj_01",
+    "char": "zhujun",
+    "text": "A gate assault punishes disorder at once. Pull the men back, dress the ranks, and try again.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_gate_hz_01",
+    "char": "hanzhong",
+    "text": "They answer surrender with ladders and blades. Hold the wall!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_gate_lb_01",
+    "char": "liubei",
+    "text": "The rebels chose a closed gate over true surrender. Strike cleanly and end this quickly.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_gate_lb_02",
+    "char": "liubei",
+    "text": "Then let the people see that Han order follows the soldiers through the gate.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_gate_zj_01",
+    "char": "zhujun",
+    "text": "Wan's gate stands before us. Break it, but keep the soldiers from plunder.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_gate_zj_02",
+    "char": "zhujun",
+    "text": "Wan is taken. This was harsher than the open road, but the city must now be kept in order.",
+    "source": "Battles.js"
+  },
+  {
     "id": "ch2_wan_gy_01",
     "char": "guanyu",
     "text": "A trapped army is iron. A fleeing army is reeds before the blade.",
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_wan_gy_02",
+    "char": "guanyu",
+    "text": "A hard blow may end deceit quickly, if our men keep discipline at the gate.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_wan_lb_01",
     "char": "liubei",
-    "text": "General, if all four sides are sealed, men without hope will fight to the death.",
+    "text": "General, Wan is not Yangcheng. The question is how to make a false surrender become a real defeat.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_wan_lb_02",
     "char": "liubei",
-    "text": "Leave the southeast road open. When their leader comes out, strike his broken ranks in the field.",
+    "text": "Leave the southeast road open. When Han Zhong comes out, strike his broken ranks in the field.",
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "ch2_wan_lb_03",
+    "id": "ch2_wan_lb_04",
     "char": "liubei",
-    "text": "Then the city may fall without turning every desperate man into a corpse.",
+    "text": "Then let us strike the walls now. If Han Zhong hides behind a false surrender, break the gate before he can profit from it.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_wan_narrator_01",
     "char": "narrator",
-    "text": "After the surrender, the army turned south toward the next rebel city.",
+    "text": "After Yangcheng opened its gates, Zhu Jun turned the army south. Han Zhong and the remaining Yellow Turbans had gathered in Wan.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -484,21 +574,39 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_wan_zf_02",
+    "char": "zhangfei",
+    "text": "Ha! If they bar the door while begging mercy, I will knock loudly enough for all Wan to hear.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_wan_zj_01",
     "char": "zhujun",
-    "text": "The remaining rebels hold the city. Their messenger asks to surrender.",
+    "text": "Han Zhong's messenger asks to surrender, yet the gate remains barred and his banners still stand on the wall.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_wan_zj_02",
     "char": "zhujun",
-    "text": "They rose in rebellion, killed officials, and filled the commandery with fear. I will not accept empty words from behind a wall.",
+    "text": "Yangcheng was different. Yan Zheng struck down Zhang Bao, opened the gate, and put the city in our hands.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_wan_zj_03",
     "char": "zhujun",
     "text": "That counsel is wise. Loosen the siege at the southeast. Place our best troops at the narrow road.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_zj_04",
+    "char": "zhujun",
+    "text": "Here, empty words from behind a wall may only be a trick to buy time. I will not trust that alone.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_zj_05",
+    "char": "zhujun",
+    "text": "So be it. Form the assault column, but keep order. Wan is to be taken, not burned.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1537,6 +1645,18 @@
     "id": "map_lb_ch2_wan_01",
     "char": "liubei",
     "text": "Our next march is south. If the rebels ask to surrender, we must think carefully before sealing every road.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_wan_field_01",
+    "char": "liubei",
+    "text": "The southeast road is open. Han Zhong has come out, and we must strike before his men can rally.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_wan_gate_01",
+    "char": "liubei",
+    "text": "Wan's gate stands before us. Break it quickly, then keep order inside the city.",
     "source": "MapScene.js"
   },
   {

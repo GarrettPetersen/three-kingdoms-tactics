@@ -1063,9 +1063,8 @@ export class NarrativeScene extends BaseScene {
                     this.manager.gameState.setStoryCursor('chapter2_hejin_gate_complete', 'hejin');
                     this.manager.gameState.addMilestone('chapter2_hejin_gate_complete', 'hejin');
                 } else if (this.scriptId === 'chapter2_wan_strategy') {
-                    this.manager.gameState.setStoryCursor('chapter2_oath_complete', 'chapter2_oath');
-                    this.manager.gameState.addMilestone('chapter2_wan_strategy', 'chapter2_oath');
-                    this.manager.gameState.addMilestone('chapter2_oath_complete', 'chapter2_oath');
+                    completeStoryNode(this.manager, 'chapter2_oath', 'chapter2_wan_strategy');
+                    return;
                 }
                 this.manager.switchTo(savedState.nextScene, savedState.nextParams || {});
                 return;

@@ -280,6 +280,24 @@ const HERO_REMINDERS = {
             en: "Our next march is south. If the rebels ask to surrender, we must think carefully before sealing every road.",
             zh: "朱儁将军下一步转向宛城。若贼众请降，四路围死之前，须先细思。"
         }
+    },
+    'chapter2_wan_field': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_ch2_wan_field_01',
+        text: {
+            en: "The southeast road is open. Han Zhong has come out, and we must strike before his men can rally.",
+            zh: "东南一路已开。韩忠出城，须趁其未整而击之。"
+        }
+    },
+    'chapter2_wan_gate': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_ch2_wan_gate_01',
+        text: {
+            en: "Wan's gate stands before us. Break it quickly, then keep order inside the city.",
+            zh: "宛城城门在前。速破其门，入城后须严整军纪。"
+        }
     }
 };
 
@@ -1193,6 +1211,8 @@ export class MapScene extends BaseScene {
         }
 
         // Highest-priority progression first.
+        if (hasChapter2Node(gs, 'chapter2_wan_gate')) return 'chapter2_wan_gate';
+        if (hasChapter2Node(gs, 'chapter2_wan_field')) return 'chapter2_wan_field';
         if (hasChapter2Node(gs, 'chapter2_wan_strategy')) return 'chapter2_wan_strategy';
         if (hasChapter2Node(gs, 'chapter2_yangcheng_surrender')) return 'chapter2_yangcheng_surrender';
         if (hasChapter2Node(gs, 'chapter2_zhangbao_counter')) return 'chapter2_zhangbao_counter';
