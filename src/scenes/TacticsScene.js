@@ -12171,7 +12171,11 @@ export class TacticsScene extends BaseScene {
             const corpseImg = assets.getImage(u.staticCorpseImgKey);
             if (corpseImg) {
                 const x = Math.floor(u.visualX + u.visualOffsetX + hexOffsetX - corpseImg.width / 2);
-                const y = Math.floor(surfaceY + u.visualOffsetY + hexOffsetY - corpseImg.height + 4);
+                const isCharacterFrameCorpse = corpseImg.width === 72 && corpseImg.height === 72;
+                const y = Math.floor(
+                    surfaceY + u.visualOffsetY + hexOffsetY -
+                    (isCharacterFrameCorpse ? 44 : corpseImg.height - 4)
+                );
                 ctx.drawImage(corpseImg, x, y);
             }
         } else {
