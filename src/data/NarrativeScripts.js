@@ -2265,8 +2265,7 @@ export const NARRATIVE_SCRIPTS = {
         {
             type: 'title',
             text: { en: 'LUOYANG', zh: '洛阳' },
-            subtext: { en: 'The Han Palace', zh: '汉宫' },
-            duration: 2400
+            subtext: { en: 'The Han Palace', zh: '汉宫' }
         },
         {
             type: 'narrator',
@@ -2444,8 +2443,7 @@ export const NARRATIVE_SCRIPTS = {
                         {
                             type: 'title',
                             text: { en: 'BAD END', zh: '异史结局' },
-                            subtext: { en: 'He Jin ignored the warning.', zh: '何进未听潘隐之言。' },
-                            duration: 3200
+                            subtext: { en: 'He Jin ignored the warning.', zh: '何进未听潘隐之言。' }
                         },
                         {
                             type: 'narrator',

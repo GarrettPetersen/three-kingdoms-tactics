@@ -250,6 +250,12 @@
     "source": "Battles.js"
   },
   {
+    "id": "ch2_counter_lb_filth_reminder_01",
+    "char": "liubei",
+    "text": "That thunder will break us if we let him keep chanting.",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "ch2_counter_zb_01",
     "char": "zhangbao",
     "text": "Again you come? Then Heaven's lightning will answer me again!",
@@ -266,6 +272,12 @@
     "char": "zhangbao",
     "text": "My spell is broken! Yangcheng - fall back to Yangcheng!",
     "source": "Battles.js"
+  },
+  {
+    "id": "ch2_counter_zf_filth_reminder_01",
+    "char": "zhangfei",
+    "text": "Then get close and hurl the filth at Zhang Bao. Foul the spell at its source!",
+    "source": "TacticsScene.js"
   },
   {
     "id": "ch2_hj_choice_enter",
@@ -436,19 +448,19 @@
     "source": "TacticsScene.js"
   },
   {
-    "id": "ch2_yc_lb_01",
-    "char": "liubei",
-    "text": "Zhang Bao, surrender now. Lay down your arms, and I will urge mercy for the soldiers on that wall.",
-    "source": "Battles.js"
-  },
-  {
     "id": "ch2_yc_lb_02",
     "char": "liubei",
     "text": "The false thunder is silent. May the people behind those walls hear real peace again.",
     "source": "Battles.js"
   },
   {
-    "id": "ch2_yc_lb_choice_threat",
+    "id": "ch2_yc_lb_clemency_01",
+    "char": "liubei",
+    "text": "Zhang Bao, surrender now. Lay down your arms, and I will urge mercy for the soldiers on that wall.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_lb_threat_01",
     "char": "liubei",
     "text": "Then hear this plainly: if you force a siege, your followers will die for a spell already spent.",
     "source": "Battles.js"
@@ -1426,6 +1438,18 @@
     "source": "MapScene.js"
   },
   {
+    "id": "map_lb_ch2_counter_01",
+    "char": "liubei",
+    "text": "Zhang Bao has fled to Yangcheng. Press on before the city can steady itself.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_counter_council_01",
+    "char": "liubei",
+    "text": "The counter is prepared. We return to the ridge and break Zhang Bao's thunder.",
+    "source": "MapScene.js"
+  },
+  {
     "id": "map_lb_ch2_probe_01",
     "char": "liubei",
     "text": "Zhang Bao's sorcery broke our first assault. We regroup at camp and plan a counter.",
@@ -1435,6 +1459,12 @@
     "id": "map_lb_ch2_probe_02",
     "char": "liubei",
     "text": "We have seen Zhang Bao's sorcery with our own eyes. We need a counter before the next clash.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_yangcheng_01",
+    "char": "liubei",
+    "text": "Yangcheng is before us. End this without wasting the lives of those ready to surrender.",
     "source": "MapScene.js"
   },
   {

@@ -236,6 +236,33 @@ const HERO_REMINDERS = {
             en: "We have seen Zhang Bao's sorcery with our own eyes. We need a counter before the next clash.",
             zh: "张宝妖术已亲眼所见。下次交锋前，须先得破术之法。"
         }
+    },
+    'chapter2_zhangbao_counter_council': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_ch2_counter_council_01',
+        text: {
+            en: "The counter is prepared. We return to the ridge and break Zhang Bao's thunder.",
+            zh: "破术之策已备。我们回到山冈，破张宝天雷。"
+        }
+    },
+    'chapter2_zhangbao_counter': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_ch2_counter_01',
+        text: {
+            en: "Zhang Bao has fled to Yangcheng. Press on before the city can steady itself.",
+            zh: "张宝已退入阳城。趁城中未定，立刻追击。"
+        }
+    },
+    'chapter2_yangcheng_surrender': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_ch2_yangcheng_01',
+        text: {
+            en: "Yangcheng is before us. End this without wasting the lives of those ready to surrender.",
+            zh: "阳城就在眼前。若有人愿降，不可枉费性命。"
+        }
     }
 };
 
@@ -1236,6 +1263,9 @@ export class MapScene extends BaseScene {
         }
 
         // Highest-priority progression first.
+        if (hasChapter2Node(gs, 'chapter2_yangcheng_surrender')) return 'chapter2_yangcheng_surrender';
+        if (hasChapter2Node(gs, 'chapter2_zhangbao_counter')) return 'chapter2_zhangbao_counter';
+        if (hasChapter2Node(gs, 'chapter2_zhangbao_counter_council')) return 'chapter2_zhangbao_counter_council';
         if (hasChapter2Node(gs, 'chapter2_zhangbao_probe')) return 'chapter2_zhangbao_probe';
         if ((hasChapter2Choice(gs, 'chapter2_oath_dongzhuo_choice') || gs.hasMilestone('chapter2_oath_dongzhuo_restrained') || gs.hasMilestone('chapter2_oath_dongzhuo_fought')) && !hasChapter2Node(gs, 'chapter2_zhujun_camp')) return 'chapter2_oath_dongzhuo_choice';
         if (gs.hasReachedStoryNode('chapter1_complete', 'liubei') || gs.hasMilestone('chapter1_complete')) return null;

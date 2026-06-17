@@ -3144,17 +3144,80 @@
         "id": "ch2_yc_lb_choice_threat",
         "character": "liubei",
         "original_text": "那便听清楚：若你执意守城，部众只会为已破之妖术送命。",
-        "stt_output": "那便聽清楚,若你直一手成,不重指揮為以破之腰述送命。",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:ch2_yc_zb_threat_reply": {
         "id": "ch2_yc_zb_threat_reply",
         "character": "zhangbao",
         "original_text": "织席贩履之徒，也敢威吓于我？吾奉黄天号令。尔等上城，便葬于城下！",
-        "stt_output": "知习犯 旅之图 也敢威嚇以我无奉皇天后令而等上成变藏于城下",
-        "wer": 3.0,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_lb_filth_reminder_01": {
+        "id": "ch2_counter_lb_filth_reminder_01",
+        "character": "liubei",
+        "original_text": "若任他继续念咒施雷，我们必被天雷击溃。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_zf_filth_reminder_01": {
+        "id": "ch2_counter_zf_filth_reminder_01",
+        "character": "zhangfei",
+        "original_text": "那就逼近张宝，把秽物掷到他身上。从源头污破他的法！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:map_lb_ch2_counter_01": {
+        "id": "map_lb_ch2_counter_01",
+        "character": "liubei",
+        "original_text": "张宝已退入阳城。趁城中未定，立刻追击。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:map_lb_ch2_counter_council_01": {
+        "id": "map_lb_ch2_counter_council_01",
+        "character": "liubei",
+        "original_text": "破术之策已备。我们回到山冈，破张宝天雷。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:map_lb_ch2_yangcheng_01": {
+        "id": "map_lb_ch2_yangcheng_01",
+        "character": "liubei",
+        "original_text": "阳城就在眼前。若有人愿降，不可枉费性命。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_yc_lb_clemency_01": {
+        "id": "ch2_yc_lb_clemency_01",
+        "character": "liubei",
+        "original_text": "张宝，此刻归降。弃兵开城，我愿为墙上士卒求一线生路。",
+        "stt_output": "张宝此刻归响,气冰开成,我愿为强尚是足球一线生路。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_yc_lb_threat_01": {
+        "id": "ch2_yc_lb_threat_01",
+        "character": "liubei",
+        "original_text": "那便听清楚：若你执意守城，部众只会为已破之妖术送命。",
+        "stt_output": "那便聽清楚若你直一手成不仲指揮唯以破之要數送命",
+        "wer": 1.0,
         "is_bad": true,
         "language": "zh"
     }

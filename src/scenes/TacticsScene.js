@@ -106,6 +106,7 @@ export class TacticsScene extends BaseScene {
         this.zhuoTrainingAttackInstructionShown = false;
         this.zhuoTrainingEndTurnPromptShown = false;
         this.zhuoTrainingFreePracticePromptShown = false;
+        this.zhangBaoFilthReminderShown = false;
         this.battlePaletteKeys = [];
         this.activeBattlePaletteIndex = 0;
         this.paletteToastText = '';
@@ -483,6 +484,8 @@ export class TacticsScene extends BaseScene {
             } else if (this.isPostCombatDialogue && this.battleDef?.cutsceneAutoCombat) {
                 this.isPostCombatDialogue = false;
                 this.completeAutoCutsceneBattle();
+            } else if (this.battleId === 'chapter2_yangcheng_surrender') {
+                this.playYangchengBetrayalAttack();
             } else if (this.battleDef?.cutsceneAutoCombat) {
                 this.startAutoCutsceneCombat();
             } else if (!this.isCutscene) {
@@ -729,6 +732,7 @@ export class TacticsScene extends BaseScene {
         this.zhuoTrainingAttackInstructionShown = false;
         this.zhuoTrainingEndTurnPromptShown = false;
         this.zhuoTrainingFreePracticePromptShown = false;
+        this.zhangBaoFilthReminderShown = false;
         this.battlePaletteKeys = this.manager?.getGlobalPaletteKeys?.() || ['off', ...Object.keys(assets.palettes || {}).sort()];
         this.activeBattlePaletteIndex = Math.max(0, this.battlePaletteKeys.indexOf(this.manager?.getGlobalPaletteKey?.() || 'off'));
         this.paletteToastText = '';
@@ -988,6 +992,28 @@ export class TacticsScene extends BaseScene {
         this.startNpcPhase();
     }
 
+    playYangchengBetrayalAttack() {
+        const yanzheng = this.units.find(u => u.id === 'yanzheng' && u.hp > 0 && !u.isGone);
+        const zhangbao = this.units.find(u => u.id === 'zhangbao' && u.hp > 0 && !u.isGone);
+        if (!yanzheng || !zhangbao) {
+            this.finishAutoCutsceneCombat();
+            return;
+        }
+
+        this.turn = 'cutscene';
+        this.isProcessingTurn = true;
+        yanzheng.hasMoved = false;
+        yanzheng.hasAttacked = false;
+        yanzheng.hasActed = false;
+        yanzheng.intent = null;
+        this.executeAttack(yanzheng, 'slash', zhangbao.r, zhangbao.q, () => {
+            yanzheng.faction = 'allied';
+            yanzheng.hasAttacked = true;
+            yanzheng.hasActed = true;
+            setTimeout(() => this.finishAutoCutsceneCombat(), 450);
+        });
+    }
+
     completeAutoCutsceneBattle() {
         if (this.onVictoryCallback) {
             this.onVictoryCallback();
@@ -1038,11 +1064,11 @@ export class TacticsScene extends BaseScene {
         if (this.tacticsMap.cityGateMeta?.gateState !== 'open') {
             this.tacticsMap.setCityGateState?.('open');
         }
-        unit.faction = 'enemy';
+        unit.faction = 'allied';
         unit.carryImgKey = 'zhangbao_head';
 
-        const dest = this.tacticsMap.getCell(4, 5) || this.tacticsMap.getCell(4, 4);
-        const destination = dest && !dest.unit ? dest : this.findNearestFreeCell(4, 5, 3);
+        const dest = this.tacticsMap.getCell(5, 4) || this.tacticsMap.getCell(5, 5);
+        const destination = dest && !dest.unit ? dest : this.findNearestFreeCell(5, 4, 3);
         if (!destination) {
             if (onComplete) onComplete();
             return;
@@ -3747,7 +3773,8 @@ export class TacticsScene extends BaseScene {
             zhuoTrainingAttackPromptShown: { ...(this.zhuoTrainingAttackPromptShown || {}) },
             zhuoTrainingAttackInstructionShown: !!this.zhuoTrainingAttackInstructionShown,
             zhuoTrainingEndTurnPromptShown: !!this.zhuoTrainingEndTurnPromptShown,
-            zhuoTrainingFreePracticePromptShown: !!this.zhuoTrainingFreePracticePromptShown
+            zhuoTrainingFreePracticePromptShown: !!this.zhuoTrainingFreePracticePromptShown,
+            zhangBaoFilthReminderShown: !!this.zhangBaoFilthReminderShown
         };
     }
 
@@ -4101,6 +4128,7 @@ export class TacticsScene extends BaseScene {
         this.zhuoTrainingAttackInstructionShown = !!state.zhuoTrainingAttackInstructionShown;
         this.zhuoTrainingEndTurnPromptShown = !!state.zhuoTrainingEndTurnPromptShown;
         this.zhuoTrainingFreePracticePromptShown = !!state.zhuoTrainingFreePracticePromptShown;
+        this.zhangBaoFilthReminderShown = !!state.zhangBaoFilthReminderShown;
         this.isChoiceActive = !!state.isChoiceActive;
         if (state.isCutscene !== undefined) {
             this.isCutscene = !!state.isCutscene;
@@ -4520,6 +4548,7 @@ export class TacticsScene extends BaseScene {
         this.zhuoTrainingAttackInstructionShown = !!state.zhuoTrainingAttackInstructionShown;
         this.zhuoTrainingEndTurnPromptShown = !!state.zhuoTrainingEndTurnPromptShown;
         this.zhuoTrainingFreePracticePromptShown = !!state.zhuoTrainingFreePracticePromptShown;
+        this.zhangBaoFilthReminderShown = !!state.zhangBaoFilthReminderShown;
         if (this.commandTutorialPendingStart && this.isCleanupDialogueActive && !this.cleanupDialogueOnComplete) {
             this.cleanupDialogueOnComplete = () => this.activatePendingCommandTutorial();
         }
@@ -6444,6 +6473,7 @@ export class TacticsScene extends BaseScene {
         const attack = ATTACKS[attackKey] || ATTACKS.heavenly_lightning;
         attacker.action = attack.animation || 'attack_2';
         attacker.frame = 0;
+        let hitSomeone = false;
 
         this.forceRainUntil = Date.now() + PRE_RAIN_MS + LIGHTNING_DURATION_MS + POST_RAIN_MS;
 
@@ -6456,11 +6486,12 @@ export class TacticsScene extends BaseScene {
                 progress: 0,
                 duration: LIGHTNING_DURATION_MS
             });
-            this.applyHeavenlyLightning(attacker, attackKey, targetR, targetQ);
+            hitSomeone = this.applyHeavenlyLightning(attacker, attackKey, targetR, targetQ);
         }, STRIKE_DELAY_MS);
 
         setTimeout(() => {
             attacker.action = 'standby';
+            if (this.startZhangBaoFilthReminderIfNeeded(attacker, hitSomeone, onComplete)) return;
             if (onComplete) onComplete();
         }, STRIKE_DELAY_MS + LIGHTNING_DURATION_MS + 400);
     }
@@ -6485,6 +6516,40 @@ export class TacticsScene extends BaseScene {
                 this.hitStopRemaining = Math.max(this.hitStopRemaining || 0, 60);
             }
         }
+        return hitVictims.size > 0;
+    }
+
+    startZhangBaoFilthReminderIfNeeded(attacker, hitSomeone, onComplete) {
+        if (!hitSomeone) return false;
+        if (this.battleId !== 'chapter2_zhangbao_counter') return false;
+        if (attacker?.id !== 'zhangbao') return false;
+        if (this.zhangBaoFilthReminderShown) return false;
+        if (!Array.isArray(attacker.attacks) || !attacker.attacks.includes('heavenly_lightning')) return false;
+
+        this.zhangBaoFilthReminderShown = true;
+        this.startBattleEndDialogue([
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'ch2_counter_lb_filth_reminder_01',
+                text: {
+                    en: "That thunder will break us if we let him keep chanting.",
+                    zh: "若任他继续念咒施雷，我们必被天雷击溃。"
+                }
+            },
+            {
+                speaker: 'zhangfei',
+                portraitKey: 'zhang-fei',
+                name: 'Zhang Fei',
+                voiceId: 'ch2_counter_zf_filth_reminder_01',
+                text: {
+                    en: "Then get close and hurl the filth at Zhang Bao. Foul the spell at its source!",
+                    zh: "那就逼近张宝，把秽物掷到他身上。从源头污破他的法！"
+                }
+            }
+        ], onComplete);
+        return true;
     }
 
     executeShout(attacker, attackKey, targetR, targetQ, onComplete) {
@@ -7880,6 +7945,7 @@ export class TacticsScene extends BaseScene {
                         id: uDef.id,
                         r: uDef.r,
                         q: uDef.q,
+                        faction: uDef.faction || template.faction,
                         level: uDef.level !== undefined ? uDef.level : template.level,
                         moveRange: uDef.moveRange !== undefined ? uDef.moveRange : template.moveRange,
                         attacks: uDef.attacks ? [...uDef.attacks] : [...(template.attacks || [])],
@@ -9291,7 +9357,7 @@ export class TacticsScene extends BaseScene {
         const img = assets.getImage(unit.carryImgKey);
         const headW = img?.width || 12;
         const headH = img?.height || 12;
-        const sourceX = unit.visualX + (unit.visualOffsetX || 0) + 24 + Math.max(1, Math.floor(headW * 0.18));
+        const sourceX = unit.visualX + (unit.visualOffsetX || 0) + 17 + Math.max(1, Math.floor(headW * 0.18));
         const sourceY = unit.visualY + (unit.visualOffsetY || 0) - 21 + headH - 2;
         const targetCell = this.getCellAt(sourceX, unit.visualY + 8) || this.tacticsMap?.getCell(unit.r, unit.q);
         const targetPos = targetCell ? this.getPixelPos(targetCell.r, targetCell.q) : { x: sourceX, y: unit.visualY };
@@ -11774,7 +11840,7 @@ export class TacticsScene extends BaseScene {
             if (carriedImg) {
                 const facing = u.flip ? -1 : 1;
                 const carryOffset = u.carryImgKey === 'zhangbao_head'
-                    ? { x: 24, y: -21 }
+                    ? { x: 17, y: -21 }
                     : { x: facing * 13, y: -34 };
                 const x = Math.floor(u.visualX + u.visualOffsetX + hexOffsetX + carryOffset.x - carriedImg.width / 2);
                 const y = Math.floor(surfaceY + u.visualOffsetY + hexOffsetY + carryOffset.y);
@@ -13805,6 +13871,7 @@ export class TacticsScene extends BaseScene {
     isScenarioAttackAllowedOnCell(unit, attackKey, r, q) {
         const rule = unit?.scenarioAttackRules?.[attackKey];
         if (!rule) return true;
+        if (ATTACKS[attackKey]?.type === 'filth') return true;
         const targetUnitIds = Array.isArray(rule.targetUnitIds) ? rule.targetUnitIds : [];
         if (targetUnitIds.length === 0) return true;
         const cell = this.tacticsMap.getCell(r, q);

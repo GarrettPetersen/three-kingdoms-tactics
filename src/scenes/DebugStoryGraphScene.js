@@ -1,6 +1,6 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
-import { STORY_ROUTES } from '../data/StoryGraph.js';
+import { STORY_ROUTES, getStoryNodeNextIds } from '../data/StoryGraph.js';
 import { CHAPTERS } from '../data/Chapters.js';
 import { BATTLES } from '../data/Battles.js';
 
@@ -138,6 +138,40 @@ export class DebugStoryGraphScene extends BaseScene {
         };
     }
 
+    getNextNodeId(routeId, nodeId) {
+        const node = STORY_ROUTES?.[routeId]?.nodes?.[nodeId];
+        const nextIds = getStoryNodeNextIds(node);
+        return nextIds[0] || null;
+    }
+
+    continueAfterGraphBattle(routeId, nodeId) {
+        const nextNodeId = this.getNextNodeId(routeId, nodeId);
+        const gs = this.manager.gameState;
+        gs.addMilestone(nodeId, routeId);
+
+        if (!nextNodeId) {
+            this.manager.switchTo('campaign_selection');
+            return;
+        }
+
+        gs.setStoryCursor(nextNodeId, routeId);
+        const nextLaunch = this.resolveLaunchTarget(routeId, nextNodeId);
+        const params = this.buildGraphLaunchParams(routeId, nextNodeId, nextLaunch);
+        this.manager.switchTo(nextLaunch.scene, params);
+    }
+
+    buildGraphLaunchParams(routeId, nodeId, launch) {
+        const params = { ...(launch.params || {}) };
+        if (launch.scene === 'map') {
+            params.campaignId = params.campaignId || routeId;
+        } else if (launch.scene === 'tactics') {
+            params.onVictory = () => this.continueAfterGraphBattle(routeId, nodeId);
+        } else if (launch.scene === 'narrative') {
+            params.onComplete = () => this.continueAfterGraphBattle(routeId, nodeId);
+        }
+        return params;
+    }
+
     getVisibleCount() {
         const canvas = this.manager?.canvas;
         const height = canvas?.height || 256;
@@ -192,9 +226,10 @@ export class DebugStoryGraphScene extends BaseScene {
         const launch = entry.launch || this.resolveLaunchTarget(entry.routeId, entry.nodeId);
         this.prepareRouteForJump(entry.routeId, entry.nodeId);
         this.manager.gameState.setLastScene(launch.scene);
+        const params = this.buildGraphLaunchParams(entry.routeId, entry.nodeId, launch);
         assets.playSound('ui_click');
-        console.log(`[CHEAT] Story graph jump: ${entry.routeId}:${entry.nodeId} -> ${launch.scene}`, launch.params || {});
-        this.manager.switchTo(launch.scene, launch.params || {});
+        console.log(`[CHEAT] Story graph jump: ${entry.routeId}:${entry.nodeId} -> ${launch.scene}`, params);
+        this.manager.switchTo(launch.scene, params);
     }
 
     goBack() {

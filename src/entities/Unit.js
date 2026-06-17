@@ -83,6 +83,7 @@ export class Unit {
     playDeathSoundOnce() {
         if (this.deathSoundPlayed) return;
         this.deathSoundPlayed = true;
+        if (this.name === 'Boulder') return;
         assets.playSound('death', 0.6);
     }
 

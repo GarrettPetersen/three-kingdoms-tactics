@@ -246,6 +246,12 @@
     "source": "Battles.js"
   },
   {
+    "id": "ch2_counter_lb_filth_reminder_01",
+    "char": "liubei",
+    "text": "若任他继续念咒施雷，我们必被天雷击溃。",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "ch2_counter_zb_01",
     "char": "zhangbao",
     "text": "汝等又来？黄天天雷仍为我应！",
@@ -262,6 +268,12 @@
     "char": "zhangbao",
     "text": "吾法已破！退入阳城，退入阳城！",
     "source": "Battles.js"
+  },
+  {
+    "id": "ch2_counter_zf_filth_reminder_01",
+    "char": "zhangfei",
+    "text": "那就逼近张宝，把秽物掷到他身上。从源头污破他的法！",
+    "source": "TacticsScene.js"
   },
   {
     "id": "ch2_hj_choice_enter",
@@ -432,19 +444,19 @@
     "source": "TacticsScene.js"
   },
   {
-    "id": "ch2_yc_lb_01",
-    "char": "liubei",
-    "text": "张宝，此刻归降。弃兵开城，我愿为墙上士卒求一线生路。",
-    "source": "Battles.js"
-  },
-  {
     "id": "ch2_yc_lb_02",
     "char": "liubei",
     "text": "妖雷已息。愿城中百姓，终能再闻太平之声。",
     "source": "Battles.js"
   },
   {
-    "id": "ch2_yc_lb_choice_threat",
+    "id": "ch2_yc_lb_clemency_01",
+    "char": "liubei",
+    "text": "张宝，此刻归降。弃兵开城，我愿为墙上士卒求一线生路。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_lb_threat_01",
     "char": "liubei",
     "text": "那便听清楚：若你执意守城，部众只会为已破之妖术送命。",
     "source": "Battles.js"
@@ -1410,6 +1422,18 @@
     "source": "MapScene.js"
   },
   {
+    "id": "map_lb_ch2_counter_01",
+    "char": "liubei",
+    "text": "张宝已退入阳城。趁城中未定，立刻追击。",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_counter_council_01",
+    "char": "liubei",
+    "text": "破术之策已备。我们回到山冈，破张宝天雷。",
+    "source": "MapScene.js"
+  },
+  {
     "id": "map_lb_ch2_probe_01",
     "char": "liubei",
     "text": "张宝妖术破了我军首战。先回营整军，再议破术之策。",
@@ -1419,6 +1443,12 @@
     "id": "map_lb_ch2_probe_02",
     "char": "liubei",
     "text": "张宝妖术已亲眼所见。下次交锋前，须先得破术之法。",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_yangcheng_01",
+    "char": "liubei",
+    "text": "阳城就在眼前。若有人愿降，不可枉费性命。",
     "source": "MapScene.js"
   },
   {

@@ -430,7 +430,7 @@ export const ATTACKS = {
         name: { en: 'Throw Filth', zh: '掷秽物' },
         damage: 0,
         minRange: 1,
-        range: 3,
+        range: 2,
         type: 'filth',
         animation: 'attack_1',
         description: { en: "Prepared filth used to foul Zhang Bao's lightning spell.", zh: '以预备秽物污破张宝雷法。' }

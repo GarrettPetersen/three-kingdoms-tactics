@@ -229,7 +229,7 @@ export class TacticsMap {
         const { 
             seed = Math.random(), 
             biome = 'central', // 'central', 'northern', 'northern_snowy', 'southern'
-            layout = 'plain',  // 'plain', 'mountain_pass', 'lake_edge', 'river', 'foothills', 'city_gate'
+            layout = 'plain',  // 'plain', 'mountain_pass', 'pincer_valley', 'lake_edge', 'river', 'foothills', 'city_gate'
             forestDensity = 0.15, 
             mountainDensity = 0.1,
             riverDensity = 0.05,
@@ -262,8 +262,11 @@ export class TacticsMap {
                 this.placeProps(forestDensity, houseDensity);
             }
             
-            // First smooth out any single-tile elevation islands
-            this.smoothLevels();
+            // First smooth out any single-tile elevation islands.
+            // Pincer-valley maps use deliberate narrow ramp bands between cliffs and valley.
+            if (layout !== 'pincer_valley') {
+                this.smoothLevels();
+            }
             
             // For river/lake layouts, ensure no cliffs (max 1 level difference between neighbors)
             if (layout === 'river' || layout === 'lake_edge') {
@@ -272,7 +275,8 @@ export class TacticsMap {
             
             // Then ensure everything is reachable based on the smoothed levels.
             // City-gate maps intentionally have a partition and should not be auto-carved.
-            if (layout !== 'city_gate') {
+            // Pincer-valley maps are authored with explicit ramps between cliffs and valley.
+            if (layout !== 'city_gate' && layout !== 'pincer_valley') {
                 this.ensureReachability();
             }
             
@@ -329,6 +333,8 @@ export class TacticsMap {
             this.generateLake();
         } else if (layout === 'mountain_pass') {
             this.generateMountainPass();
+        } else if (layout === 'pincer_valley') {
+            this.generatePincerValley();
         } else if (layout === 'foothills') {
             this.generateFoothills();
         } else if (layout === 'road') {
@@ -781,6 +787,43 @@ export class TacticsMap {
             if (cell && cell.level > 0) { // Only vary the ridges
                 const delta = Math.random() > 0.5 ? 1 : -1;
                 this.createElevationBlob(r, q, cell.level + delta, 2);
+            }
+        }
+    }
+
+    generatePincerValley() {
+        const leftCliffMaxQ = 2;
+        const rightCliffMinQ = this.width - 3;
+        const rampRows = new Set([2, this.height - 3]);
+        const rockVariants = ['mountain_stone_01', 'mountain_stone_02', 'mountain_stone_03'];
+
+        for (let r = 0; r < this.height; r++) {
+            for (let q = 0; q < this.width; q++) {
+                const cell = this.grid[r][q];
+                cell.impassable = false;
+                cell.baseTerrain = null;
+
+                if (q <= leftCliffMaxQ || q >= rightCliffMinQ) {
+                    cell.level = 3;
+                    cell.terrain = rockVariants[(r + q) % rockVariants.length];
+                } else {
+                    cell.level = 0;
+                    cell.terrain = ((r + q) % 3 === 0) ? 'earth_cracked' : 'mud_01';
+                }
+            }
+        }
+
+        for (const r of rampRows) {
+            for (const q of [2, 3, this.width - 4, this.width - 3]) {
+                const cell = this.getCell(r, q);
+                if (!cell) continue;
+                if (q === 2 || q === this.width - 3) {
+                    cell.level = 2;
+                    cell.terrain = 'earth_rocky';
+                } else {
+                    cell.level = 1;
+                    cell.terrain = 'mud_01';
+                }
             }
         }
     }

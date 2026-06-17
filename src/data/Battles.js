@@ -669,26 +669,26 @@ export const BATTLES = {
         name: 'Yingchuan - The Yangcheng Approach',
         map: {
             biome: 'northern',
-            layout: 'mountain_pass',
+            layout: 'pincer_valley',
             orientation: 'ns',
             seed: 'chapter2_zhangbao_counter',
             weather: 'rain',
-            forestDensity: 0.06,
-            mountainDensity: 0.16,
+            forestDensity: 0.0,
+            mountainDensity: 0.0,
             riverDensity: 0.0,
             houseDensity: 0.0
         },
         units: [
-            { id: 'liubei', r: 7, q: 2, type: 'hero' },
-            { id: 'guanyu', r: 6, q: 2, type: 'hero' },
-            { id: 'zhangfei', r: 8, q: 2, type: 'hero' },
-            { id: 'ally1', r: 7, q: 1, type: 'allied_soldier' },
-            { id: 'ally2', r: 6, q: 1, type: 'allied_soldier' },
-            { id: 'ally3', r: 8, q: 1, type: 'allied_soldier' },
+            { id: 'liubei', r: 5, q: 1, type: 'hero' },
+            { id: 'guanyu', r: 4, q: 8, type: 'hero' },
+            { id: 'zhangfei', r: 6, q: 8, type: 'hero' },
+            { id: 'ally1', r: 4, q: 1, type: 'allied_soldier' },
+            { id: 'ally2', r: 3, q: 9, type: 'allied_soldier' },
+            { id: 'ally3', r: 7, q: 9, type: 'allied_soldier' },
             {
                 id: 'zhangbao',
                 r: 4,
-                q: 9,
+                q: 5,
                 type: 'zhang_bao',
                 level: 4,
                 attacks: ['slash', 'heavenly_lightning'],
@@ -719,11 +719,11 @@ export const BATTLES = {
                     }
                 }
             },
-            { id: 'gaosheng_remnant', r: 5, q: 8, type: 'enemy_captain', templateId: 'gaosheng', storyCasualtyKey: 'chapter2_zhangbao_probe:gaosheng' },
-            { id: 'rebel1', r: 4, q: 8, type: 'enemy_soldier', templateId: 'rebel_archer' },
-            { id: 'rebel2', r: 5, q: 9, type: 'enemy_soldier' },
-            { id: 'rebel3', r: 3, q: 9, type: 'enemy_soldier' },
-            { id: 'rebel4', r: 6, q: 8, type: 'enemy_soldier' }
+            { id: 'gaosheng_remnant', r: 5, q: 5, type: 'enemy_captain', templateId: 'gaosheng', storyCasualtyKey: 'chapter2_zhangbao_probe:gaosheng' },
+            { id: 'rebel1', r: 4, q: 6, type: 'enemy_soldier', templateId: 'rebel_archer' },
+            { id: 'rebel2', r: 5, q: 6, type: 'enemy_soldier' },
+            { id: 'rebel3', r: 3, q: 5, type: 'enemy_soldier' },
+            { id: 'rebel4', r: 6, q: 5, type: 'enemy_soldier' }
         ],
         scenarioAttacks: [
             {
@@ -787,18 +787,18 @@ export const BATTLES = {
             houseDensity: 0.0
         },
         units: [
-            { id: 'liubei', r: 5, q: 3, type: 'hero_force', templateId: 'liubei', cityGateSide: 'outside' },
-            { id: 'guanyu', r: 5, q: 2, type: 'hero_force', templateId: 'guanyu', cityGateSide: 'outside' },
-            { id: 'zhangfei', r: 5, q: 6, type: 'hero_force', templateId: 'zhangfei', cityGateSide: 'outside' },
-            { id: 'zhujun', r: 4, q: 4, type: 'commander', templateId: 'zhujun_observer', cityGateSide: 'outside' },
-            { id: 'oath_soldier1', r: 6, q: 2, type: 'allied_soldier', templateId: 'ally', cityGateSide: 'outside', spectator: true, moveRange: 0, attacks: [] },
-            { id: 'oath_soldier2', r: 6, q: 3, type: 'allied_soldier', templateId: 'ally', cityGateSide: 'outside', spectator: true, moveRange: 0, attacks: [] },
-            { id: 'oath_soldier3', r: 6, q: 6, type: 'allied_soldier', templateId: 'ally', cityGateSide: 'outside', spectator: true, moveRange: 0, attacks: [] },
-            { id: 'han_soldier1', r: 4, q: 2, type: 'imperial_soldier', templateId: 'soldier', cityGateSide: 'outside', spectator: true, moveRange: 0, attacks: [] },
-            { id: 'han_soldier2', r: 4, q: 6, type: 'imperial_soldier', templateId: 'soldier', cityGateSide: 'outside', spectator: true, moveRange: 0, attacks: [] },
-            { id: 'han_soldier3', r: 5, q: 5, type: 'imperial_soldier', templateId: 'soldier', cityGateSide: 'outside', spectator: true, moveRange: 0, attacks: [] },
+            { id: 'liubei', r: 6, q: 4, type: 'hero_force', templateId: 'liubei', cityGateSide: 'outside' },
+            { id: 'guanyu', r: 7, q: 3, type: 'hero_force', templateId: 'guanyu', cityGateSide: 'outside' },
+            { id: 'zhangfei', r: 7, q: 6, type: 'hero_force', templateId: 'zhangfei', cityGateSide: 'outside' },
+            { id: 'zhujun', r: 5, q: 2, type: 'commander', templateId: 'zhujun_observer', cityGateSide: 'outside' },
+            { id: 'oath_soldier1', r: 8, q: 2, type: 'allied_soldier', templateId: 'ally', cityGateSide: 'outside', spectator: true, moveRange: 0, attacks: [] },
+            { id: 'oath_soldier2', r: 8, q: 4, type: 'allied_soldier', templateId: 'ally', cityGateSide: 'outside', spectator: true, moveRange: 0, attacks: [] },
+            { id: 'oath_soldier3', r: 8, q: 6, type: 'allied_soldier', templateId: 'ally', cityGateSide: 'outside', spectator: true, moveRange: 0, attacks: [] },
+            { id: 'han_soldier1', r: 5, q: 1, type: 'imperial_soldier', templateId: 'soldier', cityGateSide: 'outside', spectator: true, moveRange: 0, attacks: [] },
+            { id: 'han_soldier2', r: 5, q: 8, type: 'imperial_soldier', templateId: 'soldier', cityGateSide: 'outside', spectator: true, moveRange: 0, attacks: [] },
+            { id: 'han_soldier3', r: 6, q: 7, type: 'imperial_soldier', templateId: 'soldier', cityGateSide: 'outside', spectator: true, moveRange: 0, attacks: [] },
             { id: 'zhangbao', r: 2, q: 4, type: 'zhang_bao', templateId: 'zhangbao_wounded', cityGateSide: 'inside' },
-            { id: 'yanzheng', r: 2, q: 5, type: 'commander', templateId: 'yanzheng', cityGateSide: 'inside' },
+            { id: 'yanzheng', r: 2, q: 5, type: 'commander', templateId: 'yanzheng', faction: 'enemy', cityGateSide: 'inside' },
             { id: 'wall_rebel1', r: 2, q: 1, type: 'enemy_soldier_weak', templateId: 'rebel', cityGateSide: 'inside', spectator: true, moveRange: 0, attacks: [] },
             { id: 'wall_rebel2', r: 2, q: 2, type: 'enemy_soldier_weak', templateId: 'rebel_archer', cityGateSide: 'inside', spectator: true, moveRange: 0, attacks: [] },
             { id: 'wall_rebel3', r: 2, q: 3, type: 'enemy_soldier_weak', templateId: 'rebel', cityGateSide: 'inside', spectator: true, moveRange: 0, attacks: [] },
@@ -835,8 +835,8 @@ export const BATTLES = {
                 name: 'Liu Bei',
                 options: [
                     {
-                        buttonText: { en: "Offer clemency.", zh: "劝其归降" },
-                        voiceId: 'ch2_yc_lb_01',
+                        buttonText: { en: "Lay down your arms.", zh: "弃兵开城。" },
+                        voiceId: 'ch2_yc_lb_clemency_01',
                         text: {
                             en: "Zhang Bao, surrender now. Lay down your arms, and I will urge mercy for the soldiers on that wall.",
                             zh: "张宝，此刻归降。弃兵开城，我愿为墙上士卒求一线生路。"
@@ -857,8 +857,8 @@ export const BATTLES = {
                         ]
                     },
                     {
-                        buttonText: { en: "Threaten him.", zh: "厉声威逼" },
-                        voiceId: 'ch2_yc_lb_choice_threat',
+                        buttonText: { en: "Force a siege and die.", zh: "守城便死。" },
+                        voiceId: 'ch2_yc_lb_threat_01',
                         text: {
                             en: "Then hear this plainly: if you force a siege, your followers will die for a spell already spent.",
                             zh: "那便听清楚：若你执意守城，部众只会为已破之妖术送命。"
