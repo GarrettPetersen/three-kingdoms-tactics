@@ -444,6 +444,60 @@
     "source": "TacticsScene.js"
   },
   {
+    "id": "ch2_wan_gy_01",
+    "char": "guanyu",
+    "text": "困兽之兵坚如铁，奔逃之众则如草芥。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_lb_01",
+    "char": "liubei",
+    "text": "将军，若四面围死，贼众无路，必死战。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_lb_02",
+    "char": "liubei",
+    "text": "可独开东南一路。韩忠若出，便于野外击其散乱之阵。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_lb_03",
+    "char": "liubei",
+    "text": "如此取宛，不必令绝望之人尽成尸骨。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_narrator_01",
+    "char": "narrator",
+    "text": "阳城既降，朱儁合兵南征，转向宛城。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_zf_01",
+    "char": "zhangfei",
+    "text": "好！让他们以为有路可走，俺再用蛇矛替他们截路！",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_zj_01",
+    "char": "zhujun",
+    "text": "韩忠与余党据守宛城。张宝既死，彼等遣人请降。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_zj_02",
+    "char": "zhujun",
+    "text": "彼等作乱，杀害官吏，使郡中惊惧。躲在城墙之后，空言请降，岂可轻信？",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_zj_03",
+    "char": "zhujun",
+    "text": "玄德之言有理。东南稍解围势，精锐伏于狭路。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_yc_lb_02",
     "char": "liubei",
     "text": "妖雷已息。愿城中百姓，终能再闻太平之声。",
@@ -1449,6 +1503,12 @@
     "id": "map_lb_ch2_probe_02",
     "char": "liubei",
     "text": "张宝妖术已亲眼所见。下次交锋前，须先得破术之法。",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_wan_01",
+    "char": "liubei",
+    "text": "朱儁将军下一步转向宛城。若贼众请降，四路围死之前，须先细思。",
     "source": "MapScene.js"
   },
   {

@@ -4,6 +4,7 @@ import { ANIMATIONS } from '../core/Constants.js';
 import { NARRATIVE_SCRIPTS } from '../data/NarrativeScripts.js';
 import { getCurrentLanguage, getLocalizedText } from '../core/Language.js';
 import { UI_TEXT } from '../data/Translations.js';
+import { completeStoryNode } from '../core/StoryFlow.js';
 
 export class NarrativeScene extends BaseScene {
     constructor() {
@@ -38,6 +39,8 @@ export class NarrativeScene extends BaseScene {
         this.pendingInteractiveAdvance = false;
         this.invalidScriptRecoveryScheduled = false;
         this.waitingForActorId = null;
+        this.storyRouteId = null;
+        this.storyNodeId = null;
         this.skipNextExitSave = false;
     }
 
@@ -257,6 +260,8 @@ export class NarrativeScene extends BaseScene {
             }
 
             this.onComplete = params.onComplete || null;
+            this.storyRouteId = params.storyRouteId || null;
+            this.storyNodeId = params.storyNodeId || null;
             this.currentStep = 0;
             this.subStep = 0; // Track 3-line chunks for long dialogue
             this.actors = {};
@@ -283,6 +288,8 @@ export class NarrativeScene extends BaseScene {
         }
         
         this.scriptId = state.scriptId;
+        this.storyRouteId = state.storyRouteId || null;
+        this.storyNodeId = state.storyNodeId || null;
         let restoredBaseScript = null;
         if (this.scriptId && NARRATIVE_SCRIPTS[this.scriptId]) {
             restoredBaseScript = this.cloneScriptSteps(NARRATIVE_SCRIPTS[this.scriptId]);
@@ -358,7 +365,9 @@ export class NarrativeScene extends BaseScene {
             this.manager.gameState.clearSceneState('narrative');
             
             // Try to transition to the next scene if we have that info
-            if (state.nextScene) {
+            if (state.storyRouteId && state.storyNodeId) {
+                completeStoryNode(this.manager, state.storyRouteId, state.storyNodeId);
+            } else if (state.nextScene) {
                 this.manager.switchTo(state.nextScene, state.nextParams || {});
             } else {
                 // Default to map if no next scene info
@@ -1033,6 +1042,9 @@ export class NarrativeScene extends BaseScene {
             if (this.onComplete) {
                 this.onComplete();
                 return;
+            } else if (savedState?.storyRouteId && savedState?.storyNodeId) {
+                completeStoryNode(this.manager, savedState.storyRouteId, savedState.storyNodeId);
+                return;
             } else if (savedState && savedState.nextScene) {
                 // Restore transition from saved state (onComplete was lost during restore)
                 // Handle special cases that need milestones or other side effects
@@ -1048,6 +1060,10 @@ export class NarrativeScene extends BaseScene {
                 } else if (this.scriptId === 'chapter2_hejin_gate') {
                     this.manager.gameState.setStoryCursor('chapter2_hejin_gate_complete', 'hejin');
                     this.manager.gameState.addMilestone('chapter2_hejin_gate_complete', 'hejin');
+                } else if (this.scriptId === 'chapter2_wan_strategy') {
+                    this.manager.gameState.setStoryCursor('chapter2_oath_complete', 'chapter2_oath');
+                    this.manager.gameState.addMilestone('chapter2_wan_strategy', 'chapter2_oath');
+                    this.manager.gameState.addMilestone('chapter2_oath_complete', 'chapter2_oath');
                 }
                 this.manager.switchTo(savedState.nextScene, savedState.nextParams || {});
                 return;
@@ -1149,6 +1165,8 @@ export class NarrativeScene extends BaseScene {
         const state = {
             scriptId: this.scriptId,
             script: !this.scriptId && this.baseScript && this.baseScript.length > 0 ? this.baseScript : null,
+            storyRouteId: this.storyRouteId,
+            storyNodeId: this.storyNodeId,
             executionFrames: serializedFrames,
             currentStep: this.currentStep,
             subStep: this.subStep,
@@ -2300,6 +2318,7 @@ export class NarrativeScene extends BaseScene {
             'caocao_dunqiu_intro': 'map',
             'caocao_ch1_end_card': 'campaign_selection',
             'chapter2_hejin_gate': 'campaign_selection',
+            'chapter2_wan_strategy': 'campaign_selection',
             'noticeboard': 'narrative', // Goes to inn scene next
             'noticeboard_after_training': 'narrative',
             'inn': 'map',
@@ -2332,6 +2351,7 @@ export class NarrativeScene extends BaseScene {
             'caocao_dunqiu_intro': { campaignId: 'caocao', partyX: 168, partyY: 98 },
             'caocao_ch1_end_card': {},
             'chapter2_hejin_gate': {},
+            'chapter2_wan_strategy': {},
             'noticeboard': { scriptId: 'inn' }, // Chain to inn scene
             'noticeboard_after_training': { scriptId: 'inn' },
             'inn': {}, // After inn, goes to map (milestone added in onComplete)

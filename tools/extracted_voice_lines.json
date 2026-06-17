@@ -448,6 +448,60 @@
     "source": "TacticsScene.js"
   },
   {
+    "id": "ch2_wan_gy_01",
+    "char": "guanyu",
+    "text": "A trapped army is iron. A fleeing army is reeds before the blade.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_lb_01",
+    "char": "liubei",
+    "text": "General, if all four sides are sealed, men without hope will fight to the death.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_lb_02",
+    "char": "liubei",
+    "text": "Leave the southeast road open. When their leader comes out, strike his broken ranks in the field.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_lb_03",
+    "char": "liubei",
+    "text": "Then the city may fall without turning every desperate man into a corpse.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_narrator_01",
+    "char": "narrator",
+    "text": "After the surrender, the army turned south toward the next rebel city.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_zf_01",
+    "char": "zhangfei",
+    "text": "Good! Let them think they have found a road, then I will close it with my spear.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_zj_01",
+    "char": "zhujun",
+    "text": "The remaining rebels hold the city. Their messenger asks to surrender.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_zj_02",
+    "char": "zhujun",
+    "text": "They rose in rebellion, killed officials, and filled the commandery with fear. I will not accept empty words from behind a wall.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_zj_03",
+    "char": "zhujun",
+    "text": "That counsel is wise. Loosen the siege at the southeast. Place our best troops at the narrow road.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_yc_lb_02",
     "char": "liubei",
     "text": "The false thunder is silent. May the people behind those walls hear real peace again.",
@@ -1465,6 +1519,12 @@
     "id": "map_lb_ch2_probe_02",
     "char": "liubei",
     "text": "We have seen Zhang Bao's sorcery with our own eyes. We need a counter before the next clash.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_wan_01",
+    "char": "liubei",
+    "text": "Our next march is south. If the rebels ask to surrender, we must think carefully before sealing every road.",
     "source": "MapScene.js"
   },
   {

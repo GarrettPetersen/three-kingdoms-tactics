@@ -37,7 +37,8 @@ export const STORY_ROUTES = {
             chapter2_zhangbao_probe: { next: 'chapter2_zhangbao_counter_council' },
             chapter2_zhangbao_counter_council: { next: 'chapter2_zhangbao_counter' },
             chapter2_zhangbao_counter: { next: 'chapter2_yangcheng_surrender' },
-            chapter2_yangcheng_surrender: { next: 'chapter2_oath_complete' },
+            chapter2_yangcheng_surrender: { next: 'chapter2_wan_strategy' },
+            chapter2_wan_strategy: { next: 'chapter2_oath_complete' },
             chapter2_oath_complete: { next: null }
         }
     },

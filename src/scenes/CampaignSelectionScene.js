@@ -2,6 +2,7 @@ import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 import { getLocalizedText, LANGUAGE } from '../core/Language.js';
 import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
+import { launchStoryNode } from '../core/StoryFlow.js';
 
 const STORY_MAP_LEGACY_WIDTH = 256;
 const STORY_MAP_LEGACY_HEIGHT = 256;
@@ -177,8 +178,9 @@ export class CampaignSelectionScene extends BaseScene {
         const hasResolvedOpener = gs.getStoryChoice('chapter2_oath_dongzhuo_choice', null, routeId) != null
             || gs.hasMilestone('chapter2_oath_dongzhuo_restrained', routeId)
             || gs.hasMilestone('chapter2_oath_dongzhuo_fought', routeId);
-        const hasLaterProgress = gs.hasMilestone('chapter2_zhujun_camp', routeId)
-            || gs.hasMilestone('chapter2_zhangbao_probe', routeId);
+        const hasLaterProgress = gs.hasCompletedStoryNode('chapter2_zhujun_camp', routeId)
+            || gs.hasCompletedStoryNode('chapter2_zhangbao_probe', routeId)
+            || (cursor.nodeId && cursor.nodeId !== 'chapter2_oath_dongzhuo_choice');
         const hasSavedScene = !!gs.getSceneState('map', routeId)
             || !!gs.getSceneState('narrative', routeId)
             || !!gs.getSceneState('tactics', routeId);
@@ -198,7 +200,8 @@ export class CampaignSelectionScene extends BaseScene {
         if (!cursor.nodeId) {
             gs.startStoryRoute(routeId);
         }
-        this.manager.switchTo('map', { campaignId: routeId });
+        const nextNodeId = gs.getStoryCursor(routeId).nodeId || 'chapter2_oath_dongzhuo_choice';
+        launchStoryNode(this.manager, routeId, nextNodeId);
     }
 
     startChapter2HeJinRoute() {

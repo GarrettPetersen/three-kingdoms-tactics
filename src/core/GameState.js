@@ -435,6 +435,16 @@ export class GameState {
             || run.flags?.[nodeId] === true;
     }
 
+    hasCompletedStoryNode(nodeId, routeId = null) {
+        const resolvedRouteId = routeId || this.getCurrentCampaign();
+        const route = STORY_ROUTES[resolvedRouteId];
+        if (!route || !route.nodes[nodeId]) return false;
+        const run = this.getRunState(resolvedRouteId, { create: false });
+        if (!run) return false;
+        return (run.completedNodeIds || []).includes(nodeId)
+            || run.flags?.[nodeId] === true;
+    }
+
     setStoryChoice(key, value, routeId = null) {
         const resolvedRouteId = routeId || this.getCurrentCampaign();
         if (!resolvedRouteId) {

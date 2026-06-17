@@ -33,11 +33,12 @@ export const CHAPTERS = {
                 title: 'Brothers Against the Tide',
                 scenes: [
                     { id: 'chapter2_oath_dongzhuo_choice', type: 'battle', battleId: 'chapter2_oath_dongzhuo_choice' },
-                    { id: 'chapter2_zhujun_camp', type: 'narrative' },
+                    { id: 'chapter2_zhujun_camp', type: 'narrative', scriptId: 'chapter2_zhujun_camp' },
                     { id: 'chapter2_zhangbao_probe', type: 'battle', battleId: 'chapter2_zhangbao_probe' },
                     { id: 'chapter2_zhangbao_counter_council', type: 'narrative', scriptId: 'chapter2_zhangbao_counter_council' },
                     { id: 'chapter2_zhangbao_counter', type: 'battle', battleId: 'chapter2_zhangbao_counter' },
-                    { id: 'chapter2_yangcheng_surrender', type: 'battle', battleId: 'chapter2_yangcheng_surrender' }
+                    { id: 'chapter2_yangcheng_surrender', type: 'battle', battleId: 'chapter2_yangcheng_surrender' },
+                    { id: 'chapter2_wan_strategy', type: 'narrative', scriptId: 'chapter2_wan_strategy' }
                 ]
             },
             hejin: {

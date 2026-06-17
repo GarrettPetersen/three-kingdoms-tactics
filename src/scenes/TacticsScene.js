@@ -8,6 +8,7 @@ import { applyLevelAttackUpgrades, getLevelFromXP, getMaxHpForLevel, resolveUnit
 import { NARRATIVE_SCRIPTS } from '../data/NarrativeScripts.js';
 import { getLocalizedText, getFontForLanguage, getTextContainerSize, LANGUAGE } from '../core/Language.js';
 import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
+import { completeStoryNode } from '../core/StoryFlow.js';
 
 /** Vertical offset for drawing horse + rider (was 10; 6 moves them up 4px so they are not "underground"). */
 const MOUNTED_Y_OFFSET = 6;
@@ -694,6 +695,8 @@ export class TacticsScene extends BaseScene {
         this.lastTime = 0;
         this.hitStopRemaining = 0;
         this.onVictoryCallback = params.onVictory || null; // Custom callback for battle result
+        this.storyRouteId = params.storyRouteId || savedState?.storyRouteId || null;
+        this.storyNodeId = params.storyNodeId || savedState?.storyNodeId || null;
         this.onChoiceRestrain = params.onChoiceRestrain || null; // Callback for peaceful choice
         this.onChoiceFight = params.onChoiceFight || null; // Callback for fight choice
         this.onFightVictory = params.onFightVictory || null; // Callback for cage-break victory
@@ -3738,6 +3741,8 @@ export class TacticsScene extends BaseScene {
         const config = this.manager.config;
         return {
             battleId: this.battleId,
+            storyRouteId: this.storyRouteId || null,
+            storyNodeId: this.storyNodeId || null,
             turn: this.turn,
             turnNumber: this.turnNumber,
             caocaoSecondWaveSpawned: !!this.caocaoSecondWaveSpawned,
@@ -9009,11 +9014,18 @@ export class TacticsScene extends BaseScene {
         if (this.isGameOver) {
             this.gameOverTimer -= dt;
             if (this.gameOverTimer <= 0) {
-                // If there's a custom victory callback, pass it to the summary screen
+        // If there's a custom victory callback, pass it to the summary screen
                 if (this.won && this.onVictoryCallback) {
                     this.manager.switchTo('summary', {
                         ...this.finalStats,
                         onComplete: this.onVictoryCallback
+                    });
+                    return;
+                }
+                if (this.won && this.storyRouteId && this.storyNodeId) {
+                    this.manager.switchTo('summary', {
+                        ...this.finalStats,
+                        onComplete: () => completeStoryNode(this.manager, this.storyRouteId, this.storyNodeId)
                     });
                     return;
                 }

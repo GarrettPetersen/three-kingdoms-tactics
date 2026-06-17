@@ -2946,8 +2946,8 @@
         "id": "ch2_counter_camp_choice_use",
         "character": "liubei",
         "original_text": "If striking Zhang Bao with filth stops the thunder and saves the men, we use it.",
-        "stt_output": "If striking Shangbao with filth stops the thunder and saves the men, we use it.",
-        "wer": 0.125,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2955,8 +2955,8 @@
         "id": "ch2_counter_camp_gy_01",
         "character": "guanyu",
         "original_text": "Pig, sheep, and dog blood, with filthy matter besides. Give it to the brothers and keep it ready at both sides of the valley.",
-        "stt_output": "Pig sheep and dog blood, with filthy matter besides. Give it to the brothers and keep it ready at both sides of the valley.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2973,8 +2973,8 @@
         "id": "ch2_counter_camp_lb_02",
         "character": "liubei",
         "original_text": "Guan Yu, Zhang Fei: take the right side of the valley. I will press from the left. When Zhang Bao calls thunder, close in and throw the filth on him.",
-        "stt_output": "one you, Shang Fei, took the right side of the valley. I will press from the left. When Zhang Bao calls thunder, close in and throw the filth on him.",
-        "wer": 0.13333333333333333,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2991,8 +2991,8 @@
         "id": "ch2_counter_camp_zj_01",
         "character": "zhujun",
         "original_text": "Then do not meet thunder with spearpoints alone. Blood and filth can foul the rite itself. If Zhang Bao is struck with it, the lightning should fail.",
-        "stt_output": "Then do not meet thunder with spear points alone. Blood and filth can foul the right itself. If Jean-Bau is struck with it, the lightning should fail.",
-        "wer": 0.18518518518518517,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3000,8 +3000,8 @@
         "id": "ch2_counter_camp_zj_02",
         "character": "zhujun",
         "original_text": "This is not worship of sorcery. It is a soldier's answer: close the distance, foul the caster, and end the thunder.",
-        "stt_output": "This is not worship of sorcery. It is a soldier's answer. Close the distance, foul the caster, and end the thunder.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3018,8 +3018,8 @@
         "id": "ch2_counter_gy_01",
         "character": "guanyu",
         "original_text": "We are in position on the far side. When he calls the lightning, we close the pincer.",
-        "stt_output": "We are in position on the far side. When he calls the lightning, we close the pincer.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3189,8 +3189,8 @@
         "id": "map_lb_ch2_counter_council_01",
         "character": "liubei",
         "original_text": "The counter is prepared. We return to the valley, close the pincer, and break Zhang Bao's thunder.",
-        "stt_output": "The counter is prepared. We return to the valley, close the pincer and break Zengbao's thunder.",
-        "wer": 0.11764705882352941,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3227,6 +3227,96 @@
         "original_text": "Surrender? I am the General of Earth. Yangcheng will stand while one Yellow Turban yet breathes.",
         "stt_output": "",
         "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_gy_01": {
+        "id": "ch2_wan_gy_01",
+        "character": "guanyu",
+        "original_text": "A trapped army is iron. A fleeing army is reeds before the blade.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_lb_01": {
+        "id": "ch2_wan_lb_01",
+        "character": "liubei",
+        "original_text": "General, if all four sides are sealed, men without hope will fight to the death.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_lb_02": {
+        "id": "ch2_wan_lb_02",
+        "character": "liubei",
+        "original_text": "Leave the southeast road open. When their leader comes out, strike his broken ranks in the field.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_lb_03": {
+        "id": "ch2_wan_lb_03",
+        "character": "liubei",
+        "original_text": "Then the city may fall without turning every desperate man into a corpse.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_narrator_01": {
+        "id": "ch2_wan_narrator_01",
+        "character": "narrator",
+        "original_text": "After the surrender, the army turned south toward the next rebel city.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_zf_01": {
+        "id": "ch2_wan_zf_01",
+        "character": "zhangfei",
+        "original_text": "Good! Let them think they have found a road, then I will close it with my spear.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_zj_01": {
+        "id": "ch2_wan_zj_01",
+        "character": "zhujun",
+        "original_text": "The remaining rebels hold the city. Their messenger asks to surrender.",
+        "stt_output": "The remaining rebels hold the city. Their messenger asks to surrender.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_zj_02": {
+        "id": "ch2_wan_zj_02",
+        "character": "zhujun",
+        "original_text": "They rose in rebellion, killed officials, and filled the commandery with fear. I will not accept empty words from behind a wall.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_zj_03": {
+        "id": "ch2_wan_zj_03",
+        "character": "zhujun",
+        "original_text": "That counsel is wise. Loosen the siege at the southeast. Place our best troops at the narrow road.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:map_lb_ch2_wan_01": {
+        "id": "map_lb_ch2_wan_01",
+        "character": "liubei",
+        "original_text": "Our next march is south. If the rebels ask to surrender, we must think carefully before sealing every road.",
+        "stt_output": "Our next march is south. If the rebels ask to surrender, we must think carefully before sealing every rope.",
+        "wer": 0.05263157894736842,
         "is_bad": false,
         "language": "en"
     }

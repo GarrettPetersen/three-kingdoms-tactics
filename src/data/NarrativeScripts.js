@@ -2122,6 +2122,56 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'setActorLoop', id: 'refugee_m_02', enabled: false },
         { type: 'command', action: 'setActorLoop', id: 'refugee_f_02', enabled: false }
     ],
+    'chapter2_zhujun_camp': [
+        { bg: 'army_camp', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'addActor', id: 'zhujun', imgKey: 'zhujun_sprite', x: 136, y: 188 },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 72, y: 214 },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 42, y: 214 },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 12, y: 214 },
+        { type: 'title', text: { en: 'YINGCHUAN - ZHU JUN CAMP', zh: '颍川·朱儁军营' }, duration: 1800 },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhu-jun-generic',
+            name: 'Zhu Jun',
+            voiceId: 'ch2_zj_camp_zj_00',
+            text: {
+                en: "Xuande, you came by night to join my command. Good.",
+                zh: "玄德，你们当夜引军来投，甚好。"
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhu-jun-generic',
+            name: 'Zhu Jun',
+            voiceId: 'ch2_zj_camp_zj_02',
+            text: {
+                en: "I will receive your force with full trust. We combine our men as one host and advance against Zhang Bao.",
+                zh: "我待汝军以厚礼。即刻合兵一处，进讨张宝。"
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhu-jun-generic',
+            name: 'Zhu Jun',
+            voiceId: 'ch2_zj_camp_zj_01',
+            text: {
+                en: "Xuande, take the vanguard and engage the rebels first.",
+                zh: "玄德，你为先锋，先与贼对敌。"
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_zj_camp_lb_01',
+            text: {
+                en: "Understood. Guan Yu, Zhang Fei - prepare the men. We march at first light.",
+                zh: "领命。云长、翼德，整备军士，黎明出发。"
+            }
+        }
+    ],
     'chapter2_zhangbao_counter_council': [
         { bg: 'army_camp', type: 'command', action: 'clearActors' },
         { type: 'command', action: 'clearProps' },
@@ -2255,6 +2305,116 @@ export const NARRATIVE_SCRIPTS = {
                 zh: "善。过此山冈，便是阳城之路。此处破之，他只得退守城中。"
             }
         },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 320, y: 184, wait: false },
+        { type: 'command', action: 'move', id: 'guanyu', x: 350, y: 184, wait: false },
+        { type: 'command', action: 'move', id: 'liubei', x: 380, y: 184, wait: true },
+        { type: 'command', action: 'fade', target: 1, speed: 0.001 }
+    ],
+    'chapter2_wan_strategy': [
+        { bg: 'army_camp', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'addActor', id: 'zhujun', imgKey: 'zhujun_sprite', x: 164, y: 170 },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 74, y: 184 },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 42, y: 184 },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 24, y: 184 },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_wan_narrator_01',
+            text: {
+                en: "After the surrender, the army turned south toward the next rebel city.",
+                zh: "阳城既降，朱儁合兵南征，转向宛城。"
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhu-jun-generic',
+            name: 'Zhu Jun',
+            voiceId: 'ch2_wan_zj_01',
+            position: 'top',
+            text: {
+                en: "The remaining rebels hold the city. Their messenger asks to surrender.",
+                zh: "韩忠与余党据守宛城。张宝既死，彼等遣人请降。"
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhu-jun-generic',
+            name: 'Zhu Jun',
+            voiceId: 'ch2_wan_zj_02',
+            position: 'top',
+            text: {
+                en: "They rose in rebellion, killed officials, and filled the commandery with fear. I will not accept empty words from behind a wall.",
+                zh: "彼等作乱，杀害官吏，使郡中惊惧。躲在城墙之后，空言请降，岂可轻信？"
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_wan_lb_01',
+            position: 'top',
+            text: {
+                en: "General, if all four sides are sealed, men without hope will fight to the death.",
+                zh: "将军，若四面围死，贼众无路，必死战。"
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_wan_lb_02',
+            position: 'top',
+            text: {
+                en: "Leave the southeast road open. When their leader comes out, strike his broken ranks in the field.",
+                zh: "可独开东南一路。韩忠若出，便于野外击其散乱之阵。"
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'guan-yu',
+            name: 'Guan Yu',
+            voiceId: 'ch2_wan_gy_01',
+            position: 'top',
+            text: {
+                en: "A trapped army is iron. A fleeing army is reeds before the blade.",
+                zh: "困兽之兵坚如铁，奔逃之众则如草芥。"
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhang-fei',
+            name: 'Zhang Fei',
+            voiceId: 'ch2_wan_zf_01',
+            position: 'top',
+            text: {
+                en: "Good! Let them think they have found a road, then I will close it with my spear.",
+                zh: "好！让他们以为有路可走，俺再用蛇矛替他们截路！"
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhu-jun-generic',
+            name: 'Zhu Jun',
+            voiceId: 'ch2_wan_zj_03',
+            position: 'top',
+            text: {
+                en: "That counsel is wise. Loosen the siege at the southeast. Place our best troops at the narrow road.",
+                zh: "玄德之言有理。东南稍解围势，精锐伏于狭路。"
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_wan_lb_03',
+            position: 'top',
+            text: {
+                en: "Then the city may fall without turning every desperate man into a corpse.",
+                zh: "如此取宛，不必令绝望之人尽成尸骨。"
+            }
+        },
+        { type: 'command', action: 'setStoryChoice', key: 'chapter2_wan_strategy', value: 'open_southeast', routeId: 'chapter2_oath' },
         { type: 'command', action: 'move', id: 'zhangfei', x: 320, y: 184, wait: false },
         { type: 'command', action: 'move', id: 'guanyu', x: 350, y: 184, wait: false },
         { type: 'command', action: 'move', id: 'liubei', x: 380, y: 184, wait: true },
