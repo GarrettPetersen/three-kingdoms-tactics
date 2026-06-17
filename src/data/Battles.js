@@ -761,8 +761,8 @@ export const BATTLES = {
                 name: 'Liu Bei',
                 voiceId: 'ch2_counter_lb_01',
                 text: {
-                    en: "Hold until the thunder breaks and the black air rises. Then foul the false shapes and strike from both wings.",
-                    zh: "待雷声大作、黑气漫天，再以秽物破其纸人草马，两翼齐出。"
+                    en: "Hold until the thunder breaks and the black air rises. Then get close to Zhang Bao and throw the filth on him to stop his power.",
+                    zh: "待雷声大作、黑气漫天，再靠近张宝，将秽物掷到他身上，破其妖法。"
                 }
             }
         ],
