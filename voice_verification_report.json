@@ -1175,7 +1175,7 @@
         "character": "guanyu",
         "original_text": "Third brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march.",
         "stt_output": "Third brother is right, we have sworn to destroy these traitors and restore peace, we are ready to march.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1184,7 +1184,7 @@
         "character": "guanyu",
         "original_text": "Brother, your courage is admirable, but even heroes need strategy. Let us work with the magistrate.",
         "stt_output": "Brother, your courage is admirable, but even heroes need strategy.  Let us work with the magistrate.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1220,7 +1220,7 @@
         "character": "liubei",
         "original_text": "The people cry out for justice. We cannot stand idle.",
         "stt_output": "the people cry out for justice, we cannot stand idle.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1256,7 +1256,7 @@
         "character": "zhoujing",
         "original_text": "Who goes there? These men behind you... they have the look of tigers. You do not look like common recruits.",
         "stt_output": "Who goes there? These men behind you. They have the look of tigers. You do not look like common recruits.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1265,7 +1265,7 @@
         "character": "zhoujing",
         "original_text": "An Imperial kinsman with a true heart! Truly, the Heavens have not abandoned the Han. Your arrival is most timely.",
         "stt_output": "An imperial kinsman with a true heart.  Truly, the heavens have not abandoned the Han.  Your arrival is most timely.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1310,7 +1310,7 @@
         "character": "system",
         "original_text": "Cheat code accepted. Narrative scene is functional.",
         "stt_output": "cheat code, accepted.  Narrative scene is functional.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1328,7 +1328,7 @@
         "character": "dengmao",
         "original_text": "Imperial dogs! You dare stand in the way of the Lord of Heaven?",
         "stt_output": "Imperial dogs! You dare stand in the way of the Lord of Heaven.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1337,7 +1337,7 @@
         "character": "guanyu",
         "original_text": "Their numbers are great, but they are but a rabble without leadership.",
         "stt_output": "Their numbers are great, but they are but a rabble without leadership.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1355,7 +1355,7 @@
         "character": "liubei",
         "original_text": "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!",
         "stt_output": "Their resolve is weak. If we defeat these captains, the rest will be turned to flight.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1364,7 +1364,7 @@
         "character": "zhangfei",
         "original_text": "Let me at them! My Serpent Spear is thirsty for rebel blood!",
         "stt_output": "Let me at them, my serpent spear is thirsty for rebel blood.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1373,7 +1373,7 @@
         "character": "dongzhuo",
         "original_text": "What offices do you three hold?",
         "stt_output": "What offices do you three hold?",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1391,7 +1391,7 @@
         "character": "dongzhuo",
         "original_text": "CURSE THESE REBELS! They have slaughtered my men! Is there no one left to fight?!",
         "stt_output": "Curse these rebels. They have slaughtered my men. Is there no one left to fight?",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1418,7 +1418,7 @@
         "character": "guanyu",
         "original_text": "Brother, there may be consequences for this...",
         "stt_output": "Brother, there may be consequences for this.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1490,7 +1490,7 @@
         "character": "liubei",
         "original_text": "We have made our choice. Now we fight!",
         "stt_output": "We have made our choice.  Now we fight.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1499,7 +1499,7 @@
         "character": "liubei",
         "original_text": "Master, I could not stand by while a loyal commander was led to unjust execution.",
         "stt_output": "Master, I could not stand by while a loyal commander was led to unjust execution.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1508,7 +1508,7 @@
         "character": "liubei",
         "original_text": "None.",
         "stt_output": "None.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1517,7 +1517,7 @@
         "character": "liubei",
         "original_text": "The court will have its own public judgment. How can you act rashly?",
         "stt_output": "The court will have its own public judgment.  How can you act rashly?",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1570,9 +1570,9 @@
         "id": "gz_nar_poem_01",
         "character": "narrator",
         "original_text": "As it was in olden time so it is today,\nThe simple wight may merit well,\nOfficialdom holds sway;\nZhang Fei, the blunt and hasty,\nWhere can you find his peer?",
-        "stt_output": "As it was in olden time, so it is today, the simple white may merit well, officialdom holds sway.  Zhang Fei, the blunt and hasty. Where can you find his peer?",
-        "wer": 0.3333333333333333,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "en"
     },
     "en:gz_nar_restrain_01": {
@@ -1589,7 +1589,7 @@
         "character": "zhangfei",
         "original_text": "This is outrage! Let me slay these dogs and free you, Master!",
         "stt_output": "This is outrage! Let me slay these dogs and free you, master.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1643,7 +1643,7 @@
         "character": "farmer",
         "original_text": "These Yellow Turban rebels... I try to drink away my worries, but they always return. What will become of us?",
         "stt_output": "These yellow turban rebels, I try to drink away my worries, but they always return.  What will become of us?",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1652,7 +1652,7 @@
         "character": "guanyu",
         "original_text": "Quick! Bring me wine! I am in a hurry to get to town and join the volunteers!",
         "stt_output": "Quick, bring me wine, I am in a hurry to get to town and join the volunteers.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1679,7 +1679,7 @@
         "character": "guanyu",
         "original_text": "The heavens have surely brought us together. We share one mind and one purpose.",
         "stt_output": "The heavens have surely brought us together, we share one mind, and one purpose.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1688,7 +1688,7 @@
         "character": "guanyu",
         "original_text": "I agree. We swear by the peach garden.",
         "stt_output": "I agree, we swear by the Peach Garden.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1697,7 +1697,7 @@
         "character": "guanyu",
         "original_text": "Your words ring true. I would be honored to join your cause.",
         "stt_output": "Your words ring true, I, would be honored to join your cause.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1706,7 +1706,7 @@
         "character": "guanyu",
         "original_text": "Spoken like a true leader. The people need men like you.",
         "stt_output": "Spoken like a true leader, the people need men like you.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1715,7 +1715,7 @@
         "character": "liubei",
         "original_text": "Indeed. Honor and duty call us.",
         "stt_output": "Indeed, honor and duty call us!",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1731,10 +1731,10 @@
     "en:inn_lb_03": {
         "id": "inn_lb_03",
         "character": "liubei",
-        "original_text": "A noble heart!",
-        "stt_output": "a noble heart. I am Liu Bei. And this is Zhang Fei. We have just agreed to raise a volunteer  army ourselves.",
-        "wer": 6.333333333333333,
-        "is_bad": true,
+        "original_text": "A noble heart! I am Liu Bei, and this is Zhang Fei. We have just agreed to raise a volunteer army ourselves.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "en"
     },
     "en:inn_lb_04": {
@@ -1742,7 +1742,7 @@
         "character": "liubei",
         "original_text": "To restore the Han and bring peace to the common people. That is our shared destiny.",
         "stt_output": "to restore the Han and bring peace to the common people.  That is our shared destiny.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1751,17 +1751,17 @@
         "character": "liubei",
         "original_text": "An excellent proposal. We shall do it!",
         "stt_output": "an excellent proposal. We shall do it!",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
     "en:inn_lb_choice_01": {
         "id": "inn_lb_choice_01",
         "character": "liubei",
-        "original_text": "Join us.",
-        "stt_output": "Your cause is just, join us, and together we shall serve the Han.",
-        "wer": 5.5,
-        "is_bad": true,
+        "original_text": "Your cause is just. Join us, and together we shall serve the Han.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "en"
     },
     "en:inn_lb_choice_02": {
@@ -1769,7 +1769,7 @@
         "character": "liubei",
         "original_text": "We fight not for glory, but for the people who suffer under this chaos.",
         "stt_output": "We fight not for glory, but for the people who suffer under this chaos.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1778,7 +1778,7 @@
         "character": "liubei",
         "original_text": "The people suffer while we sit here. We must act soon.",
         "stt_output": "The people suffer while we sit here, we must act soon.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1796,7 +1796,7 @@
         "character": "zhangfei",
         "original_text": "This wine is good! Together, we shall raise an army that will make the rebels tremble.",
         "stt_output": "This wine is good, together.  We shall raise an army that will make the rebels tremble.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1805,7 +1805,7 @@
         "character": "zhangfei",
         "original_text": "Hey! You there! You're joining the volunteers too? Come, drink with us!",
         "stt_output": "Hey, you there! You're joining the volunteers too. Come, drink with us!",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1832,7 +1832,7 @@
         "character": "zhangfei",
         "original_text": "I feel as though I have known you both for a lifetime.",
         "stt_output": "I feel as though I have known you both for a lifetime.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1850,7 +1850,7 @@
         "character": "zhangfei",
         "original_text": "Tomorrow, let us offer sacrifices there and swear to be brothers! To live and die as one!",
         "stt_output": "Tomorrow, let us offer sacrifices there, and swear to be brothers, to live and die as one.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1859,7 +1859,7 @@
         "character": "narrator",
         "original_text": "The world under heaven, long divided, must unite; long united, must divide.",
         "stt_output": "The world under heaven long divided must unite, long united must divide.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1886,7 +1886,7 @@
         "character": "narrator",
         "original_text": "But now, in the reign of Emperor Ling, the Han crumbles from within.",
         "stt_output": "But now, in the reign of Emperor Ling, the Han Crumbles from within.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1894,9 +1894,9 @@
         "id": "intro_narrator_03a",
         "character": "narrator",
         "original_text": "The Ten Regular Attendants—eunuchs who have wormed their way into the emperor's favor—corrupt the court.",
-        "stt_output": "The ten regular attendants, Unix who have warmed their way into the emperor's favor, corrupt the court.",
-        "wer": 0.3333333333333333,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "en"
     },
     "en:intro_narrator_03b": {
@@ -1904,7 +1904,7 @@
         "character": "narrator",
         "original_text": "They silence honest ministers, plunder the treasury, and rule through fear.",
         "stt_output": "They silence honest ministers, plunder the treasury, and rule through fear.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1913,7 +1913,7 @@
         "character": "narrator",
         "original_text": "The people suffer while the palace grows fat.",
         "stt_output": "The people suffer while the palace grows fat.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1922,7 +1922,7 @@
         "character": "narrator",
         "original_text": "In this chaos, three brothers from Julu County see their chance.",
         "stt_output": "In this chaos, three brothers from Julu County see their chance.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1949,7 +1949,7 @@
         "character": "narrator",
         "original_text": "With half a million followers bound in yellow scarves, the Zhang brothers prepare to strike.",
         "stt_output": "With half a million followers bound in yellow scarves, the Zhang brothers prepare to strike.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1958,7 +1958,7 @@
         "character": "narrator",
         "original_text": "The rebellion begins.",
         "stt_output": "The rebellion begins.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1976,7 +1976,7 @@
         "character": "zhangbao",
         "original_text": "Brother, the official troops melt away at a whisper of our coming! Our strength grows by the day!",
         "stt_output": "Brother, the official troops melt away at a whisper of our coming. Our strength grows by the day.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1985,7 +1985,7 @@
         "character": "zhangbao",
         "original_text": "The Han has grown weak and decadent! The people cry out for justice, and we shall deliver it with fire and steel!",
         "stt_output": "The Han has grown weak and decadent.  The people cry out for justice,  and we shall deliver it with fire and steel.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -1994,7 +1994,7 @@
         "character": "zhangjue",
         "original_text": "The good fortune of the Han is exhausted! The Wise and Worthy Man has appeared!",
         "stt_output": "The good fortune of the Han is exhausted, the wise and worthy man has appeared.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2003,7 +2003,7 @@
         "character": "zhangjue",
         "original_text": "For schemes like ours, the most difficult part is to gain the popular favor. But that is already ours. Such an opportunity must not pass!",
         "stt_output": "For schemes like ours, the most difficult part is to gain the popular favor.  But, that is already ours.  Such an opportunity must not pass.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2039,7 +2039,7 @@
         "character": "zhangliang",
         "original_text": "The people bind their heads with yellow scarves and join our cause! Soon, all the empire will be ours!",
         "stt_output": "The people bind their heads with yellow scarves and join our cause.  Soon, all the Empire will be ours.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2048,7 +2048,7 @@
         "character": "zhangliang",
         "original_text": "Let the imperial dogs flee! Their cities will burn, their armies will crumble. The Yellow Heavens shall rise!",
         "stt_output": "Let the Imperial dogs flee, their cities will burn, their armies will crumble, the yellow heavens shall rise.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2057,7 +2057,7 @@
         "character": "liubei",
         "original_text": "We were overwhelmed! We must regroup and strike again.",
         "stt_output": "We were overwhelmed. We must regroup and strike again.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2084,7 +2084,7 @@
         "character": "liubei",
         "original_text": "The siege is lifted. We should return to the Magistrate to see where else we can be of service.",
         "stt_output": "The siege is lifted. We should return to the magistrate to see where else we can be of service.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2111,7 +2111,7 @@
         "character": "guanyu",
         "original_text": "We will rescue each other in difficulty; we will aid each other in danger.",
         "stt_output": "We will rescue each other in difficulty.  We will aid each other in danger.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2129,7 +2129,7 @@
         "character": "liubei",
         "original_text": "We ask not the same day of birth, but we seek to die together on the same day.",
         "stt_output": "We ask not the same day of birth, but we seek to die together on the same day.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2138,7 +2138,7 @@
         "character": "liubei",
         "original_text": "May the Heaven and the Earth read our hearts. If we turn aside from righteousness, may the Heaven and the Human smite us!",
         "stt_output": "May the heaven and the earth read our hearts.  If we turn aside from righteousness,  may the heaven and the human smite us.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2156,7 +2156,7 @@
         "character": "narrator",
         "original_text": "In the peach garden, among the blooming flowers, a black ox and a white horse are sacrificed.",
         "stt_output": "In the peach garden, among the blooming flowers, a black ox and a white horse are sacrificed.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2174,7 +2174,7 @@
         "character": "zhangfei",
         "original_text": "We swear to serve the state and save the people.",
         "stt_output": "We swear to serve the state and save the people.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2183,7 +2183,7 @@
         "character": "farmer2",
         "original_text": "I've heard the rebels are already in the next county. They show no mercy to those who resist. We must prepare for the worst.",
         "stt_output": "I've heard the rebels are already in the next county.  They show no mercy to those who resist.  We must prepare for the worst.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2192,7 +2192,7 @@
         "character": "farmer",
         "original_text": "The Yellow Turbans... they say they'll burn everything in their path. My family has lived here for generations. What will become of us?",
         "stt_output": "The Yellow Turbans, they say they'll burn everything in their path.  My family has lived here, for generations.  What will become of us?",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2201,7 +2201,7 @@
         "character": "liubei",
         "original_text": "The Imperial Clan's blood flows in my veins...",
         "stt_output": "The Imperial Clans Blood flows in my veins.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2219,7 +2219,7 @@
         "character": "liubei",
         "original_text": "How can I possibly save the people from this chaos?",
         "stt_output": "How can I possibly save the people from this chaos?",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2237,7 +2237,7 @@
         "character": "liubei",
         "original_text": "I wish I could destroy these rebels and restore peace...",
         "stt_output": "I wish I could destroy these rebels and restore peace.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2246,7 +2246,7 @@
         "character": "liubei",
         "original_text": "That would be a great blessing for the people!",
         "stt_output": "That would be a great blessing for the people.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2255,7 +2255,7 @@
         "character": "zhangfei",
         "original_text": "I sigh for the suffering people.",
         "stt_output": "I sigh for the suffering people.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2264,7 +2264,7 @@
         "character": "zhangfei",
         "original_text": "I sigh for my own lost status.",
         "stt_output": "I sigh for my own lost status.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2282,7 +2282,7 @@
         "character": "noticeboard",
         "original_text": "All able-bodied men are called to defend the Han.",
         "stt_output": "All able-bodied men are called to defend the Han.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2291,7 +2291,7 @@
         "character": "noticeboard",
         "original_text": "Report to the local Magistrate at once.",
         "stt_output": "Report to the local magistrate at once.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2309,7 +2309,7 @@
         "character": "zhangfei",
         "original_text": "A true hero's heart! You and I are of one mind.",
         "stt_output": "A true hero's heart, you and I are of one mind.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2326,9 +2326,9 @@
         "id": "pro_zf_04",
         "character": "zhangfei",
         "original_text": "I am Zhang Fei, aka Yide.",
-        "stt_output": "I'm Jan Faye, a.k.a Yee-da.",
-        "wer": 0.8333333333333334,
-        "is_bad": true,
+        "stt_output": "I am Zhang Fei, aka I'd...",
+        "wer": 0.16666666666666666,
+        "is_bad": false,
         "language": "en"
     },
     "en:pro_zf_05": {
@@ -2336,7 +2336,7 @@
         "character": "zhangfei",
         "original_text": "I live in this county, where I have a farm. I sell wine and slaughter hogs.",
         "stt_output": "I live in this county where I have a farm.  I sell wine and slaughter hogs.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2345,7 +2345,7 @@
         "character": "zhangfei",
         "original_text": "I have some wealth! I am willing to use it to recruit volunteers.",
         "stt_output": "I have some wealth.  I am willing to use it to recruit volunteers.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2354,7 +2354,7 @@
         "character": "zhangfei",
         "original_text": "What say you to that?",
         "stt_output": "What say you to that?",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2372,7 +2372,7 @@
         "character": "liubei",
         "original_text": "I must reach the flag to signal the ambush!",
         "stt_output": "I must reach the flag to signal the ambush.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2381,7 +2381,7 @@
         "character": "guanyu",
         "original_text": "A superior strategy, brother. We go at once.",
         "stt_output": "A superior strategy brother, we go at once.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2399,7 +2399,7 @@
         "character": "liubei",
         "original_text": "They are many and we but few. We cannot prevail in a direct assault.",
         "stt_output": "They are many, and we but few, we cannot prevail in a direct assault.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2417,17 +2417,17 @@
         "character": "liubei",
         "original_text": "The people cry out for aid. We must answer their call at once.",
         "stt_output": "The people cry out for aid.  We must answer their call at once.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
     "en:qz_ms_01": {
         "id": "qz_ms_01",
-        "character": "soldier",
+        "character": "volunteer",
         "original_text": "URGENT! Imperial Protector Gong Jing of Qingzhou Region is under siege! The city is near falling!",
-        "stt_output": "Urant, Imperial Protector Gong Jing of Jingzhou region, is under his siege, cities near",
-        "wer": 0.4375,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "en"
     },
     "en:qz_ret_gj_01": {
@@ -2453,7 +2453,7 @@
         "character": "gongjing",
         "original_text": "Your humility does you credit, but your deeds speak louder than words.",
         "stt_output": "Your humility does you credit, but your deeds speak louder than words.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2462,7 +2462,7 @@
         "character": "guanyu",
         "original_text": "A noble cause, brother. We stand with you.",
         "stt_output": "A noble cause brother, we stand with you.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2471,7 +2471,7 @@
         "character": "liubei",
         "original_text": "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere.",
         "stt_output": "We are glad to have served, Imperial Protector.  Peace is restored here, but the rebellion still rages elsewhere.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2525,7 +2525,7 @@
         "character": "liubei",
         "original_text": "A fine victory, but we must remain vigilant. The city gates await us.",
         "stt_output": "A fine victory, but we must remain vigilant.  The city gates await us.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2543,7 +2543,7 @@
         "character": "zhangfei",
         "original_text": "Look at them run! Like rats from a sinking ship! We've broken their spirit.",
         "stt_output": "Look at them run like rats from a sinking ship we've broken their spirit.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2552,7 +2552,7 @@
         "character": "zhangfei",
         "original_text": "Right you are, eldest brother! Let's make sure the city is truly secure.",
         "stt_output": "Right you are, eldest brother.  Let's make sure the city is truly secure.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2570,7 +2570,7 @@
         "character": "zhangfei",
         "original_text": "That's the spirit, brother! Let's show those rebels what we're made of!",
         "stt_output": "That's the spirit, brother.  Let's show those rebels what we're made of.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2588,7 +2588,7 @@
         "character": "guanyu",
         "original_text": "We offer no riches, only the chance to serve with honor under the banner of Liu Bei.",
         "stt_output": "We offer no riches, only the chance to serve with honor under the banner of Liu Bei.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2606,7 +2606,7 @@
         "character": "liubei",
         "original_text": "Let us march! Our first destination: the headquarters of the local Magistrate.",
         "stt_output": "Let us march, our first destination, the headquarters of the local magistrate.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2615,7 +2615,7 @@
         "character": "soldier",
         "original_text": "We have heard of your brotherhood! We are but simple men, but we will follow you to the death!",
         "stt_output": "We have heard of your brotherhood, we are, but simple men, but we will follow you to the death.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2633,7 +2633,7 @@
         "character": "guanyu",
         "original_text": "A momentary lapse in focus. I shall return to the field with renewed vigor.",
         "stt_output": "A momentary lapse, in focus, I shall return to the field with renewed vigor.",
-        "wer": 0.0,
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -2652,6 +2652,15 @@
         "original_text": "Bah! Those rascals got a lucky hit in! Next time, they won't be so fortunate!",
         "stt_output": "Baa! I need...  Eish!  Those rascals got a lucky hit in.  Next time, they won't be so fortunate.",
         "wer": 0.26666666666666666,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_lb_01": {
+        "id": "ch2_counter_lb_01",
+        "character": "liubei",
+        "original_text": "Hold until the thunder breaks and the black air rises. Then get close to Zhang Bao and throw the filth on him to stop his power.",
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     }

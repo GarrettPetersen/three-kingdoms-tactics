@@ -242,7 +242,7 @@
   {
     "id": "ch2_counter_lb_01",
     "char": "liubei",
-    "text": "待雷声大作、黑气漫天，再以秽物破其纸人草马，两翼齐出。",
+    "text": "待雷声大作、黑气漫天，再靠近张宝，将秽物掷到他身上，破其妖法。",
     "source": "Battles.js"
   },
   {
@@ -295,7 +295,7 @@
   },
   {
     "id": "ch2_hj_guard_01",
-    "char": "eunuchguard",
+    "char": "palace_assassin",
     "text": "闭宫门。蹇硕有令。",
     "source": "NarrativeScripts.js"
   },

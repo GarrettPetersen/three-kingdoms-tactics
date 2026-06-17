@@ -1254,8 +1254,8 @@
         "id": "pro_zf_04",
         "character": "zhangfei",
         "original_text": "I am Zhang Fei, aka Yide.",
-        "stt_output": "",
-        "wer": 0,
+        "stt_output": "I am Zhang Fei, aka I'd...",
+        "wer": 0.16666666666666666,
         "is_bad": false,
         "language": "en"
     },
@@ -2728,7 +2728,7 @@
     },
     "en:ch2_hj_guard_01": {
         "id": "ch2_hj_guard_01",
-        "character": "eunuchguard",
+        "character": "palace_assassin",
         "original_text": "Seal the gate. Jian Shuo commands it.",
         "stt_output": "",
         "wer": 0,
@@ -3026,7 +3026,7 @@
     "en:ch2_counter_lb_01": {
         "id": "ch2_counter_lb_01",
         "character": "liubei",
-        "original_text": "Hold until the thunder breaks and the black air rises. Then foul the false shapes and strike from both wings.",
+        "original_text": "Hold until the thunder breaks and the black air rises. Then get close to Zhang Bao and throw the filth on him to stop his power.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -3207,8 +3207,8 @@
         "id": "ch2_yc_lb_clemency_01",
         "character": "liubei",
         "original_text": "Zhang Bao, surrender now. Lay down your arms, and I will urge mercy for the soldiers on that wall.",
-        "stt_output": "Changbao, Zorin, Darnat, lay down your arms and I will urge mercy for the soldiers on that wall.",
-        "wer": 0.21052631578947367,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3216,8 +3216,8 @@
         "id": "ch2_yc_lb_threat_01",
         "character": "liubei",
         "original_text": "Then hear this plainly: if you force a siege, your followers will die for a spell already spent.",
-        "stt_output": "then hear this plainly. If you force a siege, your followers will die for a spell already spin.",
-        "wer": 0.05555555555555555,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     }

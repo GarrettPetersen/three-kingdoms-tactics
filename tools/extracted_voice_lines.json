@@ -246,7 +246,7 @@
   {
     "id": "ch2_counter_lb_01",
     "char": "liubei",
-    "text": "Hold until the thunder breaks and the black air rises. Then foul the false shapes and strike from both wings.",
+    "text": "Hold until the thunder breaks and the black air rises. Then get close to Zhang Bao and throw the filth on him to stop his power.",
     "source": "Battles.js"
   },
   {
@@ -299,7 +299,7 @@
   },
   {
     "id": "ch2_hj_guard_01",
-    "char": "eunuchguard",
+    "char": "palace_assassin",
     "text": "Seal the gate. Jian Shuo commands it.",
     "source": "NarrativeScripts.js"
   },
@@ -1678,8 +1678,7 @@
     "id": "pro_zf_04",
     "char": "zhangfei",
     "text": "I am Zhang Fei, aka Yide.",
-    "source": "NarrativeScripts.js",
-    "phonetic_text": "I am Jang Fay, A-K-A Yee-duh."
+    "source": "NarrativeScripts.js"
   },
   {
     "id": "pro_zf_05",

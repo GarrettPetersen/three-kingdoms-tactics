@@ -2728,7 +2728,7 @@
     },
     "zh:ch2_hj_guard_01": {
         "id": "ch2_hj_guard_01",
-        "character": "eunuchguard",
+        "character": "palace_assassin",
         "original_text": "闭宫门。蹇硕有令。",
         "stt_output": "",
         "wer": 0,
@@ -3026,10 +3026,10 @@
     "zh:ch2_counter_lb_01": {
         "id": "ch2_counter_lb_01",
         "character": "liubei",
-        "original_text": "待雷声大作、黑气漫天，再以秽物破其纸人草马，两翼齐出。",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false,
+        "original_text": "待雷声大作、黑气漫天，再靠近张宝，将秽物掷到他身上，破其妖法。",
+        "stt_output": "帶雷生大佐黑七曼田在靠近張寶將會物質到他身上破棋藥法",
+        "wer": 1.0,
+        "is_bad": true,
         "language": "zh"
     },
     "zh:ch2_counter_zb_01": {
@@ -3207,7 +3207,7 @@
         "id": "ch2_yc_lb_clemency_01",
         "character": "liubei",
         "original_text": "张宝，此刻归降。弃兵开城，我愿为墙上士卒求一线生路。",
-        "stt_output": "张宝此刻归响,气冰开成,我愿为强尚是足球一线生路。",
+        "stt_output": "张宝此刻归响,替兵开城,我愿为强尚市足球一线深路。",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
@@ -3216,7 +3216,7 @@
         "id": "ch2_yc_lb_threat_01",
         "character": "liubei",
         "original_text": "那便听清楚：若你执意守城，部众只会为已破之妖术送命。",
-        "stt_output": "那便聽清楚若你直一手成不仲指揮唯以破之要數送命",
+        "stt_output": "那便聽清楚,若你直一手成,不仲指揮唯一破之邀屬宋命。",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
