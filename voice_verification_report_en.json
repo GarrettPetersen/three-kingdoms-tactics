@@ -2180,7 +2180,7 @@
     "en:ch2_probe_lb_retreat_01": {
         "id": "ch2_probe_lb_retreat_01",
         "character": "liubei",
-        "original_text": "Brothers, withdraw! We cannot break that lightning head-on today!",
+        "original_text": "Brothers, withdraw! We cannot break his sorcery here today!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -3242,7 +3242,7 @@
     "en:ch2_wan_lb_01": {
         "id": "ch2_wan_lb_01",
         "character": "liubei",
-        "original_text": "General, if all four sides are sealed, men without hope will fight to the death.",
+        "original_text": "General, Wan is not Yangcheng. The question is how to make a false surrender become a real defeat.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -3251,7 +3251,7 @@
     "en:ch2_wan_lb_02": {
         "id": "ch2_wan_lb_02",
         "character": "liubei",
-        "original_text": "Leave the southeast road open. When their leader comes out, strike his broken ranks in the field.",
+        "original_text": "Leave the southeast road open. When Han Zhong comes out, strike his broken ranks in the field.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -3269,7 +3269,7 @@
     "en:ch2_wan_narrator_01": {
         "id": "ch2_wan_narrator_01",
         "character": "narrator",
-        "original_text": "After the surrender, the army turned south toward the next rebel city.",
+        "original_text": "After Yangcheng opened its gates, Zhu Jun turned the army south. Han Zhong and the remaining Yellow Turbans had gathered in Wan.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -3287,7 +3287,7 @@
     "en:ch2_wan_zj_01": {
         "id": "ch2_wan_zj_01",
         "character": "zhujun",
-        "original_text": "The remaining rebels hold the city. Their messenger asks to surrender.",
+        "original_text": "Han Zhong's messenger asks to surrender, yet the gate remains barred and his banners still stand on the wall.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -3296,7 +3296,7 @@
     "en:ch2_wan_zj_02": {
         "id": "ch2_wan_zj_02",
         "character": "zhujun",
-        "original_text": "They rose in rebellion, killed officials, and filled the commandery with fear. I will not accept empty words from behind a wall.",
+        "original_text": "Yangcheng was different. Yan Zheng struck down Zhang Bao, opened the gate, and put the city in our hands.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -3369,8 +3369,8 @@
         "id": "pro_lb_noticeboard_wait_01",
         "character": "liubei",
         "original_text": "If we can gather men of courage, perhaps this county need not face the rebels alone.",
-        "stt_output": "if we can gather men of courage. Perhaps this county need not face the rebels alone.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3378,8 +3378,197 @@
         "id": "pro_zf_noticeboard_wait_01",
         "character": "zhangfei",
         "original_text": "Come, Xuande! Wine first, then we find the men to break these rebels.",
-        "stt_output": "Come, Shwandai! Wine first, then we find the men to break these rebels.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_field_defeat_lb_01": {
+        "id": "ch2_wan_field_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "The plan is still sound. We must meet him in the field before he regains courage.",
+        "stt_output": "The plan is still sound. We must meet him in the field before he regains courage.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_field_defeat_zj_01": {
+        "id": "ch2_wan_field_defeat_zj_01",
+        "character": "zhujun",
+        "original_text": "Han Zhong slipped the trap because the road was opened without enough pressure. Reform the line and spring it again.",
+        "stt_output": "And Song slipped the trap because the road was opened without enough pressure. Reform the line and spring it again.",
+        "wer": 0.1,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_field_hz_01": {
+        "id": "ch2_wan_field_hz_01",
+        "character": "hanzhong",
+        "original_text": "They opened the road to bait us. Fight through before the trap closes!",
+        "stt_output": "They opened the road to bait us. Fight through before the trap closes.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_field_lb_01": {
+        "id": "ch2_wan_field_lb_01",
+        "character": "liubei",
+        "original_text": "Do not let them turn desperation into courage. Break the captains and the rest will scatter.",
+        "stt_output": "Do not let them turn desperation into courage. Break the captains and the rest will scatter.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_field_lb_02": {
+        "id": "ch2_wan_field_lb_02",
+        "character": "liubei",
+        "original_text": "A road left open saved more lives than a wall battered in anger.",
+        "stt_output": "A road left open saved more lives than a wall battered in anger.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_field_zj_01": {
+        "id": "ch2_wan_field_zj_01",
+        "character": "zhujun",
+        "original_text": "Han Zhong has taken the road. Hold discipline and cut through his disordered column.",
+        "stt_output": "Han Song has taken the road. All discipline and cuts through his disordered column.",
+        "wer": 0.21428571428571427,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_field_zj_02": {
+        "id": "ch2_wan_field_zj_02",
+        "character": "zhujun",
+        "original_text": "The field is ours. Now Wan can be received without trusting a barred gate.",
+        "stt_output": "The field is ours. Our one can be received without trusting a barred gate.",
+        "wer": 0.14285714285714285,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_gate_defeat_lb_01": {
+        "id": "ch2_wan_gate_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "We chose the harder road. Next time, keep pressure on the gate and protect the soldiers beside it.",
+        "stt_output": "We chose the harder road. Next time, keep pressure on the gate and protect the soldiers beside it.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_gate_defeat_zj_01": {
+        "id": "ch2_wan_gate_defeat_zj_01",
+        "character": "zhujun",
+        "original_text": "A gate assault punishes disorder at once. Pull the men back, dress the ranks, and try again.",
+        "stt_output": "A gaiter soul punishes disorder at once. Pull the men back, dress the ranks, and try again.",
+        "wer": 0.11764705882352941,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_gate_hz_01": {
+        "id": "ch2_wan_gate_hz_01",
+        "character": "hanzhong",
+        "original_text": "They answer surrender with ladders and blades. Hold the wall!",
+        "stt_output": "The answer, surrender with ladders and blades. Hold the wall.",
+        "wer": 0.1,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_gate_lb_01": {
+        "id": "ch2_wan_gate_lb_01",
+        "character": "liubei",
+        "original_text": "The rebels chose a closed gate over true surrender. Strike cleanly and end this quickly.",
+        "stt_output": "The rebels chose a closed gate over true surrender. Strike cleanly and end this quickly.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_gate_lb_02": {
+        "id": "ch2_wan_gate_lb_02",
+        "character": "liubei",
+        "original_text": "Then let the people see that Han order follows the soldiers through the gate.",
+        "stt_output": "then let the people see that Han Order follows the soldiers through the gate.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_gate_zj_01": {
+        "id": "ch2_wan_gate_zj_01",
+        "character": "zhujun",
+        "original_text": "Wan's gate stands before us. Break it, but keep the soldiers from plunder.",
+        "stt_output": "Once gate stands before us, break it, but keep the soldiers from plunder.",
         "wer": 0.07692307692307693,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_gate_zj_02": {
+        "id": "ch2_wan_gate_zj_02",
+        "character": "zhujun",
+        "original_text": "Wan is taken. This was harsher than the open road, but the city must now be kept in order.",
+        "stt_output": "Hun is taken. This was harsher than the open road, but the city must now be kept in order.",
+        "wer": 0.05263157894736842,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_gy_02": {
+        "id": "ch2_wan_gy_02",
+        "character": "guanyu",
+        "original_text": "A hard blow may end deceit quickly, if our men keep discipline at the gate.",
+        "stt_output": "A hard blow may end a seat quickly, if our men keep discipline at the gate.",
+        "wer": 0.13333333333333333,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_lb_04": {
+        "id": "ch2_wan_lb_04",
+        "character": "liubei",
+        "original_text": "Then let us strike the walls now. If Han Zhong hides behind a false surrender, break the gate before he can profit from it.",
+        "stt_output": "Then let us strike the walls now. Now, if Hangeon hides behind a false surrender, break the gate before he can profit from it.",
+        "wer": 0.125,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_zf_02": {
+        "id": "ch2_wan_zf_02",
+        "character": "zhangfei",
+        "original_text": "Ha! If they bar the door while begging mercy, I will knock loudly enough for all Wan to hear.",
+        "stt_output": "Ha! If they bar the door while begging mercy, I would not be allowed enough for all one to hear.",
+        "wer": 0.2631578947368421,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_zj_04": {
+        "id": "ch2_wan_zj_04",
+        "character": "zhujun",
+        "original_text": "Here, empty words from behind a wall may only be a trick to buy time. I will not trust that alone.",
+        "stt_output": "Here empty words from behind the wall may only be a trick to buy time. I will not trust that alone.",
+        "wer": 0.047619047619047616,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_zj_05": {
+        "id": "ch2_wan_zj_05",
+        "character": "zhujun",
+        "original_text": "So be it. Form the assault column, but keep order. Wan is to be taken, not burned.",
+        "stt_output": "So be it, form the Assault Column but keep order. Run is to be taken, not burn.",
+        "wer": 0.11764705882352941,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:map_lb_ch2_wan_field_01": {
+        "id": "map_lb_ch2_wan_field_01",
+        "character": "liubei",
+        "original_text": "The southeast road is open. Han Zhong has come out, and we must strike before his men can rally.",
+        "stt_output": "The southeast road is open. Han Zhong has come out, and we must strike before his men can rally.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:map_lb_ch2_wan_gate_01": {
+        "id": "map_lb_ch2_wan_gate_01",
+        "character": "liubei",
+        "original_text": "Wan's gate stands before us. Break it quickly, then keep order inside the city.",
+        "stt_output": "Once gate stands before us, break it quickly, then keep order inside the city.",
+        "wer": 0.07142857142857142,
         "is_bad": false,
         "language": "en"
     }

@@ -2180,7 +2180,7 @@
     "zh:ch2_probe_lb_retreat_01": {
         "id": "ch2_probe_lb_retreat_01",
         "character": "liubei",
-        "original_text": "二弟、三弟，先撤！今日不可与其天雷硬拼！",
+        "original_text": "二弟、三弟，先撤！今日不可强破其妖术！",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -3242,7 +3242,7 @@
     "zh:ch2_wan_lb_01": {
         "id": "ch2_wan_lb_01",
         "character": "liubei",
-        "original_text": "将军，若四面围死，贼众无路，必死战。",
+        "original_text": "将军，宛城非阳城。此时所虑，是如何使诈降变成真败。",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -3269,7 +3269,7 @@
     "zh:ch2_wan_narrator_01": {
         "id": "ch2_wan_narrator_01",
         "character": "narrator",
-        "original_text": "阳城既降，朱儁合兵南征，转向宛城。",
+        "original_text": "阳城开门归降之后，朱儁合兵南征。韩忠与黄巾余党退聚宛城。",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -3287,7 +3287,7 @@
     "zh:ch2_wan_zj_01": {
         "id": "ch2_wan_zj_01",
         "character": "zhujun",
-        "original_text": "韩忠与余党据守宛城。张宝既死，彼等遣人请降。",
+        "original_text": "韩忠遣使请降，然而城门仍闭，城头旗帜未倒。",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -3296,7 +3296,7 @@
     "zh:ch2_wan_zj_02": {
         "id": "ch2_wan_zj_02",
         "character": "zhujun",
-        "original_text": "彼等作乱，杀害官吏，使郡中惊惧。躲在城墙之后，空言请降，岂可轻信？",
+        "original_text": "阳城不同。严政斩张宝，开城门，城池已在我军掌中。",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -3369,17 +3369,206 @@
         "id": "pro_lb_noticeboard_wait_01",
         "character": "liubei",
         "original_text": "若能聚起有胆气之士，涿县或许不必独自面对贼军。",
-        "stt_output": "若能聚起有胆气之事,拙陷或许不必独自面对贼军。",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:pro_zf_noticeboard_wait_01": {
         "id": "pro_zf_noticeboard_wait_01",
         "character": "zhangfei",
         "original_text": "走吧，玄德！先饮酒，再招人，把这些贼打个粉碎。",
-        "stt_output": "走吧 全德 仙营酒在照人把这些贼打个粉碎",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_wan_field_defeat_lb_01": {
+        "id": "ch2_wan_field_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "此计仍可行。须在野外迎击，不令其复振。",
+        "stt_output": "此技仍可行,虚在野外引机不令其复震",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_field_defeat_zj_01": {
+        "id": "ch2_wan_field_defeat_zj_01",
+        "character": "zhujun",
+        "original_text": "韩忠脱围，是开路而逼迫不足。重整军阵，再设此计。",
+        "stt_output": "韓中脱围是开路而逼迫不足忠正军阵在设此计",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_field_hz_01": {
+        "id": "ch2_wan_field_hz_01",
+        "character": "hanzhong",
+        "original_text": "官军开路，果是诱我！趁伏兵未合，杀出去！",
+        "stt_output": "官軍開入 果是由我 趁腐兵為何殺出去",
         "wer": 3.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_field_lb_01": {
+        "id": "ch2_wan_field_lb_01",
+        "character": "liubei",
+        "original_text": "不可令其绝望成勇。先破头目，其余自散。",
+        "stt_output": "不可令其絕望成有先破頭目其於自散",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_field_lb_02": {
+        "id": "ch2_wan_field_lb_02",
+        "character": "liubei",
+        "original_text": "留一路生门，胜过怒击城墙，可少伤性命。",
+        "stt_output": "流一路升門,升過怒雞城牆,可少傷心命",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_field_zj_01": {
+        "id": "ch2_wan_field_zj_01",
+        "character": "zhujun",
+        "original_text": "韩忠果走此路。严整军阵，击破其散乱之队。",
+        "stt_output": "韩中国走此路,沿整军阵,激破其散乱之对。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_field_zj_02": {
+        "id": "ch2_wan_field_zj_02",
+        "character": "zhujun",
+        "original_text": "野战已胜。如此受宛城之降，便非轻信闭门之言。",
+        "stt_output": "也占以胜如此受晚成之将便非清醒地门之言",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_gate_defeat_lb_01": {
+        "id": "ch2_wan_gate_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "既择险途，下次须紧逼城门，并护住门前军士。",
+        "stt_output": "记则显图,下次虚警逼城门,并护住门前军事。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_gate_defeat_zj_01": {
+        "id": "ch2_wan_gate_defeat_zj_01",
+        "character": "zhujun",
+        "original_text": "攻门最忌乱。收兵整队，再攻一次。",
+        "stt_output": "公門最計亂收兵整隊再攻一次",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_gate_hz_01": {
+        "id": "ch2_wan_gate_hz_01",
+        "character": "hanzhong",
+        "original_text": "官军以刀梯回应请降！守住城墙！",
+        "stt_output": "官軍已刀踢回應緊箱守住成強",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_gate_lb_01": {
+        "id": "ch2_wan_gate_lb_01",
+        "character": "liubei",
+        "original_text": "贼众闭门而不真降。速战速决，不可拖延。",
+        "stt_output": "责众闭门不真讲速战速决不可拖延",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_gate_lb_02": {
+        "id": "ch2_wan_gate_lb_02",
+        "character": "liubei",
+        "original_text": "便令百姓看见，汉军入城，随之而来的是法度。",
+        "stt_output": "县林百姓看见汉军入城,随志而来的释法度",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_gate_zj_01": {
+        "id": "ch2_wan_gate_zj_01",
+        "character": "zhujun",
+        "original_text": "宛城城门在前。破门而入，但须禁军士焚掠。",
+        "stt_output": "晚成成文在前,破門入,但虛敬軍事焚略。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_gate_zj_02": {
+        "id": "ch2_wan_gate_zj_02",
+        "character": "zhujun",
+        "original_text": "宛城已取。此路较开东南为烈，城中更须安抚整肃。",
+        "stt_output": "完成一曲,死路教開東南威烈,城中更需要安撫整肅。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_gy_02": {
+        "id": "ch2_wan_gy_02",
+        "character": "guanyu",
+        "original_text": "若军心整肃，重击城门，也可速断其诈。",
+        "stt_output": "若君新整肅重機成門也可速斷其詐",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_lb_04": {
+        "id": "ch2_wan_lb_04",
+        "character": "liubei",
+        "original_text": "那便即刻攻城。若韩忠借诈降藏身墙后，便先破其城门，使其无利可图。",
+        "stt_output": "那便即刻工程,若寒中介炸强藏身强后,便先破其成门,使其无力可途。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_zf_02": {
+        "id": "ch2_wan_zf_02",
+        "character": "zhangfei",
+        "original_text": "哈哈！一边求饶一边闭门，俺便敲得全宛城都听见！",
+        "stt_output": "哈哈一边囚扰一边闭门按电积的传晚程度听见",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_zj_04": {
+        "id": "ch2_wan_zj_04",
+        "character": "zhujun",
+        "original_text": "此处隔墙空言，或只是缓兵之计。单凭此言，不可轻信。",
+        "stt_output": "此处格强空言,或只是,缓冰之计,单凭此言,不可清醒。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_zj_05": {
+        "id": "ch2_wan_zj_05",
+        "character": "zhujun",
+        "original_text": "也罢。列攻城之阵，但须严整。取宛城，不许焚掠。",
+        "stt_output": "也罢 列工程之振 但需 嚴整 取万成 不许焚略",
+        "wer": 6.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:map_lb_ch2_wan_field_01": {
+        "id": "map_lb_ch2_wan_field_01",
+        "character": "liubei",
+        "original_text": "东南一路已开。韩忠出城，须趁其未整而击之。",
+        "stt_output": "東南一路已開,寒中出城,虛振齊,為整而機制。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:map_lb_ch2_wan_gate_01": {
+        "id": "map_lb_ch2_wan_gate_01",
+        "character": "liubei",
+        "original_text": "宛城城门在前。速破其门，入城后须严整军纪。",
+        "stt_output": "完成成文在前,速破起門,入城後,需嚴正軍機。",
+        "wer": 1.0,
         "is_bad": true,
         "language": "zh"
     }
