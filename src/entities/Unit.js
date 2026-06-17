@@ -73,6 +73,7 @@ export class Unit {
         this.caged = config.caged || false;  // For cage overlay rendering
         this.isPreDead = config.isPreDead || false; // Started the mission dead (don't count for casualties)
         this.isProp = !!config.isProp;
+        this.spectator = !!config.spectator;
         this.breaksToImgKey = config.breaksToImgKey || null;
         this.keepBrokenOnDefeat = !!config.keepBrokenOnDefeat;
         this.staticCorpseImgKey = config.staticCorpseImgKey || null;

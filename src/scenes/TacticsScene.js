@@ -2910,8 +2910,8 @@ export class TacticsScene extends BaseScene {
         
         // Caged units cannot act - they're trapped!
         // Filter out NPCs that have already acted in this phase (to prevent double-acting on restore)
-        const allies = this.units.filter(u => u.faction === 'allied' && u.hp > 0 && !u.caged && !u.hasActed);
-        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.caged && !u.hasActed);
+        const allies = this.units.filter(u => u.faction === 'allied' && u.hp > 0 && !u.caged && !u.hasActed && !u.spectator);
+        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.caged && !u.hasActed && !u.spectator);
         
         const executeMoves = (npcs, index, onComplete) => {
             if (index >= npcs.length) {
@@ -2978,8 +2978,8 @@ export class TacticsScene extends BaseScene {
             }
         });
 
-        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.isGone);
-        const allies = this.units.filter(u => u.faction === 'allied' && u.hp > 0 && !u.isGone);
+        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.isGone && !u.spectator);
+        const allies = this.units.filter(u => u.faction === 'allied' && u.hp > 0 && !u.isGone && !u.spectator);
         
         let order = 1;
         // Enemies first (Red numbers)
@@ -3118,7 +3118,7 @@ export class TacticsScene extends BaseScene {
         // - Enemies target player and allied units, but NOT caged allies (they're protecting the cage)
         // - Allies target enemy units AND caged allies (to free them by breaking the cage)
         const unitTargets = this.units.filter(u => {
-            if (u.hp <= 0) return false;
+            if (u.hp <= 0 || u.spectator) return false;
             
             if (unit.faction === 'enemy') {
                 // Enemies attack player and allied units, but NOT caged ones
@@ -3695,6 +3695,7 @@ export class TacticsScene extends BaseScene {
                 shieldResistBase: Number.isFinite(u.shieldResistBase) ? u.shieldResistBase : 0,
                 shieldResistPerLevel: Number.isFinite(u.shieldResistPerLevel) ? u.shieldResistPerLevel : 0,
                 isProp: !!u.isProp,
+                spectator: !!u.spectator,
                 breaksToImgKey: u.breaksToImgKey || null,
                 keepBrokenOnDefeat: !!u.keepBrokenOnDefeat,
                 staticCorpseImgKey: u.staticCorpseImgKey || null,
@@ -3956,6 +3957,7 @@ export class TacticsScene extends BaseScene {
                     shieldResistBase: Number.isFinite(uData.shieldResistBase) ? uData.shieldResistBase : 0,
                     shieldResistPerLevel: Number.isFinite(uData.shieldResistPerLevel) ? uData.shieldResistPerLevel : 0,
                     isProp: !!uData.isProp,
+                    spectator: !!uData.spectator,
                     breaksToImgKey: uData.breaksToImgKey || null,
                     keepBrokenOnDefeat: !!uData.keepBrokenOnDefeat,
                     staticCorpseImgKey: uData.staticCorpseImgKey || null,
@@ -3986,6 +3988,7 @@ export class TacticsScene extends BaseScene {
             u.img = assets.getImage(uData.imgKey);
             u.isDestroyedBoulder = !!(uData.isDestroyedBoulder || (u.name === 'Boulder' && uData.imgKey === 'boulder_destroyed'));
             u.isProp = !!uData.isProp;
+            u.spectator = !!uData.spectator;
             u.breaksToImgKey = uData.breaksToImgKey || u.breaksToImgKey || null;
             u.keepBrokenOnDefeat = !!uData.keepBrokenOnDefeat;
             u.staticCorpseImgKey = uData.staticCorpseImgKey || u.staticCorpseImgKey || null;
@@ -4426,6 +4429,7 @@ export class TacticsScene extends BaseScene {
             u.img = assets.getImage(uData.imgKey);
             u.isDestroyedBoulder = !!(uData.isDestroyedBoulder || (u.name === 'Boulder' && uData.imgKey === 'boulder_destroyed'));
             u.isProp = !!uData.isProp;
+            u.spectator = !!uData.spectator;
             u.breaksToImgKey = uData.breaksToImgKey || u.breaksToImgKey || null;
             u.keepBrokenOnDefeat = !!uData.keepBrokenOnDefeat;
             u.staticCorpseImgKey = uData.staticCorpseImgKey || u.staticCorpseImgKey || null;
@@ -7873,9 +7877,11 @@ export class TacticsScene extends BaseScene {
                         r: uDef.r,
                         q: uDef.q,
                         level: uDef.level !== undefined ? uDef.level : template.level,
+                        moveRange: uDef.moveRange !== undefined ? uDef.moveRange : template.moveRange,
                         attacks: uDef.attacks ? [...uDef.attacks] : [...(template.attacks || [])],
                         storyCasualtyKey: uDef.storyCasualtyKey || null,
                         cityGateSide: uDef.cityGateSide,
+                        spectator: !!uDef.spectator,
                         onHorse: !!uDef.onHorse,
                         horseType: uDef.horseType || template.horseType || 'brown',
                         flip: uDef.flip !== undefined ? !!uDef.flip : !!template.flip,
@@ -11642,8 +11648,11 @@ export class TacticsScene extends BaseScene {
             const carriedImg = assets.getImage(u.carryImgKey);
             if (carriedImg) {
                 const facing = u.flip ? -1 : 1;
-                const x = Math.floor(u.visualX + u.visualOffsetX + hexOffsetX + facing * 13 - carriedImg.width / 2);
-                const y = Math.floor(surfaceY + u.visualOffsetY + hexOffsetY - 34);
+                const carryOffset = u.carryImgKey === 'zhangbao_head'
+                    ? { x: 24, y: -21 }
+                    : { x: facing * 13, y: -34 };
+                const x = Math.floor(u.visualX + u.visualOffsetX + hexOffsetX + carryOffset.x - carriedImg.width / 2);
+                const y = Math.floor(surfaceY + u.visualOffsetY + hexOffsetY + carryOffset.y);
                 ctx.drawImage(carriedImg, x, y);
             }
         }
