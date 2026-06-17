@@ -40,6 +40,7 @@ export class BattleSummaryScene extends BaseScene {
 
     render(timestamp) {
         const { ctx, canvas } = this.manager;
+        const panel = this.getSummaryPanel(canvas);
         
         // Background
         ctx.fillStyle = '#000';
@@ -50,51 +51,48 @@ export class BattleSummaryScene extends BaseScene {
         if (bg) {
             ctx.save();
             ctx.globalAlpha = 0.2;
-            const size = Math.min(canvas.width, canvas.height);
-            const x = Math.floor((canvas.width - size) / 2);
-            const y = Math.floor((canvas.height - size) / 2);
-            ctx.drawImage(bg, x, y, size, size);
+            ctx.drawImage(bg, panel.x, panel.y, panel.size, panel.size);
             ctx.restore();
         }
 
         // Title
         const titleText = this.stats.won ? getLocalizedText(UI_TEXT['VICTORY']) : getLocalizedText(UI_TEXT['DEFEAT']);
         const titleColor = this.stats.won ? "#ffd700" : "#ff4444";
-        this.drawPixelText(ctx, titleText, canvas.width / 2, 30, { 
+        this.drawPixelText(ctx, titleText, panel.cx, panel.y + 30, { 
             color: titleColor, 
             font: '16px Silkscreen', 
             align: 'center' 
         });
 
-        const startY = 65;
+        const startY = panel.y + 65;
         const spacing = 18;
 
         if (this.showLines > 0) {
-            this.drawStatLine(ctx, getLocalizedText(UI_TEXT['Allied Casualties:']), this.stats.alliedCasualties, startY, '#0f0');
+            this.drawStatLine(ctx, panel, getLocalizedText(UI_TEXT['Allied Casualties:']), this.stats.alliedCasualties, startY, '#0f0');
         }
         if (this.showLines > 1) {
-            this.drawStatLine(ctx, getLocalizedText(UI_TEXT['Enemy Casualties:']), this.stats.enemyCasualties, startY + spacing, '#f00');
+            this.drawStatLine(ctx, panel, getLocalizedText(UI_TEXT['Enemy Casualties:']), this.stats.enemyCasualties, startY + spacing, '#f00');
         }
         if (this.showLines > 2) {
             const housesProtected = this.stats.housesProtected || 0;
             const totalHouses = this.stats.totalHouses || 0;
             if (totalHouses > 0) {
                 const houseText = `${housesProtected} / ${totalHouses}`;
-                this.drawStatLine(ctx, getLocalizedText(UI_TEXT['Houses Protected:']), houseText, startY + spacing * 2, '#0af');
+                this.drawStatLine(ctx, panel, getLocalizedText(UI_TEXT['Houses Protected:']), houseText, startY + spacing * 2, '#0af');
             } else {
                 // Skip houses for battles without houses - show next stat instead
-                this.drawStatLine(ctx, getLocalizedText(UI_TEXT['Turns Taken:']), this.stats.turnNumber || 1, startY + spacing * 2, '#eee');
+                this.drawStatLine(ctx, panel, getLocalizedText(UI_TEXT['Turns Taken:']), this.stats.turnNumber || 1, startY + spacing * 2, '#eee');
             }
         }
         const hasHouses = (this.stats.totalHouses || 0) > 0;
         if (this.showLines > 3 && hasHouses) {
-            this.drawStatLine(ctx, getLocalizedText(UI_TEXT['Turns Taken:']), this.stats.turnNumber || 1, startY + spacing * 3, '#eee');
+            this.drawStatLine(ctx, panel, getLocalizedText(UI_TEXT['Turns Taken:']), this.stats.turnNumber || 1, startY + spacing * 3, '#eee');
         }
 
         // XP line - adjust position based on whether we showed houses
         const xpLineNum = hasHouses ? 4 : 3;
         if (this.showLines > xpLineNum && this.stats.won) {
-            this.drawStatLine(ctx, getLocalizedText(UI_TEXT['XP Gained:']), this.stats.xpGained || 0, startY + spacing * xpLineNum, '#ffd700');
+            this.drawStatLine(ctx, panel, getLocalizedText(UI_TEXT['XP Gained:']), this.stats.xpGained || 0, startY + spacing * xpLineNum, '#ffd700');
         }
 
         if (this.showLines > 5) {
@@ -103,7 +101,7 @@ export class BattleSummaryScene extends BaseScene {
                 const cs = gs.get('customStats') || { wins: 0, totalBattles: 0 };
                 const recordText = getLocalizedText(UI_TEXT['CUSTOM BATTLE RECORD']);
                 const text = `${recordText}: ${cs.wins} - ${cs.totalBattles - cs.wins}`;
-                this.drawPixelText(ctx, text, canvas.width / 2, 205, {
+                this.drawPixelText(ctx, text, panel.cx, panel.y + 205, {
                     color: '#0af',
                     font: '8px Silkscreen',
                     align: 'center'
@@ -113,7 +111,7 @@ export class BattleSummaryScene extends BaseScene {
             const pulse = Math.abs(Math.sin(Date.now() / 500));
             ctx.save();
             ctx.globalAlpha = 0.5 + pulse * 0.5;
-            this.drawPixelText(ctx, getLocalizedText(UI_TEXT['CLICK TO CONTINUE']), canvas.width / 2, 230, {
+            this.drawPixelText(ctx, getLocalizedText(UI_TEXT['CLICK TO CONTINUE']), panel.cx, panel.y + 230, {
                 color: '#fff',
                 font: '8px Silkscreen',
                 align: 'center'
@@ -122,9 +120,22 @@ export class BattleSummaryScene extends BaseScene {
         }
     }
 
-    drawStatLine(ctx, label, value, y, color) {
-        const x = 50;
-        const valX = 200;
+    getSummaryPanel(canvas) {
+        const size = Math.min(canvas.width, canvas.height);
+        const x = Math.floor((canvas.width - size) / 2);
+        const y = Math.floor((canvas.height - size) / 2);
+        return {
+            x,
+            y,
+            size,
+            cx: x + Math.floor(size / 2),
+            right: x + size
+        };
+    }
+
+    drawStatLine(ctx, panel, label, value, y, color) {
+        const x = panel.x + 50;
+        const valX = panel.x + 200;
         
         if (value === undefined || value === null) value = 0;
         
