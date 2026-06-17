@@ -268,6 +268,13 @@ export class SceneManager {
         }
     }
 
+    handlePointerUp(e) {
+        if (this.isOptionsOverlayActive()) return;
+        if (this.currentScene && this.currentScene.handlePointerUp) {
+            this.currentScene.handlePointerUp(e);
+        }
+    }
+
     handleKeyDown(e) {
         if (e && e.key === 'Escape') {
             if (this.isOptionsOverlayActive()) {
@@ -294,6 +301,13 @@ export class SceneManager {
         }
         if (this.currentScene && this.currentScene.handleKeyDown) {
             this.currentScene.handleKeyDown(e);
+        }
+    }
+
+    handleWheel(e) {
+        if (this.isOptionsOverlayActive()) return;
+        if (this.currentScene && this.currentScene.handleWheel) {
+            this.currentScene.handleWheel(e);
         }
     }
 

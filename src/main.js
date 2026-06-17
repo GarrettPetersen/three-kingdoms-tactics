@@ -14,6 +14,7 @@ import { RecoveryScene } from './scenes/RecoveryScene.js';
 import { CreditsScene } from './scenes/CreditsScene.js';
 import { OptionsOverlay } from './scenes/OptionsOverlay.js';
 import { LiuboScene } from './scenes/LiuboScene.js';
+import { DebugStoryGraphScene } from './scenes/DebugStoryGraphScene.js';
 
 const canvas = document.getElementById('game-canvas');
 const gameContainer = document.getElementById('game-container');
@@ -410,6 +411,7 @@ async function init() {
     sceneManager.addScene('recovery', new RecoveryScene());
     sceneManager.addScene('levelup', new LevelUpScene());
     sceneManager.addScene('credits', new CreditsScene());
+    sceneManager.addScene('debug_story_graph', new DebugStoryGraphScene());
     sceneManager.setOptionsOverlay(new OptionsOverlay());
 
     const actionRecorder = new ActionRecorder(assets, canvas);
@@ -487,6 +489,9 @@ async function init() {
     });
 
     canvas.addEventListener('pointerdown', (e) => sceneManager.handleInput(e));
+    window.addEventListener('pointerup', (e) => sceneManager.handlePointerUp(e));
+    window.addEventListener('pointercancel', (e) => sceneManager.handlePointerUp(e));
+    canvas.addEventListener('wheel', (e) => sceneManager.handleWheel(e), { passive: false });
     const unlockAudio = () => {
         assets.unlockAudioFromGesture();
     };
@@ -554,6 +559,7 @@ async function init() {
             if (inputBuffer.endsWith('title')) { sceneManager.switchTo('title'); inputBuffer = ""; }
             if (inputBuffer.endsWith('camp')) { sceneManager.switchTo('campaign_selection'); inputBuffer = ""; }
             if (inputBuffer.endsWith('map')) { sceneManager.switchTo('map'); inputBuffer = ""; }
+            if (inputBuffer.endsWith('graphjump')) { sceneManager.switchTo('debug_story_graph'); inputBuffer = ""; }
             if (inputBuffer.endsWith('battle')) { 
                 inputBuffer = ""; 
                 sceneManager.gameState.addMilestone('prologue_complete');
