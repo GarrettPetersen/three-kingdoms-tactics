@@ -2151,8 +2151,8 @@ export const NARRATIVE_SCRIPTS = {
             voiceId: 'ch2_counter_camp_zj_01',
             position: 'top',
             text: {
-                en: "Then do not meet thunder with spearpoints. His storm is carried by paper men and straw horses. Foul them, and the spell will fail.",
-                zh: "天雷不可只以兵刃相迎。其术托于纸人草马，污之则法自败。"
+                en: "Then do not meet thunder with spearpoints alone. Blood and filth can foul the rite itself. If Zhang Bao is struck with it, the lightning should fail.",
+                zh: "天雷不可只以兵刃相迎。血秽可污其法坛。若能掷中张宝，雷法应自败。"
             }
         },
         {
@@ -2162,8 +2162,8 @@ export const NARRATIVE_SCRIPTS = {
             voiceId: 'ch2_counter_camp_gy_01',
             position: 'top',
             text: {
-                en: "Pig, sheep, and dog blood, with filthy matter besides. Hide it with our men on the high ridge.",
-                zh: "盛猪羊狗血，并备秽物。令伏兵携之，伏于山后高冈。"
+                en: "Pig, sheep, and dog blood, with filthy matter besides. Give it to the brothers and keep it ready at both sides of the valley.",
+                zh: "盛猪羊狗血，并备秽物。分与兄弟，令两侧伏兵皆可随时投掷。"
             }
         },
         {
@@ -2185,8 +2185,8 @@ export const NARRATIVE_SCRIPTS = {
                 {
                     buttonText: { en: 'Use the plan.', zh: '依计而行' },
                     text: {
-                        en: "If this breaks the false shapes and saves the men, we use it.",
-                        zh: "若能破其幻形，保全军士，便依此计。"
+                        en: "If striking Zhang Bao with filth stops the thunder and saves the men, we use it.",
+                        zh: "若以秽物掷中张宝便能止雷、保全军士，便依此计。"
                     },
                     voiceId: 'ch2_counter_camp_choice_use',
                     speaker: 'liubei',
@@ -2215,11 +2215,11 @@ export const NARRATIVE_SCRIPTS = {
                             type: 'dialogue',
                             portraitKey: 'zhu-jun-generic',
                             name: 'Zhu Jun',
-            voiceId: 'ch2_counter_camp_zj_02',
+                            voiceId: 'ch2_counter_camp_zj_02',
                             position: 'top',
                             text: {
-                                en: "This is not worship of sorcery. It is the unmasking of the trick behind his thunder.",
-                                zh: "此非奉妖，乃破其雷法之后的诈术。"
+                                en: "This is not worship of sorcery. It is a soldier's answer: close the distance, foul the caster, and end the thunder.",
+                                zh: "此非奉妖，乃军中破法之策：逼近施术者，以秽物污之，雷自止。"
                             }
                         },
                         {
@@ -2240,8 +2240,8 @@ export const NARRATIVE_SCRIPTS = {
             voiceId: 'ch2_counter_camp_lb_02',
             position: 'top',
             text: {
-                en: "Guan Yu, Zhang Fei: each take a thousand men. Hide behind the mountain. When I draw Zhang Bao past the ridge, fire the signal and pour it all at once.",
-                zh: "云长、翼德，各引一千军，伏于山后。待我引张宝过冈，号炮一起，齐泼秽物。"
+                en: "Guan Yu, Zhang Fei: take the right side of the valley. I will press from the left. When Zhang Bao calls thunder, close in and throw the filth on him.",
+                zh: "云长、翼德，引兵据谷右。我自左路进逼。张宝一召雷，便合围上前，将秽物掷到他身上。"
             }
         },
         {

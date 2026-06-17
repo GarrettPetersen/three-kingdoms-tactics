@@ -2945,19 +2945,19 @@
     "zh:ch2_counter_camp_choice_use": {
         "id": "ch2_counter_camp_choice_use",
         "character": "liubei",
-        "original_text": "若能破其幻形，保全军士，便依此计。",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false,
+        "original_text": "若以秽物掷中张宝便能止雷、保全军士，便依此计。",
+        "stt_output": "若以會物質中張寶貼,能指雷保全軍事便以此計。",
+        "wer": 1.0,
+        "is_bad": true,
         "language": "zh"
     },
     "zh:ch2_counter_camp_gy_01": {
         "id": "ch2_counter_camp_gy_01",
         "character": "guanyu",
-        "original_text": "盛猪羊狗血，并备秽物。令伏兵携之，伏于山后高冈。",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false,
+        "original_text": "盛猪羊狗血，并备秽物。分与兄弟，令两侧伏兵皆可随时投掷。",
+        "stt_output": "圣珠陽狗雪並被匯物,分與兄弟,另兩側浮兵皆可隨時投志。",
+        "wer": 1.0,
+        "is_bad": true,
         "language": "zh"
     },
     "zh:ch2_counter_camp_lb_01": {
@@ -2972,10 +2972,10 @@
     "zh:ch2_counter_camp_lb_02": {
         "id": "ch2_counter_camp_lb_02",
         "character": "liubei",
-        "original_text": "云长、翼德，各引一千军，伏于山后。待我引张宝过冈，号炮一起，齐泼秽物。",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false,
+        "original_text": "云长、翼德，引兵据谷右。我自左路进逼。张宝一召雷，便合围上前，将秽物掷到他身上。",
+        "stt_output": "羽長,義德,隱兵巨古右我自左路進逼張寶義趙雷,變和為上前將會物質到他身上",
+        "wer": 1.0,
+        "is_bad": true,
         "language": "zh"
     },
     "zh:ch2_counter_camp_zf_01": {
@@ -2990,19 +2990,19 @@
     "zh:ch2_counter_camp_zj_01": {
         "id": "ch2_counter_camp_zj_01",
         "character": "zhujun",
-        "original_text": "天雷不可只以兵刃相迎。其术托于纸人草马，污之则法自败。",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false,
+        "original_text": "天雷不可只以兵刃相迎。血秽可污其法坛。若能掷中张宝，雷法应自败。",
+        "stt_output": "天雷不可止以兵人相迎,血會可無其法談,若能治,中章寶,雷法應自敗。",
+        "wer": 1.0,
+        "is_bad": true,
         "language": "zh"
     },
     "zh:ch2_counter_camp_zj_02": {
         "id": "ch2_counter_camp_zj_02",
         "character": "zhujun",
-        "original_text": "此非奉妖，乃破其雷法之后的诈术。",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false,
+        "original_text": "此非奉妖，乃军中破法之策：逼近施术者，以秽物污之，雷自止。",
+        "stt_output": "此非奉邀,乃军中破法之策,逼近失术者,已会误之,雷自知。",
+        "wer": 1.0,
+        "is_bad": true,
         "language": "zh"
     },
     "zh:ch2_counter_camp_zj_03": {
@@ -3017,10 +3017,10 @@
     "zh:ch2_counter_gy_01": {
         "id": "ch2_counter_gy_01",
         "character": "guanyu",
-        "original_text": "伏兵已在高冈。待其召雷，即发号炮。",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false,
+        "original_text": "我等已在彼侧列阵。待其召雷，即合围进逼。",
+        "stt_output": "我等以在比策列镇带其赵雷及何为敬逼",
+        "wer": 1.0,
+        "is_bad": true,
         "language": "zh"
     },
     "zh:ch2_counter_lb_01": {
@@ -3188,10 +3188,10 @@
     "zh:map_lb_ch2_counter_council_01": {
         "id": "map_lb_ch2_counter_council_01",
         "character": "liubei",
-        "original_text": "破术之策已备。我们回到山冈，破张宝天雷。",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false,
+        "original_text": "破术之策已备。我们回到谷中，合围进逼，破张宝天雷。",
+        "stt_output": "破述之策一倍我們回到古中和魏敬鼻破帐保天雷",
+        "wer": 1.0,
+        "is_bad": true,
         "language": "zh"
     },
     "zh:map_lb_ch2_yangcheng_01": {
@@ -3225,9 +3225,9 @@
         "id": "ch2_yc_zb_refuse_01",
         "character": "zhangbao",
         "original_text": "投降？吾乃地公将军。只要黄巾尚有一人，阳城便不会降。",
-        "stt_output": "投降無乃地公司只要黃金上有藝人洋城變不會降",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     }
 }

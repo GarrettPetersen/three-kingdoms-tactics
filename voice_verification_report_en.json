@@ -2945,18 +2945,18 @@
     "en:ch2_counter_camp_choice_use": {
         "id": "ch2_counter_camp_choice_use",
         "character": "liubei",
-        "original_text": "If this breaks the false shapes and saves the men, we use it.",
-        "stt_output": "",
-        "wer": 0,
+        "original_text": "If striking Zhang Bao with filth stops the thunder and saves the men, we use it.",
+        "stt_output": "If striking Shangbao with filth stops the thunder and saves the men, we use it.",
+        "wer": 0.125,
         "is_bad": false,
         "language": "en"
     },
     "en:ch2_counter_camp_gy_01": {
         "id": "ch2_counter_camp_gy_01",
         "character": "guanyu",
-        "original_text": "Pig, sheep, and dog blood, with filthy matter besides. Hide it with our men on the high ridge.",
-        "stt_output": "",
-        "wer": 0,
+        "original_text": "Pig, sheep, and dog blood, with filthy matter besides. Give it to the brothers and keep it ready at both sides of the valley.",
+        "stt_output": "Pig sheep and dog blood, with filthy matter besides. Give it to the brothers and keep it ready at both sides of the valley.",
+        "wer": 0.0,
         "is_bad": false,
         "language": "en"
     },
@@ -2972,9 +2972,9 @@
     "en:ch2_counter_camp_lb_02": {
         "id": "ch2_counter_camp_lb_02",
         "character": "liubei",
-        "original_text": "Guan Yu, Zhang Fei: each take a thousand men. Hide behind the mountain. When I draw Zhang Bao past the ridge, fire the signal and pour it all at once.",
-        "stt_output": "",
-        "wer": 0,
+        "original_text": "Guan Yu, Zhang Fei: take the right side of the valley. I will press from the left. When Zhang Bao calls thunder, close in and throw the filth on him.",
+        "stt_output": "one you, Shang Fei, took the right side of the valley. I will press from the left. When Zhang Bao calls thunder, close in and throw the filth on him.",
+        "wer": 0.13333333333333333,
         "is_bad": false,
         "language": "en"
     },
@@ -2990,18 +2990,18 @@
     "en:ch2_counter_camp_zj_01": {
         "id": "ch2_counter_camp_zj_01",
         "character": "zhujun",
-        "original_text": "Then do not meet thunder with spearpoints. His storm is carried by paper men and straw horses. Foul them, and the spell will fail.",
-        "stt_output": "",
-        "wer": 0,
+        "original_text": "Then do not meet thunder with spearpoints alone. Blood and filth can foul the rite itself. If Zhang Bao is struck with it, the lightning should fail.",
+        "stt_output": "Then do not meet thunder with spear points alone. Blood and filth can foul the right itself. If Jean-Bau is struck with it, the lightning should fail.",
+        "wer": 0.18518518518518517,
         "is_bad": false,
         "language": "en"
     },
     "en:ch2_counter_camp_zj_02": {
         "id": "ch2_counter_camp_zj_02",
         "character": "zhujun",
-        "original_text": "This is not worship of sorcery. It is the unmasking of the trick behind his thunder.",
-        "stt_output": "",
-        "wer": 0,
+        "original_text": "This is not worship of sorcery. It is a soldier's answer: close the distance, foul the caster, and end the thunder.",
+        "stt_output": "This is not worship of sorcery. It is a soldier's answer. Close the distance, foul the caster, and end the thunder.",
+        "wer": 0.0,
         "is_bad": false,
         "language": "en"
     },
@@ -3017,9 +3017,9 @@
     "en:ch2_counter_gy_01": {
         "id": "ch2_counter_gy_01",
         "character": "guanyu",
-        "original_text": "The hidden troops are ready on the high ground. When he calls the lightning, give the signal.",
-        "stt_output": "",
-        "wer": 0,
+        "original_text": "We are in position on the far side. When he calls the lightning, we close the pincer.",
+        "stt_output": "We are in position on the far side. When he calls the lightning, we close the pincer.",
+        "wer": 0.0,
         "is_bad": false,
         "language": "en"
     },
@@ -3188,9 +3188,9 @@
     "en:map_lb_ch2_counter_council_01": {
         "id": "map_lb_ch2_counter_council_01",
         "character": "liubei",
-        "original_text": "The counter is prepared. We return to the ridge and break Zhang Bao's thunder.",
-        "stt_output": "",
-        "wer": 0,
+        "original_text": "The counter is prepared. We return to the valley, close the pincer, and break Zhang Bao's thunder.",
+        "stt_output": "The counter is prepared. We return to the valley, close the pincer and break Zengbao's thunder.",
+        "wer": 0.11764705882352941,
         "is_bad": false,
         "language": "en"
     },
@@ -3225,8 +3225,8 @@
         "id": "ch2_yc_zb_refuse_01",
         "character": "zhangbao",
         "original_text": "Surrender? I am the General of Earth. Yangcheng will stand while one Yellow Turban yet breathes.",
-        "stt_output": "Surrender? I am the General of Earth. Young Chang will stand while one yellow turban yet breeze.",
-        "wer": 0.1875,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     }

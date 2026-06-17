@@ -242,8 +242,8 @@ const HERO_REMINDERS = {
         name: 'Liu Bei',
         voiceId: 'map_lb_ch2_counter_council_01',
         text: {
-            en: "The counter is prepared. We return to the ridge and break Zhang Bao's thunder.",
-            zh: "破术之策已备。我们回到山冈，破张宝天雷。"
+            en: "The counter is prepared. We return to the valley, close the pincer, and break Zhang Bao's thunder.",
+            zh: "破术之策已备。我们回到谷中，合围进逼，破张宝天雷。"
         }
     },
     'chapter2_zhangbao_counter': {

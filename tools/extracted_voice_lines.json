@@ -192,13 +192,13 @@
   {
     "id": "ch2_counter_camp_choice_use",
     "char": "liubei",
-    "text": "If this breaks the false shapes and saves the men, we use it.",
+    "text": "If striking Zhang Bao with filth stops the thunder and saves the men, we use it.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_counter_camp_gy_01",
     "char": "guanyu",
-    "text": "Pig, sheep, and dog blood, with filthy matter besides. Hide it with our men on the high ridge.",
+    "text": "Pig, sheep, and dog blood, with filthy matter besides. Give it to the brothers and keep it ready at both sides of the valley.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -210,7 +210,7 @@
   {
     "id": "ch2_counter_camp_lb_02",
     "char": "liubei",
-    "text": "Guan Yu, Zhang Fei: each take a thousand men. Hide behind the mountain. When I draw Zhang Bao past the ridge, fire the signal and pour it all at once.",
+    "text": "Guan Yu, Zhang Fei: take the right side of the valley. I will press from the left. When Zhang Bao calls thunder, close in and throw the filth on him.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -222,13 +222,13 @@
   {
     "id": "ch2_counter_camp_zj_01",
     "char": "zhujun",
-    "text": "Then do not meet thunder with spearpoints. His storm is carried by paper men and straw horses. Foul them, and the spell will fail.",
+    "text": "Then do not meet thunder with spearpoints alone. Blood and filth can foul the rite itself. If Zhang Bao is struck with it, the lightning should fail.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_counter_camp_zj_02",
     "char": "zhujun",
-    "text": "This is not worship of sorcery. It is the unmasking of the trick behind his thunder.",
+    "text": "This is not worship of sorcery. It is a soldier's answer: close the distance, foul the caster, and end the thunder.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -240,7 +240,7 @@
   {
     "id": "ch2_counter_gy_01",
     "char": "guanyu",
-    "text": "The hidden troops are ready on the high ground. When he calls the lightning, give the signal.",
+    "text": "We are in position on the far side. When he calls the lightning, we close the pincer.",
     "source": "Battles.js"
   },
   {
@@ -1452,7 +1452,7 @@
   {
     "id": "map_lb_ch2_counter_council_01",
     "char": "liubei",
-    "text": "The counter is prepared. We return to the ridge and break Zhang Bao's thunder.",
+    "text": "The counter is prepared. We return to the valley, close the pincer, and break Zhang Bao's thunder.",
     "source": "MapScene.js"
   },
   {

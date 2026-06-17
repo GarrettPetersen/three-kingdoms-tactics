@@ -751,8 +751,8 @@ export const BATTLES = {
                 name: 'Guan Yu',
                 voiceId: 'ch2_counter_gy_01',
                 text: {
-                    en: "The hidden troops are ready on the high ground. When he calls the lightning, give the signal.",
-                    zh: "伏兵已在高冈。待其召雷，即发号炮。"
+                    en: "We are in position on the far side. When he calls the lightning, we close the pincer.",
+                    zh: "我等已在彼侧列阵。待其召雷，即合围进逼。"
                 }
             },
             {
@@ -769,8 +769,8 @@ export const BATTLES = {
         defeat: {
             retry: { scene: 'tactics', params: { battleId: 'chapter2_zhangbao_counter' } },
             script: [
-                { bg: 'army_camp', type: 'dialogue', portraitKey: 'zhu-jun-generic', name: 'Zhu Jun', text: { en: "The signal failed. Reform the hidden troops and carry the blood and filth back to the ridge.", zh: "号令未成。重整伏兵，仍携血秽上冈。" } },
-                { type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "We know the method now. We return and execute it cleanly.", zh: "破法之策已明。再往，务必齐整。" } }
+                { bg: 'army_camp', type: 'dialogue', portraitKey: 'zhu-jun-generic', name: 'Zhu Jun', text: { en: "The counter failed before the filth reached Zhang Bao. Reform the two wings and try again.", zh: "秽物未及张宝，破法便败。重整两翼，再试一次。" } },
+                { type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "We know the method. Next time, close the pincer and strike him directly.", zh: "破法之策已明。再往，合围上前，务必中其身。" } }
             ]
         }
     },

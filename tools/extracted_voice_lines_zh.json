@@ -188,13 +188,13 @@
   {
     "id": "ch2_counter_camp_choice_use",
     "char": "liubei",
-    "text": "若能破其幻形，保全军士，便依此计。",
+    "text": "若以秽物掷中张宝便能止雷、保全军士，便依此计。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_counter_camp_gy_01",
     "char": "guanyu",
-    "text": "盛猪羊狗血，并备秽物。令伏兵携之，伏于山后高冈。",
+    "text": "盛猪羊狗血，并备秽物。分与兄弟，令两侧伏兵皆可随时投掷。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -206,7 +206,7 @@
   {
     "id": "ch2_counter_camp_lb_02",
     "char": "liubei",
-    "text": "云长、翼德，各引一千军，伏于山后。待我引张宝过冈，号炮一起，齐泼秽物。",
+    "text": "云长、翼德，引兵据谷右。我自左路进逼。张宝一召雷，便合围上前，将秽物掷到他身上。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -218,13 +218,13 @@
   {
     "id": "ch2_counter_camp_zj_01",
     "char": "zhujun",
-    "text": "天雷不可只以兵刃相迎。其术托于纸人草马，污之则法自败。",
+    "text": "天雷不可只以兵刃相迎。血秽可污其法坛。若能掷中张宝，雷法应自败。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_counter_camp_zj_02",
     "char": "zhujun",
-    "text": "此非奉妖，乃破其雷法之后的诈术。",
+    "text": "此非奉妖，乃军中破法之策：逼近施术者，以秽物污之，雷自止。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -236,7 +236,7 @@
   {
     "id": "ch2_counter_gy_01",
     "char": "guanyu",
-    "text": "伏兵已在高冈。待其召雷，即发号炮。",
+    "text": "我等已在彼侧列阵。待其召雷，即合围进逼。",
     "source": "Battles.js"
   },
   {
@@ -1436,7 +1436,7 @@
   {
     "id": "map_lb_ch2_counter_council_01",
     "char": "liubei",
-    "text": "破术之策已备。我们回到山冈，破张宝天雷。",
+    "text": "破术之策已备。我们回到谷中，合围进逼，破张宝天雷。",
     "source": "MapScene.js"
   },
   {
