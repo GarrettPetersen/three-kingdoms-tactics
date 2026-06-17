@@ -486,6 +486,12 @@
     "source": "Battles.js"
   },
   {
+    "id": "ch2_yc_zb_refuse_01",
+    "char": "zhangbao",
+    "text": "投降？吾乃地公将军。只要黄巾尚有一人，阳城便不会降。",
+    "source": "Battles.js"
+  },
+  {
     "id": "ch2_yc_zb_threat_reply",
     "char": "zhangbao",
     "text": "织席贩履之徒，也敢威吓于我？吾奉黄天号令。尔等上城，便葬于城下！",

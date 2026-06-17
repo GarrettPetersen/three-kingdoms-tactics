@@ -490,6 +490,12 @@
     "source": "Battles.js"
   },
   {
+    "id": "ch2_yc_zb_refuse_01",
+    "char": "zhangbao",
+    "text": "Surrender? I am the General of Earth. Yangcheng will stand while one Yellow Turban yet breathes.",
+    "source": "Battles.js"
+  },
+  {
     "id": "ch2_yc_zb_threat_reply",
     "char": "zhangbao",
     "text": "Threats from woven-mat peddlers? I command the Yellow Heaven. Come up the wall and be buried beneath it.",

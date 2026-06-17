@@ -1254,8 +1254,8 @@
         "id": "pro_zf_04",
         "character": "zhangfei",
         "original_text": "I am Zhang Fei, aka Yide.",
-        "stt_output": "I am Zhang Fei, aka I'd...",
-        "wer": 0.16666666666666666,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3218,6 +3218,15 @@
         "original_text": "Then hear this plainly: if you force a siege, your followers will die for a spell already spent.",
         "stt_output": "",
         "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_yc_zb_refuse_01": {
+        "id": "ch2_yc_zb_refuse_01",
+        "character": "zhangbao",
+        "original_text": "Surrender? I am the General of Earth. Yangcheng will stand while one Yellow Turban yet breathes.",
+        "stt_output": "Surrender? I am the General of Earth. Young Chang will stand while one yellow turban yet breeze.",
+        "wer": 0.1875,
         "is_bad": false,
         "language": "en"
     }

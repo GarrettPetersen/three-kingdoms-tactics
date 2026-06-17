@@ -787,8 +787,8 @@ export const BATTLES = {
             houseDensity: 0.0
         },
         units: [
-            { id: 'liubei', r: 6, q: 4, type: 'hero_force', templateId: 'liubei', cityGateSide: 'outside' },
-            { id: 'guanyu', r: 7, q: 3, type: 'hero_force', templateId: 'guanyu', cityGateSide: 'outside' },
+            { id: 'liubei', r: 6, q: 3, type: 'hero_force', templateId: 'liubei', cityGateSide: 'outside' },
+            { id: 'guanyu', r: 7, q: 2, type: 'hero_force', templateId: 'guanyu', cityGateSide: 'outside' },
             { id: 'zhangfei', r: 7, q: 6, type: 'hero_force', templateId: 'zhangfei', cityGateSide: 'outside' },
             { id: 'zhujun', r: 5, q: 2, type: 'commander', templateId: 'zhujun_observer', cityGateSide: 'outside' },
             { id: 'oath_soldier1', r: 8, q: 2, type: 'allied_soldier', templateId: 'ally', cityGateSide: 'outside', spectator: true, moveRange: 0, attacks: [] },
@@ -827,6 +827,16 @@ export const BATTLES = {
                 text: {
                     en: "Open the gate. Surrender the city, and those who lay down arms may yet live.",
                     zh: "开城投降。弃兵归顺者，尚可保全性命。"
+                }
+            },
+            {
+                speaker: 'zhangbao',
+                portraitKey: 'zhang-bao',
+                name: 'Zhang Bao',
+                voiceId: 'ch2_yc_zb_refuse_01',
+                text: {
+                    en: "Surrender? I am the General of Earth. Yangcheng will stand while one Yellow Turban yet breathes.",
+                    zh: "投降？吾乃地公将军。只要黄巾尚有一人，阳城便不会降。"
                 }
             },
             {

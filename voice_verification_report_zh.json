@@ -3027,9 +3027,9 @@
         "id": "ch2_counter_lb_01",
         "character": "liubei",
         "original_text": "待雷声大作、黑气漫天，再靠近张宝，将秽物掷到他身上，破其妖法。",
-        "stt_output": "帶雷生大佐黑七曼田在靠近張寶將會物質到他身上破棋藥法",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:ch2_counter_zb_01": {
@@ -3207,16 +3207,25 @@
         "id": "ch2_yc_lb_clemency_01",
         "character": "liubei",
         "original_text": "张宝，此刻归降。弃兵开城，我愿为墙上士卒求一线生路。",
-        "stt_output": "张宝此刻归响,替兵开城,我愿为强尚市足球一线深路。",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:ch2_yc_lb_threat_01": {
         "id": "ch2_yc_lb_threat_01",
         "character": "liubei",
         "original_text": "那便听清楚：若你执意守城，部众只会为已破之妖术送命。",
-        "stt_output": "那便聽清楚,若你直一手成,不仲指揮唯一破之邀屬宋命。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_yc_zb_refuse_01": {
+        "id": "ch2_yc_zb_refuse_01",
+        "character": "zhangbao",
+        "original_text": "投降？吾乃地公将军。只要黄巾尚有一人，阳城便不会降。",
+        "stt_output": "投降無乃地公司只要黃金上有藝人洋城變不會降",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"

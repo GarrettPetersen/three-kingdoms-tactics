@@ -874,6 +874,9 @@ export class TacticsScene extends BaseScene {
 
         if (!isResume) {
             this.placeInitialUnits(params.units);
+            if (this.battleId === 'chapter2_yangcheng_surrender') {
+                this.arrangeYangchengSurrenderCutsceneUnits();
+            }
             
             // Spawn random boulders on mountain maps
             if (this.mapGenParams.layout === 'mountain_pass' || this.mapGenParams.mountainDensity > 0.1) {
@@ -1007,7 +1010,6 @@ export class TacticsScene extends BaseScene {
         yanzheng.hasActed = false;
         yanzheng.intent = null;
         this.executeAttack(yanzheng, 'slash', zhangbao.r, zhangbao.q, () => {
-            yanzheng.faction = 'allied';
             yanzheng.hasAttacked = true;
             yanzheng.hasActed = true;
             setTimeout(() => this.finishAutoCutsceneCombat(), 450);
@@ -1064,11 +1066,16 @@ export class TacticsScene extends BaseScene {
         if (this.tacticsMap.cityGateMeta?.gateState !== 'open') {
             this.tacticsMap.setCityGateState?.('open');
         }
-        unit.faction = 'allied';
+        unit.faction = 'enemy';
         unit.carryImgKey = 'zhangbao_head';
 
-        const dest = this.tacticsMap.getCell(5, 4) || this.tacticsMap.getCell(5, 5);
-        const destination = dest && !dest.unit ? dest : this.findNearestFreeCell(5, 4, 3);
+        const preferred = [
+            { r: 6, q: 4 },
+            { r: 6, q: 5 },
+            { r: 5, q: 4 },
+            { r: 5, q: 5 }
+        ];
+        const destination = this.findFirstOpenCutsceneCell(preferred) || this.findNearestFreeCell(6, 4, 4);
         if (!destination) {
             if (onComplete) onComplete();
             return;
@@ -1093,9 +1100,77 @@ export class TacticsScene extends BaseScene {
                 return;
             }
             this.isProcessingTurn = false;
+            unit.faction = 'allied';
             if (onComplete) onComplete();
         };
         waitForArrival();
+    }
+
+    findFirstOpenCutsceneCell(cells) {
+        for (const pos of cells || []) {
+            const cell = this.tacticsMap?.getCell(pos.r, pos.q);
+            if (cell && !cell.omitted && !cell.impassable && !cell.unit) return cell;
+        }
+        return null;
+    }
+
+    arrangeYangchengSurrenderCutsceneUnits() {
+        if (!this.tacticsMap) return;
+        const placements = [
+            ['zhangbao', 2, 4],
+            ['yanzheng', 2, 5],
+            ['wall_rebel1', 2, 1],
+            ['wall_rebel2', 2, 2],
+            ['wall_rebel3', 2, 3],
+            ['wall_rebel4', 2, 6],
+            ['wall_rebel5', 2, 7],
+            ['wall_rebel6', 2, 8],
+            ['zhujun', 5, 1],
+            ['liubei', 6, 3],
+            ['guanyu', 7, 2],
+            ['zhangfei', 7, 6],
+            ['han_soldier1', 5, 0],
+            ['han_soldier2', 5, 8],
+            ['han_soldier3', 6, 7],
+            ['oath_soldier1', 8, 2],
+            ['oath_soldier2', 8, 4],
+            ['oath_soldier3', 8, 6]
+        ];
+
+        const ids = new Set(placements.map(([id]) => id));
+        for (const unit of this.units) {
+            if (!ids.has(unit.id)) continue;
+            const oldCell = this.tacticsMap.getCell(unit.r, unit.q);
+            if (oldCell && oldCell.unit === unit) oldCell.unit = null;
+        }
+
+        for (const [id, r, q] of placements) {
+            const unit = this.units.find(u => u.id === id);
+            const cell = this.tacticsMap.getCell(r, q);
+            if (!unit || !cell || cell.omitted || cell.impassable) continue;
+            if (cell.unit && cell.unit !== unit) {
+                const fallback = this.findNearestFreeCell(r, q, 3);
+                if (fallback) {
+                    cell.unit.r = fallback.r;
+                    cell.unit.q = fallback.q;
+                    fallback.unit = cell.unit;
+                }
+            }
+            unit.r = r;
+            unit.q = q;
+            unit.visualOffsetX = 0;
+            unit.visualOffsetY = 0;
+            unit.currentSortR = r;
+            const pos = this.getPixelPos(r, q);
+            unit.visualX = pos.x;
+            unit.visualY = pos.y;
+            unit.targetX = pos.x;
+            unit.targetY = pos.y;
+            unit.isMoving = false;
+            unit.path = null;
+            unit.pathIndex = 0;
+            cell.unit = unit;
+        }
     }
     
     checkCutsceneCombatComplete() {
