@@ -184,6 +184,90 @@
     "phonetic_text": "But slaying the ungrateful would Mean many deaths a year. Dong Jwoh's fate will be unrolled in later chapters."
   },
   {
+    "id": "ch2_counter_camp_choice_reluctant",
+    "char": "liubei",
+    "text": "It sits poorly with me to answer darkness with such things. Yet lives weigh heavier than pride.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_camp_choice_use",
+    "char": "liubei",
+    "text": "If this breaks the false shapes and saves the men, we use it.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_camp_gy_01",
+    "char": "guanyu",
+    "text": "Pig, sheep, and dog blood, with filthy matter besides. Hide it with our men on the high ridge.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_camp_lb_01",
+    "char": "liubei",
+    "text": "Zhang Bao called lightning down on us. In the thunder and black air, it seemed as if soldiers were falling from the sky.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_camp_lb_02",
+    "char": "liubei",
+    "text": "Guan Yu, Zhang Fei: each take a thousand men. Hide behind the mountain. When I draw Zhang Bao past the ridge, fire the signal and pour it all at once.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_camp_zf_01",
+    "char": "zhangfei",
+    "text": "Ha! If thunder answers him, slop will answer thunder.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_camp_zj_01",
+    "char": "zhujun",
+    "text": "Then do not meet thunder with spearpoints. His storm is carried by paper men and straw horses. Foul them, and the spell will fail.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_camp_zj_02",
+    "char": "zhujun",
+    "text": "This is not worship of sorcery. It is the unmasking of the trick behind his thunder.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_camp_zj_03",
+    "char": "zhujun",
+    "text": "Good. The road to Yangcheng opens beyond that ridge. Break him there, and he will have only the city walls left.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_gy_01",
+    "char": "guanyu",
+    "text": "The hidden troops are ready on the high ground. When he calls the lightning, give the signal.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_counter_lb_01",
+    "char": "liubei",
+    "text": "Hold until the thunder breaks and the black air rises. Then foul the false shapes and strike from both wings.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_counter_zb_01",
+    "char": "zhangbao",
+    "text": "Again you come? Then Heaven's lightning will answer me again!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_counter_zb_filth_01",
+    "char": "zhangbao",
+    "text": "Filth! You dare foul Heaven's spell? The thunder... it will not answer!",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_counter_zb_retreat_01",
+    "char": "zhangbao",
+    "text": "My spell is broken! Yangcheng - fall back to Yangcheng!",
+    "source": "Battles.js"
+  },
+  {
     "id": "ch2_hj_choice_enter",
     "char": "hejin",
     "text": "I am General-in-Chief. Let Jian Shuo show his hand if he dares.",
@@ -336,20 +420,74 @@
   {
     "id": "ch2_probe_lb_retreat_01",
     "char": "liubei",
-    "text": "Brothers, withdraw! We cannot break his sorcery head-on today!",
+    "text": "Brothers, withdraw! We cannot break that lightning head-on today!",
     "source": "TacticsScene.js"
   },
   {
     "id": "ch2_probe_zb_01",
     "char": "zhangbao",
-    "text": "You are Liu Xuande? Good. Taste the art of the Yellow Heaven.",
+    "text": "You are Liu Xuande? Good. Taste the thunder of the Yellow Heaven.",
     "source": "Battles.js"
   },
   {
     "id": "ch2_probe_zb_sorcery_01",
     "char": "zhangbao",
-    "text": "You cannot kill me in this storm. Behold the thunder of Heaven!",
+    "text": "You cannot kill me while Heaven's lightning answers my command!",
     "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_yc_lb_01",
+    "char": "liubei",
+    "text": "If he forces a siege, the common soldiers on that wall will die for a spell already spent.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_lb_02",
+    "char": "liubei",
+    "text": "The false thunder is silent. May the people behind those walls hear real peace again.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_yz_01",
+    "char": "yanzheng",
+    "text": "General... the men have no grain, no faith, and no wish to be buried with you.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_yz_02",
+    "char": "yanzheng",
+    "text": "Yan Zheng has struck down Zhang Bao. I bring his head and surrender Yangcheng.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_zb_01",
+    "char": "zhangbao",
+    "text": "Clemency? From men who splash filth at Heaven? I am General of Earth. Yangcheng will not bend.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_zb_02",
+    "char": "zhangbao",
+    "text": "Coward! Speak once more of surrender and I will offer your blood to the Yellow Heaven.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_zj_01",
+    "char": "zhujun",
+    "text": "Zhang Bao! Your brother is dead, your sorcery is broken, and the counties are returning to the Han.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_zj_02",
+    "char": "zhujun",
+    "text": "Open the gate. Surrender the city, and those who lay down arms may yet live.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_zj_03",
+    "char": "zhujun",
+    "text": "Receive the surrender. Disarm the rebels, spare those who submit, and send word of Yangcheng to the court.",
+    "source": "Battles.js"
   },
   {
     "id": "ch2_zj_camp_lb_01",
@@ -359,19 +497,19 @@
   },
   {
     "id": "ch2_zj_camp_zj_00",
-    "char": "zhujungeneric",
+    "char": "zhujun",
     "text": "Xuande, you came by night to join my command. Good.",
     "source": "MapScene.js"
   },
   {
     "id": "ch2_zj_camp_zj_01",
-    "char": "zhujungeneric",
+    "char": "zhujun",
     "text": "Xuande, take the vanguard and engage the rebels first.",
     "source": "MapScene.js"
   },
   {
     "id": "ch2_zj_camp_zj_02",
-    "char": "zhujungeneric",
+    "char": "zhujun",
     "text": "I will receive your force with full trust. We combine our men as one host and advance against Zhang Bao.",
     "source": "MapScene.js"
   },
@@ -961,12 +1099,6 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "inn_liubo_accept_repeat_01",
-    "char": "xiaoer",
-    "text": "Set the pieces again.",
-    "source": "NarrativeScripts.js"
-  },
-  {
     "id": "inn_liubo_decline_01",
     "char": "xiaoer",
     "text": "Another time.",
@@ -976,12 +1108,6 @@
     "id": "inn_liubo_decline_reply_01",
     "char": "xiaoer",
     "text": "The board will wait. The rebels, perhaps not.",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "inn_liubo_decline_reply_02",
-    "char": "xiaoer",
-    "text": "Then keep your eyes sharp. The road plays rougher games than mine.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1003,98 +1129,92 @@
     "source": "LiuboScene.js"
   },
   {
-    "id": "inn_liubo_repeat_01",
-    "char": "xiaoer",
-    "text": "Back to the board? Good. A second game tells more truth than the first.",
-    "source": "NarrativeScripts.js"
-  },
-  {
     "id": "inn_liubo_tutorial_block_01",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "These two birds together have blocked a perch.",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_block_02",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "Other birds can't get past them.",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_contest_01",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "This perch is contested.",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_contest_02",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "The next bird to move there will capture the opposing player's bird.",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_goal_01",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "The goal of the game is to get 6 points.",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_goal_02",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "You can get a point by capturing the opponent's birds.",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_goal_03",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "You can also catch a fish in the central pond.",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_goal_04",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "Deposit that fish in the opponent's nest to score.",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_goal_05",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "A bird with a fish becomes an owl. Simple!",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_move_01",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "You get to move two of your birds on your turn.",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_move_02",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "The number of face up sticks determines the distance.",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_owl_01",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "This piece has caught a fish and become an owl.",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_owl_02",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "Owls and birds can capture each other by landing in the same perch.",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_owl_03",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "The owl can also score by reaching a nest on the opponent's side.",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_start_01",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "You start the game by throwing your sticks.",
     "source": "LiuboScene.js"
   },

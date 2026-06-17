@@ -1157,10 +1157,17 @@ export class MapScene extends BaseScene {
                                 this.manager.switchTo('tactics', {
                                     battleId: 'chapter2_zhangbao_counter',
                                     onVictory: () => {
-                                        this.manager.gameState.setStoryCursor('chapter2_oath_complete', CHAPTER2_ROUTE_ID);
+                                        this.manager.gameState.setStoryCursor('chapter2_yangcheng_surrender', CHAPTER2_ROUTE_ID);
                                         this.manager.gameState.addMilestone('chapter2_zhangbao_counter', CHAPTER2_ROUTE_ID);
-                                        this.manager.gameState.addMilestone('chapter2_oath_complete', CHAPTER2_ROUTE_ID);
-                                        this.manager.switchTo('campaign_selection');
+                                        this.manager.switchTo('tactics', {
+                                            battleId: 'chapter2_yangcheng_surrender',
+                                            onVictory: () => {
+                                                this.manager.gameState.setStoryCursor('chapter2_oath_complete', CHAPTER2_ROUTE_ID);
+                                                this.manager.gameState.addMilestone('chapter2_yangcheng_surrender', CHAPTER2_ROUTE_ID);
+                                                this.manager.gameState.addMilestone('chapter2_oath_complete', CHAPTER2_ROUTE_ID);
+                                                this.manager.switchTo('campaign_selection');
+                                            }
+                                        });
                                     }
                                 });
                             }

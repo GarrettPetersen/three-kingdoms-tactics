@@ -75,6 +75,8 @@ export class Unit {
         this.isProp = !!config.isProp;
         this.breaksToImgKey = config.breaksToImgKey || null;
         this.keepBrokenOnDefeat = !!config.keepBrokenOnDefeat;
+        this.staticCorpseImgKey = config.staticCorpseImgKey || null;
+        this.carryImgKey = config.carryImgKey || null;
     }
 
     playDeathSoundOnce() {

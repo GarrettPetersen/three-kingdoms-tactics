@@ -478,6 +478,11 @@ export class TacticsScene extends BaseScene {
                         this.manager.switchTo('map');
                     }
                 });
+            } else if (this.isPostCombatDialogue && this.battleDef?.cutsceneAutoCombat) {
+                this.isPostCombatDialogue = false;
+                this.completeAutoCutsceneBattle();
+            } else if (this.battleDef?.cutsceneAutoCombat) {
+                this.startAutoCutsceneCombat();
             } else if (!this.isCutscene) {
                 this.startNpcPhase();
             }
@@ -947,10 +952,9 @@ export class TacticsScene extends BaseScene {
         if (this.introScript && this.introScript.length > 0) {
             this.isIntroDialogueActive = true;
             this.dialogueStep = 0;
-        } else if (this.battleId === 'yellow_turban_rout') {
-            // Start combat immediately, dialogue comes after
+        } else if (battleDef?.cutsceneAutoCombat) {
             this.isIntroDialogueActive = false;
-            this.startYellowTurbanCutsceneCombat();
+            this.startAutoCutsceneCombat();
         } else if (this.isCutscene) {
             // Cutscenes handle their own flow - don't start NPC phase
             this.isIntroDialogueActive = false;
@@ -961,6 +965,10 @@ export class TacticsScene extends BaseScene {
     }
 
     startYellowTurbanCutsceneCombat() {
+        this.startAutoCutsceneCombat();
+    }
+
+    startAutoCutsceneCombat() {
         this.isProcessingTurn = true;
         this.cutsceneCombatComplete = false; // Flag to track when combat is done
         
@@ -974,6 +982,90 @@ export class TacticsScene extends BaseScene {
         // Use normal NPC phase (allied move → enemy move → telegraph → execution)
         // This will be intercepted to skip player turn and go straight to execution
         this.startNpcPhase();
+    }
+
+    completeAutoCutsceneBattle() {
+        if (this.onVictoryCallback) {
+            this.onVictoryCallback();
+            return;
+        }
+
+        const battleDef = BATTLES[this.battleId];
+        if (battleDef?.nextScene) {
+            this.manager.switchTo(battleDef.nextScene, battleDef.nextParams || {});
+            return;
+        }
+
+        this.endBattle(true);
+    }
+
+    finishAutoCutsceneCombat() {
+        if (this.battleId === 'yellow_turban_rout') {
+            this.checkCutsceneCombatComplete();
+            return;
+        }
+
+        const battleDef = BATTLES[this.battleId];
+        if (this.battleId === 'chapter2_yangcheng_surrender') {
+            this.moveYangchengSurrendererThroughGate(() => {
+                if (battleDef?.postCombatScript?.length) {
+                    this.startPostCombatDialogue();
+                } else {
+                    this.completeAutoCutsceneBattle();
+                }
+            });
+            return;
+        }
+
+        if (battleDef?.postCombatScript?.length) {
+            this.startPostCombatDialogue();
+        } else {
+            this.completeAutoCutsceneBattle();
+        }
+    }
+
+    moveYangchengSurrendererThroughGate(onComplete) {
+        const unit = this.units.find(u => u.id === 'yanzheng' && u.hp > 0 && !u.isGone);
+        if (!unit || !this.tacticsMap) {
+            if (onComplete) onComplete();
+            return;
+        }
+
+        if (this.tacticsMap.cityGateMeta?.gateState !== 'open') {
+            this.tacticsMap.setCityGateState?.('open');
+        }
+        unit.faction = 'enemy';
+        unit.carryImgKey = 'zhangbao_head';
+
+        const dest = this.tacticsMap.getCell(4, 5) || this.tacticsMap.getCell(4, 4);
+        const destination = dest && !dest.unit ? dest : this.findNearestFreeCell(4, 5, 3);
+        if (!destination) {
+            if (onComplete) onComplete();
+            return;
+        }
+
+        const path = this.tacticsMap.getPath(unit.r, unit.q, destination.r, destination.q, 12, unit);
+        if (!Array.isArray(path) || path.length < 2) {
+            if (onComplete) onComplete();
+            return;
+        }
+
+        this.isProcessingTurn = true;
+        this.prepareUnitForPathMovement(unit, path);
+        const oldCell = this.tacticsMap.getCell(unit.r, unit.q);
+        if (oldCell && oldCell.unit === unit) oldCell.unit = null;
+        unit.startPath(path);
+        destination.unit = unit;
+
+        const waitForArrival = () => {
+            if (unit.isMoving) {
+                setTimeout(waitForArrival, 100);
+                return;
+            }
+            this.isProcessingTurn = false;
+            if (onComplete) onComplete();
+        };
+        waitForArrival();
     }
     
     checkCutsceneCombatComplete() {
@@ -2786,7 +2878,7 @@ export class TacticsScene extends BaseScene {
         this.commandTutorialStep = null;
         this.commandTutorialTargetId = null;
         // For yellow_turban_rout cutscene, alternate between enemy and allied phases
-        if (this.battleId === 'yellow_turban_rout' && this.cutsceneCombatTurns !== undefined) {
+        if (this.battleDef?.cutsceneAutoCombat && this.cutsceneCombatTurns !== undefined) {
             // Determine which phase based on current turn state
             const isEnemyPhase = this.turn === 'enemy' || this.turn === 'enemy_moving';
             this.turn = isEnemyPhase ? 'enemy_moving' : 'allied_moving';
@@ -2866,7 +2958,7 @@ export class TacticsScene extends BaseScene {
                                 }
                             });
                             // Special handling for yellow_turban_rout cutscene - skip player turn, go straight to execution
-                            if (this.battleId === 'yellow_turban_rout' && this.cutsceneCombatComplete !== undefined) {
+                            if (this.battleDef?.cutsceneAutoCombat && this.cutsceneCombatComplete !== undefined) {
                                 this.startExecutionPhase();
                             } else {
                                 this.startPlayerTurn();
@@ -3605,6 +3697,8 @@ export class TacticsScene extends BaseScene {
                 isProp: !!u.isProp,
                 breaksToImgKey: u.breaksToImgKey || null,
                 keepBrokenOnDefeat: !!u.keepBrokenOnDefeat,
+                staticCorpseImgKey: u.staticCorpseImgKey || null,
+                carryImgKey: u.carryImgKey || null,
                 caged: u.caged,
                 cageHp: u.cageHp,
                 cageSprite: u.cageSprite,
@@ -3864,6 +3958,8 @@ export class TacticsScene extends BaseScene {
                     isProp: !!uData.isProp,
                     breaksToImgKey: uData.breaksToImgKey || null,
                     keepBrokenOnDefeat: !!uData.keepBrokenOnDefeat,
+                    staticCorpseImgKey: uData.staticCorpseImgKey || null,
+                    carryImgKey: uData.carryImgKey || null,
                     caged: !!uData.caged,
                     cageHp: uData.cageHp,
                     cageSprite: uData.cageSprite,
@@ -3892,6 +3988,8 @@ export class TacticsScene extends BaseScene {
             u.isProp = !!uData.isProp;
             u.breaksToImgKey = uData.breaksToImgKey || u.breaksToImgKey || null;
             u.keepBrokenOnDefeat = !!uData.keepBrokenOnDefeat;
+            u.staticCorpseImgKey = uData.staticCorpseImgKey || u.staticCorpseImgKey || null;
+            u.carryImgKey = uData.carryImgKey || null;
             u.overkillEffectStarted = false;
             u.attacks = Array.isArray(uData.attacks) ? [...uData.attacks] : u.attacks;
             u.scenarioAttackRules = uData.scenarioAttackRules
@@ -4162,7 +4260,7 @@ export class TacticsScene extends BaseScene {
                                 const attackers = this.units.filter(u => u.hp > 0 && u.intent && u.intent.type === 'attack');
                                 if (attackers.length === 0) {
                                     // No attackers with intents - execution may have completed, check for post-combat
-                                    this.checkCutsceneCombatComplete();
+                                    this.finishAutoCutsceneCombat();
                                 } else {
                                     this.startExecutionPhase();
                                 }
@@ -4202,7 +4300,7 @@ export class TacticsScene extends BaseScene {
                 } else {
                     // All attacks have been executed - trigger post-execution logic
                     // For yellow_turban_rout, check if we should show post-combat dialogue
-                    if (this.battleId === 'yellow_turban_rout' && this.cutsceneCombatComplete !== undefined) {
+                    if (this.battleDef?.cutsceneAutoCombat && this.cutsceneCombatComplete !== undefined) {
                         // Check if we're already in post-combat dialogue
                         if (this.isPostCombatDialogue && this.isIntroDialogueActive) {
                             // Already in post-combat dialogue - ensure script is loaded and dialogueStep is valid
@@ -4237,7 +4335,7 @@ export class TacticsScene extends BaseScene {
                             } else {
                                 // Need to run retreat sequence
                                 setTimeout(() => {
-                                    this.checkCutsceneCombatComplete();
+                                    this.finishAutoCutsceneCombat();
                                 }, 100);
                             }
                         }
@@ -4330,6 +4428,8 @@ export class TacticsScene extends BaseScene {
             u.isProp = !!uData.isProp;
             u.breaksToImgKey = uData.breaksToImgKey || u.breaksToImgKey || null;
             u.keepBrokenOnDefeat = !!uData.keepBrokenOnDefeat;
+            u.staticCorpseImgKey = uData.staticCorpseImgKey || u.staticCorpseImgKey || null;
+            u.carryImgKey = uData.carryImgKey || null;
             u.overkillEffectStarted = false;
             u.attacks = Array.isArray(uData.attacks) ? [...uData.attacks] : u.attacks;
             u.scenarioAttackRules = uData.scenarioAttackRules
@@ -5081,10 +5181,10 @@ export class TacticsScene extends BaseScene {
                 this.units.filter(u => u.intent).map(u => ({ id: u.id, intent: u.intent })));
             // No attackers - execution phase completes immediately
             // For yellow_turban_rout, check if we should go to post-combat
-            if (this.battleId === 'yellow_turban_rout' && this.cutsceneCombatComplete !== undefined) {
+            if (this.battleDef?.cutsceneAutoCombat && this.cutsceneCombatComplete !== undefined) {
                 this.isProcessingTurn = false;
                 setTimeout(() => {
-                    this.checkCutsceneCombatComplete();
+                    this.finishAutoCutsceneCombat();
                 }, 100);
             } else {
                 this.isProcessingTurn = false;
@@ -5104,10 +5204,10 @@ export class TacticsScene extends BaseScene {
                 // Short pause after the final attack before next phase
                 setTimeout(() => {
                     // Special handling for yellow_turban_rout cutscene
-                    if (this.battleId === 'yellow_turban_rout' && this.cutsceneCombatComplete !== undefined) {
+                    if (this.battleDef?.cutsceneAutoCombat && this.cutsceneCombatComplete !== undefined) {
                         // Mark execution as complete
                         this.isProcessingTurn = false;
-                        this.checkCutsceneCombatComplete();
+                        this.finishAutoCutsceneCombat();
                         return;
                     }
                     
@@ -11519,6 +11619,13 @@ export class TacticsScene extends BaseScene {
             drawHalf(rearSide);
         } else if (u.name === 'Boulder') {
             this.drawBoulder(ctx, u, surfaceY + u.visualOffsetY, drawOptions);
+        } else if (u.hp <= 0 && u.staticCorpseImgKey) {
+            const corpseImg = assets.getImage(u.staticCorpseImgKey);
+            if (corpseImg) {
+                const x = Math.floor(u.visualX + u.visualOffsetX + hexOffsetX - corpseImg.width / 2);
+                const y = Math.floor(surfaceY + u.visualOffsetY + hexOffsetY - corpseImg.height + 4);
+                ctx.drawImage(corpseImg, x, y);
+            }
         } else {
             const drawAction = drawOptions?.actionOverride || u.currentAnimAction || u.action;
             this.drawCharacter(
@@ -11530,6 +11637,15 @@ export class TacticsScene extends BaseScene {
                 surfaceY + u.visualOffsetY + hexOffsetY,
                 { ...drawOptions, isProp: !!u.isProp }
             );
+        }
+        if (u.carryImgKey && u.hp > 0 && !u.isGone) {
+            const carriedImg = assets.getImage(u.carryImgKey);
+            if (carriedImg) {
+                const facing = u.flip ? -1 : 1;
+                const x = Math.floor(u.visualX + u.visualOffsetX + hexOffsetX + facing * 13 - carriedImg.width / 2);
+                const y = Math.floor(surfaceY + u.visualOffsetY + hexOffsetY - 34);
+                ctx.drawImage(carriedImg, x, y);
+            }
         }
         if (u.caged) {
             const cageKey = u.cageSprite || 'cage';

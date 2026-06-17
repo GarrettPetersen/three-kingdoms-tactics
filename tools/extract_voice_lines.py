@@ -40,9 +40,17 @@ PORTRAIT_TO_CHAR = {
     'lu-zhi': 'luzhi',
     'Huangfu-Song-generic': 'huangfusong',
     'Zhu-Jun-generic': 'zhujun',
+    'zhu-jun-generic': 'zhujun',
+    'yan-zheng': 'yanzheng',
     'bandit1': 'dengmao',
     'bandit2': 'chengyuanzhi',
     'dong-zhuo': 'dongzhuo',
+    'hejin': 'hejin',
+    'panyin': 'panyin',
+    'eunuch': 'eunuch',
+    'eunuch-guard': 'eunuchguard',
+    'xiaoer': 'xiaoer',
+    'cao-ren': 'caoren',
     'cao-cao': 'caocao',
     'peach_garden': 'narrator',
     'noticeboard': 'noticeboard',  # Noticeboard has its own voice
@@ -69,9 +77,16 @@ NAME_TO_CHAR = {
     'Lu Zhi': 'luzhi',
     'Huangfu Song': 'huangfusong',
     'Zhu Jun': 'zhujun',
+    'Yan Zheng': 'yanzheng',
     'Deng Mao': 'dengmao',
     'Cheng Yuanzhi': 'chengyuanzhi',
     'Dong Zhuo': 'dongzhuo',
+    'He Jin': 'hejin',
+    'Pan Yin': 'panyin',
+    'Palace Eunuch': 'eunuch',
+    'Palace Attendant': 'eunuchguard',
+    'Liubo Player': 'xiaoer',
+    'Cao Ren': 'caoren',
     'Cao Cao': 'caocao',
     'Narrator': 'narrator',
 }
@@ -191,7 +206,8 @@ def extract_voice_lines_from_file(filepath):
         # Try speaker field first
         speaker_match = re.search(r'speaker\s*:\s*[\'"]([^\'"]+)[\'"]', obj_str)
         if speaker_match:
-            char = speaker_match.group(1)
+            speaker_key = speaker_match.group(1)
+            char = PORTRAIT_TO_CHAR.get(speaker_key, speaker_key.replace('-', ''))
         
         # Try portraitKey
         if not char:
@@ -215,17 +231,21 @@ def extract_voice_lines_from_file(filepath):
         
         # Try to infer character from voiceId prefix
         if not char or char == 'unknown':
+            if voice_id.startswith('inn_liubo'):
+                char = 'xiaoer'
             vid_parts = voice_id.split('_')
             char_abbrev_map = {
                 'lb': 'liubei', 'gy': 'guanyu', 'zf': 'zhangfei',
                 'zj': 'zhoujing', 'gj': 'gongjing', 'lz': 'luzhi',
+                'hj': 'hejin', 'cr': 'caoren',
                 'dz': 'dongzhuo', 'nar': 'narrator', 'nb': 'noticeboard',  # noticeboard uses its own voice
                 'yt': 'yellowturban', 'dm': 'dengmao', 'cyz': 'chengyuanzhi',
             }
-            for part in vid_parts:
-                if part in char_abbrev_map:
-                    char = char_abbrev_map[part]
-                    break
+            if not char or char == 'unknown':
+                for part in vid_parts:
+                    if part in char_abbrev_map:
+                        char = char_abbrev_map[part]
+                        break
         
         if not char:
             char = 'unknown'

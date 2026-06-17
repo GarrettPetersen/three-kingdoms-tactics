@@ -52,18 +52,27 @@ CHAR_TARGETS = {
     "yellowturban": "movies/clean/clean_kublai-khan.wav",  # Aggressive warrior voice (shared with zhangfei, dongzhuo, zhangbao)
     "narrator": "movies/clean/clean_uncle-iroh.wav",
     "noticeboard": "movies/clean/clean_mulan-emperor.wav",  # Authoritative voice (shared with dengmao, luzhi, zhangliang)
-    "volunteer": "movies/clean/clean_hercules_young_adult_hero.wav",  # Heroic, enthusiastic voice for volunteers
+    "volunteer": "movies/clean/clean_dark_riku_young_adult.wav",  # Young, earnest volunteer voice
     "gongjing": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
     "luzhi": "movies/clean/clean_mulan-emperor.wav",
     "huangfusong": "movies/clean/clean_mulan-emperor.wav",
     "zhujun": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
+    "yanzheng": "movies/clean/clean_brash_australian_man.wav",
+    "hejin": "movies/clean/clean_thanos_deep_villain.wav",  # Middle-aged, powerful court voice
+    "panyin": "movies/clean/clean_mulans-dad.wav",  # Urgent but grounded official
+    "eunuch": "movies/clean/clean_disney_hades.wav",  # Slippery palace functionary
+    "eunuchguard": "movies/clean/clean_master_xehanort.wav",  # Cold palace enforcer
+    "xiaoer": "movies/clean/clean_dark_riku_young_adult.wav",  # Distinct young inn/game player voice
     "dongzhuo": "movies/clean/clean_kublai-khan.wav",  # Gruff and arrogant
     "caocao": "movies/clean/clean_thanos_deep_villain.wav",  # Deep, commanding contrast vs guanyu
+    "caoren": "movies/clean/clean_li-shang-captain-from-mulan.wav",  # Military subordinate, younger than Cao Cao
     "zhangjue": "movies/clean/clean_anton-ego-villainous-food-critic.wav",  # Villainous, commanding
     "zhangbao": "movies/clean/clean_kublai-khan.wav",  # Aggressive, warrior-like
     "zhangliang": "movies/clean/clean_mulan-emperor.wav",  # Authoritative, imperial
-    "soldier": "movies/clean/clean_hercules_young_adult_hero.wav",  # Younger common soldier voice
-    "farmer": "movies/clean/clean_hercules_young_adult_hero.wav",  # Younger male villager voice
+    "soldier": "movies/clean/clean_li-shang-captain-from-mulan.wav",  # Disciplined common soldier voice
+    "soldierv2": "movies/clean/clean_dark_riku_young_adult.wav",  # Alternate young soldier
+    "soldierv3": "movies/clean/clean_angry-mulans-dad.wav",  # Older anxious soldier
+    "farmer": "movies/clean/clean_mulans-dad.wav",  # Older male villager voice
     "farmer2": "movies/clean/clean_anna_frozen_young_adult_woman.wav",  # Female villager voice
     "default": "movies/clean/clean_hercules_young_adult_hero.wav",  # Younger fallback voice for unmapped speakers
 }
@@ -88,17 +97,26 @@ CHAR_TARGETS_MANDARIN = {
     "yellowturban": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Aggressive (shared)
     "narrator": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",  # Calm, baritone narrator
     "noticeboard": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
-    "volunteer": "mandarin/clean/clean_young_adult_male_mandarin.wav",  # Young, enthusiastic
+    "volunteer": "mandarin/clean/clean_bipolar_male_mandarin.wav",  # Young, expressive
     "gongjing": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
     "luzhi": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
     "huangfusong": "mandarin/clean/clean_serious_male_mandarin.wav",  # Commanding imperial general
     "zhujun": "mandarin/clean/clean_deep_male_mandarin.wav",  # Veteran field commander
+    "yanzheng": "mandarin/clean/clean_bipolar_male_mandarin.wav",  # Rebel subordinate turning on Zhang Bao
+    "hejin": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav",  # Powerful middle-aged court voice
+    "panyin": "mandarin/clean/clean_calm_wise_male_mandarin.wav",  # Calm warning voice
+    "eunuch": "mandarin/clean/clean_grandiose_male_mandarin.wav",  # Palace functionary
+    "eunuchguard": "mandarin/clean/clean_fearsome_elder_male_mandarin.wav",  # Cold palace enforcer
+    "xiaoer": "mandarin/clean/clean_young_adult_male_mandarin.wav",  # Distinct inn/game player voice
     "dongzhuo": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Gruff, arrogant (shared)
     "caocao": "mandarin/clean/clean_deep_male_mandarin.wav",  # Cool-headed strategist
+    "caoren": "mandarin/clean/clean_young_adult_male_mandarin.wav",  # Younger military subordinate
     "zhangjue": "mandarin/clean/clean_fearsome_elder_male_mandarin.wav",  # Fearsome, commanding elder
     "zhangbao": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Aggressive (shared)
     "zhangliang": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
-    "soldier": "mandarin/clean/clean_young_adult_male_mandarin.wav",  # Young male (shared)
+    "soldier": "mandarin/clean/clean_young_adult_male_mandarin.wav",  # Young soldier
+    "soldierv2": "mandarin/clean/clean_bipolar_male_mandarin.wav",  # Alternate young soldier
+    "soldierv3": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Older anxious soldier
     "farmer": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",  # Common villager
     "farmer2": "mandarin/clean/clean_young_adult_female_mandarin.wav",  # Female villager
     "default": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative fallback

@@ -180,6 +180,90 @@
     "source": "MapScene.js"
   },
   {
+    "id": "ch2_counter_camp_choice_reluctant",
+    "char": "liubei",
+    "text": "以秽物破妖，心中终觉不安。但军士性命，重于颜面。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_camp_choice_use",
+    "char": "liubei",
+    "text": "若能破其幻形，保全军士，便依此计。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_camp_gy_01",
+    "char": "guanyu",
+    "text": "盛猪羊狗血，并备秽物。令伏兵携之，伏于山后高冈。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_camp_lb_01",
+    "char": "liubei",
+    "text": "张宝作法唤下天雷。雷声与黑气之中，似有人马自天而下。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_camp_lb_02",
+    "char": "liubei",
+    "text": "云长、翼德，各引一千军，伏于山后。待我引张宝过冈，号炮一起，齐泼秽物。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_camp_zf_01",
+    "char": "zhangfei",
+    "text": "哈哈！他以雷吓人，俺便以污秽泼雷！",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_camp_zj_01",
+    "char": "zhujun",
+    "text": "天雷不可只以兵刃相迎。其术托于纸人草马，污之则法自败。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_camp_zj_02",
+    "char": "zhujun",
+    "text": "此非奉妖，乃破其雷法之后的诈术。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_camp_zj_03",
+    "char": "zhujun",
+    "text": "善。过此山冈，便是阳城之路。此处破之，他只得退守城中。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_gy_01",
+    "char": "guanyu",
+    "text": "伏兵已在高冈。待其召雷，即发号炮。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_counter_lb_01",
+    "char": "liubei",
+    "text": "待雷声大作、黑气漫天，再以秽物破其纸人草马，两翼齐出。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_counter_zb_01",
+    "char": "zhangbao",
+    "text": "汝等又来？黄天天雷仍为我应！",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_counter_zb_filth_01",
+    "char": "zhangbao",
+    "text": "秽物！汝等竟敢污我雷法？天雷……竟不应了！",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_counter_zb_retreat_01",
+    "char": "zhangbao",
+    "text": "吾法已破！退入阳城，退入阳城！",
+    "source": "Battles.js"
+  },
+  {
     "id": "ch2_hj_choice_enter",
     "char": "hejin",
     "text": "我乃大将军。蹇硕若敢，便让他露出手来。",
@@ -332,20 +416,74 @@
   {
     "id": "ch2_probe_lb_retreat_01",
     "char": "liubei",
-    "text": "二弟、三弟，先撤！今日不可与其妖法硬拼！",
+    "text": "二弟、三弟，先撤！今日不可与其天雷硬拼！",
     "source": "TacticsScene.js"
   },
   {
     "id": "ch2_probe_zb_01",
     "char": "zhangbao",
-    "text": "你便是刘玄德？好，且尝黄天道法。",
+    "text": "你便是刘玄德？好，且尝黄天之雷。",
     "source": "Battles.js"
   },
   {
     "id": "ch2_probe_zb_sorcery_01",
     "char": "zhangbao",
-    "text": "风雨之中，尔等岂能杀我？且看天雷！",
+    "text": "天雷听我号令，尔等岂能杀我！",
     "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_yc_lb_01",
+    "char": "liubei",
+    "text": "若他执意守城，墙上士卒只会为已破之妖术送命。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_lb_02",
+    "char": "liubei",
+    "text": "妖雷已息。愿城中百姓，终能再闻太平之声。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_yz_01",
+    "char": "yanzheng",
+    "text": "将军……军中无粮，无心，也无人愿陪你同葬。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_yz_02",
+    "char": "yanzheng",
+    "text": "严政已杀张宝。今献其首，举阳城归降。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_zb_01",
+    "char": "zhangbao",
+    "text": "宽赦？尔等以污秽犯天，也配言宽赦？吾乃地公将军，阳城不降！",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_zb_02",
+    "char": "zhangbao",
+    "text": "懦夫！再敢言降，吾便以汝血祭黄天！",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_zj_01",
+    "char": "zhujun",
+    "text": "张宝！张角已死，妖法已破，诸郡皆归汉廷。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_zj_02",
+    "char": "zhujun",
+    "text": "开城投降。弃兵归顺者，尚可保全性命。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_zj_03",
+    "char": "zhujun",
+    "text": "纳降。收其兵器，顺者勿杀，并将阳城捷报奏闻朝廷。",
+    "source": "Battles.js"
   },
   {
     "id": "ch2_zj_camp_lb_01",
@@ -355,19 +493,19 @@
   },
   {
     "id": "ch2_zj_camp_zj_00",
-    "char": "zhujungeneric",
+    "char": "zhujun",
     "text": "玄德，你们当夜引军来投，甚好。",
     "source": "MapScene.js"
   },
   {
     "id": "ch2_zj_camp_zj_01",
-    "char": "zhujungeneric",
+    "char": "zhujun",
     "text": "玄德，你为先锋，先与贼对敌。",
     "source": "MapScene.js"
   },
   {
     "id": "ch2_zj_camp_zj_02",
-    "char": "zhujungeneric",
+    "char": "zhujun",
     "text": "我待汝军以厚礼。即刻合兵一处，进讨张宝。",
     "source": "MapScene.js"
   },
@@ -948,12 +1086,6 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "inn_liubo_accept_repeat_01",
-    "char": "xiaoer",
-    "text": "再摆一局。",
-    "source": "NarrativeScripts.js"
-  },
-  {
     "id": "inn_liubo_decline_01",
     "char": "xiaoer",
     "text": "改日吧。",
@@ -963,12 +1095,6 @@
     "id": "inn_liubo_decline_reply_01",
     "char": "xiaoer",
     "text": "棋盘会等你。黄巾贼可未必。",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "inn_liubo_decline_reply_02",
-    "char": "xiaoer",
-    "text": "那就把眼睛放亮些。路上的局，比我这棋盘更狠。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -990,98 +1116,92 @@
     "source": "LiuboScene.js"
   },
   {
-    "id": "inn_liubo_repeat_01",
-    "char": "xiaoer",
-    "text": "又来棋盘前了？好。第二局比第一局更见真章。",
-    "source": "NarrativeScripts.js"
-  },
-  {
     "id": "inn_liubo_tutorial_block_01",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "这两只鸟一起堵住了这个栖位。",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_block_02",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "其他鸟不能从这里通过。",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_contest_01",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "这个栖位正在争夺中。",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_contest_02",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "下一只移动到这里的鸟会吃掉对方的鸟。",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_goal_01",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "游戏的目标是得到六分。",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_goal_02",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "吃掉对手的鸟可以得一分。",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_goal_03",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "你也可以到中央池塘捕鱼。",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_goal_04",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "把鱼送到对手的巢里，也能得分。",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_goal_05",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "叼着鱼的鸟会变成枭。很简单！",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_move_01",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "每回合你可以移动两只鸟。",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_move_02",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "朝上的箸数决定移动距离。",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_owl_01",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "这枚棋子捉到鱼，变成了枭。",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_owl_02",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "枭和鸟落在同一栖位时可以互相吃掉。",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_owl_03",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "枭也能到达对手一侧的巢来得分。",
     "source": "LiuboScene.js"
   },
   {
     "id": "inn_liubo_tutorial_start_01",
-    "char": "unknown",
+    "char": "xiaoer",
     "text": "你先掷箸，游戏就从这里开始。",
     "source": "LiuboScene.js"
   },

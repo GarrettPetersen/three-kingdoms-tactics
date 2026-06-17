@@ -2180,7 +2180,7 @@
     "en:ch2_probe_lb_retreat_01": {
         "id": "ch2_probe_lb_retreat_01",
         "character": "liubei",
-        "original_text": "Brothers, withdraw! We cannot break his sorcery head-on today!",
+        "original_text": "Brothers, withdraw! We cannot break that lightning head-on today!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -2189,7 +2189,7 @@
     "en:ch2_probe_zb_01": {
         "id": "ch2_probe_zb_01",
         "character": "zhangbao",
-        "original_text": "You are Liu Xuande? Good. Taste the art of the Yellow Heaven.",
+        "original_text": "You are Liu Xuande? Good. Taste the thunder of the Yellow Heaven.",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -2198,7 +2198,7 @@
     "en:ch2_probe_zb_sorcery_01": {
         "id": "ch2_probe_zb_sorcery_01",
         "character": "zhangbao",
-        "original_text": "You cannot kill me in this storm. Behold the thunder of Heaven!",
+        "original_text": "You cannot kill me while Heaven's lightning answers my command!",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -2215,7 +2215,7 @@
     },
     "en:ch2_zj_camp_zj_00": {
         "id": "ch2_zj_camp_zj_00",
-        "character": "zhujungeneric",
+        "character": "zhujun",
         "original_text": "Xuande, you came by night to join my command. Good.",
         "stt_output": "",
         "wer": 0,
@@ -2224,7 +2224,7 @@
     },
     "en:ch2_zj_camp_zj_01": {
         "id": "ch2_zj_camp_zj_01",
-        "character": "zhujungeneric",
+        "character": "zhujun",
         "original_text": "Xuande, take the vanguard and engage the rebels first.",
         "stt_output": "",
         "wer": 0,
@@ -2233,7 +2233,7 @@
     },
     "en:ch2_zj_camp_zj_02": {
         "id": "ch2_zj_camp_zj_02",
-        "character": "zhujungeneric",
+        "character": "zhujun",
         "original_text": "I will receive your force with full trust. We combine our men as one host and advance against Zhang Bao.",
         "stt_output": "",
         "wer": 0,
@@ -2377,7 +2377,7 @@
     },
     "en:inn_liubo_tutorial_block_01": {
         "id": "inn_liubo_tutorial_block_01",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "These two birds together have blocked a perch.",
         "stt_output": "",
         "wer": 0,
@@ -2386,7 +2386,7 @@
     },
     "en:inn_liubo_tutorial_block_02": {
         "id": "inn_liubo_tutorial_block_02",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "Other birds can't get past them.",
         "stt_output": "",
         "wer": 0,
@@ -2395,7 +2395,7 @@
     },
     "en:inn_liubo_tutorial_contest_01": {
         "id": "inn_liubo_tutorial_contest_01",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "This perch is contested.",
         "stt_output": "",
         "wer": 0,
@@ -2404,7 +2404,7 @@
     },
     "en:inn_liubo_tutorial_contest_02": {
         "id": "inn_liubo_tutorial_contest_02",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "The next bird to move there will capture the opposing player's bird.",
         "stt_output": "",
         "wer": 0,
@@ -2413,7 +2413,7 @@
     },
     "en:inn_liubo_tutorial_goal_01": {
         "id": "inn_liubo_tutorial_goal_01",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "The goal of the game is to get 6 points.",
         "stt_output": "",
         "wer": 0,
@@ -2422,7 +2422,7 @@
     },
     "en:inn_liubo_tutorial_goal_02": {
         "id": "inn_liubo_tutorial_goal_02",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "You can get a point by capturing the opponent's birds.",
         "stt_output": "",
         "wer": 0,
@@ -2431,7 +2431,7 @@
     },
     "en:inn_liubo_tutorial_goal_03": {
         "id": "inn_liubo_tutorial_goal_03",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "You can also catch a fish in the central pond.",
         "stt_output": "",
         "wer": 0,
@@ -2440,7 +2440,7 @@
     },
     "en:inn_liubo_tutorial_goal_04": {
         "id": "inn_liubo_tutorial_goal_04",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "Deposit that fish in the opponent's nest to score.",
         "stt_output": "",
         "wer": 0,
@@ -2449,7 +2449,7 @@
     },
     "en:inn_liubo_tutorial_goal_05": {
         "id": "inn_liubo_tutorial_goal_05",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "A bird with a fish becomes an owl. Simple!",
         "stt_output": "",
         "wer": 0,
@@ -2458,7 +2458,7 @@
     },
     "en:inn_liubo_tutorial_move_01": {
         "id": "inn_liubo_tutorial_move_01",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "You get to move two of your birds on your turn.",
         "stt_output": "",
         "wer": 0,
@@ -2467,7 +2467,7 @@
     },
     "en:inn_liubo_tutorial_move_02": {
         "id": "inn_liubo_tutorial_move_02",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "The number of face up sticks determines the distance.",
         "stt_output": "",
         "wer": 0,
@@ -2476,7 +2476,7 @@
     },
     "en:inn_liubo_tutorial_owl_01": {
         "id": "inn_liubo_tutorial_owl_01",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "This piece has caught a fish and become an owl.",
         "stt_output": "",
         "wer": 0,
@@ -2485,7 +2485,7 @@
     },
     "en:inn_liubo_tutorial_owl_02": {
         "id": "inn_liubo_tutorial_owl_02",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "Owls and birds can capture each other by landing in the same perch.",
         "stt_output": "",
         "wer": 0,
@@ -2494,7 +2494,7 @@
     },
     "en:inn_liubo_tutorial_owl_03": {
         "id": "inn_liubo_tutorial_owl_03",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "The owl can also score by reaching a nest on the opponent's side.",
         "stt_output": "",
         "wer": 0,
@@ -2503,7 +2503,7 @@
     },
     "en:inn_liubo_tutorial_start_01": {
         "id": "inn_liubo_tutorial_start_01",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "You start the game by throwing your sticks.",
         "stt_output": "",
         "wer": 0,
@@ -2928,8 +2928,215 @@
         "id": "ch2_oath_gy_strike_escape_after_01",
         "character": "guanyu",
         "original_text": "He flees with his life and his shame intact. Brother, we have no cause to chase him farther.",
-        "stt_output": "He flees with his life and his shame and tact. Brother, we have no cause to chase him farther.",
-        "wer": 0.1111111111111111,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_camp_choice_reluctant": {
+        "id": "ch2_counter_camp_choice_reluctant",
+        "character": "liubei",
+        "original_text": "It sits poorly with me to answer darkness with such things. Yet lives weigh heavier than pride.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_camp_choice_use": {
+        "id": "ch2_counter_camp_choice_use",
+        "character": "liubei",
+        "original_text": "If this breaks the false shapes and saves the men, we use it.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_camp_gy_01": {
+        "id": "ch2_counter_camp_gy_01",
+        "character": "guanyu",
+        "original_text": "Pig, sheep, and dog blood, with filthy matter besides. Hide it with our men on the high ridge.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_camp_lb_01": {
+        "id": "ch2_counter_camp_lb_01",
+        "character": "liubei",
+        "original_text": "Zhang Bao called lightning down on us. In the thunder and black air, it seemed as if soldiers were falling from the sky.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_camp_lb_02": {
+        "id": "ch2_counter_camp_lb_02",
+        "character": "liubei",
+        "original_text": "Guan Yu, Zhang Fei: each take a thousand men. Hide behind the mountain. When I draw Zhang Bao past the ridge, fire the signal and pour it all at once.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_camp_zf_01": {
+        "id": "ch2_counter_camp_zf_01",
+        "character": "zhangfei",
+        "original_text": "Ha! If thunder answers him, slop will answer thunder.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_camp_zj_01": {
+        "id": "ch2_counter_camp_zj_01",
+        "character": "zhujun",
+        "original_text": "Then do not meet thunder with spearpoints. His storm is carried by paper men and straw horses. Foul them, and the spell will fail.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_camp_zj_02": {
+        "id": "ch2_counter_camp_zj_02",
+        "character": "zhujun",
+        "original_text": "This is not worship of sorcery. It is the unmasking of the trick behind his thunder.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_camp_zj_03": {
+        "id": "ch2_counter_camp_zj_03",
+        "character": "zhujun",
+        "original_text": "Good. The road to Yangcheng opens beyond that ridge. Break him there, and he will have only the city walls left.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_gy_01": {
+        "id": "ch2_counter_gy_01",
+        "character": "guanyu",
+        "original_text": "The hidden troops are ready on the high ground. When he calls the lightning, give the signal.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_lb_01": {
+        "id": "ch2_counter_lb_01",
+        "character": "liubei",
+        "original_text": "Hold until the thunder breaks and the black air rises. Then foul the false shapes and strike from both wings.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_zb_01": {
+        "id": "ch2_counter_zb_01",
+        "character": "zhangbao",
+        "original_text": "Again you come? Then Heaven's lightning will answer me again!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_zb_filth_01": {
+        "id": "ch2_counter_zb_filth_01",
+        "character": "zhangbao",
+        "original_text": "Filth! You dare foul Heaven's spell? The thunder... it will not answer!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_zb_retreat_01": {
+        "id": "ch2_counter_zb_retreat_01",
+        "character": "zhangbao",
+        "original_text": "My spell is broken! Yangcheng - fall back to Yangcheng!",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_yc_lb_01": {
+        "id": "ch2_yc_lb_01",
+        "character": "liubei",
+        "original_text": "If he forces a siege, the common soldiers on that wall will die for a spell already spent.",
+        "stt_output": "If he forces a siege, the common soldiers on that wall will die for a spell already spent.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_yc_lb_02": {
+        "id": "ch2_yc_lb_02",
+        "character": "liubei",
+        "original_text": "The false thunder is silent. May the people behind those walls hear real peace again.",
+        "stt_output": "The false thunder is silent. May the people behind those walls hear real peace again.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_yc_yz_01": {
+        "id": "ch2_yc_yz_01",
+        "character": "yanzheng",
+        "original_text": "General... the men have no grain, no faith, and no wish to be buried with you.",
+        "stt_output": "General, the men have no grain, no faith, and no wish to be buried with you.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_yc_yz_02": {
+        "id": "ch2_yc_yz_02",
+        "character": "yanzheng",
+        "original_text": "Yan Zheng has struck down Zhang Bao. I bring his head and surrender Yangcheng.",
+        "stt_output": "Yanxin has struck down Zhang Baow. I bring his head and surrender Yanxin.",
+        "wer": 0.2857142857142857,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_yc_zb_01": {
+        "id": "ch2_yc_zb_01",
+        "character": "zhangbao",
+        "original_text": "Clemency? From men who splash filth at Heaven? I am General of Earth. Yangcheng will not bend.",
+        "stt_output": "Clemancy from men who splash filth at heaven. I am general of earth. Young Chang will not bend.",
+        "wer": 0.17647058823529413,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_yc_zb_02": {
+        "id": "ch2_yc_zb_02",
+        "character": "zhangbao",
+        "original_text": "Coward! Speak once more of surrender and I will offer your blood to the Yellow Heaven.",
+        "stt_output": "coward. Speak once more of surrender, and I will offer your blood to the yellow heaven.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_yc_zj_01": {
+        "id": "ch2_yc_zj_01",
+        "character": "zhujun",
+        "original_text": "Zhang Bao! Your brother is dead, your sorcery is broken, and the counties are returning to the Han.",
+        "stt_output": "Shining bow, your brother is dead, your sorcery is broken, and the counties are returning to the hunt.",
+        "wer": 0.16666666666666666,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_yc_zj_02": {
+        "id": "ch2_yc_zj_02",
+        "character": "zhujun",
+        "original_text": "Open the gate. Surrender the city, and those who lay down arms may yet live.",
+        "stt_output": "Open the gate, Zurinder the city, and those who lay down arms may yet live.",
+        "wer": 0.06666666666666667,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_yc_zj_03": {
+        "id": "ch2_yc_zj_03",
+        "character": "zhujun",
+        "original_text": "Receive the surrender. Disarm the rebels, spare those who submit, and send word of Yangcheng to the court.",
+        "stt_output": "Receive the surrender, disarm the rebels, spare those who submit and send word of young to the court.",
+        "wer": 0.05555555555555555,
         "is_bad": false,
         "language": "en"
     }

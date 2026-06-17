@@ -825,6 +825,8 @@ async function init() {
                 crossbowman: 'assets/characters/099_crossbowman.png',
                 zhangjiao: 'assets/characters/005_zhangjiao.png',
                 zhangbao: 'assets/characters/006_zhangbao.png',
+                zhangbao_head: 'assets/characters/zhangbao_head.png',
+                zhangbao_headless_body: 'assets/characters/zhangbao_headless_body.png',
                 zhangliang: 'assets/characters/007_zhangliang.png',
                 yellowturban: 'assets/characters/097_yellowturban.png',
                 priest: 'assets/characters/085_daoshi01.png',

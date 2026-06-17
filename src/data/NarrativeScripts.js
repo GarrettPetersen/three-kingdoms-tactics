@@ -2189,6 +2189,7 @@ export const NARRATIVE_SCRIPTS = {
                         zh: "若能破其幻形，保全军士，便依此计。"
                     },
                     voiceId: 'ch2_counter_camp_choice_use',
+                    speaker: 'liubei',
                     position: 'top',
                     result: [
                         {
@@ -2207,6 +2208,7 @@ export const NARRATIVE_SCRIPTS = {
                         zh: "以秽物破妖，心中终觉不安。但军士性命，重于颜面。"
                     },
                     voiceId: 'ch2_counter_camp_choice_reluctant',
+                    speaker: 'liubei',
                     position: 'top',
                     result: [
                         {

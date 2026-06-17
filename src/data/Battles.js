@@ -774,6 +774,123 @@ export const BATTLES = {
             ]
         }
     },
+    'chapter2_yangcheng_surrender': {
+        name: 'Yangcheng - Surrender at the Wall',
+        map: {
+            biome: 'northern',
+            layout: 'city_gate',
+            seed: 'chapter2_yangcheng_surrender',
+            cityGateDefenderSide: 'enemy',
+            forestDensity: 0.0,
+            mountainDensity: 0.0,
+            riverDensity: 0.0,
+            houseDensity: 0.0
+        },
+        units: [
+            { id: 'liubei', r: 5, q: 3, type: 'hero_force', templateId: 'liubei', cityGateSide: 'outside' },
+            { id: 'guanyu', r: 5, q: 2, type: 'hero_force', templateId: 'guanyu', cityGateSide: 'outside' },
+            { id: 'zhangfei', r: 5, q: 6, type: 'hero_force', templateId: 'zhangfei', cityGateSide: 'outside' },
+            { id: 'zhujun', r: 4, q: 4, type: 'commander', templateId: 'zhujun_observer', cityGateSide: 'outside' },
+            { id: 'zhangbao', r: 1, q: 4, type: 'zhang_bao', templateId: 'zhangbao_wounded', cityGateSide: 'inside' },
+            { id: 'yanzheng', r: 1, q: 5, type: 'commander', templateId: 'yanzheng', cityGateSide: 'inside' }
+        ],
+        isCutscene: true,
+        cutsceneAutoCombat: true,
+        introScript: [
+            {
+                speaker: 'zhujun',
+                portraitKey: 'zhu-jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'ch2_yc_zj_01',
+                text: {
+                    en: "Zhang Bao! Your brother is dead, your sorcery is broken, and the counties are returning to the Han.",
+                    zh: "张宝！张角已死，妖法已破，诸郡皆归汉廷。"
+                }
+            },
+            {
+                speaker: 'zhujun',
+                portraitKey: 'zhu-jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'ch2_yc_zj_02',
+                text: {
+                    en: "Open the gate. Surrender the city, and those who lay down arms may yet live.",
+                    zh: "开城投降。弃兵归顺者，尚可保全性命。"
+                }
+            },
+            {
+                speaker: 'zhangbao',
+                portraitKey: 'zhang-bao',
+                name: 'Zhang Bao',
+                voiceId: 'ch2_yc_zb_01',
+                text: {
+                    en: "Clemency? From men who splash filth at Heaven? I am General of Earth. Yangcheng will not bend.",
+                    zh: "宽赦？尔等以污秽犯天，也配言宽赦？吾乃地公将军，阳城不降！"
+                }
+            },
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'ch2_yc_lb_01',
+                text: {
+                    en: "If he forces a siege, the common soldiers on that wall will die for a spell already spent.",
+                    zh: "若他执意守城，墙上士卒只会为已破之妖术送命。"
+                }
+            },
+            {
+                speaker: 'yanzheng',
+                portraitKey: 'yellowturban',
+                name: 'Yan Zheng',
+                voiceId: 'ch2_yc_yz_01',
+                text: {
+                    en: "General... the men have no grain, no faith, and no wish to be buried with you.",
+                    zh: "将军……军中无粮，无心，也无人愿陪你同葬。"
+                }
+            },
+            {
+                speaker: 'zhangbao',
+                portraitKey: 'zhang-bao',
+                name: 'Zhang Bao',
+                voiceId: 'ch2_yc_zb_02',
+                text: {
+                    en: "Coward! Speak once more of surrender and I will offer your blood to the Yellow Heaven.",
+                    zh: "懦夫！再敢言降，吾便以汝血祭黄天！"
+                }
+            }
+        ],
+        postCombatScript: [
+            {
+                speaker: 'yanzheng',
+                portraitKey: 'yellowturban',
+                name: 'Yan Zheng',
+                voiceId: 'ch2_yc_yz_02',
+                text: {
+                    en: "Yan Zheng has struck down Zhang Bao. I bring his head and surrender Yangcheng.",
+                    zh: "严政已杀张宝。今献其首，举阳城归降。"
+                }
+            },
+            {
+                speaker: 'zhujun',
+                portraitKey: 'zhu-jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'ch2_yc_zj_03',
+                text: {
+                    en: "Receive the surrender. Disarm the rebels, spare those who submit, and send word of Yangcheng to the court.",
+                    zh: "纳降。收其兵器，顺者勿杀，并将阳城捷报奏闻朝廷。"
+                }
+            },
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'ch2_yc_lb_02',
+                text: {
+                    en: "The false thunder is silent. May the people behind those walls hear real peace again.",
+                    zh: "妖雷已息。愿城中百姓，终能再闻太平之声。"
+                }
+            }
+        ]
+    },
     'caocao_yingchuan_intercept': {
         name: 'Yingchuan - Cavalry Intercept',
         map: {
@@ -1114,7 +1231,9 @@ export const UNIT_TEMPLATES = {
         'gongjing': { name: 'Gong Jing', imgKey: 'gongjing_sprite', hp: 5, moveRange: 3, attacks: ['slash'], faction: 'allied' },
         'luzhi': { name: 'Lu Zhi', imgKey: 'zhoujing', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' },
         'huangfusong': { name: 'Huangfu Song', imgKey: 'huangfusong_sprite', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' },
-        'zhujun': { name: 'Zhu Jun', imgKey: 'zhujun_sprite', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' }
+        'zhujun': { name: 'Zhu Jun', imgKey: 'zhujun_sprite', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' },
+        'zhujun_observer': { name: 'Zhu Jun', imgKey: 'zhujun_sprite', hp: 6, moveRange: 0, attacks: [], faction: 'player' },
+        'yanzheng': { name: 'Yan Zheng', imgKey: 'yellowturban', hp: 3, moveRange: 0, attacks: ['slash'], faction: 'allied' }
     },
     'warlord': {
         'dongzhuo': { name: 'Dong Zhuo', imgKey: 'dongzhuo', hp: 9, moveRange: 3, attacks: ['blade_sweep_4'], faction: 'allied' }
@@ -1137,7 +1256,8 @@ export const UNIT_TEMPLATES = {
         'zhangjue': { name: 'Zhang Jue', imgKey: 'zhangjiao', hp: 8, moveRange: 4, attacks: ['bash_3'], faction: 'enemy' }
     },
     'zhang_bao': {
-        'zhangbao': { name: 'Zhang Bao', imgKey: 'zhangbao', hp: 7, moveRange: 4, attacks: ['slash'], faction: 'enemy' }
+        'zhangbao': { name: 'Zhang Bao', imgKey: 'zhangbao', hp: 7, moveRange: 4, attacks: ['slash'], faction: 'enemy' },
+        'zhangbao_wounded': { name: 'Zhang Bao', imgKey: 'zhangbao', hp: 1, moveRange: 0, attacks: [], faction: 'enemy', staticCorpseImgKey: 'zhangbao_headless_body' }
     },
     'zhang_liang': {
         'zhangliang': { name: 'Zhang Liang', imgKey: 'zhangliang', hp: 7, moveRange: 4, attacks: ['blade_sweep_2'], faction: 'enemy' }

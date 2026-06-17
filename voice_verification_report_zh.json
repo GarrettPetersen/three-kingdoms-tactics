@@ -2180,7 +2180,7 @@
     "zh:ch2_probe_lb_retreat_01": {
         "id": "ch2_probe_lb_retreat_01",
         "character": "liubei",
-        "original_text": "二弟、三弟，先撤！今日不可与其妖法硬拼！",
+        "original_text": "二弟、三弟，先撤！今日不可与其天雷硬拼！",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -2189,7 +2189,7 @@
     "zh:ch2_probe_zb_01": {
         "id": "ch2_probe_zb_01",
         "character": "zhangbao",
-        "original_text": "你便是刘玄德？好，且尝黄天道法。",
+        "original_text": "你便是刘玄德？好，且尝黄天之雷。",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -2198,7 +2198,7 @@
     "zh:ch2_probe_zb_sorcery_01": {
         "id": "ch2_probe_zb_sorcery_01",
         "character": "zhangbao",
-        "original_text": "风雨之中，尔等岂能杀我？且看天雷！",
+        "original_text": "天雷听我号令，尔等岂能杀我！",
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
@@ -2215,7 +2215,7 @@
     },
     "zh:ch2_zj_camp_zj_00": {
         "id": "ch2_zj_camp_zj_00",
-        "character": "zhujungeneric",
+        "character": "zhujun",
         "original_text": "玄德，你们当夜引军来投，甚好。",
         "stt_output": "",
         "wer": 0,
@@ -2224,7 +2224,7 @@
     },
     "zh:ch2_zj_camp_zj_01": {
         "id": "ch2_zj_camp_zj_01",
-        "character": "zhujungeneric",
+        "character": "zhujun",
         "original_text": "玄德，你为先锋，先与贼对敌。",
         "stt_output": "",
         "wer": 0,
@@ -2233,7 +2233,7 @@
     },
     "zh:ch2_zj_camp_zj_02": {
         "id": "ch2_zj_camp_zj_02",
-        "character": "zhujungeneric",
+        "character": "zhujun",
         "original_text": "我待汝军以厚礼。即刻合兵一处，进讨张宝。",
         "stt_output": "",
         "wer": 0,
@@ -2377,7 +2377,7 @@
     },
     "zh:inn_liubo_tutorial_block_01": {
         "id": "inn_liubo_tutorial_block_01",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "这两只鸟一起堵住了这个栖位。",
         "stt_output": "",
         "wer": 0,
@@ -2386,7 +2386,7 @@
     },
     "zh:inn_liubo_tutorial_block_02": {
         "id": "inn_liubo_tutorial_block_02",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "其他鸟不能从这里通过。",
         "stt_output": "",
         "wer": 0,
@@ -2395,7 +2395,7 @@
     },
     "zh:inn_liubo_tutorial_contest_01": {
         "id": "inn_liubo_tutorial_contest_01",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "这个栖位正在争夺中。",
         "stt_output": "",
         "wer": 0,
@@ -2404,7 +2404,7 @@
     },
     "zh:inn_liubo_tutorial_contest_02": {
         "id": "inn_liubo_tutorial_contest_02",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "下一只移动到这里的鸟会吃掉对方的鸟。",
         "stt_output": "",
         "wer": 0,
@@ -2413,7 +2413,7 @@
     },
     "zh:inn_liubo_tutorial_goal_01": {
         "id": "inn_liubo_tutorial_goal_01",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "游戏的目标是得到六分。",
         "stt_output": "",
         "wer": 0,
@@ -2422,7 +2422,7 @@
     },
     "zh:inn_liubo_tutorial_goal_02": {
         "id": "inn_liubo_tutorial_goal_02",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "吃掉对手的鸟可以得一分。",
         "stt_output": "",
         "wer": 0,
@@ -2431,7 +2431,7 @@
     },
     "zh:inn_liubo_tutorial_goal_03": {
         "id": "inn_liubo_tutorial_goal_03",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "你也可以到中央池塘捕鱼。",
         "stt_output": "",
         "wer": 0,
@@ -2440,7 +2440,7 @@
     },
     "zh:inn_liubo_tutorial_goal_04": {
         "id": "inn_liubo_tutorial_goal_04",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "把鱼送到对手的巢里，也能得分。",
         "stt_output": "",
         "wer": 0,
@@ -2449,7 +2449,7 @@
     },
     "zh:inn_liubo_tutorial_goal_05": {
         "id": "inn_liubo_tutorial_goal_05",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "叼着鱼的鸟会变成枭。很简单！",
         "stt_output": "",
         "wer": 0,
@@ -2458,7 +2458,7 @@
     },
     "zh:inn_liubo_tutorial_move_01": {
         "id": "inn_liubo_tutorial_move_01",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "每回合你可以移动两只鸟。",
         "stt_output": "",
         "wer": 0,
@@ -2467,7 +2467,7 @@
     },
     "zh:inn_liubo_tutorial_move_02": {
         "id": "inn_liubo_tutorial_move_02",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "朝上的箸数决定移动距离。",
         "stt_output": "",
         "wer": 0,
@@ -2476,7 +2476,7 @@
     },
     "zh:inn_liubo_tutorial_owl_01": {
         "id": "inn_liubo_tutorial_owl_01",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "这枚棋子捉到鱼，变成了枭。",
         "stt_output": "",
         "wer": 0,
@@ -2485,7 +2485,7 @@
     },
     "zh:inn_liubo_tutorial_owl_02": {
         "id": "inn_liubo_tutorial_owl_02",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "枭和鸟落在同一栖位时可以互相吃掉。",
         "stt_output": "",
         "wer": 0,
@@ -2494,7 +2494,7 @@
     },
     "zh:inn_liubo_tutorial_owl_03": {
         "id": "inn_liubo_tutorial_owl_03",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "枭也能到达对手一侧的巢来得分。",
         "stt_output": "",
         "wer": 0,
@@ -2503,7 +2503,7 @@
     },
     "zh:inn_liubo_tutorial_start_01": {
         "id": "inn_liubo_tutorial_start_01",
-        "character": "unknown",
+        "character": "xiaoer",
         "original_text": "你先掷箸，游戏就从这里开始。",
         "stt_output": "",
         "wer": 0,
@@ -2928,7 +2928,214 @@
         "id": "ch2_oath_gy_strike_escape_after_01",
         "character": "guanyu",
         "original_text": "他性命得保，颜面尽失。兄长，我等不必再追。",
-        "stt_output": "他性命得保,也念警示,兄長,我等不必再追",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_camp_choice_reluctant": {
+        "id": "ch2_counter_camp_choice_reluctant",
+        "character": "liubei",
+        "original_text": "以秽物破妖，心中终觉不安。但军士性命，重于颜面。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_camp_choice_use": {
+        "id": "ch2_counter_camp_choice_use",
+        "character": "liubei",
+        "original_text": "若能破其幻形，保全军士，便依此计。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_camp_gy_01": {
+        "id": "ch2_counter_camp_gy_01",
+        "character": "guanyu",
+        "original_text": "盛猪羊狗血，并备秽物。令伏兵携之，伏于山后高冈。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_camp_lb_01": {
+        "id": "ch2_counter_camp_lb_01",
+        "character": "liubei",
+        "original_text": "张宝作法唤下天雷。雷声与黑气之中，似有人马自天而下。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_camp_lb_02": {
+        "id": "ch2_counter_camp_lb_02",
+        "character": "liubei",
+        "original_text": "云长、翼德，各引一千军，伏于山后。待我引张宝过冈，号炮一起，齐泼秽物。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_camp_zf_01": {
+        "id": "ch2_counter_camp_zf_01",
+        "character": "zhangfei",
+        "original_text": "哈哈！他以雷吓人，俺便以污秽泼雷！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_camp_zj_01": {
+        "id": "ch2_counter_camp_zj_01",
+        "character": "zhujun",
+        "original_text": "天雷不可只以兵刃相迎。其术托于纸人草马，污之则法自败。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_camp_zj_02": {
+        "id": "ch2_counter_camp_zj_02",
+        "character": "zhujun",
+        "original_text": "此非奉妖，乃破其雷法之后的诈术。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_camp_zj_03": {
+        "id": "ch2_counter_camp_zj_03",
+        "character": "zhujun",
+        "original_text": "善。过此山冈，便是阳城之路。此处破之，他只得退守城中。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_gy_01": {
+        "id": "ch2_counter_gy_01",
+        "character": "guanyu",
+        "original_text": "伏兵已在高冈。待其召雷，即发号炮。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_lb_01": {
+        "id": "ch2_counter_lb_01",
+        "character": "liubei",
+        "original_text": "待雷声大作、黑气漫天，再以秽物破其纸人草马，两翼齐出。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_zb_01": {
+        "id": "ch2_counter_zb_01",
+        "character": "zhangbao",
+        "original_text": "汝等又来？黄天天雷仍为我应！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_zb_filth_01": {
+        "id": "ch2_counter_zb_filth_01",
+        "character": "zhangbao",
+        "original_text": "秽物！汝等竟敢污我雷法？天雷……竟不应了！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_zb_retreat_01": {
+        "id": "ch2_counter_zb_retreat_01",
+        "character": "zhangbao",
+        "original_text": "吾法已破！退入阳城，退入阳城！",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_yc_lb_01": {
+        "id": "ch2_yc_lb_01",
+        "character": "liubei",
+        "original_text": "若他执意守城，墙上士卒只会为已破之妖术送命。",
+        "stt_output": "若他直一手成,牆上是阻止会为以破值要属宋明。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_yc_lb_02": {
+        "id": "ch2_yc_lb_02",
+        "character": "liubei",
+        "original_text": "妖雷已息。愿城中百姓，终能再闻太平之声。",
+        "stt_output": "腰雷以吸,願成中百姓,中能再聞太平之聲",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_yc_yz_01": {
+        "id": "ch2_yc_yz_01",
+        "character": "yanzheng",
+        "original_text": "将军……军中无粮，无心，也无人愿陪你同葬。",
+        "stt_output": "將軍軍種無良、無心也無人願陪你通脹",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_yc_yz_02": {
+        "id": "ch2_yc_yz_02",
+        "character": "yanzheng",
+        "original_text": "严政已杀张宝。今献其首，举阳城归降。",
+        "stt_output": "養丈夫沿着你鼠脏包津縣齊首舉堯成規相",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_yc_zb_01": {
+        "id": "ch2_yc_zb_01",
+        "character": "zhangbao",
+        "original_text": "宽赦？尔等以污秽犯天，也配言宽赦？吾乃地公将军，阳城不降！",
+        "stt_output": "宽舍而等以吾会犯天也配言宽舍吾乃帝公将军杨城股价",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_yc_zb_02": {
+        "id": "ch2_yc_zb_02",
+        "character": "zhangbao",
+        "original_text": "懦夫！再敢言降，吾便以汝血祭黄天！",
+        "stt_output": "諾夫在感言降無變以如是如是血祭皇篇",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_yc_zj_01": {
+        "id": "ch2_yc_zj_01",
+        "character": "zhujun",
+        "original_text": "张宝！张角已死，妖法已破，诸郡皆归汉廷。",
+        "stt_output": "张宝 张教一死 要罚一破诸俊 皆 归汉庭",
+        "wer": 5.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_yc_zj_02": {
+        "id": "ch2_yc_zj_02",
+        "character": "zhujun",
+        "original_text": "开城投降。弃兵归顺者，尚可保全性命。",
+        "stt_output": "開城頭翔,氣兵歸順者,上可保全性命",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_yc_zj_03": {
+        "id": "ch2_yc_zj_03",
+        "character": "zhujun",
+        "original_text": "纳降。收其兵器，顺者勿杀，并将阳城捷报奏闻朝廷。",
+        "stt_output": "那翔收起冰器顺着误杀并将杨承洁暴走文朝廷",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
