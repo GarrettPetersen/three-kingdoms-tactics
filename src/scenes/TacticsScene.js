@@ -1149,7 +1149,10 @@ export class TacticsScene extends BaseScene {
 
         for (const [id, r, q] of placements) {
             const unit = this.units.find(u => u.id === id);
-            const cell = this.tacticsMap.getCell(r, q);
+            const preferredCell = this.tacticsMap.getCell(r, q);
+            const cell = (preferredCell && !preferredCell.omitted && !preferredCell.impassable)
+                ? preferredCell
+                : this.findNearestFreeCell(r, q, 5);
             if (!unit || !cell || cell.omitted || cell.impassable) continue;
             if (cell.unit && cell.unit !== unit) {
                 const fallback = this.findNearestFreeCell(r, q, 3);
@@ -1159,12 +1162,12 @@ export class TacticsScene extends BaseScene {
                     fallback.unit = cell.unit;
                 }
             }
-            unit.r = r;
-            unit.q = q;
+            unit.r = cell.r;
+            unit.q = cell.q;
             unit.visualOffsetX = 0;
             unit.visualOffsetY = 0;
-            unit.currentSortR = r;
-            const pos = this.getPixelPos(r, q);
+            unit.currentSortR = cell.r;
+            const pos = this.getPixelPos(cell.r, cell.q);
             unit.visualX = pos.x;
             unit.visualY = pos.y;
             unit.targetX = pos.x;
@@ -1640,8 +1643,8 @@ export class TacticsScene extends BaseScene {
                         portraitKey: 'liu-bei',
                         name: 'Liu Bei',
                         text: {
-                            en: "Brothers, withdraw! We cannot break that lightning head-on today!",
-                            zh: "二弟、三弟，先撤！今日不可与其天雷硬拼！"
+                            en: "Brothers, withdraw! We cannot break his sorcery here today!",
+                            zh: "二弟、三弟，先撤！今日不可强破其妖术！"
                         },
                         voiceId: 'ch2_probe_lb_retreat_01'
                     }], () => {
@@ -9702,14 +9705,14 @@ export class TacticsScene extends BaseScene {
         const img = assets.getImage(unit.carryImgKey);
         const headW = img?.width || 12;
         const headH = img?.height || 12;
-        const sourceX = unit.visualX + (unit.visualOffsetX || 0) + 17 + Math.max(1, Math.floor(headW * 0.18));
+        const sourceX = unit.visualX + (unit.visualOffsetX || 0) + 12 + Math.max(1, Math.floor(headW * 0.18));
         const sourceY = unit.visualY + (unit.visualOffsetY || 0) - 21 + headH - 2;
         const targetCell = this.getCellAt(sourceX, unit.visualY + 8) || this.tacticsMap?.getCell(unit.r, unit.q);
         const targetPos = targetCell ? this.getPixelPos(targetCell.r, targetCell.q) : { x: sourceX, y: unit.visualY };
         return {
             x: sourceX,
             y: sourceY,
-            targetY: targetPos.y - 3 + Math.floor(Math.random() * 3),
+            targetY: targetPos.y + Math.floor(Math.random() * 3),
             r: targetCell ? targetCell.r + 0.86 : (unit.currentSortR || unit.r) + 0.86
         };
     }
@@ -9740,13 +9743,15 @@ export class TacticsScene extends BaseScene {
                     life: 1,
                     alpha: 0.95,
                     size: strongDrop ? 2 : 1,
-                    color: strongDrop ? '#8f1010' : '#5f0707'
+                    color: strongDrop ? '#8f1010' : '#5f0707',
+                    persistentDecal: true
                 });
             }
         });
 
         for (let i = this.bloodDecals.length - 1; i >= 0; i--) {
             const d = this.bloodDecals[i];
+            if (d.persistent) continue;
             d.life -= dt;
             d.alpha = Math.max(0, Math.min(1, d.life / Math.max(1, d.maxLife)));
             if (d.life <= 0) this.bloodDecals.splice(i, 1);
@@ -9756,7 +9761,7 @@ export class TacticsScene extends BaseScene {
     addBloodDecalFromDrop(p) {
         if (!p) return;
         if (!this.bloodDecals) this.bloodDecals = [];
-        const maxDecals = 90;
+        const maxDecals = 220;
         this.bloodDecals.push({
             type: 'blood_decal',
             x: Math.floor(p.x + (Math.random() - 0.5) * 2),
@@ -9764,8 +9769,9 @@ export class TacticsScene extends BaseScene {
             r: p.r || 0,
             size: Math.max(1, Math.floor(p.size || 1)) + (Math.random() < 0.22 ? 1 : 0),
             alpha: 0.9,
-            life: 9000 + Math.random() * 6500,
-            maxLife: 13000,
+            life: p.persistentDecal ? 1 : 9000 + Math.random() * 6500,
+            maxLife: p.persistentDecal ? 1 : 13000,
+            persistent: !!p.persistentDecal,
             color: Math.random() < 0.32 ? '#a31616' : '#650707'
         });
         if (this.bloodDecals.length > maxDecals) {
@@ -12185,7 +12191,7 @@ export class TacticsScene extends BaseScene {
             if (carriedImg) {
                 const facing = u.flip ? -1 : 1;
                 const carryOffset = u.carryImgKey === 'zhangbao_head'
-                    ? { x: 17, y: -21 }
+                    ? { x: 12, y: -21 }
                     : { x: facing * 13, y: -34 };
                 const x = Math.floor(u.visualX + u.visualOffsetX + hexOffsetX + carryOffset.x - carriedImg.width / 2);
                 const y = Math.floor(surfaceY + u.visualOffsetY + hexOffsetY + carryOffset.y);
