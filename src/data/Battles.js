@@ -1298,7 +1298,7 @@ export const UNIT_TEMPLATES = {
             imgKey: 'caoren',
             hp: 5,
             moveRange: 4,
-            attacks: ['caoren_spear'],
+            attacks: ['caoren_spear', 'shield_bash'],
             faction: 'player',
             shieldResistBase: 0.2,
             shieldResistPerLevel: 0.05

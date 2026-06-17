@@ -3113,6 +3113,13 @@ export class TacticsScene extends BaseScene {
         return victim.faction === 'enemy' || (victim.faction === 'allied' && victim.caged);
     }
 
+    areUnitsFriendly(a, b) {
+        if (!a || !b) return false;
+        if (a.faction === b.faction) return true;
+        const isPlayerSide = unit => unit.faction === 'player' || unit.faction === 'allied';
+        return isPlayerSide(a) && isPlayerSide(b);
+    }
+
     isVictimFriendlyForNpcAttack(attacker, victim) {
         if (!attacker || !victim) return false;
         if (attacker.faction === 'enemy') return victim.faction === 'enemy';
@@ -6310,7 +6317,7 @@ export class TacticsScene extends BaseScene {
             // Fired on the release frame so the sound wave syncs with the shout pose.
         }
         else if (this.isDoubleBladesAttack(attackKey)) assets.playSound('double_blades');
-        else if (attackKey === 'bash') assets.playSound('bash');
+        else if (attackKey === 'bash' || attackKey.startsWith('shield_bash')) assets.playSound('bash');
         else if (attackKey.startsWith('slash')) assets.playSound('slash');
         else if (attackKey === 'stab') assets.playSound('stab');
 
@@ -6540,7 +6547,7 @@ export class TacticsScene extends BaseScene {
                             startPos, 'slash',
                             { maxWidth: 7, duration: 130 }
                         );
-                    } else if (attackKey.startsWith('bash')) {
+                    } else if (attackKey.startsWith('bash') || attackKey.startsWith('shield_bash')) {
                         this.spawnSwish(
                             [{ r: targetR, q: targetQ }],
                             startPos, 'slash',
@@ -7432,6 +7439,11 @@ export class TacticsScene extends BaseScene {
         }
     }
 
+    getAttackPushDistance(attack) {
+        if (!attack?.push) return 0;
+        return Math.max(1, Math.floor(Number.isFinite(attack.pushDistance) ? attack.pushDistance : 1));
+    }
+
     drawPushPreviewArrowsForAttack(ctx, attacker, attackKey, targetR, targetQ, alpha = 1) {
         const attack = ATTACKS[attackKey];
         if (!attacker || !attack?.push) return false;
@@ -7459,7 +7471,16 @@ export class TacticsScene extends BaseScene {
                     this.drawPushArrow(ctx, path[i].r, path[i].q, dirIndex, i === path.length - 2 && bumpAtEnd, alpha);
                 }
             } else {
-                this.drawPushArrow(ctx, tile.r, tile.q, dirIndex, false, alpha);
+                const distance = this.getAttackPushDistance(attack);
+                let arrowR = tile.r;
+                let arrowQ = tile.q;
+                for (let step = 0; step < distance; step++) {
+                    this.drawPushArrow(ctx, arrowR, arrowQ, dirIndex, false, alpha);
+                    const next = this.tacticsMap.getNeighborInDirection(arrowR, arrowQ, dirIndex);
+                    if (!next) break;
+                    arrowR = next.r;
+                    arrowQ = next.q;
+                }
             }
         }
 
@@ -7657,6 +7678,107 @@ export class TacticsScene extends BaseScene {
         }, Math.max(0, delayMs));
     }
 
+    applyMultiHexPush(attacker, victim, attack, targetR, targetQ, dirIndex, pushDamageContext, hasDeferredOverkill) {
+        const pushDistance = this.getAttackPushDistance(attack);
+        if (pushDistance <= 1 || !victim || victim.hp <= 0 || victim.isGone) return false;
+
+        let victimPushR = victim.r;
+        let victimPushQ = victim.q;
+        const wasMounted = !!victim.onHorse;
+        if (wasMounted && victim.r === targetR && victim.q === targetQ) {
+            victimPushR = targetR;
+            victimPushQ = targetQ;
+        }
+
+        const startCell = this.tacticsMap.getCell(victimPushR, victimPushQ);
+        const startPos = this.getPixelPos(victimPushR, victimPushQ);
+        let finalR = victimPushR;
+        let finalQ = victimPushQ;
+        let finalLevelDiff = 0;
+        let finalIsDeepWater = false;
+        let stoppedBySpecialLanding = false;
+
+        for (let step = 0; step < pushDistance; step++) {
+            const currentCell = this.tacticsMap.getCell(finalR, finalQ);
+            const nextCell = this.tacticsMap.getNeighborInDirection(finalR, finalQ, dirIndex);
+            if (!nextCell) {
+                assets.playSound('collision', 0.5);
+                if (hasDeferredOverkill) this.finishDeferredOverkill(victim, attacker, 180);
+                return true;
+            }
+
+            const levelDiff = (nextCell.level || 0) - (currentCell?.level || 0);
+            const isDeepWater = nextCell.terrain && nextCell.terrain.includes('water_deep');
+            const isHighCliff = levelDiff > 1;
+            const isImpassable = nextCell.impassable && !isDeepWater;
+            const isSolidGatehouse = this.isSolidCityGatehouseCell(nextCell);
+            const liveOccupant = this.getLivingUnitOccupyingCell(nextCell.r, nextCell.q, victim);
+            const isOccupiedByLiving = !!liveOccupant;
+            const isOccupiedByHorse = !!nextCell.horse;
+
+            if (isHighCliff || isImpassable || isSolidGatehouse || isOccupiedByLiving || isOccupiedByHorse) {
+                const currentPos = this.getPixelPos(finalR, finalQ);
+                const blockedPos = this.getPixelPos(nextCell.r, nextCell.q);
+                if (finalR !== victimPushR || finalQ !== victimPushQ) {
+                    if (wasMounted) this.dismountUnitLeaveHorse(victim);
+                    if (startCell) startCell.unit = null;
+                    this.shiftIntentTargetWithDisplacement(victim, victimPushR, victimPushQ, finalR, finalQ);
+                    victim.setPosition(finalR, finalQ);
+                    const finalCell = this.tacticsMap.getCell(finalR, finalQ);
+                    if (finalCell) finalCell.unit = victim;
+                }
+                victim.startPush(startPos.x, startPos.y, blockedPos.x, blockedPos.y, true, 0);
+                this.executePushCollision(victim, nextCell, currentPos, blockedPos, pushDamageContext);
+                return true;
+            }
+
+            finalR = nextCell.r;
+            finalQ = nextCell.q;
+            finalLevelDiff = levelDiff;
+            finalIsDeepWater = !!isDeepWater;
+
+            if (levelDiff < -1 || isDeepWater) {
+                stoppedBySpecialLanding = true;
+                break;
+            }
+        }
+
+        if (finalR === victimPushR && finalQ === victimPushQ) return true;
+
+        const finalCell = this.tacticsMap.getCell(finalR, finalQ);
+        const finalPos = this.getPixelPos(finalR, finalQ);
+        if (wasMounted) this.dismountUnitLeaveHorse(victim);
+        if (startCell) startCell.unit = null;
+        this.shiftIntentTargetWithDisplacement(victim, victimPushR, victimPushQ, finalR, finalQ);
+        victim.setPosition(finalR, finalQ);
+        if (finalCell) finalCell.unit = victim;
+        const fallHeight = finalLevelDiff < -1 ? Math.abs(finalLevelDiff) : (wasMounted ? 1 : 0);
+        victim.startPush(startPos.x, startPos.y, finalPos.x, finalPos.y, false, fallHeight);
+
+        if (hasDeferredOverkill) {
+            setTimeout(() => {
+                assets.playSound(finalIsDeepWater ? 'drown' : 'bash', finalIsDeepWater ? 1 : 0.5);
+            }, stoppedBySpecialLanding ? 400 : 250);
+            this.finishDeferredOverkill(victim, attacker, stoppedBySpecialLanding ? 430 : 280);
+        } else if (finalIsDeepWater) {
+            setTimeout(() => {
+                victim.isDrowning = true;
+                assets.playSound('drown');
+            }, 250);
+        } else if (finalLevelDiff < -1) {
+            const fallDamage = Math.max(0, Math.abs(finalLevelDiff) - 1);
+            setTimeout(() => {
+                assets.playSound('collision', 0.8);
+                this.applyUnitDamage(victim, fallDamage);
+                this.addDamageNumber(finalPos.x, finalPos.y - 30, fallDamage);
+            }, 400);
+        } else {
+            assets.playSound('bash', 0.5);
+        }
+
+        return true;
+    }
+
     applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos, pushRefR = targetR, pushRefQ = targetQ) {
         // Hard safety: nobody can ever hit/push themselves with their own attack.
         // (Mounted units occupy 2 hexes, and some multi-hex attacks can otherwise reference the other hex.)
@@ -7667,6 +7789,10 @@ export class TacticsScene extends BaseScene {
         let finalDamage = attack.damage;
         if (Number.isFinite(attacker.commandDamageBonus) && attacker.commandDamageBonus > 0) {
             finalDamage += attacker.commandDamageBonus;
+        }
+        const usesFriendlyDamageOverride = this.areUnitsFriendly(attacker, victim) && Number.isFinite(attack.friendlyDamage);
+        if (usesFriendlyDamageOverride) {
+            finalDamage = attack.friendlyDamage;
         }
         let isCrit = false;
         let isResisted = false;
@@ -7679,7 +7805,7 @@ export class TacticsScene extends BaseScene {
 
         // 1. Critical Hit (Player only)
         // Formula: 0.5 * (level - 1) / (level + 4) -> Asymptotically approaches 50%
-        if (attacker.faction === 'player') {
+        if (attacker.faction === 'player' && finalDamage > 0) {
             let critChance = 0.5 * (attacker.level - 1) / (attacker.level + 4);
             
             // Height Bonus/Penalty
@@ -7697,7 +7823,7 @@ export class TacticsScene extends BaseScene {
         }
 
         // 2. Damage Resistance (Player/Allied only)
-        if (victim.faction === 'player' || victim.faction === 'allied') {
+        if ((victim.faction === 'player' || victim.faction === 'allied') && finalDamage > 0) {
             const hasShieldResist =
                 Number.isFinite(victim.shieldResistBase) &&
                 victim.shieldResistBase > 0;
@@ -7750,7 +7876,7 @@ export class TacticsScene extends BaseScene {
         }
 
         // Visual Feedback
-        if (attack.suppressDamageNumber) {
+        if (attack.suppressDamageNumber || (usesFriendlyDamageOverride && finalDamage === 0)) {
             // Utility attacks like Shout intentionally push without showing a 0-damage popup.
         } else if (isResisted) {
             this.addDamageNumber(endPos.x, endPos.y - 30, resistText, '#00ff00');
@@ -7786,6 +7912,10 @@ export class TacticsScene extends BaseScene {
                 } else if (victim.pendingDestroyAfterRoll) {
                     this.destroyBoulderAtRest(victim);
                 }
+                return;
+            }
+
+            if (this.applyMultiHexPush(attacker, victim, attack, targetR, targetQ, dirIndex, pushDamageContext, hasDeferredOverkill)) {
                 return;
             }
 

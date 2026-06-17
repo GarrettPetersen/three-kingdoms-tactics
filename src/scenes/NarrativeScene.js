@@ -174,6 +174,7 @@ export class NarrativeScene extends BaseScene {
                 if (propName === 'fg' && Object.prototype.hasOwnProperty.call(step, 'bg')) {
                     if (foregroundBgBoundary === null) {
                         foregroundBgBoundary = step.bg;
+                        if (!Object.prototype.hasOwnProperty.call(step, 'fg')) return null;
                     } else if (step.bg !== foregroundBgBoundary) {
                         return null;
                     }

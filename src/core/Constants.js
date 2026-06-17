@@ -87,6 +87,30 @@ export const ATTACKS = {
         animation: 'attack_2',
         description: { en: 'Ultimate strike. Pushes all targets in line.', zh: '极限突刺，击退直线上的全部目标。' }
     },
+    shield_bash: {
+        name: { en: 'Shield Bash', zh: '盾击' },
+        damage: 1,
+        range: 1,
+        shape: 'sweep',
+        sweepLength: 2,
+        push: true,
+        pushDistance: 2,
+        friendlyDamage: 0,
+        animation: 'attack_2',
+        description: { en: 'A wide shield shove that pushes targets 2 hexes. Allies take no damage.', zh: '宽盾猛推，将目标击退 2 格。友军不受伤害。' }
+    },
+    shield_bash_2: {
+        name: { en: 'Shield Bash II', zh: '盾击 II' },
+        damage: 2,
+        range: 1,
+        shape: 'sweep',
+        sweepLength: 2,
+        push: true,
+        pushDistance: 2,
+        friendlyDamage: 0,
+        animation: 'attack_2',
+        description: { en: 'A stronger shield shove that pushes targets 2 hexes. Allies take no damage.', zh: '更强的宽盾猛推，将目标击退 2 格。友军不受伤害。' }
+    },
     generic_spear: {
         name: { en: 'Spear Thrust', zh: '长枪突刺' },
         damage: 1,
@@ -496,6 +520,7 @@ export const UPGRADE_PATHS = {
     'caoren': {
         3: { attack: 'caoren_spear_2', text: { en: 'Range increased to 3', zh: '射程提升至 3' } },
         5: { attack: 'caoren_spear_3', text: { en: 'Damage increased to 2', zh: '伤害提升至 2' } },
+        6: { secondaryAttack: 'shield_bash_2', text: { en: 'Shield Bash damage increased to 2', zh: '盾击伤害提升至 2' } },
         8: { attack: 'caoren_spear_4', text: { en: 'Push affects all targets in line', zh: '击退影响直线上的全部目标' } }
     },
     'dengmao': {

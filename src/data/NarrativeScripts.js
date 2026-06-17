@@ -2664,9 +2664,9 @@ export const NARRATIVE_SCRIPTS = {
             y: 122,
             sortY: 154
         },
-        { type: 'command', action: 'addActor', id: 'deathbed_eunuch_left', imgKey: 'priest', x: 44, y: 196, flip: true },
+        { type: 'command', action: 'addActor', id: 'deathbed_eunuch_left', imgKey: 'priest', x: 102, y: 204, flip: true },
         { type: 'command', action: 'addActor', id: 'deathbed_eunuch_center', imgKey: 'priest', x: 126, y: 204 },
-        { type: 'command', action: 'addActor', id: 'deathbed_eunuch_right', imgKey: 'priest', x: 204, y: 190 },
+        { type: 'command', action: 'addActor', id: 'deathbed_eunuch_right', imgKey: 'priest', x: 150, y: 204 },
         {
             type: 'narrator',
             voiceId: 'ch2_hj_narrator_02',
@@ -2764,7 +2764,7 @@ export const NARRATIVE_SCRIPTS = {
                         { type: 'command', action: 'removeActor', id: 'panyin' },
                         { type: 'command', action: 'fade', target: 1, speed: 0.001 },
                         { type: 'command', action: 'wait', duration: 300 },
-                        { bg: 'luoyang_council_hall', type: 'command', action: 'clearActors' },
+                        { bg: 'luoyang_council_hall', fg: null, type: 'command', action: 'clearActors' },
                         { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: 128, y: 202 },
                         { type: 'command', action: 'addActor', id: 'minister_left', imgKey: 'caocao', x: 78, y: 202 },
                         { type: 'command', action: 'addActor', id: 'minister_right', imgKey: 'zhoujing', x: 178, y: 202, flip: true },
