@@ -2448,6 +2448,9 @@ export const NARRATIVE_SCRIPTS = {
             y: 122,
             sortY: 154
         },
+        { type: 'command', action: 'addActor', id: 'deathbed_eunuch_left', imgKey: 'priest', x: 44, y: 196, flip: true },
+        { type: 'command', action: 'addActor', id: 'deathbed_eunuch_center', imgKey: 'priest', x: 126, y: 204 },
+        { type: 'command', action: 'addActor', id: 'deathbed_eunuch_right', imgKey: 'priest', x: 204, y: 190 },
         {
             type: 'narrator',
             voiceId: 'ch2_hj_narrator_02',
