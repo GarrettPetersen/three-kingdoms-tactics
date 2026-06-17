@@ -3062,9 +3062,9 @@
     "en:ch2_yc_lb_01": {
         "id": "ch2_yc_lb_01",
         "character": "liubei",
-        "original_text": "If he forces a siege, the common soldiers on that wall will die for a spell already spent.",
-        "stt_output": "If he forces a siege, the common soldiers on that wall will die for a spell already spent.",
-        "wer": 0.0,
+        "original_text": "Zhang Bao, surrender now. Lay down your arms, and I will urge mercy for the soldiers on that wall.",
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3072,8 +3072,8 @@
         "id": "ch2_yc_lb_02",
         "character": "liubei",
         "original_text": "The false thunder is silent. May the people behind those walls hear real peace again.",
-        "stt_output": "The false thunder is silent. May the people behind those walls hear real peace again.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3081,8 +3081,8 @@
         "id": "ch2_yc_yz_01",
         "character": "yanzheng",
         "original_text": "General... the men have no grain, no faith, and no wish to be buried with you.",
-        "stt_output": "General, the men have no grain, no faith, and no wish to be buried with you.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3090,8 +3090,8 @@
         "id": "ch2_yc_yz_02",
         "character": "yanzheng",
         "original_text": "Yan Zheng has struck down Zhang Bao. I bring his head and surrender Yangcheng.",
-        "stt_output": "Yanxin has struck down Zhang Baow. I bring his head and surrender Yanxin.",
-        "wer": 0.2857142857142857,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3099,8 +3099,8 @@
         "id": "ch2_yc_zb_01",
         "character": "zhangbao",
         "original_text": "Clemency? From men who splash filth at Heaven? I am General of Earth. Yangcheng will not bend.",
-        "stt_output": "Clemancy from men who splash filth at heaven. I am general of earth. Young Chang will not bend.",
-        "wer": 0.17647058823529413,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3108,8 +3108,8 @@
         "id": "ch2_yc_zb_02",
         "character": "zhangbao",
         "original_text": "Coward! Speak once more of surrender and I will offer your blood to the Yellow Heaven.",
-        "stt_output": "coward. Speak once more of surrender, and I will offer your blood to the yellow heaven.",
-        "wer": 0.0,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3117,8 +3117,8 @@
         "id": "ch2_yc_zj_01",
         "character": "zhujun",
         "original_text": "Zhang Bao! Your brother is dead, your sorcery is broken, and the counties are returning to the Han.",
-        "stt_output": "Shining bow, your brother is dead, your sorcery is broken, and the counties are returning to the hunt.",
-        "wer": 0.16666666666666666,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3126,8 +3126,8 @@
         "id": "ch2_yc_zj_02",
         "character": "zhujun",
         "original_text": "Open the gate. Surrender the city, and those who lay down arms may yet live.",
-        "stt_output": "Open the gate, Zurinder the city, and those who lay down arms may yet live.",
-        "wer": 0.06666666666666667,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3135,8 +3135,26 @@
         "id": "ch2_yc_zj_03",
         "character": "zhujun",
         "original_text": "Receive the surrender. Disarm the rebels, spare those who submit, and send word of Yangcheng to the court.",
-        "stt_output": "Receive the surrender, disarm the rebels, spare those who submit and send word of young to the court.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_yc_lb_choice_threat": {
+        "id": "ch2_yc_lb_choice_threat",
+        "character": "liubei",
+        "original_text": "Then hear this plainly: if you force a siege, your followers will die for a spell already spent.",
+        "stt_output": "Then here this plainly, if you force a siege, your followers will die for a spell already spent.",
         "wer": 0.05555555555555555,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_yc_zb_threat_reply": {
+        "id": "ch2_yc_zb_threat_reply",
+        "character": "zhangbao",
+        "original_text": "Threats from woven-mat peddlers? I command the Yellow Heaven. Come up the wall and be buried beneath it.",
+        "stt_output": "Threats from woven mat peddlers? I command the yellow heaven. Come up the wall and be buried beneath it.",
+        "wer": 0.1111111111111111,
         "is_bad": false,
         "language": "en"
     }

@@ -434,13 +434,19 @@
   {
     "id": "ch2_yc_lb_01",
     "char": "liubei",
-    "text": "若他执意守城，墙上士卒只会为已破之妖术送命。",
+    "text": "张宝，此刻归降。弃兵开城，我愿为墙上士卒求一线生路。",
     "source": "Battles.js"
   },
   {
     "id": "ch2_yc_lb_02",
     "char": "liubei",
     "text": "妖雷已息。愿城中百姓，终能再闻太平之声。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_lb_choice_threat",
+    "char": "liubei",
+    "text": "那便听清楚：若你执意守城，部众只会为已破之妖术送命。",
     "source": "Battles.js"
   },
   {
@@ -465,6 +471,12 @@
     "id": "ch2_yc_zb_02",
     "char": "zhangbao",
     "text": "懦夫！再敢言降，吾便以汝血祭黄天！",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_zb_threat_reply",
+    "char": "zhangbao",
+    "text": "织席贩履之徒，也敢威吓于我？吾奉黄天号令。尔等上城，便葬于城下！",
     "source": "Battles.js"
   },
   {

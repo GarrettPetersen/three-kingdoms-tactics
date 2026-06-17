@@ -438,13 +438,19 @@
   {
     "id": "ch2_yc_lb_01",
     "char": "liubei",
-    "text": "If he forces a siege, the common soldiers on that wall will die for a spell already spent.",
+    "text": "Zhang Bao, surrender now. Lay down your arms, and I will urge mercy for the soldiers on that wall.",
     "source": "Battles.js"
   },
   {
     "id": "ch2_yc_lb_02",
     "char": "liubei",
     "text": "The false thunder is silent. May the people behind those walls hear real peace again.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_lb_choice_threat",
+    "char": "liubei",
+    "text": "Then hear this plainly: if you force a siege, your followers will die for a spell already spent.",
     "source": "Battles.js"
   },
   {
@@ -469,6 +475,12 @@
     "id": "ch2_yc_zb_02",
     "char": "zhangbao",
     "text": "Coward! Speak once more of surrender and I will offer your blood to the Yellow Heaven.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_zb_threat_reply",
+    "char": "zhangbao",
+    "text": "Threats from woven-mat peddlers? I command the Yellow Heaven. Come up the wall and be buried beneath it.",
     "source": "Battles.js"
   },
   {

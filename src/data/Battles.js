@@ -830,24 +830,55 @@ export const BATTLES = {
                 }
             },
             {
-                speaker: 'zhangbao',
-                portraitKey: 'zhang-bao',
-                name: 'Zhang Bao',
-                voiceId: 'ch2_yc_zb_01',
-                text: {
-                    en: "Clemency? From men who splash filth at Heaven? I am General of Earth. Yangcheng will not bend.",
-                    zh: "宽赦？尔等以污秽犯天，也配言宽赦？吾乃地公将军，阳城不降！"
-                }
-            },
-            {
-                speaker: 'liubei',
+                type: 'choice',
                 portraitKey: 'liu-bei',
                 name: 'Liu Bei',
-                voiceId: 'ch2_yc_lb_01',
-                text: {
-                    en: "If he forces a siege, the common soldiers on that wall will die for a spell already spent.",
-                    zh: "若他执意守城，墙上士卒只会为已破之妖术送命。"
-                }
+                options: [
+                    {
+                        buttonText: { en: "Offer clemency.", zh: "劝其归降" },
+                        voiceId: 'ch2_yc_lb_01',
+                        text: {
+                            en: "Zhang Bao, surrender now. Lay down your arms, and I will urge mercy for the soldiers on that wall.",
+                            zh: "张宝，此刻归降。弃兵开城，我愿为墙上士卒求一线生路。"
+                        },
+                        speaker: 'liubei',
+                        result: [
+                            { type: 'command', action: 'setStoryChoice', key: 'chapter2_yangcheng_appeal', value: 'clemency', routeId: 'chapter2_oath' },
+                            {
+                                speaker: 'zhangbao',
+                                portraitKey: 'zhang-bao',
+                                name: 'Zhang Bao',
+                                voiceId: 'ch2_yc_zb_01',
+                                text: {
+                                    en: "Clemency? From men who splash filth at Heaven? I am General of Earth. Yangcheng will not bend.",
+                                    zh: "宽赦？尔等以污秽犯天，也配言宽赦？吾乃地公将军，阳城不降！"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        buttonText: { en: "Threaten him.", zh: "厉声威逼" },
+                        voiceId: 'ch2_yc_lb_choice_threat',
+                        text: {
+                            en: "Then hear this plainly: if you force a siege, your followers will die for a spell already spent.",
+                            zh: "那便听清楚：若你执意守城，部众只会为已破之妖术送命。"
+                        },
+                        speaker: 'liubei',
+                        result: [
+                            { type: 'command', action: 'setStoryChoice', key: 'chapter2_yangcheng_appeal', value: 'threat', routeId: 'chapter2_oath' },
+                            {
+                                speaker: 'zhangbao',
+                                portraitKey: 'zhang-bao',
+                                name: 'Zhang Bao',
+                                voiceId: 'ch2_yc_zb_threat_reply',
+                                text: {
+                                    en: "Threats from woven-mat peddlers? I command the Yellow Heaven. Come up the wall and be buried beneath it.",
+                                    zh: "织席贩履之徒，也敢威吓于我？吾奉黄天号令。尔等上城，便葬于城下！"
+                                }
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 speaker: 'yanzheng',

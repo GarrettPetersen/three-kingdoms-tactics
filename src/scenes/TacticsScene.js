@@ -14,6 +14,7 @@ const MOUNTED_Y_OFFSET = 6;
 const CITY_GATEHOUSE_Y_OFFSET = 33;
 const DRAW_CALL_PRIORITIES = {
     hex: 0,
+    blood_decal: 0.82,
     particle: 1,
     fire_smoke: 1.1,
     flag: 1.5,
@@ -58,6 +59,7 @@ export class TacticsScene extends BaseScene {
         this._waterEffectMaskActiveFrame = false;
         this.projectiles = []; // { startX, startY, targetX, targetY, progress, type, duration }
         this.particles = []; // { x, y, r, type, vx, vy, life, targetY }
+        this.bloodDecals = []; // { x, y, r, size, alpha, life, maxLife, color }
         this.overkillEffects = [];
         this.fireSmokeParticles = []; // { x, y, r, life, maxLife, vx, vy, alpha, driftTimer, size }
         this.weatherType = null; // 'rain', 'snow'
@@ -656,6 +658,7 @@ export class TacticsScene extends BaseScene {
         this.attackTiles = new Map();
         this.projectiles = [];
         this.particles = [];
+        this.bloodDecals = [];
         this.overkillEffects = [];
         this.fireSmokeParticles = [];
         this.damageNumbers = [];
@@ -902,6 +905,7 @@ export class TacticsScene extends BaseScene {
         this.syncPaletteFromManager(false);
 
         this.particles = [];
+        this.bloodDecals = [];
         this.overkillEffects = [];
         this.fireSmokeParticles = [];
         if (!this.isCustom) {
@@ -9148,6 +9152,7 @@ export class TacticsScene extends BaseScene {
             }
         }
 
+        this.updateCarriedHeadBlood(dt);
         this.updateWeather(dt);
         if (this.battleId === 'chapter2_oath_dongzhuo_choice' && this.chapter2DongZhuoFightActive && !this.chapter2DongZhuoEscapeTriggered) {
             const dongzhuo = this.units.find(u => u.id === 'dongzhuo');
@@ -9234,6 +9239,24 @@ export class TacticsScene extends BaseScene {
                 }
                 continue;
             }
+            if (p.type === 'blood_drip') {
+                if (p.life > 0) {
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    p.vy += (p.gravity || 0.0005) * dt;
+                    if (p.y >= p.targetY) {
+                        p.y = p.targetY;
+                        this.addBloodDecalFromDrop(p);
+                        p.life = 0;
+                        p.splashMs = 130 + Math.random() * 90;
+                    }
+                } else {
+                    p.splashMs -= dt;
+                    p.alpha = Math.max(0, p.splashMs / 130);
+                    if (p.splashMs <= 0) this.particles.splice(i, 1);
+                }
+                continue;
+            }
             if ((p.type === 'rain' || p.type === 'snow') && !effectiveWeather) {
                 this.particles.splice(i, 1);
                 continue;
@@ -9260,6 +9283,82 @@ export class TacticsScene extends BaseScene {
                     if (p.life < -2000) this.particles.splice(i, 1);
                 }
             }
+        }
+    }
+
+    getCarriedHeadDripSource(unit) {
+        if (!unit || unit.carryImgKey !== 'zhangbao_head' || unit.hp <= 0 || unit.isGone) return null;
+        const img = assets.getImage(unit.carryImgKey);
+        const headW = img?.width || 12;
+        const headH = img?.height || 12;
+        const sourceX = unit.visualX + (unit.visualOffsetX || 0) + 24 + Math.max(1, Math.floor(headW * 0.18));
+        const sourceY = unit.visualY + (unit.visualOffsetY || 0) - 21 + headH - 2;
+        const targetCell = this.getCellAt(sourceX, unit.visualY + 8) || this.tacticsMap?.getCell(unit.r, unit.q);
+        const targetPos = targetCell ? this.getPixelPos(targetCell.r, targetCell.q) : { x: sourceX, y: unit.visualY };
+        return {
+            x: sourceX,
+            y: sourceY,
+            targetY: targetPos.y - 3 + Math.floor(Math.random() * 3),
+            r: targetCell ? targetCell.r + 0.86 : (unit.currentSortR || unit.r) + 0.86
+        };
+    }
+
+    updateCarriedHeadBlood(dt) {
+        if (!this.particles) this.particles = [];
+        if (!this.bloodDecals) this.bloodDecals = [];
+
+        const carriers = this.units.filter(u => u.carryImgKey === 'zhangbao_head' && u.hp > 0 && !u.isGone);
+        carriers.forEach(unit => {
+            unit._bloodDripMs = (unit._bloodDripMs || 0) + dt;
+            const isMoving = !!unit.isMoving;
+            const interval = isMoving ? 95 : 210;
+            while (unit._bloodDripMs >= interval) {
+                unit._bloodDripMs -= interval;
+                const source = this.getCarriedHeadDripSource(unit);
+                if (!source) break;
+                const strongDrop = Math.random() < (isMoving ? 0.46 : 0.25);
+                this.particles.push({
+                    type: 'blood_drip',
+                    x: source.x + (Math.random() - 0.5) * 3,
+                    y: source.y + (Math.random() - 0.5) * 2,
+                    r: source.r,
+                    vx: (Math.random() - 0.5) * 0.018,
+                    vy: 0.045 + Math.random() * 0.035,
+                    gravity: 0.00046 + Math.random() * 0.00018,
+                    targetY: source.targetY,
+                    life: 1,
+                    alpha: 0.95,
+                    size: strongDrop ? 2 : 1,
+                    color: strongDrop ? '#8f1010' : '#5f0707'
+                });
+            }
+        });
+
+        for (let i = this.bloodDecals.length - 1; i >= 0; i--) {
+            const d = this.bloodDecals[i];
+            d.life -= dt;
+            d.alpha = Math.max(0, Math.min(1, d.life / Math.max(1, d.maxLife)));
+            if (d.life <= 0) this.bloodDecals.splice(i, 1);
+        }
+    }
+
+    addBloodDecalFromDrop(p) {
+        if (!p) return;
+        if (!this.bloodDecals) this.bloodDecals = [];
+        const maxDecals = 90;
+        this.bloodDecals.push({
+            type: 'blood_decal',
+            x: Math.floor(p.x + (Math.random() - 0.5) * 2),
+            y: Math.floor(p.targetY || p.y),
+            r: p.r || 0,
+            size: Math.max(1, Math.floor(p.size || 1)) + (Math.random() < 0.22 ? 1 : 0),
+            alpha: 0.9,
+            life: 9000 + Math.random() * 6500,
+            maxLife: 13000,
+            color: Math.random() < 0.32 ? '#a31616' : '#650707'
+        });
+        if (this.bloodDecals.length > maxDecals) {
+            this.bloodDecals.splice(0, this.bloodDecals.length - maxDecals);
         }
     }
 
@@ -9676,6 +9775,16 @@ export class TacticsScene extends BaseScene {
         }
 
         // 3. Collect particles
+        (this.bloodDecals || []).forEach(d => {
+            const { alpha } = this.getIntroEffect(Math.floor(d.r), 0);
+            if (alpha <= 0) return;
+            drawCalls.push({
+                type: 'blood_decal',
+                r: d.r,
+                decal: d,
+                alpha: d.alpha * alpha
+            });
+        });
         this.particles.forEach(p => {
             const { alpha } = this.getIntroEffect(Math.floor(p.r), 0);
             if (alpha <= 0) return;
@@ -9974,6 +10083,15 @@ export class TacticsScene extends BaseScene {
                 if (img) {
                     this.drawFlag(ctx, img, call.x, call.y + effect.yOffset, timestamp);
                 }
+            } else if (call.type === 'blood_decal') {
+                const d = call.decal;
+                const px = Math.floor(d.x);
+                const py = Math.floor(d.y);
+                const size = Math.max(1, Math.floor(d.size || 1));
+                ctx.globalAlpha = call.alpha;
+                ctx.fillStyle = d.color || '#650707';
+                ctx.fillRect(px, py, size, 1);
+                if (size > 1) ctx.fillRect(px - 1, py + 1, size, 1);
             } else if (call.type === 'particle') {
                 const p = call.particle;
                 const px = Math.floor(p.x);
@@ -10001,6 +10119,13 @@ export class TacticsScene extends BaseScene {
                     const size = Math.max(1, Math.floor(p.size || 1));
                     ctx.fillStyle = p.color || '#3d2618';
                     ctx.fillRect(px, py, size, size);
+                } else if (p.type === 'blood_drip') {
+                    const size = Math.max(1, Math.floor(p.size || 1));
+                    ctx.fillStyle = p.color || '#8f1010';
+                    ctx.fillRect(px, py, size, size);
+                    if (p.life <= 0 && p.alpha > 0.25) {
+                        ctx.fillRect(px - 1, py, size + 2, 1);
+                    }
                 } else {
                     // Snow: simple pixel squares
                     const size = p.life > 0 ? 1 : 1;
