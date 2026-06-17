@@ -65,7 +65,7 @@ CHAR_TARGETS = {
     "xiaoer": "movies/clean/clean_dark_riku_young_adult.wav",  # Distinct young inn/game player voice
     "dongzhuo": "movies/clean/clean_kublai-khan.wav",  # Gruff and arrogant
     "caocao": "movies/clean/clean_thanos_deep_villain.wav",  # Deep, commanding contrast vs guanyu
-    "caoren": "movies/clean/clean_li-shang-captain-from-mulan.wav",  # Military subordinate, younger than Cao Cao
+    "caoren": "movies/clean/clean_hercules_young_adult_hero.wav",  # Cao Ren's original fallback voice
     "zhangjue": "movies/clean/clean_anton-ego-villainous-food-critic.wav",  # Villainous, commanding
     "zhangbao": "movies/clean/clean_kublai-khan.wav",  # Aggressive, warrior-like
     "zhangliang": "movies/clean/clean_mulan-emperor.wav",  # Authoritative, imperial
@@ -110,7 +110,7 @@ CHAR_TARGETS_MANDARIN = {
     "xiaoer": "mandarin/clean/clean_young_adult_male_mandarin.wav",  # Distinct inn/game player voice
     "dongzhuo": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Gruff, arrogant (shared)
     "caocao": "mandarin/clean/clean_deep_male_mandarin.wav",  # Cool-headed strategist
-    "caoren": "mandarin/clean/clean_young_adult_male_mandarin.wav",  # Younger military subordinate
+    "caoren": "mandarin/clean/clean_serious_male_mandarin.wav",  # Cao Ren's original fallback voice
     "zhangjue": "mandarin/clean/clean_fearsome_elder_male_mandarin.wav",  # Fearsome, commanding elder
     "zhangbao": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Aggressive (shared)
     "zhangliang": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)

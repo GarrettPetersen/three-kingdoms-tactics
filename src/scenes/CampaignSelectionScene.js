@@ -88,6 +88,7 @@ export class CampaignSelectionScene extends BaseScene {
         const visible = this.getVisibleCampaigns();
         this.selectedIndex = Math.min(this.selectedIndex, Math.max(0, visible.length - 1));
         const chapter1Complete = gs.isChapterComplete(1);
+        const liubeiChapter1Complete = gs.isCampaignComplete('liubei');
         const chapter2OathComplete = gs.isCampaignComplete('chapter2_oath');
         const freedLuZhi = gs.getStoryChoice('luzhi_outcome', null, 'liubei') === 'freed' || gs.hasMilestone('freed_luzhi', 'liubei');
         const caocao = this.campaigns.find(c => c.id === 'caocao');
@@ -122,9 +123,9 @@ export class CampaignSelectionScene extends BaseScene {
         liubei.nameKey = 'THE OATH IN THE PEACH GARDEN';
         liubei.nameCompleteKey = 'THE OATH IN THE PEACH GARDEN';
         liubei.locked = false;
-        liubei.isInProgress = (gs.getCurrentCampaign() === 'liubei') && !chapter1Complete;
+        liubei.isInProgress = (gs.getCurrentCampaign() === 'liubei') && !liubeiChapter1Complete;
 
-        if (chapter1Complete) {
+        if (liubeiChapter1Complete) {
             liubei.isComplete = true;
             liubei.description = getLocalizedText(UI_TEXT['campaign_liubei_complete_base']);
             if (freedLuZhi) {
