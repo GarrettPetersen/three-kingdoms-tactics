@@ -1717,6 +1717,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "pro_lb_noticeboard_wait_01",
+    "char": "liubei",
+    "text": "If we can gather men of courage, perhaps this county need not face the rebels alone.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "pro_nb_01",
     "char": "noticeboard",
     "text": "NOTICE: The Yellow Turban rebels under Zhang Jue have risen!",
@@ -1780,6 +1786,12 @@
     "id": "pro_zf_08",
     "char": "zhangfei",
     "text": "Then come! Let us go to the village inn and discuss our plans over wine.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "pro_zf_noticeboard_wait_01",
+    "char": "zhangfei",
+    "text": "Come, Xuande! Wine first, then we find the men to break these rebels.",
     "source": "NarrativeScripts.js"
   },
   {

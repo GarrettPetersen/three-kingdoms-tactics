@@ -1698,6 +1698,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "pro_lb_noticeboard_wait_01",
+    "char": "liubei",
+    "text": "若能聚起有胆气之士，涿县或许不必独自面对贼军。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "pro_nb_01",
     "char": "noticeboard",
     "text": "告示：张角领导的黄巾军已起事！",
@@ -1761,6 +1767,12 @@
     "id": "pro_zf_08",
     "char": "zhangfei",
     "text": "那好！我们去村中酒店，边喝酒边商议大事。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "pro_zf_noticeboard_wait_01",
+    "char": "zhangfei",
+    "text": "走吧，玄德！先饮酒，再招人，把这些贼打个粉碎。",
     "source": "NarrativeScripts.js"
   },
   {

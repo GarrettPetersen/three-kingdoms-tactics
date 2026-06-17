@@ -293,10 +293,12 @@ function isBacktrackingAcrossFeature(path, nextSpaceId) {
 }
 
 function canMoveThroughOrLand(state, piece, spaceId, isFinalStep, path = null) {
+    const effectiveMoverIsOwl = !!piece.isOwl || (isFinalStep && !!path?.visitedPond);
+
     if (isLiuboNest(spaceId)) {
         const canEnterNest = isFinalStep
             && isScoringNest(piece.player, spaceId)
-            && (piece.carryingFish || piece.isOwl || path?.visitedPond);
+            && (piece.carryingFish || effectiveMoverIsOwl);
         if (!canEnterNest) return false;
     }
 
@@ -309,22 +311,22 @@ function canMoveThroughOrLand(state, piece, spaceId, isFinalStep, path = null) {
 
     if (enemies.length) {
         if (!isFinalStep) return isContested(occupants);
-        return canEnterEnemyOccupiedSpace(state, piece, spaceId, friendly, enemies);
+        return canEnterEnemyOccupiedSpace(state, piece, spaceId, friendly, enemies, effectiveMoverIsOwl);
     }
 
-    if (friendly.some(other => other.isOwl !== piece.isOwl)) return false;
+    if (friendly.some(other => other.isOwl !== effectiveMoverIsOwl)) return false;
     if (friendly.length >= spaceCapacity) return false;
     return occupants.length < spaceCapacity;
 }
 
-function canEnterEnemyOccupiedSpace(state, piece, spaceId, friendly, enemies) {
+function canEnterEnemyOccupiedSpace(state, piece, spaceId, friendly, enemies, effectiveMoverIsOwl = !!piece?.isOwl) {
     if (enemies.length !== 1) return false;
     if (friendly.length > 1) return false;
-    if (friendly.some(other => other.isOwl !== piece.isOwl)) return false;
+    if (friendly.some(other => other.isOwl !== effectiveMoverIsOwl)) return false;
 
     const target = enemies[0];
     if (friendly.length === 1) return true;
-    if (target.isOwl !== piece.isOwl) return true;
+    if (target.isOwl !== effectiveMoverIsOwl) return true;
     return getLiuboSpaceCapacity(spaceId) > 1;
 }
 

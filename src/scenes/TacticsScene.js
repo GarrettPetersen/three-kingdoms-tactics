@@ -3817,7 +3817,8 @@ export class TacticsScene extends BaseScene {
                 commandOriginalFaction: u.commandOriginalFaction || null,
                 commandOriginalMoveRange: Number.isFinite(u.commandOriginalMoveRange) ? u.commandOriginalMoveRange : null,
                 commandDamageBonus: Number.isFinite(u.commandDamageBonus) ? u.commandDamageBonus : 0,
-                isDestroyedBoulder: !!u.isDestroyedBoulder
+                isDestroyedBoulder: !!u.isDestroyedBoulder,
+                pendingDestroyAfterRoll: !!u.pendingDestroyAfterRoll
             })),
             // Save intro/post-combat dialogue state
             isIntroDialogueActive: this.isIntroDialogueActive,
@@ -4098,6 +4099,7 @@ export class TacticsScene extends BaseScene {
             u.imgKey = uData.imgKey;
             u.img = assets.getImage(uData.imgKey);
             u.isDestroyedBoulder = !!(uData.isDestroyedBoulder || (u.name === 'Boulder' && uData.imgKey === 'boulder_destroyed'));
+            u.pendingDestroyAfterRoll = !!uData.pendingDestroyAfterRoll;
             u.isProp = !!uData.isProp;
             u.spectator = !!uData.spectator;
             u.breaksToImgKey = uData.breaksToImgKey || u.breaksToImgKey || null;
@@ -4540,6 +4542,7 @@ export class TacticsScene extends BaseScene {
             u.imgKey = uData.imgKey;
             u.img = assets.getImage(uData.imgKey);
             u.isDestroyedBoulder = !!(uData.isDestroyedBoulder || (u.name === 'Boulder' && uData.imgKey === 'boulder_destroyed'));
+            u.pendingDestroyAfterRoll = !!uData.pendingDestroyAfterRoll;
             u.isProp = !!uData.isProp;
             u.spectator = !!uData.spectator;
             u.breaksToImgKey = uData.breaksToImgKey || u.breaksToImgKey || null;
@@ -5705,8 +5708,12 @@ export class TacticsScene extends BaseScene {
         const path = roll.path;
         const idx = roll.pathIndex;
         if (!path || idx >= path.length - 1) {
-            boulder.rollData = null;
-            this.stopBoulderRollSoundIfDone();
+            if (boulder.pendingDestroyAfterRoll) {
+                this.destroyBoulderAtRest(boulder);
+            } else {
+                boulder.rollData = null;
+                this.stopBoulderRollSoundIfDone();
+            }
             return;
         }
         const nextCell = this.tacticsMap.getCell(path[idx + 1].r, path[idx + 1].q);
@@ -5742,8 +5749,12 @@ export class TacticsScene extends BaseScene {
         const doCollision = () => {
             this.executePushCollision(boulder, nextCell, victimPos, targetPos);
             stayAtPrev();
-            boulder.rollData = null;
-            this.stopBoulderRollSoundIfDone();
+            if (boulder.pendingDestroyAfterRoll) {
+                this.destroyBoulderAtRest(boulder);
+            } else {
+                boulder.rollData = null;
+                this.stopBoulderRollSoundIfDone();
+            }
         };
 
         const pushImpactTarget = (occupant) => {
@@ -5757,9 +5768,13 @@ export class TacticsScene extends BaseScene {
                 this.startBoulderRoll(occupant, chainedPath, roll.dirIndex);
                 boulder.setPosition(path[idx + 1].r, path[idx + 1].q);
                 nextCell.unit = boulder;
-                boulder.rollData = null;
                 assets.playSound('boulder_impact', 0.9);
-                this.stopBoulderRollSoundIfDone();
+                if (boulder.pendingDestroyAfterRoll) {
+                    this.destroyBoulderAtRest(boulder);
+                } else {
+                    boulder.rollData = null;
+                    this.stopBoulderRollSoundIfDone();
+                }
                 return true;
             }
 
@@ -5789,9 +5804,13 @@ export class TacticsScene extends BaseScene {
 
             boulder.setPosition(path[idx + 1].r, path[idx + 1].q);
             nextCell.unit = boulder;
-            boulder.rollData = null;
             assets.playSound('boulder_impact', 0.8);
-            this.stopBoulderRollSoundIfDone();
+            if (boulder.pendingDestroyAfterRoll) {
+                this.destroyBoulderAtRest(boulder);
+            } else {
+                boulder.rollData = null;
+                this.stopBoulderRollSoundIfDone();
+            }
 
             if (pushIsDeepWater) {
                 setTimeout(() => {
@@ -5863,6 +5882,7 @@ export class TacticsScene extends BaseScene {
                 assets.playSound('drown');
                 nextCell.terrain = 'water_shallow_01';
                 this.invalidateBattlefieldRenderCaches();
+                boulder.pendingDestroyAfterRoll = false;
                 boulder.isGone = true;
                 nextCell.unit = null;
             }, 250);
@@ -5871,8 +5891,12 @@ export class TacticsScene extends BaseScene {
             return;
         }
         if (roll.pathIndex >= path.length - 1) {
-            boulder.rollData = null;
-            this.stopBoulderRollSoundIfDone();
+            if (boulder.pendingDestroyAfterRoll) {
+                this.destroyBoulderAtRest(boulder);
+            } else {
+                boulder.rollData = null;
+                this.stopBoulderRollSoundIfDone();
+            }
             return;
         }
         roll.collisionAtSegmentEnd = roll.pathIndex + 1 < path.length && this.isSegmentEndBlocked(path, roll.pathIndex + 1);
@@ -7503,6 +7527,13 @@ export class TacticsScene extends BaseScene {
                 victim.img = assets.getImage('boulder_cracked');
             } else {
                 finalDamage = 1; // Break it
+                if (options.deferBoulderDestroy) {
+                    victim.pendingDestroyAfterRoll = true;
+                    if (typeof victim.triggerDamageFlash === 'function') {
+                        victim.triggerDamageFlash();
+                    }
+                    return finalDamage;
+                }
             }
         }
 
@@ -7557,6 +7588,7 @@ export class TacticsScene extends BaseScene {
                 victim.imgKey = 'boulder_destroyed';
                 victim.img = assets.getImage('boulder_destroyed');
                 victim.isDestroyedBoulder = true;
+                victim.pendingDestroyAfterRoll = false;
                 victim.rollData = null;
                 victim.isGone = false;
                 this.stopBoulderRollSoundIfDone();
@@ -7592,6 +7624,20 @@ export class TacticsScene extends BaseScene {
         }
 
         return finalDamage;
+    }
+
+    destroyBoulderAtRest(boulder) {
+        if (!boulder || boulder.name !== 'Boulder' || boulder.isDestroyedBoulder) return;
+        boulder.hp = 0;
+        boulder.imgKey = 'boulder_destroyed';
+        boulder.img = assets.getImage('boulder_destroyed');
+        boulder.isDestroyedBoulder = true;
+        boulder.pendingDestroyAfterRoll = false;
+        boulder.rollData = null;
+        boulder.isGone = false;
+        const cell = this.tacticsMap.getCell(boulder.r, boulder.q);
+        if (cell && cell.unit !== boulder) cell.unit = boulder;
+        this.stopBoulderRollSoundIfDone();
     }
 
     finishDeferredOverkill(victim, attacker = null, delayMs = 0) {
@@ -7684,7 +7730,14 @@ export class TacticsScene extends BaseScene {
         const canPushThisVictim = !!attack.push && (
             attack.push !== 'furthest' || (victim.r === pushRefR && victim.q === pushRefQ)
         );
-        finalDamage = this.applyUnitDamage(victim, finalDamage, hitCell, { deferOverkill: canPushThisVictim });
+        const shouldDeferBoulderDestroy = canPushThisVictim
+            && victim.name === 'Boulder'
+            && !victim.isDestroyedBoulder
+            && victim.hp === 1;
+        finalDamage = this.applyUnitDamage(victim, finalDamage, hitCell, {
+            deferOverkill: canPushThisVictim,
+            deferBoulderDestroy: shouldDeferBoulderDestroy
+        });
         const hasDeferredOverkill = canPushThisVictim
             && victim.name !== 'Boulder'
             && finalDamage > victimHpBeforeDamage
@@ -7728,7 +7781,11 @@ export class TacticsScene extends BaseScene {
 
             if (victim.name === 'Boulder' && !victim.isDestroyedBoulder) {
                 const { path } = this.getBoulderRollPath(victim.r, victim.q, dirIndex);
-                this.startBoulderRoll(victim, path, dirIndex);
+                if (path && path.length >= 2) {
+                    this.startBoulderRoll(victim, path, dirIndex);
+                } else if (victim.pendingDestroyAfterRoll) {
+                    this.destroyBoulderAtRest(victim);
+                }
                 return;
             }
 
@@ -9176,8 +9233,12 @@ export class TacticsScene extends BaseScene {
                 if (pending) {
                     this.executePushCollision(u, pending.nextCell, pending.victimPos, pending.targetPos);
                 }
-                u.rollData = null;
-                this.stopBoulderRollSoundIfDone();
+                if (u.pendingDestroyAfterRoll) {
+                    this.destroyBoulderAtRest(u);
+                } else {
+                    u.rollData = null;
+                    this.stopBoulderRollSoundIfDone();
+                }
             }
         });
         this.units.forEach(u => {

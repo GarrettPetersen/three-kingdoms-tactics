@@ -1160,7 +1160,69 @@ export const NARRATIVE_SCRIPTS = {
             type: 'interactive',
             promptOptions: [
                 { id: 'to_inn', text: { en: 'TO INN', zh: '前往酒店' }, position: 'left', advanceOnClick: true }
-            ]
+            ],
+            clickableActors: {
+                'farmer': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'farmer-v1',
+                            position: 'top',
+                            name: 'Villager',
+                            voiceId: 'pro_farmer_01',
+                            text: {
+                                en: "The Yellow Turbans... they say they'll burn everything in their path. My family has lived here for generations. What will become of us?",
+                                zh: "黄巾军...听说他们会烧毁一切。我家世代住在这里。我们该怎么办？"
+                            }
+                        }
+                    ]
+                },
+                'farmer2': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'farmer-female',
+                            position: 'top',
+                            name: 'Villager',
+                            voiceId: 'pro_farmer2_01',
+                            text: {
+                                en: "I've heard the rebels are already in the next county. They show no mercy to those who resist. We must prepare for the worst.",
+                                zh: "我听说叛军已经到了邻县。他们对抵抗者毫不留情。我们必须做最坏的打算。"
+                            }
+                        }
+                    ]
+                },
+                'liubei': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'liu-bei',
+                            position: 'top',
+                            name: 'Liu Bei',
+                            voiceId: 'pro_lb_noticeboard_wait_01',
+                            text: {
+                                en: "If we can gather men of courage, perhaps this county need not face the rebels alone.",
+                                zh: "若能聚起有胆气之士，涿县或许不必独自面对贼军。"
+                            }
+                        }
+                    ]
+                },
+                'zhangfei': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhang-fei',
+                            position: 'top',
+                            name: 'Zhang Fei',
+                            voiceId: 'pro_zf_noticeboard_wait_01',
+                            text: {
+                                en: "Come, Xuande! Wine first, then we find the men to break these rebels.",
+                                zh: "走吧，玄德！先饮酒，再招人，把这些贼打个粉碎。"
+                            }
+                        }
+                    ]
+                }
+            }
         },
         { type: 'command', action: 'flip', id: 'liubei', flip: true },
         { type: 'command', action: 'move', id: 'liubei', x: -50, y: 240, wait: false },
