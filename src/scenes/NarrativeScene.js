@@ -1027,6 +1027,7 @@ export class NarrativeScene extends BaseScene {
                     this.currentStep = this.interactiveStepIndex;
                     this.isInteractive = true;
                     this.isWaiting = true;
+                    this.processStep();
                     this.saveNarrativeState();
                     return;
                 }
