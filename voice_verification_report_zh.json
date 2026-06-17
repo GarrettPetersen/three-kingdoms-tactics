@@ -3324,16 +3324,43 @@
         "id": "inn_butcher_npc_01",
         "character": "butcher",
         "original_text": "张飞的酒烈，他的话也重。他说此誓为重，我信。",
-        "stt_output": "張飛的酒列,他的話也中他說此事未中,我信",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:inn_soldier_npc_01": {
         "id": "inn_soldier_npc_01",
         "character": "soldier",
         "original_text": "三位若举旗，自有人追随。涿县百姓都在等第一个挺身而出的人。",
-        "stt_output": "三位落聚齐,自由人追隨,昨天百姓都在等第一個挺身而出的人。",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:daxing_int_guard1_push_01": {
+        "id": "daxing_int_guard1_push_01",
+        "character": "soldier",
+        "original_text": "有些招式能击退敌人，把他们的攻击方向推离友军。",
+        "stt_output": "有些招式能集退敵人把他们的攻击方向推理有军",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:daxing_int_guard2_push_01": {
+        "id": "daxing_int_guard2_push_01",
+        "character": "soldier",
+        "original_text": "把敌人击下山崖会造成额外伤害。高低之势，足以让一击变成溃败。",
+        "stt_output": "把敵人机下山牙会造成额外伤害高低知识足以让一机变成亏败",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:daxing_int_soldier3_push_01": {
+        "id": "daxing_int_soldier3_push_01",
+        "character": "soldier",
+        "original_text": "若把敌人推进深水，他们会溺亡。选目标时，要留意河岸。",
+        "stt_output": "若把敵人推進深水他們會逆往選目標時要留意荷案",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"

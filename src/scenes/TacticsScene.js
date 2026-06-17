@@ -5746,6 +5746,71 @@ export class TacticsScene extends BaseScene {
             this.stopBoulderRollSoundIfDone();
         };
 
+        const pushImpactTarget = (occupant) => {
+            if (!occupant || occupant.hp <= 0) return false;
+
+            if (occupant.name === 'Boulder' && !occupant.isDestroyedBoulder) {
+                const { path: chainedPath } = this.getBoulderRollPath(occupant.r, occupant.q, roll.dirIndex);
+                if (!chainedPath || chainedPath.length < 2) return false;
+
+                if (prevCell && prevCell.unit === boulder) prevCell.unit = null;
+                this.startBoulderRoll(occupant, chainedPath, roll.dirIndex);
+                boulder.setPosition(path[idx + 1].r, path[idx + 1].q);
+                nextCell.unit = boulder;
+                boulder.rollData = null;
+                assets.playSound('boulder_impact', 0.9);
+                this.stopBoulderRollSoundIfDone();
+                return true;
+            }
+
+            const pushCell = this.tacticsMap.getNeighborInDirection(nextCell.r, nextCell.q, roll.dirIndex);
+            if (!pushCell) return false;
+
+            const pushTargetPos = this.getPixelPos(pushCell.r, pushCell.q);
+            const pushLevelDiff = (pushCell.level || 0) - (nextCell.level || 0);
+            const pushIsDeepWater = pushCell.terrain && pushCell.terrain.includes('water_deep');
+            const pushBlockedByTerrain = pushLevelDiff > 1
+                || (pushCell.impassable && !pushIsDeepWater)
+                || this.isSolidCityGatehouseCell(pushCell);
+            const pushBlockedByUnit = !!this.getLivingUnitOccupyingCell(pushCell.r, pushCell.q, occupant);
+            const pushBlockedByHorse = !!pushCell.horse;
+
+            if (pushBlockedByTerrain || pushBlockedByUnit || pushBlockedByHorse) {
+                occupant.startPush(targetPos.x, targetPos.y, pushTargetPos.x, pushTargetPos.y, true, 0);
+                return false;
+            }
+
+            if (prevCell && prevCell.unit === boulder) prevCell.unit = null;
+            if (occupant.onHorse) this.dismountUnitLeaveHorse(occupant);
+            this.shiftIntentTargetWithDisplacement(occupant, occupant.r, occupant.q, pushCell.r, pushCell.q);
+            occupant.setPosition(pushCell.r, pushCell.q);
+            pushCell.unit = occupant;
+            occupant.startPush(targetPos.x, targetPos.y, pushTargetPos.x, pushTargetPos.y, false, pushLevelDiff < -1 ? Math.abs(pushLevelDiff) : 0);
+
+            boulder.setPosition(path[idx + 1].r, path[idx + 1].q);
+            nextCell.unit = boulder;
+            boulder.rollData = null;
+            assets.playSound('boulder_impact', 0.8);
+            this.stopBoulderRollSoundIfDone();
+
+            if (pushIsDeepWater) {
+                setTimeout(() => {
+                    occupant.isDrowning = true;
+                    assets.playSound('drown');
+                }, 250);
+            } else if (pushLevelDiff < -1) {
+                const fallDamage = Math.max(0, Math.abs(pushLevelDiff) - 1);
+                setTimeout(() => {
+                    assets.playSound('collision', 0.8);
+                    this.applyUnitDamage(occupant, fallDamage);
+                    this.addDamageNumber(pushTargetPos.x, pushTargetPos.y - 30, fallDamage);
+                }, 400);
+            } else {
+                assets.playSound('bash', 0.45);
+            }
+            return true;
+        };
+
         if (!nextCell) {
             if (roll.collisionAtSegmentEnd) startBounceBack();
             else doCollision();
@@ -5777,8 +5842,10 @@ export class TacticsScene extends BaseScene {
                 boulder.rollData = null;
                 this.stopBoulderRollSoundIfDone();
             } else {
-                if (roll.collisionAtSegmentEnd) startBounceBack();
-                else doCollision();
+                if (!pushImpactTarget(occupant)) {
+                    if (roll.collisionAtSegmentEnd) startBounceBack();
+                    else doCollision();
+                }
             }
             return;
         }

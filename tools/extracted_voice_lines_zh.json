@@ -612,15 +612,15 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "daxing_int_guard1_01",
+    "id": "daxing_int_guard1_push_01",
     "char": "soldier",
-    "text": "听说贼军有数万之众。我们唯有严守阵形，方有生机。",
+    "text": "有些招式能击退敌人，把他们的攻击方向推离友军。",
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "daxing_int_guard2_01",
+    "id": "daxing_int_guard2_push_01",
     "char": "soldier",
-    "text": "他们在门上写“甲子”，妄称天命。此等谎言，自当以兵刃破之。",
+    "text": "把敌人击下山崖会造成额外伤害。高低之势，足以让一击变成溃败。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -642,9 +642,9 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "daxing_int_soldier3_01",
+    "id": "daxing_int_soldier3_push_01",
     "char": "soldier",
-    "text": "涿县从未如此紧张，连集市百姓都在备矛守望。",
+    "text": "若把敌人推进深水，他们会溺亡。选目标时，要留意河岸。",
     "source": "NarrativeScripts.js"
   },
   {

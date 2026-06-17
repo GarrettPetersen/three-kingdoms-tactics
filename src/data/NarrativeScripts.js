@@ -366,11 +366,11 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'soldier-v1',
                             name: 'Guard',
                             position: 'top',
-                            voiceId: 'daxing_int_guard1_01',
+                            voiceId: 'daxing_int_guard1_push_01',
                             speaker: 'soldier',
                             text: {
-                                en: "Word is the main rebel host numbers in the tens of thousands. Staying in formation is our only chance.",
-                                zh: "听说贼军有数万之众。我们唯有严守阵形，方有生机。"
+                                en: "Some attacks can push enemies, redirecting their blows away from allied soldiers.",
+                                zh: "有些招式能击退敌人，把他们的攻击方向推离友军。"
                             }
                         }
                     ]
@@ -382,11 +382,11 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'soldier-v2',
                             name: 'Guard',
                             position: 'top',
-                            voiceId: 'daxing_int_guard2_01',
+                            voiceId: 'daxing_int_guard2_push_01',
                             speaker: 'soldier',
                             text: {
-                                en: "They paint \"Jiazi\" on their gates and call it Heaven's will. Steel will answer that lie.",
-                                zh: "他们在门上写“甲子”，妄称天命。此等谎言，自当以兵刃破之。"
+                                en: "Pushing an enemy off a cliff deals extra damage. Height can turn one strike into a rout.",
+                                zh: "把敌人击下山崖会造成额外伤害。高低之势，足以让一击变成溃败。"
                             }
                         }
                     ]
@@ -398,11 +398,11 @@ export const NARRATIVE_SCRIPTS = {
                             portraitKey: 'soldier-v3',
                             name: 'Soldier',
                             position: 'top',
-                            voiceId: 'daxing_int_soldier3_01',
+                            voiceId: 'daxing_int_soldier3_push_01',
                             speaker: 'soldier',
                             text: {
-                                en: "I have never seen Zhuo this tense. Even the market folk are carrying spears now.",
-                                zh: "涿县从未如此紧张，连集市百姓都在备矛守望。"
+                                en: "If you push enemies into deep water, they drown. Watch the riverbanks when you choose your target.",
+                                zh: "若把敌人推进深水，他们会溺亡。选目标时，要留意河岸。"
                             }
                         }
                     ]

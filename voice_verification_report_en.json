@@ -3324,8 +3324,8 @@
         "id": "inn_butcher_npc_01",
         "character": "butcher",
         "original_text": "Zhang Fei's wine is strong, and so is his word. If he calls this oath sacred, I believe him.",
-        "stt_output": "Chang Fai's wine is strong, and so is his word. If he caused this oath sacred, I believe him.",
-        "wer": 0.15789473684210525,
+        "stt_output": "",
+        "wer": 0,
         "is_bad": false,
         "language": "en"
     },
@@ -3333,8 +3333,35 @@
         "id": "inn_soldier_npc_01",
         "character": "soldier",
         "original_text": "If you three raise the banner, men will follow. The county is waiting for someone to stand first.",
-        "stt_output": "If you three raise the banner, men will follow. The county is waiting for someone to stand first.",
+        "stt_output": "",
+        "wer": 0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:daxing_int_guard1_push_01": {
+        "id": "daxing_int_guard1_push_01",
+        "character": "soldier",
+        "original_text": "Some attacks can push enemies, redirecting their blows away from allied soldiers.",
+        "stt_output": "Some attacks can push enemies, redirecting their blows away from allied soldiers.",
         "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:daxing_int_guard2_push_01": {
+        "id": "daxing_int_guard2_push_01",
+        "character": "soldier",
+        "original_text": "Pushing an enemy off a cliff deals extra damage. Height can turn one strike into a rout.",
+        "stt_output": "Pushing an enemy off a cliff deals extra damage. Hike can turn one strike into a route.",
+        "wer": 0.11764705882352941,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:daxing_int_soldier3_push_01": {
+        "id": "daxing_int_soldier3_push_01",
+        "character": "soldier",
+        "original_text": "If you push enemies into deep water, they drown. Watch the riverbanks when you choose your target.",
+        "stt_output": "If you push enemies into deep water, they drown. Watch the river banks when you choose your target.",
+        "wer": 0.11764705882352941,
         "is_bad": false,
         "language": "en"
     }

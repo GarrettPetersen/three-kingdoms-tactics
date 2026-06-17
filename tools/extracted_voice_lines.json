@@ -616,15 +616,15 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "daxing_int_guard1_01",
+    "id": "daxing_int_guard1_push_01",
     "char": "soldier",
-    "text": "Word is the main rebel host numbers in the tens of thousands. Staying in formation is our only chance.",
+    "text": "Some attacks can push enemies, redirecting their blows away from allied soldiers.",
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "daxing_int_guard2_01",
+    "id": "daxing_int_guard2_push_01",
     "char": "soldier",
-    "text": "They paint \"Jiazi\" on their gates and call it Heaven's will. Steel will answer that lie.",
+    "text": "Pushing an enemy off a cliff deals extra damage. Height can turn one strike into a rout.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -646,9 +646,9 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "daxing_int_soldier3_01",
+    "id": "daxing_int_soldier3_push_01",
     "char": "soldier",
-    "text": "I have never seen Zhuo this tense. Even the market folk are carrying spears now.",
+    "text": "If you push enemies into deep water, they drown. Watch the riverbanks when you choose your target.",
     "source": "NarrativeScripts.js"
   },
   {
