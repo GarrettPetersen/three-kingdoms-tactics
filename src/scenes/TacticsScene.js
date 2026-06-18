@@ -7908,6 +7908,8 @@ export class TacticsScene extends BaseScene {
                 return; // Cannot push if direction is undefined
             }
 
+            const pushDamageContext = { victimOverkillSnapshot, deferredOverkill: hasDeferredOverkill, attacker };
+
             if (victim.name === 'Boulder' && !victim.isDestroyedBoulder) {
                 const { path } = this.getBoulderRollPath(victim.r, victim.q, dirIndex);
                 if (path && path.length >= 2) {
@@ -7935,7 +7937,6 @@ export class TacticsScene extends BaseScene {
 
             const victimCellForPush = this.tacticsMap.getCell(victimPushR, victimPushQ);
             const pushCell = this.tacticsMap.getNeighborInDirection(victimPushR, victimPushQ, dirIndex);
-            const pushDamageContext = { victimOverkillSnapshot, deferredOverkill: hasDeferredOverkill, attacker };
             
             const victimPos = this.getPixelPos(victimPushR, victimPushQ);
 
