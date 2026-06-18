@@ -219,17 +219,8 @@ export class CampaignSelectionScene extends BaseScene {
         if (!cursor.nodeId) {
             gs.startStoryRoute(routeId, 'chapter2_hejin_gate');
         }
-
-        this.manager.switchTo('narrative', {
-            scriptId: 'chapter2_hejin_gate',
-            musicKey: 'narrative',
-            keepMusic: false,
-            onComplete: () => {
-                gs.setStoryCursor('chapter2_hejin_gate_complete', routeId);
-                gs.addMilestone('chapter2_hejin_gate_complete', routeId);
-                this.manager.switchTo('campaign_selection');
-            }
-        });
+        const nextNodeId = gs.getStoryCursor(routeId).nodeId || 'chapter2_hejin_gate';
+        launchStoryNode(this.manager, routeId, nextNodeId);
     }
 
     enter() {

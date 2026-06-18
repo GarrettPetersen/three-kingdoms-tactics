@@ -288,6 +288,90 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_hj_council_cc_01",
+    "char": "caocao",
+    "text": "宦官世在禁中，帘幕廊庑之间，皆有其耳目。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_cc_02",
+    "char": "caocao",
+    "text": "若欲行事，须密而准。大张杀伐，必有灭族之祸。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_cc_03",
+    "char": "caocao",
+    "text": "那便令知者少。诸臣皆知之计，张让亦已知之。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_cc_04",
+    "char": "caocao",
+    "text": "操言尽于此。只愿宫墙不如人多口。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_hj_01",
+    "char": "hejin",
+    "text": "蹇硕在宫门设刃害我。此毒根已遍禁中。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_hj_02",
+    "char": "hejin",
+    "text": "宦官若能以杀人定储位，则我等皆非为汉效力。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_hj_03",
+    "char": "hejin",
+    "text": "刀兵未动，先定储位。遣人守宫中消息，等潘隐再报。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_hj_dismiss",
+    "char": "hejin",
+    "text": "孟德年少，不可在众臣前以惧为智。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_hj_heed",
+    "char": "hejin",
+    "text": "孟德之慎，言中要害。先查明谁与蹇硕同党。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_narrator_01",
+    "char": "narrator",
+    "text": "何进大惊，急归私宅，召诸大臣。其意欲尽诛宫中宦官。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_narrator_02",
+    "char": "narrator",
+    "text": "诸臣议论未定，宫中已秘不发丧，并拟矫诏再召何进。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_ys_01",
+    "char": "zhoujing",
+    "text": "大将军，此事分明。列其奸名，发兵入宫，一扫而尽。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_ys_02",
+    "char": "zhoujing",
+    "text": "谨慎固然有用，迁延只会养肥奸贼。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_ys_03",
+    "char": "zhoujing",
+    "text": "大将军明断。以兵制奸，正当其时。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_hj_eunuch_01",
     "char": "eunuch",
     "text": "大将军何进，陛下在宫中相候。",
@@ -561,6 +645,66 @@
     "id": "ch2_wan_narrator_01",
     "char": "narrator",
     "text": "阳城开门归降之后，朱儁合兵南征。韩忠与黄巾余党退聚宛城。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_gy_01",
+    "char": "guanyu",
+    "text": "当待其隙，不可怒驱士卒撞墙。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_lb_01",
+    "char": "liubei",
+    "text": "韩忠出城而败。赵弘若复据城墙，便更难破。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_lb_02",
+    "char": "liubei",
+    "text": "如此，我兄弟守其道路，孙将军可逼其城。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_messenger_01",
+    "char": "soldier",
+    "text": "朱将军！赵弘、孙仲收合余党，声势甚盛。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_messenger_02",
+    "char": "soldier",
+    "text": "贼众反扑宛城，城外诸军已被逼退。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_narrator_01",
+    "char": "narrator",
+    "text": "韩忠既死，余众四散。然而宛城之役并未就此结束。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_sj_01",
+    "char": "chengyuanzhi",
+    "text": "朱儁将军，下邳孙坚奉诏而来。麾下兵马，愿攻宛城。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_zf_01",
+    "char": "zhangfei",
+    "text": "哼。孙仲若从北门逃，便交给俺。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_zj_01",
+    "char": "zhujun",
+    "text": "蛇断一首，余首尚动。退军十里下寨，先保军势。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_zj_02",
+    "char": "zhujun",
+    "text": "善。贼众以为勇气复来，我等便让他们知道，不过喧嚣而已。",
     "source": "NarrativeScripts.js"
   },
   {

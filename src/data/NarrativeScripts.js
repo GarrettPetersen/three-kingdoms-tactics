@@ -2696,6 +2696,131 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'move', id: 'liubei', x: 380, y: 184, wait: true },
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ],
+    'chapter2_wan_reversal': [
+        { bg: 'dirt_road_city_in_distance', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_wan_rev_narrator_01',
+            text: {
+                en: 'Han Zhong was slain and his scattered men fled. Yet the Wan campaign did not end there.',
+                zh: '韩忠既死，余众四散。然而宛城之役并未就此结束。'
+            }
+        },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 78, y: 190 },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 46, y: 190 },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 24, y: 190 },
+        { type: 'command', action: 'addActor', id: 'zhujun', imgKey: 'zhujun_sprite', x: 170, y: 188, flip: true },
+        { type: 'command', action: 'addActor', id: 'messenger', imgKey: 'soldier', x: 332, y: 190, actorAction: 'walk', speed: 0.82, flip: true },
+        { type: 'command', action: 'move', id: 'messenger', x: 216, y: 190, wait: true },
+        {
+            type: 'dialogue',
+            portraitKey: 'soldier',
+            name: 'Messenger',
+            voiceId: 'ch2_wan_rev_messenger_01',
+            position: 'top',
+            text: {
+                en: 'General Zhu! Zhao Hong and Sun Zhong have gathered the remaining rebels. Their numbers are strong.',
+                zh: '朱将军！赵弘、孙仲收合余党，声势甚盛。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'soldier',
+            name: 'Messenger',
+            voiceId: 'ch2_wan_rev_messenger_02',
+            position: 'top',
+            text: {
+                en: 'They have struck back toward Wan. The outer troops are falling away from the walls.',
+                zh: '贼众反扑宛城，城外诸军已被逼退。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhu-jun-generic',
+            name: 'Zhu Jun',
+            voiceId: 'ch2_wan_rev_zj_01',
+            position: 'top',
+            text: {
+                en: 'So the serpent has another head. Pull the line ten li back and keep the army whole.',
+                zh: '蛇断一首，余首尚动。退军十里下寨，先保军势。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_wan_rev_lb_01',
+            position: 'top',
+            text: {
+                en: 'Han Zhong fell because he left the city broken. Zhao Hong will be harder if he has regained the walls.',
+                zh: '韩忠出城而败。赵弘若复据城墙，便更难破。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'guan-yu',
+            name: 'Guan Yu',
+            voiceId: 'ch2_wan_rev_gy_01',
+            position: 'top',
+            text: {
+                en: 'Then we wait for the next opening, not throw men against a wall in anger.',
+                zh: '当待其隙，不可怒驱士卒撞墙。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhang-fei',
+            name: 'Zhang Fei',
+            voiceId: 'ch2_wan_rev_zf_01',
+            position: 'top',
+            text: {
+                en: 'Hmph. If Sun Zhong tries to run north, leave that road to me.',
+                zh: '哼。孙仲若从北门逃，便交给俺。'
+            }
+        },
+        { type: 'command', action: 'move', id: 'messenger', x: 332, y: 190, wait: false },
+        { type: 'command', action: 'addActor', id: 'sunjian', imgKey: 'chengyuanzhi', x: 340, y: 190, actorAction: 'walk', speed: 0.76, flip: true },
+        { type: 'command', action: 'addActor', id: 'sunjian_soldier', imgKey: 'soldier', x: 366, y: 194, actorAction: 'walk', speed: 0.7, flip: true },
+        { type: 'command', action: 'move', id: 'sunjian', x: 246, y: 190, wait: false },
+        { type: 'command', action: 'move', id: 'sunjian_soldier', x: 276, y: 194, wait: true },
+        {
+            type: 'dialogue',
+            portraitKey: 'chengyuanzhi',
+            name: 'Sun Jian',
+            voiceId: 'ch2_wan_rev_sj_01',
+            position: 'top',
+            text: {
+                en: 'General Zhu Jun, Sun Jian of Xiapi answers the imperial call. My men are ready to strike Wan.',
+                zh: '朱儁将军，下邳孙坚奉诏而来。麾下兵马，愿攻宛城。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhu-jun-generic',
+            name: 'Zhu Jun',
+            voiceId: 'ch2_wan_rev_zj_02',
+            position: 'top',
+            text: {
+                en: 'Good. The rebels think their courage has returned. We will show them it was only noise.',
+                zh: '善。贼众以为勇气复来，我等便让他们知道，不过喧嚣而已。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_wan_rev_lb_02',
+            position: 'top',
+            text: {
+                en: 'Then our brothers will hold the roads while Sun Jian presses the wall.',
+                zh: '如此，我兄弟守其道路，孙将军可逼其城。'
+            }
+        },
+        { type: 'command', action: 'setStoryChoice', key: 'chapter2_wan_reversal', value: 'sun_jian_arrived', routeId: 'chapter2_oath' },
+        { type: 'command', action: 'fade', target: 1, speed: 0.001 }
+    ],
     'chapter2_hejin_gate': [
         { bg: 'luoyang_aerial_shot', type: 'command', action: 'fade', target: 0, speed: 0.001, wait: false },
         {
@@ -2898,6 +3023,174 @@ export const NARRATIVE_SCRIPTS = {
                 }
             ]
         }
+    ],
+    'chapter2_hejin_council': [
+        { bg: 'luoyang_council_hall', fg: null, type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: 134, y: 202 },
+        { type: 'command', action: 'addActor', id: 'yuanshao', imgKey: 'zhoujing', x: 198, y: 204, flip: true },
+        { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: 72, y: 204 },
+        { type: 'command', action: 'addActor', id: 'minister', imgKey: 'soldier', x: 236, y: 208, flip: true },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_hj_council_narrator_01',
+            text: {
+                en: 'He Jin returned to his residence in alarm and summoned the ministers. His first thought was to kill every eunuch in the palace.',
+                zh: '何进大惊，急归私宅，召诸大臣。其意欲尽诛宫中宦官。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'hejin',
+            name: 'He Jin',
+            voiceId: 'ch2_hj_council_hj_01',
+            position: 'top',
+            text: {
+                en: 'Jian Shuo set a blade for me at the palace gate. This poison has roots through the whole forbidden palace.',
+                zh: '蹇硕在宫门设刃害我。此毒根已遍禁中。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'hejin',
+            name: 'He Jin',
+            voiceId: 'ch2_hj_council_hj_02',
+            position: 'top',
+            text: {
+                en: 'If the eunuchs can choose the emperor by murder, none of us serves the Han any longer.',
+                zh: '宦官若能以杀人定储位，则我等皆非为汉效力。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhou-jing',
+            name: 'Yuan Shao',
+            voiceId: 'ch2_hj_council_ys_01',
+            position: 'top',
+            text: {
+                en: 'My lord, the matter is plain. Name the traitors, command the troops, and sweep the palace clean.',
+                zh: '大将军，此事分明。列其奸名，发兵入宫，一扫而尽。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'cao-cao',
+            name: 'Cao Cao',
+            voiceId: 'ch2_hj_council_cc_01',
+            position: 'top',
+            text: {
+                en: 'The eunuchs have served inside the palace for generations. Their ears are in every curtain and corridor.',
+                zh: '宦官世在禁中，帘幕廊庑之间，皆有其耳目。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'cao-cao',
+            name: 'Cao Cao',
+            voiceId: 'ch2_hj_council_cc_02',
+            position: 'top',
+            text: {
+                en: 'If this is to be done, it must be secret and exact. A broad shout of vengeance will ruin your whole clan.',
+                zh: '若欲行事，须密而准。大张杀伐，必有灭族之祸。'
+            }
+        },
+        {
+            type: 'choice',
+            portraitKey: 'hejin',
+            name: 'He Jin',
+            position: 'top',
+            options: [
+                {
+                    buttonText: { en: 'Heed Cao Cao.', zh: '听曹操之言' },
+                    voiceId: 'ch2_hj_council_hj_heed',
+                    text: {
+                        en: 'Your caution is sharp, Mengde. We will first learn who stands with Jian Shuo.',
+                        zh: '孟德之慎，言中要害。先查明谁与蹇硕同党。'
+                    },
+                    speaker: 'hejin',
+                    result: [
+                        { type: 'command', action: 'setStoryChoice', key: 'hejin_cao_cao_trust', value: 'heeded', routeId: 'hejin' },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'cao-cao',
+                            name: 'Cao Cao',
+                            voiceId: 'ch2_hj_council_cc_03',
+                            position: 'top',
+                            text: {
+                                en: 'Then keep the circle small. A plan known by all ministers is already known by Zhang Rang.',
+                                zh: '那便令知者少。诸臣皆知之计，张让亦已知之。'
+                            }
+                        },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhou-jing',
+                            name: 'Yuan Shao',
+                            voiceId: 'ch2_hj_council_ys_02',
+                            position: 'top',
+                            text: {
+                                en: 'Caution has its place, but delay fattens traitors.',
+                                zh: '谨慎固然有用，迁延只会养肥奸贼。'
+                            }
+                        }
+                    ]
+                },
+                {
+                    buttonText: { en: 'Dismiss him.', zh: '斥其年少' },
+                    voiceId: 'ch2_hj_council_hj_dismiss',
+                    text: {
+                        en: 'You are still young, Mengde. Do not dress fear as wisdom before the ministers.',
+                        zh: '孟德年少，不可在众臣前以惧为智。'
+                    },
+                    speaker: 'hejin',
+                    result: [
+                        { type: 'command', action: 'setStoryChoice', key: 'hejin_cao_cao_trust', value: 'dismissed', routeId: 'hejin' },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'cao-cao',
+                            name: 'Cao Cao',
+                            voiceId: 'ch2_hj_council_cc_04',
+                            position: 'top',
+                            text: {
+                                en: 'Then I have spoken. May the walls be less talkative than men.',
+                                zh: '操言尽于此。只愿宫墙不如人多口。'
+                            }
+                        },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhou-jing',
+                            name: 'Yuan Shao',
+                            voiceId: 'ch2_hj_council_ys_03',
+                            position: 'top',
+                            text: {
+                                en: 'The General-in-Chief sees clearly. Let force answer force.',
+                                zh: '大将军明断。以兵制奸，正当其时。'
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'hejin',
+            name: 'He Jin',
+            voiceId: 'ch2_hj_council_hj_03',
+            position: 'top',
+            text: {
+                en: 'Before steel is drawn, the succession must be secured. Send watchers to the palace and wait for Pan Yin.',
+                zh: '刀兵未动，先定储位。遣人守宫中消息，等潘隐再报。'
+            }
+        },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_hj_council_narrator_02',
+            text: {
+                en: 'Even as the ministers argued, the palace concealed Emperor Ling\'s death and prepared a forged summons.',
+                zh: '诸臣议论未定，宫中已秘不发丧，并拟矫诏再召何进。'
+            }
+        },
+        { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ],
     'caocao_ch1_end_card': [
         { bg: 'black', type: 'command', action: 'clearActors' },

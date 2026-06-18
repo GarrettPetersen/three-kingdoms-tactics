@@ -1060,10 +1060,16 @@ export class NarrativeScene extends BaseScene {
                     this.manager.gameState.setStoryCursor('caocao_chapter1_complete', 'caocao');
                     this.manager.gameState.addMilestone('caocao_chapter1_complete');
                 } else if (this.scriptId === 'chapter2_hejin_gate') {
-                    this.manager.gameState.setStoryCursor('chapter2_hejin_gate_complete', 'hejin');
-                    this.manager.gameState.addMilestone('chapter2_hejin_gate_complete', 'hejin');
+                    completeStoryNode(this.manager, 'hejin', 'chapter2_hejin_gate');
+                    return;
+                } else if (this.scriptId === 'chapter2_hejin_council') {
+                    completeStoryNode(this.manager, 'hejin', 'chapter2_hejin_council');
+                    return;
                 } else if (this.scriptId === 'chapter2_wan_strategy') {
                     completeStoryNode(this.manager, 'chapter2_oath', 'chapter2_wan_strategy');
+                    return;
+                } else if (this.scriptId === 'chapter2_wan_reversal') {
+                    completeStoryNode(this.manager, 'chapter2_oath', 'chapter2_wan_reversal');
                     return;
                 }
                 this.manager.switchTo(savedState.nextScene, savedState.nextParams || {});
@@ -2319,7 +2325,9 @@ export class NarrativeScene extends BaseScene {
             'caocao_dunqiu_intro': 'map',
             'caocao_ch1_end_card': 'campaign_selection',
             'chapter2_hejin_gate': 'campaign_selection',
+            'chapter2_hejin_council': 'campaign_selection',
             'chapter2_wan_strategy': 'campaign_selection',
+            'chapter2_wan_reversal': 'campaign_selection',
             'noticeboard': 'narrative', // Goes to inn scene next
             'noticeboard_after_training': 'narrative',
             'inn': 'map',
@@ -2352,7 +2360,9 @@ export class NarrativeScene extends BaseScene {
             'caocao_dunqiu_intro': { campaignId: 'caocao', partyX: 168, partyY: 98 },
             'caocao_ch1_end_card': {},
             'chapter2_hejin_gate': {},
+            'chapter2_hejin_council': {},
             'chapter2_wan_strategy': {},
+            'chapter2_wan_reversal': {},
             'noticeboard': { scriptId: 'inn' }, // Chain to inn scene
             'noticeboard_after_training': { scriptId: 'inn' },
             'inn': {}, // After inn, goes to map (milestone added in onComplete)

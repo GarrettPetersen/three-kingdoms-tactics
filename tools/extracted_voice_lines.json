@@ -292,6 +292,90 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_hj_council_cc_01",
+    "char": "caocao",
+    "text": "The eunuchs have served inside the palace for generations. Their ears are in every curtain and corridor.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_cc_02",
+    "char": "caocao",
+    "text": "If this is to be done, it must be secret and exact. A broad shout of vengeance will ruin your whole clan.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_cc_03",
+    "char": "caocao",
+    "text": "Then keep the circle small. A plan known by all ministers is already known by Zhang Rang.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_cc_04",
+    "char": "caocao",
+    "text": "Then I have spoken. May the walls be less talkative than men.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_hj_01",
+    "char": "hejin",
+    "text": "Jian Shuo set a blade for me at the palace gate. This poison has roots through the whole forbidden palace.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_hj_02",
+    "char": "hejin",
+    "text": "If the eunuchs can choose the emperor by murder, none of us serves the Han any longer.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_hj_03",
+    "char": "hejin",
+    "text": "Before steel is drawn, the succession must be secured. Send watchers to the palace and wait for Pan Yin.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_hj_dismiss",
+    "char": "hejin",
+    "text": "You are still young, Mengde. Do not dress fear as wisdom before the ministers.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_hj_heed",
+    "char": "hejin",
+    "text": "Your caution is sharp, Mengde. We will first learn who stands with Jian Shuo.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_narrator_01",
+    "char": "narrator",
+    "text": "He Jin returned to his residence in alarm and summoned the ministers. His first thought was to kill every eunuch in the palace.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_narrator_02",
+    "char": "narrator",
+    "text": "Even as the ministers argued, the palace concealed Emperor Ling's death and prepared a forged summons.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_ys_01",
+    "char": "zhoujing",
+    "text": "My lord, the matter is plain. Name the traitors, command the troops, and sweep the palace clean.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_ys_02",
+    "char": "zhoujing",
+    "text": "Caution has its place, but delay fattens traitors.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_ys_03",
+    "char": "zhoujing",
+    "text": "The General-in-Chief sees clearly. Let force answer force.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_hj_eunuch_01",
     "char": "eunuch",
     "text": "General-in-Chief He Jin, His Majesty awaits within.",
@@ -565,6 +649,66 @@
     "id": "ch2_wan_narrator_01",
     "char": "narrator",
     "text": "After Yangcheng opened its gates, Zhu Jun turned the army south. Han Zhong and the remaining Yellow Turbans had gathered in Wan.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_gy_01",
+    "char": "guanyu",
+    "text": "Then we wait for the next opening, not throw men against a wall in anger.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_lb_01",
+    "char": "liubei",
+    "text": "Han Zhong fell because he left the city broken. Zhao Hong will be harder if he has regained the walls.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_lb_02",
+    "char": "liubei",
+    "text": "Then our brothers will hold the roads while Sun Jian presses the wall.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_messenger_01",
+    "char": "soldier",
+    "text": "General Zhu! Zhao Hong and Sun Zhong have gathered the remaining rebels. Their numbers are strong.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_messenger_02",
+    "char": "soldier",
+    "text": "They have struck back toward Wan. The outer troops are falling away from the walls.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_narrator_01",
+    "char": "narrator",
+    "text": "Han Zhong was slain and his scattered men fled. Yet the Wan campaign did not end there.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_sj_01",
+    "char": "chengyuanzhi",
+    "text": "General Zhu Jun, Sun Jian of Xiapi answers the imperial call. My men are ready to strike Wan.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_zf_01",
+    "char": "zhangfei",
+    "text": "Hmph. If Sun Zhong tries to run north, leave that road to me.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_zj_01",
+    "char": "zhujun",
+    "text": "So the serpent has another head. Pull the line ten li back and keep the army whole.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_zj_02",
+    "char": "zhujun",
+    "text": "Good. The rebels think their courage has returned. We will show them it was only noise.",
     "source": "NarrativeScripts.js"
   },
   {
