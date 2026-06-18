@@ -1166,6 +1166,140 @@ export const BATTLES = {
             ]
         }
     },
+    'chapter2_wan_final_assault': {
+        name: 'Wan - Sun Jian at the Walls',
+        map: {
+            biome: 'northern',
+            layout: 'city_gate',
+            seed: 'chapter2_wan_final_assault',
+            cityGateDefenderSide: 'enemy',
+            forestDensity: 0.0,
+            mountainDensity: 0.0,
+            riverDensity: 0.0,
+            houseDensity: 0.0
+        },
+        units: [
+            { id: 'liubei', r: 7, q: 3, type: 'hero_force', templateId: 'liubei', cityGateSide: 'outside' },
+            { id: 'guanyu', r: 7, q: 2, type: 'hero_force', templateId: 'guanyu', cityGateSide: 'outside' },
+            { id: 'zhangfei', r: 7, q: 6, type: 'hero_force', templateId: 'zhangfei', cityGateSide: 'outside' },
+            { id: 'ally1', r: 8, q: 3, type: 'allied_soldier', cityGateSide: 'outside' },
+            { id: 'ally2', r: 8, q: 5, type: 'allied_soldier', cityGateSide: 'outside' },
+            { id: 'sunjian', r: 6, q: 2, type: 'commander', templateId: 'sunjian', cityGateSide: 'outside' },
+            { id: 'sunjian_soldier1', r: 6, q: 1, type: 'imperial_soldier', cityGateSide: 'outside' },
+            { id: 'sunjian_soldier2', r: 7, q: 1, type: 'imperial_soldier', cityGateSide: 'outside' },
+            { id: 'zhujun', r: 6, q: 7, type: 'commander', templateId: 'zhujun', cityGateSide: 'outside' },
+            { id: 'zhaohong', r: 2, q: 4, type: 'enemy_captain', templateId: 'zhaohong', cityGateSide: 'inside' },
+            { id: 'sunzhong', r: 2, q: 5, type: 'enemy_captain', templateId: 'sunzhong', cityGateSide: 'inside' },
+            { id: 'wall_rebel1', r: 1, q: 2, type: 'enemy_soldier', templateId: 'rebel_archer', cityGateSide: 'inside' },
+            { id: 'wall_rebel2', r: 1, q: 6, type: 'enemy_soldier', templateId: 'rebel_archer', cityGateSide: 'inside' },
+            { id: 'wall_rebel3', r: 2, q: 2, type: 'enemy_soldier', cityGateSide: 'inside' },
+            { id: 'wall_rebel4', r: 2, q: 7, type: 'enemy_soldier', cityGateSide: 'inside' }
+        ],
+        victoryCondition: {
+            type: 'defeat_all_enemies',
+            mustSurvive: ['liubei', 'guanyu', 'zhangfei']
+        },
+        introScript: [
+            {
+                speaker: 'zhujun',
+                portraitKey: 'zhu-jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'ch2_wan_final_zj_01',
+                text: {
+                    en: "Sun Jian takes the south gate. Liu Bei, hold the north. I will press the west and leave the east for flight.",
+                    zh: "孙坚攻南门，刘备守北门。吾攻西门，独留东门使贼走。"
+                }
+            },
+            {
+                speaker: 'sunjian',
+                portraitKey: 'chengyuanzhi',
+                name: 'Sun Jian',
+                voiceId: 'ch2_wan_final_sj_01',
+                text: {
+                    en: "Then I will be first on the wall. Zhao Hong will learn how little his reclaimed city is worth.",
+                    zh: "坚愿先登。赵弘复得宛城，也不过再失一次。"
+                }
+            },
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'ch2_wan_final_lb_01',
+                text: {
+                    en: "Brothers, watch the north gate. If Sun Zhong flees, he must not carry this rebellion with him.",
+                    zh: "二弟三弟，守住北门。孙仲若走，不可让他再携乱势而去。"
+                }
+            },
+            {
+                speaker: 'sunzhong',
+                portraitKey: 'yellowturban',
+                name: 'Sun Zhong',
+                voiceId: 'ch2_wan_final_sz_01',
+                text: {
+                    en: "Break through! Wan is lost if we cling to the stones.",
+                    zh: "突围！若死守城石，宛城便真完了！"
+                }
+            }
+        ],
+        postCombatScript: [
+            {
+                speaker: 'zhujun',
+                portraitKey: 'zhu-jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'ch2_wan_final_zj_02',
+                text: {
+                    en: "Zhao Hong is dead, Sun Zhong has fallen, and the rebels have broken. Nanyang is quiet again.",
+                    zh: "赵弘已死，孙仲亦伏，贼众溃散。南阳一路复平。"
+                }
+            },
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'ch2_wan_final_lb_02',
+                text: {
+                    en: "Then let the surrendering men be counted and disarmed. Victory must end the killing, not feed it.",
+                    zh: "请清点降众，收其兵器。胜利当止杀，不可养杀。"
+                }
+            },
+            {
+                speaker: 'sunjian',
+                portraitKey: 'chengyuanzhi',
+                name: 'Sun Jian',
+                voiceId: 'ch2_wan_final_sj_02',
+                text: {
+                    en: "Well said. The wall is taken; now the officers must hold the city better than the rebels did.",
+                    zh: "玄德所言甚是。城墙既取，官军更当守出法度。"
+                }
+            }
+        ],
+        defeat: {
+            retry: { scene: 'tactics', params: { battleId: 'chapter2_wan_final_assault' } },
+            script: [
+                {
+                    bg: 'army_camp',
+                    type: 'dialogue',
+                    portraitKey: 'zhu-jun-generic',
+                    name: 'Zhu Jun',
+                    voiceId: 'ch2_wan_final_defeat_zj_01',
+                    text: {
+                        en: "Zhao Hong used the walls better than expected. Reform at the north gate and press again with Sun Jian.",
+                        zh: "赵弘凭城之势，胜于所料。重整北门，与孙坚再攻。"
+                    }
+                },
+                {
+                    type: 'dialogue',
+                    portraitKey: 'liu-bei',
+                    name: 'Liu Bei',
+                    voiceId: 'ch2_wan_final_defeat_lb_01',
+                    text: {
+                        en: "Sun Zhong cannot be allowed to carry the remnant away. We return to the gate at once.",
+                        zh: "不可令孙仲携余党逃去。即刻回攻城门。"
+                    }
+                }
+            ]
+        }
+    },
     'caocao_yingchuan_intercept': {
         name: 'Yingchuan - Cavalry Intercept',
         map: {
@@ -1501,6 +1635,8 @@ export const UNIT_TEMPLATES = {
         'chengyuanzhi': { name: 'Cheng Yuanzhi', imgKey: 'chengyuanzhi', hp: 4, moveRange: 3, attacks: ['polearm_sweep'], faction: 'enemy', level: 2 },
         'gaosheng': { name: 'Gao Sheng', imgKey: 'dengmao', hp: 5, moveRange: 3, attacks: ['generic_spear'], faction: 'enemy', level: 2 },
         'hanzhong': { name: 'Han Zhong', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['bash'], faction: 'enemy', level: 2 },
+        'zhaohong': { name: 'Zhao Hong', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['generic_spear'], faction: 'enemy', level: 2 },
+        'sunzhong': { name: 'Sun Zhong', imgKey: 'dengmao', hp: 4, moveRange: 4, attacks: ['bash'], faction: 'enemy', level: 2 },
         'zhang_jue_captain': { name: 'Yellow Turban Captain', imgKey: 'bandit2', hp: 5, moveRange: 3, attacks: ['bash'], faction: 'enemy' }
     },
     'commander': {
@@ -1509,6 +1645,7 @@ export const UNIT_TEMPLATES = {
         'huangfusong': { name: 'Huangfu Song', imgKey: 'huangfusong_sprite', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' },
         'zhujun': { name: 'Zhu Jun', imgKey: 'zhujun_sprite', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' },
         'zhujun_observer': { name: 'Zhu Jun', imgKey: 'zhujun_sprite', hp: 6, moveRange: 0, attacks: [], faction: 'player' },
+        'sunjian': { name: 'Sun Jian', imgKey: 'chengyuanzhi', hp: 6, moveRange: 4, attacks: ['slash'], faction: 'allied', level: 2 },
         'yanzheng': { name: 'Yan Zheng', imgKey: 'yellowturban', hp: 3, moveRange: 0, attacks: ['slash'], faction: 'allied' }
     },
     'warlord': {

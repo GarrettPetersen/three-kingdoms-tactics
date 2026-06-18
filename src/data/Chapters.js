@@ -41,7 +41,8 @@ export const CHAPTERS = {
                     { id: 'chapter2_wan_strategy', type: 'narrative', scriptId: 'chapter2_wan_strategy' },
                     { id: 'chapter2_wan_field', type: 'battle', battleId: 'chapter2_wan_field' },
                     { id: 'chapter2_wan_gate', type: 'battle', battleId: 'chapter2_wan_gate' },
-                    { id: 'chapter2_wan_reversal', type: 'narrative', scriptId: 'chapter2_wan_reversal' }
+                    { id: 'chapter2_wan_reversal', type: 'narrative', scriptId: 'chapter2_wan_reversal' },
+                    { id: 'chapter2_wan_final_assault', type: 'battle', battleId: 'chapter2_wan_final_assault' }
                 ]
             },
             hejin: {
@@ -49,7 +50,8 @@ export const CHAPTERS = {
                 title: "The Eunuchs' Snare",
                 scenes: [
                     { id: 'chapter2_hejin_gate', type: 'narrative', scriptId: 'chapter2_hejin_gate' },
-                    { id: 'chapter2_hejin_council', type: 'narrative', scriptId: 'chapter2_hejin_council' }
+                    { id: 'chapter2_hejin_council', type: 'narrative', scriptId: 'chapter2_hejin_council' },
+                    { id: 'chapter2_hejin_secret_death', type: 'narrative', scriptId: 'chapter2_hejin_secret_death' }
                 ]
             }
         }

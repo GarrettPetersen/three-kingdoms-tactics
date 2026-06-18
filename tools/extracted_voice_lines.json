@@ -376,6 +376,84 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_hj_death_cc_01",
+    "char": "caocao",
+    "text": "There is the snare, dressed as command.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_cc_02",
+    "char": "caocao",
+    "text": "The first matter is to make the throne lawful. Set Prince Bian in place, then punish the traitors.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_cc_03",
+    "char": "caocao",
+    "text": "Then speed and order may still serve you.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_eunuch_01",
+    "char": "eunuch",
+    "text": "By palace order: General-in-Chief He Jin is to enter at once and settle the late matter of succession.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_hj_01",
+    "char": "hejin",
+    "text": "Who here dares enter with me, enthrone the heir, and cleanse the palace?",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_hj_discipline",
+    "char": "hejin",
+    "text": "Take the troops, but keep them under command. We enter to secure the throne, not to loot the palace.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_hj_force",
+    "char": "hejin",
+    "text": "Let the palace see our strength before it opens its mouth again.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_narrator_01",
+    "char": "narrator",
+    "text": "He Jin chose Yuan Shao, gathered the imperial troops, and prepared to enter before Emperor Ling's coffin.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_panyin_01",
+    "char": "panyin",
+    "text": "My lord, Emperor Ling is dead.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_panyin_02",
+    "char": "panyin",
+    "text": "Jian Shuo and the Ten Attendants hide the mourning. They prepare a false edict to summon you in again.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_panyin_03",
+    "char": "panyin",
+    "text": "Their aim is to end you first, then enthrone Prince Xie.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_ys_01",
+    "char": "zhoujing",
+    "text": "I will borrow five thousand elite troops. We cut through the gates, enthrone the new lord, and kill the eunuchs.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_ys_02",
+    "char": "zhoujing",
+    "text": "Good. Fear is the one court language the eunuchs understand.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_hj_eunuch_01",
     "char": "eunuch",
     "text": "General-in-Chief He Jin, His Majesty awaits within.",
@@ -571,6 +649,60 @@
     "id": "ch2_wan_field_zj_02",
     "char": "zhujun",
     "text": "The field is ours. Now Wan can be received without trusting a barred gate.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_defeat_lb_01",
+    "char": "liubei",
+    "text": "Sun Zhong cannot be allowed to carry the remnant away. We return to the gate at once.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_defeat_zj_01",
+    "char": "zhujun",
+    "text": "Zhao Hong used the walls better than expected. Reform at the north gate and press again with Sun Jian.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_lb_01",
+    "char": "liubei",
+    "text": "Brothers, watch the north gate. If Sun Zhong flees, he must not carry this rebellion with him.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_lb_02",
+    "char": "liubei",
+    "text": "Then let the surrendering men be counted and disarmed. Victory must end the killing, not feed it.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_sj_01",
+    "char": "sunjian",
+    "text": "Then I will be first on the wall. Zhao Hong will learn how little his reclaimed city is worth.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_sj_02",
+    "char": "sunjian",
+    "text": "Well said. The wall is taken; now the officers must hold the city better than the rebels did.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_sz_01",
+    "char": "sunzhong",
+    "text": "Break through! Wan is lost if we cling to the stones.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_zj_01",
+    "char": "zhujun",
+    "text": "Sun Jian takes the south gate. Liu Bei, hold the north. I will press the west and leave the east for flight.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_zj_02",
+    "char": "zhujun",
+    "text": "Zhao Hong is dead, Sun Zhong has fallen, and the rebels have broken. Nanyang is quiet again.",
     "source": "Battles.js"
   },
   {

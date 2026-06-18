@@ -3192,6 +3192,169 @@ export const NARRATIVE_SCRIPTS = {
         },
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ],
+    'chapter2_hejin_secret_death': [
+        { bg: 'luoyang_council_hall', fg: null, type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: 134, y: 202 },
+        { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: 72, y: 204 },
+        { type: 'command', action: 'addActor', id: 'yuanshao', imgKey: 'zhoujing', x: 198, y: 204, flip: true },
+        { type: 'command', action: 'addActor', id: 'panyin', imgKey: 'panyin', x: 340, y: 206, actorAction: 'walk', speed: 0.88, flip: true },
+        { type: 'command', action: 'move', id: 'panyin', x: 236, y: 206, wait: true },
+        {
+            type: 'dialogue',
+            portraitKey: 'panyin',
+            name: 'Pan Yin',
+            voiceId: 'ch2_hj_death_panyin_01',
+            position: 'top',
+            text: {
+                en: 'My lord, Emperor Ling is dead.',
+                zh: '大将军，灵帝已崩。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'panyin',
+            name: 'Pan Yin',
+            voiceId: 'ch2_hj_death_panyin_02',
+            position: 'top',
+            text: {
+                en: 'Jian Shuo and the Ten Attendants hide the mourning. They prepare a false edict to summon you in again.',
+                zh: '蹇硕与十常侍秘不发丧，又拟矫诏再召公入宫。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'panyin',
+            name: 'Pan Yin',
+            voiceId: 'ch2_hj_death_panyin_03',
+            position: 'top',
+            text: {
+                en: 'Their aim is to end you first, then enthrone Prince Xie.',
+                zh: '其意先绝公之后患，再立皇子协。'
+            }
+        },
+        { type: 'command', action: 'addActor', id: 'false_messenger', imgKey: 'eunuch', x: 340, y: 206, actorAction: 'walk', speed: 0.74, flip: true },
+        { type: 'command', action: 'move', id: 'false_messenger', x: 270, y: 206, wait: true },
+        {
+            type: 'dialogue',
+            portraitKey: 'eunuch',
+            name: 'Palace Messenger',
+            voiceId: 'ch2_hj_death_eunuch_01',
+            position: 'top',
+            text: {
+                en: 'By palace order: General-in-Chief He Jin is to enter at once and settle the late matter of succession.',
+                zh: '宫中有命：请大将军速入，以定后事。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'cao-cao',
+            name: 'Cao Cao',
+            voiceId: 'ch2_hj_death_cc_01',
+            position: 'top',
+            text: {
+                en: 'There is the snare, dressed as command.',
+                zh: '此便是罗网，却披作诏命。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'cao-cao',
+            name: 'Cao Cao',
+            voiceId: 'ch2_hj_death_cc_02',
+            position: 'top',
+            text: {
+                en: 'The first matter is to make the throne lawful. Set Prince Bian in place, then punish the traitors.',
+                zh: '今日之计，先宜正君位，然后图贼。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'hejin',
+            name: 'He Jin',
+            voiceId: 'ch2_hj_death_hj_01',
+            position: 'top',
+            text: {
+                en: 'Who here dares enter with me, enthrone the heir, and cleanse the palace?',
+                zh: '谁敢与吾入宫，正君讨贼，扫清朝廷？'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhou-jing',
+            name: 'Yuan Shao',
+            voiceId: 'ch2_hj_death_ys_01',
+            position: 'top',
+            text: {
+                en: 'I will borrow five thousand elite troops. We cut through the gates, enthrone the new lord, and kill the eunuchs.',
+                zh: '愿借精兵五千，斩关入内，册立新君，尽诛阉竖。'
+            }
+        },
+        {
+            type: 'choice',
+            portraitKey: 'hejin',
+            name: 'He Jin',
+            position: 'top',
+            options: [
+                {
+                    buttonText: { en: 'Enter with discipline.', zh: '整军入宫' },
+                    voiceId: 'ch2_hj_death_hj_discipline',
+                    text: {
+                        en: 'Take the troops, but keep them under command. We enter to secure the throne, not to loot the palace.',
+                        zh: '可点兵入宫，但须严令约束。入宫为正君位，不为劫掠。'
+                    },
+                    speaker: 'hejin',
+                    result: [
+                        { type: 'command', action: 'setStoryChoice', key: 'hejin_palace_entry_tone', value: 'disciplined', routeId: 'hejin' },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'cao-cao',
+                            name: 'Cao Cao',
+                            voiceId: 'ch2_hj_death_cc_03',
+                            position: 'top',
+                            text: {
+                                en: 'Then speed and order may still serve you.',
+                                zh: '如此，速与整尚可为公所用。'
+                            }
+                        }
+                    ]
+                },
+                {
+                    buttonText: { en: 'Show force openly.', zh: '张兵示威' },
+                    voiceId: 'ch2_hj_death_hj_force',
+                    text: {
+                        en: 'Let the palace see our strength before it opens its mouth again.',
+                        zh: '让宫中先见我兵威，再敢开口。'
+                    },
+                    speaker: 'hejin',
+                    result: [
+                        { type: 'command', action: 'setStoryChoice', key: 'hejin_palace_entry_tone', value: 'show_force', routeId: 'hejin' },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhou-jing',
+                            name: 'Yuan Shao',
+                            voiceId: 'ch2_hj_death_ys_02',
+                            position: 'top',
+                            text: {
+                                en: 'Good. Fear is the one court language the eunuchs understand.',
+                                zh: '善。宦官所懂的朝廷话，正是畏惧二字。'
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_hj_death_narrator_01',
+            text: {
+                en: 'He Jin chose Yuan Shao, gathered the imperial troops, and prepared to enter before Emperor Ling\'s coffin.',
+                zh: '何进大喜，遂点御林军，欲引众臣入宫，于灵帝柩前扶立太子辩。'
+            }
+        },
+        { type: 'command', action: 'fade', target: 1, speed: 0.001 }
+    ],
     'caocao_ch1_end_card': [
         { bg: 'black', type: 'command', action: 'clearActors' },
         { type: 'command', action: 'fade', target: 0, speed: 0.0012 },

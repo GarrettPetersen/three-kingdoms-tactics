@@ -1065,6 +1065,9 @@ export class NarrativeScene extends BaseScene {
                 } else if (this.scriptId === 'chapter2_hejin_council') {
                     completeStoryNode(this.manager, 'hejin', 'chapter2_hejin_council');
                     return;
+                } else if (this.scriptId === 'chapter2_hejin_secret_death') {
+                    completeStoryNode(this.manager, 'hejin', 'chapter2_hejin_secret_death');
+                    return;
                 } else if (this.scriptId === 'chapter2_wan_strategy') {
                     completeStoryNode(this.manager, 'chapter2_oath', 'chapter2_wan_strategy');
                     return;
@@ -2326,6 +2329,7 @@ export class NarrativeScene extends BaseScene {
             'caocao_ch1_end_card': 'campaign_selection',
             'chapter2_hejin_gate': 'campaign_selection',
             'chapter2_hejin_council': 'campaign_selection',
+            'chapter2_hejin_secret_death': 'campaign_selection',
             'chapter2_wan_strategy': 'campaign_selection',
             'chapter2_wan_reversal': 'campaign_selection',
             'noticeboard': 'narrative', // Goes to inn scene next
@@ -2361,6 +2365,7 @@ export class NarrativeScene extends BaseScene {
             'caocao_ch1_end_card': {},
             'chapter2_hejin_gate': {},
             'chapter2_hejin_council': {},
+            'chapter2_hejin_secret_death': {},
             'chapter2_wan_strategy': {},
             'chapter2_wan_reversal': {},
             'noticeboard': { scriptId: 'inn' }, // Chain to inn scene

@@ -372,6 +372,84 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_hj_death_cc_01",
+    "char": "caocao",
+    "text": "此便是罗网，却披作诏命。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_cc_02",
+    "char": "caocao",
+    "text": "今日之计，先宜正君位，然后图贼。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_cc_03",
+    "char": "caocao",
+    "text": "如此，速与整尚可为公所用。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_eunuch_01",
+    "char": "eunuch",
+    "text": "宫中有命：请大将军速入，以定后事。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_hj_01",
+    "char": "hejin",
+    "text": "谁敢与吾入宫，正君讨贼，扫清朝廷？",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_hj_discipline",
+    "char": "hejin",
+    "text": "可点兵入宫，但须严令约束。入宫为正君位，不为劫掠。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_hj_force",
+    "char": "hejin",
+    "text": "让宫中先见我兵威，再敢开口。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_narrator_01",
+    "char": "narrator",
+    "text": "何进大喜，遂点御林军，欲引众臣入宫，于灵帝柩前扶立太子辩。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_panyin_01",
+    "char": "panyin",
+    "text": "大将军，灵帝已崩。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_panyin_02",
+    "char": "panyin",
+    "text": "蹇硕与十常侍秘不发丧，又拟矫诏再召公入宫。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_panyin_03",
+    "char": "panyin",
+    "text": "其意先绝公之后患，再立皇子协。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_ys_01",
+    "char": "zhoujing",
+    "text": "愿借精兵五千，斩关入内，册立新君，尽诛阉竖。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_ys_02",
+    "char": "zhoujing",
+    "text": "善。宦官所懂的朝廷话，正是畏惧二字。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_hj_eunuch_01",
     "char": "eunuch",
     "text": "大将军何进，陛下在宫中相候。",
@@ -567,6 +645,60 @@
     "id": "ch2_wan_field_zj_02",
     "char": "zhujun",
     "text": "野战已胜。如此受宛城之降，便非轻信闭门之言。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_defeat_lb_01",
+    "char": "liubei",
+    "text": "不可令孙仲携余党逃去。即刻回攻城门。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_defeat_zj_01",
+    "char": "zhujun",
+    "text": "赵弘凭城之势，胜于所料。重整北门，与孙坚再攻。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_lb_01",
+    "char": "liubei",
+    "text": "二弟三弟，守住北门。孙仲若走，不可让他再携乱势而去。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_lb_02",
+    "char": "liubei",
+    "text": "请清点降众，收其兵器。胜利当止杀，不可养杀。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_sj_01",
+    "char": "sunjian",
+    "text": "坚愿先登。赵弘复得宛城，也不过再失一次。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_sj_02",
+    "char": "sunjian",
+    "text": "玄德所言甚是。城墙既取，官军更当守出法度。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_sz_01",
+    "char": "sunzhong",
+    "text": "突围！若死守城石，宛城便真完了！",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_zj_01",
+    "char": "zhujun",
+    "text": "孙坚攻南门，刘备守北门。吾攻西门，独留东门使贼走。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_zj_02",
+    "char": "zhujun",
+    "text": "赵弘已死，孙仲亦伏，贼众溃散。南阳一路复平。",
     "source": "Battles.js"
   },
   {

@@ -47,7 +47,8 @@ export const STORY_ROUTES = {
             },
             chapter2_wan_field: { next: 'chapter2_wan_reversal' },
             chapter2_wan_gate: { next: 'chapter2_wan_reversal' },
-            chapter2_wan_reversal: { next: 'chapter2_oath_complete' },
+            chapter2_wan_reversal: { next: 'chapter2_wan_final_assault' },
+            chapter2_wan_final_assault: { next: 'chapter2_oath_complete' },
             chapter2_oath_complete: { next: null }
         }
     },
@@ -57,7 +58,8 @@ export const STORY_ROUTES = {
         terminalNode: 'chapter2_hejin_gate_complete',
         nodes: {
             chapter2_hejin_gate: { next: 'chapter2_hejin_council' },
-            chapter2_hejin_council: { next: 'chapter2_hejin_gate_complete' },
+            chapter2_hejin_council: { next: 'chapter2_hejin_secret_death' },
+            chapter2_hejin_secret_death: { next: 'chapter2_hejin_gate_complete' },
             chapter2_hejin_gate_complete: { next: null }
         }
     }
