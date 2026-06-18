@@ -78,6 +78,7 @@ NAME_TO_CHAR = {
     'Huangfu Song': 'huangfusong',
     'Zhu Jun': 'zhujun',
     'Yan Zheng': 'yanzheng',
+    'Sun Jian': 'sunjian',
     'Deng Mao': 'dengmao',
     'Cheng Yuanzhi': 'chengyuanzhi',
     'Dong Zhuo': 'dongzhuo',

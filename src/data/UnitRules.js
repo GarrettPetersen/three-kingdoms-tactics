@@ -1,6 +1,19 @@
 import { UPGRADE_PATHS } from '../core/Constants.js';
 import { UNIT_TEMPLATES } from './Battles.js';
 
+const DEFAULT_TEMPLATE_IDS = {
+    allied_soldier: 'ally',
+    enemy_soldier: 'rebel',
+    enemy_soldier_weak: 'rebel',
+    imperial_soldier: 'soldier',
+    yellow_turban: 'rebel'
+};
+
+const TEMPLATE_TYPE_ALIASES = {
+    hero_force: 'hero',
+    yellow_turban: 'enemy_soldier'
+};
+
 export function getLevelFromXP(xp) {
     if (xp < 10) return 1;
     // Formula: TotalXP(L) = 2.5*L^2 + 2.5*L - 5
@@ -39,9 +52,11 @@ export function applyLevelAttackUpgrades(baseAttacks, unitClass, level, isArcher
 }
 
 export function resolveUnitTemplate(type, unitIdOrTemplateId) {
-    const typeTemplates = UNIT_TEMPLATES[type];
+    const templateType = TEMPLATE_TYPE_ALIASES[type] || type;
+    const typeTemplates = UNIT_TEMPLATES[templateType];
     if (!typeTemplates) return null;
     const raw = (unitIdOrTemplateId || '').toString();
     const baseId = raw.replace(/\d+$/, '');
-    return typeTemplates[raw] || typeTemplates[raw.split('_')[0]] || typeTemplates[baseId] || null;
+    const defaultId = DEFAULT_TEMPLATE_IDS[type];
+    return typeTemplates[raw] || typeTemplates[raw.split('_')[0]] || typeTemplates[baseId] || typeTemplates[defaultId] || null;
 }

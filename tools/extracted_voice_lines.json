@@ -748,36 +748,6 @@
     "source": "Battles.js"
   },
   {
-    "id": "ch2_wan_gy_01",
-    "char": "guanyu",
-    "text": "A trapped army is iron. A fleeing army is reeds before the blade.",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_wan_gy_02",
-    "char": "guanyu",
-    "text": "A hard blow may end deceit quickly, if our men keep discipline at the gate.",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_wan_lb_01",
-    "char": "liubei",
-    "text": "General, Wan is not Yangcheng. The question is how to make a false surrender become a real defeat.",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_wan_lb_02",
-    "char": "liubei",
-    "text": "Leave the southeast road open. When Han Zhong comes out, strike his broken ranks in the field.",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_wan_lb_04",
-    "char": "liubei",
-    "text": "Then let us strike the walls now. If Han Zhong hides behind a false surrender, break the gate before he can profit from it.",
-    "source": "NarrativeScripts.js"
-  },
-  {
     "id": "ch2_wan_narrator_01",
     "char": "narrator",
     "text": "After Yangcheng opened its gates, Zhu Jun turned the army south. Han Zhong and the remaining Yellow Turbans had gathered in Wan.",
@@ -821,7 +791,7 @@
   },
   {
     "id": "ch2_wan_rev_sj_01",
-    "char": "chengyuanzhi",
+    "char": "sunjian",
     "text": "General Zhu Jun, Sun Jian of Xiapi answers the imperial call. My men are ready to strike Wan.",
     "source": "NarrativeScripts.js"
   },
@@ -844,45 +814,75 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "ch2_wan_zf_01",
+    "id": "ch2_wan_wall_gy_01",
+    "char": "guanyu",
+    "text": "A trapped army is iron. A fleeing army is reeds before the blade.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_wall_gy_02",
+    "char": "guanyu",
+    "text": "A hard blow may end deceit quickly, if our men keep discipline at the gate.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_wall_lb_01",
+    "char": "liubei",
+    "text": "General, Wan is not Yangcheng. We must decide whether to draw Han Zhong out or break the gate before his deceit ripens.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_wall_lb_02",
+    "char": "liubei",
+    "text": "Leave the southeast road open. When Han Zhong comes out, strike his broken ranks in the field.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_wall_lb_03",
+    "char": "liubei",
+    "text": "Then strike the walls now. If Han Zhong hides behind a false surrender, break the gate before he can profit from it.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_wall_zf_01",
     "char": "zhangfei",
     "text": "Good! Let them think they have found a road, then I will close it with my spear.",
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "ch2_wan_zf_02",
+    "id": "ch2_wan_wall_zf_02",
     "char": "zhangfei",
     "text": "Ha! If they bar the door while begging mercy, I will knock loudly enough for all Wan to hear.",
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "ch2_wan_zj_01",
+    "id": "ch2_wan_wall_zj_01",
     "char": "zhujun",
-    "text": "Han Zhong's messenger asks to surrender, yet the gate remains barred and his banners still stand on the wall.",
+    "text": "There stands Wan. Han Zhong asks to surrender, yet the gate remains barred and his banners still fly on the wall.",
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "ch2_wan_zj_02",
+    "id": "ch2_wan_wall_zj_02",
     "char": "zhujun",
-    "text": "Yangcheng was different. Yan Zheng struck down Zhang Bao, opened the gate, and put the city in our hands.",
+    "text": "Yangcheng opened from within after Yan Zheng struck down Zhang Bao. Wan has offered only words from behind a shut gate.",
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "ch2_wan_zj_03",
+    "id": "ch2_wan_wall_zj_03",
+    "char": "zhujun",
+    "text": "If this is a trick to buy time, the walls before us will make it costly. Speak, Xuande: how should we answer?",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_wall_zj_04",
     "char": "zhujun",
     "text": "That counsel is wise. Loosen the siege at the southeast. Place our best troops at the narrow road.",
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "ch2_wan_zj_04",
+    "id": "ch2_wan_wall_zj_05",
     "char": "zhujun",
-    "text": "Here, empty words from behind a wall may only be a trick to buy time. I will not trust that alone.",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_wan_zj_05",
-    "char": "zhujun",
-    "text": "So be it. Form the assault column, but keep order. Wan is to be taken, not burned.",
+    "text": "So be it. Form the assault column here before the gate. Wan is to be taken, not burned.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -955,6 +955,12 @@
     "id": "ch2_yc_zj_03",
     "char": "zhujun",
     "text": "Receive the surrender. Disarm the rebels, spare those who submit, and send word of Yangcheng to the court.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_yc_zj_04",
+    "char": "zhujun",
+    "text": "Yangcheng is settled. We march next to Wan, where Han Zhong has gathered the remaining rebels.",
     "source": "Battles.js"
   },
   {

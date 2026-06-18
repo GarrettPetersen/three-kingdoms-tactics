@@ -2543,54 +2543,54 @@ export const NARRATIVE_SCRIPTS = {
                 zh: "阳城开门归降之后，朱儁合兵南征。韩忠与黄巾余党退聚宛城。"
             }
         },
-        { bg: 'army_camp', type: 'command', action: 'clearActors' },
+        { bg: 'dirt_road_city_in_distance', type: 'command', action: 'clearActors' },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-        { type: 'command', action: 'addActor', id: 'zhujun', imgKey: 'zhujun_sprite', x: 164, y: 170 },
-        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 74, y: 184 },
-        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 42, y: 184 },
-        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 24, y: 184 },
+        { type: 'command', action: 'addActor', id: 'zhujun', imgKey: 'zhujun_sprite', x: 164, y: 178 },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 74, y: 192 },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 42, y: 192 },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 24, y: 192 },
         {
             type: 'dialogue',
             portraitKey: 'zhu-jun-generic',
             name: 'Zhu Jun',
-            voiceId: 'ch2_wan_zj_01',
+            voiceId: 'ch2_wan_wall_zj_01',
             position: 'top',
             text: {
-                en: "Han Zhong's messenger asks to surrender, yet the gate remains barred and his banners still stand on the wall.",
-                zh: "韩忠遣使请降，然而城门仍闭，城头旗帜未倒。"
+                en: "There stands Wan. Han Zhong asks to surrender, yet the gate remains barred and his banners still fly on the wall.",
+                zh: "宛城就在眼前。韩忠遣使请降，然而城门仍闭，城头旗帜仍在。"
             }
         },
         {
             type: 'dialogue',
             portraitKey: 'zhu-jun-generic',
             name: 'Zhu Jun',
-            voiceId: 'ch2_wan_zj_02',
+            voiceId: 'ch2_wan_wall_zj_02',
             position: 'top',
             text: {
-                en: "Yangcheng was different. Yan Zheng struck down Zhang Bao, opened the gate, and put the city in our hands.",
-                zh: "阳城不同。严政斩张宝，开城门，城池已在我军掌中。"
+                en: "Yangcheng opened from within after Yan Zheng struck down Zhang Bao. Wan has offered only words from behind a shut gate.",
+                zh: "阳城是严政斩张宝后从城中开门。宛城如今只是隔着闭门空言请降。"
             }
         },
         {
             type: 'dialogue',
             portraitKey: 'zhu-jun-generic',
             name: 'Zhu Jun',
-            voiceId: 'ch2_wan_zj_04',
+            voiceId: 'ch2_wan_wall_zj_03',
             position: 'top',
             text: {
-                en: "Here, empty words from behind a wall may only be a trick to buy time. I will not trust that alone.",
-                zh: "此处隔墙空言，或只是缓兵之计。单凭此言，不可轻信。"
+                en: "If this is a trick to buy time, the walls before us will make it costly. Speak, Xuande: how should we answer?",
+                zh: "若这是缓兵之计，眼前城墙便会令我军付出代价。玄德，你以为该如何应对？"
             }
         },
         {
             type: 'dialogue',
             portraitKey: 'liu-bei',
             name: 'Liu Bei',
-            voiceId: 'ch2_wan_lb_01',
+            voiceId: 'ch2_wan_wall_lb_01',
             position: 'top',
             text: {
-                en: "General, Wan is not Yangcheng. The question is how to make a false surrender become a real defeat.",
-                zh: "将军，宛城非阳城。此时所虑，是如何使诈降变成真败。"
+                en: "General, Wan is not Yangcheng. We must decide whether to draw Han Zhong out or break the gate before his deceit ripens.",
+                zh: "将军，宛城非阳城。此刻须决断：诱韩忠出城，还是趁其诈计未成先破城门。"
             }
         },
         {
@@ -2601,7 +2601,7 @@ export const NARRATIVE_SCRIPTS = {
             options: [
                 {
                     buttonText: { en: "Open the southeast road.", zh: "开东南一路。" },
-                    voiceId: 'ch2_wan_lb_02',
+                    voiceId: 'ch2_wan_wall_lb_02',
                     text: {
                         en: "Leave the southeast road open. When Han Zhong comes out, strike his broken ranks in the field.",
                         zh: "可独开东南一路。韩忠若出，便于野外击其散乱之阵。"
@@ -2613,7 +2613,7 @@ export const NARRATIVE_SCRIPTS = {
                             type: 'dialogue',
                             portraitKey: 'guan-yu',
                             name: 'Guan Yu',
-                            voiceId: 'ch2_wan_gy_01',
+                            voiceId: 'ch2_wan_wall_gy_01',
                             position: 'top',
                             text: {
                                 en: "A trapped army is iron. A fleeing army is reeds before the blade.",
@@ -2624,7 +2624,7 @@ export const NARRATIVE_SCRIPTS = {
                             type: 'dialogue',
                             portraitKey: 'zhang-fei',
                             name: 'Zhang Fei',
-                            voiceId: 'ch2_wan_zf_01',
+                            voiceId: 'ch2_wan_wall_zf_01',
                             position: 'top',
                             text: {
                                 en: "Good! Let them think they have found a road, then I will close it with my spear.",
@@ -2635,7 +2635,7 @@ export const NARRATIVE_SCRIPTS = {
                             type: 'dialogue',
                             portraitKey: 'zhu-jun-generic',
                             name: 'Zhu Jun',
-                            voiceId: 'ch2_wan_zj_03',
+                            voiceId: 'ch2_wan_wall_zj_04',
                             position: 'top',
                             text: {
                                 en: "That counsel is wise. Loosen the siege at the southeast. Place our best troops at the narrow road.",
@@ -2646,9 +2646,9 @@ export const NARRATIVE_SCRIPTS = {
                 },
                 {
                     buttonText: { en: "Strike the walls now.", zh: "即刻攻城。" },
-                    voiceId: 'ch2_wan_lb_04',
+                    voiceId: 'ch2_wan_wall_lb_03',
                     text: {
-                        en: "Then let us strike the walls now. If Han Zhong hides behind a false surrender, break the gate before he can profit from it.",
+                        en: "Then strike the walls now. If Han Zhong hides behind a false surrender, break the gate before he can profit from it.",
                         zh: "那便即刻攻城。若韩忠借诈降藏身墙后，便先破其城门，使其无利可图。"
                     },
                     speaker: 'liubei',
@@ -2658,7 +2658,7 @@ export const NARRATIVE_SCRIPTS = {
                             type: 'dialogue',
                             portraitKey: 'guan-yu',
                             name: 'Guan Yu',
-                            voiceId: 'ch2_wan_gy_02',
+                            voiceId: 'ch2_wan_wall_gy_02',
                             position: 'top',
                             text: {
                                 en: "A hard blow may end deceit quickly, if our men keep discipline at the gate.",
@@ -2669,7 +2669,7 @@ export const NARRATIVE_SCRIPTS = {
                             type: 'dialogue',
                             portraitKey: 'zhang-fei',
                             name: 'Zhang Fei',
-                            voiceId: 'ch2_wan_zf_02',
+                            voiceId: 'ch2_wan_wall_zf_02',
                             position: 'top',
                             text: {
                                 en: "Ha! If they bar the door while begging mercy, I will knock loudly enough for all Wan to hear.",
@@ -2680,11 +2680,11 @@ export const NARRATIVE_SCRIPTS = {
                             type: 'dialogue',
                             portraitKey: 'zhu-jun-generic',
                             name: 'Zhu Jun',
-                            voiceId: 'ch2_wan_zj_05',
+                            voiceId: 'ch2_wan_wall_zj_05',
                             position: 'top',
                             text: {
-                                en: "So be it. Form the assault column, but keep order. Wan is to be taken, not burned.",
-                                zh: "也罢。列攻城之阵，但须严整。取宛城，不许焚掠。"
+                                en: "So be it. Form the assault column here before the gate. Wan is to be taken, not burned.",
+                                zh: "也罢。就在城门前列攻城之阵。取宛城，不许焚掠。"
                             }
                         }
                     ]
@@ -2787,6 +2787,7 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'move', id: 'sunjian_soldier', x: 276, y: 194, wait: true },
         {
             type: 'dialogue',
+            speaker: 'sunjian',
             portraitKey: 'chengyuanzhi',
             name: 'Sun Jian',
             voiceId: 'ch2_wan_rev_sj_01',

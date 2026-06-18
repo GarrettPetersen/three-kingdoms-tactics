@@ -122,6 +122,23 @@ const LIUBEI_LOCATIONS = {
             ),
         isCompleted: (gs) =>
             hasCompletedChapter2Node(gs, 'chapter2_zhujun_camp')
+    },
+    chapter2_wan_strategy: {
+        id: 'chapter2_wan_strategy',
+        x: 181,
+        y: 120,
+        name: 'Wan',
+        imgKey: 'city',
+        storyRouteId: CHAPTER2_ROUTE_ID,
+        storyNodeId: 'chapter2_wan_strategy',
+        unlockCondition: (gs) =>
+            (
+                gs.getStoryCursor(CHAPTER2_ROUTE_ID).nodeId === 'chapter2_wan_strategy'
+                || gs.getStoryCursor(CHAPTER2_LEGACY_ROUTE_ID).nodeId === 'chapter2_wan_strategy'
+                || hasChapter2Node(gs, 'chapter2_wan_strategy')
+            ) && !hasCompletedChapter2Node(gs, 'chapter2_wan_strategy'),
+        isCompleted: (gs) =>
+            hasCompletedChapter2Node(gs, 'chapter2_wan_strategy')
     }
 };
 
@@ -931,7 +948,8 @@ export class MapScene extends BaseScene {
             const isDone = loc.isCompleted ? loc.isCompleted(gs) : false;
             if (!isDone) {
                 this.heroMoveTo(loc.x, loc.y, () => {
-                    if (loc.battleId === 'daxing') this.startBriefing();
+                    if (loc.storyRouteId && loc.storyNodeId) this.startStoryMapLocation(loc);
+                    else if (loc.battleId === 'daxing') this.startBriefing();
                     else if (loc.battleId === 'qingzhou_siege') this.startQingzhouBriefing();
                     else if (loc.battleId === 'qingzhou_cleanup') this.startQingzhouCleanup();
                     else if (loc.battleId === 'guangzong_camp') this.startGuangzongCamp();
@@ -946,6 +964,11 @@ export class MapScene extends BaseScene {
             this.interactionSelected = locId;
             this.selectedLocation = locId;
         }
+    }
+
+    startStoryMapLocation(loc) {
+        if (!loc?.storyRouteId || !loc?.storyNodeId) return;
+        launchStoryNode(this.manager, loc.storyRouteId, loc.storyNodeId);
     }
 
     activatePartyTarget() {
@@ -1089,7 +1112,8 @@ export class MapScene extends BaseScene {
                 const isDone = loc.isCompleted ? loc.isCompleted(gs) : false;
                 if (!isDone) {
                     this.heroMoveTo(loc.x, loc.y, () => {
-                        if (loc.battleId === 'daxing') this.startBriefing();
+                        if (loc.storyRouteId && loc.storyNodeId) this.startStoryMapLocation(loc);
+                        else if (loc.battleId === 'daxing') this.startBriefing();
                         else if (loc.battleId === 'qingzhou_siege') this.startQingzhouBriefing();
                         else if (loc.battleId === 'qingzhou_cleanup') this.startQingzhouCleanup();
                         else if (loc.battleId === 'guangzong_camp') this.startGuangzongCamp();

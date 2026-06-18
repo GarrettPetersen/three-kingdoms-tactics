@@ -36,7 +36,17 @@ const PARTY_POSITIONS = {
         default: { partyX: 168, partyY: 98 }
     },
     chapter2_oath: {
-        default: { partyX: 220, partyY: 95 }
+        default: { partyX: 220, partyY: 95 },
+        chapter2_wan_strategy: { partyX: 188, partyY: 92 }
+    }
+};
+
+const INTERACTIVE_MAP_TRANSITIONS = {
+    chapter2_oath: {
+        chapter2_yangcheng_surrender: {
+            partyX: 188,
+            partyY: 92
+        }
     }
 };
 
@@ -150,6 +160,17 @@ export function completeStoryNode(manager, routeId, nodeId) {
     const nextNodeId = getNextStoryNodeId(routeId, nodeId, gs);
     if (!nextNodeId) {
         manager.switchTo('campaign_selection');
+        return;
+    }
+
+    const mapTransition = INTERACTIVE_MAP_TRANSITIONS[routeId]?.[nodeId];
+    if (mapTransition) {
+        gs.setStoryCursor(nextNodeId, routeId);
+        gs.setCurrentCampaign(routeId);
+        manager.switchTo('map', {
+            campaignId: routeId,
+            ...mapTransition
+        });
         return;
     }
 

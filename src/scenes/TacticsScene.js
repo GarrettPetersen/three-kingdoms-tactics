@@ -9710,10 +9710,11 @@ export class TacticsScene extends BaseScene {
         const sourceY = unit.visualY + (unit.visualOffsetY || 0) - 21 + headH - 2;
         const targetCell = this.getCellAt(sourceX, unit.visualY + 8) || this.tacticsMap?.getCell(unit.r, unit.q);
         const targetPos = targetCell ? this.getPixelPos(targetCell.r, targetCell.q) : { x: sourceX, y: unit.visualY };
+        const groundTargetY = targetPos.y + Math.floor(Math.random() * 3);
         return {
             x: sourceX,
             y: sourceY,
-            targetY: targetPos.y + Math.floor(Math.random() * 3),
+            targetY: Math.floor(sourceY + (groundTargetY - sourceY) * 0.5),
             r: targetCell ? targetCell.r + 0.86 : (unit.currentSortR || unit.r) + 0.86
         };
     }

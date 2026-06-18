@@ -787,9 +787,9 @@ export const BATTLES = {
             houseDensity: 0.0
         },
         units: [
-            { id: 'liubei', r: 6, q: 3, type: 'hero_force', templateId: 'liubei', cityGateSide: 'outside' },
-            { id: 'guanyu', r: 7, q: 2, type: 'hero_force', templateId: 'guanyu', cityGateSide: 'outside' },
-            { id: 'zhangfei', r: 7, q: 6, type: 'hero_force', templateId: 'zhangfei', cityGateSide: 'outside' },
+            { id: 'liubei', r: 6, q: 3, type: 'hero', templateId: 'liubei', cityGateSide: 'outside' },
+            { id: 'guanyu', r: 7, q: 2, type: 'hero', templateId: 'guanyu', cityGateSide: 'outside' },
+            { id: 'zhangfei', r: 7, q: 6, type: 'hero', templateId: 'zhangfei', cityGateSide: 'outside' },
             { id: 'zhujun', r: 5, q: 2, type: 'commander', templateId: 'zhujun_observer', cityGateSide: 'outside' },
             { id: 'oath_soldier1', r: 8, q: 2, type: 'allied_soldier', templateId: 'ally', cityGateSide: 'outside', spectator: true, moveRange: 0, attacks: [] },
             { id: 'oath_soldier2', r: 8, q: 4, type: 'allied_soldier', templateId: 'ally', cityGateSide: 'outside', spectator: true, moveRange: 0, attacks: [] },
@@ -941,6 +941,16 @@ export const BATTLES = {
                     en: "The false thunder is silent. May the people behind those walls hear real peace again.",
                     zh: "妖雷已息。愿城中百姓，终能再闻太平之声。"
                 }
+            },
+            {
+                speaker: 'zhujun',
+                portraitKey: 'zhu-jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'ch2_yc_zj_04',
+                text: {
+                    en: "Yangcheng is settled. We march next to Wan, where Han Zhong has gathered the remaining rebels.",
+                    zh: "阳城已定。下一步进军宛城，韩忠已在那里收聚余贼。"
+                }
             }
         ]
     },
@@ -956,9 +966,9 @@ export const BATTLES = {
             houseDensity: 0.0
         },
         units: [
-            { id: 'liubei', r: 6, q: 2, type: 'hero_force', templateId: 'liubei' },
-            { id: 'guanyu', r: 5, q: 1, type: 'hero_force', templateId: 'guanyu' },
-            { id: 'zhangfei', r: 7, q: 1, type: 'hero_force', templateId: 'zhangfei' },
+            { id: 'liubei', r: 6, q: 2, type: 'hero', templateId: 'liubei' },
+            { id: 'guanyu', r: 5, q: 1, type: 'hero', templateId: 'guanyu' },
+            { id: 'zhangfei', r: 7, q: 1, type: 'hero', templateId: 'zhangfei' },
             { id: 'ally1', r: 5, q: 2, type: 'allied_soldier' },
             { id: 'ally2', r: 7, q: 2, type: 'allied_soldier' },
             { id: 'zhujun', r: 6, q: 0, type: 'commander', templateId: 'zhujun' },
@@ -1068,9 +1078,9 @@ export const BATTLES = {
             houseDensity: 0.0
         },
         units: [
-            { id: 'liubei', r: 7, q: 3, type: 'hero_force', templateId: 'liubei', cityGateSide: 'outside' },
-            { id: 'guanyu', r: 7, q: 2, type: 'hero_force', templateId: 'guanyu', cityGateSide: 'outside' },
-            { id: 'zhangfei', r: 7, q: 6, type: 'hero_force', templateId: 'zhangfei', cityGateSide: 'outside' },
+            { id: 'liubei', r: 7, q: 3, type: 'hero', templateId: 'liubei', cityGateSide: 'outside' },
+            { id: 'guanyu', r: 7, q: 2, type: 'hero', templateId: 'guanyu', cityGateSide: 'outside' },
+            { id: 'zhangfei', r: 7, q: 6, type: 'hero', templateId: 'zhangfei', cityGateSide: 'outside' },
             { id: 'ally1', r: 8, q: 2, type: 'allied_soldier', cityGateSide: 'outside' },
             { id: 'ally2', r: 8, q: 6, type: 'allied_soldier', cityGateSide: 'outside' },
             { id: 'zhujun', r: 6, q: 1, type: 'commander', templateId: 'zhujun', cityGateSide: 'outside' },
@@ -1179,9 +1189,9 @@ export const BATTLES = {
             houseDensity: 0.0
         },
         units: [
-            { id: 'liubei', r: 7, q: 3, type: 'hero_force', templateId: 'liubei', cityGateSide: 'outside' },
-            { id: 'guanyu', r: 7, q: 2, type: 'hero_force', templateId: 'guanyu', cityGateSide: 'outside' },
-            { id: 'zhangfei', r: 7, q: 6, type: 'hero_force', templateId: 'zhangfei', cityGateSide: 'outside' },
+            { id: 'liubei', r: 7, q: 3, type: 'hero', templateId: 'liubei', cityGateSide: 'outside' },
+            { id: 'guanyu', r: 7, q: 2, type: 'hero', templateId: 'guanyu', cityGateSide: 'outside' },
+            { id: 'zhangfei', r: 7, q: 6, type: 'hero', templateId: 'zhangfei', cityGateSide: 'outside' },
             { id: 'ally1', r: 8, q: 3, type: 'allied_soldier', cityGateSide: 'outside' },
             { id: 'ally2', r: 8, q: 5, type: 'allied_soldier', cityGateSide: 'outside' },
             { id: 'sunjian', r: 6, q: 2, type: 'commander', templateId: 'sunjian', cityGateSide: 'outside' },

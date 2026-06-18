@@ -1,5 +1,6 @@
 import { BATTLES, UNIT_TEMPLATES } from '../src/data/Battles.js';
 import { GameState } from '../src/core/GameState.js';
+import { resolveUnitTemplate } from '../src/data/UnitRules.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -114,7 +115,23 @@ function checkBattleRows() {
     const forbiddenPersistentKeys = ['templateId', 'level', 'hp', 'maxHp', 'attacks', 'moveRange', 'allyPartyOwnerId', 'traits'];
 
     Object.entries(BATTLES).forEach(([battleId, battle]) => {
+        const unitsById = new Map((battle.units || []).map(unit => [unit.id, unit]));
+        const mustSurvive = typeof battle.victoryCondition === 'object' && Array.isArray(battle.victoryCondition?.mustSurvive)
+            ? battle.victoryCondition.mustSurvive
+            : [];
+        mustSurvive.forEach(id => {
+            const unit = unitsById.get(id);
+            assertRule(!!unit, `${battleId} mustSurvive unit '${id}' must be present in battle units.`);
+            if (unit) {
+                assertRule(!!resolveUnitTemplate(unit.type, unit.templateId || unit.id),
+                    `${battleId} mustSurvive unit '${id}' must resolve a spawnable template.`);
+            }
+        });
+
         (battle.units || []).forEach(unit => {
+            assertRule(!!resolveUnitTemplate(unit.type, unit.templateId || unit.id),
+                `${battleId}.${unit.id} must resolve a unit template for type '${unit.type}'.`);
+
             if (persistentAllyId.test(unit.id) && unit.type === 'allied_soldier') {
                 forbiddenPersistentKeys.forEach(key => {
                     assertRule(!(key in unit),

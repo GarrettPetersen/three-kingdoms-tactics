@@ -69,6 +69,7 @@ CHAR_TARGETS = {
     "zhangjue": "movies/clean/clean_anton-ego-villainous-food-critic.wav",  # Villainous, commanding
     "zhangbao": "movies/clean/clean_kublai-khan.wav",  # Aggressive, warrior-like
     "zhangliang": "movies/clean/clean_mulan-emperor.wav",  # Authoritative, imperial
+    "sunjian": "movies/clean/clean_angry-mulans-dad.wav",  # Hard-driving veteran ally
     "soldier": "movies/clean/clean_li-shang-captain-from-mulan.wav",  # Disciplined common soldier voice
     "soldierv2": "movies/clean/clean_dark_riku_young_adult.wav",  # Alternate young soldier
     "soldierv3": "movies/clean/clean_angry-mulans-dad.wav",  # Older anxious soldier
@@ -114,6 +115,7 @@ CHAR_TARGETS_MANDARIN = {
     "zhangjue": "mandarin/clean/clean_fearsome_elder_male_mandarin.wav",  # Fearsome, commanding elder
     "zhangbao": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Aggressive (shared)
     "zhangliang": "mandarin/clean/clean_serious_male_mandarin.wav",  # Authoritative (shared)
+    "sunjian": "mandarin/clean/clean_calm_wise_male_mandarin.wav",  # Experienced allied commander
     "soldier": "mandarin/clean/clean_young_adult_male_mandarin.wav",  # Young soldier
     "soldierv2": "mandarin/clean/clean_bipolar_male_mandarin.wav",  # Alternate young soldier
     "soldierv3": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",  # Older anxious soldier
