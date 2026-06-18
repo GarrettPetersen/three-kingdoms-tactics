@@ -2832,6 +2832,7 @@ export const NARRATIVE_SCRIPTS = {
         {
             type: 'narrator',
             voiceId: 'ch2_hj_narrator_01',
+            position: 'top',
             text: {
                 en: 'In the fourth month of Zhongping year six, Emperor Ling lay gravely ill.',
                 zh: '中平六年四月，灵帝病笃。'
@@ -2856,6 +2857,7 @@ export const NARRATIVE_SCRIPTS = {
         {
             type: 'narrator',
             voiceId: 'ch2_hj_narrator_02',
+            position: 'top',
             text: {
                 en: 'He summoned General-in-Chief He Jin to the palace to settle the matter of succession.',
                 zh: '帝召大将军何进入宫，商议后事。'
@@ -2864,6 +2866,7 @@ export const NARRATIVE_SCRIPTS = {
         {
             type: 'narrator',
             voiceId: 'ch2_hj_narrator_03',
+            position: 'top',
             text: {
                 en: 'But Jian Shuo and the palace eunuchs had already made their counsel plain: if Prince Xie was to be enthroned, He Jin must first be killed.',
                 zh: '蹇硕与宦官密议：若欲立皇子协，必先诛何进，以绝后患。'
@@ -2948,21 +2951,6 @@ export const NARRATIVE_SCRIPTS = {
                         { type: 'command', action: 'move', id: 'hejin', x: -36, y: 214, wait: true },
                         { type: 'command', action: 'removeActor', id: 'hejin' },
                         { type: 'command', action: 'removeActor', id: 'panyin' },
-                        { type: 'command', action: 'fade', target: 1, speed: 0.001 },
-                        { type: 'command', action: 'wait', duration: 300 },
-                        { bg: 'luoyang_council_hall', fg: null, type: 'command', action: 'clearActors' },
-                        { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: 128, y: 202 },
-                        { type: 'command', action: 'addActor', id: 'minister_left', imgKey: 'caocao', x: 78, y: 202 },
-                        { type: 'command', action: 'addActor', id: 'minister_right', imgKey: 'zhoujing', x: 178, y: 202, flip: true },
-                        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-                        {
-                            type: 'narrator',
-                            voiceId: 'ch2_hj_narrator_04',
-                            text: {
-                                en: 'Shaken, He Jin returned to his residence and summoned the ministers, intent on destroying the eunuchs.',
-                                zh: '何进大惊，急归私宅，召诸大臣，欲尽诛宦官。'
-                            }
-                        },
                         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
                     ]
                 },
@@ -3030,17 +3018,22 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'clearProps' },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
         { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: 134, y: 202 },
-        { type: 'command', action: 'addActor', id: 'yuanshao', imgKey: 'zhoujing', x: 198, y: 204, flip: true },
-        { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: 72, y: 204 },
-        { type: 'command', action: 'addActor', id: 'minister', imgKey: 'soldier', x: 236, y: 208, flip: true },
         {
             type: 'narrator',
-            voiceId: 'ch2_hj_council_narrator_01',
+            voiceId: 'ch2_hj_narrator_04',
+            position: 'top',
             text: {
-                en: 'He Jin returned to his residence in alarm and summoned the ministers. His first thought was to kill every eunuch in the palace.',
-                zh: '何进大惊，急归私宅，召诸大臣。其意欲尽诛宫中宦官。'
+                en: 'Shaken, He Jin returned to his residence and summoned the ministers, intent on destroying the eunuchs.',
+                zh: '何进大惊，急归私宅，召诸大臣，欲尽诛宦官。'
             }
         },
+        { type: 'command', action: 'playSound', key: 'heavy_door_unlocking', volume: 0.75 },
+        { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: -24, y: 204, actorAction: 'walk', speed: 0.72 },
+        { type: 'command', action: 'addActor', id: 'yuanshao', imgKey: 'yuanshao', x: 340, y: 204, actorAction: 'walk', speed: 0.72, flip: true },
+        { type: 'command', action: 'addActor', id: 'minister', imgKey: 'soldier', x: 356, y: 208, actorAction: 'walk', speed: 0.66, flip: true },
+        { type: 'command', action: 'move', id: 'caocao', x: 72, y: 204, wait: false },
+        { type: 'command', action: 'move', id: 'yuanshao', x: 198, y: 204, wait: false },
+        { type: 'command', action: 'move', id: 'minister', x: 236, y: 208, wait: true },
         {
             type: 'dialogue',
             portraitKey: 'hejin',
@@ -3065,7 +3058,7 @@ export const NARRATIVE_SCRIPTS = {
         },
         {
             type: 'dialogue',
-            portraitKey: 'zhou-jing',
+            portraitKey: 'yuan-shao',
             name: 'Yuan Shao',
             voiceId: 'ch2_hj_council_ys_01',
             position: 'top',
@@ -3125,7 +3118,7 @@ export const NARRATIVE_SCRIPTS = {
                         },
                         {
                             type: 'dialogue',
-                            portraitKey: 'zhou-jing',
+                            portraitKey: 'yuan-shao',
                             name: 'Yuan Shao',
                             voiceId: 'ch2_hj_council_ys_02',
                             position: 'top',
@@ -3159,7 +3152,7 @@ export const NARRATIVE_SCRIPTS = {
                         },
                         {
                             type: 'dialogue',
-                            portraitKey: 'zhou-jing',
+                            portraitKey: 'yuan-shao',
                             name: 'Yuan Shao',
                             voiceId: 'ch2_hj_council_ys_03',
                             position: 'top',
@@ -3199,7 +3192,7 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
         { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: 134, y: 202 },
         { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: 72, y: 204 },
-        { type: 'command', action: 'addActor', id: 'yuanshao', imgKey: 'zhoujing', x: 198, y: 204, flip: true },
+        { type: 'command', action: 'addActor', id: 'yuanshao', imgKey: 'yuanshao', x: 198, y: 204, flip: true },
         { type: 'command', action: 'addActor', id: 'panyin', imgKey: 'panyin', x: 340, y: 206, actorAction: 'walk', speed: 0.88, flip: true },
         { type: 'command', action: 'move', id: 'panyin', x: 236, y: 206, wait: true },
         {
@@ -3283,7 +3276,7 @@ export const NARRATIVE_SCRIPTS = {
         },
         {
             type: 'dialogue',
-            portraitKey: 'zhou-jing',
+            portraitKey: 'yuan-shao',
             name: 'Yuan Shao',
             voiceId: 'ch2_hj_death_ys_01',
             position: 'top',
@@ -3333,7 +3326,7 @@ export const NARRATIVE_SCRIPTS = {
                         { type: 'command', action: 'setStoryChoice', key: 'hejin_palace_entry_tone', value: 'show_force', routeId: 'hejin' },
                         {
                             type: 'dialogue',
-                            portraitKey: 'zhou-jing',
+                            portraitKey: 'yuan-shao',
                             name: 'Yuan Shao',
                             voiceId: 'ch2_hj_death_ys_02',
                             position: 'top',

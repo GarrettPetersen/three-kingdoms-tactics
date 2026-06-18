@@ -845,6 +845,7 @@ export class BaseScene {
             luzhi: 'lu-zhi',
             gongjing: 'gong-jing',
             zhoujing: 'zhou-jing',
+            yuanshao: 'yuan-shao',
             soldier: 'soldier',
             farmer: 'farmer',
             farmer2: 'farmer2',
@@ -877,6 +878,7 @@ export class BaseScene {
             'commander lu zhi': 'lu-zhi',
             'gong jing': 'gong-jing',
             'zhou jing': 'zhou-jing',
+            'yuan shao': 'yuan-shao',
             villager: 'farmer',
             farmer: 'farmer',
             merchant: 'merchant',
@@ -899,6 +901,7 @@ export class BaseScene {
             dengmao: 'deng-mao',
             chengyuanzhi: 'cheng-yuanzhi',
             zhoujing: 'zhou-jing',
+            yuanshao: 'yuan-shao',
             yellowturban: 'yellow-turban'
         };
         const portraitAssetKeyById = {
@@ -908,6 +911,7 @@ export class BaseScene {
             'cao-cao': 'Cao-Cao',
             'cao-ren': 'Cao-Ren',
             'zhou-jing': 'Zhou-Jing',
+            'yuan-shao': 'Yuan-Shao',
             'deng-mao': 'Deng-Mao',
             'cheng-yuanzhi': 'Cheng-Yuanzhi',
             'dong-zhuo': 'Dong-Zhuo',
@@ -974,6 +978,7 @@ export class BaseScene {
             'cao-cao': 'caocao',
             'cao-ren': 'caoren',
             'zhou-jing': 'zhoujing',
+            'yuan-shao': 'yuanshao',
             'dong-zhuo': 'dongzhuo',
             'hejin': 'hejin',
             'he-jin': 'hejin',

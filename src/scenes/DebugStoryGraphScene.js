@@ -19,6 +19,13 @@ const ROUTE_LABELS = {
     hejin: 'He Jin Ch. 2'
 };
 
+const ROUTE_TINTS = {
+    liubei: { label: 'LB1', fill: '#10243a', selectedFill: '#233f5a', text: '#8fd0ff' },
+    caocao: { label: 'CC1', fill: '#2a1834', selectedFill: '#463052', text: '#d3a6ff' },
+    chapter2_oath: { label: 'LB2', fill: '#16301f', selectedFill: '#2d5035', text: '#8ee8a1' },
+    hejin: { label: 'HJ2', fill: '#352015', selectedFill: '#583825', text: '#ffba7a' }
+};
+
 export class DebugStoryGraphScene extends BaseScene {
     constructor() {
         super();
@@ -55,6 +62,10 @@ export class DebugStoryGraphScene extends BaseScene {
 
     resolveLaunchTarget(routeId, nodeId) {
         return resolveStoryLaunchTarget(routeId, nodeId);
+    }
+
+    getRouteTint(routeId) {
+        return ROUTE_TINTS[routeId] || { label: routeId, fill: '#181818', selectedFill: '#333', text: '#9fd3ff' };
     }
 
     continueAfterGraphBattle(routeId, nodeId) {
@@ -259,6 +270,19 @@ export class DebugStoryGraphScene extends BaseScene {
         this.drawPixelText(ctx, 'STORY GRAPH JUMP', 10, 8, { color: '#ffd700', font: '8px Silkscreen' });
         this.drawPixelText(ctx, 'Select a route node. Enter/click jumps there.', 10, 23, { color: '#aaa', font: '8px Tiny5' });
 
+        let legendX = 10;
+        const legendY = 34;
+        for (const route of Object.values(STORY_ROUTES || {})) {
+            const tint = this.getRouteTint(route.id);
+            const label = tint.label || route.id;
+            ctx.fillStyle = tint.fill;
+            ctx.fillRect(legendX, legendY, 13, 6);
+            ctx.strokeStyle = tint.text;
+            ctx.strokeRect(legendX + 0.5, legendY + 0.5, 12, 5);
+            this.drawPixelText(ctx, label, legendX + 17, legendY - 2, { color: tint.text, font: '8px Tiny5' });
+            legendX += 48;
+        }
+
         this.backRect = { x: canvas.width - 54, y: 7, w: 44, h: 15 };
         ctx.strokeStyle = '#666';
         ctx.fillStyle = '#151515';
@@ -279,16 +303,23 @@ export class DebugStoryGraphScene extends BaseScene {
             const entry = this.entries[i];
             const rowY = listY + (i - start) * ROW_HEIGHT;
             const selected = i === this.selectedIndex;
+            const tint = this.getRouteTint(entry.routeId);
             this.rowRects.push({ x: listX, y: rowY, w: listW, h: ROW_HEIGHT - 2, index: i });
 
-            ctx.fillStyle = selected ? '#2f2610' : (i % 2 === 0 ? '#111' : '#0c0c0c');
+            ctx.fillStyle = selected ? tint.selectedFill : tint.fill;
             ctx.fillRect(listX, rowY, listW, ROW_HEIGHT - 2);
+            if (!selected && i % 2 !== 0) {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
+                ctx.fillRect(listX, rowY, listW, ROW_HEIGHT - 2);
+            }
             if (selected) {
                 ctx.strokeStyle = '#ffd700';
                 ctx.strokeRect(listX + 0.5, rowY + 0.5, listW - 1, ROW_HEIGHT - 3);
             }
 
-            this.drawPixelText(ctx, entry.routeLabel, listX + 5, rowY + 3, { color: '#9fd3ff', font: '8px Tiny5' });
+            ctx.fillStyle = tint.text;
+            ctx.fillRect(listX + 2, rowY + 2, 2, ROW_HEIGHT - 6);
+            this.drawPixelText(ctx, entry.routeLabel, listX + 8, rowY + 3, { color: tint.text, font: '8px Tiny5' });
             this.drawPixelText(ctx, entry.nodeId, listX + 122, rowY + 3, { color: '#fff', font: '8px Tiny5' });
             this.drawPixelText(ctx, entry.launch.label, listX + 286, rowY + 3, { color: '#aaa', font: '8px Tiny5' });
         }

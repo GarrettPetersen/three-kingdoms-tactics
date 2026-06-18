@@ -346,12 +346,6 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "ch2_hj_council_narrator_01",
-    "char": "narrator",
-    "text": "He Jin returned to his residence in alarm and summoned the ministers. His first thought was to kill every eunuch in the palace.",
-    "source": "NarrativeScripts.js"
-  },
-  {
     "id": "ch2_hj_council_narrator_02",
     "char": "narrator",
     "text": "Even as the ministers argued, the palace concealed Emperor Ling's death and prepared a forged summons.",
@@ -359,19 +353,19 @@
   },
   {
     "id": "ch2_hj_council_ys_01",
-    "char": "zhoujing",
+    "char": "yuanshao",
     "text": "My lord, the matter is plain. Name the traitors, command the troops, and sweep the palace clean.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_hj_council_ys_02",
-    "char": "zhoujing",
+    "char": "yuanshao",
     "text": "Caution has its place, but delay fattens traitors.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_hj_council_ys_03",
-    "char": "zhoujing",
+    "char": "yuanshao",
     "text": "The General-in-Chief sees clearly. Let force answer force.",
     "source": "NarrativeScripts.js"
   },
@@ -443,13 +437,13 @@
   },
   {
     "id": "ch2_hj_death_ys_01",
-    "char": "zhoujing",
+    "char": "yuanshao",
     "text": "I will borrow five thousand elite troops. We cut through the gates, enthrone the new lord, and kill the eunuchs.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_hj_death_ys_02",
-    "char": "zhoujing",
+    "char": "yuanshao",
     "text": "Good. Fear is the one court language the eunuchs understand.",
     "source": "NarrativeScripts.js"
   },

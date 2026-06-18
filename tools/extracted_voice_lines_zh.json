@@ -342,12 +342,6 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "ch2_hj_council_narrator_01",
-    "char": "narrator",
-    "text": "何进大惊，急归私宅，召诸大臣。其意欲尽诛宫中宦官。",
-    "source": "NarrativeScripts.js"
-  },
-  {
     "id": "ch2_hj_council_narrator_02",
     "char": "narrator",
     "text": "诸臣议论未定，宫中已秘不发丧，并拟矫诏再召何进。",
@@ -355,19 +349,19 @@
   },
   {
     "id": "ch2_hj_council_ys_01",
-    "char": "zhoujing",
+    "char": "yuanshao",
     "text": "大将军，此事分明。列其奸名，发兵入宫，一扫而尽。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_hj_council_ys_02",
-    "char": "zhoujing",
+    "char": "yuanshao",
     "text": "谨慎固然有用，迁延只会养肥奸贼。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_hj_council_ys_03",
-    "char": "zhoujing",
+    "char": "yuanshao",
     "text": "大将军明断。以兵制奸，正当其时。",
     "source": "NarrativeScripts.js"
   },
@@ -439,13 +433,13 @@
   },
   {
     "id": "ch2_hj_death_ys_01",
-    "char": "zhoujing",
+    "char": "yuanshao",
     "text": "愿借精兵五千，斩关入内，册立新君，尽诛阉竖。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_hj_death_ys_02",
-    "char": "zhoujing",
+    "char": "yuanshao",
     "text": "善。宦官所懂的朝廷话，正是畏惧二字。",
     "source": "NarrativeScripts.js"
   },
