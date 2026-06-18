@@ -2535,15 +2535,7 @@ export const NARRATIVE_SCRIPTS = {
             text: { en: 'THE MARCH TO WAN', zh: '进军宛城' },
             subtext: { en: 'Zhu Jun turns south', zh: '朱儁南征' }
         },
-        {
-            type: 'narrator',
-            voiceId: 'ch2_wan_narrator_01',
-            text: {
-                en: "After Yangcheng opened its gates, Zhu Jun turned the army south. Han Zhong and the remaining Yellow Turbans had gathered in Wan.",
-                zh: "阳城开门归降之后，朱儁合兵南征。韩忠与黄巾余党退聚宛城。"
-            }
-        },
-        { bg: 'dirt_road_city_in_distance', type: 'command', action: 'clearActors' },
+        { bg: 'outside_city_walls', type: 'command', action: 'clearActors' },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
         { type: 'command', action: 'addActor', id: 'zhujun', imgKey: 'zhujun_sprite', x: 164, y: 178 },
         { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 74, y: 192 },
@@ -2697,7 +2689,7 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ],
     'chapter2_wan_reversal': [
-        { bg: 'dirt_road_city_in_distance', type: 'command', action: 'clearActors' },
+        { bg: 'outside_city_walls', type: 'command', action: 'clearActors' },
         { type: 'command', action: 'clearProps' },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
         {

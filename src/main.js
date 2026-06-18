@@ -787,6 +787,7 @@ async function init() {
                 urban_street: 'assets/settings/urban_street.png',
                 urban_street_foreground: 'assets/settings/urban_street_foreground.png',
                 dirt_road_city_in_distance: 'assets/settings/dirt_road_city_in_distance.png',
+                outside_city_walls: 'assets/settings/outside_city_walls.png',
                 china_map: 'assets/settings/china_map.png',
                 imperial_chamber: 'assets/settings/imperial_chamber.png',
                 imperial_memorial: 'assets/settings/imperial_memorial.png',

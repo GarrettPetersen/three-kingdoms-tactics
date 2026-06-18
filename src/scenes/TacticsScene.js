@@ -7712,14 +7712,16 @@ export class TacticsScene extends BaseScene {
 
             const levelDiff = (nextCell.level || 0) - (currentCell?.level || 0);
             const isDeepWater = nextCell.terrain && nextCell.terrain.includes('water_deep');
+            const isCliffDrop = levelDiff < -1;
             const isHighCliff = levelDiff > 1;
             const isImpassable = nextCell.impassable && !isDeepWater;
             const isSolidGatehouse = this.isSolidCityGatehouseCell(nextCell);
             const liveOccupant = this.getLivingUnitOccupyingCell(nextCell.r, nextCell.q, victim);
             const isOccupiedByLiving = !!liveOccupant;
             const isOccupiedByHorse = !!nextCell.horse;
+            const isBlockedOccupant = !isCliffDrop && (isOccupiedByLiving || isOccupiedByHorse);
 
-            if (isHighCliff || isImpassable || isSolidGatehouse || isOccupiedByLiving || isOccupiedByHorse) {
+            if (isHighCliff || isImpassable || isSolidGatehouse || isBlockedOccupant) {
                 const currentPos = this.getPixelPos(finalR, finalQ);
                 const blockedPos = this.getPixelPos(nextCell.r, nextCell.q);
                 if (finalR !== victimPushR || finalQ !== victimPushQ) {
@@ -7750,25 +7752,37 @@ export class TacticsScene extends BaseScene {
 
         const finalCell = this.tacticsMap.getCell(finalR, finalQ);
         const finalPos = this.getPixelPos(finalR, finalQ);
+        const crushOccupant = finalLevelDiff < -1 && finalCell
+            ? this.getLivingUnitOccupyingCell(finalR, finalQ, victim)
+            : null;
         if (wasMounted) this.dismountUnitLeaveHorse(victim);
         if (startCell) startCell.unit = null;
-        this.shiftIntentTargetWithDisplacement(victim, victimPushR, victimPushQ, finalR, finalQ);
-        victim.setPosition(finalR, finalQ);
-        if (finalCell) finalCell.unit = victim;
+        if (!crushOccupant) {
+            this.shiftIntentTargetWithDisplacement(victim, victimPushR, victimPushQ, finalR, finalQ);
+        }
         const fallHeight = finalLevelDiff < -1 ? Math.abs(finalLevelDiff) : (wasMounted ? 1 : 0);
         victim.startPush(startPos.x, startPos.y, finalPos.x, finalPos.y, false, fallHeight);
 
-        if (hasDeferredOverkill) {
+        if (crushOccupant) {
+            this.handleCrushLanding(victim, crushOccupant, finalCell, finalLevelDiff, finalPos);
+            if (hasDeferredOverkill) this.finishDeferredOverkill(victim, attacker, 460);
+        } else if (hasDeferredOverkill) {
             setTimeout(() => {
                 assets.playSound(finalIsDeepWater ? 'drown' : 'bash', finalIsDeepWater ? 1 : 0.5);
             }, stoppedBySpecialLanding ? 400 : 250);
+            victim.setPosition(finalR, finalQ);
+            if (finalCell && !crushOccupant) finalCell.unit = victim;
             this.finishDeferredOverkill(victim, attacker, stoppedBySpecialLanding ? 430 : 280);
         } else if (finalIsDeepWater) {
+            victim.setPosition(finalR, finalQ);
+            if (finalCell && !crushOccupant) finalCell.unit = victim;
             setTimeout(() => {
                 victim.isDrowning = true;
                 assets.playSound('drown');
             }, 250);
         } else if (finalLevelDiff < -1) {
+            victim.setPosition(finalR, finalQ);
+            if (finalCell) finalCell.unit = victim;
             const fallDamage = Math.max(0, Math.abs(finalLevelDiff) - 1);
             setTimeout(() => {
                 assets.playSound('collision', 0.8);
@@ -7776,6 +7790,8 @@ export class TacticsScene extends BaseScene {
                 this.addDamageNumber(finalPos.x, finalPos.y - 30, fallDamage);
             }, 400);
         } else {
+            victim.setPosition(finalR, finalQ);
+            if (finalCell) finalCell.unit = victim;
             assets.playSound('bash', 0.5);
         }
 
@@ -7944,6 +7960,7 @@ export class TacticsScene extends BaseScene {
                 const targetPos = this.getPixelPos(pushCell.r, pushCell.q);
                 const levelDiff = (pushCell.level || 0) - (victimCellForPush?.level || 0);
                 const isDeepWater = pushCell.terrain && pushCell.terrain.includes('water_deep');
+                const isCliffDrop = levelDiff < -1;
 
                 // 1. COLLISION (Pushing into a wall/high cliff or another living unit)
                 const isHighCliff = levelDiff > 1;
@@ -7952,8 +7969,9 @@ export class TacticsScene extends BaseScene {
                 const liveOccupant = this.getLivingUnitOccupyingCell(pushCell.r, pushCell.q, victim);
                 const isOccupiedByLiving = !!liveOccupant;
                 const isOccupiedByHorse = !!pushCell.horse; // riderless or ridden horses occupy hexes too
+                const isBlockedOccupant = !isCliffDrop && (isOccupiedByLiving || isOccupiedByHorse);
 
-                if (isHighCliff || isImpassable || isSolidGatehouse || isOccupiedByLiving || isOccupiedByHorse) {
+                if (isHighCliff || isImpassable || isSolidGatehouse || isBlockedOccupant) {
 
                     // Blocked push: bump damage + bounce, but stay mounted (no displacement).
                     victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, true, 0); // true = bounce
@@ -7962,11 +7980,10 @@ export class TacticsScene extends BaseScene {
                 // 2. FALLING (Pushing off a cliff)
                 else if (levelDiff < -1) {
                     const fallDamage = Math.max(0, Math.abs(levelDiff) - 1);
-                    const occupant = pushCell.unit; // Could be a corpse or a living unit (if not _aliveAtStartOfAction)
+                    const occupant = this.getLivingUnitOccupyingCell(pushCell.r, pushCell.q, victim);
 
                     // Displaced push: if mounted, fall off horse (horse stays) before resolving fall.
                     if (wasMounted) this.dismountUnitLeaveHorse(victim);
-                    this.shiftIntentTargetWithDisplacement(victim, victimPushR, victimPushQ, pushCell.r, pushCell.q);
                     victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false, Math.abs(levelDiff));
                     if (victimCellForPush) victimCellForPush.unit = null;
 
@@ -7975,6 +7992,7 @@ export class TacticsScene extends BaseScene {
                         this.handleCrushLanding(victim, occupant, pushCell, levelDiff, targetPos);
                         if (hasDeferredOverkill) this.finishDeferredOverkill(victim, attacker, 460);
                     } else {
+                        this.shiftIntentTargetWithDisplacement(victim, victimPushR, victimPushQ, pushCell.r, pushCell.q);
                         victim.setPosition(pushCell.r, pushCell.q);
                         pushCell.unit = victim;
                         if (hasDeferredOverkill) {
@@ -15322,7 +15340,7 @@ export class TacticsScene extends BaseScene {
             assets.playSound(isBoulder ? 'boulder_impact' : 'collision');
             
             const fallDamage = Math.max(0, Math.abs(levelDiff) - 1);
-            const crushDamage = fallDamage + 1; // Collision bonus
+            const crushDamage = Math.max(3, fallDamage + 2); // Heavy collision bonus; walls/cliffs should hurt.
             
             // Damage both
             this.applyUnitDamage(faller, crushDamage);

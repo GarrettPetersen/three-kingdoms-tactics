@@ -1216,8 +1216,8 @@ export const BATTLES = {
                 name: 'Zhu Jun',
                 voiceId: 'ch2_wan_final_zj_01',
                 text: {
-                    en: "Sun Jian takes the south gate. Liu Bei, hold the north. I will press the west and leave the east for flight.",
-                    zh: "孙坚攻南门，刘备守北门。吾攻西门，独留东门使贼走。"
+                    en: "Sun Jian has joined us. We strike the gate together; keep the assault line tight and give the rebels no room to rally.",
+                    zh: "孙坚既至，我军合攻此门。攻城之阵须齐整，不可使贼众复聚。"
                 }
             },
             {
@@ -1236,8 +1236,8 @@ export const BATTLES = {
                 name: 'Liu Bei',
                 voiceId: 'ch2_wan_final_lb_01',
                 text: {
-                    en: "Brothers, watch the north gate. If Sun Zhong flees, he must not carry this rebellion with him.",
-                    zh: "二弟三弟，守住北门。孙仲若走，不可让他再携乱势而去。"
+                    en: "Brothers, press the gate with Sun Jian. If Sun Zhong breaks out, cut off his road before the rebellion scatters again.",
+                    zh: "二弟三弟，与孙将军并力攻门。孙仲若突围，便截其去路，勿使乱势复散。"
                 }
             },
             {
@@ -1293,8 +1293,8 @@ export const BATTLES = {
                     name: 'Zhu Jun',
                     voiceId: 'ch2_wan_final_defeat_zj_01',
                     text: {
-                        en: "Zhao Hong used the walls better than expected. Reform at the north gate and press again with Sun Jian.",
-                        zh: "赵弘凭城之势，胜于所料。重整北门，与孙坚再攻。"
+                        en: "Zhao Hong used the walls better than expected. Reform before the gate and press again with Sun Jian.",
+                        zh: "赵弘凭城之势，胜于所料。重整门前之阵，与孙坚再攻。"
                     }
                 },
                 {
