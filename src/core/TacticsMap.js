@@ -26,7 +26,8 @@ export class TacticsMap {
                     gateDefenderSide: null,
                     gateInside: null,
                     cityGateSegment: null,
-                    cityGateStair: false
+                    cityGateStair: false,
+                    siegeLadderUnitId: null
                 });
             }
             this.grid.push(row);
@@ -394,6 +395,8 @@ export class TacticsMap {
             gateRow,
             approachRow,
             gateState: 'closed',
+            gateHp: 10,
+            gateMaxHp: 10,
             gateGroundCells,
             stairCells
         };
@@ -412,6 +415,7 @@ export class TacticsMap {
                 cell.gateDefenderSide = null;
                 cell.cityGateSegment = null;
                 cell.cityGateStair = false;
+                cell.siegeLadderUnitId = null;
                 cell.omitted = r === 0;
 
                 if (cell.omitted) {
@@ -1407,8 +1411,8 @@ export class TacticsMap {
         if (!startCell) return new Map();
 
         const data = new Map(); // key: "r,q", value: { cost, parent: "r,q" }
-        const queue = [{ r: startR, q: startQ, cost: 0, level: startCell.level, gatePassageEntrySide: null }];
-        data.set(`${startR},${startQ}`, { cost: 0, parent: null, gatePassageEntrySide: null });
+        const queue = [{ r: startR, q: startQ, cost: 0, level: startCell.level, gatePassageEntrySide: null, ladderStepLocked: false }];
+        data.set(`${startR},${startQ}`, { cost: 0, parent: null, gatePassageEntrySide: null, ladderStepLocked: false });
 
         while (queue.length > 0) {
             // Sort by cost for Dijkstra
@@ -1416,13 +1420,14 @@ export class TacticsMap {
             const current = queue.shift();
 
             if (current.cost >= range) continue;
+            if (current.ladderStepLocked) continue;
 
             const neighbors = this.getMovementNeighbors(current.r, current.q, movingUnit);
             neighbors.forEach(({ cell: n, cityGateTransition }) => {
                 if (!this.canUnitTraverseCell(n, movingUnit)) return;
+                const currentCell = this.getCell(current.r, current.q);
                 let gatePassageEntrySide = current.gatePassageEntrySide || null;
                 if (cityGateTransition) {
-                    const currentCell = this.getCell(current.r, current.q);
                     const fromSide = this.getCityGateSideForCell(currentCell);
                     const toSide = this.getCityGateSideForCell(n);
                     if (this.isCityGateStairCell(currentCell)) {
@@ -1437,36 +1442,46 @@ export class TacticsMap {
 
                 // Living units block movement; corpses do not.
                 if (n.unit && n.unit !== movingUnit && n.unit.hp > 0 && !n.unit.isGone) {
-                    const movingFaction = movingUnit ? movingUnit.faction : null;
-                    const neighborFaction = n.unit.faction;
+                    if (n.unit.isSiegeLadder && !movingUnit?.isSiegeLadder) {
+                        // Active ladders are platforms; if another soldier is already
+                        // on the ladder, that soldier will be the blocking cell.unit.
+                    } else {
+                        const movingFaction = movingUnit ? movingUnit.faction : null;
+                        const neighborFaction = n.unit.faction;
 
-                    let areFriendly = false;
-                    if (movingFaction === 'player' || movingFaction === 'allied') {
-                        if (neighborFaction === 'player' || neighborFaction === 'allied') areFriendly = true;
-                    } else if (movingFaction === 'enemy') {
-                        if (neighborFaction === 'enemy') areFriendly = true;
+                        let areFriendly = false;
+                        if (movingFaction === 'player' || movingFaction === 'allied') {
+                            if (neighborFaction === 'player' || neighborFaction === 'allied') areFriendly = true;
+                        } else if (movingFaction === 'enemy') {
+                            if (neighborFaction === 'enemy') areFriendly = true;
+                        }
+
+                        if (!areFriendly) return;
                     }
-
-                    if (!areFriendly) return;
                 }
 
                 // Climbing rule: max 1 level difference
                 const nLevel = (n.level !== undefined) ? n.level : 0;
                 const cLevel = (current.level !== undefined) ? current.level : 0;
                 const levelDiff = Math.abs(nLevel - cLevel);
-                if (!cityGateTransition && levelDiff > 1) return;
+                const isLadderUser = !movingUnit?.isSiegeLadder;
+                const currentHasLadder = isLadderUser && !!currentCell?.siegeLadderUnitId;
+                const nextHasLadder = isLadderUser && !!n.siegeLadderUnitId;
+                const ladderTransition = currentHasLadder || nextHasLadder;
+                if (!cityGateTransition && levelDiff > 1 && !ladderTransition) return;
 
                 // Difficult terrain costs 2, normal costs 1
                 const isDifficult = n.terrain.includes('forest') || n.terrain.includes('water_shallow');
                 const moveCost = isDifficult ? 2 : 1;
                 const newCost = current.cost + moveCost;
+                const ladderStepLocked = ladderTransition;
 
                 if (newCost > range) return;
 
                 const key = `${n.r},${n.q}`;
                 if (!data.has(key) || data.get(key).cost > newCost) {
-                    data.set(key, { cost: newCost, parent: `${current.r},${current.q}`, gatePassageEntrySide });
-                    queue.push({ r: n.r, q: n.q, cost: newCost, level: n.level, gatePassageEntrySide });
+                    data.set(key, { cost: newCost, parent: `${current.r},${current.q}`, gatePassageEntrySide, ladderStepLocked });
+                    queue.push({ r: n.r, q: n.q, cost: newCost, level: n.level, gatePassageEntrySide, ladderStepLocked });
                 }
             });
         }

@@ -318,6 +318,53 @@ const HERO_REMINDERS = {
     }
 };
 
+function makeMapScreenLocation(location, overrides = {}) {
+    return {
+        ...location,
+        ...overrides,
+        unlockCondition: overrides.unlockCondition || (() => true)
+    };
+}
+
+const MAP_SCREEN_DEFINITIONS = {
+    liubei_chapter1: {
+        id: 'liubei_chapter1',
+        campaignId: 'liubei',
+        party: { id: 'liubei', name: 'Liu Bei', x: 190, y: 70, imgKey: 'liubei' },
+        locations: LIUBEI_LOCATIONS
+    },
+    caocao_chapter1: {
+        id: 'caocao_chapter1',
+        campaignId: 'caocao',
+        party: { id: 'caocao', name: 'Cao Cao', x: 168, y: 98, imgKey: 'caocao' },
+        locations: CAOCAO_LOCATIONS,
+        reminderKey: 'caocao_intro_complete'
+    },
+    chapter2_zhujun_camp: {
+        id: 'chapter2_zhujun_camp',
+        campaignId: CHAPTER2_ROUTE_ID,
+        party: { id: 'liubei', name: 'Liu Bei', x: 205, y: 55, imgKey: 'liubei' },
+        locations: {
+            chapter2_zhujun_camp: makeMapScreenLocation(LIUBEI_LOCATIONS.chapter2_zhujun_camp)
+        },
+        reminderKey: 'chapter2_oath_dongzhuo_choice'
+    },
+    chapter2_wan_strategy: {
+        id: 'chapter2_wan_strategy',
+        campaignId: CHAPTER2_ROUTE_ID,
+        party: { id: 'liubei', name: 'Liu Bei', x: 188, y: 92, imgKey: 'liubei' },
+        locations: {
+            chapter2_wan_strategy: makeMapScreenLocation(LIUBEI_LOCATIONS.chapter2_wan_strategy)
+        },
+        reminderKey: 'chapter2_wan_strategy'
+    }
+};
+
+const MAP_SCREEN_BY_STORY_NODE = {
+    chapter2_zhujun_camp: 'chapter2_zhujun_camp',
+    chapter2_wan_strategy: 'chapter2_wan_strategy'
+};
+
 export class MapScene extends BaseScene {
     constructor() {
         super();
@@ -346,13 +393,39 @@ export class MapScene extends BaseScene {
         this.lastSaveTime = 0; // Track when we last saved state
         this.saveInterval = 2000; // Save every 2 seconds
         this.navTargets = [];
+        this.currentMapScreenId = 'liubei_chapter1';
+    }
+
+    getActiveMapScreen() {
+        return MAP_SCREEN_DEFINITIONS[this.currentMapScreenId] || null;
+    }
+
+    resolveMapScreenId(params = {}, gs = this.manager.gameState) {
+        if (params.mapScreenId && MAP_SCREEN_DEFINITIONS[params.mapScreenId]) {
+            return params.mapScreenId;
+        }
+        if (params.afterEvent === 'chapter2_to_zhujun') {
+            return 'chapter2_zhujun_camp';
+        }
+
+        const campaignId = params.campaignId || gs.getCurrentCampaign();
+        const cursorNodeId = gs.getStoryCursor(campaignId).nodeId;
+        const cursorScreenId = MAP_SCREEN_BY_STORY_NODE[cursorNodeId];
+        if (cursorScreenId && MAP_SCREEN_DEFINITIONS[cursorScreenId]) {
+            return cursorScreenId;
+        }
+
+        if (campaignId === 'caocao') return 'caocao_chapter1';
+        return 'liubei_chapter1';
     }
 
     getActiveLocations() {
+        const screen = this.getActiveMapScreen();
+        if (screen?.locations) return screen.locations;
         return this.currentCampaignId === 'caocao' ? CAOCAO_LOCATIONS : LIUBEI_LOCATIONS;
     }
 
-    enter(params) {
+    enter(params = {}) {
         // Only switch to campaign music if we're not already playing something "epic" (like the oath music)
         // that is supposed to carry through.
         if (assets.currentMusicKey !== 'oath') {
@@ -368,6 +441,10 @@ export class MapScene extends BaseScene {
 
         if (!isResume) {
             this.dialogueElapsed = 0;
+            this.currentMapScreenId = this.resolveMapScreenId(params, gs);
+            const activeScreen = this.getActiveMapScreen();
+            const targetCampaignId = params?.campaignId || activeScreen?.campaignId;
+            const preferScreenDefaults = !!params.mapScreenId;
 
             if (params && params.afterEvent) {
                 const event = STORY_EVENTS[params.afterEvent];
@@ -389,57 +466,62 @@ export class MapScene extends BaseScene {
                 }
             }
 
-            if (params && params.campaignId) {
-                this.currentCampaignId = params.campaignId;
-                gs.setCurrentCampaign(params.campaignId);
-                if (params.campaignId === 'liubei' && !gs.getStoryCursor('liubei').nodeId) {
+            if (targetCampaignId) {
+                this.currentCampaignId = targetCampaignId;
+                gs.setCurrentCampaign(targetCampaignId);
+                if (targetCampaignId === 'liubei' && !gs.getStoryCursor('liubei').nodeId) {
                     gs.startStoryRoute('liubei', 'prologue_complete');
                 }
                 // Don't set lastScene here - SceneManager will handle it
 
                 // Initialize party based on campaign
-                if (params.campaignId === 'liubei' || params.campaignId === CHAPTER2_ROUTE_ID) {
+                if (targetCampaignId === 'liubei' || targetCampaignId === CHAPTER2_ROUTE_ID) {
                     // Prefer explicit params, then saved position, then default
-                    const savedX = gs.getCampaignVar('partyX', params.campaignId);
-                    const savedY = gs.getCampaignVar('partyY', params.campaignId);
-                    this.party = { 
-                        id: 'liubei', 
-                        name: 'Liu Bei', 
-                        x: params.partyX !== undefined ? params.partyX : (savedX !== undefined ? savedX : 190), 
-                        y: params.partyY !== undefined ? params.partyY : (savedY !== undefined ? savedY : 70),
-                        imgKey: 'liubei'
+                    const savedX = preferScreenDefaults ? undefined : gs.getCampaignVar('partyX', targetCampaignId);
+                    const savedY = preferScreenDefaults ? undefined : gs.getCampaignVar('partyY', targetCampaignId);
+                    const defaults = activeScreen?.party || MAP_SCREEN_DEFINITIONS.liubei_chapter1.party;
+                    this.party = {
+                        id: defaults.id || 'liubei',
+                        name: defaults.name || 'Liu Bei',
+                        x: params.partyX !== undefined ? params.partyX : (savedX !== undefined ? savedX : defaults.x),
+                        y: params.partyY !== undefined ? params.partyY : (savedY !== undefined ? savedY : defaults.y),
+                        imgKey: defaults.imgKey || 'liubei'
                     };
-                } else if (params.campaignId === 'caocao') {
+                } else if (targetCampaignId === 'caocao') {
                     const savedX = gs.getCampaignVar('partyX', 'caocao');
                     const savedY = gs.getCampaignVar('partyY', 'caocao');
+                    const defaults = activeScreen?.party || MAP_SCREEN_DEFINITIONS.caocao_chapter1.party;
                     this.party = {
-                        id: 'caocao',
-                        name: 'Cao Cao',
-                        x: params.partyX !== undefined ? params.partyX : (savedX !== undefined ? savedX : 168),
-                        y: params.partyY !== undefined ? params.partyY : (savedY !== undefined ? savedY : 98),
-                        imgKey: 'caocao'
+                        id: defaults.id || 'caocao',
+                        name: defaults.name || 'Cao Cao',
+                        x: params.partyX !== undefined ? params.partyX : (savedX !== undefined ? savedX : defaults.x),
+                        y: params.partyY !== undefined ? params.partyY : (savedY !== undefined ? savedY : defaults.y),
+                        imgKey: defaults.imgKey || 'caocao'
                     };
                 }
             } else {
                 // No params (coming from Continue), restore from save
                 this.currentCampaignId = gs.getCurrentCampaign();
+                const fallbackScreen = this.getActiveMapScreen();
                 const savedX = gs.getCampaignVar('partyX', this.currentCampaignId);
                 const savedY = gs.getCampaignVar('partyY', this.currentCampaignId);
                 if (this.currentCampaignId === 'liubei' || this.currentCampaignId === CHAPTER2_ROUTE_ID) {
-                    this.party = { 
-                        id: 'liubei', 
-                        name: 'Liu Bei', 
-                        x: savedX !== undefined ? savedX : 190, 
-                        y: savedY !== undefined ? savedY : 70,
-                        imgKey: 'liubei'
+                    const defaults = fallbackScreen?.party || MAP_SCREEN_DEFINITIONS.liubei_chapter1.party;
+                    this.party = {
+                        id: defaults.id || 'liubei',
+                        name: defaults.name || 'Liu Bei',
+                        x: savedX !== undefined ? savedX : defaults.x,
+                        y: savedY !== undefined ? savedY : defaults.y,
+                        imgKey: defaults.imgKey || 'liubei'
                     };
                 } else if (this.currentCampaignId === 'caocao') {
+                    const defaults = fallbackScreen?.party || MAP_SCREEN_DEFINITIONS.caocao_chapter1.party;
                     this.party = {
-                        id: 'caocao',
-                        name: 'Cao Cao',
-                        x: savedX !== undefined ? savedX : 168,
-                        y: savedY !== undefined ? savedY : 98,
-                        imgKey: 'caocao'
+                        id: defaults.id || 'caocao',
+                        name: defaults.name || 'Cao Cao',
+                        x: savedX !== undefined ? savedX : defaults.x,
+                        y: savedY !== undefined ? savedY : defaults.y,
+                        imgKey: defaults.imgKey || 'caocao'
                     };
                 }
             }
@@ -461,6 +543,9 @@ export class MapScene extends BaseScene {
         if (!state) return;
         
         this.currentCampaignId = state.currentCampaignId;
+        this.currentMapScreenId = MAP_SCREEN_DEFINITIONS[state.currentMapScreenId]
+            ? state.currentMapScreenId
+            : this.resolveMapScreenId({ campaignId: state.currentCampaignId }, this.manager.gameState);
         this.party = state.party || { 
             id: 'liubei', 
             name: 'Liu Bei', 
@@ -517,6 +602,7 @@ export class MapScene extends BaseScene {
         // Save map scene state
         const state = {
             currentCampaignId: this.currentCampaignId,
+            currentMapScreenId: this.currentMapScreenId,
             party: this.party ? { ...this.party } : null,
             interactionSelected: this.interactionSelected,
             currentEventKey: currentEventKey, // Save event key instead of object
@@ -1228,6 +1314,9 @@ export class MapScene extends BaseScene {
     }
 
     getCurrentPartyReminderKey(gs) {
+        const screenReminderKey = this.getActiveMapScreen()?.reminderKey;
+        if (screenReminderKey && HERO_REMINDERS[screenReminderKey]) return screenReminderKey;
+
         if (this.currentCampaignId === 'caocao') {
             if (gs.hasReachedStoryNode('caocao_chapter1_complete', 'caocao') || gs.hasMilestone('caocao_chapter1_complete')) return null;
             if (gs.hasReachedStoryNode('caocao_intro_complete', 'caocao') || gs.hasMilestone('caocao_intro_complete')) return 'caocao_intro_complete';

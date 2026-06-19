@@ -2422,6 +2422,7 @@ export class TacticsScene extends BaseScene {
             this.manager.gameState.setStoryCursor('chapter2_oath_dongzhuo_choice', 'chapter2_oath');
             this.manager.switchTo('map', {
                 campaignId: 'chapter2_oath',
+                mapScreenId: 'chapter2_zhujun_camp',
                 partyX: 205,
                 partyY: 55,
                 afterEvent: 'chapter2_to_zhujun'
@@ -2647,6 +2648,7 @@ export class TacticsScene extends BaseScene {
             this.manager.gameState.setStoryCursor('chapter2_oath_dongzhuo_choice', 'chapter2_oath');
             this.manager.switchTo('map', {
                 campaignId: 'chapter2_oath',
+                mapScreenId: 'chapter2_zhujun_camp',
                 partyX: 205,
                 partyY: 55,
                 afterEvent: 'chapter2_to_zhujun'
@@ -2882,6 +2884,7 @@ export class TacticsScene extends BaseScene {
             this.manager.gameState.setStoryCursor('chapter2_oath_dongzhuo_choice', 'chapter2_oath');
             this.manager.switchTo('map', {
                 campaignId: 'chapter2_oath',
+                mapScreenId: 'chapter2_zhujun_camp',
                 partyX: 205,
                 partyY: 55,
                 afterEvent: 'chapter2_to_zhujun'
@@ -3228,6 +3231,11 @@ export class TacticsScene extends BaseScene {
     }
 
     moveNpcAndTelegraph(unit, onComplete) {
+        if (this.isSiegeLadder(unit)) {
+            this.moveSiegeLadderNpc(unit, onComplete);
+            return;
+        }
+
         const attackOptions = Array.from(new Set((unit.attacks && unit.attacks.length > 0 ? unit.attacks : ['stab'])))
             .filter(k => ATTACKS[k]?.type !== 'command');
         if (attackOptions.length === 0) attackOptions.push('stab');
@@ -3249,6 +3257,7 @@ export class TacticsScene extends BaseScene {
                 return false;
             }
         });
+        this.syncSiegeLadderCells();
         const reachableData = this.tacticsMap.getReachableData(unit.r, unit.q, unit.moveRange, unit);
         
         let bestTile = { r: unit.r, q: unit.q };
@@ -3262,7 +3271,7 @@ export class TacticsScene extends BaseScene {
             const [r, q] = key.split(',').map(Number);
             const cell = this.tacticsMap.getCell(r, q);
             if (!this.canStopOnCell(unit, cell)) return;
-            const blockedByLiving = !!this.getLivingUnitOccupyingCell(r, q, unit);
+            const blockedByLiving = !!this.getBlockingUnitOccupyingCell(r, q, unit);
             const blockedByHorse = !!(cell?.horse && cell.horse.riderId && (!unit.onHorse || cell.horse.id !== unit.horseId));
             if (!blockedByLiving && !blockedByHorse) {
                 validDestinations.set(key, data);
@@ -3595,7 +3604,101 @@ export class TacticsScene extends BaseScene {
         }
     }
 
+    getSiegeLadderAssaultCells(unit) {
+        const cells = [];
+        const meta = this.tacticsMap?.cityGateMeta;
+        if (meta?.orientation === 'top_rampart') {
+            const gateKeys = new Set((meta.gateGroundCells || []).map(c => `${c.r},${c.q}`));
+            const approachRow = meta.approachRow ?? meta.rampartRows ?? 0;
+            for (let q = 0; q < this.manager.config.mapWidth; q++) {
+                const cell = this.tacticsMap.getCell(approachRow, q);
+                if (!cell || cell.omitted || cell.impassable || gateKeys.has(`${cell.r},${cell.q}`)) continue;
+                const hasWallNeighbor = this.tacticsMap.getNeighbors(cell.r, cell.q)
+                    .some(n => n && (n.level || 0) >= 5);
+                if (hasWallNeighbor) cells.push(cell);
+            }
+        }
+
+        if (cells.length > 0) return cells;
+        return this.getAttackableGateCellsForUnit(unit)
+            .flatMap(gate => this.tacticsMap.getNeighbors(gate.r, gate.q))
+            .filter(c => c && !this.isCityGateCell(c) && !c.omitted && !c.impassable);
+    }
+
+    moveSiegeLadderNpc(unit, onComplete) {
+        this.syncSiegeLadderCells();
+        const targets = this.getSiegeLadderAssaultCells(unit);
+        if (targets.length === 0) {
+            unit.hasActed = true;
+            unit.hasMoved = true;
+            unit.intent = null;
+            onComplete();
+            return;
+        }
+
+        const isAtTarget = targets.some(c => c.r === unit.r && c.q === unit.q);
+        if (isAtTarget) {
+            unit.hasActed = true;
+            unit.hasMoved = true;
+            unit.intent = null;
+            onComplete();
+            return;
+        }
+
+        const reachableData = this.tacticsMap.getReachableData(unit.r, unit.q, unit.moveRange, unit);
+        let bestTile = { r: unit.r, q: unit.q };
+        let bestScore = Infinity;
+        reachableData.forEach((data, key) => {
+            const [r, q] = key.split(',').map(Number);
+            const cell = this.tacticsMap.getCell(r, q);
+            if (!this.canStopOnCell(unit, cell)) return;
+            if (this.getBlockingUnitOccupyingCell(r, q, unit)) return;
+            const otherLadder = this.getActiveSiegeLadderAtCell(r, q, unit);
+            if (otherLadder) return;
+            const dist = targets.reduce((min, t) => Math.min(min, this.tacticsMap.getDistance(r, q, t.r, t.q)), Infinity);
+            const score = dist * 10 + (data.cost || 0);
+            if (score < bestScore) {
+                bestScore = score;
+                bestTile = { r, q };
+            }
+        });
+
+        const path = this.tacticsMap.getPath(unit.r, unit.q, bestTile.r, bestTile.q, unit.moveRange, unit);
+        if (path && path.length > 1) {
+            const oldCell = this.tacticsMap.getCell(unit.r, unit.q);
+            if (oldCell && oldCell.unit === unit) oldCell.unit = null;
+            this.prepareUnitForPathMovement(unit, path);
+            unit.startPath(path);
+            const destCell = this.tacticsMap.getCell(bestTile.r, bestTile.q);
+            if (destCell) destCell.unit = unit;
+            this.syncSiegeLadderCells();
+
+            const checkDone = () => {
+                if (!unit.isMoving) {
+                    unit.hasActed = true;
+                    unit.hasMoved = true;
+                    unit.intent = null;
+                    this.syncSiegeLadderCells();
+                    onComplete();
+                } else {
+                    setTimeout(checkDone, 100);
+                }
+            };
+            checkDone();
+        } else {
+            unit.hasActed = true;
+            unit.hasMoved = true;
+            unit.intent = null;
+            onComplete();
+        }
+    }
+
     telegraphSingleNpc(unit) {
+        if (this.isSiegeLadder(unit)) {
+            unit.intent = null;
+            unit.npcPreferredAttackKey = null;
+            return;
+        }
         const preferred = unit.npcPreferredAttackKey || null;
         const attackOptions = Array.from(new Set([
             ...(preferred ? [preferred] : []),
@@ -3820,6 +3923,11 @@ export class TacticsScene extends BaseScene {
                 keepBrokenOnDefeat: !!u.keepBrokenOnDefeat,
                 staticCorpseImgKey: u.staticCorpseImgKey || null,
                 carryImgKey: u.carryImgKey || null,
+                isSiegeLadder: !!u.isSiegeLadder,
+                isDestroyedSiegeLadder: !!u.isDestroyedSiegeLadder,
+                crackedImgKey: u.crackedImgKey || null,
+                destroyedImgKey: u.destroyedImgKey || null,
+                ladderCombatLevel: Number.isFinite(u.ladderCombatLevel) ? u.ladderCombatLevel : 3,
                 caged: u.caged,
                 cageHp: u.cageHp,
                 cageSprite: u.cageSprite,
@@ -4084,6 +4192,11 @@ export class TacticsScene extends BaseScene {
                     keepBrokenOnDefeat: !!uData.keepBrokenOnDefeat,
                     staticCorpseImgKey: uData.staticCorpseImgKey || null,
                     carryImgKey: uData.carryImgKey || null,
+                    isSiegeLadder: !!uData.isSiegeLadder,
+                    isDestroyedSiegeLadder: !!uData.isDestroyedSiegeLadder,
+                    crackedImgKey: uData.crackedImgKey || null,
+                    destroyedImgKey: uData.destroyedImgKey || null,
+                    ladderCombatLevel: Number.isFinite(uData.ladderCombatLevel) ? uData.ladderCombatLevel : 3,
                     caged: !!uData.caged,
                     cageHp: uData.cageHp,
                     cageSprite: uData.cageSprite,
@@ -4116,6 +4229,11 @@ export class TacticsScene extends BaseScene {
             u.keepBrokenOnDefeat = !!uData.keepBrokenOnDefeat;
             u.staticCorpseImgKey = uData.staticCorpseImgKey || u.staticCorpseImgKey || null;
             u.carryImgKey = uData.carryImgKey || null;
+            u.isSiegeLadder = !!(uData.isSiegeLadder || u.isSiegeLadder);
+            u.isDestroyedSiegeLadder = !!uData.isDestroyedSiegeLadder;
+            u.crackedImgKey = uData.crackedImgKey || u.crackedImgKey || null;
+            u.destroyedImgKey = uData.destroyedImgKey || u.destroyedImgKey || null;
+            u.ladderCombatLevel = Number.isFinite(uData.ladderCombatLevel) ? uData.ladderCombatLevel : (Number.isFinite(u.ladderCombatLevel) ? u.ladderCombatLevel : 3);
             u.overkillEffectStarted = false;
             u.attacks = Array.isArray(uData.attacks) ? [...uData.attacks] : u.attacks;
             u.scenarioAttackRules = uData.scenarioAttackRules
@@ -4188,6 +4306,7 @@ export class TacticsScene extends BaseScene {
                 .map(u => ({ id: u.horseId || `horse_${u.id}`, riderId: u.id, r: u.r, q: u.q, flip: !!u.flip, type: u.horseType || 'brown' }));
         }
         this.horses.forEach(h => this.placeHorseOnCells(h));
+        this.syncSiegeLadderCells();
 
         this.selectedUnit = null;
         this.selectedAttack = null;
@@ -4559,6 +4678,11 @@ export class TacticsScene extends BaseScene {
             u.keepBrokenOnDefeat = !!uData.keepBrokenOnDefeat;
             u.staticCorpseImgKey = uData.staticCorpseImgKey || u.staticCorpseImgKey || null;
             u.carryImgKey = uData.carryImgKey || null;
+            u.isSiegeLadder = !!(uData.isSiegeLadder || u.isSiegeLadder);
+            u.isDestroyedSiegeLadder = !!uData.isDestroyedSiegeLadder;
+            u.crackedImgKey = uData.crackedImgKey || u.crackedImgKey || null;
+            u.destroyedImgKey = uData.destroyedImgKey || u.destroyedImgKey || null;
+            u.ladderCombatLevel = Number.isFinite(uData.ladderCombatLevel) ? uData.ladderCombatLevel : (Number.isFinite(u.ladderCombatLevel) ? u.ladderCombatLevel : 3);
             u.overkillEffectStarted = false;
             u.attacks = Array.isArray(uData.attacks) ? [...uData.attacks] : u.attacks;
             u.scenarioAttackRules = uData.scenarioAttackRules
@@ -4620,6 +4744,7 @@ export class TacticsScene extends BaseScene {
                 .map(u => ({ id: u.horseId || `horse_${u.id}`, riderId: u.id, r: u.r, q: u.q, flip: !!u.flip, type: u.horseType || 'brown' }));
         }
         this.horses.forEach(h => this.placeHorseOnCells(h));
+        this.syncSiegeLadderCells();
 
         this.selectedUnit = null;
         this.selectedAttack = null;
@@ -6046,11 +6171,65 @@ export class TacticsScene extends BaseScene {
         return !!(cell && cell.cityGateSegment);
     }
 
+    isSiegeLadder(unit) {
+        return !!(unit && unit.isSiegeLadder);
+    }
+
+    isActiveSiegeLadder(unit) {
+        return !!(this.isSiegeLadder(unit) && unit.hp > 0 && !unit.isGone && !unit.isDestroyedSiegeLadder);
+    }
+
+    getActiveSiegeLadderAtCell(r, q, excludeUnit = null) {
+        return this.units.find(u => (
+            u &&
+            u !== excludeUnit &&
+            this.isActiveSiegeLadder(u) &&
+            this.unitOccupiesCell(u, r, q)
+        )) || null;
+    }
+
+    getBlockingUnitOccupyingCell(r, q, excludeUnit = null) {
+        return this.units.find(u => (
+            u &&
+            u !== excludeUnit &&
+            !this.isSiegeLadder(u) &&
+            !u.isGone &&
+            u.hp > 0 &&
+            this.unitOccupiesCell(u, r, q)
+        )) || null;
+    }
+
+    syncSiegeLadderCells() {
+        if (!this.tacticsMap) return;
+        for (let r = 0; r < this.tacticsMap.height; r++) {
+            for (let q = 0; q < this.tacticsMap.width; q++) {
+                const cell = this.tacticsMap.getCell(r, q);
+                if (cell) cell.siegeLadderUnitId = null;
+            }
+        }
+        for (const u of this.units) {
+            if (!this.isActiveSiegeLadder(u)) continue;
+            const cell = this.tacticsMap.getCell(u.r, u.q);
+            if (cell) cell.siegeLadderUnitId = u.id;
+        }
+    }
+
+    getCombatLevelForUnit(unit) {
+        if (!unit) return 0;
+        const cell = this.tacticsMap.getCell(unit.r, unit.q);
+        const baseLevel = cell?.level || 0;
+        if (!this.isSiegeLadder(unit) && this.getActiveSiegeLadderAtCell(unit.r, unit.q, unit)) {
+            return Number.isFinite(unit.ladderCombatLevel) ? unit.ladderCombatLevel : 3;
+        }
+        return baseLevel;
+    }
+
     canStopOnCell(unit, cell) {
         if (!cell) return false;
         // Gatehouse cells are transit-only. Units can path through them, but should not
         // end a move there because the gatehouse itself is the attackable object.
         if (this.isCityGateCell(cell)) return false;
+        if (unit?.onHorse && this.getActiveSiegeLadderAtCell(cell.r, cell.q, unit)) return false;
         return true;
     }
 
@@ -6160,12 +6339,18 @@ export class TacticsScene extends BaseScene {
         if (!wasOpen) assets.playSound('heavy_door_unlocking', 0.85);
     }
 
-    damageCityGate(r, q) {
+    damageCityGate(r, q, damage = 1) {
         if (!this.tacticsMap?.cityGateMeta || this.isCityGateDestroyed()) return;
         if (this._cityGateDamageActionActive && this._cityGateDamagedThisAttack) return;
         if (this._cityGateDamageActionActive) this._cityGateDamagedThisAttack = true;
-        const state = this.tacticsMap.getCityGateState();
-        const nextState = state === 'cracked' ? 'destroyed' : 'cracked';
+        const meta = this.tacticsMap.cityGateMeta;
+        const maxHp = Number.isFinite(meta.gateMaxHp) ? meta.gateMaxHp : 10;
+        const currentHp = Number.isFinite(meta.gateHp) ? meta.gateHp : maxHp;
+        const hit = Math.max(1, Math.floor(damage || 1));
+        const nextHp = Math.max(0, currentHp - hit);
+        meta.gateMaxHp = maxHp;
+        meta.gateHp = nextHp;
+        const nextState = nextHp <= 0 ? 'destroyed' : (nextHp < maxHp ? 'cracked' : 'closed');
         this.tacticsMap.setCityGateState(nextState);
         this.tacticsMap.cityGateMeta.gateTransientOpenUntil = 0;
         this.tacticsMap.getCityGateGroundCells().forEach(cell => {
@@ -6176,19 +6361,22 @@ export class TacticsScene extends BaseScene {
         const pos = this.getPixelPos(r, q);
         const text = nextState === 'destroyed'
             ? getLocalizedText({ en: "DESTROYED", zh: "摧毁" })
-            : getLocalizedText({ en: "CRACKED", zh: "开裂" });
+            : getLocalizedText({
+                en: `GATE: ${nextHp}/${maxHp}`,
+                zh: `城门：${nextHp}/${maxHp}`
+            });
         this.addDamageNumber(pos.x, pos.y - 20, text);
         assets.playSound('building_damage', nextState === 'destroyed' ? 0.9 : 0.75);
     }
 
-    damageCell(r, q) {
+    damageCell(r, q, damage = 1) {
         const cell = this.tacticsMap.getCell(r, q);
         if (!cell) return;
 
         this.triggerHexDamageWave(r, q);
 
         if (this.isCityGateCell(cell)) {
-            this.damageCityGate(r, q);
+            this.damageCityGate(r, q, damage);
         } else if (cell.terrain === 'house_01') {
             cell.terrain = 'house_damaged_01';
             this.invalidateBattlefieldRenderCaches();
@@ -6500,7 +6688,7 @@ export class TacticsScene extends BaseScene {
                         type: 'arrow',
                         duration: 500,
                         onComplete: () => {
-                            this.damageCell(targetR, targetQ);
+                            this.damageCell(targetR, targetQ, attack.damage || 1);
                             if (victim) {
                                 assets.playSound('arrow_hit', 0.7);
                                 this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos);
@@ -6560,7 +6748,7 @@ export class TacticsScene extends BaseScene {
 
                     const isDestructible = this.isCellDestructibleStructure(targetCell);
 
-                    this.damageCell(targetR, targetQ);
+                    this.damageCell(targetR, targetQ, attack.damage || 1);
                     if (victim) {
                         this.applyDamageAndPush(attacker, victim, attack, targetR, targetQ, startPos, endPos);
                     } else if (!isDestructible) {
@@ -6626,7 +6814,7 @@ export class TacticsScene extends BaseScene {
                         }
 
                         if (livePath?.impactType === 'terrain') {
-                            this.damageCell(liveImpactCell.r, liveImpactCell.q);
+                            this.damageCell(liveImpactCell.r, liveImpactCell.q, attack.damage || 1);
                             return;
                         }
 
@@ -6837,7 +7025,7 @@ export class TacticsScene extends BaseScene {
                     startPos, 'slash',
                     { maxWidth: 7, duration: 130 }
                 );
-                this.damageCell(targetR, targetQ);
+                this.damageCell(targetR, targetQ, attack.damage || 1);
                 if (frontVictim) {
                     this.applyDamageAndPush(attacker, frontVictim, attack, targetR, targetQ, startPos, frontPos);
                 } else if (!isFrontDestructible) {
@@ -6871,7 +7059,7 @@ export class TacticsScene extends BaseScene {
                                     startPos2, 'slash',
                                     { maxWidth: 7, duration: 130 }
                                 );
-                                this.damageCell(backCell.r, backCell.q);
+                                this.damageCell(backCell.r, backCell.q, attack.damage || 1);
                                 if (backVictim) {
                                     this.applyDamageAndPush(attacker, backVictim, attack, backCell.r, backCell.q, startPos2, backPos);
                                 } else if (!isBackDestructible) {
@@ -6949,7 +7137,7 @@ export class TacticsScene extends BaseScene {
                         'slash',
                         { maxWidth: 7, duration: 130 }
                     );
-                    this.damageCell(target.r, target.q);
+                    this.damageCell(target.r, target.q, attack.damage || 1);
                     if (victim) {
                         this.applyDamageAndPush(attacker, victim, attack, target.r, target.q, startPos, targetPos);
                     } else if (!isDestructible) {
@@ -6993,7 +7181,7 @@ export class TacticsScene extends BaseScene {
                 const hitVictims = new Set();
                 let hitAnything = false;
                 affected.forEach(pos => {
-                    this.damageCell(pos.r, pos.q);
+                    this.damageCell(pos.r, pos.q, attack.damage || 1);
                     const cell = this.tacticsMap.getCell(pos.r, pos.q);
                     if (cell) {
                         const isDestructible = this.isCellDestructibleStructure(cell);
@@ -7054,7 +7242,13 @@ export class TacticsScene extends BaseScene {
             const hitVictimsSS = new Set();
             let hitAnything = false;
             affected.forEach(pos => {
-                this.damageCell(pos.r, pos.q);
+                const furthestBonus = (attack.furthestBonusDamage && pos.r === targetR && pos.q === targetQ)
+                    ? attack.furthestBonusDamage
+                    : 0;
+                const attackForCell = furthestBonus > 0
+                    ? { ...attack, damage: (attack.damage || 0) + furthestBonus }
+                    : attack;
+                this.damageCell(pos.r, pos.q, attackForCell.damage || attack.damage || 1);
                 const cell = this.tacticsMap.getCell(pos.r, pos.q);
                 if (cell) {
                     const isDestructible = this.isCellDestructibleStructure(cell);
@@ -7064,12 +7258,6 @@ export class TacticsScene extends BaseScene {
                     if (victim && !hitVictimsSS.has(victim)) {
                         hitVictimsSS.add(victim);
                         const victimPos = this.getPixelPos(cell.r, cell.q);
-                        const furthestBonus = (attack.furthestBonusDamage && pos.r === targetR && pos.q === targetQ)
-                            ? attack.furthestBonusDamage
-                            : 0;
-                        const attackForCell = furthestBonus > 0
-                            ? { ...attack, damage: (attack.damage || 0) + furthestBonus }
-                            : attack;
                         // Apply damage on the actual struck hex; keep push decision anchored to clicked hex.
                         this.applyDamageAndPush(attacker, victim, attackForCell, pos.r, pos.q, startPos, victimPos, targetR, targetQ);
                         hitAnything = true;
@@ -7542,6 +7730,40 @@ export class TacticsScene extends BaseScene {
         }
         
         let finalDamage = damage;
+
+        if (this.isSiegeLadder(victim)) {
+            finalDamage = Math.max(1, Math.floor(finalDamage || 1));
+            victim.hp = Math.max(0, victim.hp - finalDamage);
+            if (typeof victim.triggerDamageFlash === 'function') {
+                victim.triggerDamageFlash();
+            }
+
+            const pos = this.getPixelPos(victim.r, victim.q);
+            if (victim.hp <= 0) {
+                victim.hp = 0;
+                victim.imgKey = victim.destroyedImgKey || 'siege_ladder_destroyed';
+                victim.img = assets.getImage(victim.imgKey);
+                victim.isDestroyedSiegeLadder = true;
+                victim.isGone = false;
+                victim.action = 'standby';
+                victim.currentAnimAction = 'standby';
+                victim.intent = null;
+                this.syncSiegeLadderCells();
+                this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "BROKEN", zh: "毁坏" }));
+                assets.playSound('building_damage', 0.9);
+            } else {
+                if (victim.hp < victim.maxHp) {
+                    victim.imgKey = victim.crackedImgKey || 'siege_ladder_cracked';
+                    victim.img = assets.getImage(victim.imgKey);
+                }
+                this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({
+                    en: `LADDER: ${victim.hp}/${victim.maxHp}`,
+                    zh: `云梯：${victim.hp}/${victim.maxHp}`
+                }));
+                assets.playSound('building_damage', 0.7);
+            }
+            return finalDamage;
+        }
         
         // Boulder Special Logic: Cracked on first damage, destroyed on second
         if (victim.name === 'Boulder') {
@@ -7818,9 +8040,7 @@ export class TacticsScene extends BaseScene {
         let critText = getLocalizedText({ en: "CRIT!", zh: "暴击！" });
         let resistText = getLocalizedText({ en: "RESISTED!", zh: "格挡！" });
 
-        const attackerCell = this.tacticsMap.getCell(attacker.r, attacker.q);
-        const victimCell = this.tacticsMap.getCell(victim.r, victim.q);
-        const heightDiff = (attackerCell?.level || 0) - (victimCell?.level || 0);
+        const heightDiff = this.getCombatLevelForUnit(attacker) - this.getCombatLevelForUnit(victim);
 
         // 1. Critical Hit (Player only)
         // Formula: 0.5 * (level - 1) / (level + 4) -> Asymptotically approaches 50%
@@ -7841,8 +8061,15 @@ export class TacticsScene extends BaseScene {
             }
         }
 
-        // 2. Damage Resistance (Player/Allied only)
-        if ((victim.faction === 'player' || victim.faction === 'allied') && finalDamage > 0) {
+        const isProjectileAttack = attack.type === 'projectile' || attack.type === 'directional_projectile';
+        const shouldRollResist = finalDamage > 0 && (
+            victim.faction === 'player' ||
+            victim.faction === 'allied' ||
+            (isProjectileAttack && heightDiff < 0)
+        );
+
+        // 2. Damage Resistance / high-ground projectile evasion
+        if (shouldRollResist) {
             const hasShieldResist =
                 Number.isFinite(victim.shieldResistBase) &&
                 victim.shieldResistBase > 0;
@@ -7852,11 +8079,17 @@ export class TacticsScene extends BaseScene {
             if (hasShieldResist) {
                 resistText = getLocalizedText({ en: "SHIELD RESIST!", zh: "盾牌格挡！" });
             }
+            if (isProjectileAttack && heightDiff < 0) {
+                resistChance = Math.max(resistChance, Math.min(0.75, 0.08 * Math.abs(heightDiff)));
+                resistText = getLocalizedText({ en: "HIGH GROUND EVADE!", zh: "高地闪避！" });
+            }
             
             // Height Bonus/Penalty (Victim is on high ground relative to attacker)
             if (heightDiff < 0) {
-                resistChance *= 2;
-                resistText = getLocalizedText({ en: "HIGH GROUND RESIST!", zh: "高地格挡！" });
+                if (!isProjectileAttack) {
+                    resistChance *= 2;
+                    resistText = getLocalizedText({ en: "HIGH GROUND RESIST!", zh: "高地格挡！" });
+                }
             } else if (heightDiff > 0) {
                 resistChance *= 0.5;
             }
@@ -8557,6 +8790,7 @@ export class TacticsScene extends BaseScene {
                     }
                 }
             });
+            this.syncSiegeLadderCells();
         }
     }
 
@@ -8605,7 +8839,7 @@ export class TacticsScene extends BaseScene {
         if (isSolidHouse(cell)) return false;
 
         // Destination must be free (or occupied by the moving unit itself).
-        const blocked = !!this.getLivingUnitOccupyingCell(r, q, unit);
+        const blocked = !!this.getBlockingUnitOccupyingCell(r, q, unit);
         if (blocked) return false;
 
         return true;
@@ -8632,7 +8866,7 @@ export class TacticsScene extends BaseScene {
             if (!this.canStopOnCell(unit, cell)) return;
 
             // Destination must be free (or this unit).
-            if (this.getLivingUnitOccupyingCell(r, q, unit)) return;
+            if (this.getBlockingUnitOccupyingCell(r, q, unit)) return;
 
             // Determine final facing from cheapest-path parent -> node
             let plannedFlip = unit.flip;
@@ -8713,6 +8947,10 @@ export class TacticsScene extends BaseScene {
 
     getLivingUnitOccupyingCell(r, q, excludeUnit = null) {
         for (const u of this.units) {
+            if (!u || u === excludeUnit || u.isGone || u.hp <= 0 || this.isSiegeLadder(u)) continue;
+            if (this.unitOccupiesCell(u, r, q)) return u;
+        }
+        for (const u of this.units) {
             if (!u || u === excludeUnit || u.isGone || u.hp <= 0) continue;
             if (this.unitOccupiesCell(u, r, q)) return u;
         }
@@ -8730,17 +8968,27 @@ export class TacticsScene extends BaseScene {
         // Place destroyed boulders on cells first (they don't block; pathfinding checks hp > 0)
         for (const u of this.units) {
             if (!u || u.isGone) continue;
-            if (u.name === 'Boulder' && (u.isDestroyedBoulder || u.imgKey === 'boulder_destroyed')) {
+            if (
+                (u.name === 'Boulder' && (u.isDestroyedBoulder || u.imgKey === 'boulder_destroyed')) ||
+                (this.isSiegeLadder(u) && (u.isDestroyedSiegeLadder || u.imgKey === 'siege_ladder_destroyed'))
+            ) {
                 const anchorCell = this.tacticsMap.getCell(u.r, u.q);
                 if (anchorCell) anchorCell.unit = u;
             }
         }
-        // Living units overwrite (so a unit standing on destroyed boulder occupies the cell)
+        // Active ladders are platforms; living non-ladder units overwrite if they stand on one.
         for (const u of this.units) {
-            if (!u || u.hp <= 0 || u.isGone) continue;
+            if (!this.isActiveSiegeLadder(u)) continue;
+            const anchorCell = this.tacticsMap.getCell(u.r, u.q);
+            if (anchorCell && !anchorCell.unit) anchorCell.unit = u;
+        }
+        // Living units overwrite (so a unit standing on a prop occupies the cell)
+        for (const u of this.units) {
+            if (!u || u.hp <= 0 || u.isGone || this.isSiegeLadder(u)) continue;
             const anchorCell = this.tacticsMap.getCell(u.r, u.q);
             if (anchorCell) anchorCell.unit = u;
         }
+        this.syncSiegeLadderCells();
     }
 
     getHorseMoveBonus(horseType) {
@@ -9373,6 +9621,7 @@ export class TacticsScene extends BaseScene {
                 this.triggerImmortalBehavior(u, cause);
             }
         });
+        this.syncSiegeLadderCells();
 
         const unitHexDriftTargets = this.buildUnitHexDriftMap();
         this.updateUnitHexDriftAnimation(unitHexDriftTargets, dt);
@@ -10273,6 +10522,9 @@ export class TacticsScene extends BaseScene {
                 const isDeadA = a.unit.hp <= 0;
                 const isDeadB = b.unit.hp <= 0;
                 if (isDeadA !== isDeadB) return isDeadA ? -1 : 1;
+                const isLadderA = this.isSiegeLadder(a.unit);
+                const isLadderB = this.isSiegeLadder(b.unit);
+                if (isLadderA !== isLadderB) return isLadderA ? -1 : 1;
             }
 
             if (a.type === 'hex' && b.type === 'hex') {
@@ -11803,7 +12055,7 @@ export class TacticsScene extends BaseScene {
                 assets.playSound('ui_error', 0.4);
                 return;
             }
-            const blockedByLiving = !!this.getLivingUnitOccupyingCell(clickedCell.r, clickedCell.q, this.selectedUnit);
+            const blockedByLiving = !!this.getBlockingUnitOccupyingCell(clickedCell.r, clickedCell.q, this.selectedUnit);
             const blockedByHorse = this.isCellBlockedByOtherHorse(this.selectedUnit, clickedCell.r, clickedCell.q, true);
             if (!blockedByLiving && !blockedByHorse) {
                 let destR = clickedCell.r;
@@ -11843,6 +12095,7 @@ export class TacticsScene extends BaseScene {
                     this.selectedUnit.startPath(path);
                     const destCell = this.tacticsMap.getCell(destR, destQ);
                     if (destCell) destCell.unit = this.selectedUnit;
+                    this.syncSiegeLadderCells();
                     this.selectedUnit.hasMoved = true;
                     const movingUnit = this.selectedUnit;
                     const checkArrival = () => {
@@ -11967,7 +12220,7 @@ export class TacticsScene extends BaseScene {
                     const [r, q] = key.split(',').map(Number);
                     const cell = this.tacticsMap.getCell(r, q);
                     if (!this.canStopOnCell(this.selectedUnit, cell)) return;
-                    const blockedByLiving = !!this.getLivingUnitOccupyingCell(r, q, this.selectedUnit);
+                    const blockedByLiving = !!this.getBlockingUnitOccupyingCell(r, q, this.selectedUnit);
                     if (this.selectedUnit.onHorse) {
                         // Mounted movement uses a single occupied destination hex.
                         if (!blockedByLiving) this.reachableTiles.set(key, data);
@@ -15197,7 +15450,7 @@ export class TacticsScene extends BaseScene {
                 return;
             }
             // Check landing spot (cannot land on another unit)
-            const blockedByLiving = !!this.getLivingUnitOccupyingCell(clickedCell.r, clickedCell.q, this.selectedUnit);
+            const blockedByLiving = !!this.getBlockingUnitOccupyingCell(clickedCell.r, clickedCell.q, this.selectedUnit);
             const blockedByHorse = this.isCellBlockedByOtherHorse(this.selectedUnit, clickedCell.r, clickedCell.q, true);
             if (!blockedByLiving && !blockedByHorse) {
                 let destR = clickedCell.r;
@@ -15240,6 +15493,7 @@ export class TacticsScene extends BaseScene {
                     this.selectedUnit.startPath(path);
                     const destCell = this.tacticsMap.getCell(destR, destQ);
                     if (destCell) destCell.unit = this.selectedUnit;
+                    this.syncSiegeLadderCells();
                     this.selectedUnit.hasMoved = true;
                     const movingUnit = this.selectedUnit;
                     const checkArrival = () => {

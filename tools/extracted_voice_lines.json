@@ -184,6 +184,180 @@
     "phonetic_text": "But slaying the ungrateful would Mean many deaths a year. Dong Jwoh's fate will be unrolled in later chapters."
   },
   {
+    "id": "ch2_anxi_eunuch_01",
+    "char": "eunuch",
+    "text": "Zhang Jun deceives the throne. These complaints come from men who resent their place, not men who love the Han.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_eunuch_both_01",
+    "char": "eunuch",
+    "text": "Liu Bei freed Lu Zhi by force, then raised blades against Dong Zhuo. This is not merit; it is rebellion wearing campaign dust.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_eunuch_dz_01",
+    "char": "eunuch",
+    "text": "Liu Bei is also the man whose brothers raised steel against Dong Zhuo, an imperial general in the field. Is that loyalty?",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_eunuch_freed_01",
+    "char": "eunuch",
+    "text": "Liu Bei is also the man who took arms against imperial escorts and released Lu Zhi. Are we to reward disorder with a seal?",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_gy_01",
+    "char": "guanyu",
+    "text": "Merit should speak for itself. Yet at court, even merit seems to need an usher.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_gy_02",
+    "char": "guanyu",
+    "text": "Then we go cleanly. A low office held with righteousness is higher than a high office bought with shame.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_gy_both_01",
+    "char": "guanyu",
+    "text": "A pardon from such hands is not honor, but it keeps the oath alive.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_gy_one_01",
+    "char": "guanyu",
+    "text": "They could not deny your merit, so they made the post smaller than the deed.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_lb_01",
+    "char": "liubei",
+    "text": "If office comes, we serve. If none comes, our oath remains. Still, the men who followed us deserve to see justice done.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_lb_02",
+    "char": "liubei",
+    "text": "We have submitted our names and wait on the court. Nothing more is in my hands.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_lb_03",
+    "char": "liubei",
+    "text": "Anxi County commandant. The seal is small, but the people beneath it are not small.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_lb_both_01",
+    "char": "liubei",
+    "text": "So our reward is not a seal, but breath in our bodies. If that breath remains, we can still choose righteousness.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_lb_one_01",
+    "char": "liubei",
+    "text": "Assistant to the Anxi commandant. No seal of my own, yet the people served by that office are still people of the Han.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_narrator_01",
+    "char": "narrator",
+    "text": "With Wan settled and Nanyang quiet, Zhu Jun returned to Luoyang and memorialized the merit of Sun Jian and Liu Bei.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_narrator_02",
+    "char": "narrator",
+    "text": "Sun Jian had patrons and soon departed to a new post. Liu Bei waited in the capital, day after day, and no summons came.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_narrator_03",
+    "char": "narrator",
+    "text": "Zhang Jun was driven out. The eunuchs, fearing that unrewarded soldiers would make more noise, wrote Liu Bei down for a minor office.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_narrator_04",
+    "char": "narrator",
+    "text": "Liu Bei dismissed the volunteers to their villages and took only a small retinue with Guan Yu and Zhang Fei to Anxi.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_narrator_both_01",
+    "char": "narrator",
+    "text": "Zhang Jun was driven out. Zhu Jun's memorial saved Liu Bei's life, not his future. The court remitted the capital charges and granted no office.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_narrator_both_02",
+    "char": "narrator",
+    "text": "Liu Bei dismissed the volunteers to their villages and left Luoyang with Guan Yu and Zhang Fei, their crimes forgiven but their names still darkened at court.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_narrator_one_01",
+    "char": "narrator",
+    "text": "Zhang Jun was driven out. Zhu Jun's memorial could not erase Liu Bei's offense, but it made punishment inconvenient. The court forgave the crime and cut down the reward.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_narrator_one_02",
+    "char": "narrator",
+    "text": "Liu Bei dismissed the volunteers to their villages and took a small retinue with Guan Yu and Zhang Fei to Anxi, there to serve beneath another man's seal.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zf_01",
+    "char": "zhangfei",
+    "text": "We broke rebels, scaled walls, and chased their chiefs into the dust. Are we to live in an inn until our beards turn white?",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zf_02",
+    "char": "zhangfei",
+    "text": "Fine. But if some painted official comes to bully honest folk, do not ask me to smile at him.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zf_both_01",
+    "char": "zhangfei",
+    "text": "Forgive us? After we saved their realm? If anger were wine, I could drown Luoyang in it.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zf_one_01",
+    "char": "zhangfei",
+    "text": "A half-reward for a whole battlefield. Hmph. I will still walk beside you to Anxi.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_01",
+    "char": "zhoujing",
+    "text": "You are Liu Xuande? I have heard your name in the campaign reports. Why do you idle in the street like an unrewarded clerk?",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_02",
+    "char": "zhoujing",
+    "text": "Then I will speak where waiting cannot. If soldiers bleed for the Han and receive only silence, the silence itself is treason.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_03",
+    "char": "zhoujing",
+    "text": "The Yellow Turbans rose because offices are sold, kin are favored, enemies are ruined, and worthy men are made to beg at the gate.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_04",
+    "char": "zhoujing",
+    "text": "Cut away the corruption of the Ten Attendants, reward those who fought, and the four seas may yet be quiet.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_counter_camp_choice_reluctant",
     "char": "liubei",
     "text": "It sits poorly with me to answer darkness with such things. Yet lives weigh heavier than pride.",
@@ -654,13 +828,13 @@
   {
     "id": "ch2_wan_final_defeat_zj_01",
     "char": "zhujun",
-    "text": "Zhao Hong used the walls better than expected. Reform at the north gate and press again with Sun Jian.",
+    "text": "Zhao Hong used the walls better than expected. Reform before the gate and press again with Sun Jian.",
     "source": "Battles.js"
   },
   {
     "id": "ch2_wan_final_lb_01",
     "char": "liubei",
-    "text": "Brothers, watch the north gate. If Sun Zhong flees, he must not carry this rebellion with him.",
+    "text": "Brothers, press the gate with Sun Jian. Break Zhao Hong and Sun Zhong here before the rebellion scatters again.",
     "source": "Battles.js"
   },
   {
@@ -690,7 +864,7 @@
   {
     "id": "ch2_wan_final_zj_01",
     "char": "zhujun",
-    "text": "Sun Jian takes the south gate. Liu Bei, hold the north. I will press the west and leave the east for flight.",
+    "text": "Xuande has chosen to join Sun Jian at the wall. My remaining troops will watch the roads; your task is to break this gate.",
     "source": "Battles.js"
   },
   {
@@ -742,10 +916,52 @@
     "source": "Battles.js"
   },
   {
-    "id": "ch2_wan_narrator_01",
-    "char": "narrator",
-    "text": "After Yangcheng opened its gates, Zhu Jun turned the army south. Han Zhong and the remaining Yellow Turbans had gathered in Wan.",
-    "source": "NarrativeScripts.js"
+    "id": "ch2_wan_north_defeat_lb_01",
+    "char": "liubei",
+    "text": "The wall assault depends on this road staying closed. We try again at once.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_defeat_zj_01",
+    "char": "zhujun",
+    "text": "Sun Zhong broke through the north road. Reform the line before his remnant gathers strength.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_lb_01",
+    "char": "liubei",
+    "text": "Form across the road. Leave the rebels no passage except surrender.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_lb_02",
+    "char": "liubei",
+    "text": "Sun Zhong's column is broken. Gather the weapons and spare those who throw them down.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_sj_01",
+    "char": "sunjian",
+    "text": "The wall is ours, and Zhao Hong is dead. Your roadblock kept the rebels from becoming an army again.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_sz_01",
+    "char": "sunzhong",
+    "text": "The wall is shaking. Run north before Sun Jian shuts us inside Wan!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_zj_01",
+    "char": "zhujun",
+    "text": "Sun Jian is striking the wall. Xuande, hold this north road; Sun Zhong must not carry Zhao Hong's remnant away.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_zj_02",
+    "char": "zhujun",
+    "text": "Then Wan is settled. Nanyang is quiet, and the court will hear who held the road.",
+    "source": "Battles.js"
   },
   {
     "id": "ch2_wan_rev_gy_01",
@@ -760,9 +976,15 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "ch2_wan_rev_lb_02",
+    "id": "ch2_wan_rev_lb_02_road",
     "char": "liubei",
-    "text": "Then our brothers will hold the roads while Sun Jian presses the wall.",
+    "text": "Then Sun Jian can press the wall. Our brothers will hold the north road and cut down anyone who breaks from the gate.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_lb_02_wall",
+    "char": "liubei",
+    "text": "Then we will join Sun Jian at the wall. If the gate breaks quickly, Sun Zhong will have no road left to use.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -790,6 +1012,18 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_wan_rev_sj_02_road",
+    "char": "sunjian",
+    "text": "Leave the wall to me. If the rebels flee north, make the road narrower than the gate.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_sj_02_wall",
+    "char": "sunjian",
+    "text": "Good. We will climb together and settle Zhao Hong before his courage hardens.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_wan_rev_zf_01",
     "char": "zhangfei",
     "text": "Hmph. If Sun Zhong tries to run north, leave that road to me.",
@@ -805,6 +1039,18 @@
     "id": "ch2_wan_rev_zj_02",
     "char": "zhujun",
     "text": "Good. The rebels think their courage has returned. We will show them it was only noise.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_zj_03_road",
+    "char": "zhujun",
+    "text": "Good. Sun Jian will strike the wall. Xuande, take your brothers to the north road; if Sun Zhong runs, he must find you there.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_zj_03_wall",
+    "char": "zhujun",
+    "text": "Then the wall assault will carry our strength. My remaining troops will watch the roads while you and Sun Jian break the gate.",
     "source": "NarrativeScripts.js"
   },
   {

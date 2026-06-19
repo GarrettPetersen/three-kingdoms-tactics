@@ -184,6 +184,49 @@ export class NarrativeScene extends BaseScene {
         return null;
     }
 
+    conditionPasses(condition) {
+        if (!condition) return true;
+        const gs = this.manager?.gameState;
+        if (!gs) return true;
+
+        if (Array.isArray(condition)) {
+            return condition.every(item => this.conditionPasses(item));
+        }
+        if (condition.all) {
+            return (condition.all || []).every(item => this.conditionPasses(item));
+        }
+        if (condition.any) {
+            return (condition.any || []).some(item => this.conditionPasses(item));
+        }
+        if (condition.not) {
+            return !this.conditionPasses(condition.not);
+        }
+
+        const routeId = condition.routeId || null;
+        const choiceKey = condition.choice || condition.storyChoice;
+        if (choiceKey) {
+            const actual = gs.getStoryChoice(choiceKey, undefined, routeId);
+            if (condition.exists) return actual !== undefined;
+            if (condition.value !== undefined) return actual === condition.value;
+            if (condition.notValue !== undefined) return actual !== condition.notValue;
+            return actual !== undefined;
+        }
+
+        const milestone = condition.milestone || condition.hasMilestone;
+        if (milestone) {
+            return gs.hasMilestone(milestone, routeId);
+        }
+        if (condition.completedNode) {
+            return gs.hasCompletedStoryNode(condition.completedNode, routeId);
+        }
+
+        return true;
+    }
+
+    getAvailableChoiceOptions(step) {
+        return (step?.options || []).filter(option => this.conditionPasses(option?.condition));
+    }
+
     createChoiceDialogueStep(step, opt) {
         const fallbackText = opt?.buttonText || '';
         const dialogueText = opt?.text !== undefined && opt?.text !== null ? opt.text : fallbackText;
@@ -509,7 +552,7 @@ export class NarrativeScene extends BaseScene {
                 // Initialize selection system if it's a choice
                 this.initSelection({
                     defaultIndex: 0,
-                    totalOptions: step.options ? step.options.length : 0
+                    totalOptions: this.getAvailableChoiceOptions(step).length
                 });
             } else if (step.type === 'dialogue' || step.type === 'narrator') {
                 // For dialogue/narrator steps, ensure they're set up for rendering
@@ -684,8 +727,16 @@ export class NarrativeScene extends BaseScene {
     }
 
     processStep() {
-        const step = this.script[this.currentStep];
-        if (!step) return;
+        let step = this.script[this.currentStep];
+        while (step && !this.conditionPasses(step.condition)) {
+            this.currentStep++;
+            this.syncActiveFrame();
+            step = this.script[this.currentStep];
+        }
+        if (!step) {
+            this.nextStep();
+            return;
+        }
 
         this.elapsedInStep = 0;
 
@@ -698,7 +749,7 @@ export class NarrativeScene extends BaseScene {
         if (step.type === 'choice') {
             this.initSelection({
                 defaultIndex: 0,
-                totalOptions: step.options ? step.options.length : 0
+                totalOptions: this.getAvailableChoiceOptions(step).length
             });
         }
 
@@ -1718,7 +1769,7 @@ export class NarrativeScene extends BaseScene {
 
     renderChoice(step) {
         const { ctx, canvas } = this.manager;
-        const options = step.options || [];
+        const options = this.getAvailableChoiceOptions(step);
         const currentLang = getCurrentLanguage();
         const isTouchLayout = !!this.manager?.config?.hasCoarsePointer;
         const padding = isTouchLayout ? 12 : 10;
@@ -1800,7 +1851,7 @@ export class NarrativeScene extends BaseScene {
         });
 
         // Store panel metadata for input handling
-        step._panelMetadata = { px, py, panelWidth, panelHeight, wrappedOptions, optionHeights, padding, lineSpacing, optionSpacing, optionInnerPadY };
+        step._panelMetadata = { px, py, panelWidth, panelHeight, wrappedOptions, optionHeights, padding, lineSpacing, optionSpacing, optionInnerPadY, options };
     }
 
     renderTitleCard(step) {
@@ -2003,7 +2054,8 @@ export class NarrativeScene extends BaseScene {
                 // Handle mouse clicks
                 let currentY = m.py + m.padding;
                 
-                step.options.forEach((opt, i) => {
+                const options = m.options || this.getAvailableChoiceOptions(step);
+                options.forEach((opt, i) => {
                     const lines = m.wrappedOptions[i];
                     const optionHeight = m.optionHeights?.[i] ?? (lines.length * m.lineSpacing + (m.optionInnerPadY || 0) * 2);
                     
@@ -2226,7 +2278,7 @@ export class NarrativeScene extends BaseScene {
 
         // Handle choice navigation using reusable selection system
         if (step && step.type === 'choice' && step._panelMetadata && this.selection) {
-            const options = step.options || [];
+            const options = step._panelMetadata.options || this.getAvailableChoiceOptions(step);
             const handled = this.handleSelectionKeyboard(e, (selectedIndex) => {
                 // Select the currently highlighted choice
                 const opt = options[selectedIndex];
@@ -2332,6 +2384,7 @@ export class NarrativeScene extends BaseScene {
             'chapter2_hejin_secret_death': 'campaign_selection',
             'chapter2_wan_strategy': 'campaign_selection',
             'chapter2_wan_reversal': 'campaign_selection',
+            'chapter2_anxi_appointment': 'campaign_selection',
             'noticeboard': 'narrative', // Goes to inn scene next
             'noticeboard_after_training': 'narrative',
             'inn': 'map',
@@ -2368,6 +2421,7 @@ export class NarrativeScene extends BaseScene {
             'chapter2_hejin_secret_death': {},
             'chapter2_wan_strategy': {},
             'chapter2_wan_reversal': {},
+            'chapter2_anxi_appointment': {},
             'noticeboard': { scriptId: 'inn' }, // Chain to inn scene
             'noticeboard_after_training': { scriptId: 'inn' },
             'inn': {}, // After inn, goes to map (milestone added in onComplete)

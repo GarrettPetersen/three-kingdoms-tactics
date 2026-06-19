@@ -325,13 +325,13 @@ export class SceneManager {
     isPointInOptionsButton(x, y) {
         const r = this.optionsButtonRect;
         return !!r && Number.isFinite(x) && Number.isFinite(y)
-            && x >= r.x && x <= r.x + r.w
-            && y >= r.y && y <= r.y + r.h;
+            && x >= r.x && x < r.x + r.w
+            && y >= r.y && y < r.y + r.h;
     }
 
     getOptionsButtonLayout() {
         const iconSize = 13;
-        const hitPadding = 3;
+        const hitPadding = 0;
         const iconX = Math.max(1, this.canvas.width - iconSize - 1);
         const iconY = 1;
         return {

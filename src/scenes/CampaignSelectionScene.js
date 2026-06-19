@@ -100,7 +100,9 @@ export class CampaignSelectionScene extends BaseScene {
             liubei.isComplete = chapter2OathComplete;
             liubei.isInProgress = gs.getCurrentCampaign() === 'chapter2_oath' && !chapter2OathComplete;
             liubei.locked = !chapter1Complete;
-            liubei.description = getLocalizedText(UI_TEXT[chapter2OathComplete ? 'campaign_ch2_oath_complete' : 'campaign_ch2_oath_description']);
+            liubei.description = chapter2OathComplete
+                ? this.getChapter2OathCompleteDescription(gs)
+                : getLocalizedText(UI_TEXT['campaign_ch2_oath_description']);
             if (caocao) {
                 caocao.nameKey = 'ASCENT OF THE CAVALRY COMMANDER';
                 caocao.nameCompleteKey = 'ASCENT OF THE CAVALRY COMMANDER';
@@ -168,6 +170,49 @@ export class CampaignSelectionScene extends BaseScene {
             hejin.locked = !chapter1Complete;
             hejin.description = getLocalizedText(UI_TEXT['campaign_ch2_hejin_description']);
         }
+    }
+
+    didFreeLuZhi(gs) {
+        return gs.getStoryChoice('luzhi_outcome', null, 'liubei') === 'freed'
+            || gs.hasMilestone('freed_luzhi', 'liubei')
+            || gs.hasMilestone('freed_luzhi');
+    }
+
+    didAttackDongZhuo(gs) {
+        return gs.getStoryChoice('chapter2_oath_dongzhuo_choice', null, 'chapter2_oath') === 'strike'
+            || gs.hasMilestone('chapter2_oath_dongzhuo_fought', 'chapter2_oath')
+            || gs.hasMilestone('chapter2_oath_dongzhuo_fought');
+    }
+
+    getChapter2OathCompleteDescription(gs) {
+        const freedLuZhi = this.didFreeLuZhi(gs);
+        const attackedDongZhuo = this.didAttackDongZhuo(gs);
+        const wanStrategy = gs.getStoryChoice('chapter2_wan_strategy', 'open_southeast', 'chapter2_oath');
+        const wanSecondSiege = gs.getStoryChoice('chapter2_wan_second_siege', 'hold_north_road', 'chapter2_oath');
+
+        const parts = [getLocalizedText(UI_TEXT['campaign_ch2_oath_complete_intro'])];
+        if (freedLuZhi && attackedDongZhuo) {
+            parts.push(getLocalizedText(UI_TEXT['campaign_ch2_oath_complete_both_crimes']));
+        } else if (freedLuZhi) {
+            parts.push(getLocalizedText(UI_TEXT['campaign_ch2_oath_complete_freed_only']));
+        } else if (attackedDongZhuo) {
+            parts.push(getLocalizedText(UI_TEXT['campaign_ch2_oath_complete_attacked_only']));
+        } else {
+            parts.push(getLocalizedText(UI_TEXT['campaign_ch2_oath_complete_lawful']));
+        }
+
+        parts.push(getLocalizedText(UI_TEXT[
+            wanStrategy === 'assault_walls'
+                ? 'campaign_ch2_oath_complete_wan_wall'
+                : 'campaign_ch2_oath_complete_wan_road'
+        ]));
+        parts.push(getLocalizedText(UI_TEXT[
+            wanSecondSiege === 'join_wall'
+                ? 'campaign_ch2_oath_complete_wan_join'
+                : 'campaign_ch2_oath_complete_wan_hold'
+        ]));
+
+        return parts.join(' ');
     }
 
     startChapter2OathRoute() {

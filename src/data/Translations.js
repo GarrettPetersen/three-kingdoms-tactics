@@ -353,8 +353,44 @@ export const UI_TEXT = {
         zh: '兄弟三人离开董卓战场后继续前行。是克制守义，还是怒火开路？'
     },
     'campaign_ch2_oath_complete': {
-        en: 'The brothers have left Dong Zhuo behind, joined Zhu Jun at Yingchuan, broken Zhang Bao\'s sorcery, seen Yangcheng surrender, and advised the campaign against Wan.',
-        zh: '兄弟三人离开董卓，投奔颍川朱儁，破了张宝妖法，亲见阳城献降，又为攻宛之策进言。'
+        en: 'The brothers have left Dong Zhuo behind, joined Zhu Jun at Yingchuan, broken Zhang Bao\'s sorcery, pacified Wan, and received the meager Anxi County appointment.',
+        zh: '兄弟三人离开董卓，投奔颍川朱儁，破了张宝妖法，平定宛城，最终只得安喜县尉微职。'
+    },
+    'campaign_ch2_oath_complete_intro': {
+        en: 'Zhang Bao fell; Wan was settled.',
+        zh: '张宝既破，宛城亦平。'
+    },
+    'campaign_ch2_oath_complete_lawful': {
+        en: 'Court: Anxi commandant.',
+        zh: '朝廷授安喜县尉。'
+    },
+    'campaign_ch2_oath_complete_freed_only': {
+        en: 'Freed Lu Zhi; court: Anxi assistant.',
+        zh: '私放卢植；朝廷授安喜县尉佐。'
+    },
+    'campaign_ch2_oath_complete_attacked_only': {
+        en: 'Attacked Dong Zhuo; court: Anxi assistant.',
+        zh: '攻打董卓；朝廷授安喜县尉佐。'
+    },
+    'campaign_ch2_oath_complete_both_crimes': {
+        en: 'Freed Lu Zhi and attacked Dong Zhuo; court: pardon only.',
+        zh: '既私放卢植又攻董卓；朝廷只赦其死罪。'
+    },
+    'campaign_ch2_oath_complete_wan_road': {
+        en: 'Wan: open road.',
+        zh: '宛城：开路诱敌。'
+    },
+    'campaign_ch2_oath_complete_wan_wall': {
+        en: 'Wan: forced gate.',
+        zh: '宛城：强攻城门。'
+    },
+    'campaign_ch2_oath_complete_wan_hold': {
+        en: 'Then held north road.',
+        zh: '后守北路。'
+    },
+    'campaign_ch2_oath_complete_wan_join': {
+        en: 'Then joined Sun Jian.',
+        zh: '后合孙坚攻城。'
     },
     'campaign_ch2_hejin_description': {
         en: 'At Luoyang, Emperor Ling lies dying. He Jin must decide whether to trust a warning at the palace gate.',

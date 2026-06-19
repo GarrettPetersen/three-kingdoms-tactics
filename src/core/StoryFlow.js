@@ -41,9 +41,15 @@ const PARTY_POSITIONS = {
     }
 };
 
+const MAP_SCREEN_BY_STORY_NODE = {
+    chapter2_zhujun_camp: 'chapter2_zhujun_camp',
+    chapter2_wan_strategy: 'chapter2_wan_strategy'
+};
+
 const INTERACTIVE_MAP_TRANSITIONS = {
     chapter2_oath: {
         chapter2_yangcheng_surrender: {
+            mapScreenId: 'chapter2_wan_strategy',
             partyX: 188,
             partyY: 92
         }
@@ -97,9 +103,10 @@ export function resolveStoryLaunchTarget(routeId, nodeId) {
     }
 
     const pos = PARTY_POSITIONS[routeId]?.[nodeId] || PARTY_POSITIONS[routeId]?.default || {};
+    const mapScreenId = MAP_SCREEN_BY_STORY_NODE[nodeId] || null;
     return {
         scene: 'map',
-        params: { campaignId: routeId, ...pos },
+        params: { campaignId: routeId, ...(mapScreenId ? { mapScreenId } : {}), ...pos },
         label: 'map'
     };
 }
@@ -167,8 +174,10 @@ export function completeStoryNode(manager, routeId, nodeId) {
     if (mapTransition) {
         gs.setStoryCursor(nextNodeId, routeId);
         gs.setCurrentCampaign(routeId);
+        const mapScreenId = mapTransition.mapScreenId || MAP_SCREEN_BY_STORY_NODE[nextNodeId] || null;
         manager.switchTo('map', {
             campaignId: routeId,
+            ...(mapScreenId ? { mapScreenId } : {}),
             ...mapTransition
         });
         return;

@@ -47,8 +47,16 @@ export const STORY_ROUTES = {
             },
             chapter2_wan_field: { next: 'chapter2_wan_reversal' },
             chapter2_wan_gate: { next: 'chapter2_wan_reversal' },
-            chapter2_wan_reversal: { next: 'chapter2_wan_final_assault' },
-            chapter2_wan_final_assault: { next: 'chapter2_oath_complete' },
+            chapter2_wan_reversal: {
+                transitions: [
+                    { choice: 'chapter2_wan_second_siege', value: 'hold_north_road', to: 'chapter2_wan_north_road' },
+                    { choice: 'chapter2_wan_second_siege', value: 'join_wall', to: 'chapter2_wan_final_assault' },
+                    { to: 'chapter2_wan_north_road' }
+                ]
+            },
+            chapter2_wan_north_road: { next: 'chapter2_anxi_appointment' },
+            chapter2_wan_final_assault: { next: 'chapter2_anxi_appointment' },
+            chapter2_anxi_appointment: { next: 'chapter2_oath_complete' },
             chapter2_oath_complete: { next: null }
         }
     },

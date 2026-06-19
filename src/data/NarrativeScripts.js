@@ -1,3 +1,54 @@
+const CH2_FREED_LU_ZHI = {
+    any: [
+        { choice: 'luzhi_outcome', value: 'freed', routeId: 'liubei' },
+        { milestone: 'freed_luzhi', routeId: 'liubei' },
+        { milestone: 'freed_luzhi' }
+    ]
+};
+
+const CH2_ATTACKED_DONG_ZHUO = {
+    any: [
+        { choice: 'chapter2_oath_dongzhuo_choice', value: 'strike', routeId: 'chapter2_oath' },
+        { milestone: 'chapter2_oath_dongzhuo_fought', routeId: 'chapter2_oath' },
+        { milestone: 'chapter2_oath_dongzhuo_fought' }
+    ]
+};
+
+const CH2_NO_POLITICAL_CRIMES = {
+    all: [
+        { not: CH2_FREED_LU_ZHI },
+        { not: CH2_ATTACKED_DONG_ZHUO }
+    ]
+};
+
+const CH2_FREED_ONLY = {
+    all: [
+        CH2_FREED_LU_ZHI,
+        { not: CH2_ATTACKED_DONG_ZHUO }
+    ]
+};
+
+const CH2_ATTACKED_ONLY = {
+    all: [
+        { not: CH2_FREED_LU_ZHI },
+        CH2_ATTACKED_DONG_ZHUO
+    ]
+};
+
+const CH2_ONE_POLITICAL_CRIME = {
+    any: [
+        CH2_FREED_ONLY,
+        CH2_ATTACKED_ONLY
+    ]
+};
+
+const CH2_BOTH_POLITICAL_CRIMES = {
+    all: [
+        CH2_FREED_LU_ZHI,
+        CH2_ATTACKED_DONG_ZHUO
+    ]
+};
+
 export const NARRATIVE_SCRIPTS = {
     'intro_poem': [
         { bg: 'peach_garden', type: 'command', action: 'fade', target: 0, speed: 0.001 },
@@ -2801,17 +2852,431 @@ export const NARRATIVE_SCRIPTS = {
             }
         },
         {
+            type: 'choice',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            position: 'top',
+            options: [
+                {
+                    buttonText: { en: 'Hold the north road.', zh: '守北路。' },
+                    voiceId: 'ch2_wan_rev_lb_02_road',
+                    text: {
+                        en: 'Then Sun Jian can press the wall. Our brothers will hold the north road and cut down anyone who breaks from the gate.',
+                        zh: '那便请孙将军攻城。我兄弟守北路，凡从城门突围者，尽截之。'
+                    },
+                    speaker: 'liubei',
+                    result: [
+                        { type: 'command', action: 'setStoryChoice', key: 'chapter2_wan_second_siege', value: 'hold_north_road', routeId: 'chapter2_oath' },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhu-jun-generic',
+                            name: 'Zhu Jun',
+                            voiceId: 'ch2_wan_rev_zj_03_road',
+                            position: 'top',
+                            text: {
+                                en: 'Good. Sun Jian will strike the wall. Xuande, take your brothers to the north road; if Sun Zhong runs, he must find you there.',
+                                zh: '善。孙坚攻城。玄德，你兄弟往守北路；孙仲若走，必使其遇你。'
+                            }
+                        },
+                        {
+                            type: 'dialogue',
+                            speaker: 'sunjian',
+                            portraitKey: 'chengyuanzhi',
+                            name: 'Sun Jian',
+                            voiceId: 'ch2_wan_rev_sj_02_road',
+                            position: 'top',
+                            text: {
+                                en: 'Leave the wall to me. If the rebels flee north, make the road narrower than the gate.',
+                                zh: '城墙交给孙坚。贼若北逃，便请诸君使其路窄于城门。'
+                            }
+                        }
+                    ]
+                },
+                {
+                    buttonText: { en: 'Join Sun Jian at the wall.', zh: '同孙坚攻城。' },
+                    voiceId: 'ch2_wan_rev_lb_02_wall',
+                    text: {
+                        en: 'Then we will join Sun Jian at the wall. If the gate breaks quickly, Sun Zhong will have no road left to use.',
+                        zh: '那我等同孙将军攻城。若速破城门，孙仲便无路可走。'
+                    },
+                    speaker: 'liubei',
+                    result: [
+                        { type: 'command', action: 'setStoryChoice', key: 'chapter2_wan_second_siege', value: 'join_wall', routeId: 'chapter2_oath' },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'zhu-jun-generic',
+                            name: 'Zhu Jun',
+                            voiceId: 'ch2_wan_rev_zj_03_wall',
+                            position: 'top',
+                            text: {
+                                en: 'Then the wall assault will carry our strength. My remaining troops will watch the roads while you and Sun Jian break the gate.',
+                                zh: '如此，攻城一路当用我军锐气。余兵守道路，你与孙坚并力破门。'
+                            }
+                        },
+                        {
+                            type: 'dialogue',
+                            speaker: 'sunjian',
+                            portraitKey: 'chengyuanzhi',
+                            name: 'Sun Jian',
+                            voiceId: 'ch2_wan_rev_sj_02_wall',
+                            position: 'top',
+                            text: {
+                                en: 'Good. We will climb together and settle Zhao Hong before his courage hardens.',
+                                zh: '好。并力登城，趁赵弘胆气未固，便定此役。'
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        { type: 'command', action: 'setStoryChoice', key: 'chapter2_wan_reversal', value: 'sun_jian_arrived', routeId: 'chapter2_oath' },
+        { type: 'command', action: 'fade', target: 1, speed: 0.001 }
+    ],
+    'chapter2_anxi_appointment': [
+        { bg: 'luoyang_aerial_shot', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        {
+            type: 'title',
+            text: { en: 'AFTER WAN', zh: '宛城之后' },
+            subtext: { en: 'Merit waits at Luoyang', zh: '功名滞于洛阳' }
+        },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_anxi_narrator_01',
+            text: {
+                en: 'With Wan settled and Nanyang quiet, Zhu Jun returned to Luoyang and memorialized the merit of Sun Jian and Liu Bei.',
+                zh: '宛城既定，南阳平息，朱儁班师洛阳，上表奏孙坚、刘备等人之功。'
+            }
+        },
+        { bg: 'urban_street', fg: 'urban_street_foreground', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 92, y: 238, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 58, y: 238, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 32, y: 238, drawAboveForeground: true },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_anxi_narrator_02',
+            text: {
+                en: 'Sun Jian had patrons and soon departed to a new post. Liu Bei waited in the capital, day after day, and no summons came.',
+                zh: '孙坚有人情，不久便得别郡司马之任。刘备在京候命，日复一日，却始终不得除授。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhang-fei',
+            name: 'Zhang Fei',
+            voiceId: 'ch2_anxi_zf_01',
+            position: 'top',
+            text: {
+                en: 'We broke rebels, scaled walls, and chased their chiefs into the dust. Are we to live in an inn until our beards turn white?',
+                zh: '咱们破贼、攻城、追杀渠帅，难道要在客舍里等到胡子都白了？'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'guan-yu',
+            name: 'Guan Yu',
+            voiceId: 'ch2_anxi_gy_01',
+            position: 'top',
+            text: {
+                en: 'Merit should speak for itself. Yet at court, even merit seems to need an usher.',
+                zh: '功劳本当自明。只是朝堂之上，功劳也似乎要人引见。'
+            }
+        },
+        {
             type: 'dialogue',
             portraitKey: 'liu-bei',
             name: 'Liu Bei',
-            voiceId: 'ch2_wan_rev_lb_02',
+            voiceId: 'ch2_anxi_lb_01',
             position: 'top',
             text: {
-                en: 'Then our brothers will hold the roads while Sun Jian presses the wall.',
-                zh: '如此，我兄弟守其道路，孙将军可逼其城。'
+                en: 'If office comes, we serve. If none comes, our oath remains. Still, the men who followed us deserve to see justice done.',
+                zh: '有官则尽职，无官亦守义。只是随我等出生入死之人，也该见朝廷公道。'
             }
         },
-        { type: 'command', action: 'setStoryChoice', key: 'chapter2_wan_reversal', value: 'sun_jian_arrived', routeId: 'chapter2_oath' },
+        { type: 'command', action: 'addActor', id: 'zhoujing', imgKey: 'zhoujing', x: 340, y: 234, actorAction: 'walk', speed: 0.72, flip: true, drawAboveForeground: true },
+        { type: 'command', action: 'move', id: 'zhoujing', x: 178, y: 234, wait: true },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhou-jing',
+            name: 'Zhang Jun',
+            voiceId: 'ch2_anxi_zj_01',
+            position: 'top',
+            text: {
+                en: 'You are Liu Xuande? I have heard your name in the campaign reports. Why do you idle in the street like an unrewarded clerk?',
+                zh: '你便是刘玄德？军报中屡闻其名。为何反在街上徘徊，如无功小吏？'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_anxi_lb_02',
+            position: 'top',
+            text: {
+                en: 'We have submitted our names and wait on the court. Nothing more is in my hands.',
+                zh: '我等名籍已上，只待朝廷铨注。除此之外，备无可为。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhou-jing',
+            name: 'Zhang Jun',
+            voiceId: 'ch2_anxi_zj_02',
+            position: 'top',
+            text: {
+                en: 'Then I will speak where waiting cannot. If soldiers bleed for the Han and receive only silence, the silence itself is treason.',
+                zh: '既如此，我便替这沉默开口。将士为汉流血而只得沉默，这沉默本身便是误国。'
+            }
+        },
+        { bg: 'luoyang_council_hall', fg: null, type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'addActor', id: 'zhoujing', imgKey: 'zhoujing', x: 82, y: 206 },
+        { type: 'command', action: 'addActor', id: 'eunuch_left', imgKey: 'eunuch', x: 210, y: 206, flip: true },
+        { type: 'command', action: 'addActor', id: 'eunuch', imgKey: 'eunuch', x: 242, y: 206, flip: true },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhou-jing',
+            name: 'Zhang Jun',
+            voiceId: 'ch2_anxi_zj_03',
+            position: 'top',
+            text: {
+                en: 'The Yellow Turbans rose because offices are sold, kin are favored, enemies are ruined, and worthy men are made to beg at the gate.',
+                zh: '黄巾之乱，正因卖官鬻爵、任亲害仇，贤者有功，反须乞命于门外。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhou-jing',
+            name: 'Zhang Jun',
+            voiceId: 'ch2_anxi_zj_04',
+            position: 'top',
+            text: {
+                en: 'Cut away the corruption of the Ten Attendants, reward those who fought, and the four seas may yet be quiet.',
+                zh: '请诛十常侍之蠹，重赏讨贼有功者，则四海尚可清平。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'eunuch',
+            name: 'Palace Eunuch',
+            voiceId: 'ch2_anxi_eunuch_01',
+            position: 'top',
+            text: {
+                en: 'Zhang Jun deceives the throne. These complaints come from men who resent their place, not men who love the Han.',
+                zh: '张钧欺主。此等怨言，不过出自不得除授之徒，非真为汉室。'
+            }
+        },
+        {
+            condition: CH2_FREED_ONLY,
+            type: 'dialogue',
+            portraitKey: 'eunuch',
+            name: 'Palace Eunuch',
+            voiceId: 'ch2_anxi_eunuch_freed_01',
+            position: 'top',
+            text: {
+                en: 'Liu Bei is also the man who took arms against imperial escorts and released Lu Zhi. Are we to reward disorder with a seal?',
+                zh: '刘备又是劫夺朝廷解送、私放卢植之人。难道要以印绶赏其乱法？'
+            }
+        },
+        {
+            condition: CH2_ATTACKED_ONLY,
+            type: 'dialogue',
+            portraitKey: 'eunuch',
+            name: 'Palace Eunuch',
+            voiceId: 'ch2_anxi_eunuch_dz_01',
+            position: 'top',
+            text: {
+                en: 'Liu Bei is also the man whose brothers raised steel against Dong Zhuo, an imperial general in the field. Is that loyalty?',
+                zh: '刘备又是纵兄弟向董卓举兵之人。董卓乃朝廷将帅，这也算忠义么？'
+            }
+        },
+        {
+            condition: CH2_BOTH_POLITICAL_CRIMES,
+            type: 'dialogue',
+            portraitKey: 'eunuch',
+            name: 'Palace Eunuch',
+            voiceId: 'ch2_anxi_eunuch_both_01',
+            position: 'top',
+            text: {
+                en: 'Liu Bei freed Lu Zhi by force, then raised blades against Dong Zhuo. This is not merit; it is rebellion wearing campaign dust.',
+                zh: '刘备以兵私放卢植，又向董卓举刃。此非功劳，不过披着征尘的叛逆。'
+            }
+        },
+        {
+            condition: CH2_NO_POLITICAL_CRIMES,
+            type: 'narrator',
+            voiceId: 'ch2_anxi_narrator_03',
+            text: {
+                en: 'Zhang Jun was driven out. The eunuchs, fearing that unrewarded soldiers would make more noise, wrote Liu Bei down for a minor office.',
+                zh: '张钧被逐。宦官惧有功之士再生怨言，便权且将刘备铨注微名。'
+            }
+        },
+        {
+            condition: CH2_ONE_POLITICAL_CRIME,
+            type: 'narrator',
+            voiceId: 'ch2_anxi_narrator_one_01',
+            text: {
+                en: "Zhang Jun was driven out. Zhu Jun's memorial could not erase Liu Bei's offense, but it made punishment inconvenient. The court forgave the crime and cut down the reward.",
+                zh: '张钧被逐。朱儁表奏不能抹去刘备之罪，却使朝廷不便加刑。于是赦其罪，减其赏。'
+            }
+        },
+        {
+            condition: CH2_BOTH_POLITICAL_CRIMES,
+            type: 'narrator',
+            voiceId: 'ch2_anxi_narrator_both_01',
+            text: {
+                en: "Zhang Jun was driven out. Zhu Jun's memorial saved Liu Bei's life, not his future. The court remitted the capital charges and granted no office.",
+                zh: '张钧被逐。朱儁表奏救了刘备之命，却救不得前程。朝廷免其死罪，不授官职。'
+            }
+        },
+        { condition: CH2_NO_POLITICAL_CRIMES, type: 'command', action: 'setStoryChoice', key: 'chapter2_oath_political_outcome', value: 'anxi_commandant', routeId: 'chapter2_oath' },
+        { condition: CH2_ONE_POLITICAL_CRIME, type: 'command', action: 'setStoryChoice', key: 'chapter2_oath_political_outcome', value: 'anxi_assistant', routeId: 'chapter2_oath' },
+        { condition: CH2_BOTH_POLITICAL_CRIMES, type: 'command', action: 'setStoryChoice', key: 'chapter2_oath_political_outcome', value: 'pardoned_outlaw', routeId: 'chapter2_oath' },
+        { bg: 'dirt_road_city_in_distance', fg: null, type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 104, y: 192 },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 72, y: 192 },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 46, y: 192 },
+        {
+            condition: CH2_NO_POLITICAL_CRIMES,
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_anxi_lb_03',
+            position: 'top',
+            text: {
+                en: 'Anxi County commandant. The seal is small, but the people beneath it are not small.',
+                zh: '安喜县尉。印绶虽小，印下百姓却不可轻。'
+            }
+        },
+        {
+            condition: CH2_NO_POLITICAL_CRIMES,
+            type: 'dialogue',
+            portraitKey: 'guan-yu',
+            name: 'Guan Yu',
+            voiceId: 'ch2_anxi_gy_02',
+            position: 'top',
+            text: {
+                en: 'Then we go cleanly. A low office held with righteousness is higher than a high office bought with shame.',
+                zh: '那便清清白白去。以义守微官，胜过以耻买高位。'
+            }
+        },
+        {
+            condition: CH2_NO_POLITICAL_CRIMES,
+            type: 'dialogue',
+            portraitKey: 'zhang-fei',
+            name: 'Zhang Fei',
+            voiceId: 'ch2_anxi_zf_02',
+            position: 'top',
+            text: {
+                en: 'Fine. But if some painted official comes to bully honest folk, do not ask me to smile at him.',
+                zh: '也罢。若有花面官来欺压良民，可别叫俺陪他笑脸。'
+            }
+        },
+        {
+            condition: CH2_NO_POLITICAL_CRIMES,
+            type: 'narrator',
+            voiceId: 'ch2_anxi_narrator_04',
+            text: {
+                en: 'Liu Bei dismissed the volunteers to their villages and took only a small retinue with Guan Yu and Zhang Fei to Anxi.',
+                zh: '刘备遂遣军士各归乡里，只带少数亲随，与关羽、张飞赴安喜县上任。'
+            }
+        },
+        {
+            condition: CH2_ONE_POLITICAL_CRIME,
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_anxi_lb_one_01',
+            position: 'top',
+            text: {
+                en: 'Assistant to the Anxi commandant. No seal of my own, yet the people served by that office are still people of the Han.',
+                zh: '安喜县尉佐。虽无自掌之印，然此职所及，仍是汉家百姓。'
+            }
+        },
+        {
+            condition: CH2_ONE_POLITICAL_CRIME,
+            type: 'dialogue',
+            portraitKey: 'guan-yu',
+            name: 'Guan Yu',
+            voiceId: 'ch2_anxi_gy_one_01',
+            position: 'top',
+            text: {
+                en: 'They could not deny your merit, so they made the post smaller than the deed.',
+                zh: '他们不能没你的功，便把官职压得小过功劳。'
+            }
+        },
+        {
+            condition: CH2_ONE_POLITICAL_CRIME,
+            type: 'dialogue',
+            portraitKey: 'zhang-fei',
+            name: 'Zhang Fei',
+            voiceId: 'ch2_anxi_zf_one_01',
+            position: 'top',
+            text: {
+                en: 'A half-reward for a whole battlefield. Hmph. I will still walk beside you to Anxi.',
+                zh: '一场大战，只给半截赏赐。哼。去安喜，俺仍陪大哥。'
+            }
+        },
+        {
+            condition: CH2_ONE_POLITICAL_CRIME,
+            type: 'narrator',
+            voiceId: 'ch2_anxi_narrator_one_02',
+            text: {
+                en: 'Liu Bei dismissed the volunteers to their villages and took a small retinue with Guan Yu and Zhang Fei to Anxi, there to serve beneath another man\'s seal.',
+                zh: '刘备遂遣军士各归乡里，只带少数亲随，与关羽、张飞赴安喜，在他人印下供职。'
+            }
+        },
+        {
+            condition: CH2_BOTH_POLITICAL_CRIMES,
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_anxi_lb_both_01',
+            position: 'top',
+            text: {
+                en: 'So our reward is not a seal, but breath in our bodies. If that breath remains, we can still choose righteousness.',
+                zh: '如此，我等所得不是印绶，而是尚留此身一口气。此气尚在，仍可择义而行。'
+            }
+        },
+        {
+            condition: CH2_BOTH_POLITICAL_CRIMES,
+            type: 'dialogue',
+            portraitKey: 'guan-yu',
+            name: 'Guan Yu',
+            voiceId: 'ch2_anxi_gy_both_01',
+            position: 'top',
+            text: {
+                en: 'A pardon from such hands is not honor, but it keeps the oath alive.',
+                zh: '此等人手中赦免，非荣也；然兄弟之誓因此得存。'
+            }
+        },
+        {
+            condition: CH2_BOTH_POLITICAL_CRIMES,
+            type: 'dialogue',
+            portraitKey: 'zhang-fei',
+            name: 'Zhang Fei',
+            voiceId: 'ch2_anxi_zf_both_01',
+            position: 'top',
+            text: {
+                en: 'Forgive us? After we saved their realm? If anger were wine, I could drown Luoyang in it.',
+                zh: '赦我们？我们救了他们的天下！若怒气是酒，俺能把洛阳灌沉。'
+            }
+        },
+        {
+            condition: CH2_BOTH_POLITICAL_CRIMES,
+            type: 'narrator',
+            voiceId: 'ch2_anxi_narrator_both_02',
+            text: {
+                en: 'Liu Bei dismissed the volunteers to their villages and left Luoyang with Guan Yu and Zhang Fei, their crimes forgiven but their names still darkened at court.',
+                zh: '刘备遂遣军士各归乡里，与关羽、张飞离洛阳。罪名虽赦，朝中名籍仍被涂黑。'
+            }
+        },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 320, y: 192, wait: false },
+        { type: 'command', action: 'move', id: 'guanyu', x: 350, y: 192, wait: false },
+        { type: 'command', action: 'move', id: 'liubei', x: 380, y: 192, wait: true },
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ],
     'chapter2_hejin_gate': [

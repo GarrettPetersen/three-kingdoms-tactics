@@ -42,7 +42,9 @@ export const CHAPTERS = {
                     { id: 'chapter2_wan_field', type: 'battle', battleId: 'chapter2_wan_field' },
                     { id: 'chapter2_wan_gate', type: 'battle', battleId: 'chapter2_wan_gate' },
                     { id: 'chapter2_wan_reversal', type: 'narrative', scriptId: 'chapter2_wan_reversal' },
-                    { id: 'chapter2_wan_final_assault', type: 'battle', battleId: 'chapter2_wan_final_assault' }
+                    { id: 'chapter2_wan_north_road', type: 'battle', battleId: 'chapter2_wan_north_road' },
+                    { id: 'chapter2_wan_final_assault', type: 'battle', battleId: 'chapter2_wan_final_assault' },
+                    { id: 'chapter2_anxi_appointment', type: 'narrative', scriptId: 'chapter2_anxi_appointment' }
                 ]
             },
             hejin: {

@@ -34,6 +34,10 @@ export class DebugStoryGraphScene extends BaseScene {
         this.scroll = 0;
         this.rowRects = [];
         this.backRect = null;
+        this.preflightRows = [];
+        this.preflightButtons = {};
+        this.pendingJump = null;
+        this.preflightSelectedIndex = 0;
         this.dragScroll = null;
         collectChapterSceneMetadata();
     }
@@ -43,6 +47,10 @@ export class DebugStoryGraphScene extends BaseScene {
         this.selectedIndex = 0;
         this.scroll = 0;
         this.rowRects = [];
+        this.preflightRows = [];
+        this.preflightButtons = {};
+        this.pendingJump = null;
+        this.preflightSelectedIndex = 0;
     }
 
     buildEntries() {
@@ -70,6 +78,124 @@ export class DebugStoryGraphScene extends BaseScene {
 
     continueAfterGraphBattle(routeId, nodeId) {
         completeStoryNode(this.manager, routeId, nodeId);
+    }
+
+    shouldShowPreflight(entry) {
+        return entry?.routeId === 'chapter2_oath';
+    }
+
+    getCurrentPreflightChoices() {
+        const gs = this.manager.gameState;
+        const freedLuZhi = gs.getStoryChoice('luzhi_outcome', null, 'liubei') === 'freed'
+            || gs.hasMilestone('freed_luzhi', 'liubei')
+            || gs.hasMilestone('freed_luzhi');
+        const dongZhuoChoice = gs.getStoryChoice('chapter2_oath_dongzhuo_choice', 'restrain', 'chapter2_oath');
+        return {
+            luzhi_outcome: freedLuZhi ? 'freed' : 'restrained',
+            chapter2_oath_dongzhuo_choice: dongZhuoChoice === 'strike' ? 'strike' : 'restrain',
+            chapter2_wan_strategy: gs.getStoryChoice('chapter2_wan_strategy', 'open_southeast', 'chapter2_oath'),
+            chapter2_wan_second_siege: gs.getStoryChoice('chapter2_wan_second_siege', 'hold_north_road', 'chapter2_oath')
+        };
+    }
+
+    getPreflightConfig() {
+        return [
+            {
+                key: 'luzhi_outcome',
+                label: 'Lu Zhi',
+                options: [
+                    { value: 'restrained', label: 'obey law' },
+                    { value: 'freed', label: 'free him' }
+                ]
+            },
+            {
+                key: 'chapter2_oath_dongzhuo_choice',
+                label: 'Dong Zhuo',
+                options: [
+                    { value: 'restrain', label: 'restrain' },
+                    { value: 'strike', label: 'attack' }
+                ]
+            },
+            {
+                key: 'chapter2_wan_strategy',
+                label: 'Wan first',
+                options: [
+                    { value: 'open_southeast', label: 'open road' },
+                    { value: 'assault_walls', label: 'force gate' }
+                ]
+            },
+            {
+                key: 'chapter2_wan_second_siege',
+                label: 'Wan second',
+                options: [
+                    { value: 'hold_north_road', label: 'hold road' },
+                    { value: 'join_wall', label: 'join wall' }
+                ]
+            }
+        ];
+    }
+
+    beginPreflight(index) {
+        const entry = this.entries[index];
+        if (!entry) return;
+        this.pendingJump = {
+            index,
+            entry,
+            choices: this.getCurrentPreflightChoices()
+        };
+        this.preflightSelectedIndex = 0;
+        this.preflightRows = [];
+        this.preflightButtons = {};
+        assets.playSound('ui_click');
+    }
+
+    setPreflightChoice(key, value) {
+        if (!this.pendingJump?.choices) return;
+        this.pendingJump.choices[key] = value;
+        assets.playSound('ui_click', 0.35);
+    }
+
+    cyclePreflightChoice(delta) {
+        if (!this.pendingJump) return;
+        const config = this.getPreflightConfig()[this.preflightSelectedIndex];
+        if (!config) return;
+        const options = config.options || [];
+        const current = this.pendingJump.choices[config.key];
+        const index = Math.max(0, options.findIndex(opt => opt.value === current));
+        const next = options[(index + delta + options.length) % options.length];
+        if (next) this.setPreflightChoice(config.key, next.value);
+    }
+
+    applyPreflightChoices() {
+        const gs = this.manager.gameState;
+        const choices = this.pendingJump?.choices || {};
+
+        if (choices.luzhi_outcome === 'freed') {
+            gs.setStoryChoice('luzhi_outcome', 'freed', 'liubei');
+            gs.setWorldChoice('luzhi_outcome', 'freed');
+            gs.addMilestone('freed_luzhi', 'liubei');
+            gs.addWorldMilestone('freed_luzhi');
+        } else {
+            gs.setStoryChoice('luzhi_outcome', 'restrained', 'liubei');
+            gs.setWorldChoice('luzhi_outcome', 'restrained');
+            gs.removeMilestone('freed_luzhi', 'liubei');
+        }
+
+        const dongZhuoChoice = choices.chapter2_oath_dongzhuo_choice === 'strike' ? 'strike' : 'restrain';
+        gs.setStoryChoice('chapter2_oath_dongzhuo_choice', dongZhuoChoice, 'chapter2_oath');
+        gs.setWorldChoice('chapter2_oath_dongzhuo_choice', dongZhuoChoice);
+        if (dongZhuoChoice === 'strike') {
+            gs.addMilestone('chapter2_oath_dongzhuo_fought', 'chapter2_oath');
+            gs.addWorldMilestone('chapter2_oath_dongzhuo_fought');
+            gs.removeMilestone('chapter2_oath_dongzhuo_restrained', 'chapter2_oath');
+        } else {
+            gs.addMilestone('chapter2_oath_dongzhuo_restrained', 'chapter2_oath');
+            gs.addWorldMilestone('chapter2_oath_dongzhuo_restrained');
+            gs.removeMilestone('chapter2_oath_dongzhuo_fought', 'chapter2_oath');
+        }
+
+        gs.setStoryChoice('chapter2_wan_strategy', choices.chapter2_wan_strategy || 'open_southeast', 'chapter2_oath');
+        gs.setStoryChoice('chapter2_wan_second_siege', choices.chapter2_wan_second_siege || 'hold_north_road', 'chapter2_oath');
     }
 
     buildGraphLaunchParams(routeId, nodeId, launch) {
@@ -112,7 +238,7 @@ export class DebugStoryGraphScene extends BaseScene {
             gs.addMilestone('chapter1_complete', 'liubei');
         }
 
-        if (routeId === 'chapter2_oath') {
+        if (routeId === 'chapter2_oath' && gs.getStoryChoice('chapter2_oath_dongzhuo_choice', null, routeId) == null) {
             gs.setStoryChoice('chapter2_oath_dongzhuo_choice', 'restrain', routeId);
             gs.setWorldChoice('chapter2_oath_dongzhuo_choice', 'restrain');
         }
@@ -126,6 +252,16 @@ export class DebugStoryGraphScene extends BaseScene {
     jumpToEntry(index = this.selectedIndex) {
         const entry = this.entries[index];
         if (!entry) return;
+        if (this.shouldShowPreflight(entry)) {
+            this.beginPreflight(index);
+            return;
+        }
+        this.performJumpToEntry(index);
+    }
+
+    performJumpToEntry(index = this.selectedIndex) {
+        const entry = this.entries[index];
+        if (!entry) return;
         const launch = entry.launch || this.resolveLaunchTarget(entry.routeId, entry.nodeId);
         this.prepareRouteForJump(entry.routeId, entry.nodeId);
         this.manager.gameState.setLastScene(launch.scene);
@@ -135,12 +271,64 @@ export class DebugStoryGraphScene extends BaseScene {
         this.manager.switchTo(launch.scene, params);
     }
 
+    confirmPreflightJump() {
+        if (!this.pendingJump) return;
+        const index = this.pendingJump.index;
+        this.applyPreflightChoices();
+        this.pendingJump = null;
+        this.preflightRows = [];
+        this.preflightButtons = {};
+        this.performJumpToEntry(index);
+    }
+
+    cancelPreflightJump() {
+        this.pendingJump = null;
+        this.preflightRows = [];
+        this.preflightButtons = {};
+        assets.playSound('ui_click', 0.35);
+    }
+
     goBack() {
         assets.playSound('ui_click');
         this.manager.switchTo('campaign_selection');
     }
 
     handleKeyDown(e) {
+        if (this.pendingJump) {
+            const config = this.getPreflightConfig();
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                this.preflightSelectedIndex = (this.preflightSelectedIndex - 1 + config.length) % config.length;
+                assets.playSound('ui_click', 0.35);
+                return;
+            }
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                this.preflightSelectedIndex = (this.preflightSelectedIndex + 1) % config.length;
+                assets.playSound('ui_click', 0.35);
+                return;
+            }
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.cyclePreflightChoice(-1);
+                return;
+            }
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.cyclePreflightChoice(1);
+                return;
+            }
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.confirmPreflightJump();
+                return;
+            }
+            if (e.key === 'Escape' || e.key === 'Backspace') {
+                e.preventDefault();
+                this.cancelPreflightJump();
+                return;
+            }
+        }
         if (e.key === 'ArrowUp') {
             e.preventDefault();
             this.selectedIndex -= 1;
@@ -196,6 +384,23 @@ export class DebugStoryGraphScene extends BaseScene {
 
     handleInput(e) {
         const { x, y } = this.getMousePos(e);
+        if (this.pendingJump) {
+            const row = this.preflightRows.find(rect => x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h);
+            if (row) {
+                this.preflightSelectedIndex = row.index;
+                this.setPreflightChoice(row.key, row.value);
+                return;
+            }
+            if (this.preflightButtons.confirm && x >= this.preflightButtons.confirm.x && x <= this.preflightButtons.confirm.x + this.preflightButtons.confirm.w && y >= this.preflightButtons.confirm.y && y <= this.preflightButtons.confirm.y + this.preflightButtons.confirm.h) {
+                this.confirmPreflightJump();
+                return;
+            }
+            if (this.preflightButtons.cancel && x >= this.preflightButtons.cancel.x && x <= this.preflightButtons.cancel.x + this.preflightButtons.cancel.w && y >= this.preflightButtons.cancel.y && y <= this.preflightButtons.cancel.y + this.preflightButtons.cancel.h) {
+                this.cancelPreflightJump();
+                return;
+            }
+            return;
+        }
         if (this.backRect && x >= this.backRect.x && x <= this.backRect.x + this.backRect.w && y >= this.backRect.y && y <= this.backRect.y + this.backRect.h) {
             this.goBack();
             return;
@@ -219,6 +424,7 @@ export class DebugStoryGraphScene extends BaseScene {
 
     onMouseInput(mouseX, mouseY) {
         super.onMouseInput(mouseX, mouseY);
+        if (this.pendingJump) return;
         if (this.dragScroll) {
             const delta = mouseY - this.dragScroll.lastY;
             if (Math.abs(mouseY - this.dragScroll.startY) > 4 || Math.abs(mouseX - this.dragScroll.startX) > 4) {
@@ -239,6 +445,7 @@ export class DebugStoryGraphScene extends BaseScene {
     }
 
     handlePointerUp(e) {
+        if (this.pendingJump) return;
         if (!this.dragScroll) return;
         const { x, y } = this.getMousePos(e);
         const wasDrag = this.dragScroll.moved;
@@ -253,6 +460,7 @@ export class DebugStoryGraphScene extends BaseScene {
     }
 
     handleWheel(e) {
+        if (this.pendingJump) return;
         if (typeof e.preventDefault === 'function') e.preventDefault();
         const rawRows = Math.abs(e.deltaY) >= 40 ? Math.trunc(e.deltaY / 40) : Math.sign(e.deltaY);
         const rows = rawRows || Math.sign(e.deltaY);
@@ -266,6 +474,12 @@ export class DebugStoryGraphScene extends BaseScene {
         ctx.imageSmoothingEnabled = false;
         ctx.fillStyle = '#070707';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        if (this.pendingJump) {
+            this.renderPreflight(ctx, canvas);
+            ctx.restore();
+            return;
+        }
 
         this.drawPixelText(ctx, 'STORY GRAPH JUMP', 10, 8, { color: '#ffd700', font: '8px Silkscreen' });
         this.drawPixelText(ctx, 'Select a route node. Enter/click jumps there.', 10, 23, { color: '#aaa', font: '8px Tiny5' });
@@ -344,5 +558,68 @@ export class DebugStoryGraphScene extends BaseScene {
         }
 
         ctx.restore();
+    }
+
+    renderPreflight(ctx, canvas) {
+        const entry = this.pendingJump.entry;
+        const config = this.getPreflightConfig();
+        this.preflightRows = [];
+        this.preflightButtons = {};
+
+        this.drawPixelText(ctx, 'STORY CHOICES', 10, 8, { color: '#ffd700', font: '8px Silkscreen' });
+        this.drawPixelText(ctx, `${entry.routeLabel}: ${entry.nodeId}`, 10, 23, { color: '#aaa', font: '8px Tiny5' });
+
+        const panelX = 10;
+        const panelY = 44;
+        const panelW = canvas.width - 20;
+        const rowH = 28;
+        const optionW = Math.floor((panelW - 84) / 2);
+
+        ctx.fillStyle = '#111';
+        ctx.fillRect(panelX, panelY - 8, panelW, config.length * rowH + 18);
+        ctx.strokeStyle = '#444';
+        ctx.strokeRect(panelX + 0.5, panelY - 7.5, panelW - 1, config.length * rowH + 17);
+
+        config.forEach((row, index) => {
+            const y = panelY + index * rowH;
+            const selected = index === this.preflightSelectedIndex;
+            this.drawPixelText(ctx, row.label, panelX + 6, y + 8, { color: selected ? '#ffd700' : '#ddd', font: '8px Tiny5' });
+            row.options.forEach((option, optionIndex) => {
+                const active = this.pendingJump.choices[row.key] === option.value;
+                const x = panelX + 78 + optionIndex * (optionW + 4);
+                ctx.fillStyle = active ? '#5a3a12' : '#1a1a1a';
+                ctx.fillRect(x, y + 4, optionW, 18);
+                ctx.strokeStyle = active ? '#ffd700' : '#555';
+                ctx.strokeRect(x + 0.5, y + 4.5, optionW - 1, 17);
+                this.drawPixelText(ctx, option.label, x + Math.floor(optionW / 2), y + 9, {
+                    color: active ? '#fff' : '#aaa',
+                    font: '8px Tiny5',
+                    align: 'center'
+                });
+                this.preflightRows.push({ x, y: y + 4, w: optionW, h: 18, key: row.key, value: option.value, index });
+            });
+        });
+
+        const helpY = panelY + config.length * rowH + 20;
+        this.drawPixelText(ctx, 'Set prior choices before graphjump.', panelX, helpY, { color: '#777', font: '8px Tiny5' });
+        this.drawPixelText(ctx, 'Enter confirms. Esc cancels.', panelX, helpY + 11, { color: '#777', font: '8px Tiny5' });
+
+        const buttonY = canvas.height - 28;
+        this.preflightButtons.cancel = { x: 10, y: buttonY, w: 54, h: 18 };
+        this.preflightButtons.confirm = { x: canvas.width - 84, y: buttonY, w: 74, h: 18 };
+        [
+            { rect: this.preflightButtons.cancel, label: 'CANCEL', color: '#999' },
+            { rect: this.preflightButtons.confirm, label: 'JUMP', color: '#ffd700' }
+        ].forEach(button => {
+            ctx.fillStyle = '#151515';
+            ctx.fillRect(button.rect.x, button.rect.y, button.rect.w, button.rect.h);
+            ctx.strokeStyle = button.color;
+            ctx.strokeRect(button.rect.x + 0.5, button.rect.y + 0.5, button.rect.w - 1, button.rect.h - 1);
+            this.drawPixelText(ctx, button.label, button.rect.x + button.rect.w / 2, button.rect.y + 5, {
+                color: button.color,
+                font: '8px Tiny5',
+                align: 'center'
+            });
+        });
     }
 }

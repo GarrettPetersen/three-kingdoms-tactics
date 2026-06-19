@@ -1085,6 +1085,8 @@ export const BATTLES = {
             { id: 'ally2', r: 8, q: 6, type: 'allied_soldier', cityGateSide: 'outside' },
             { id: 'zhujun', r: 6, q: 1, type: 'commander', templateId: 'zhujun', cityGateSide: 'outside' },
             { id: 'imperial1', r: 6, q: 7, type: 'imperial_soldier', cityGateSide: 'outside' },
+            { id: 'wan_ladder_left', r: 8, q: 4, type: 'siege_ladder', templateId: 'ladder', faction: 'allied', cityGateSide: 'outside' },
+            { id: 'wan_ladder_right', r: 8, q: 5, type: 'siege_ladder', templateId: 'ladder', faction: 'allied', cityGateSide: 'outside' },
             { id: 'hanzhong', r: 2, q: 4, type: 'enemy_captain', templateId: 'hanzhong', cityGateSide: 'inside' },
             { id: 'wall_rebel1', r: 2, q: 2, type: 'enemy_soldier', cityGateSide: 'inside' },
             { id: 'wall_rebel2', r: 2, q: 6, type: 'enemy_soldier', templateId: 'rebel_archer', cityGateSide: 'inside' },
@@ -1176,6 +1178,126 @@ export const BATTLES = {
             ]
         }
     },
+    'chapter2_wan_north_road': {
+        name: 'Wan - Hold the North Road',
+        map: {
+            biome: 'northern',
+            layout: 'road',
+            seed: 'chapter2_wan_north_road',
+            forestDensity: 0.06,
+            mountainDensity: 0.08,
+            riverDensity: 0.0,
+            houseDensity: 0.0
+        },
+        units: [
+            { id: 'liubei', r: 6, q: 2, type: 'hero', templateId: 'liubei' },
+            { id: 'guanyu', r: 5, q: 2, type: 'hero', templateId: 'guanyu' },
+            { id: 'zhangfei', r: 7, q: 2, type: 'hero', templateId: 'zhangfei' },
+            { id: 'ally1', r: 5, q: 1, type: 'allied_soldier' },
+            { id: 'ally2', r: 7, q: 1, type: 'allied_soldier' },
+            { id: 'imperial1', r: 6, q: 1, type: 'imperial_soldier' },
+            { id: 'sunzhong', r: 6, q: 8, type: 'enemy_captain', templateId: 'sunzhong' },
+            { id: 'rebel1', r: 5, q: 8, type: 'enemy_soldier', templateId: 'rebel_archer' },
+            { id: 'rebel2', r: 7, q: 8, type: 'enemy_soldier' },
+            { id: 'rebel3', r: 4, q: 9, type: 'enemy_soldier' },
+            { id: 'rebel4', r: 8, q: 9, type: 'enemy_soldier', templateId: 'rebel_archer' },
+            { id: 'rebel5', r: 6, q: 9, type: 'enemy_soldier' }
+        ],
+        victoryCondition: {
+            type: 'defeat_all_enemies',
+            mustSurvive: ['liubei', 'guanyu', 'zhangfei']
+        },
+        introScript: [
+            {
+                speaker: 'zhujun',
+                portraitKey: 'zhu-jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'ch2_wan_north_zj_01',
+                text: {
+                    en: "Sun Jian is striking the wall. Xuande, hold this north road; Sun Zhong must not carry Zhao Hong's remnant away.",
+                    zh: "孙坚正攻城墙。玄德，守住这条北路；不可令孙仲带赵弘余众逃去。"
+                }
+            },
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'ch2_wan_north_lb_01',
+                text: {
+                    en: "Form across the road. Leave the rebels no passage except surrender.",
+                    zh: "横列于道路之上。除降服之外，不给贼众留路。"
+                }
+            },
+            {
+                speaker: 'sunzhong',
+                portraitKey: 'yellowturban',
+                name: 'Sun Zhong',
+                voiceId: 'ch2_wan_north_sz_01',
+                text: {
+                    en: "The wall is shaking. Run north before Sun Jian shuts us inside Wan!",
+                    zh: "城墙将破！趁孙坚未封住宛城，向北杀出去！"
+                }
+            }
+        ],
+        postCombatScript: [
+            {
+                speaker: 'liubei',
+                portraitKey: 'liu-bei',
+                name: 'Liu Bei',
+                voiceId: 'ch2_wan_north_lb_02',
+                text: {
+                    en: "Sun Zhong's column is broken. Gather the weapons and spare those who throw them down.",
+                    zh: "孙仲一队已破。收其兵器，弃械者可免。"
+                }
+            },
+            {
+                speaker: 'sunjian',
+                portraitKey: 'chengyuanzhi',
+                name: 'Sun Jian',
+                voiceId: 'ch2_wan_north_sj_01',
+                text: {
+                    en: "The wall is ours, and Zhao Hong is dead. Your roadblock kept the rebels from becoming an army again.",
+                    zh: "城墙已取，赵弘已死。你等守路，使贼众不能复成军势。"
+                }
+            },
+            {
+                speaker: 'zhujun',
+                portraitKey: 'zhu-jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'ch2_wan_north_zj_02',
+                text: {
+                    en: "Then Wan is settled. Nanyang is quiet, and the court will hear who held the road.",
+                    zh: "如此宛城已定，南阳复平。朝廷自会知道是谁守住此路。"
+                }
+            }
+        ],
+        defeat: {
+            retry: { scene: 'tactics', params: { battleId: 'chapter2_wan_north_road' } },
+            script: [
+                {
+                    bg: 'army_camp',
+                    type: 'dialogue',
+                    portraitKey: 'zhu-jun-generic',
+                    name: 'Zhu Jun',
+                    voiceId: 'ch2_wan_north_defeat_zj_01',
+                    text: {
+                        en: "Sun Zhong broke through the north road. Reform the line before his remnant gathers strength.",
+                        zh: "孙仲冲破北路。趁余众未聚，立刻重整军阵。"
+                    }
+                },
+                {
+                    type: 'dialogue',
+                    portraitKey: 'liu-bei',
+                    name: 'Liu Bei',
+                    voiceId: 'ch2_wan_north_defeat_lb_01',
+                    text: {
+                        en: "The wall assault depends on this road staying closed. We try again at once.",
+                        zh: "攻城之势，要靠此路不失。即刻再战。"
+                    }
+                }
+            ]
+        }
+    },
     'chapter2_wan_final_assault': {
         name: 'Wan - Sun Jian at the Walls',
         map: {
@@ -1198,6 +1320,8 @@ export const BATTLES = {
             { id: 'sunjian_soldier1', r: 6, q: 1, type: 'imperial_soldier', cityGateSide: 'outside' },
             { id: 'sunjian_soldier2', r: 7, q: 1, type: 'imperial_soldier', cityGateSide: 'outside' },
             { id: 'zhujun', r: 6, q: 7, type: 'commander', templateId: 'zhujun', cityGateSide: 'outside' },
+            { id: 'wan_final_ladder_left', r: 8, q: 2, type: 'siege_ladder', templateId: 'ladder', faction: 'allied', cityGateSide: 'outside' },
+            { id: 'wan_final_ladder_right', r: 8, q: 6, type: 'siege_ladder', templateId: 'ladder', faction: 'allied', cityGateSide: 'outside' },
             { id: 'zhaohong', r: 2, q: 4, type: 'enemy_captain', templateId: 'zhaohong', cityGateSide: 'inside' },
             { id: 'sunzhong', r: 2, q: 5, type: 'enemy_captain', templateId: 'sunzhong', cityGateSide: 'inside' },
             { id: 'wall_rebel1', r: 1, q: 2, type: 'enemy_soldier', templateId: 'rebel_archer', cityGateSide: 'inside' },
@@ -1216,8 +1340,8 @@ export const BATTLES = {
                 name: 'Zhu Jun',
                 voiceId: 'ch2_wan_final_zj_01',
                 text: {
-                    en: "Sun Jian has joined us. We strike the gate together; keep the assault line tight and give the rebels no room to rally.",
-                    zh: "孙坚既至，我军合攻此门。攻城之阵须齐整，不可使贼众复聚。"
+                    en: "Xuande has chosen to join Sun Jian at the wall. My remaining troops will watch the roads; your task is to break this gate.",
+                    zh: "玄德已决意同孙坚攻城。余兵守道路；你等所任，便是破此城门。"
                 }
             },
             {
@@ -1236,8 +1360,8 @@ export const BATTLES = {
                 name: 'Liu Bei',
                 voiceId: 'ch2_wan_final_lb_01',
                 text: {
-                    en: "Brothers, press the gate with Sun Jian. If Sun Zhong breaks out, cut off his road before the rebellion scatters again.",
-                    zh: "二弟三弟，与孙将军并力攻门。孙仲若突围，便截其去路，勿使乱势复散。"
+                    en: "Brothers, press the gate with Sun Jian. Break Zhao Hong and Sun Zhong here before the rebellion scatters again.",
+                    zh: "二弟三弟，与孙将军并力攻门。就在此处破赵弘、孙仲，勿使乱势复散。"
                 }
             },
             {
@@ -1687,5 +1811,20 @@ export const UNIT_TEMPLATES = {
     },
     'prop': {
         'boulder': { name: 'Boulder', imgKey: 'boulder', hp: 2, moveRange: 0, attacks: [], faction: 'neutral' }
+    },
+    'siege_ladder': {
+        'ladder': {
+            name: 'Siege Ladder',
+            imgKey: 'siege_ladder',
+            hp: 4,
+            moveRange: 1,
+            attacks: [],
+            faction: 'allied',
+            isProp: true,
+            isSiegeLadder: true,
+            crackedImgKey: 'siege_ladder_cracked',
+            destroyedImgKey: 'siege_ladder_destroyed',
+            ladderCombatLevel: 3
+        }
     }
 };

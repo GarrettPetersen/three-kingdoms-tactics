@@ -78,6 +78,11 @@ export class Unit {
         this.keepBrokenOnDefeat = !!config.keepBrokenOnDefeat;
         this.staticCorpseImgKey = config.staticCorpseImgKey || null;
         this.carryImgKey = config.carryImgKey || null;
+        this.isSiegeLadder = !!config.isSiegeLadder;
+        this.isDestroyedSiegeLadder = !!config.isDestroyedSiegeLadder;
+        this.crackedImgKey = config.crackedImgKey || null;
+        this.destroyedImgKey = config.destroyedImgKey || null;
+        this.ladderCombatLevel = Number.isFinite(config.ladderCombatLevel) ? config.ladderCombatLevel : 3;
     }
 
     playDeathSoundOnce() {
