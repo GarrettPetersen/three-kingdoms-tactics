@@ -2,18 +2,20 @@
 PYTHON_VENV = ./tools/venv_xtts/bin/python3
 PORTRAITS_SCRIPT = tools/generate_portraits.py
 VOICES_SCRIPT = tools/generate_voices_xtts.py
+VOICE_REPAIR_SCRIPT = tools/repair_voices.py
 EXTRACT_VOICES_SCRIPT = tools/extract_voice_lines.py
 NARRATIVE_WORKFLOW_SCRIPT = tools/narrative_workflow.py
 VOICE_LANG ?= all
 VOICE_LANGUAGES = en zh
 
-.PHONY: help portrait portraits extract-voices voices clean-voices plot-init plot-answer-major plot-answer-pov plot-answer-pov-set plot-pov-qa-start plot-answer-pov-qa plot-answer-pov-b plot-answer-pov-c plot-prompt build build-all build-mac build-win build-linux
+.PHONY: help portrait portraits extract-voices voices voice-repair clean-voices plot-init plot-answer-major plot-answer-pov plot-answer-pov-set plot-pov-qa-start plot-answer-pov-qa plot-answer-pov-b plot-answer-pov-c plot-prompt build build-all build-mac build-win build-linux
 
 help:
 	@echo "Available commands:"
 	@echo "  make portrait NAME=<name>   - Re-generate a single portrait (e.g., make portrait NAME=liu-bei)"
 	@echo "  make portraits              - Re-generate ALL portraits"
 	@echo "  make voices                 - Extract and generate all voice lines (VOICE_LANG=all|en|zh)"
+	@echo "  make voice-repair           - Regenerate high-WER voices and keep only improved lines"
 	@echo "  make extract-voices         - Refresh extracted voice line cache (VOICE_LANG=all|en|zh)"
 	@echo "  make clean-voices           - Delete all generated voices"
 	@echo "  make plot-init CHAPTER=<n>  - Initialize narrative workflow for chapter n"
@@ -59,6 +61,15 @@ voices: extract-voices
 		done; \
 	else \
 		VOICE_LANG=$(VOICE_LANG) $(PYTHON_VENV) $(VOICES_SCRIPT); \
+	fi
+
+voice-repair:
+	@if [ "$(VOICE_LANG)" = "all" ]; then \
+		for lang in $(VOICE_LANGUAGES); do \
+			VOICE_LANG=$$lang $(PYTHON_VENV) $(VOICE_REPAIR_SCRIPT) $(if $(VOICE_LINE),--line "$(VOICE_LINE)") $(if $(VOICE_REPAIR_LIMIT),--limit "$(VOICE_REPAIR_LIMIT)") $(if $(VOICE_REPAIR_WER_THRESHOLD),--threshold "$(VOICE_REPAIR_WER_THRESHOLD)"); \
+		done; \
+	else \
+		VOICE_LANG=$(VOICE_LANG) $(PYTHON_VENV) $(VOICE_REPAIR_SCRIPT) $(if $(VOICE_LINE),--line "$(VOICE_LINE)") $(if $(VOICE_REPAIR_LIMIT),--limit "$(VOICE_REPAIR_LIMIT)") $(if $(VOICE_REPAIR_WER_THRESHOLD),--threshold "$(VOICE_REPAIR_WER_THRESHOLD)"); \
 	fi
 
 clean-voices:
@@ -142,4 +153,3 @@ build-win:
 
 build-linux:
 	npm run dist:linux
-

@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import string
+import hashlib
 
 try:
     import whisper
@@ -61,6 +62,7 @@ CHAR_TARGETS = {
     "yanzheng": "movies/clean/clean_brash_australian_man.wav",
     "hejin": "movies/clean/clean_thanos_deep_villain.wav",  # Middle-aged, powerful court voice
     "panyin": "movies/clean/clean_mulans-dad.wav",  # Urgent but grounded official
+    "yuanshao": "movies/clean/clean_brash_australian_man.wav",  # Confident aristocratic hawk
     "eunuch": "movies/clean/clean_disney_hades.wav",  # Slippery palace functionary
     "eunuchguard": "movies/clean/clean_master_xehanort.wav",  # Cold palace enforcer
     "xiaoer": "movies/clean/clean_dark_riku_young_adult.wav",  # Distinct young inn/game player voice
@@ -107,6 +109,7 @@ CHAR_TARGETS_MANDARIN = {
     "yanzheng": "mandarin/clean/clean_bipolar_male_mandarin.wav",  # Rebel subordinate turning on Zhang Bao
     "hejin": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav",  # Powerful middle-aged court voice
     "panyin": "mandarin/clean/clean_calm_wise_male_mandarin.wav",  # Calm warning voice
+    "yuanshao": "mandarin/clean/clean_bipolar_male_mandarin.wav",  # Forceful aristocratic hawk
     "eunuch": "mandarin/clean/clean_grandiose_male_mandarin.wav",  # Palace functionary
     "eunuchguard": "mandarin/clean/clean_fearsome_elder_male_mandarin.wav",  # Cold palace enforcer
     "xiaoer": "mandarin/clean/clean_young_adult_male_mandarin.wav",  # Distinct inn/game player voice
@@ -130,6 +133,7 @@ CHAR_TARGETS_MANDARIN = {
 tts = None
 stt_model = None
 _SOURCE_PATH_CACHE = {}
+VOICE_HASH_VERSION = 1
 
 
 def project_relative_path(path):
@@ -169,24 +173,76 @@ def resolve_line_source_path(line):
     return path
 
 
-def voice_dependency_paths(line):
-    """Return files whose newer mtime should make this voice line stale."""
-    paths = []
-    source_path = resolve_line_source_path(line)
-    if source_path:
-        paths.append(source_path)
-
-    for dependency in line.get("voice_dependencies", []):
-        path = resolve_project_path(dependency)
-        if path.exists():
-            paths.append(path)
-
-    return paths
+def voice_hash_manifest_path(lang_code):
+    return PROJECT_ROOT / "tools" / f"voice_line_hashes_{lang_code}.json"
 
 
-def voice_file_generation_status(line, lang_code):
+def load_voice_hash_manifest(lang_code):
+    path = voice_hash_manifest_path(lang_code)
+    if not path.exists():
+        return {}
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            data = json.load(f)
+        except json.JSONDecodeError:
+            return {}
+    return data if isinstance(data, dict) else {}
+
+
+def voice_target_filename(character, lang_code):
+    char_key = character.lower().replace(" ", "")
+    if lang_code == "zh":
+        return CHAR_TARGETS_MANDARIN.get(char_key, CHAR_TARGETS_MANDARIN["default"])
+    return CHAR_TARGETS.get(char_key, CHAR_TARGETS["default"])
+
+
+def voice_line_hash(line, lang_code):
+    payload = {
+        "version": VOICE_HASH_VERSION,
+        "language": lang_code,
+        "id": line["id"],
+        "character": line["char"],
+        "text": line["text"],
+        "original_text": line.get("original_text", line["text"]),
+        "speed": line.get("speed", 1.0),
+        "emotion": line.get("emotion"),
+        "phonetic_text": line.get("phonetic_text"),
+        "voice_target": voice_target_filename(line["char"], lang_code),
+    }
+    encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def voice_hash_entry(line, lang_code):
+    return {
+        "hash": voice_line_hash(line, lang_code),
+        "version": VOICE_HASH_VERSION,
+        "character": line["char"],
+        "text": line.get("original_text", line["text"]),
+        "voice_target": voice_target_filename(line["char"], lang_code),
+    }
+
+
+def save_voice_hash_manifest(voice_lines, lang_code):
+    manifest = {}
+    for line in voice_lines:
+        output_ogg = Path(OUTPUT_DIR) / lang_code / f"{line['id']}.ogg"
+        if output_ogg.exists() and output_ogg.stat().st_size > 0:
+            manifest[line["id"]] = voice_hash_entry(line, lang_code)
+
+    path = voice_hash_manifest_path(lang_code)
+    existing = load_voice_hash_manifest(lang_code)
+    if existing == manifest:
+        return
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(manifest, f, indent=2, ensure_ascii=False, sort_keys=True)
+        f.write("\n")
+
+
+def voice_file_generation_status(line, lang_code, hash_manifest=None):
     """Decide whether a voice line needs audio generated or regenerated."""
     output_ogg = Path(OUTPUT_DIR) / lang_code / f"{line['id']}.ogg"
+    hash_manifest = hash_manifest or {}
 
     if not output_ogg.exists():
         return {"needs_generation": True, "reason": "missing", "details": "no audio file"}
@@ -195,16 +251,14 @@ def voice_file_generation_status(line, lang_code):
     if audio_stat.st_size == 0:
         return {"needs_generation": True, "reason": "empty", "details": "0-byte audio file"}
 
-    stale_paths = []
-    for path in voice_dependency_paths(line):
-        if path.stat().st_mtime_ns > audio_stat.st_mtime_ns:
-            stale_paths.append(project_relative_path(path))
-
-    if stale_paths:
+    stored = hash_manifest.get(line["id"])
+    stored_hash = stored.get("hash") if isinstance(stored, dict) else stored
+    current_hash = voice_line_hash(line, lang_code)
+    if stored_hash and stored_hash != current_hash:
         return {
             "needs_generation": True,
             "reason": "stale",
-            "details": f"newer dependency: {', '.join(stale_paths)}",
+            "details": "line generation hash changed",
         }
 
     return {"needs_generation": False, "reason": "current", "details": ""}
@@ -1372,15 +1426,17 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Pre-fill list of lines that need generation.
+    hash_manifest = load_voice_hash_manifest(LANGUAGE)
     lines_to_generate = []
     generation_statuses = {}
     for line in voice_lines:
-        status = voice_file_generation_status(line, LANGUAGE)
+        status = voice_file_generation_status(line, LANGUAGE, hash_manifest)
         if status["needs_generation"]:
             lines_to_generate.append(line)
             generation_statuses[line["id"]] = status
 
     if len(lines_to_generate) == 0:
+        save_voice_hash_manifest(voice_lines, LANGUAGE)
         print("All voice files are current. Nothing to generate.")
         sys.exit(0)
 
@@ -1445,3 +1501,4 @@ if __name__ == "__main__":
     with open(lang_report_file, "w") as f:
         json.dump(existing_report, f, indent=4, ensure_ascii=False)
     print(f"\nVerification report updated in {lang_report_file}")
+    save_voice_hash_manifest(voice_lines, LANGUAGE)

@@ -3571,5 +3571,698 @@
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
+    },
+    "zh:ch2_anxi_eunuch_01": {
+        "id": "ch2_anxi_eunuch_01",
+        "character": "eunuch",
+        "original_text": "张钧欺主。此等怨言，不过出自不得除授之徒，非真为汉室。",
+        "stt_output": "将军其主此等院言不过出自不得除兽之图非真未汉事",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_eunuch_both_01": {
+        "id": "ch2_anxi_eunuch_both_01",
+        "character": "eunuch",
+        "original_text": "刘备以兵私放卢植，又向董卓举刃。此非功劳，不过披着征尘的叛逆。",
+        "stt_output": "流被以兵司放如此又向董卓举认死非功劳不过批则争承的叛逸",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_eunuch_dz_01": {
+        "id": "ch2_anxi_eunuch_dz_01",
+        "character": "eunuch",
+        "original_text": "刘备又是纵兄弟向董卓举兵之人。董卓乃朝廷将帅，这也算忠义么？",
+        "stt_output": "流被又是重兄弟向董卓取兵之人董卓乃朝廷降帥这也算中一吗",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_eunuch_freed_01": {
+        "id": "ch2_anxi_eunuch_freed_01",
+        "character": "eunuch",
+        "original_text": "刘备又是劫夺朝廷解送、私放卢植之人。难道要以印绶赏其乱法？",
+        "stt_output": "流被又是解奪朝廷借送私放如植之人難道要以應受上其亂法?",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_gy_01": {
+        "id": "ch2_anxi_gy_01",
+        "character": "guanyu",
+        "original_text": "功劳本当自明。只是朝堂之上，功劳也似乎要人引见。",
+        "stt_output": "功勞本當自明,只是朝堂之上,功勞也似乎要人引見。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_gy_02": {
+        "id": "ch2_anxi_gy_02",
+        "character": "guanyu",
+        "original_text": "那便清清白白去。以义守微官，胜过以耻买高位。",
+        "stt_output": "那便清清白白去,以一手微觀,勝過一尺買高尾。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_gy_both_01": {
+        "id": "ch2_anxi_gy_both_01",
+        "character": "guanyu",
+        "original_text": "此等人手中赦免，非荣也；然兄弟之誓因此得存。",
+        "stt_output": "此等人手中射面,非容也,然兄弟之事,因此得存。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_gy_one_01": {
+        "id": "ch2_anxi_gy_one_01",
+        "character": "guanyu",
+        "original_text": "他们不能没你的功，便把官职压得小过功劳。",
+        "stt_output": "他們不能沒你的功,便把關直壓的小郭功勞。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_lb_01": {
+        "id": "ch2_anxi_lb_01",
+        "character": "liubei",
+        "original_text": "有官则尽职，无官亦守义。只是随我等出生入死之人，也该见朝廷公道。",
+        "stt_output": "有關則禁止,無關一手一,只是隨我等出生入死之人,也該見朝廷公道。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_lb_02": {
+        "id": "ch2_anxi_lb_02",
+        "character": "liubei",
+        "original_text": "我等名籍已上，只待朝廷铨注。除此之外，备无可为。",
+        "stt_output": "我等名记以上直带朝廷全住,出此之外被无可谓。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_lb_03": {
+        "id": "ch2_anxi_lb_03",
+        "character": "liubei",
+        "original_text": "安喜县尉。印绶虽小，印下百姓却不可轻。",
+        "stt_output": "安喜线为 硬受碎小 印下百姓却不可清",
+        "wer": 3.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_lb_both_01": {
+        "id": "ch2_anxi_lb_both_01",
+        "character": "liubei",
+        "original_text": "如此，我等所得不是印绶，而是尚留此身一口气。此气尚在，仍可择义而行。",
+        "stt_output": "如此我登所的不是印奏而是上流此生意口气此气上在仍可则意而行",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_lb_one_01": {
+        "id": "ch2_anxi_lb_one_01",
+        "character": "liubei",
+        "original_text": "安喜县尉佐。虽无自掌之印，然此职所及，仍是汉家百姓。",
+        "stt_output": "安喜憲為左,雖無自長之印,然此之所其仍是漢家百姓。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_narrator_01": {
+        "id": "ch2_anxi_narrator_01",
+        "character": "narrator",
+        "original_text": "宛城既定，南阳平息，朱儁班师洛阳，上表奏孙坚、刘备等人之功。",
+        "stt_output": "完成基定南洋平息朱俊班湿洛杨上表做瞬间刘备等人之功",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_narrator_02": {
+        "id": "ch2_anxi_narrator_02",
+        "character": "narrator",
+        "original_text": "孙坚有人情，不久便得别郡司马之任。刘备在京候命，日复一日，却始终不得除授。",
+        "stt_output": "孫建有人勤不久變得別墜司馬之人劉備在今後命日富一日卻始終不得處受",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_narrator_03": {
+        "id": "ch2_anxi_narrator_03",
+        "character": "narrator",
+        "original_text": "张钧被逐。宦官惧有功之士再生怨言，便权且将刘备铨注微名。",
+        "stt_output": "張軍被逐,皇冠軍有公知識在聲援言並全界將留被全住微明",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_narrator_04": {
+        "id": "ch2_anxi_narrator_04",
+        "character": "narrator",
+        "original_text": "刘备遂遣军士各归乡里，只带少数亲随，与关羽、张飞赴安喜县上任。",
+        "stt_output": "劉備歲前軍事各規象裡職貸少數精髓與關於張飛復安喜憲上任",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_narrator_both_01": {
+        "id": "ch2_anxi_narrator_both_01",
+        "character": "narrator",
+        "original_text": "张钧被逐。朱儁表奏救了刘备之命，却救不得前程。朝廷免其死罪，不授官职。",
+        "stt_output": "張軍被主,朱軍表作救了劉備之命,卻就不得前程朝廷免其死最不受關職",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_narrator_both_02": {
+        "id": "ch2_anxi_narrator_both_02",
+        "character": "narrator",
+        "original_text": "刘备遂遣军士各归乡里，与关羽、张飞离洛阳。罪名虽赦，朝中名籍仍被涂黑。",
+        "stt_output": "由被岁前軍事各規相理與關於張飛离落陽罪名衰射朝中名及人被土黑",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_narrator_one_01": {
+        "id": "ch2_anxi_narrator_one_01",
+        "character": "narrator",
+        "original_text": "张钧被逐。朱儁表奏不能抹去刘备之罪，却使朝廷不便加刑。于是赦其罪，减其赏。",
+        "stt_output": "张军被主 主进表揍不能抹去流被之罪确实逃停不变家型于是涉及最简单上",
+        "wer": 2.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_narrator_one_02": {
+        "id": "ch2_anxi_narrator_one_02",
+        "character": "narrator",
+        "original_text": "刘备遂遣军士各归乡里，只带少数亲随，与关羽、张飞赴安喜，在他人印下供职。",
+        "stt_output": "劉備歲前軍是各閨鄉裡直帶少數青髓與關於張飛輔安喜在他人印下共職",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_zf_01": {
+        "id": "ch2_anxi_zf_01",
+        "character": "zhangfei",
+        "original_text": "咱们破贼、攻城、追杀渠帅，难道要在客舍里等到胡子都白了？",
+        "stt_output": "咱們破賊工程追殺其率難道要在客設裡等到鬍子都白了",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_zf_02": {
+        "id": "ch2_anxi_zf_02",
+        "character": "zhangfei",
+        "original_text": "也罢。若有花面官来欺压良民，可别叫俺陪他笑脸。",
+        "stt_output": "也罢也罢若有欢面关来西亚两名可别叫按陪他笑脸",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_zf_both_01": {
+        "id": "ch2_anxi_zf_both_01",
+        "character": "zhangfei",
+        "original_text": "赦我们？我们救了他们的天下！若怒气是酒，俺能把洛阳灌沉。",
+        "stt_output": "是我们我们救了他们的天下若怒气是久暗能把若阳贯成",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_zf_one_01": {
+        "id": "ch2_anxi_zf_one_01",
+        "character": "zhangfei",
+        "original_text": "一场大战，只给半截赏赐。哼。去安喜，俺仍陪大哥。",
+        "stt_output": "一城大站只给半截赏似哼去安喜按任陪大哥",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_zj_01": {
+        "id": "ch2_anxi_zj_01",
+        "character": "zhoujing",
+        "original_text": "你便是刘玄德？军报中屡闻其名。为何反在街上徘徊，如无功小吏？",
+        "stt_output": "你便是留玄德軍報中履文其名為何反在街上排緩如無功效力",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_zj_02": {
+        "id": "ch2_anxi_zj_02",
+        "character": "zhoujing",
+        "original_text": "既如此，我便替这沉默开口。将士为汉流血而只得沉默，这沉默本身便是误国。",
+        "stt_output": "既如此我便替这沉默开口将是为汉流血而指得沉默这沉默本身便是物国",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_zj_03": {
+        "id": "ch2_anxi_zj_03",
+        "character": "zhoujing",
+        "original_text": "黄巾之乱，正因卖官鬻爵、任亲害仇，贤者有功，反须乞命于门外。",
+        "stt_output": "黃金之亂正因邁官預決任青海籌顯著有功反需起命於門外",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_zj_04": {
+        "id": "ch2_anxi_zj_04",
+        "character": "zhoujing",
+        "original_text": "请诛十常侍之蠹，重赏讨贼有功者，则四海尚可清平。",
+        "stt_output": "请诸石尝试之度 重上讨贼有公者 则似海上可轻平",
+        "wer": 3.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_death_cc_01": {
+        "id": "ch2_hj_death_cc_01",
+        "character": "caocao",
+        "original_text": "此便是罗网，却披作诏命。",
+        "stt_output": "此便是罗网,确批做照明",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_death_cc_02": {
+        "id": "ch2_hj_death_cc_02",
+        "character": "caocao",
+        "original_text": "今日之计，先宜正君位，然后图贼。",
+        "stt_output": "今日之際,先一正軍為,然後徒賊",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_death_cc_03": {
+        "id": "ch2_hj_death_cc_03",
+        "character": "caocao",
+        "original_text": "如此，速与整尚可为公所用。",
+        "stt_output": "如此,素于整箱可为工所用",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_death_eunuch_01": {
+        "id": "ch2_hj_death_eunuch_01",
+        "character": "eunuch",
+        "original_text": "宫中有命：请大将军速入，以定后事。",
+        "stt_output": "公中有命請大將軍送入以定後事",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_death_hj_01": {
+        "id": "ch2_hj_death_hj_01",
+        "character": "hejin",
+        "original_text": "谁敢与吾入宫，正君讨贼，扫清朝廷？",
+        "stt_output": "誰敢與吳魯公正軍討賊掃清朝廷",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_death_hj_discipline": {
+        "id": "ch2_hj_death_hj_discipline",
+        "character": "hejin",
+        "original_text": "可点兵入宫，但须严令约束。入宫为正君位，不为劫掠。",
+        "stt_output": "可典兵入宫,但需严令约束入宫为政均为不为结略",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_death_hj_force": {
+        "id": "ch2_hj_death_hj_force",
+        "character": "hejin",
+        "original_text": "让宫中先见我兵威，再敢开口。",
+        "stt_output": "讓共中先見我冰威再趕開口",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_death_narrator_01": {
+        "id": "ch2_hj_death_narrator_01",
+        "character": "narrator",
+        "original_text": "何进大喜，遂点御林军，欲引众臣入宫，于灵帝柩前扶立太子辩。",
+        "stt_output": "何靖大喜碎點玉玲軍,律宇宙城入宮,玉玲地就先福立太子邊。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_death_panyin_01": {
+        "id": "ch2_hj_death_panyin_01",
+        "character": "panyin",
+        "original_text": "大将军，灵帝已崩。",
+        "stt_output": "大将军林地以崩",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_death_panyin_02": {
+        "id": "ch2_hj_death_panyin_02",
+        "character": "panyin",
+        "original_text": "蹇硕与十常侍秘不发丧，又拟矫诏再召公入宫。",
+        "stt_output": "簡述與時常事密不發生又你腳趙在照公入公",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_death_panyin_03": {
+        "id": "ch2_hj_death_panyin_03",
+        "character": "panyin",
+        "original_text": "其意先绝公之后患，再立皇子协。",
+        "stt_output": "其一先絕功之後換再立皇子協",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_death_ys_01": {
+        "id": "ch2_hj_death_ys_01",
+        "character": "yuanshao",
+        "original_text": "愿借精兵五千，斩关入内，册立新君，尽诛阉竖。",
+        "stt_output": "燕姐金兵五千掌關入內策理新軍緊諸嚴肅",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_death_ys_02": {
+        "id": "ch2_hj_death_ys_02",
+        "character": "yuanshao",
+        "original_text": "善。宦官所懂的朝廷话，正是畏惧二字。",
+        "stt_output": "善患罐所懂的朝廷化正是微距二字",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_enthrone_cc_dismissed_01": {
+        "id": "ch2_hj_enthrone_cc_dismissed_01",
+        "character": "caocao",
+        "original_text": "若兵威在前，至少让名义紧随其后。",
+        "stt_output": "若冰味在前,至少让民意紧随其后。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_enthrone_cc_heeded_01": {
+        "id": "ch2_hj_enthrone_cc_heeded_01",
+        "character": "caocao",
+        "original_text": "少开一门，便少漏一分奸计。直趋梓宫与玺绶。",
+        "stt_output": "少开一门,变少露一分,监几,直去子宫与洗售。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_enthrone_hj_01": {
+        "id": "ch2_hj_enthrone_hj_01",
+        "character": "hejin",
+        "original_text": "于灵帝梓宫之前，奉太子辩受玺绶，即皇帝位。",
+        "stt_output": "于林地子公之前奉太子变受喜受极皇帝为",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_enthrone_hj_disciplined_01": {
+        "id": "ch2_hj_enthrone_hj_disciplined_01",
+        "character": "hejin",
+        "original_text": "诸军不得乱行，不得擅入别殿。我等入宫，只为正君位。",
+        "stt_output": "中軍不得亂行不得善入別墊我懂入功只為正軍為",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_enthrone_narrator_01": {
+        "id": "ch2_hj_enthrone_narrator_01",
+        "character": "narrator",
+        "original_text": "袁绍借御林军五千，何颙、荀攸、郑泰等诸臣随何进入宫。",
+        "stt_output": "元少界玉林君五千和勇巡邮正太等朱城随和进入宫",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_enthrone_narrator_02": {
+        "id": "ch2_hj_enthrone_narrator_02",
+        "character": "narrator",
+        "original_text": "太子辩即位，是为少帝。何后为皇太后，皇子协封陈留王。",
+        "stt_output": "太子為便記為世為少大何後為皇太后皇子協封城流亡",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_enthrone_narrator_03": {
+        "id": "ch2_hj_enthrone_narrator_03",
+        "character": "narrator",
+        "original_text": "君位虽定，蹇硕仍握禁兵，宫中廊庑仍听宦官之声。",
+        "stt_output": "居為隧定 檢輸人物禁兵 公中老五 人聽喚關之聲",
+        "wer": 4.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_enthrone_ys_01": {
+        "id": "ch2_hj_enthrone_ys_01",
+        "character": "yuanshao",
+        "original_text": "新天子已立。暗中矫诏者，皆可名为逆贼。",
+        "stt_output": "今天此以一暗中角照者皆可名為逆賊",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_enthrone_ys_force_01": {
+        "id": "ch2_hj_enthrone_ys_force_01",
+        "character": "yuanshao",
+        "original_text": "让诸门都看见兵威。宦官若要低语，也叫他们对着枪尖低语。",
+        "stt_output": "兩桌門都看見冰妹慣關落要低雨也叫他們對著槍間低雨",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_js_cc_dismissed_01": {
+        "id": "ch2_hj_js_cc_dismissed_01",
+        "character": "caocao",
+        "original_text": "御园已静，内宫未静。胜一宦官，并非制宦官。",
+        "stt_output": "預員已進,內工為進,生意換官,定非制換官",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_js_cc_heeded_01": {
+        "id": "ch2_hj_js_cc_heeded_01",
+        "character": "caocao",
+        "original_text": "明其一罪而诛之，此为权。泛呼尽杀宦官，权势便化作烟。",
+        "stt_output": "民旗一罪而诸之,死未全,犯乎警杀患馆,全是变化作业。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_js_guo_01": {
+        "id": "ch2_hj_js_guo_01",
+        "character": "eunuch",
+        "original_text": "你以私谋拖我等共死。我不为你的野心殉葬。",
+        "stt_output": "你以私謀脫我等共死我不為你的野心遜漲",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_js_hj_01": {
+        "id": "ch2_hj_js_hj_01",
+        "character": "hejin",
+        "original_text": "蹇硕谋杀，罪在明处。张让、段珪仍得太后左右。行事须以罪名，不可以怒气。",
+        "stt_output": "渐速謀殺 最在民處張讓 斷歸 仍得太后左右形勢 虛易罪名 不可以怒氣",
+        "wer": 6.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_js_jian_01": {
+        "id": "ch2_hj_js_jian_01",
+        "character": "eunuchguard",
+        "original_text": "护驾！都来！禁兵听我号令！",
+        "stt_output": "胡家都来进兵听我号令",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_js_narrator_01": {
+        "id": "ch2_hj_js_narrator_01",
+        "character": "narrator",
+        "original_text": "少帝既立，袁绍即引兵收蹇硕。",
+        "stt_output": "少地基地元少吉隐兵收检数",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_js_narrator_02": {
+        "id": "ch2_hj_js_narrator_02",
+        "character": "narrator",
+        "original_text": "蹇硕走入御园，为郭胜所杀。蹇硕所领禁兵，皆归何进。",
+        "stt_output": "检朔走路語言為郭盛所殺检朔所領慶兵 皆歸何謹",
+        "wer": 2.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_js_narrator_03": {
+        "id": "ch2_hj_js_narrator_03",
+        "character": "narrator",
+        "original_text": "何进手握新君、蹇硕禁兵，亦握住满宫惊惧之敌。张让、段珪等仍在。",
+        "stt_output": "和敬守握新军,减述近兵,以握住满公经局之敌,张让段归等仍在。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_js_narrator_discipline_01": {
+        "id": "ch2_hj_js_narrator_discipline_01",
+        "character": "narrator",
+        "original_text": "因何进先前约束军伍，宫中兵士多安然解旗归命。",
+        "stt_output": "因何近新前约束军务,公中兵使多案解极规明。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_js_narrator_force_01": {
+        "id": "ch2_hj_js_narrator_force_01",
+        "character": "narrator",
+        "original_text": "因何进张兵示威，宫中虽速静，惧声却先于使者传开。",
+        "stt_output": "任何緊張兵士位公中雖俗禁舉升卻先於使者傳開",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_js_ys_01": {
+        "id": "ch2_hj_js_ys_01",
+        "character": "yuanshao",
+        "original_text": "蹇硕矫诏谋杀大将军，欲别立皇子。拿下。",
+        "stt_output": "竟說叫趙謀殺大將軍玉別離皇子那下",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_hj_js_ys_02": {
+        "id": "ch2_hj_js_ys_02",
+        "character": "yuanshao",
+        "original_text": "蹇硕已死。刀已断一根恶根，便当尽断其余。",
+        "stt_output": "建设意思,刀一段一根恶根,便当尽端其余。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_north_defeat_lb_01": {
+        "id": "ch2_wan_north_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "攻城之势，要靠此路不失。即刻再战。",
+        "stt_output": "工程知识要考词路不识,即刻再站",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_north_defeat_zj_01": {
+        "id": "ch2_wan_north_defeat_zj_01",
+        "character": "zhujun",
+        "original_text": "孙仲冲破北路。趁余众未聚，立刻重整军阵。",
+        "stt_output": "孫重衝破北路撐於眾為劇立刻種整軍政",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_north_lb_01": {
+        "id": "ch2_wan_north_lb_01",
+        "character": "liubei",
+        "original_text": "横列于道路之上。除降服之外，不给贼众留路。",
+        "stt_output": "横裂于道路之上,除祥福之外,不给贼重流露。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_north_lb_02": {
+        "id": "ch2_wan_north_lb_02",
+        "character": "liubei",
+        "original_text": "孙仲一队已破。收其兵器，弃械者可免。",
+        "stt_output": "孫眾一對一破 收起冰淇 氣泄著殼棉",
+        "wer": 3.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_north_sj_01": {
+        "id": "ch2_wan_north_sj_01",
+        "character": "sunjian",
+        "original_text": "城墙已取，赵弘已死。你等守路，使贼众不能复成军势。",
+        "stt_output": "承强一曲 赵鸿一死你等手路 使贼重不能复成军事",
+        "wer": 3.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_north_sz_01": {
+        "id": "ch2_wan_north_sz_01",
+        "character": "sunzhong",
+        "original_text": "城墙将破！趁孙坚未封住宛城，向北杀出去！",
+        "stt_output": "成强将破,趁孙尖为封住晚城,向北沙出去。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_north_zj_01": {
+        "id": "ch2_wan_north_zj_01",
+        "character": "zhujun",
+        "original_text": "孙坚正攻城墙。玄德，守住这条北路；不可令孙仲带赵弘余众逃去。",
+        "stt_output": "孫奸正宫城墙,選得守住這條北路,不可令孫重帶,造紅魚重逃去。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_north_zj_02": {
+        "id": "ch2_wan_north_zj_02",
+        "character": "zhujun",
+        "original_text": "如此宛城已定，南阳复平。朝廷自会知道是谁守住此路。",
+        "stt_output": "如此晚成已定,南洋副品,朝廷自會知道是誰,守住此路。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_rev_lb_02_road": {
+        "id": "ch2_wan_rev_lb_02_road",
+        "character": "liubei",
+        "original_text": "那便请孙将军攻城。我兄弟守北路，凡从城门突围者，尽截之。",
+        "stt_output": "那便請孫江軍工程,我兄弟手背入,繁從成本突為者,競結智。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_rev_lb_02_wall": {
+        "id": "ch2_wan_rev_lb_02_wall",
+        "character": "liubei",
+        "original_text": "那我等同孙将军攻城。若速破城门，孙仲便无路可走。",
+        "stt_output": "那我等同孫將軍工程,若速破成門,孫重變無路可走。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_rev_sj_02_road": {
+        "id": "ch2_wan_rev_sj_02_road",
+        "character": "sunjian",
+        "original_text": "城墙交给孙坚。贼若北逃，便请诸君使其路窄于城门。",
+        "stt_output": "成强交给孙奸 贼弱北陶便请诸军 时期录寨与成门",
+        "wer": 3.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_rev_sj_02_wall": {
+        "id": "ch2_wan_rev_sj_02_wall",
+        "character": "sunjian",
+        "original_text": "好。并力登城，趁赵弘胆气未固，便定此役。",
+        "stt_output": "好,那病密登城,趁趙紅膽起,為故辯定此意。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_rev_zj_03_road": {
+        "id": "ch2_wan_rev_zj_03_road",
+        "character": "zhujun",
+        "original_text": "善。孙坚攻城。玄德，你兄弟往守北路；孙仲若走，必使其遇你。",
+        "stt_output": "善,孙奸宫城,玄德,你兄弟王手北路,孙重弱走,必使其遇你。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_rev_zj_03_wall": {
+        "id": "ch2_wan_rev_zj_03_wall",
+        "character": "zhujun",
+        "original_text": "如此，攻城一路当用我军锐气。余兵守道路，你与孙坚并力破门。",
+        "stt_output": "如此,工程一路當用我軍銳起,與兵手道路,你與孫間定力破門。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
     }
 }

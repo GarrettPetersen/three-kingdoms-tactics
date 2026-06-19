@@ -180,6 +180,180 @@
     "source": "MapScene.js"
   },
   {
+    "id": "ch2_anxi_eunuch_01",
+    "char": "eunuch",
+    "text": "张钧欺主。此等怨言，不过出自不得除授之徒，非真为汉室。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_eunuch_both_01",
+    "char": "eunuch",
+    "text": "刘备以兵私放卢植，又向董卓举刃。此非功劳，不过披着征尘的叛逆。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_eunuch_dz_01",
+    "char": "eunuch",
+    "text": "刘备又是纵兄弟向董卓举兵之人。董卓乃朝廷将帅，这也算忠义么？",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_eunuch_freed_01",
+    "char": "eunuch",
+    "text": "刘备又是劫夺朝廷解送、私放卢植之人。难道要以印绶赏其乱法？",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_gy_01",
+    "char": "guanyu",
+    "text": "功劳本当自明。只是朝堂之上，功劳也似乎要人引见。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_gy_02",
+    "char": "guanyu",
+    "text": "那便清清白白去。以义守微官，胜过以耻买高位。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_gy_both_01",
+    "char": "guanyu",
+    "text": "此等人手中赦免，非荣也；然兄弟之誓因此得存。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_gy_one_01",
+    "char": "guanyu",
+    "text": "他们不能没你的功，便把官职压得小过功劳。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_lb_01",
+    "char": "liubei",
+    "text": "有官则尽职，无官亦守义。只是随我等出生入死之人，也该见朝廷公道。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_lb_02",
+    "char": "liubei",
+    "text": "我等名籍已上，只待朝廷铨注。除此之外，备无可为。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_lb_03",
+    "char": "liubei",
+    "text": "安喜县尉。印绶虽小，印下百姓却不可轻。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_lb_both_01",
+    "char": "liubei",
+    "text": "如此，我等所得不是印绶，而是尚留此身一口气。此气尚在，仍可择义而行。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_lb_one_01",
+    "char": "liubei",
+    "text": "安喜县尉佐。虽无自掌之印，然此职所及，仍是汉家百姓。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_narrator_01",
+    "char": "narrator",
+    "text": "宛城既定，南阳平息，朱儁班师洛阳，上表奏孙坚、刘备等人之功。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_narrator_02",
+    "char": "narrator",
+    "text": "孙坚有人情，不久便得别郡司马之任。刘备在京候命，日复一日，却始终不得除授。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_narrator_03",
+    "char": "narrator",
+    "text": "张钧被逐。宦官惧有功之士再生怨言，便权且将刘备铨注微名。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_narrator_04",
+    "char": "narrator",
+    "text": "刘备遂遣军士各归乡里，只带少数亲随，与关羽、张飞赴安喜县上任。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_narrator_both_01",
+    "char": "narrator",
+    "text": "张钧被逐。朱儁表奏救了刘备之命，却救不得前程。朝廷免其死罪，不授官职。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_narrator_both_02",
+    "char": "narrator",
+    "text": "刘备遂遣军士各归乡里，与关羽、张飞离洛阳。罪名虽赦，朝中名籍仍被涂黑。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_narrator_one_01",
+    "char": "narrator",
+    "text": "张钧被逐。朱儁表奏不能抹去刘备之罪，却使朝廷不便加刑。于是赦其罪，减其赏。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_narrator_one_02",
+    "char": "narrator",
+    "text": "刘备遂遣军士各归乡里，只带少数亲随，与关羽、张飞赴安喜，在他人印下供职。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zf_01",
+    "char": "zhangfei",
+    "text": "咱们破贼、攻城、追杀渠帅，难道要在客舍里等到胡子都白了？",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zf_02",
+    "char": "zhangfei",
+    "text": "也罢。若有花面官来欺压良民，可别叫俺陪他笑脸。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zf_both_01",
+    "char": "zhangfei",
+    "text": "赦我们？我们救了他们的天下！若怒气是酒，俺能把洛阳灌沉。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zf_one_01",
+    "char": "zhangfei",
+    "text": "一场大战，只给半截赏赐。哼。去安喜，俺仍陪大哥。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_01",
+    "char": "zhoujing",
+    "text": "你便是刘玄德？军报中屡闻其名。为何反在街上徘徊，如无功小吏？",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_02",
+    "char": "zhoujing",
+    "text": "既如此，我便替这沉默开口。将士为汉流血而只得沉默，这沉默本身便是误国。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_03",
+    "char": "zhoujing",
+    "text": "黄巾之乱，正因卖官鬻爵、任亲害仇，贤者有功，反须乞命于门外。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_04",
+    "char": "zhoujing",
+    "text": "请诛十常侍之蠹，重赏讨贼有功者，则四海尚可清平。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_counter_camp_choice_reluctant",
     "char": "liubei",
     "text": "以秽物破妖，心中终觉不安。但军士性命，重于颜面。",
@@ -444,6 +618,60 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_hj_enthrone_cc_dismissed_01",
+    "char": "caocao",
+    "text": "若兵威在前，至少让名义紧随其后。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_enthrone_cc_heeded_01",
+    "char": "caocao",
+    "text": "少开一门，便少漏一分奸计。直趋梓宫与玺绶。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_enthrone_hj_01",
+    "char": "hejin",
+    "text": "于灵帝梓宫之前，奉太子辩受玺绶，即皇帝位。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_enthrone_hj_disciplined_01",
+    "char": "hejin",
+    "text": "诸军不得乱行，不得擅入别殿。我等入宫，只为正君位。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_enthrone_narrator_01",
+    "char": "narrator",
+    "text": "袁绍借御林军五千，何颙、荀攸、郑泰等诸臣随何进入宫。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_enthrone_narrator_02",
+    "char": "narrator",
+    "text": "太子辩即位，是为少帝。何后为皇太后，皇子协封陈留王。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_enthrone_narrator_03",
+    "char": "narrator",
+    "text": "君位虽定，蹇硕仍握禁兵，宫中廊庑仍听宦官之声。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_enthrone_ys_01",
+    "char": "yuanshao",
+    "text": "新天子已立。暗中矫诏者，皆可名为逆贼。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_enthrone_ys_force_01",
+    "char": "yuanshao",
+    "text": "让诸门都看见兵威。宦官若要低语，也叫他们对着枪尖低语。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_hj_eunuch_01",
     "char": "eunuch",
     "text": "大将军何进，陛下在宫中相候。",
@@ -459,6 +687,78 @@
     "id": "ch2_hj_hejin_01",
     "char": "hejin",
     "text": "谋杀我？就在宫门之前？",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_cc_dismissed_01",
+    "char": "caocao",
+    "text": "御园已静，内宫未静。胜一宦官，并非制宦官。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_cc_heeded_01",
+    "char": "caocao",
+    "text": "明其一罪而诛之，此为权。泛呼尽杀宦官，权势便化作烟。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_guo_01",
+    "char": "eunuch",
+    "text": "你以私谋拖我等共死。我不为你的野心殉葬。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_hj_01",
+    "char": "hejin",
+    "text": "蹇硕谋杀，罪在明处。张让、段珪仍得太后左右。行事须以罪名，不可以怒气。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_jian_01",
+    "char": "eunuchguard",
+    "text": "护驾！都来！禁兵听我号令！",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_narrator_01",
+    "char": "narrator",
+    "text": "少帝既立，袁绍即引兵收蹇硕。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_narrator_02",
+    "char": "narrator",
+    "text": "蹇硕走入御园，为郭胜所杀。蹇硕所领禁兵，皆归何进。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_narrator_03",
+    "char": "narrator",
+    "text": "何进手握新君、蹇硕禁兵，亦握住满宫惊惧之敌。张让、段珪等仍在。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_narrator_discipline_01",
+    "char": "narrator",
+    "text": "因何进先前约束军伍，宫中兵士多安然解旗归命。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_narrator_force_01",
+    "char": "narrator",
+    "text": "因何进张兵示威，宫中虽速静，惧声却先于使者传开。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_ys_01",
+    "char": "yuanshao",
+    "text": "蹇硕矫诏谋杀大将军，欲别立皇子。拿下。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_ys_02",
+    "char": "yuanshao",
+    "text": "蹇硕已死。刀已断一根恶根，便当尽断其余。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -650,13 +950,13 @@
   {
     "id": "ch2_wan_final_defeat_zj_01",
     "char": "zhujun",
-    "text": "赵弘凭城之势，胜于所料。重整北门，与孙坚再攻。",
+    "text": "赵弘凭城之势，胜于所料。重整门前之阵，与孙坚再攻。",
     "source": "Battles.js"
   },
   {
     "id": "ch2_wan_final_lb_01",
     "char": "liubei",
-    "text": "二弟三弟，守住北门。孙仲若走，不可让他再携乱势而去。",
+    "text": "二弟三弟，与孙将军并力攻门。就在此处破赵弘、孙仲，勿使乱势复散。",
     "source": "Battles.js"
   },
   {
@@ -686,7 +986,7 @@
   {
     "id": "ch2_wan_final_zj_01",
     "char": "zhujun",
-    "text": "孙坚攻南门，刘备守北门。吾攻西门，独留东门使贼走。",
+    "text": "玄德已决意同孙坚攻城。余兵守道路；你等所任，便是破此城门。",
     "source": "Battles.js"
   },
   {
@@ -738,10 +1038,52 @@
     "source": "Battles.js"
   },
   {
-    "id": "ch2_wan_narrator_01",
-    "char": "narrator",
-    "text": "阳城开门归降之后，朱儁合兵南征。韩忠与黄巾余党退聚宛城。",
-    "source": "NarrativeScripts.js"
+    "id": "ch2_wan_north_defeat_lb_01",
+    "char": "liubei",
+    "text": "攻城之势，要靠此路不失。即刻再战。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_defeat_zj_01",
+    "char": "zhujun",
+    "text": "孙仲冲破北路。趁余众未聚，立刻重整军阵。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_lb_01",
+    "char": "liubei",
+    "text": "横列于道路之上。除降服之外，不给贼众留路。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_lb_02",
+    "char": "liubei",
+    "text": "孙仲一队已破。收其兵器，弃械者可免。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_sj_01",
+    "char": "sunjian",
+    "text": "城墙已取，赵弘已死。你等守路，使贼众不能复成军势。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_sz_01",
+    "char": "sunzhong",
+    "text": "城墙将破！趁孙坚未封住宛城，向北杀出去！",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_zj_01",
+    "char": "zhujun",
+    "text": "孙坚正攻城墙。玄德，守住这条北路；不可令孙仲带赵弘余众逃去。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_zj_02",
+    "char": "zhujun",
+    "text": "如此宛城已定，南阳复平。朝廷自会知道是谁守住此路。",
+    "source": "Battles.js"
   },
   {
     "id": "ch2_wan_rev_gy_01",
@@ -756,9 +1098,15 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "ch2_wan_rev_lb_02",
+    "id": "ch2_wan_rev_lb_02_road",
     "char": "liubei",
-    "text": "如此，我兄弟守其道路，孙将军可逼其城。",
+    "text": "那便请孙将军攻城。我兄弟守北路，凡从城门突围者，尽截之。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_lb_02_wall",
+    "char": "liubei",
+    "text": "那我等同孙将军攻城。若速破城门，孙仲便无路可走。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -786,6 +1134,18 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_wan_rev_sj_02_road",
+    "char": "sunjian",
+    "text": "城墙交给孙坚。贼若北逃，便请诸君使其路窄于城门。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_sj_02_wall",
+    "char": "sunjian",
+    "text": "好。并力登城，趁赵弘胆气未固，便定此役。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_wan_rev_zf_01",
     "char": "zhangfei",
     "text": "哼。孙仲若从北门逃，便交给俺。",
@@ -801,6 +1161,18 @@
     "id": "ch2_wan_rev_zj_02",
     "char": "zhujun",
     "text": "善。贼众以为勇气复来，我等便让他们知道，不过喧嚣而已。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_zj_03_road",
+    "char": "zhujun",
+    "text": "善。孙坚攻城。玄德，你兄弟往守北路；孙仲若走，必使其遇你。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_wan_rev_zj_03_wall",
+    "char": "zhujun",
+    "text": "如此，攻城一路当用我军锐气。余兵守道路，你与孙坚并力破门。",
     "source": "NarrativeScripts.js"
   },
   {

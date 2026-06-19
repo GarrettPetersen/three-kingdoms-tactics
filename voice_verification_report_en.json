@@ -3571,5 +3571,698 @@
         "wer": 0.07142857142857142,
         "is_bad": false,
         "language": "en"
+    },
+    "en:ch2_anxi_eunuch_01": {
+        "id": "ch2_anxi_eunuch_01",
+        "character": "eunuch",
+        "original_text": "Zhang Jun deceives the throne. These complaints come from men who resent their place, not men who love the Han.",
+        "stt_output": "Telling you and in these halves the throne. These complaints come from men who resent their place. Not men who love the Hun.",
+        "wer": 0.35,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_eunuch_both_01": {
+        "id": "ch2_anxi_eunuch_both_01",
+        "character": "eunuch",
+        "original_text": "Liu Bei freed Lu Zhi by force, then raised blades against Dong Zhuo. This is not merit; it is rebellion wearing campaign dust.",
+        "stt_output": "Le U by Friedlucci by Forrest then raised blades against Don Chouaou. This is not merit. It is rebellion wearing campaign dust.",
+        "wer": 0.34782608695652173,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_eunuch_dz_01": {
+        "id": "ch2_anxi_eunuch_dz_01",
+        "character": "eunuch",
+        "original_text": "Liu Bei is also the man whose brothers raised steel against Dong Zhuo, an imperial general in the field. Is that loyalty?",
+        "stt_output": "Liu Baezou is also the man whose brothers raised steel against Dong Shuo. An imperial general in the field. Is that loyalty? Ah!",
+        "wer": 0.13636363636363635,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_eunuch_freed_01": {
+        "id": "ch2_anxi_eunuch_freed_01",
+        "character": "eunuch",
+        "original_text": "Liu Bei is also the man who took arms against imperial escorts and released Lu Zhi. Are we to reward disorder with a seal?",
+        "stt_output": "Liu Bae is other than the man who took arms against Imperial Escorts and released Lu Ji. Are we to reward this order with a seal?",
+        "wer": 0.25,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_gy_01": {
+        "id": "ch2_anxi_gy_01",
+        "character": "guanyu",
+        "original_text": "Merit should speak for itself. Yet at court, even merit seems to need an usher.",
+        "stt_output": "Marriage should speak for itself, yet at court, even merit seems to need an usher.",
+        "wer": 0.06666666666666667,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_gy_02": {
+        "id": "ch2_anxi_gy_02",
+        "character": "guanyu",
+        "original_text": "Then we go cleanly. A low office held with righteousness is higher than a high office bought with shame.",
+        "stt_output": "Then we go cleanly. A low office held with righteousness is higher than a high office bot with shame.",
+        "wer": 0.05263157894736842,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_gy_both_01": {
+        "id": "ch2_anxi_gy_both_01",
+        "character": "guanyu",
+        "original_text": "A pardon from such hands is not honor, but it keeps the oath alive.",
+        "stt_output": "A pardon from such hands is not honor, but it keeps the oath alive.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_gy_one_01": {
+        "id": "ch2_anxi_gy_one_01",
+        "character": "guanyu",
+        "original_text": "They could not deny your merit, so they made the post smaller than the deed.",
+        "stt_output": "They could not deny your merit, so they made the post smaller than the deed.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_lb_01": {
+        "id": "ch2_anxi_lb_01",
+        "character": "liubei",
+        "original_text": "If office comes, we serve. If none comes, our oath remains. Still, the men who followed us deserve to see justice done.",
+        "stt_output": "If office comes, we serve. If non comes, our oath remains. Still, the men who followed us deserve to see justice done.",
+        "wer": 0.045454545454545456,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_lb_02": {
+        "id": "ch2_anxi_lb_02",
+        "character": "liubei",
+        "original_text": "We have submitted our names and wait on the court. Nothing more is in my hands.",
+        "stt_output": "We have submitted our names and wait on the court. Nothing more or is in my hair.",
+        "wer": 0.125,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_lb_03": {
+        "id": "ch2_anxi_lb_03",
+        "character": "liubei",
+        "original_text": "Anxi County commandant. The seal is small, but the people beneath it are not small.",
+        "stt_output": "and she counting commandant. The seal is small, but the people beneath it are not small.",
+        "wer": 0.2,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_lb_both_01": {
+        "id": "ch2_anxi_lb_both_01",
+        "character": "liubei",
+        "original_text": "So our reward is not a seal, but breath in our bodies. If that breath remains, we can still choose righteousness.",
+        "stt_output": "So our reward is not to seal, but breath in our bodies. If that breath remains, we can still choose righteousness.",
+        "wer": 0.047619047619047616,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_lb_one_01": {
+        "id": "ch2_anxi_lb_one_01",
+        "character": "liubei",
+        "original_text": "Assistant to the Anxi commandant. No seal of my own, yet the people served by that office are still people of the Han.",
+        "stt_output": "assistant to the young sea come and done. No seal of my own, yet the people served by that office are still people of the harm.",
+        "wer": 0.2608695652173913,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_narrator_01": {
+        "id": "ch2_anxi_narrator_01",
+        "character": "narrator",
+        "original_text": "With Wan settled and Nanyang quiet, Zhu Jun returned to Luoyang and memorialized the merit of Sun Jian and Liu Bei.",
+        "stt_output": "with one settled and then Yanquia. Jujun returned to Luoyang and memorialized the merit of Sanjian and Liu Baida.",
+        "wer": 0.38095238095238093,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_narrator_02": {
+        "id": "ch2_anxi_narrator_02",
+        "character": "narrator",
+        "original_text": "Sun Jian had patrons and soon departed to a new post. Liu Bei waited in the capital, day after day, and no summons came.",
+        "stt_output": "Sunjian had patrons and soon departed to a new post, Liu by waited in the capital day after day and no summons came.",
+        "wer": 0.125,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_narrator_03": {
+        "id": "ch2_anxi_narrator_03",
+        "character": "narrator",
+        "original_text": "Zhang Jun was driven out. The eunuchs, fearing that unrewarded soldiers would make more noise, wrote Liu Bei down for a minor office.",
+        "stt_output": "Changyoon, bass, driven out, the unix, fearing that unrewarded soldiers would make more noise, wrote Lupe Down for a minor office.",
+        "wer": 0.2608695652173913,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_narrator_04": {
+        "id": "ch2_anxi_narrator_04",
+        "character": "narrator",
+        "original_text": "Liu Bei dismissed the volunteers to their villages and took only a small retinue with Guan Yu and Zhang Fei to Anxi.",
+        "stt_output": "Leo by dismissed the volunteers to their villages and took only a small retinue with Guanyu and Zhang Fei to Angxi.",
+        "wer": 0.22727272727272727,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_narrator_both_01": {
+        "id": "ch2_anxi_narrator_both_01",
+        "character": "narrator",
+        "original_text": "Zhang Jun was driven out. Zhu Jun's memorial saved Liu Bei's life, not his future. The court remitted the capital charges and granted no office.",
+        "stt_output": "Chang Yun was driven out. Chuyun's memorial saved Liu by his life, not his future. The court remitted the capital charges and granted no office.",
+        "wer": 0.24,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_narrator_both_02": {
+        "id": "ch2_anxi_narrator_both_02",
+        "character": "narrator",
+        "original_text": "Liu Bei dismissed the volunteers to their villages and left Luoyang with Guan Yu and Zhang Fei, their crimes forgiven but their names still darkened at court.",
+        "stt_output": "Liu by dismissed the volunteers to their villages and left Luoyang with Guan Yu and Zhang Fei, their crimes forgiven but their name still darkened at court.",
+        "wer": 0.07407407407407407,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_narrator_one_01": {
+        "id": "ch2_anxi_narrator_one_01",
+        "character": "narrator",
+        "original_text": "Zhang Jun was driven out. Zhu Jun's memorial could not erase Liu Bei's offense, but it made punishment inconvenient. The court forgave the crime and cut down the reward.",
+        "stt_output": "Changyue investor even out, Chuyun's memorial could not erase Liu Yu by his offense, but it made punishment inconvenient. The court forgave the crime and cut down the reward.",
+        "wer": 0.3103448275862069,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_narrator_one_02": {
+        "id": "ch2_anxi_narrator_one_02",
+        "character": "narrator",
+        "original_text": "Liu Bei dismissed the volunteers to their villages and took a small retinue with Guan Yu and Zhang Fei to Anxi, there to serve beneath another man's seal.",
+        "stt_output": "Liu, by dismiss the volunteers to their villages, and took a small retinue with Guanyu and Zhang Fei to Zhang'si, there to serve beneath another man's seat.",
+        "wer": 0.21428571428571427,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_zf_01": {
+        "id": "ch2_anxi_zf_01",
+        "character": "zhangfei",
+        "original_text": "We broke rebels, scaled walls, and chased their chiefs into the dust. Are we to live in an inn until our beards turn white?",
+        "stt_output": "We broke rebels scaled walls and chased their chiefs into the dust. Are we to live in and in until our beards turn white?",
+        "wer": 0.08333333333333333,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_zf_02": {
+        "id": "ch2_anxi_zf_02",
+        "character": "zhangfei",
+        "original_text": "Fine. But if some painted official comes to bully honest folk, do not ask me to smile at him.",
+        "stt_output": "Find an idea. Die! But if some painted official comes to bully honest folk, do not ask me to smile at him.",
+        "wer": 0.21052631578947367,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_zf_both_01": {
+        "id": "ch2_anxi_zf_both_01",
+        "character": "zhangfei",
+        "original_text": "Forgive us? After we saved their realm? If anger were wine, I could drown Luoyang in it.",
+        "stt_output": "Forgive us after we save their realm. If anger were wine, I could drown Luoyang in it.",
+        "wer": 0.058823529411764705,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_zf_one_01": {
+        "id": "ch2_anxi_zf_one_01",
+        "character": "zhangfei",
+        "original_text": "A half-reward for a whole battlefield. Hmph. I will still walk beside you to Anxi.",
+        "stt_output": "A half reward for a whole battlefield. Half? Kendo. I will still walk beside you to Anxie.",
+        "wer": 0.3333333333333333,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_zj_01": {
+        "id": "ch2_anxi_zj_01",
+        "character": "zhoujing",
+        "original_text": "You are Liu Xuande? I have heard your name in the campaign reports. Why do you idle in the street like an unrewarded clerk?",
+        "stt_output": "You are Liu Shuandei? I have heard your name in the campaign reports. Why do you idle in the street like an unrooted clout?",
+        "wer": 0.125,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_zj_02": {
+        "id": "ch2_anxi_zj_02",
+        "character": "zhoujing",
+        "original_text": "Then I will speak where waiting cannot. If soldiers bleed for the Han and receive only silence, the silence itself is treason.",
+        "stt_output": "Then I will speak where waiting cannot, if soldiers bleed for the Han and receive only silence, the silence itself is treason.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_zj_03": {
+        "id": "ch2_anxi_zj_03",
+        "character": "zhoujing",
+        "original_text": "The Yellow Turbans rose because offices are sold, kin are favored, enemies are ruined, and worthy men are made to beg at the gate.",
+        "stt_output": "The yellow turbans rose because offices are so thin of favoured, enemies are ruined, and worthy men are made to beg at the gate.",
+        "wer": 0.16666666666666666,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_zj_04": {
+        "id": "ch2_anxi_zj_04",
+        "character": "zhoujing",
+        "original_text": "Cut away the corruption of the Ten Attendants, reward those who fought, and the four seas may yet be quiet.",
+        "stt_output": "Cut away the corruption of the Ten Attendants, reward those who fought, and the four seas may yet be quiet.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_death_cc_01": {
+        "id": "ch2_hj_death_cc_01",
+        "character": "caocao",
+        "original_text": "There is the snare, dressed as command.",
+        "stt_output": "There is the snare, dressed as command.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_death_cc_02": {
+        "id": "ch2_hj_death_cc_02",
+        "character": "caocao",
+        "original_text": "The first matter is to make the throne lawful. Set Prince Bian in place, then punish the traitors.",
+        "stt_output": "The first matter is to make the throne lawful. Set Prince Bian in place, then punish the traitors.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_death_cc_03": {
+        "id": "ch2_hj_death_cc_03",
+        "character": "caocao",
+        "original_text": "Then speed and order may still serve you.",
+        "stt_output": "then speed and order may still serve you.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_death_eunuch_01": {
+        "id": "ch2_hj_death_eunuch_01",
+        "character": "eunuch",
+        "original_text": "By palace order: General-in-Chief He Jin is to enter at once and settle the late matter of succession.",
+        "stt_output": "by Palace Order. General in chief, he jinn is to enter at once and settle the late matter of succession.",
+        "wer": 0.2222222222222222,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_death_hj_01": {
+        "id": "ch2_hj_death_hj_01",
+        "character": "hejin",
+        "original_text": "Who here dares enter with me, enthrone the heir, and cleanse the palace?",
+        "stt_output": "Who here dares enter with me, enthrone the air, and cleanse the palace?",
+        "wer": 0.07692307692307693,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_death_hj_discipline": {
+        "id": "ch2_hj_death_hj_discipline",
+        "character": "hejin",
+        "original_text": "Take the troops, but keep them under command. We enter to secure the throne, not to loot the palace.",
+        "stt_output": "Take the troops, but keep them under command. We enter to secure the throne, not to loot the palace.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_death_hj_force": {
+        "id": "ch2_hj_death_hj_force",
+        "character": "hejin",
+        "original_text": "Let the palace see our strength before it opens its mouth again.",
+        "stt_output": "Let the palace see our strength before it opens its mouth again.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_death_narrator_01": {
+        "id": "ch2_hj_death_narrator_01",
+        "character": "narrator",
+        "original_text": "He Jin chose Yuan Shao, gathered the imperial troops, and prepared to enter before Emperor Ling's coffin.",
+        "stt_output": "Yi Jin chose Yuan Shao, gathered the Imperial troops, and prepared to enter before Emperor Ling's cuff.",
+        "wer": 0.11764705882352941,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_death_panyin_01": {
+        "id": "ch2_hj_death_panyin_01",
+        "character": "panyin",
+        "original_text": "My lord, Emperor Ling is dead.",
+        "stt_output": "My Lord, Emperor Ling is dead.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_death_panyin_02": {
+        "id": "ch2_hj_death_panyin_02",
+        "character": "panyin",
+        "original_text": "Jian Shuo and the Ten Attendants hide the mourning. They prepare a false edict to summon you in again.",
+        "stt_output": "Jiang Shu-uo and the Ten Attendants hide the morning. They prepare a false edict to summon you in again.",
+        "wer": 0.15789473684210525,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_death_panyin_03": {
+        "id": "ch2_hj_death_panyin_03",
+        "character": "panyin",
+        "original_text": "Their aim is to end you first, then enthrone Prince Xie.",
+        "stt_output": "Their aim is to end you first, then, in throne Prince Chiu.",
+        "wer": 0.2727272727272727,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_death_ys_01": {
+        "id": "ch2_hj_death_ys_01",
+        "character": "yuanshao",
+        "original_text": "I will borrow five thousand elite troops. We cut through the gates, enthrone the new lord, and kill the eunuchs.",
+        "stt_output": "I will borrow 5,000 elite troops. We cut through the gates and thrown the new Lord and killed the Unix.",
+        "wer": 0.3,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_death_ys_02": {
+        "id": "ch2_hj_death_ys_02",
+        "character": "yuanshao",
+        "original_text": "Good. Fear is the one court language the eunuchs understand.",
+        "stt_output": "Good. Fear is the one court language the unix understand.",
+        "wer": 0.1,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_enthrone_cc_dismissed_01": {
+        "id": "ch2_hj_enthrone_cc_dismissed_01",
+        "character": "caocao",
+        "original_text": "If force must lead, then at least let purpose follow close behind it.",
+        "stt_output": "If force must lead, then at least let purpose follow close behind it.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_enthrone_cc_heeded_01": {
+        "id": "ch2_hj_enthrone_cc_heeded_01",
+        "character": "caocao",
+        "original_text": "The fewer doors we open, the fewer lies escape. Go straight to the coffin and the seals.",
+        "stt_output": "The fewer doors we open, the fewer lies escape. Go straight to the coffin and the seals.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_enthrone_hj_01": {
+        "id": "ch2_hj_enthrone_hj_01",
+        "character": "hejin",
+        "original_text": "Before the late Emperor Ling, let Prince Bian receive the seals and mount the throne.",
+        "stt_output": "Before the late emperor laying, let Prince B in receive the seals and mount the throne.",
+        "wer": 0.2,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_enthrone_hj_disciplined_01": {
+        "id": "ch2_hj_enthrone_hj_disciplined_01",
+        "character": "hejin",
+        "original_text": "No one breaks ranks. No one enters a chamber not named. We come to set the throne in order.",
+        "stt_output": "No one breaks ranks. No one enters a chamber not named. We come to set the throne in order.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_enthrone_narrator_01": {
+        "id": "ch2_hj_enthrone_narrator_01",
+        "character": "narrator",
+        "original_text": "Yuan Shao borrowed five thousand imperial troops. He Yong, Xun You, Zheng Tai, and the ministers followed He Jin toward the palace.",
+        "stt_output": "Yuan Shao borrowed 5,000 imperial troops. Yong, Xuanyu, Zheng Tai, and the ministers followed he jinn toward the palace.",
+        "wer": 0.2727272727272727,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_enthrone_narrator_02": {
+        "id": "ch2_hj_enthrone_narrator_02",
+        "character": "narrator",
+        "original_text": "Prince Bian was enthroned as Emperor Shao. Empress He became Empress Dowager, and Prince Xie was made Prince of Chenliu.",
+        "stt_output": "Prince Biam was enthroned as Emperor Shah. Empress he became Empress Dowager, and Prince Chowin was made Prince of Chenlew.",
+        "wer": 0.2,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_enthrone_narrator_03": {
+        "id": "ch2_hj_enthrone_narrator_03",
+        "character": "narrator",
+        "original_text": "The throne was settled, but Jian Shuo still held forbidden troops and the palace corridors still answered to eunuch voices.",
+        "stt_output": "The throne was settled, but Jan Shu also held forbidden troops, and the palace corridors still answered to unuck voices.",
+        "wer": 0.2,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_enthrone_ys_01": {
+        "id": "ch2_hj_enthrone_ys_01",
+        "character": "yuanshao",
+        "original_text": "The new Son of Heaven is seated. Now every false order issued in the dark can be named treason.",
+        "stt_output": "The new son of heaven is seated. Now every false order issued in the dark can be named treason.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_enthrone_ys_force_01": {
+        "id": "ch2_hj_enthrone_ys_force_01",
+        "character": "yuanshao",
+        "original_text": "Let every gate see the troops. If the eunuchs whisper, let them whisper behind spear-points.",
+        "stt_output": "Let every gate see the troops. If the Unix whisper, let them whisper behind spear points.",
+        "wer": 0.2,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_js_cc_dismissed_01": {
+        "id": "ch2_hj_js_cc_dismissed_01",
+        "character": "caocao",
+        "original_text": "The garden is quiet, but the inner palace is not. Victory over one eunuch is not mastery of the eunuchs.",
+        "stt_output": "The garden is quiet, but the inner palace is not. Victory over one unucks is not mastery of the unucks.",
+        "wer": 0.1,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_js_cc_heeded_01": {
+        "id": "ch2_hj_js_cc_heeded_01",
+        "character": "caocao",
+        "original_text": "One traitor named and struck: that is power. A general cry against all eunuchs will turn power into smoke.",
+        "stt_output": "one traitor named and struck. That is power. A general cry against our units will turn power into smoke.",
+        "wer": 0.10526315789473684,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_js_guo_01": {
+        "id": "ch2_hj_js_guo_01",
+        "character": "eunuch",
+        "original_text": "You tried to drag us all into your murder. I will not die for your ambition.",
+        "stt_output": "You tried to drag us all into your murder. I will not die for your ambition.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_js_hj_01": {
+        "id": "ch2_hj_js_hj_01",
+        "character": "hejin",
+        "original_text": "Jian Shuo plotted murder. Zhang Rang and Duan Gui still have the Empress Dowager's ear. We move by charge, not by fury.",
+        "stt_output": "Giancio plotted murder. Zhang Rang and Duan Gi still have the Empress Dowager's ear. We move by charge, not by fury.",
+        "wer": 0.13636363636363635,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_js_jian_01": {
+        "id": "ch2_hj_js_jian_01",
+        "character": "eunuchguard",
+        "original_text": "Guards! To me! The palace troops answer to me!",
+        "stt_output": "GARTS! TO ME! The Palace troops answer to me.",
+        "wer": 0.1111111111111111,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_js_narrator_01": {
+        "id": "ch2_hj_js_narrator_01",
+        "character": "narrator",
+        "original_text": "With Emperor Shao enthroned, Yuan Shao moved at once to arrest Jian Shuo.",
+        "stt_output": "With Emperor Shao enthroned, you and Shao moved at once to arrest, Gian Shu'o.",
+        "wer": 0.23076923076923078,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_js_narrator_02": {
+        "id": "ch2_hj_js_narrator_02",
+        "character": "narrator",
+        "original_text": "Jian Shuo fled into the imperial garden and was killed by Guo Sheng. The troops under Jian Shuo submitted to He Jin.",
+        "stt_output": "Jian Shuoh fled into the Imperial Garden and was killed by Guo Shang. The troops under Jian Shuoh submitted to Hijin. Na.",
+        "wer": 0.22727272727272727,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_js_narrator_03": {
+        "id": "ch2_hj_js_narrator_03",
+        "character": "narrator",
+        "original_text": "He Jin now held the new emperor, Jian Shuo's troops, and a palace full of frightened enemies. Zhang Rang and Duan Gui remained.",
+        "stt_output": "He jian now held the new emperor, jian shuos troops, and a palace full of frightened enemies, chan rang and wangi remained.",
+        "wer": 0.17391304347826086,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_js_narrator_discipline_01": {
+        "id": "ch2_hj_js_narrator_discipline_01",
+        "character": "narrator",
+        "original_text": "Because He Jin had kept order at the gates, more palace soldiers surrendered their banners without panic.",
+        "stt_output": "because he gin had kept order at the gates, more palace soldiers surrendered their banners without panic.",
+        "wer": 0.058823529411764705,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_js_narrator_force_01": {
+        "id": "ch2_hj_js_narrator_force_01",
+        "character": "narrator",
+        "original_text": "Because He Jin had displayed force openly, the palace quieted quickly, but fear ran ahead of every messenger.",
+        "stt_output": "because he gin had displayed force openly, palace quieted quickly, but fear ran ahead of every messenger.",
+        "wer": 0.1111111111111111,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_js_ys_01": {
+        "id": "ch2_hj_js_ys_01",
+        "character": "yuanshao",
+        "original_text": "Jian Shuo plotted to murder the General-in-Chief and enthrone another prince by forged command. Seize him.",
+        "stt_output": "Jian Shu applauded to murder the general in chief and enthrone another prince by forged command. Seize him.",
+        "wer": 0.3125,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_js_ys_02": {
+        "id": "ch2_hj_js_ys_02",
+        "character": "yuanshao",
+        "original_text": "Jian Shuo is dead. The blade has found one root. Let it find the rest.",
+        "stt_output": "Gian Shuou is dead. The blade has found one root. Let it find the rest.",
+        "wer": 0.13333333333333333,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_north_defeat_lb_01": {
+        "id": "ch2_wan_north_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "The wall assault depends on this road staying closed. We try again at once.",
+        "stt_output": "The wall assault depends on this road staying closed. We try again at once.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_north_defeat_zj_01": {
+        "id": "ch2_wan_north_defeat_zj_01",
+        "character": "zhujun",
+        "original_text": "Sun Zhong broke through the north road. Reform the line before his remnant gathers strength.",
+        "stt_output": "Sun Chong broke through the North Road, Reformed the line before his remnant gathers strength.",
+        "wer": 0.13333333333333333,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_north_lb_01": {
+        "id": "ch2_wan_north_lb_01",
+        "character": "liubei",
+        "original_text": "Form across the road. Leave the rebels no passage except surrender.",
+        "stt_output": "Form across the road. Leave the Rebels no passage except surrender.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_north_lb_02": {
+        "id": "ch2_wan_north_lb_02",
+        "character": "liubei",
+        "original_text": "Sun Zhong's column is broken. Gather the weapons and spare those who throw them down.",
+        "stt_output": "Sun's own column is broken. Gather the weapons and spare those who throw them down.",
+        "wer": 0.13333333333333333,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_north_sj_01": {
+        "id": "ch2_wan_north_sj_01",
+        "character": "sunjian",
+        "original_text": "The wall is ours, and Zhao Hong is dead. Your roadblock kept the rebels from becoming an army again.",
+        "stt_output": "The wall is ours and Zhao Hong is dead. Your roadblock kept the rebels from becoming an army again.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_north_sz_01": {
+        "id": "ch2_wan_north_sz_01",
+        "character": "sunzhong",
+        "original_text": "The wall is shaking. Run north before Sun Jian shuts us inside Wan!",
+        "stt_output": "The wall is shaking, but run north before Sun Ji-An shuts us inside one.",
+        "wer": 0.15384615384615385,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_north_zj_01": {
+        "id": "ch2_wan_north_zj_01",
+        "character": "zhujun",
+        "original_text": "Sun Jian is striking the wall. Xuande, hold this north road; Sun Zhong must not carry Zhao Hong's remnant away.",
+        "stt_output": "Sun Jian is striking the wall. Wander, all this north road, Sun Chong must not carry Zhao Heng's remnant away.",
+        "wer": 0.2,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_north_zj_02": {
+        "id": "ch2_wan_north_zj_02",
+        "character": "zhujun",
+        "original_text": "Then Wan is settled. Nanyang is quiet, and the court will hear who held the road.",
+        "stt_output": "Then one is settled. Nanyang is quiet, and the court will hear who held the role.",
+        "wer": 0.125,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_rev_lb_02_road": {
+        "id": "ch2_wan_rev_lb_02_road",
+        "character": "liubei",
+        "original_text": "Then Sun Jian can press the wall. Our brothers will hold the north road and cut down anyone who breaks from the gate.",
+        "stt_output": "then Sanjian can press the wall. Our brothers will hold the North Road and cut down anyone who breaks from the gate.",
+        "wer": 0.08695652173913043,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_rev_lb_02_wall": {
+        "id": "ch2_wan_rev_lb_02_wall",
+        "character": "liubei",
+        "original_text": "Then we will join Sun Jian at the wall. If the gate breaks quickly, Sun Zhong will have no road left to use.",
+        "stt_output": "Then we will join Sun Jian at the wall. If the gate breaks quickly, Sun Jian will have no road left to use.",
+        "wer": 0.043478260869565216,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_rev_sj_02_road": {
+        "id": "ch2_wan_rev_sj_02_road",
+        "character": "sunjian",
+        "original_text": "Leave the wall to me. If the rebels flee north, make the road narrower than the gate.",
+        "stt_output": "Leave the wall to me if the rebels flee north. Make the road narrower than the gates.",
+        "wer": 0.058823529411764705,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_rev_sj_02_wall": {
+        "id": "ch2_wan_rev_sj_02_wall",
+        "character": "sunjian",
+        "original_text": "Good. We will climb together and settle Zhao Hong before his courage hardens.",
+        "stt_output": "Good. We will climb together and settle Zao Hong before his courage hardens.",
+        "wer": 0.07692307692307693,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_rev_zj_03_road": {
+        "id": "ch2_wan_rev_zj_03_road",
+        "character": "zhujun",
+        "original_text": "Good. Sun Jian will strike the wall. Xuande, take your brothers to the north road; if Sun Zhong runs, he must find you there.",
+        "stt_output": "Whoa! Sunji and Sunimville strike the wall. Suwande, take your brothers to the north road. If Sun Jong runs, he must find you there.",
+        "wer": 0.25,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_rev_zj_03_wall": {
+        "id": "ch2_wan_rev_zj_03_wall",
+        "character": "zhujun",
+        "original_text": "Then the wall assault will carry our strength. My remaining troops will watch the roads while you and Sun Jian break the gate.",
+        "stt_output": "Then the war assault will carry our strength. My remaining troops will watch the roads while you and Sun Giant break the gate.",
+        "wer": 0.08695652173913043,
+        "is_bad": false,
+        "language": "en"
     }
 }

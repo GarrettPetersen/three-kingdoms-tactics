@@ -1,0 +1,3432 @@
+{
+  "cc_dq_01": {
+    "character": "caocao",
+    "hash": "b3993337e278e5e108ab77ad6914d5c5dddae964a87ad8958bc1c5db8686405d",
+    "text": "The court sits idle while the Yellow Turbans spread havoc. If this chaos is to end, someone must move first.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_dq_02": {
+    "character": "caocao",
+    "hash": "d0765bb494971a43c0253157c79c734c0d1f9c6a9ac8afff034238755a4d45e5",
+    "text": "Something must be done about these refugees.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_dq_03": {
+    "character": "caocao",
+    "hash": "5cdbd836e68f998c534e18045d11017c36b83b1a7033d58c7a7e727bea0cedd4",
+    "text": "At last - authority to strike the rebels.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_dq_04": {
+    "character": "caocao",
+    "hash": "dc220b337a3ba9f7dfb8d04b367807c0341f3bd51ba7042ca3a859d062ff4a04",
+    "text": "Write draft notices to every household at once, and send riders to every surrounding village.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_dq_05": {
+    "character": "caocao",
+    "hash": "3e61477a06e14c84d90fbbfa147fe85e9582564c6b982cd94f067dfdec62d8cb",
+    "text": "Send word to my cousin Cao Ren: gather every horseman he can and join me without delay.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_dq_06": {
+    "character": "caocao",
+    "hash": "1076a9be32afb1740e2230bfbe98e73a3aaa5a4ab236d23ffeec85e87dbe19dc",
+    "text": "Arm my household retainers for war, and draw horses from my own stables to mount them.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_dq_att_00": {
+    "character": "zhoujing",
+    "hash": "545196647f59b7624cfb680c76f5ad9e251db327092516a6e54e1836b0ab3488",
+    "text": "Magistrate, the refugees all report the Yellow Turbans are burning and plundering along the roads. The people are carrying old and young alike and pleading to enter the city for shelter.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "cc_dq_att_01": {
+    "character": "soldierv3",
+    "hash": "630959f9b15ca4ad185b98649a0d26b484fb218879793ced3ac34bff24292bec",
+    "text": "At once, Magistrate. We will open the stores and keep order.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_angry-mulans-dad.wav"
+  },
+  "cc_dq_att_02": {
+    "character": "soldierv3",
+    "hash": "ed94ff474f6d1e20c6256d213a672f2469d677ed0a816ab7c91d151c5a5e49ca",
+    "text": "Understood, Magistrate. I will have the gates sealed at once.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_angry-mulans-dad.wav"
+  },
+  "cc_dq_att_03": {
+    "character": "zhoujing",
+    "hash": "6e27428397c90dbda8e99d5cd1c22910fd97aa7fce4d93480401b2798decdac5",
+    "text": "As you command, Magistrate. I will see these orders carried out at once.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "cc_dq_choice_01": {
+    "character": "caocao",
+    "hash": "e6bdd4316d708f7a3af31227469fd24375419ba2ff8d20e4105823d03dc2f8d4",
+    "text": "Open the city granaries. Issue gruel at the east market and register each household in order.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_dq_choice_02": {
+    "character": "caocao",
+    "hash": "9a5c91b664167e161dd4a23a77226d84dc312f3d042bae70b17d393de6a21786",
+    "text": "Close the gates at once. Redirect new arrivals to neighboring counties before panic swallows the city.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_dq_msg_01": {
+    "character": "volunteer",
+    "hash": "640d01cfa4600c4bee4c78e5b6b2bd5dcd02db5c76c0a47303d636ca9ceacee9",
+    "text": "Dispatch from Luoyang! Imperial order: Dong Commandery is to muster a cavalry force of five thousand.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "cc_dq_msg_02": {
+    "character": "volunteer",
+    "hash": "b3d338db83578ccdac90719df4533424035ff3881d38362d1dd2fee4a3f59dbd",
+    "text": "Draft men and horses from local households and march against the Yellow Turban rebels.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "cc_dq_msg_03": {
+    "character": "volunteer",
+    "hash": "6dd028fdbba0136bfb773702081ad7e33a48c7d4abf8a33ec281fdccb6bc688f",
+    "text": "Magistrate Cao Cao is elevated to Cavalry Commander and placed in command of this Dong Commandery cavalry force.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "cc_yc_01": {
+    "character": "caocao",
+    "hash": "8b53b1f53b5388c9419511894c8cd805f62c43e49a61cfa907877bbfdc806456",
+    "text": "Yingchuan burns behind them. Huangfu Song and Zhu Jun have already broken their camp.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_yc_02": {
+    "character": "caocao",
+    "hash": "2cdbcd11fdb1ac561ab3c6ddfa7fbaaaeee303462ee60c4fe0c848ca503b2bdb",
+    "text": "We cut the road here. Leave none to regroup at Guangzong.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_yc_choice_01": {
+    "character": "caocao",
+    "hash": "843240352cf97d3d443b47c3eaf6a8ad3d34ad41c4bd3331069fcac2f7403e6a",
+    "text": "Then we ride without delay. A beaten enemy must not be given a night to breathe.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_yc_choice_02": {
+    "character": "caocao",
+    "hash": "33b9ffe57b59c44f12075cb37ac8435b33fc1f02bc31c73566f10d19ab880b42",
+    "text": "We secure this field first and gather remounts; then strike again with full speed.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_yc_cr_01": {
+    "character": "caoren",
+    "hash": "1735e585e06f73e20b41af7278f06c3b08efd657efd02310df768275a7e70490",
+    "text": "Understood! Cavalry forward - close the pass and strike their rear guard!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "cc_yc_cr_02": {
+    "character": "caoren",
+    "hash": "8801d4334484ab12580114cc5b23272eb1be69e5679bebe2bae8ee1c0701ab5c",
+    "text": "Orders received. I will regroup the riders and prepare to move at once.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "cc_yc_cr_cmd_tutorial_01": {
+    "character": "caoren",
+    "hash": "44703171062127a851d596388eae3acb620acddf354948bc86bc05784849f2f5",
+    "text": "That soldier is in danger! Issue a command to get him to safety.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "cc_yc_cr_post_01": {
+    "character": "caoren",
+    "hash": "7ee45c9d5a000c2cd0749d7cc0b1eebb02cc3a24ea6620827e91d17a245792ef",
+    "text": "Understood. I'll sweep the road, gather stragglers, and have the cavalry ready to move.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "cc_yc_hfs_01": {
+    "character": "huangfusong",
+    "hash": "cd6b0406d00e8594979af15e48c4456531a6e4471ffc624be55059f62f532cae",
+    "text": "Cavalry Commander Cao, your interception came in perfect time. The routed bands have no order left.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "cc_yc_hfs_choice_01": {
+    "character": "huangfusong",
+    "hash": "93edee7a7efee92d667dcb8dda9983088306b56d2734d3202ccaa935c4d231d1",
+    "text": "Prudent and sharp. Keep your riders fresh and your line intact.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "cc_yc_zb_01": {
+    "character": "zhangbao",
+    "hash": "497e52584f57a9cb3d585ba0365bd7932fe4435cea8c971fd5bb3fc15267fcae",
+    "text": "Cavalry ahead?! Break through! Break through!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "cc_yc_zb_retreat_01": {
+    "character": "zhangbao",
+    "hash": "4b6f1987d9dba44205aa4cb43a1ccae0b2a8fc71401e8a2f6f3fc6becfa41e5d",
+    "text": "Brother Liang, break away! We will settle this at Guangzong!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "cc_yc_zj_01": {
+    "character": "zhujun",
+    "hash": "e7337940eca10599a9a5a12cddc17deef4bbafdf01018cd1c0a8252b7be1eb65",
+    "text": "Zhang Liang and Zhang Bao slipped away with a few horsemen. They will likely run toward Guangzong.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "cc_yc_zl_retreat_01": {
+    "character": "zhangliang",
+    "hash": "f3243b42da537a8034d2b42c72615cc287853a72d26b787593c5853cc5d742b0",
+    "text": "To Guangzong! Rejoin the elder brother!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "ch1_end_01": {
+    "character": "narrator",
+    "hash": "87921c98589834a5d6bf8307d629fe57d937492005855d48e3184b4685bef932",
+    "text": "But slaying the ungrateful would\nmean many deaths a year.\n\nDong Zhuo's fate will be unrolled in later chapters...",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_anxi_eunuch_01": {
+    "character": "eunuch",
+    "hash": "7a1d08d861fc07631cf6ece9f87630a32839e9679529474ad626d4aecaaa1806",
+    "text": "Zhang Jun deceives the throne. These complaints come from men who resent their place, not men who love the Han.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_disney_hades.wav"
+  },
+  "ch2_anxi_eunuch_both_01": {
+    "character": "eunuch",
+    "hash": "2556e0b4237f1a07efa47f63bc05ea98c152db51a59782a18d6d77f7ffe9b08f",
+    "text": "Liu Bei freed Lu Zhi by force, then raised blades against Dong Zhuo. This is not merit; it is rebellion wearing campaign dust.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_disney_hades.wav"
+  },
+  "ch2_anxi_eunuch_dz_01": {
+    "character": "eunuch",
+    "hash": "a23b1006558174df3294c06181406d98d085bbff17919c9109e399c6684c266f",
+    "text": "Liu Bei is also the man whose brothers raised steel against Dong Zhuo, an imperial general in the field. Is that loyalty?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_disney_hades.wav"
+  },
+  "ch2_anxi_eunuch_freed_01": {
+    "character": "eunuch",
+    "hash": "6d6b24ef051ccc6cfbe055471c46e0af81f56fa35412481d0dd4a9181f0e34d0",
+    "text": "Liu Bei is also the man who took arms against imperial escorts and released Lu Zhi. Are we to reward disorder with a seal?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_disney_hades.wav"
+  },
+  "ch2_anxi_gy_01": {
+    "character": "guanyu",
+    "hash": "9d25bb7f96e61ac41d20c47b534af392473dad8a6425d89556a476ba5119c69a",
+    "text": "Merit should speak for itself. Yet at court, even merit seems to need an usher.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "ch2_anxi_gy_02": {
+    "character": "guanyu",
+    "hash": "c832abe6a5c203571d8fe7ecb8e0eaca6314c4398a5c99e3cda7e3805b383d07",
+    "text": "Then we go cleanly. A low office held with righteousness is higher than a high office bought with shame.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "ch2_anxi_gy_both_01": {
+    "character": "guanyu",
+    "hash": "9ab38e80260f160b5395cfb29db7cf4cac8c9f5c26993cbae6aa224a8c53b0f0",
+    "text": "A pardon from such hands is not honor, but it keeps the oath alive.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "ch2_anxi_gy_one_01": {
+    "character": "guanyu",
+    "hash": "844ac46df481ea6978b7d1cbbaaccba6ffefc883aa71efd820be079cb25c3343",
+    "text": "They could not deny your merit, so they made the post smaller than the deed.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "ch2_anxi_lb_01": {
+    "character": "liubei",
+    "hash": "5c3f3088036e91b1407a4930fbffc7f143261a30178cd2216ce02bdd3494ccfa",
+    "text": "If office comes, we serve. If none comes, our oath remains. Still, the men who followed us deserve to see justice done.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_anxi_lb_02": {
+    "character": "liubei",
+    "hash": "572395b92b5da866f7001aad09153996318743c67b9c26c1801e802fa38cdf8a",
+    "text": "We have submitted our names and wait on the court. Nothing more is in my hands.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_anxi_lb_03": {
+    "character": "liubei",
+    "hash": "c483ff469ea66fb1fbde59e37a83aeeaec267680cbcee54a0af5834c50a5e0f5",
+    "text": "Anxi County commandant. The seal is small, but the people beneath it are not small.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_anxi_lb_both_01": {
+    "character": "liubei",
+    "hash": "6e96de60751cd39df0ed5299b1fa74d234a1d427ab740b344ded9cb85cd79da4",
+    "text": "So our reward is not a seal, but breath in our bodies. If that breath remains, we can still choose righteousness.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_anxi_lb_one_01": {
+    "character": "liubei",
+    "hash": "ebb0a8882f0552e6fe979bd97fcd6fc691de7100b89329e64a4d24ce5e03f875",
+    "text": "Assistant to the Anxi commandant. No seal of my own, yet the people served by that office are still people of the Han.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_anxi_narrator_01": {
+    "character": "narrator",
+    "hash": "3176fc3bc63a6be53a9148ea92088e8d27bb4a7e41ac1e977fc283e6ec1013bb",
+    "text": "With Wan settled and Nanyang quiet, Zhu Jun returned to Luoyang and memorialized the merit of Sun Jian and Liu Bei.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_anxi_narrator_02": {
+    "character": "narrator",
+    "hash": "4890ff6796bb039234bd5bd54f8e4bb67b27cda70062b29c8988613f7a368e0c",
+    "text": "Sun Jian had patrons and soon departed to a new post. Liu Bei waited in the capital, day after day, and no summons came.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_anxi_narrator_03": {
+    "character": "narrator",
+    "hash": "43c2a2ecebb2df9dd4b1e411976f8674aa9194467b787a46a14fac572d47d47d",
+    "text": "Zhang Jun was driven out. The eunuchs, fearing that unrewarded soldiers would make more noise, wrote Liu Bei down for a minor office.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_anxi_narrator_04": {
+    "character": "narrator",
+    "hash": "35e2e59b5d3f8ef49e7bbf518724e0df48a36b76762f7484f5ca52ff829f44d6",
+    "text": "Liu Bei dismissed the volunteers to their villages and took only a small retinue with Guan Yu and Zhang Fei to Anxi.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_anxi_narrator_both_01": {
+    "character": "narrator",
+    "hash": "6680f50d45ef8155c14c3548d23118518acfa6789ee92391d76ab0aba1c5a206",
+    "text": "Zhang Jun was driven out. Zhu Jun's memorial saved Liu Bei's life, not his future. The court remitted the capital charges and granted no office.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_anxi_narrator_both_02": {
+    "character": "narrator",
+    "hash": "386d5118ccb5a899ec7e11a07114c90feccedc8a7d3ee6d18470124a18427595",
+    "text": "Liu Bei dismissed the volunteers to their villages and left Luoyang with Guan Yu and Zhang Fei, their crimes forgiven but their names still darkened at court.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_anxi_narrator_one_01": {
+    "character": "narrator",
+    "hash": "2419ebf0f97475d10b9ab3af7ec5f39e4c9da1a5ca37828d5855d9bf97a976b5",
+    "text": "Zhang Jun was driven out. Zhu Jun's memorial could not erase Liu Bei's offense, but it made punishment inconvenient. The court forgave the crime and cut down the reward.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_anxi_narrator_one_02": {
+    "character": "narrator",
+    "hash": "a4ec9b8f1a6796858981cdc0b6b625bc53c4eba15eb16e4314700b241e5bd2c1",
+    "text": "Liu Bei dismissed the volunteers to their villages and took a small retinue with Guan Yu and Zhang Fei to Anxi, there to serve beneath another man's seal.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_anxi_zf_01": {
+    "character": "zhangfei",
+    "hash": "cf252ecf69c8268c6065453810a6496329b7bde07b4a6e1b22c48f129e7f4e54",
+    "text": "We broke rebels, scaled walls, and chased their chiefs into the dust. Are we to live in an inn until our beards turn white?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_anxi_zf_02": {
+    "character": "zhangfei",
+    "hash": "261272b02f9772ad1c58b739b69739fc3ac8d900aeeba4f6ca5eccb50303cad9",
+    "text": "Fine. But if some painted official comes to bully honest folk, do not ask me to smile at him.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_anxi_zf_both_01": {
+    "character": "zhangfei",
+    "hash": "50fdfa485aa78b321eb5fcffd80ced037d0499cde5c6a8aae41d2314207f44d0",
+    "text": "Forgive us? After we saved their realm? If anger were wine, I could drown Luoyang in it.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_anxi_zf_one_01": {
+    "character": "zhangfei",
+    "hash": "7fbaf3835d129dd8a1481faff017bcdd75fa233fbb188cc4100d8e718869f1c7",
+    "text": "A half-reward for a whole battlefield. Hmph. I will still walk beside you to Anxi.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_anxi_zj_01": {
+    "character": "zhoujing",
+    "hash": "986c74fe0dc1556c10f2abf2387c36676ceb058411c147911cf4612c769f7140",
+    "text": "You are Liu Xuande? I have heard your name in the campaign reports. Why do you idle in the street like an unrewarded clerk?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_anxi_zj_02": {
+    "character": "zhoujing",
+    "hash": "b159eb4c8c22c05115dd26116c80bfb119b0871d33f5ec0efb6db23358c30140",
+    "text": "Then I will speak where waiting cannot. If soldiers bleed for the Han and receive only silence, the silence itself is treason.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_anxi_zj_03": {
+    "character": "zhoujing",
+    "hash": "00d4362f5321c028d08a4852fc20ffe65f6623875622aec1a353c59564655f29",
+    "text": "The Yellow Turbans rose because offices are sold, kin are favored, enemies are ruined, and worthy men are made to beg at the gate.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_anxi_zj_04": {
+    "character": "zhoujing",
+    "hash": "9d64a87134b5f84d4516339e53cb26d5f35bb4639263192ddd658de762584083",
+    "text": "Cut away the corruption of the Ten Attendants, reward those who fought, and the four seas may yet be quiet.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_counter_camp_choice_reluctant": {
+    "character": "liubei",
+    "hash": "362dfdadf85345cbcb8d7d1acaf12c5231b27fd4f6abea3ae64ac0d793b0f313",
+    "text": "It sits poorly with me to answer darkness with such things. Yet lives weigh heavier than pride.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_counter_camp_choice_use": {
+    "character": "liubei",
+    "hash": "c4ae8716d448aa22f41ab32ac11327e7a6907bc8f55441f32007053cae7b1ef3",
+    "text": "If striking Zhang Bao with filth stops the thunder and saves the men, we use it.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_counter_camp_gy_01": {
+    "character": "guanyu",
+    "hash": "5e35d830618c34a102db9c201d79096465d5a66d812cc696d0a5b5ccf30958d1",
+    "text": "Pig, sheep, and dog blood, with filthy matter besides. Give it to the brothers and keep it ready at both sides of the valley.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "ch2_counter_camp_lb_01": {
+    "character": "liubei",
+    "hash": "070264ebca11f6f5617ba72407e0f410f895877249be6ce1f193ecbfbe965a98",
+    "text": "Zhang Bao called lightning down on us. In the thunder and black air, it seemed as if soldiers were falling from the sky.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_counter_camp_lb_02": {
+    "character": "liubei",
+    "hash": "1e41f6ec5db61550a6ca4c5dfafbefb5019336184978fec4b1575577b9ab70b2",
+    "text": "Guan Yu, Zhang Fei: take the right side of the valley. I will press from the left. When Zhang Bao calls thunder, close in and throw the filth on him.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_counter_camp_zf_01": {
+    "character": "zhangfei",
+    "hash": "3fc5b3287ad5b115ba9a0eecfd2e6eeaf4016436d1751a14e9cfe0ba1c91a200",
+    "text": "Ha! If thunder answers him, slop will answer thunder.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_counter_camp_zj_01": {
+    "character": "zhujun",
+    "hash": "c1afca55bddfc9c4b6038fdc499ed86a2c3379e8567badcf2fdb61ebae203e51",
+    "text": "Then do not meet thunder with spearpoints alone. Blood and filth can foul the rite itself. If Zhang Bao is struck with it, the lightning should fail.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_counter_camp_zj_02": {
+    "character": "zhujun",
+    "hash": "4932a4da26b1440f34002bfc685edbc488352ac5fa2c94e7255e6dfa2ffdcf1d",
+    "text": "This is not worship of sorcery. It is a soldier's answer: close the distance, foul the caster, and end the thunder.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_counter_camp_zj_03": {
+    "character": "zhujun",
+    "hash": "134687278c826f2a276252fc652caef7a7e3d9478ea249e9800302b95f6b2952",
+    "text": "Good. The road to Yangcheng opens beyond that ridge. Break him there, and he will have only the city walls left.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_counter_gy_01": {
+    "character": "guanyu",
+    "hash": "f7370aace63fa5749d6b4d7ca17880acd40e25f8302f92621fab608f6d15e3b6",
+    "text": "We are in position on the far side. When he calls the lightning, we close the pincer.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "ch2_counter_lb_01": {
+    "character": "liubei",
+    "hash": "746c0fb546067fb7e5f2fb6b2333f9c383ff8c1aa6eada5b4ddab352ff63a077",
+    "text": "Hold until the thunder breaks and the black air rises. Then get close to Zhang Bao and throw the filth on him to stop his power.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_counter_lb_filth_reminder_01": {
+    "character": "liubei",
+    "hash": "c64c86d3ebdddf06e9e45e9f6942cc7e04060599fa30bd16e36c81fdad470d2f",
+    "text": "That thunder will break us if we let him keep chanting.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_counter_zb_01": {
+    "character": "zhangbao",
+    "hash": "a199180492dfe2e7f79590c2d0efe9ca6fbcd4b02c7df205229f98072c0fa8e7",
+    "text": "Again you come? Then Heaven's lightning will answer me again!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_counter_zb_filth_01": {
+    "character": "zhangbao",
+    "hash": "1f364fdbe5f6c18c7fdc27d0b158162077d14a134a102b95aaae3bf84a0729f3",
+    "text": "Filth! You dare foul Heaven's spell? The thunder... it will not answer!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_counter_zb_retreat_01": {
+    "character": "zhangbao",
+    "hash": "199682135f939b1445411237bc71bae3b271651c9d539608b56cbffd9c4228d3",
+    "text": "My spell is broken! Yangcheng - fall back to Yangcheng!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_counter_zf_filth_reminder_01": {
+    "character": "zhangfei",
+    "hash": "f7b6056b1c270a828e53aec59efab2041c05a183d2c24329c3b48f5a3f7f29ec",
+    "text": "Then get close and hurl the filth at Zhang Bao. Foul the spell at its source!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_hj_choice_enter": {
+    "character": "hejin",
+    "hash": "3b1c42e73ac5b9a58023e6ecfde322a76aa9d8a48cd51a16f8a5dc52c6125f38",
+    "text": "I am General-in-Chief. Let Jian Shuo show his hand if he dares.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_choice_return": {
+    "character": "hejin",
+    "hash": "6024b4539a577137c5ef1e05ac60832126c103a5ec3a2a062ba6233ab9c5bca0",
+    "text": "I will not step blindly into Jian Shuo's knife. I return home and summon the ministers.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_council_cc_01": {
+    "character": "caocao",
+    "hash": "ac7f03816ab285b03519ec499d4c90b87f98dd911785d9d69f91d95fa3fce135",
+    "text": "The eunuchs have served inside the palace for generations. Their ears are in every curtain and corridor.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_council_cc_02": {
+    "character": "caocao",
+    "hash": "6a662ab0d8c88601c9c97d8b33d4e8df7a250d497ebe1d2cebd41abe4325a063",
+    "text": "If this is to be done, it must be secret and exact. A broad shout of vengeance will ruin your whole clan.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_council_cc_03": {
+    "character": "caocao",
+    "hash": "8d66af3d8cf8b6ac5deac8a6c62131354e441adc0e3b06181b82c062b55bb4e5",
+    "text": "Then keep the circle small. A plan known by all ministers is already known by Zhang Rang.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_council_cc_04": {
+    "character": "caocao",
+    "hash": "4bee1e5d7830f2f855fe8d18095a604f0a9bed1c1c93d454a5ca31858727af75",
+    "text": "Then I have spoken. May the walls be less talkative than men.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_council_hj_01": {
+    "character": "hejin",
+    "hash": "92aa39956cec265134f6556e7006e4f0cbb1d6f0e692c99f0a4680d2f156071d",
+    "text": "Jian Shuo set a blade for me at the palace gate. This poison has roots through the whole forbidden palace.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_council_hj_02": {
+    "character": "hejin",
+    "hash": "1fef3de3ab49b72c75891330ab918a8b689d697078b822e957807a29a84525c2",
+    "text": "If the eunuchs can choose the emperor by murder, none of us serves the Han any longer.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_council_hj_03": {
+    "character": "hejin",
+    "hash": "db282ece946cf4459550080baeb2f9a2c68b96a42a4d2b8a2ac5497ef17df916",
+    "text": "Before steel is drawn, the succession must be secured. Send watchers to the palace and wait for Pan Yin.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_council_hj_dismiss": {
+    "character": "hejin",
+    "hash": "2a04e5ff7a100241b40e01260550c58c9d62b09ec6a172ae38316bb878006e62",
+    "text": "You are still young, Mengde. Do not dress fear as wisdom before the ministers.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_council_hj_heed": {
+    "character": "hejin",
+    "hash": "977e0fc0fe74c209cc0524eba1b8423a01b4cfb2e9e904b976a108315c959486",
+    "text": "Your caution is sharp, Mengde. We will first learn who stands with Jian Shuo.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_council_narrator_02": {
+    "character": "narrator",
+    "hash": "b59bcbcdc802f213b018a9ceb4824fecf95db0347ca9816a7c9d7f15adc7b39f",
+    "text": "Even as the ministers argued, the palace concealed Emperor Ling's death and prepared a forged summons.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_hj_council_ys_01": {
+    "character": "yuanshao",
+    "hash": "191eab2b0f5801959739172b8b2257e75780cec01b2c9dd885459f30d41ba2b5",
+    "text": "My lord, the matter is plain. Name the traitors, command the troops, and sweep the palace clean.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_brash_australian_man.wav"
+  },
+  "ch2_hj_council_ys_02": {
+    "character": "yuanshao",
+    "hash": "01befe2a11fc047cf8ef2c84725cc097e1944ce84ff45e080d3e16bc6590ca3e",
+    "text": "Caution has its place, but delay fattens traitors.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_brash_australian_man.wav"
+  },
+  "ch2_hj_council_ys_03": {
+    "character": "yuanshao",
+    "hash": "e4f68430484f1ce86696ceefa68eea672e8f712b112110ca8971dfb911442432",
+    "text": "The General-in-Chief sees clearly. Let force answer force.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_brash_australian_man.wav"
+  },
+  "ch2_hj_death_cc_01": {
+    "character": "caocao",
+    "hash": "f38f86d2a5ed7284dfbe20fea632088d19d82054c28a7d103d7c8870dbbf7dd2",
+    "text": "There is the snare, dressed as command.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_death_cc_02": {
+    "character": "caocao",
+    "hash": "863e4c6158a3324c4fdbe72b33ad1170cc77bc2bbeec2816e4d21e5133fb75bd",
+    "text": "The first matter is to make the throne lawful. Set Prince Bian in place, then punish the traitors.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_death_cc_03": {
+    "character": "caocao",
+    "hash": "32d6d6029bb77626badd321a31e5fccbf1afc9433ec5fe08c251dd8d3bf0fdcd",
+    "text": "Then speed and order may still serve you.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_death_eunuch_01": {
+    "character": "eunuch",
+    "hash": "13e2c41cd83c8f5087b499dfc0a7eecaadeb89bd56e3ea7b2360404badacc83e",
+    "text": "By palace order: General-in-Chief He Jin is to enter at once and settle the late matter of succession.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_disney_hades.wav"
+  },
+  "ch2_hj_death_hj_01": {
+    "character": "hejin",
+    "hash": "e15131c04d22a2f9a76b455191a18c7cb1bfcd6e128a5a9c79ccd5b2abbefa1c",
+    "text": "Who here dares enter with me, enthrone the heir, and cleanse the palace?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_death_hj_discipline": {
+    "character": "hejin",
+    "hash": "e8d215f0cf829bfc4d0b6c8a776f23549bc04107805853d83cc7019a58d2d096",
+    "text": "Take the troops, but keep them under command. We enter to secure the throne, not to loot the palace.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_death_hj_force": {
+    "character": "hejin",
+    "hash": "08e470eaa4f1f95ebd26793cc9ca5d2961904e5e6b28f5d3da6f3a4525e8f200",
+    "text": "Let the palace see our strength before it opens its mouth again.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_death_narrator_01": {
+    "character": "narrator",
+    "hash": "5c7ed59cf70b0cf9b324ebb7cdce52dbe5a2685ae6029f831dc7afaf183195ee",
+    "text": "He Jin chose Yuan Shao, gathered the imperial troops, and prepared to enter before Emperor Ling's coffin.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_hj_death_panyin_01": {
+    "character": "panyin",
+    "hash": "0ad3006f37a5e1c67f2886794304813b159bbb013e749da87df6b06dff5d3d0a",
+    "text": "My lord, Emperor Ling is dead.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_hj_death_panyin_02": {
+    "character": "panyin",
+    "hash": "8ffde4a606f347576793e3d71fc46b0043c037b75ae0d0fb7743824a09d173f0",
+    "text": "Jian Shuo and the Ten Attendants hide the mourning. They prepare a false edict to summon you in again.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_hj_death_panyin_03": {
+    "character": "panyin",
+    "hash": "799c4a6af32b9bddf07c8baa88ba8b4729dcffc2f3dfe29f190f64d7c66960a0",
+    "text": "Their aim is to end you first, then enthrone Prince Xie.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_hj_death_ys_01": {
+    "character": "yuanshao",
+    "hash": "b53092d71a37c6bbba7d26db22942d9087a25ba6247a41a5bdd58f56ebc7b251",
+    "text": "I will borrow five thousand elite troops. We cut through the gates, enthrone the new lord, and kill the eunuchs.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_brash_australian_man.wav"
+  },
+  "ch2_hj_death_ys_02": {
+    "character": "yuanshao",
+    "hash": "0a40214ec23dbf94caa073b64124d5f3e9513de70740ada3f349cf60e331d8ee",
+    "text": "Good. Fear is the one court language the eunuchs understand.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_brash_australian_man.wav"
+  },
+  "ch2_hj_enthrone_cc_dismissed_01": {
+    "character": "caocao",
+    "hash": "ae229d8d9c986c901842723d6f798f4a6e29a3fbd15d425b3a8f6248064b8097",
+    "text": "If force must lead, then at least let purpose follow close behind it.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_enthrone_cc_heeded_01": {
+    "character": "caocao",
+    "hash": "03dfce9b2e1b8acf827c919b81ed6604f99f785b79257b39f054b4acafadb462",
+    "text": "The fewer doors we open, the fewer lies escape. Go straight to the coffin and the seals.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_enthrone_hj_01": {
+    "character": "hejin",
+    "hash": "e5561e9033bfc3863055cecd4c78311b429436d9843d5cca1080b36301cd0b06",
+    "text": "Before the late Emperor Ling, let Prince Bian receive the seals and mount the throne.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_enthrone_hj_disciplined_01": {
+    "character": "hejin",
+    "hash": "fd71a840f63b6c1d08f14e172b59baf4c3e0f9e88bd67cc1d57536b9c8474009",
+    "text": "No one breaks ranks. No one enters a chamber not named. We come to set the throne in order.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_enthrone_narrator_01": {
+    "character": "narrator",
+    "hash": "fd8a6055c25fc7b471d540861c772b665dce7cf4e60f7f469c6927f65a7cfe25",
+    "text": "Yuan Shao borrowed five thousand imperial troops. He Yong, Xun You, Zheng Tai, and the ministers followed He Jin toward the palace.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_hj_enthrone_narrator_02": {
+    "character": "narrator",
+    "hash": "d4d520a5fdfbb1774dbe8f9917dacc03451550ad4026530840e12ee64069a112",
+    "text": "Prince Bian was enthroned as Emperor Shao. Empress He became Empress Dowager, and Prince Xie was made Prince of Chenliu.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_hj_enthrone_narrator_03": {
+    "character": "narrator",
+    "hash": "f803ce5f6601e1d921567a54c790a22276b8abd861179957870541b58d059c46",
+    "text": "The throne was settled, but Jian Shuo still held forbidden troops and the palace corridors still answered to eunuch voices.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_hj_enthrone_ys_01": {
+    "character": "yuanshao",
+    "hash": "70bbdb326db5322aa77d7a4bcdd96340b86e144224dc0eddfba8ea561bea1313",
+    "text": "The new Son of Heaven is seated. Now every false order issued in the dark can be named treason.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_brash_australian_man.wav"
+  },
+  "ch2_hj_enthrone_ys_force_01": {
+    "character": "yuanshao",
+    "hash": "adcee218fd2e5af3375360a8545aa2b7f82fe02f27f500492933d8d276290195",
+    "text": "Let every gate see the troops. If the eunuchs whisper, let them whisper behind spear-points.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_brash_australian_man.wav"
+  },
+  "ch2_hj_eunuch_01": {
+    "character": "eunuch",
+    "hash": "665c8f297528dab64daabda06bd7db86a7416a0b2103e976dd4e149929a221a5",
+    "text": "General-in-Chief He Jin, His Majesty awaits within.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_disney_hades.wav"
+  },
+  "ch2_hj_guard_01": {
+    "character": "palace_assassin",
+    "hash": "acfb43a00df152af1a287aea53f9abaef3d0a2958e451c903c917f7c0142d94c",
+    "text": "Seal the gate. Jian Shuo commands it.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "ch2_hj_hejin_01": {
+    "character": "hejin",
+    "hash": "d339b89d557f27183a7435c7a966a7ffa0f932b4cb888d166296ac0bccb9c116",
+    "text": "Murder me? At the very gate?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_js_cc_dismissed_01": {
+    "character": "caocao",
+    "hash": "c6db8d35ff896a8c3ba365308b6b7cf5ae71f9d08710429c72150f8c8d2d5d44",
+    "text": "The garden is quiet, but the inner palace is not. Victory over one eunuch is not mastery of the eunuchs.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_js_cc_heeded_01": {
+    "character": "caocao",
+    "hash": "e49d2f003c616500456c1989d69ae1e895d9e9eeec8af3f4692114d39ac5763c",
+    "text": "One traitor named and struck: that is power. A general cry against all eunuchs will turn power into smoke.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_js_guo_01": {
+    "character": "eunuch",
+    "hash": "8c6123aedef40d9182257cb6870c2e772d6af0a92f4367bb7e8fe66a602ff66b",
+    "text": "You tried to drag us all into your murder. I will not die for your ambition.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_disney_hades.wav"
+  },
+  "ch2_hj_js_hj_01": {
+    "character": "hejin",
+    "hash": "54b31edcc0e58f5465284689a37f88258e655a96b9357aaf90cb43a3b202eac6",
+    "text": "Jian Shuo plotted murder. Zhang Rang and Duan Gui still have the Empress Dowager's ear. We move by charge, not by fury.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_js_jian_01": {
+    "character": "eunuchguard",
+    "hash": "058cd1dfd8785360069d68776826f968d79fdc29293956bb5e193eca893ae9a8",
+    "text": "Guards! To me! The palace troops answer to me!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "ch2_hj_js_narrator_01": {
+    "character": "narrator",
+    "hash": "e79a74b0f4fb0542b6621953070db94bb828e14028b2103b5e5dbfb5a2d1dd2e",
+    "text": "With Emperor Shao enthroned, Yuan Shao moved at once to arrest Jian Shuo.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_hj_js_narrator_02": {
+    "character": "narrator",
+    "hash": "7e2f9ac5822279b72897bbdf24775accbf772bc99438568244c639f4af5824a7",
+    "text": "Jian Shuo fled into the imperial garden and was killed by Guo Sheng. The troops under Jian Shuo submitted to He Jin.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_hj_js_narrator_03": {
+    "character": "narrator",
+    "hash": "d107c4a77420bc6e40791a4f5712d6e2cee7fc5d7a95a639f9c11019e7599140",
+    "text": "He Jin now held the new emperor, Jian Shuo's troops, and a palace full of frightened enemies. Zhang Rang and Duan Gui remained.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_hj_js_narrator_discipline_01": {
+    "character": "narrator",
+    "hash": "d2cb27267698b16a8cabc7e600f8cb5e6883dbc7979fee859a8de9a3ae744938",
+    "text": "Because He Jin had kept order at the gates, more palace soldiers surrendered their banners without panic.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_hj_js_narrator_force_01": {
+    "character": "narrator",
+    "hash": "a7ccbff3fc4f6d403ea2002ee72597fec1f5768895eaa40d7172e3d8849b9f68",
+    "text": "Because He Jin had displayed force openly, the palace quieted quickly, but fear ran ahead of every messenger.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_hj_js_ys_01": {
+    "character": "yuanshao",
+    "hash": "05bbcc9f3a8fcc9f723474629eff4ea56af269b3dd197774b5b157eb2b432179",
+    "text": "Jian Shuo plotted to murder the General-in-Chief and enthrone another prince by forged command. Seize him.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_brash_australian_man.wav"
+  },
+  "ch2_hj_js_ys_02": {
+    "character": "yuanshao",
+    "hash": "ed1b7e5df4050990a586719ca59c7babbf034dafd65099aba4e4e79c29d04646",
+    "text": "Jian Shuo is dead. The blade has found one root. Let it find the rest.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_brash_australian_man.wav"
+  },
+  "ch2_hj_narrator_01": {
+    "character": "narrator",
+    "hash": "6b310779d6fc26f1b23176933ab80c1e83472ac805b6e15b8979f0c3e2b44e1a",
+    "text": "In the fourth month of Zhongping year six, Emperor Ling lay gravely ill.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_hj_narrator_02": {
+    "character": "narrator",
+    "hash": "7500f6c547d4a1d3a7b1a60d6ac479a2c01c51054ee868f6e61456cc2dfba41f",
+    "text": "He summoned General-in-Chief He Jin to the palace to settle the matter of succession.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_hj_narrator_03": {
+    "character": "narrator",
+    "hash": "3380e95aaf85f046dfa7b441cba6d7ef70a66ceb7b21d0f71006ce349e7dd4b1",
+    "text": "But Jian Shuo and the palace eunuchs had already made their counsel plain: if Prince Xie was to be enthroned, He Jin must first be killed.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_hj_narrator_04": {
+    "character": "narrator",
+    "hash": "4cf1caf915b20976a45e701e405097b91d6bb2476e0e74beb4003c6bc126db8f",
+    "text": "Shaken, He Jin returned to his residence and summoned the ministers, intent on destroying the eunuchs.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_hj_narrator_bad_end": {
+    "character": "narrator",
+    "hash": "a842ca10bc18da0a94c19a9dbd17bde30799ff2bbb22cafed48555676493e07f",
+    "text": "This was not how the chronicle records it. Return to the palace gate.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_hj_panyin_01": {
+    "character": "panyin",
+    "hash": "6ea05c7d4fddc46e90f5743fe438925394b54a36c68104ff0eeefe93b8018fe4",
+    "text": "Do not enter the palace. Jian Shuo means to murder you.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_hj_panyin_02": {
+    "character": "panyin",
+    "hash": "f40d6e12670f1e6c0e04e7067e734bca7afea30edc3fed6e69b120a47b54a190",
+    "text": "Go quickly. The palace walls have ears, and every ear belongs to the eunuchs.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_hj_panyin_03": {
+    "character": "panyin",
+    "hash": "2929f98dbf3168f5391fca83a6b96dc22e670ca307bc073e3cb937c283765244",
+    "text": "My lord, no. This is exactly what they want.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_oath_dz_restrain_01": {
+    "character": "dongzhuo",
+    "hash": "ad7e77cd5d55a621b9305f946554fa924bbcee255b4043b3ae96d1e80bb3bafe",
+    "text": "Know your place, commoners. Be grateful I even speak to you.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_oath_dz_strike_01": {
+    "character": "dongzhuo",
+    "hash": "f050de5ba1a18ee3bc8b88b86629d69e6d3af3f3c8b2478e4a9ee5c9c29429f6",
+    "text": "You dare raise steel against me? I'll have your heads on pikes!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_oath_gy_restrain_01": {
+    "character": "guanyu",
+    "hash": "1c059fd6bc9d35bbe52e7e26933c6f1ad4753a64fa6ccc7aaf2bf744de77bf62",
+    "text": "Let us depart. The realm has larger fires ahead.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "ch2_oath_gy_strike_after_01": {
+    "character": "guanyu",
+    "hash": "0569f7397d1cfeb77d0d06995bf6b809e39cdeda50a4fccbc20ad033f16f277e",
+    "text": "Even the river spat him back out. Heaven has postponed his punishment.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "ch2_oath_gy_strike_escape_after_01": {
+    "character": "guanyu",
+    "hash": "e08f841397bd0dbe5bd107084ed77dfeb994f1f10b305b7cbe472c4d40d0b05d",
+    "text": "He flees with his life and his shame intact. Brother, we have no cause to chase him farther.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "ch2_oath_lb_restrain_01": {
+    "character": "liubei",
+    "hash": "1b2bf9d7063204aa4c539e3ab0b4faefa75995491a10f839c7d5201cf9ffa063",
+    "text": "Brother, hold! Fury may win a breath, but righteousness must win the age.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_oath_lb_strike_01": {
+    "character": "liubei",
+    "hash": "fdedd26a210b5c577b3c98765b26e4e7128b60738a3a91c35f6028edf7e66626",
+    "text": "If words fail, then let steel answer steel.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_oath_zf_restrain_01": {
+    "character": "zhangfei",
+    "hash": "2266733aac2ac1efe9ac50e0492a9b6f615631c4dbc84b5b4f4f57e6741d1193",
+    "text": "Hmph... I obey, eldest brother. But I will remember this insult.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_oath_zf_strike_01": {
+    "character": "zhangfei",
+    "hash": "b9d8adcc9625abf5346d8e6b4c093408e49f3151ab010b6d9a56f44cb7d48975",
+    "text": "HA! At last!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_oath_zf_strike_after_01": {
+    "character": "zhangfei",
+    "hash": "8776dd3e1653eac0f43d127fd89871eb50f5496e03474c65df43c114b93ed5fb",
+    "text": "Hmph! Next time, that butcher will not run so fast.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_oath_zf_strike_water_after_01": {
+    "character": "zhangfei",
+    "hash": "d167b4dc913517e5cfe25d3b5dc75496b89b6037001888bdd8577c03f046311b",
+    "text": "Bah! Not even drowning would keep that coward down. Next time, I'll tie a stone to him myself.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_probe_lb_01": {
+    "character": "liubei",
+    "hash": "9c7f306d3b74db32755fa7eb6926b05413ad4c8798b10608c49214f03532d62f",
+    "text": "Hold the line. Break Gao Sheng first and pressure Zhang Bao.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_probe_lb_retreat_01": {
+    "character": "liubei",
+    "hash": "bca00fda0500be98557dd9addb965dccadb793b5808cf58db89c21b1e2f92a32",
+    "text": "Brothers, withdraw! We cannot break his sorcery here today!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_probe_zb_01": {
+    "character": "zhangbao",
+    "hash": "70c4458543f794360922e3dd6ee04b6e8a53dd99e2b3ebe08f89cd361a0da778",
+    "text": "You are Liu Xuande? Good. Taste the thunder of the Yellow Heaven.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_probe_zb_sorcery_01": {
+    "character": "zhangbao",
+    "hash": "1b78ded3b7dcf3027fa969155644874275eba90cb25778f91d1cab0bb824ae17",
+    "text": "You cannot kill me while Heaven's lightning answers my command!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_wan_field_defeat_lb_01": {
+    "character": "liubei",
+    "hash": "9cefb81b36dee24f2a34dc8eb99299fb6db40dbb989bc19ecbe3c4b12c3ba550",
+    "text": "The plan is still sound. We must meet him in the field before he regains courage.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_field_defeat_zj_01": {
+    "character": "zhujun",
+    "hash": "2c21342482d7c58646b6fec9430f9934b7c8b393e605263e9400c9dc3910c814",
+    "text": "Han Zhong slipped the trap because the road was opened without enough pressure. Reform the line and spring it again.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_field_hz_01": {
+    "character": "hanzhong",
+    "hash": "c77c3a1e497bf5985b6901ced97f914a9499a56e8d8c146e6fba2b993204be7e",
+    "text": "They opened the road to bait us. Fight through before the trap closes!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "ch2_wan_field_lb_01": {
+    "character": "liubei",
+    "hash": "3b12d3a6d16f7f93591409413586214270aa69035d580e1250142134e6d66de5",
+    "text": "Do not let them turn desperation into courage. Break the captains and the rest will scatter.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_field_lb_02": {
+    "character": "liubei",
+    "hash": "466144ab838d4e139cd550ed9662368df3efeccf1d2eedacb3c17efe11bd2194",
+    "text": "A road left open saved more lives than a wall battered in anger.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_field_zj_01": {
+    "character": "zhujun",
+    "hash": "8a1335d103e40ddfcdde08b1621c09e05129571d65f70bcb76661e8ea10ac0ba",
+    "text": "Han Zhong has taken the road. Hold discipline and cut through his disordered column.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_field_zj_02": {
+    "character": "zhujun",
+    "hash": "a5e091f3e389ce547fe945461d0357c806e11350f158abc4c189bdc5ab3a1528",
+    "text": "The field is ours. Now Wan can be received without trusting a barred gate.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_final_defeat_lb_01": {
+    "character": "liubei",
+    "hash": "bb2213eff20c3b16793a9dcc8647acce6a6cfc2ab95eebb45e09510504cc5762",
+    "text": "Sun Zhong cannot be allowed to carry the remnant away. We return to the gate at once.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_final_defeat_zj_01": {
+    "character": "zhujun",
+    "hash": "6af7601166a5b62d0d629deca11bd885e48b8792ce195fc762a97a43165297cb",
+    "text": "Zhao Hong used the walls better than expected. Reform before the gate and press again with Sun Jian.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_final_lb_01": {
+    "character": "liubei",
+    "hash": "df6fd6260e192f43dd398b2001645a84da5389ee3df614bfd0697ae6f998ca8e",
+    "text": "Brothers, press the gate with Sun Jian. Break Zhao Hong and Sun Zhong here before the rebellion scatters again.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_final_lb_02": {
+    "character": "liubei",
+    "hash": "95415d5472ccc8f118fbf60a2a63a2109de727736bd74f563566cd039f16ab98",
+    "text": "Then let the surrendering men be counted and disarmed. Victory must end the killing, not feed it.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_final_sj_01": {
+    "character": "sunjian",
+    "hash": "3fe8ea32ce20eecfdc7d13743bda4431981e39dd9ee75f8bc10791e16697d006",
+    "text": "Then I will be first on the wall. Zhao Hong will learn how little his reclaimed city is worth.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_angry-mulans-dad.wav"
+  },
+  "ch2_wan_final_sj_02": {
+    "character": "sunjian",
+    "hash": "e597ee804baa7f23129e5173078d2c2c0cad79be8f13f78d39810faa50ba9dbc",
+    "text": "Well said. The wall is taken; now the officers must hold the city better than the rebels did.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_angry-mulans-dad.wav"
+  },
+  "ch2_wan_final_sz_01": {
+    "character": "sunzhong",
+    "hash": "770e83ad22e7914fc313b67567f9540e9d205ae76184b0c2828aaf849ef2ed82",
+    "text": "Break through! Wan is lost if we cling to the stones.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "ch2_wan_final_zj_01": {
+    "character": "zhujun",
+    "hash": "f7896d1bd49a527f96684200e3018a5ff0c455290cfb0a8efcee6d7b8368ba09",
+    "text": "Xuande has chosen to join Sun Jian at the wall. My remaining troops will watch the roads; your task is to break this gate.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_final_zj_02": {
+    "character": "zhujun",
+    "hash": "77a9f8dc01244de80674c5512c5255dfdadead6340759887dc218f557868b776",
+    "text": "Zhao Hong is dead, Sun Zhong has fallen, and the rebels have broken. Nanyang is quiet again.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_gate_defeat_lb_01": {
+    "character": "liubei",
+    "hash": "12f5ab127aeaa77b6c2be67b7c2ad5ed8ba917ce9ddad28caa4df2ccc866e3b3",
+    "text": "We chose the harder road. Next time, keep pressure on the gate and protect the soldiers beside it.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_gate_defeat_zj_01": {
+    "character": "zhujun",
+    "hash": "7cf8ec0742fe64dca47fdb0dc25cd9dcd80d93b901072efbcd15566dfd45d30f",
+    "text": "A gate assault punishes disorder at once. Pull the men back, dress the ranks, and try again.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_gate_hz_01": {
+    "character": "hanzhong",
+    "hash": "d32006fd0c6c3ba271b9cbaa62cbf97319edca6853c15e0254efbe8cfcee98e5",
+    "text": "They answer surrender with ladders and blades. Hold the wall!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "ch2_wan_gate_lb_01": {
+    "character": "liubei",
+    "hash": "85476397a0f460b7541493e207b9838868296338fcb76f6caa53bc026392bc6c",
+    "text": "The rebels chose a closed gate over true surrender. Strike cleanly and end this quickly.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_gate_lb_02": {
+    "character": "liubei",
+    "hash": "afcc311a1e4c0b80973a582a249f782e736a067976c7d6cef497729cd3f1195a",
+    "text": "Then let the people see that Han order follows the soldiers through the gate.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_gate_zj_01": {
+    "character": "zhujun",
+    "hash": "23ead908fdbed9e2e130cda67ea6ff33e9293cf40f5e7f72a5a51d5bdfa562fd",
+    "text": "Wan's gate stands before us. Break it, but keep the soldiers from plunder.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_gate_zj_02": {
+    "character": "zhujun",
+    "hash": "b9e3a3df889d65d8b9ea8916b46371a58608e4f96d2fb28852a5be279a680f91",
+    "text": "Wan is taken. This was harsher than the open road, but the city must now be kept in order.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_north_defeat_lb_01": {
+    "character": "liubei",
+    "hash": "dbf2c2b81ac9bfb0a018e2bf2e36513db8234df49d24f8c7e73a79ebe47a0fca",
+    "text": "The wall assault depends on this road staying closed. We try again at once.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_north_defeat_zj_01": {
+    "character": "zhujun",
+    "hash": "533ae5c1d46581325ed35b39a66a54e96887944346f25276551a686a96e4585f",
+    "text": "Sun Zhong broke through the north road. Reform the line before his remnant gathers strength.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_north_lb_01": {
+    "character": "liubei",
+    "hash": "4345a2109e50cc5b3bf6ab33f33bc4c62bee643f362df3112a672e436e79db14",
+    "text": "Form across the road. Leave the rebels no passage except surrender.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_north_lb_02": {
+    "character": "liubei",
+    "hash": "c0579dc1f6a04221df83c07bce0aaf45827447340f2fb23fa48504b0a5ddf6d1",
+    "text": "Sun Zhong's column is broken. Gather the weapons and spare those who throw them down.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_north_sj_01": {
+    "character": "sunjian",
+    "hash": "bf9592728bf7800269ea4a5b40f612948c7e9401adae263ae97632528eb645af",
+    "text": "The wall is ours, and Zhao Hong is dead. Your roadblock kept the rebels from becoming an army again.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_angry-mulans-dad.wav"
+  },
+  "ch2_wan_north_sz_01": {
+    "character": "sunzhong",
+    "hash": "40ef8b78a5ded3b03d1f5a64513240ecf3b6f97d926d567d8894f5c77915c0d1",
+    "text": "The wall is shaking. Run north before Sun Jian shuts us inside Wan!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "ch2_wan_north_zj_01": {
+    "character": "zhujun",
+    "hash": "50b4e88ebf294326dc6f3ee928f25bfc6a2866416a4ee15d5ad042416294761b",
+    "text": "Sun Jian is striking the wall. Xuande, hold this north road; Sun Zhong must not carry Zhao Hong's remnant away.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_north_zj_02": {
+    "character": "zhujun",
+    "hash": "5033efd35454143cc245b9aae165f98cc0ee6029eb3ce3b94b56d299fe5cbd9d",
+    "text": "Then Wan is settled. Nanyang is quiet, and the court will hear who held the road.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_rev_gy_01": {
+    "character": "guanyu",
+    "hash": "ff34d3d79e5e1e2dac50d231613dfc48b56e86134c320f820049fcf15fb4ad36",
+    "text": "Then we wait for the next opening, not throw men against a wall in anger.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "ch2_wan_rev_lb_01": {
+    "character": "liubei",
+    "hash": "3355e1ccdb65d1ecd1bc907de9c76853232ed5fa0209dbe08f86ca9c7c7c1047",
+    "text": "Han Zhong fell because he left the city broken. Zhao Hong will be harder if he has regained the walls.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_rev_lb_02_road": {
+    "character": "liubei",
+    "hash": "0782293f616159b380291e5d5e0323e703e8d3fb9ae796b9a99dcc375c5f45dd",
+    "text": "Then Sun Jian can press the wall. Our brothers will hold the north road and cut down anyone who breaks from the gate.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_rev_lb_02_wall": {
+    "character": "liubei",
+    "hash": "6801f7757e326fcae5d2398746103f7a435e4c40a7ead435829dc20e89f59143",
+    "text": "Then we will join Sun Jian at the wall. If the gate breaks quickly, Sun Zhong will have no road left to use.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_rev_messenger_01": {
+    "character": "soldier",
+    "hash": "7e3026501fb479feff1bc70ad97e2561f973b7829de466ed421237bee78b315e",
+    "text": "General Zhu! Zhao Hong and Sun Zhong have gathered the remaining rebels. Their numbers are strong.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_rev_messenger_02": {
+    "character": "soldier",
+    "hash": "c30aa7385e35be5acd0e56a50a929347099960219033cdd92bb1d6d676952cd8",
+    "text": "They have struck back toward Wan. The outer troops are falling away from the walls.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_rev_narrator_01": {
+    "character": "narrator",
+    "hash": "d77dac641fa3bb7485de30573216601f7fd1c8b24b94c28fb7a2fa8498a57194",
+    "text": "Han Zhong was slain and his scattered men fled. Yet the Wan campaign did not end there.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_wan_rev_sj_01": {
+    "character": "sunjian",
+    "hash": "7e95bdd259883103e65e527648d460b26f14133f1ab9cf78d90503b7b81a73a7",
+    "text": "General Zhu Jun, Sun Jian of Xiapi answers the imperial call. My men are ready to strike Wan.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_angry-mulans-dad.wav"
+  },
+  "ch2_wan_rev_sj_02_road": {
+    "character": "sunjian",
+    "hash": "dc1956818e5636148f3853f19c2503e2e61f5afdc62d050b305518cb1f0c9621",
+    "text": "Leave the wall to me. If the rebels flee north, make the road narrower than the gate.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_angry-mulans-dad.wav"
+  },
+  "ch2_wan_rev_sj_02_wall": {
+    "character": "sunjian",
+    "hash": "6cbf0684ec8fdd67c65e76e490047d83ff04f483836eabf96383a9348ebfb94b",
+    "text": "Good. We will climb together and settle Zhao Hong before his courage hardens.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_angry-mulans-dad.wav"
+  },
+  "ch2_wan_rev_zf_01": {
+    "character": "zhangfei",
+    "hash": "b0546c23e7591636551f5103044c817227fa78c288a8433d14c801b93a33d44e",
+    "text": "Hmph. If Sun Zhong tries to run north, leave that road to me.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_wan_rev_zj_01": {
+    "character": "zhujun",
+    "hash": "48d707d5a2d215d2889b197b70dd009781e17b0d11b85aaefc39cea37ffdeb9f",
+    "text": "So the serpent has another head. Pull the line ten li back and keep the army whole.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_rev_zj_02": {
+    "character": "zhujun",
+    "hash": "0fc59bc672097b29d079a74dcb5f8822f33df6e38ee8926972e4496d57e7e9d5",
+    "text": "Good. The rebels think their courage has returned. We will show them it was only noise.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_rev_zj_03_road": {
+    "character": "zhujun",
+    "hash": "fe2dd5cd3acf70f38b171719dd6dbf3b3c1b69c09dfc029b3aaf35e5f8b32a19",
+    "text": "Good. Sun Jian will strike the wall. Xuande, take your brothers to the north road; if Sun Zhong runs, he must find you there.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_rev_zj_03_wall": {
+    "character": "zhujun",
+    "hash": "6217636ca78e79f7b2e4fcb25b3fd773b7494d4d68d18ba4bc1e682ab63be584",
+    "text": "Then the wall assault will carry our strength. My remaining troops will watch the roads while you and Sun Jian break the gate.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_wall_gy_01": {
+    "character": "guanyu",
+    "hash": "a72fed7711c83b40aeeb26621b82b413db5ee08d6c8aafef183257ebf7338211",
+    "text": "A trapped army is iron. A fleeing army is reeds before the blade.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "ch2_wan_wall_gy_02": {
+    "character": "guanyu",
+    "hash": "0bda2dd998c06471ee1221d2372b0b6098f47a386496729b93a136a4621abeed",
+    "text": "A hard blow may end deceit quickly, if our men keep discipline at the gate.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "ch2_wan_wall_lb_01": {
+    "character": "liubei",
+    "hash": "1ed32eb951e853af3a4593617b9c68aed3957a5f327c38d05d325058e4fdfdb3",
+    "text": "General, Wan is not Yangcheng. We must decide whether to draw Han Zhong out or break the gate before his deceit ripens.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_wall_lb_02": {
+    "character": "liubei",
+    "hash": "68b14eb839e5722aeeeb89e5b7a6cfbddc5583bbaec5047c7e6c8618bbc7859d",
+    "text": "Leave the southeast road open. When Han Zhong comes out, strike his broken ranks in the field.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_wall_lb_03": {
+    "character": "liubei",
+    "hash": "871eeeac39c1ba1d4f1d7dec862d7e7e0b33f3e93091df996c1d366c2110fd77",
+    "text": "Then strike the walls now. If Han Zhong hides behind a false surrender, break the gate before he can profit from it.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_wan_wall_zf_01": {
+    "character": "zhangfei",
+    "hash": "58df97f75357353f7cb03d1455f44ea0a3f1fc366c73862e79db27d4f7f35603",
+    "text": "Good! Let them think they have found a road, then I will close it with my spear.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_wan_wall_zf_02": {
+    "character": "zhangfei",
+    "hash": "12f90ac15c237affe50367d296cb18238737a362bbe92b833075684dcfc249b6",
+    "text": "Ha! If they bar the door while begging mercy, I will knock loudly enough for all Wan to hear.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_wan_wall_zj_01": {
+    "character": "zhujun",
+    "hash": "a10d8306f3183863c6de9999017510eefd203b412cf137c69e23c255ba4c758e",
+    "text": "There stands Wan. Han Zhong asks to surrender, yet the gate remains barred and his banners still fly on the wall.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_wall_zj_02": {
+    "character": "zhujun",
+    "hash": "7913246b1c2de162474a0889372d8823f4017b6e02e45e64c1debb0a5e3a2ca9",
+    "text": "Yangcheng opened from within after Yan Zheng struck down Zhang Bao. Wan has offered only words from behind a shut gate.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_wall_zj_03": {
+    "character": "zhujun",
+    "hash": "5420ed15d71a7cd2f3db65a84b0d090c8b8e6784a9f12ffd28af9e4df0678282",
+    "text": "If this is a trick to buy time, the walls before us will make it costly. Speak, Xuande: how should we answer?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_wall_zj_04": {
+    "character": "zhujun",
+    "hash": "9616c8ac4247f9960e88be2f8b72342ef82eff3a907a40e63bbb82d79975278f",
+    "text": "That counsel is wise. Loosen the siege at the southeast. Place our best troops at the narrow road.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_wall_zj_05": {
+    "character": "zhujun",
+    "hash": "83e80c593308776aba6759f6ddf0adaf038a85c898a25368bf7496a37bd2e972",
+    "text": "So be it. Form the assault column here before the gate. Wan is to be taken, not burned.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_yc_lb_02": {
+    "character": "liubei",
+    "hash": "ef4f7715c3353ecbd2e6caebeee4e146dcbf64d740cbd2e7de306608a51c4b2b",
+    "text": "The false thunder is silent. May the people behind those walls hear real peace again.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_yc_lb_clemency_01": {
+    "character": "liubei",
+    "hash": "4d934471494549941e1dde37830a53243bcb7162bd3f8cafa2ef3089821cc264",
+    "text": "Zhang Bao, surrender now. Lay down your arms, and I will urge mercy for the soldiers on that wall.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_yc_lb_threat_01": {
+    "character": "liubei",
+    "hash": "e642c32ff29803b37034058cd2fa68fe8378e13127ecd936b0347a385e40a2ea",
+    "text": "Then hear this plainly: if you force a siege, your followers will die for a spell already spent.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_yc_yz_01": {
+    "character": "yanzheng",
+    "hash": "db1793d22762f3339d161a1cbdcee1a5195ad83dda50a5e29c39b36b965aa491",
+    "text": "General... the men have no grain, no faith, and no wish to be buried with you.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_brash_australian_man.wav"
+  },
+  "ch2_yc_yz_02": {
+    "character": "yanzheng",
+    "hash": "9d49988a0bb48f30e17c013d1475eb046a49ef6871577d133531ca3e5487e1b0",
+    "text": "Yan Zheng has struck down Zhang Bao. I bring his head and surrender Yangcheng.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_brash_australian_man.wav"
+  },
+  "ch2_yc_zb_01": {
+    "character": "zhangbao",
+    "hash": "c00aa32f92cf3d445a0da20e170f210d1b66761b0f38869e278ffeb4bc108f28",
+    "text": "Clemency? From men who splash filth at Heaven? I am General of Earth. Yangcheng will not bend.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_yc_zb_02": {
+    "character": "zhangbao",
+    "hash": "b10dc79ddb3846991b3e371943cee9b70f218fc9390325fd31c4f40fe5aac043",
+    "text": "Coward! Speak once more of surrender and I will offer your blood to the Yellow Heaven.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_yc_zb_refuse_01": {
+    "character": "zhangbao",
+    "hash": "228316c9a0aa67ca0b2f024c18c01caaa11dfdfa5e99552b8469b614898ec2b5",
+    "text": "Surrender? I am the General of Earth. Yangcheng will stand while one Yellow Turban yet breathes.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_yc_zb_threat_reply": {
+    "character": "zhangbao",
+    "hash": "103691c3d84371ec14e17120a228a5bee0218963a3e6bebead7d3fb76d15d54e",
+    "text": "Threats from woven-mat peddlers? I command the Yellow Heaven. Come up the wall and be buried beneath it.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "ch2_yc_zj_01": {
+    "character": "zhujun",
+    "hash": "6e4ad99f44a5b239e826d58fb3beae3bc01834b30b46db785727572f5511a215",
+    "text": "Zhang Bao! Your brother is dead, your sorcery is broken, and the counties are returning to the Han.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_yc_zj_02": {
+    "character": "zhujun",
+    "hash": "a6c62d7e733fda2c591e137d865e8df7a6f47e45c7f147211bff8e600eafdec4",
+    "text": "Open the gate. Surrender the city, and those who lay down arms may yet live.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_yc_zj_03": {
+    "character": "zhujun",
+    "hash": "a1ad0b2ab4146285125d74e1046e28344a55013ed7088a95e7cf39fda78571bf",
+    "text": "Receive the surrender. Disarm the rebels, spare those who submit, and send word of Yangcheng to the court.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_yc_zj_04": {
+    "character": "zhujun",
+    "hash": "810408713454a8cc9fddc43c7430808f557aef0dd72d89bdd3eca7fd3d9e89f5",
+    "text": "Yangcheng is settled. We march next to Wan, where Han Zhong has gathered the remaining rebels.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_zj_camp_lb_01": {
+    "character": "liubei",
+    "hash": "08cabe6b98fe922d34ee8b0b6b64b5f3471a193f93be815c1896486137ba850d",
+    "text": "Understood. Guan Yu, Zhang Fei - prepare the men. We march at first light.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_zj_camp_zj_00": {
+    "character": "zhujun",
+    "hash": "7e14ad72891a2d37a45af4573b8909426637f4529cc9a2e2a464cf9b654ca9ce",
+    "text": "Xuande, you came by night to join my command. Good.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_zj_camp_zj_01": {
+    "character": "zhujun",
+    "hash": "257f5df5c148beeeceed7f59ad9fbd058adaed46fd569ddf81db8909dfa32c2f",
+    "text": "Xuande, take the vanguard and engage the rebels first.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_zj_camp_zj_02": {
+    "character": "zhujun",
+    "hash": "8200666a4c0916eda46da78560a24445b13accbe9dd54583ba785a8a8974bf63",
+    "text": "I will receive your force with full trust. We combine our men as one host and advance against Zhang Bao.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "daxing_gy_01": {
+    "character": "guanyu",
+    "hash": "9c5e74558885bfa141ecb67644ab05c289de78302ccd65454d78cee41faa6fa0",
+    "text": "Third brother is right. We have sworn to destroy these traitors and restore peace. We are ready to march.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "daxing_gy_choice_01": {
+    "character": "guanyu",
+    "hash": "21219a2c1db607f8342437f6cb4a5ae908f74e39410d17f6f5f4c99e28974f23",
+    "text": "Brother, your courage is admirable, but even heroes need strategy. Let us work with the magistrate.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "daxing_int_blacksmith_01": {
+    "character": "farmer",
+    "hash": "956e6a420b3b3352358da9e78aa7e4e1dcc6a73a27e76c05b5685b6d3f8f648b",
+    "text": "I reforged farm iron into spearheads all night. The county's fate now hangs on your vanguard.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "daxing_int_guard1_push_01": {
+    "character": "soldier",
+    "hash": "e96e584dafb63e56bdac5f9e59a0652c3dc789a54833efbcec95892945d4e069",
+    "text": "Some attacks can push enemies, redirecting their blows away from allied soldiers.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "daxing_int_guard2_push_01": {
+    "character": "soldier",
+    "hash": "d6a76ef888ff3bb32129d5069da0d5513d9801d14e648161598a692998b37eb8",
+    "text": "Pushing an enemy off a cliff deals extra damage. Height can turn one strike into a rout.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "daxing_int_gy_01": {
+    "character": "guanyu",
+    "hash": "82aa02a6294ea56ed0e21d9f043bc338890785ef70d8a24d6a82d16ca7301935",
+    "text": "When the line wavers, hold your ground. Discipline cuts deeper than any blade.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "daxing_int_lb_01": {
+    "character": "liubei",
+    "hash": "bae3113ed83af9e7e63e9218be79ff31fe6e8fef38140e8e2f0b57dda3b6396d",
+    "text": "To shield the people is our vow. Brothers, we fight not for fame, but to end this terror.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "daxing_int_merchant_01": {
+    "character": "farmer",
+    "hash": "c5fc7d4ae4307342744c0e61a3848d7cba18153aa0c4e4fd01bed07a727c454d",
+    "text": "Roads to the east are half-blocked by refugees. If you march, march fast before supply lines choke.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "daxing_int_soldier3_push_01": {
+    "character": "soldier",
+    "hash": "c3419b1b786e969433ec90da84609c7a82248e422a74165ad8c4a54eee3b9782",
+    "text": "If you push enemies into deep water, they drown. Watch the riverbanks when you choose your target.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "daxing_int_soldier4_01": {
+    "character": "soldier",
+    "hash": "a4d78b8e48f5c27bfb4ebff999c75c224fa6bc12d9199a939a9c6f445fa8f2a6",
+    "text": "After Cheng Yuanzhi, more rebel captains will come. We have to win this first clash cleanly.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "daxing_int_volunteer1_01": {
+    "character": "volunteer",
+    "hash": "3c65470bdcbef13c98ba53594c7ea38b5466cc45c17061cce7afbdc80fb1c8fa",
+    "text": "I was a field hand yesterday. Today I carry a blade. If we fail, our families have nowhere to run.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "daxing_int_volunteer2_01": {
+    "character": "volunteer",
+    "hash": "8d187dc3b36f44701edc273cbb5cae9fc8103aa1e737c871396bbb6e2401d64c",
+    "text": "People say the Zhang brothers can call wind and rain. I do not know about that—but I know we cannot yield.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "daxing_int_zf_01": {
+    "character": "zhangfei",
+    "hash": "d3b9d2732262dde7effc9d183eb204ee01f8a8cc050508ded8f80c57531c4406",
+    "text": "Ha! Let Cheng Yuanzhi come. I have been waiting to test this spear on real rebels.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "daxing_int_zj_01": {
+    "character": "zhoujing",
+    "hash": "c91def6511c002bd427eb9e361ffdc127cc93494e6dce9b8acc692cf59abf341",
+    "text": "The rebels rally under yellow banners and false promises. We must break their momentum before fear spreads.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "daxing_lb_01": {
+    "character": "liubei",
+    "hash": "96a3bdeec1dc450cad728ac3b308372e4b6a1503e0146e4c47446ad9bb3b337f",
+    "text": "I am Liu Bei, a descendant of Prince Jing of Zhongshan and great-great-grandson of Emperor Jing. These are my sworn brothers, Guan Yu and Zhang Fei.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "daxing_lb_02": {
+    "character": "liubei",
+    "hash": "1812868a28e1a9bd9c4df22d438ce94adce922eda8009aed56c93fb61561d845",
+    "text": "We have raised a force of five hundred volunteers to serve our country and protect the people.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "daxing_lb_03": {
+    "character": "zhoujing",
+    "hash": "8c0509d6c9e29ee03eb9305cf22a87c674368c3c7efec457937032fb8df14d50",
+    "text": "Magistrate Zhou, we seek only to serve. Lead us to Daxing District; let us put an end to this rebellion.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "daxing_lb_choice_01": {
+    "character": "liubei",
+    "hash": "207e3b94ac9a3d9dd3cddb273de386b927f8892791f74e5267977ab3e20eb16a",
+    "text": "The people cry out for justice. We cannot stand idle.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "daxing_lb_choice_02": {
+    "character": "liubei",
+    "hash": "7ddf6d83392f632b0ccf92280047fc0e0a61f7b1772d952f6c1a728346ed23f5",
+    "text": "We seek glory in service to the Han.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "daxing_lb_choice_03": {
+    "character": "liubei",
+    "hash": "f71d216f24260159945e723f236af6944db36d747953e45fe9a330c9d5efa963",
+    "text": "Fifty thousand rebels? We three alone could handle them!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "daxing_zf_01": {
+    "character": "zhangfei",
+    "hash": "3999fd8f670b7c33e02762103377589e8dfc5073248fc6b60154a24d52289982",
+    "text": "Fifty thousand? Hah! They are but a mob of ants! Give us the order, Magistrate, and we shall scatter them like dust!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "daxing_zj_01": {
+    "character": "zhoujing",
+    "hash": "89c3f09a287b52c445cc2385e801b08f6a8827182f320a823774aee6d2be2928",
+    "text": "Who goes there? These men behind you... they have the look of tigers. You do not look like common recruits.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "daxing_zj_02": {
+    "character": "zhoujing",
+    "hash": "660c18f3a576c75d6769ea83e12ce5d894be4fdaaa3be1e2f7353d13a934ca97",
+    "text": "An Imperial kinsman with a true heart! Truly, the Heavens have not abandoned the Han. Your arrival is most timely.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "daxing_zj_02_alt": {
+    "character": "zhoujing",
+    "hash": "8951dd792ed9a9d8af4183b0218df03aa09489ccfdbf84f8b6d10dcb8a5003dc",
+    "text": "An Imperial kinsman! Your ambition serves the Han well. Your arrival is most timely.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "daxing_zj_03": {
+    "character": "zhoujing",
+    "hash": "45142648fd05cd4d6fb65e1b290580bdcad19d1e76e7b6f1b2edf7857f802195",
+    "text": "Scouts report that the rebel general Cheng Yuanzhi is marching upon us with fifty thousand Yellow Turbans.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "daxing_zj_04": {
+    "character": "zhoujing",
+    "hash": "0442926040e760b87c2c891c55015d0b2413da45ec0658d6062c9a89ff314a4a",
+    "text": "Very well! I shall lead the main force myself. Together, we shall strike at the heart of Cheng Yuanzhi's army!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "daxing_zj_04_alt": {
+    "character": "zhoujing",
+    "hash": "8d424e62158dd5390abb17e452548e583de1c2745c91e5913726ef3b338691a8",
+    "text": "Your confidence is inspiring! I shall lead the main force myself. Together, we shall strike at the heart of Cheng Yuanzhi's army!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "debug_narrative_01": {
+    "character": "system",
+    "hash": "a354128b9d666db97fa039016af197c7a0bd20df4ae449b2de67061380622362",
+    "text": "Cheat code accepted. Narrative scene is functional.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "dx_cyz_01": {
+    "character": "chengyuanzhi",
+    "hash": "c3c7d93364afa200710066722e4f10951c6cf7840ca3e82ac8a71f82de0541dc",
+    "text": "Slay them all! The Han is dead, the Yellow Heavens shall rise!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "dx_dm_01": {
+    "character": "dengmao",
+    "hash": "51a47143e31f6b3c8617d1d79a591636cac14edad5175b6c3f11bc9e8ddfc95c",
+    "text": "Imperial dogs! You dare stand in the way of the Lord of Heaven?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "dx_gy_01": {
+    "character": "guanyu",
+    "hash": "5b0b31c5fadceebdd0af26af1e780b09d097116cdb132e208037414a3985fc23",
+    "text": "Their numbers are great, but they are but a rabble without leadership.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "dx_lb_01": {
+    "character": "liubei",
+    "hash": "46021b3eed5c38c328b0737343efccf79e47ee7e1772e5c421721144f35c6579",
+    "text": "The Yellow Turban vanguard is here. They seek to plunder Zhuo County!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "dx_lb_02": {
+    "character": "liubei",
+    "hash": "a85feba0b21352cf9640c33cde1a364478e2a01c66bfbe958f0f64b4bae42c05",
+    "text": "Their resolve is weak. If we defeat these captains, the rest will be turned to flight!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "dx_lb_03": {
+    "character": "liubei",
+    "hash": "bbe83ad2b1d9d97e960aa5a20ecbf4d6bd8ae8ce5ad3ce432b5393081bfa2865",
+    "text": "They keep coming! We must defeat Deng Mao and Cheng Yuanzhi to break them!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "dx_yt_01": {
+    "character": "yellowturban",
+    "hash": "503fab782f1910760560b89167fd2048f2765c9b666b512a69e2a0aeda17ff11",
+    "text": "Our leaders are dead! Run!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "dx_zf_01": {
+    "character": "zhangfei",
+    "hash": "ad477e11e9ee49350a78de2bca25ac987e6b97013aafdc392429ddbbf71492ae",
+    "text": "Let me at them! My Serpent Spear is thirsty for rebel blood!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "gz_camp_gy_01": {
+    "character": "guanyu",
+    "hash": "de27e08504ba1acb84f6d9a499c4cb04938c959073d3fa51d28d4a669b0fc40b",
+    "text": "Understood. We ride at once.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "gz_camp_lb_01": {
+    "character": "liubei",
+    "hash": "6733dc0db7c366512975be80dbdd4b515d3b85998ccf44e557a5a559bfd9692f",
+    "text": "Master Lu! Liu Bei has brought volunteers from Youzhou. We came as soon as we heard you had engaged Zhang Jue at Guangzong.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "gz_camp_lb_choice_01": {
+    "character": "liubei",
+    "hash": "6ac8f064d5fa0f398b000b7dff66e977c3d477249255c000826743e443e20654",
+    "text": "Your command is clear. We march to Yingchuan at once.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "gz_camp_lb_choice_02": {
+    "character": "liubei",
+    "hash": "3d4c394b9e02486f606a5b1c469a92507e1c69d3cad8bc4a8c692335d020d5db",
+    "text": "Before we depart, tell me: where should we regroup after contact?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "gz_camp_lz_01": {
+    "character": "luzhi",
+    "hash": "22c679768220371492b7abec6fc9eb83166eac515419e70b257a309c74955e7d",
+    "text": "Xuande, your loyalty honors me. I have Zhang Jue pinned here, but his brothers Zhang Liang and Zhang Bao contest Huangfu Song and Zhu Jun at Yingchuan.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "gz_camp_lz_02": {
+    "character": "luzhi",
+    "hash": "4f019d08d0347ac9e18570810d06c5f0c02ddae45d1b5672331e1f15b2e755b9",
+    "text": "Take your five hundred and I will lend a thousand regulars. March to Yingchuan, scout the situation, and strike when the chance appears.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "gz_camp_lz_choice_01": {
+    "character": "luzhi",
+    "hash": "8531a3116c9df3da6d01f9ea18be417372f2b53e364a827e18ea692407e2593a",
+    "text": "If the rebels break, report back at Guangzong immediately.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "gz_dz_01": {
+    "character": "dongzhuo",
+    "hash": "8aa39fd3e37e5e49e5ca6d3c2e0efed229345efd36fe3dd04ead3c6194e52f4f",
+    "text": "What offices do you three hold?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "gz_dz_02": {
+    "character": "dongzhuo",
+    "hash": "80e88e39a5d393ab031671c2d0e027dd2a8f275faf58d457d5aec81ec9168029",
+    "text": "Hmph. Common men with no rank. You may go.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "gz_dz_help_01": {
+    "character": "dongzhuo",
+    "hash": "9b452486c6cee3845f0605141507118325a36900d526041eba67346fb8ef8151",
+    "text": "CURSE THESE REBELS! They have slaughtered my men! Is there no one left to fight?!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "gz_dz_outlaw_01": {
+    "character": "dongzhuo",
+    "hash": "0c36f657f47d2af976547956595c6640d9b34c13fc60c817c98649bd38531cab",
+    "text": "Wait... I know you. You're the ones who attacked imperial escorts and freed that traitor Lu Zhi!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "gz_dz_outlaw_02": {
+    "character": "dongzhuo",
+    "hash": "c3b6cb7631e4c8c6c27600f069219db69698f0a03bc1f08e95e5c1e76a2da8ee",
+    "text": "Hmph! You dare lecture me? I should have you arrested! But... you did save my life today. Leave now, before I change my mind.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "gz_gy_free_01": {
+    "character": "guanyu",
+    "hash": "b1514feb2b03255cc53d1b0cd4ba29eb1656c3e22a088794e2cdad22e26eeaa9",
+    "text": "Brother, there may be consequences for this...",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "gz_gy_outlaw_01": {
+    "character": "guanyu",
+    "hash": "b5ba91c8a1e0a30f37ba5c9268e415630e733a2e7d422df322a41b191648c819",
+    "text": "Brother, we cannot stay. If Dong Zhuo learns we freed Lu Zhi, he will have us executed on this spot.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "gz_gy_restrain_01": {
+    "character": "guanyu",
+    "hash": "04d404bbe2a609b27d33df11bf75107cc6336aa133da626a53bbf0efb3b9d4f9",
+    "text": "It was wise to stay your hand, brother. The law must take its course. Let us return toward Zhuo.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "gz_gy_return_01": {
+    "character": "guanyu",
+    "hash": "b5dc7cd43fc563869926074ebf411ee05c4553fc8e819bf35e01f76c6369581f",
+    "text": "Let us return toward Zhuo County. There is nothing more for us here.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "gz_lb_01": {
+    "character": "liubei",
+    "hash": "ab81715e8922406bbe025e528e20f5d9dbb23aabbc69c7778fd4e619d9a85fb2",
+    "text": "What is this? Commander Lu Zhi... in chains?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "gz_lb_attack_01": {
+    "character": "liubei",
+    "hash": "5ebb463c3fbf9b506ec2abce2656826b7b4904db8cca6348acbbd781f42557db",
+    "text": "That banner reads 'Zhang Jue, Lord of Heaven!' Government soldiers are losing! Brothers, we attack!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "gz_lb_defend_01": {
+    "character": "liubei",
+    "hash": "befefb909f9670e458c132fc1193112303e6e037ce735b7d767f65ed66be3673",
+    "text": "Lu Zhi was no traitor. He was unjustly accused by corrupt officials.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "gz_lb_fight_01": {
+    "character": "liubei",
+    "hash": "409bfab686d6ee317546e422958642ac8f96cb2d3cdd8cde238f83166ad76352",
+    "text": "Brother, we cannot stand idle while injustice is done. Free him!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "gz_lb_free_02": {
+    "character": "liubei",
+    "hash": "918c73015fa6129f9a77eb9cf1388884994dc8d4233cacd82489b21b3a528450",
+    "text": "We have made our choice. Now we fight!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "gz_lb_freed_02": {
+    "character": "liubei",
+    "hash": "8007c58707a1dc8e56aebb54e31ec8df3438961d463ee37f0f0cc52078ce7c95",
+    "text": "Master, I could not stand by while a loyal commander was led to unjust execution.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "gz_lb_office_01": {
+    "character": "liubei",
+    "hash": "ecad5821fea39477e2c2890cdd3000ffd771aa74ff5181da9e2791314145cec0",
+    "text": "None.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "gz_lb_restrain_01": {
+    "character": "liubei",
+    "hash": "8bbd2d2158852564b4046beb8d7973d68a4a0f306c51f14c3111c19a55022ff7",
+    "text": "The court will have its own public judgment. How can you act rashly?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "gz_lb_ret_01": {
+    "character": "liubei",
+    "hash": "53a84ca2a6188f705896bd36cf097346aeb5e4ecfcf12025833ad7afd34c9143",
+    "text": "We have scattered their vanguard, but there are too many! We must retreat!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "gz_lz_explain_01": {
+    "character": "luzhi",
+    "hash": "d112ba3c004f32357a92393b165e67c931b8f9eb1ea9b0d964256cd9c9e80a29",
+    "text": "Xuande! I had the rebels surrounded and was on the point of smashing them, when Zhang Jue employed sorcery to prevent my victory.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "gz_lz_explain_02": {
+    "character": "luzhi",
+    "hash": "52163f2d9e47e95d1ecec95c5c622e5ae0bc70ba26f7a4646482048c7fd255b1",
+    "text": "The court sent Eunuch Zuo Feng to inquire. He demanded a bribe, but where could I find gold in such circumstances? He reported that I hid behind ramparts and disheartened my army.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "gz_lz_explain_03": {
+    "character": "luzhi",
+    "hash": "e57fc9a7657287764c2d0a11b14d1e3f5b734b9b31c90fe9677f9ecbee15d765",
+    "text": "So I was superseded by Dong Zhuo, and now I go to the capital to answer false charges.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "gz_lz_freed_01": {
+    "character": "luzhi",
+    "hash": "1c6a8fc97fd0d48669e0d228b6e5789d11130c748f8d7bfa7b4f279f8108bea7",
+    "text": "Xuande! You have saved me, but at great cost. The court will brand you as rebels for attacking imperial soldiers.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "gz_lz_freed_02": {
+    "character": "luzhi",
+    "hash": "6de1b6ea73bc7b54d5314520ed98f8328733a2315a85afc487b20e02bb811873",
+    "text": "Your loyalty does you credit. I will return to Guangzong in secret. Go now, before more soldiers come.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "gz_nar_poem_01": {
+    "character": "narrator",
+    "hash": "1f660876f78af834c814c24803102a1716baaecbff34613e624f808c5c35dbe7",
+    "text": "As it was in olden time so it is today,\nThe simple wight may merit well,\nOfficialdom holds sway;\nZhang Fei, the blunt and hasty,\nWhere can you find his peer?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "gz_nar_restrain_01": {
+    "character": "narrator",
+    "hash": "380915c80ca31fefa7335eae15b2a37e976b10c7ca742f81ec9b5000d27bbbc9",
+    "text": "And so the escort and the three brothers went two ways. It was useless to continue on that road to Guangzong.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "gz_zf_01": {
+    "character": "zhangfei",
+    "hash": "0d143a098e4680d1a6a06f7da712de0989efb7c21e5f98643ff30ec632b307f2",
+    "text": "This is outrage! Let me slay these dogs and free you, Master!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "gz_zf_attack_01": {
+    "character": "zhangfei",
+    "hash": "6eee12091d2da29bba753981373794c6f280328287e5f8ef74d3833c9e853f1e",
+    "text": "HA! Finally some Yellow Turbans to smash! Let's go!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "gz_zf_free_01": {
+    "character": "zhangfei",
+    "hash": "a6ac52657eec6b761d7ff51b1691c087e8ecadd9c518cfc6f36d62b817df6234",
+    "text": "HA! Now you're talking, brother! Come on!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "gz_zf_rage_01": {
+    "character": "zhangfei",
+    "hash": "9d68745ead5386ec0a627ab9e25f09b0c0ba0c0a80eecb8322f5b9125f8d2d6d",
+    "text": "We have just rescued this menial in a bloody fight, and now he is rude to us! Nothing but his death can slake my anger.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "gz_zf_rage_outlaw_01": {
+    "character": "zhangfei",
+    "hash": "7671b0f3cefe0965902ec23b2b51fc7be61d0a29091a8e3d0bbecab31b4793c1",
+    "text": "The nerve of that swine! First we save Lu Zhi from injustice, now we save Dong Zhuo from death, and this is our thanks?! Nothing but his death can slake my anger!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "gz_zf_restrain_01": {
+    "character": "zhangfei",
+    "hash": "35ef05055df61c6a345f40d4c42a8c874bc5611ae3853627b44cd0a68067b74c",
+    "text": "BAH! This stinks of corruption! But... I will follow your lead, eldest brother.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "gz_zj_rescue_01": {
+    "character": "zhangjue",
+    "hash": "c75c968b49ecd7ad8caa8b6c3b56a8abaa8317bfc0bab0a0753b9341e33ede64",
+    "text": "The Blue Heaven is dead; the Yellow Heaven shall rise! Dong Zhuo, today your fate ends!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "gz_zj_retreat_01": {
+    "character": "zhangjue",
+    "hash": "95942fe97e296a074649f4496c6de594555179daf9750e0dfcbe8d7185df1f30",
+    "text": "Fall back! We withdraw for now—but the Yellow Heaven will rise again!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "inn_butcher_npc_01": {
+    "character": "butcher",
+    "hash": "eecc2b37a655fe482bf22efaec2dc45dff38f52dff4776b0b97f2bcd5b55a276",
+    "text": "Zhang Fei's wine is strong, and so is his word. If he calls this oath sacred, I believe him.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "inn_farmer_01": {
+    "character": "farmer",
+    "hash": "f471d6d7c50b6a87dfdac276d43ae2e9bade9d0de241ce3b0ae36502ce847cdd",
+    "text": "These Yellow Turban rebels... I try to drink away my worries, but they always return. What will become of us?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "inn_gy_01": {
+    "character": "guanyu",
+    "hash": "2e4c9be623875ae8286aaed6673a9a86e5dee756619c989bf488300784065af9",
+    "text": "Quick! Bring me wine! I am in a hurry to get to town and join the volunteers!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "inn_gy_02": {
+    "character": "guanyu",
+    "hash": "40eca26138ca8ddc90ca801d3f017aa280f5b037d4e2fb69a1c4aa3f0eddafd2",
+    "text": "I am Guan Yu, courtesy name Yunchang. For years I have been a fugitive, for I slew a local bully who oppressed the weak.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "inn_gy_03": {
+    "character": "guanyu",
+    "hash": "723aac5aa5a64d8a684dda6e4c021bfec935c407f21ccc774e64b327cf170923",
+    "text": "Now I hear there is a call for volunteers, and I have come to join the cause.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "inn_gy_04": {
+    "character": "guanyu",
+    "hash": "01bd3fe21ef002c9d950b8a9836b5f87a60f1797402381b4111d7915488f7f64",
+    "text": "The heavens have surely brought us together. We share one mind and one purpose.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "inn_gy_05": {
+    "character": "guanyu",
+    "hash": "8190a4a0607c597f702aa468eb15bf81a58f851b0baccce075c42413707deb05",
+    "text": "I agree. We swear by the peach garden.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "inn_gy_choice_01": {
+    "character": "guanyu",
+    "hash": "1a08b5e041a23a1c1237e241a7f86b238c8496cea1ab42c749cb8d4fa5c0e2cd",
+    "text": "Your words ring true. I would be honored to join your cause.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "inn_gy_choice_02": {
+    "character": "guanyu",
+    "hash": "9647f42e73505c5da3ec8cba12b6d2afc23a7a91ca3330bf810e4c7dfb1105c8",
+    "text": "Spoken like a true leader. The people need men like you.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "inn_gy_choice_unlawful_01": {
+    "character": "guanyu",
+    "hash": "3b6f50578fe60d2e51aca49e006050b59e76df2a0bc0449859c88890278cdffb",
+    "text": "You speak rightly. I have lived as a fugitive for that deed. Let me seek redemption through service to the Han.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "inn_lb_01": {
+    "character": "liubei",
+    "hash": "01b46444f335bb6b40d9513f328b646a73642c6c01a649b962b3a0153a6554cc",
+    "text": "Indeed. Honor and duty call us.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "inn_lb_02": {
+    "character": "liubei",
+    "hash": "3c0a2896211a2d4f5e6e25e1a1ded43fbc2cbdd9d63a773d80f7505aa34fce97",
+    "text": "That man... his presence is extraordinary. Look at his majestic beard and phoenix-like eyes.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "inn_lb_03": {
+    "character": "liubei",
+    "hash": "d28588654d2cdb3ddf4a9c79f32b20f5feea37f2246ee9a8a6b8e4bcb05f0e80",
+    "text": "A noble heart! I am Liu Bei, and this is Zhang Fei. We have just agreed to raise a volunteer army ourselves.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "inn_lb_04": {
+    "character": "liubei",
+    "hash": "14ec3bdfedc11fb2819ef97c03980dac7fba73e3ff2d347cd2832e798ceebc3e",
+    "text": "To restore the Han and bring peace to the common people. That is our shared destiny.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "inn_lb_05": {
+    "character": "liubei",
+    "hash": "68ccd61d5f64c6310ad4d256d8bd8f72468b9df7c82d828405529404510f0de7",
+    "text": "An excellent proposal. We shall do it!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "inn_lb_choice_01": {
+    "character": "liubei",
+    "hash": "b7b589fbed62a03e1aa0a80a64c970c84cced83e8a40981013dfacd428e8109e",
+    "text": "Your cause is just. Join us, and together we shall serve the Han.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "inn_lb_choice_02": {
+    "character": "liubei",
+    "hash": "fb377842e358d2c92754bbb83dbde2d46a4be7af4e949961504971afc73bad65",
+    "text": "We fight not for glory, but for the people who suffer under this chaos.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "inn_lb_choice_unlawful_01": {
+    "character": "liubei",
+    "hash": "db3c761d7fc7c531639642ad50ac638838f21818a91331312462aa6f97702d54",
+    "text": "Even when a man deserves punishment, private killing is not lawful. Righteous anger must still answer to the Han.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "inn_lb_click_01": {
+    "character": "liubei",
+    "hash": "279275af908759fe653edefa292d8b7dc2f8b196a6a8889028f7644c1e306abe",
+    "text": "The people suffer while we sit here. We must act soon.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "inn_lb_wine_01": {
+    "character": "liubei",
+    "hash": "09406475730443b76d37562ae2dafce7a0d836d2c570388935e1528bf7c7f13e",
+    "text": "The wine here is of fine quality. A good vintage for such troubled times.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "inn_liubo_accept_01": {
+    "character": "xiaoer",
+    "hash": "c3fb239c02b14116e518997de45184076f31371ad4a87b7336c1b2db706d4b25",
+    "text": "Very well. Let us play.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_decline_01": {
+    "character": "xiaoer",
+    "hash": "5ecf2116d1dd34fa37ca1f52971fae64a7e3d38776df59548f06160114a0c173",
+    "text": "Another time.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_decline_reply_01": {
+    "character": "xiaoer",
+    "hash": "4a669330950d3b2a340f8852ba876a5281af9d1517b65575789197bbd43fdba5",
+    "text": "The board will wait. The rebels, perhaps not.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_intro_01": {
+    "character": "xiaoer",
+    "hash": "e1da612664bb76f6796941c97d173ae27a1911ac6c2af2a681fa77af6d49e9fa",
+    "text": "The road is dangerous, friend. Sit for a game of Liubo before you chase trouble?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_loss_first_01": {
+    "character": "xiaoer",
+    "hash": "7cf23529e331f46578f00850150e440f2dd2d52480988669b9b30ba650e73bac",
+    "text": "No shame in losing the first game. Liubo rewards patience more than pride.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_loss_repeat_01": {
+    "character": "xiaoer",
+    "hash": "669e19739869b110f0943911401e264f4f271924bd57f1278f9d0b59de5d21d8",
+    "text": "The board has humbled many travelers. Come back after your battles and we will set the pieces again.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_tutorial_block_01": {
+    "character": "xiaoer",
+    "hash": "5c8026335e7323e26575fdda3b20138a9e323f9ff0bd2dd4021509a1c19d1e2b",
+    "text": "These two birds together have blocked a perch.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_tutorial_block_02": {
+    "character": "xiaoer",
+    "hash": "d4615d99fa0e3b8fadde9d1ed8d61db0be3a2c58d834d648e940bed275d62486",
+    "text": "Other birds can't get past them.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_tutorial_contest_01": {
+    "character": "xiaoer",
+    "hash": "353f59e18ddabbbd007669bde8cac4b5473939c7d8b4bbee53c3e7e954ab443d",
+    "text": "This perch is contested.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_tutorial_contest_02": {
+    "character": "xiaoer",
+    "hash": "9d79518d1ee8939ea4683a7a154e1b7f764c7b2d8f0f99a7a7364727c5b44758",
+    "text": "The next bird to move there will capture the opposing player's bird.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_tutorial_goal_01": {
+    "character": "xiaoer",
+    "hash": "62271cdf30f2e9b9bacfccf9924974423a8c7545b95da00bc2ac83da37dc874f",
+    "text": "The goal of the game is to get 6 points.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_tutorial_goal_02": {
+    "character": "xiaoer",
+    "hash": "610270ecfc9157240c33235e665c36a8c47527f642f7f5b3b9fc2169c9787e1e",
+    "text": "You can get a point by capturing the opponent's birds.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_tutorial_goal_03": {
+    "character": "xiaoer",
+    "hash": "f61f13881611446b876a1b156842239ec53d434b25961194f1f6884adc72b33e",
+    "text": "You can also catch a fish in the central pond.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_tutorial_goal_04": {
+    "character": "xiaoer",
+    "hash": "664dd3db03121a94588d58dfdea7bb4f8e15cdb6be8c03792c00df6ee732a546",
+    "text": "Deposit that fish in the opponent's nest to score.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_tutorial_goal_05": {
+    "character": "xiaoer",
+    "hash": "2b1bcb67b4271ffe05f3b37d5111fcfd3b5cdeea9b5192928e393a0c957c71c0",
+    "text": "A bird with a fish becomes an owl. Simple!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_tutorial_move_01": {
+    "character": "xiaoer",
+    "hash": "a24bde1a937e4bf83a41b58b86b4fe1022c754e7648b9043aedcbd9fec4cc8b1",
+    "text": "You get to move two of your birds on your turn.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_tutorial_move_02": {
+    "character": "xiaoer",
+    "hash": "3a219c5a195b7913f16f3d61be9db75a7154c95fb973a50b1ff2243779f30ce2",
+    "text": "The number of face up sticks determines the distance.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_tutorial_owl_01": {
+    "character": "xiaoer",
+    "hash": "bf9e846cdd42ec4800bd8f97a31d692e328b7db368a383294b36e75b0cec417b",
+    "text": "This piece has caught a fish and become an owl.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_tutorial_owl_02": {
+    "character": "xiaoer",
+    "hash": "64519337fa7a8bcc09d231d7e54618c97ff2add54a290c622ee8737c2c9285c0",
+    "text": "Owls and birds can capture each other by landing in the same perch.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_tutorial_owl_03": {
+    "character": "xiaoer",
+    "hash": "72807fd6d6dcdfca98bbfa872f54632998073fb04280974bcdcacbea3c9c4d48",
+    "text": "The owl can also score by reaching a nest on the opponent's side.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_tutorial_start_01": {
+    "character": "xiaoer",
+    "hash": "db8d9a27e265218734ff528639df62d1b28ab180578d2edeb9b6270d7f468a61",
+    "text": "You start the game by throwing your sticks.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_win_first_01": {
+    "character": "xiaoer",
+    "hash": "1172e8fa3be05022523f0b84ae74f6ca3e8791ccc1f2e1029a9de3054d67503a",
+    "text": "Ha! A fine first game. You saw the Owl's path before I did.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_liubo_win_repeat_01": {
+    "character": "xiaoer",
+    "hash": "a6897668065c10d677bdd3774d103251f81bc98c806bb68b6717aef46b238165",
+    "text": "Again! You read the sticks like a market scale. I will have to stop wagering with you.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "inn_soldier_npc_01": {
+    "character": "soldier",
+    "hash": "7ad9705421c50829ad741034374806ccb1e1ceada24852db229cfe43af6248f4",
+    "text": "If you three raise the banner, men will follow. The county is waiting for someone to stand first.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "inn_zf_01": {
+    "character": "zhangfei",
+    "hash": "7357149ede67a2e52ef03f1a0f648bff8dfe860b2c2c4f61fee03108dfb9d846",
+    "text": "This wine is good! Together, we shall raise an army that will make the rebels tremble.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "inn_zf_02": {
+    "character": "zhangfei",
+    "hash": "afe6d48dc69f3e0d08abce575c64d49c5e748eb874368f0cb4b1288b0f37fdae",
+    "text": "Hey! You there! You're joining the volunteers too? Come, drink with us!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "inn_zf_03": {
+    "character": "zhangfei",
+    "hash": "26d7a953888fa581760628fb1dc0c1a6dbd6bc8ccb6c52d04e373becf146cda9",
+    "text": "Haha! The more the merrier! Drink, Yunchang! Let us toast to our new brotherhood!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "inn_zf_04": {
+    "character": "zhangfei",
+    "hash": "6b160b3f6a27802e8681a025356b35456ef2aae9a34b181017133da1bdfac4c3",
+    "text": "...and that is why the pig escaped! Haha! But seriously, my friends...",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "inn_zf_05": {
+    "character": "zhangfei",
+    "hash": "9ad6ba8bea994d849e4986127ec96fd5bb1f2ce441b5a310bb141cc4ece74c4f",
+    "text": "I feel as though I have known you both for a lifetime.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "inn_zf_06": {
+    "character": "zhangfei",
+    "hash": "2e69a168e8bf41bbac543b85042deed76b8c05c87478f25c277a06992f44a16b",
+    "text": "Listen! Behind my farm is a peach garden. The flowers are in full bloom.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "inn_zf_07": {
+    "character": "zhangfei",
+    "hash": "e0da8036fc6d8a49a0f88f0515ee2dcc4ecf425b858082d9523068d4dbeb102f",
+    "text": "Tomorrow, let us offer sacrifices there and swear to be brothers! To live and die as one!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "intro_narrator_01": {
+    "character": "narrator",
+    "hash": "7891de040bbf2c694290f884ca7099747183657ea84a213a5ddcb276cc59f2a7",
+    "text": "The world under heaven, long divided, must unite; long united, must divide.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "intro_narrator_02a": {
+    "character": "narrator",
+    "hash": "157ffd58d07cfa9881e4f1de3d89607f008987d9eb1824eaf6edeb1e053b7b77",
+    "text": "Four hundred years ago, the Han dynasty rose from the ashes of the Qin.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "intro_narrator_02b": {
+    "character": "narrator",
+    "hash": "7681888c9ca75679109eafe682e632945ddf50c47775fe276a7a4b5aaa5774c5",
+    "text": "From Gaozu's founding to Guangwu's restoration, the empire stood strong.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "intro_narrator_02c": {
+    "character": "narrator",
+    "hash": "498370a449f051ffd43dc4fafdab1c0a59ebb9fef6a7d02e0e53af68272cdf57",
+    "text": "But now, in the reign of Emperor Ling, the Han crumbles from within.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "intro_narrator_03a": {
+    "character": "narrator",
+    "hash": "b8f690d5327b78f03fc6b50eef520adf49ba096c535a174f4997a4a9200df444",
+    "text": "The Ten Regular Attendants—eunuchs who have wormed their way into the emperor's favor—corrupt the court.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "intro_narrator_03b": {
+    "character": "narrator",
+    "hash": "50955f56ecb8cabf6a68a7a2a22594cd07b7f8e5dc669fcdd226698ebe5d2a47",
+    "text": "They silence honest ministers, plunder the treasury, and rule through fear.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "intro_narrator_03c": {
+    "character": "narrator",
+    "hash": "5a652e6fe73e685394deb4d2f6ac4981ffcb906654c5951a6e96b64c237df1ae",
+    "text": "The people suffer while the palace grows fat.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "intro_narrator_04a": {
+    "character": "narrator",
+    "hash": "3d3946602a0dbe90b5c9908d0d0eef015b8529606cad1429daea3ef7c989014d",
+    "text": "In this chaos, the three Zhang brothers of Julu Commandery see their chance.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "intro_narrator_04b": {
+    "character": "narrator",
+    "hash": "19540bdc8e2b02117caa4e08b84c65d5ae3382c98bcc279bdc46e9811cb88033",
+    "text": "Zhang Jue, a failed scholar, claims to have received divine teachings.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "intro_narrator_04c": {
+    "character": "narrator",
+    "hash": "ed1eb9c97ee4e7ecdced1027bea71b95fdface07efa62737a07031cbd5498c86",
+    "text": "He heals the sick, gathers followers, and whispers: 'The Blue Heaven is dead. The Yellow Heaven shall rise.'",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "intro_narrator_05a": {
+    "character": "narrator",
+    "hash": "ec934efd5b271bfbc40c0eeaee11797f5758bc9ebb9b1322d7a4d75fcdad659e",
+    "text": "With half a million followers bound in yellow scarves, the Zhang brothers prepare to strike.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "intro_narrator_05b": {
+    "character": "narrator",
+    "hash": "7c609a1ba26c89c26bece5e3feef9cba2384bbc86609e63397f1c1378fdca7a1",
+    "text": "The rebellion begins.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "intro_narrator_05c": {
+    "character": "narrator",
+    "hash": "e7aa1f6237506e786c92d360b31e1d6a45e3d90e802ddc7f6995969673093844",
+    "text": "The age of the Han draws to its end.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "intro_zb_01": {
+    "character": "zhangbao",
+    "hash": "bc3176825da88b40e6dbf6a95563725df4a5b1b8a3f980acd3b0dd2f613ba893",
+    "text": "Brother, the official troops melt away at a whisper of our coming! Our strength grows by the day!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "intro_zb_02": {
+    "character": "zhangbao",
+    "hash": "830cae98d7b0125edab3f92e277977bbd27542c7a05874a4712b35ef5eb4599c",
+    "text": "The Han has grown weak and decadent! The people cry out for justice, and we shall deliver it with fire and steel!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "intro_zj_01": {
+    "character": "zhangjue",
+    "hash": "444a4109c736bce1ae63f610cb9c73f95b676db2486d1e46652537b3e84af812",
+    "text": "The good fortune of the Han is exhausted! The Wise and Worthy Man has appeared!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "intro_zj_02": {
+    "character": "zhangjue",
+    "hash": "0cc8eff2b04a06739281b6a81cd758f13f13f4e8b13e58f55fa0966164bb79fc",
+    "text": "For schemes like ours, the most difficult part is to gain the popular favor. But that is already ours. Such an opportunity must not pass!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "intro_zj_03": {
+    "character": "zhangjue",
+    "hash": "341982b078be1ce88dbeebd6f8b9509270c99db57b9f33564044a2e6b9979c49",
+    "text": "I am Zhang Jue, the Lord of Heaven! With my brothers Zhang Bao, Lord of Earth, and Zhang Liang, Lord of Human, we shall bring down this corrupt dynasty!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "intro_zj_04": {
+    "character": "zhangjue",
+    "hash": "ed81b74a030ed17f8e74790e5c393257b02948ea01736ebb8ce1ec1125d15c2e",
+    "text": "The age of the Han is over. A new era begins today—an era of the people, led by the Wise and Worthy Master!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "intro_zj_05": {
+    "character": "zhangjue",
+    "hash": "3ecfcccaea46a1adc14f49dfcb6d122b7743bd4cdc806c402ac4a1400de899ba",
+    "text": "Now we march through Zhuo County! Let all who stand in our way be crushed beneath the banner of the Yellow Turbans!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "intro_zl_01": {
+    "character": "zhangliang",
+    "hash": "61c8f71974d22a700f5da66c60d92aa9d066ad5070092e214fdbf9e27e1f88a5",
+    "text": "The people bind their heads with yellow scarves and join our cause! Soon, all the empire will be ours!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "intro_zl_02": {
+    "character": "zhangliang",
+    "hash": "8a2cab48eab7a85f36e86863ead071b56546ff64c23beba2c07118095fef4314",
+    "text": "Let the imperial dogs flee! Their cities will burn, their armies will crumble. The Yellow Heavens shall rise!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "map_cc_rem_01": {
+    "character": "caocao",
+    "hash": "daec2b46dfba76936eec3004358174998df4f14b86b33e80e145512ae5b6ce90",
+    "text": "Government armies are already engaged with the Yellow Turbans at Yingchuan. We march there now and cut off their retreat.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "map_lb_ch2_counter_01": {
+    "character": "liubei",
+    "hash": "58777bd9be00e26c581d6b040c59a611c8f37e007683f63931f0386971d369a8",
+    "text": "Zhang Bao has fled to Yangcheng. Press on before the city can steady itself.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_ch2_counter_council_01": {
+    "character": "liubei",
+    "hash": "ff1809403435ec4e486acdf23f44090af558341af3073508b5539222cbde84d2",
+    "text": "The counter is prepared. We return to the valley, close the pincer, and break Zhang Bao's thunder.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_ch2_probe_01": {
+    "character": "liubei",
+    "hash": "40817a741e239b358378d915892aad336d4fd582aa71e1fb1ce290d03a6c6081",
+    "text": "Zhang Bao's sorcery broke our first assault. We regroup at camp and plan a counter.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_ch2_probe_02": {
+    "character": "liubei",
+    "hash": "f5d25aa361ebe0808c7ea878fec847cab5e6bcb93a5e2b8dd0597a826aac13fa",
+    "text": "We have seen Zhang Bao's sorcery with our own eyes. We need a counter before the next clash.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_ch2_wan_01": {
+    "character": "liubei",
+    "hash": "1b201f5d1ec5555518b08a7e187cee075e39bb7166c246aa2c06d91e985792df",
+    "text": "Our next march is south. If the rebels ask to surrender, we must think carefully before sealing every road.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_ch2_wan_field_01": {
+    "character": "liubei",
+    "hash": "9dfd0cb315c8d1b408086430f168702ecdd4cfe81db014ffe248713235cbe9a5",
+    "text": "The southeast road is open. Han Zhong has come out, and we must strike before his men can rally.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_ch2_wan_gate_01": {
+    "character": "liubei",
+    "hash": "25e15df07c5cbc8bc881ed44f1a4525590b221f6f16f32e48ce6c30323cc1032",
+    "text": "Wan's gate stands before us. Break it quickly, then keep order inside the city.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_ch2_yangcheng_01": {
+    "character": "liubei",
+    "hash": "427c5e6ef20f0729eea85d7e075c8d8e3b61955a77be0e8a82fbe6e508ba97f2",
+    "text": "Yangcheng is before us. End this without wasting the lives of those ready to surrender.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_ch2_zhujun_01": {
+    "character": "liubei",
+    "hash": "2fb4bc455ed9ad8e1cc39626637e55989d7300eef486c22cbc515b9dc414dbfc",
+    "text": "Dong Zhuo's road is not ours. We march to Yingchuan and report to General Zhu Jun.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_ch2_zhujun_02": {
+    "character": "liubei",
+    "hash": "351cf610d460ec00a6d780558c0832dbc62b4a4ac2885c7484b38dd4cab17638",
+    "text": "General Zhu Jun is at Yingchuan. Let us march there and take proper command against the rebels.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_defeat": {
+    "character": "liubei",
+    "hash": "7deb34817e14076817410b09d60efff08c3d33cb9e802978e8268dc18c5e6b1a",
+    "text": "We were overwhelmed! We must regroup and strike again.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_rem_01": {
+    "character": "liubei",
+    "hash": "9cf248f7f5851debb57762e2d0aa33b9f9eeeeb901ef07c5c2a49335ebf7527f",
+    "text": "Magistrate Zhou Jing's headquarters is to the East. We must report there at once to begin our service.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_rem_02": {
+    "character": "liubei",
+    "hash": "cfc075cd9aebc6ceef5eb5b0775ff7c9e33e374a5d75dcf95f6e955762471329",
+    "text": "Qingzhou is under siege. We must march there at once to relieve Imperial Protector Gong Jing!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_rem_03": {
+    "character": "liubei",
+    "hash": "7d45fd301efd90803f58ed7190e2cc2affb617370e883765f9298a276d752884",
+    "text": "The siege is lifted. We should return to the Magistrate to see where else we can be of service.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_rem_04": {
+    "character": "liubei",
+    "hash": "005029b45ac92490e4d594b77cb9d93ebeebf47a1434650ebea679a30d5a7e59",
+    "text": "Master Lu Zhi is confronting Zhang Jue at Guangzong. We should reinforce his camp first and await orders.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_rem_05": {
+    "character": "liubei",
+    "hash": "9559caa1447e2c07b53eceec4500f86ccf70b7f887eeb23337db690d1d323644",
+    "text": "There is nothing more for us at Guangzong. Let us return to Zhuo County.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_rem_06": {
+    "character": "liubei",
+    "hash": "6c952d5cc41ca2e6e5b8b5fba5abd35a9f8820cb05851e94bcb17bcaac6172a6",
+    "text": "Master Lu sent us to Yingchuan. Huangfu Song and Zhu Jun are engaging Zhang Liang and Zhang Bao there.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_rem_07": {
+    "character": "liubei",
+    "hash": "f221594734ea5a7f24b0ba770c39e53599a6c5e13d93a604ad6021d46c3cdc61",
+    "text": "The rebels have already been routed at Yingchuan. We must return at once and report to Master Lu.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "pg_gy_01": {
+    "character": "guanyu",
+    "hash": "6fd491bf2ca983861e2f4475ff4c2b3bc6b30a12f8111d8d25009722ddc0071e",
+    "text": "We will rescue each other in difficulty; we will aid each other in danger.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "pg_lb_01": {
+    "character": "liubei",
+    "hash": "5d71761d76138136a1e208641eec461b7c1f79f440f649ac9177c91b50bd505f",
+    "text": "We three, Liu Bei, Guan Yu, and Zhang Fei, though of different lineages, swear brotherhood and promise mutual help to one end.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "pg_lb_02": {
+    "character": "liubei",
+    "hash": "0449cdf78e0d1ce8eef23c611b9e2ff3abb7386463954af5aca49b52b68efcc8",
+    "text": "We ask not the same day of birth, but we seek to die together on the same day.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "pg_lb_03": {
+    "character": "liubei",
+    "hash": "685c29f5c4adb4dda04dfbe75660aa28ecac4ef5882309dc54b05fa5db1d264f",
+    "text": "May the Heaven and the Earth read our hearts. If we turn aside from righteousness, may the Heaven and the Human smite us!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "pg_lb_04": {
+    "character": "liubei",
+    "hash": "730d9c647ef69f8ce3cbf0e8192e37e885295458a835c397525f404c73862706",
+    "text": "The path ahead is long and full of peril, but together, we shall restore the Han!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "pg_nar_01": {
+    "character": "narrator",
+    "hash": "af62bbcc105b58b9acb453f35016cef82a186b3769ec58273a22ecabb8cf0e25",
+    "text": "In the peach garden, among the blooming flowers, a black ox and a white horse are sacrificed.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "pg_nar_02": {
+    "character": "narrator",
+    "hash": "3780688fd184168c43e6c23196beaa42e2bed2a5d826d7130388139eec55e55f",
+    "text": "The ritual complete, Liu Bei is acknowledged as the eldest brother, Guan Yu the second, and Zhang Fei the youngest.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "pg_zf_01": {
+    "character": "zhangfei",
+    "hash": "e07fd5a856c8b2a397d566d430dedb53f10c4c169f2e3a35c822ad854b8dfdf3",
+    "text": "We swear to serve the state and save the people.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "pro_farmer2_01": {
+    "character": "farmer2",
+    "hash": "7c7aa0b7e855d1c747ff9a80eda6464d454c1f67972661b0d271d7f3a418d06d",
+    "text": "I've heard the rebels are already in the next county. They show no mercy to those who resist. We must prepare for the worst.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anna_frozen_young_adult_woman.wav"
+  },
+  "pro_farmer_01": {
+    "character": "farmer",
+    "hash": "92138bd64bd97e1485bc834749256acb8d5d8a518d8113501d174738bf383f3c",
+    "text": "The Yellow Turbans... they say they'll burn everything in their path. My family has lived here for generations. What will become of us?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "pro_lb_01": {
+    "character": "liubei",
+    "hash": "27f7042b37c25bd16929001751266fba9d1d49558d1cdcb07d62e327319986c3",
+    "text": "The Imperial Clan's blood flows in my veins...",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "pro_lb_02": {
+    "character": "liubei",
+    "hash": "63236a3a64c26fcfca67678c4bc2ddb779266bc96de0cc5c77475493fbe18f08",
+    "text": "...yet I am but a poor straw-shoe seller.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "pro_lb_03": {
+    "character": "liubei",
+    "hash": "cab71dbac7943a97f46744b11e67571740ff7b8a0fd62c6e3819602e1650226a",
+    "text": "How can I possibly save the people from this chaos?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "pro_lb_04": {
+    "character": "liubei",
+    "hash": "cc9845c07a7e3a61e483984972412b919be3dd4a4ec2c4adac814f6fc912d13a",
+    "text": "I am of the Imperial Clan. My name is Liu Bei.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "pro_lb_05": {
+    "character": "liubei",
+    "hash": "7e391c6e618aec2a97dc4b566f45865fc24dab76e098e2094237e98f935eeefc",
+    "text": "I wish I could destroy these rebels and restore peace...",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "pro_lb_06": {
+    "character": "liubei",
+    "hash": "9bf63c841d6e1b0d10c41ae2db57de700618f9cc5ab679de4140bdc153809711",
+    "text": "That would be a great blessing for the people!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "pro_lb_choice_01": {
+    "character": "zhangfei",
+    "hash": "4d8e51d9f7e03da0c145efe291d8fc17c0f139c7a492bdfc561d9b4ae29aac72",
+    "text": "I sigh for the suffering people.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "pro_lb_choice_02": {
+    "character": "zhangfei",
+    "hash": "50b888c29d467cc27d61093aaab06464bdfc3f06c28509a009358025ec428882",
+    "text": "I sigh for my own lost status.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "pro_lb_noticeboard_wait_01": {
+    "character": "liubei",
+    "hash": "2ea9e678e8346381798b4c90a17658bff006dd10120bc97ccafdff7e07a8c14a",
+    "text": "If we can gather men of courage, perhaps this county need not face the rebels alone.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "pro_nb_01": {
+    "character": "noticeboard",
+    "hash": "6f7639c6d4476bfe93a98bb72bcbfde193fdcaa058a84c9cc4710a4fa2ecc3c1",
+    "text": "NOTICE: The Yellow Turban rebels under Zhang Jue have risen!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "pro_nb_02": {
+    "character": "noticeboard",
+    "hash": "a3fcf4fce18c3ba2ba3cd555c1010a200220086f827a9fafdd7a62d74a4e2403",
+    "text": "All able-bodied men are called to defend the Han.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "pro_nb_03": {
+    "character": "noticeboard",
+    "hash": "2917ebd382d96f4cbde0c6627ba18ecea4e5c998287c445a0af91b3930322427",
+    "text": "Report to the local Magistrate at once.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "pro_zf_01": {
+    "character": "zhangfei",
+    "hash": "07d55494e2d7568ec180b0e172e6f08e486ad50deb73a223b174aa5ffb9f16e0",
+    "text": "Why sigh, O hero, if you do not help your country?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "pro_zf_02": {
+    "character": "zhangfei",
+    "hash": "4a9e4b4cb2d6a64eff7321786fc430fc97102f03a4dfb96ebf8314f855d4c479",
+    "text": "A true hero's heart! You and I are of one mind.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "pro_zf_03": {
+    "character": "zhangfei",
+    "hash": "47e7206cf339e5b6b3796c90f7ec5c90bac7caef916c92efef1db6ff8c2dbcfe",
+    "text": "Status? Bah! In these times of chaos, only courage and wine matter!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "pro_zf_04": {
+    "character": "zhangfei",
+    "hash": "6f41ebf8bd26264073859a86bb30c97dc0441b8c6038431feb369f130a63f4d3",
+    "text": "I am Zhang Fei, aka Yide.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "pro_zf_05": {
+    "character": "zhangfei",
+    "hash": "00313fc6d5b0e4775f464123b7538c501af913417ca40b562bd6659e2f89c56b",
+    "text": "I live in this county, where I have a farm. I sell wine and slaughter hogs.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "pro_zf_06": {
+    "character": "zhangfei",
+    "hash": "a004521d93b68e0273fc7dd42a9b82b3627350fe2b9b1d378d0b3d75851892f0",
+    "text": "I have some wealth! I am willing to use it to recruit volunteers.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "pro_zf_07": {
+    "character": "zhangfei",
+    "hash": "e992bd44891657626b3fb90739868502db064da9ebd7a4c3224c0e35ad34e152",
+    "text": "What say you to that?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "pro_zf_08": {
+    "character": "zhangfei",
+    "hash": "0fdf8950f78527a22aa36dc236c9f5f0c14b6f4e927431a754d7ba9d1e6f7873",
+    "text": "Then come! Let us go to the village inn and discuss our plans over wine.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "pro_zf_noticeboard_wait_01": {
+    "character": "zhangfei",
+    "hash": "e5ddf9f9b4516c5a2847c39e4c6f0bea5acb5be7bc30601d64f0e6252d0e9564",
+    "text": "Come, Xuande! Wine first, then we find the men to break these rebels.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "qz_bt_lb_03": {
+    "character": "liubei",
+    "hash": "b7e9aea0b633d2c5b786b85162fbc60bc1412186ddbb3c14c2db1caab87eda2c",
+    "text": "I must reach the flag to signal the ambush!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "qz_gy_01": {
+    "character": "guanyu",
+    "hash": "5e766f6b9c414bbc732242f7b7480b876f667e8fef9cdf8cb5177085a6951329",
+    "text": "A superior strategy, brother. We go at once.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "qz_gy_surp_01": {
+    "character": "guanyu",
+    "hash": "e91fc37cdf1f39ce59b0a2d2947fc357effade353fa67955ac225b048e3be6fd",
+    "text": "Brother! We heard the signal was... oh. They are all fallen.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "qz_lb_02": {
+    "character": "liubei",
+    "hash": "9f0bd5de019802b89eeabb470d3dd73a5371718ccab906f6953e9671efdff5a8",
+    "text": "They are many and we but few. We cannot prevail in a direct assault.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "qz_lb_03": {
+    "character": "liubei",
+    "hash": "37fa153d3e72acacf1626b035f81ad5436a0458ef741acfb4e91ece703faecd4",
+    "text": "Guan Yu, Zhang Fei—take half our forces and hide behind the hills. When the gongs beat, strike from the flanks!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "qz_lb_amb_01": {
+    "character": "liubei",
+    "hash": "381bece6deac3dbc647bded45a678614cfa7a29e754e7797c5bf5484b9262dc7",
+    "text": "BEAT THE GONGS! Brothers, strike now!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "qz_lb_ask_danger_01": {
+    "character": "liubei",
+    "hash": "93d17644266f0284ff9a721ffb15fad25517cab09f6a8681e2720a6705d6375e",
+    "text": "We will help, but tell us the danger first. Which gate is hardest pressed, and who commands the rebels?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "qz_lb_ride_now_01": {
+    "character": "liubei",
+    "hash": "c96fe2639bba4c1ea883ca4493937218bf0fed8bce937f659d6d8aa23f7349c4",
+    "text": "We ride at once. If Qingzhou is near falling, every moment we spend talking costs lives.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "qz_lb_surp_01": {
+    "character": "liubei",
+    "hash": "d6c524e39de489d5e0c5b10b71344f31660ab8cb6d9387428b32bb503c6eab41",
+    "text": "I... I think I've taken care of them already.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "qz_ms_01": {
+    "character": "volunteer",
+    "hash": "cbb29650349abef29478feb00f85c14635dce02b7df16ad3182526ca735943b3",
+    "text": "URGENT! Imperial Protector Gong Jing of Qingzhou Region is under siege! The city is near falling!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "qz_ms_ask_danger_01": {
+    "character": "xiaoer",
+    "hash": "e193d87510d41e121a4f41b60032214e464b6d23e8216a108b26395da5c0d826",
+    "text": "The western gate bends under their assault. Their banners name no famous general, only Yellow Turban zealots in great number.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "qz_ret_gj_01": {
+    "character": "gongjing",
+    "hash": "2656b062fe3e922c204c884cbc560b6f9d3751f31e38a0e59651456b917ef463",
+    "text": "Heroic brothers! You have saved Qingzhou! When your signal echoed through the pass, we charged from the gates. The rebels were caught between us and slaughtered.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "qz_ret_gj_02": {
+    "character": "gongjing",
+    "hash": "aec712ad57a34718782c4bc61aea105a996422a1c28c922a02a77ed95aec485e",
+    "text": "Indeed. I have heard that Commander Lu Zhi is hard-pressed at Guangzong by the chief rebel, Zhang Jue himself.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "qz_ret_gj_choice_01": {
+    "character": "gongjing",
+    "hash": "a46fefd440d5d6b62760101ee2e6ef5ffd4f1dbcca9de7ffc5f1b64c320fdb4e",
+    "text": "Your humility does you credit, but your deeds speak louder than words.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "qz_ret_gy_choice_01": {
+    "character": "guanyu",
+    "hash": "e62b6b3e37b94411b869a45701e80e76202dc28755ec74f841ba332bebf0180d",
+    "text": "A noble cause, brother. We stand with you.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "qz_ret_lb_01": {
+    "character": "liubei",
+    "hash": "b006af32fa0f311f3480d881ae7e6eb009b50c5339fd0c34fa580db3400c7741",
+    "text": "We are glad to have served, Imperial Protector. Peace is restored here, but the rebellion still rages elsewhere.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "qz_ret_lb_02": {
+    "character": "liubei",
+    "hash": "b6951a904c07f1189f2dd58f2f88edbcc6a0984e797c952535a581c6a22b60a8",
+    "text": "Lu Zhi! He was my teacher years ago. I cannot let him face such a horde alone. Brothers, we march for Guangzong!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "qz_ret_lb_choice_01": {
+    "character": "liubei",
+    "hash": "44bf525de1cdc85b34adbb88e08137a5e235531bf4efe57b81a4ad69a5f0c9b8",
+    "text": "It was an honor to serve. The people of Qingzhou can rest easy now.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "qz_ret_lb_choice_02": {
+    "character": "liubei",
+    "hash": "3a9569b952e8390a2d876045723ab8d4eaf596e9a3e980e15a0229009841f8c4",
+    "text": "Commander Lu Zhi needs aid. We cannot abandon a loyal servant of the Han.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "qz_vic_gy_01": {
+    "character": "guanyu",
+    "hash": "2dbbc4b55917eb3a722e4a7a47079498a1af32e7e9df7987cce54c65d0ae1461",
+    "text": "A well-executed trap, Brother. The high ground served us well.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "qz_vic_gy_secure_city_01": {
+    "character": "guanyu",
+    "hash": "df9990cc13f4ff6b1d01638f1d7400867159f1c17b6dee4ce96251fa4571f8ba",
+    "text": "A sound judgment. Victory in the pass means little if the city falls behind us.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "qz_vic_lb_pursue_01": {
+    "character": "liubei",
+    "hash": "edc27ab287206e4376c931f805af6595b0e8e1f544692622259297bb3f5ccfc3",
+    "text": "If we pursue now, perhaps we can scatter them completely before they rally.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "qz_vic_lb_return_after_pursuit_01": {
+    "character": "liubei",
+    "hash": "acc2f1e301726312d8d54ba271b5f7acf3945aae49518832189659678be8dc4a",
+    "text": "Enough. They will not trouble Qingzhou tonight. Now back to the city before the gates ask why we delayed.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "qz_vic_lb_secure_city_01": {
+    "character": "liubei",
+    "hash": "f8b929d13890714af5d2a03878274af82f634bd2c502d317d15dba476b52eb0e",
+    "text": "Let us not tarry. The city is still in peril. We return to the gates and secure the people first.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "qz_vic_nar_01": {
+    "character": "narrator",
+    "hash": "d669151daf303ce00c8c7b83a396079613874fa2a864493a967d99f2965a083e",
+    "text": "Though fierce as tigers soldiers be, Battles are won by strategy.\nA hero comes; he gains renown, Already destined for a crown.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "qz_vic_nar_pursue_01": {
+    "character": "narrator",
+    "hash": "20e67dc9c40ef9a34d869a2a08db277f7fdfb1416362c0ba62270ac2d59af48b",
+    "text": "The brothers hunted the broken rebels through the pass, scattering those who tried to rally and driving the rest into the hills.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "qz_vic_zf_01": {
+    "character": "zhangfei",
+    "hash": "dcac00b4e90b9892981556e38e005f91117b2869f5853b627b559fd0f73300d0",
+    "text": "Look at them run! Like rats from a sinking ship! We've broken their spirit.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "qz_vic_zf_pursue_01": {
+    "character": "zhangfei",
+    "hash": "7ad89d3f0b588edfb08529f8aa18343c6779106b228cf8afb5c7a1515fc90c09",
+    "text": "Ha! That is the fire I like. Give me one charge and I will send them running until sunset!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "qz_victory_lb_01": {
+    "character": "liubei",
+    "hash": "96ae41b1cad4c91f77615481d8cbb6e48b4eca1b134f7412b0def9aaefe0d775",
+    "text": "The siege is lifted. We should report back to Magistrate Zhou Jing for our next assignment.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "qz_zf_ride_now_01": {
+    "character": "zhangfei",
+    "hash": "e0da2c1a5c0d0194993420a5f18fcb0171a0d041a9afb8222944ab532ab38db3",
+    "text": "Good! Words will not break a siege. Hooves and blades will!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "qz_zj_01": {
+    "character": "zhoujing",
+    "hash": "5b5982f7ff37b884c61bffbdd4cdc6f636d723a8d9159f83d2d23aef7df63e67",
+    "text": "I shall reinforce you with five thousand of my best soldiers. March at once!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "rec_gy_01": {
+    "character": "guanyu",
+    "hash": "940fb392d9992da2b4979b83420ae2bf31953cddf3839db91cd9da3f2662527d",
+    "text": "We offer no riches, only the chance to serve with honor under the banner of Liu Bei.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "rec_lb_01": {
+    "character": "liubei",
+    "hash": "4d019c8f132a81bce993781f01b6605e67d5b64d2212fcb93319a3dcaf814c5f",
+    "text": "Welcome, brothers. Today we are but a few, but tomorrow we shall be an army.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "rec_lb_02": {
+    "character": "liubei",
+    "hash": "f1da97e27058b528764c8d604ca64753e86fa142d7a1f4dbbbe501cd2f51eac3",
+    "text": "Let us march! Our first destination: the headquarters of the local Magistrate.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "rec_lb_train_no_01": {
+    "character": "liubei",
+    "hash": "70a60815581510ed4d871b7dcf4a1986af4061c54c877c86231fa7af0464c454",
+    "text": "No. We know enough to begin, and the county cannot wait.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "rec_vol_01": {
+    "character": "soldierv2",
+    "hash": "be503f934fff40324719b0758a7b27e19d40a44a050e109f67abccc0041b4455",
+    "text": "We have heard of your brotherhood! We are but simple men, but we will follow you to the death!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "rec_zf_01": {
+    "character": "zhangfei",
+    "hash": "f2610a5ad1be6a0edb9c769887c65b8f4b24aa7511429c0251680b9935c63eb3",
+    "text": "CITIZENS OF ZHUO! The Yellow Turbans are coming! Who among you is brave enough to fight for your homes?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "rec_zf_train_prompt_01": {
+    "character": "zhangfei",
+    "hash": "2065cdd3ea54fdb69a9a2563a84c3f9ca9b88b581bd6a0cef171c2d428fd60de",
+    "text": "Should we pause to do some training?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "rec_zf_train_yes_01": {
+    "character": "zhangfei",
+    "hash": "5f02df638e98da2097f897572f723c736a4f609504fae394af6d25ad4afb4fb4",
+    "text": "Good. Better to strike wood now than miss rebels later.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "recov_gy_01": {
+    "character": "guanyu",
+    "hash": "a1ee8454404bd0facd9fa90da667ecfa07ffddb50cb93d7b09e9ec1b8efb1837",
+    "text": "A momentary lapse in focus. I shall return to the field with renewed vigor.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "recov_lb_01": {
+    "character": "liubei",
+    "hash": "2e3ec0d372753933787b1d44ad57d8ef001c5fe387d7eeef7b1dcc2580788c3b",
+    "text": "My apologies, brothers. I let my guard down, but my spirit remains unbroken.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "recov_zf_01": {
+    "character": "zhangfei",
+    "hash": "55e9406d03929c25680a5ba151549e2837f3e959d37502a92a1a0896b9569f61",
+    "text": "Bah! Those rascals got a lucky hit in! Next time, they won't be so fortunate!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "train_gy_01": {
+    "character": "guanyu",
+    "hash": "a65e3ab53e9614195a4e55ec60221a09d0252f313cb943331ee8f9a518f4e115",
+    "text": "Red marks enemies. Blue marks allies. Green marks the heroes under your command.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "train_gy_02": {
+    "character": "guanyu",
+    "hash": "4678a8d19e9bb95c90620458df7d8d26dd7dab873c0e915a574acbbd13a18aa0",
+    "text": "Each brother strikes in a different pattern.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "train_gy_03": {
+    "character": "guanyu",
+    "hash": "2e085f46a3d0cc498ea747a001e2796a80f7f4b470e4fc06537dc91107acf9f9",
+    "text": "My Green Dragon Crescent Blade sweeps an arc at a range of one or two hexes.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "train_gy_watch_01": {
+    "character": "guanyu",
+    "hash": "8bfde8b3bc9afa547244c62399b8abc4d909c3804bf2be7fad948eff131b8688",
+    "text": "In real battle, watch the hexes other units are targeting.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "train_lb_01": {
+    "character": "liubei",
+    "hash": "6b6c310706c9d69f5a87e34505aba4b5ad82ff86f52392301cc0864205f47401",
+    "text": "Before battle, watch how the field breathes.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "train_lb_02": {
+    "character": "liubei",
+    "hash": "02fde0e13a61c647a12af0fdd2bc66cff5165333711bc3aa6253a0bc29fca6cf",
+    "text": "Enemies and allies move first. They show where they mean to strike.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "train_lb_03": {
+    "character": "liubei",
+    "hash": "1103d1a11c084c8ef52d3c42b65b1d64d7abb0c60f6d960f05a9d1b53b68211f",
+    "text": "Those attacks do not land until you end your turn.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "train_lb_04": {
+    "character": "liubei",
+    "hash": "38f551290c328592566ef0d660b13dd6f7862745cc75c6c7a969f4f6b7e97d19",
+    "text": "A hero may move, then attack. You may also attack without moving.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "train_lb_05": {
+    "character": "liubei",
+    "hash": "e9cd6063c6338302755a8b4170511063126426875180b71ec4af6b2b1fbcefcf",
+    "text": "Click a hero, then click a highlighted yellow hex to move there.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "train_lb_06": {
+    "character": "liubei",
+    "hash": "91b3152d4c00899dbb6ea1bd94202e4f2cc458e0da299f5c3abbe9d05e3c7414",
+    "text": "With an attack selected, click a highlighted red hex to strike.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "train_lb_07": {
+    "character": "liubei",
+    "hash": "eaa57f6cabdcd3cb1827aa7bac19409678340c1806c524ed26f2632970cd8eee",
+    "text": "My double swords cut in two opposite directions and push the targets back.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "train_lb_end_turn_01": {
+    "character": "liubei",
+    "hash": "ecf871e7f162fe775f781186a13cbb98d18e658c4196fa6d67f6a4faaaf1a236",
+    "text": "Good. All three heroes have attacked.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "train_lb_end_turn_02": {
+    "character": "liubei",
+    "hash": "d4fc88a20059dcc89fc5009574b6ce05e0933e74ee04d318f8d85291d662e273",
+    "text": "Now hit the End Turn button.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "train_zf_01": {
+    "character": "zhangfei",
+    "hash": "d9274e77f14c4d8919ee07578308b78d4375f065e3a4beab7f0830bd656071f2",
+    "text": "If your hand slips, use the buttons in the bottom right.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "train_zf_02": {
+    "character": "zhangfei",
+    "hash": "50e0fc354c54bfb6e254bdf42973cc60f7ea2f0b54f090f77ac981bee7f8dfbd",
+    "text": "One button undoes your last action. One resets the whole turn.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "train_zf_03": {
+    "character": "zhangfei",
+    "hash": "8acce7ea4f1366396d3716a8b5046fc06a8d6feaeb0b284a2e401c6df5a9c3ac",
+    "text": "My Serpent Spear thrusts one or two spaces in a straight line.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "train_zf_04": {
+    "character": "zhangfei",
+    "hash": "b49627aae6cd5eff8b0c9dd5382269c7b6de024bb15dff5edacda23eacf2cc8f",
+    "text": "It can damage both spaces, and it pushes the farther target.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "train_zf_finish_01": {
+    "character": "zhangfei",
+    "hash": "181bb7510b71a4cb5b61dbab3962458d8f7d9194ef79b91602afb69ae24b87b2",
+    "text": "Now go ahead and smash the rest of these dummies.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "yc_af_hfs_01": {
+    "character": "huangfusong",
+    "hash": "4b23aae8749d8c3ce059ab835cfa15ca53e014f9405e1295b3ec48621d524bc1",
+    "text": "You are Liu Xuande? We fired the grass camp in the second watch. The rebels had no saddles, no armor, and broke in panic.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulan-emperor.wav"
+  },
+  "yc_af_lb_choice_01": {
+    "character": "liubei",
+    "hash": "4f5979a1ed688d3dbc432e543d7ae6813c57131f4892a3e5e5474797fedd6986",
+    "text": "Understood. Brothers, we return to Master Lu immediately.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "yc_af_lb_choice_02": {
+    "character": "liubei",
+    "hash": "f6a7f2052ea0d31aba1862dbcd07e3a4ecd163e69ecb8f2f52dd9328146ecb9c",
+    "text": "Do you judge Zhang Liang and Zhang Bao to rejoin Zhang Jue without delay?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "yc_af_zf_01": {
+    "character": "zhangfei",
+    "hash": "982eacd74d4f896d03679702f060308148c8fce05b42f13ae0764d1a1a6b7cd8",
+    "text": "Look at this blaze! We arrived too late to wet our blades.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
+  "yc_af_zj_01": {
+    "character": "zhujun",
+    "hash": "242f3c5b4dcc016a16778dcd3d4b87c1b110f1437e5805da11d0f7978aeaac1a",
+    "text": "Zhang Liang and Zhang Bao escaped with remnants toward Guangzong. Report this to Commander Lu Zhi at once.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "yc_af_zj_choice_01": {
+    "character": "zhujun",
+    "hash": "e01df5381ac9a64829d0f3b524388d8e074c0b3b64e66d1c131566e11b80183d",
+    "text": "That is most likely. Speed your march and Lu Zhi may catch them in disorder.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  }
+}
