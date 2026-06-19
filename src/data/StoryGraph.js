@@ -67,7 +67,9 @@ export const STORY_ROUTES = {
         nodes: {
             chapter2_hejin_gate: { next: 'chapter2_hejin_council' },
             chapter2_hejin_council: { next: 'chapter2_hejin_secret_death' },
-            chapter2_hejin_secret_death: { next: 'chapter2_hejin_gate_complete' },
+            chapter2_hejin_secret_death: { next: 'chapter2_hejin_enthronement' },
+            chapter2_hejin_enthronement: { next: 'chapter2_hejin_jian_shuo' },
+            chapter2_hejin_jian_shuo: { next: 'chapter2_hejin_gate_complete' },
             chapter2_hejin_gate_complete: { next: null }
         }
     }

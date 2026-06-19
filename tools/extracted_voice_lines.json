@@ -622,6 +622,60 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_hj_enthrone_cc_dismissed_01",
+    "char": "caocao",
+    "text": "If force must lead, then at least let purpose follow close behind it.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_enthrone_cc_heeded_01",
+    "char": "caocao",
+    "text": "The fewer doors we open, the fewer lies escape. Go straight to the coffin and the seals.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_enthrone_hj_01",
+    "char": "hejin",
+    "text": "Before the late Emperor Ling, let Prince Bian receive the seals and mount the throne.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_enthrone_hj_disciplined_01",
+    "char": "hejin",
+    "text": "No one breaks ranks. No one enters a chamber not named. We come to set the throne in order.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_enthrone_narrator_01",
+    "char": "narrator",
+    "text": "Yuan Shao borrowed five thousand imperial troops. He Yong, Xun You, Zheng Tai, and the ministers followed He Jin toward the palace.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_enthrone_narrator_02",
+    "char": "narrator",
+    "text": "Prince Bian was enthroned as Emperor Shao. Empress He became Empress Dowager, and Prince Xie was made Prince of Chenliu.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_enthrone_narrator_03",
+    "char": "narrator",
+    "text": "The throne was settled, but Jian Shuo still held forbidden troops and the palace corridors still answered to eunuch voices.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_enthrone_ys_01",
+    "char": "yuanshao",
+    "text": "The new Son of Heaven is seated. Now every false order issued in the dark can be named treason.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_enthrone_ys_force_01",
+    "char": "yuanshao",
+    "text": "Let every gate see the troops. If the eunuchs whisper, let them whisper behind spear-points.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_hj_eunuch_01",
     "char": "eunuch",
     "text": "General-in-Chief He Jin, His Majesty awaits within.",
@@ -637,6 +691,78 @@
     "id": "ch2_hj_hejin_01",
     "char": "hejin",
     "text": "Murder me? At the very gate?",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_cc_dismissed_01",
+    "char": "caocao",
+    "text": "The garden is quiet, but the inner palace is not. Victory over one eunuch is not mastery of the eunuchs.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_cc_heeded_01",
+    "char": "caocao",
+    "text": "One traitor named and struck: that is power. A general cry against all eunuchs will turn power into smoke.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_guo_01",
+    "char": "eunuch",
+    "text": "You tried to drag us all into your murder. I will not die for your ambition.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_hj_01",
+    "char": "hejin",
+    "text": "Jian Shuo plotted murder. Zhang Rang and Duan Gui still have the Empress Dowager's ear. We move by charge, not by fury.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_jian_01",
+    "char": "eunuchguard",
+    "text": "Guards! To me! The palace troops answer to me!",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_narrator_01",
+    "char": "narrator",
+    "text": "With Emperor Shao enthroned, Yuan Shao moved at once to arrest Jian Shuo.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_narrator_02",
+    "char": "narrator",
+    "text": "Jian Shuo fled into the imperial garden and was killed by Guo Sheng. The troops under Jian Shuo submitted to He Jin.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_narrator_03",
+    "char": "narrator",
+    "text": "He Jin now held the new emperor, Jian Shuo's troops, and a palace full of frightened enemies. Zhang Rang and Duan Gui remained.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_narrator_discipline_01",
+    "char": "narrator",
+    "text": "Because He Jin had kept order at the gates, more palace soldiers surrendered their banners without panic.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_narrator_force_01",
+    "char": "narrator",
+    "text": "Because He Jin had displayed force openly, the palace quieted quickly, but fear ran ahead of every messenger.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_ys_01",
+    "char": "yuanshao",
+    "text": "Jian Shuo plotted to murder the General-in-Chief and enthrone another prince by forged command. Seize him.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_js_ys_02",
+    "char": "yuanshao",
+    "text": "Jian Shuo is dead. The blade has found one root. Let it find the rest.",
     "source": "NarrativeScripts.js"
   },
   {

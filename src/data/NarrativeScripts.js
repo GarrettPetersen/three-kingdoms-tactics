@@ -49,6 +49,11 @@ const CH2_BOTH_POLITICAL_CRIMES = {
     ]
 };
 
+const HEJIN_CAO_CAO_HEEDED = { choice: 'hejin_cao_cao_trust', value: 'heeded', routeId: 'hejin' };
+const HEJIN_CAO_CAO_DISMISSED = { choice: 'hejin_cao_cao_trust', value: 'dismissed', routeId: 'hejin' };
+const HEJIN_ENTRY_DISCIPLINED = { choice: 'hejin_palace_entry_tone', value: 'disciplined', routeId: 'hejin' };
+const HEJIN_ENTRY_SHOW_FORCE = { choice: 'hejin_palace_entry_tone', value: 'show_force', routeId: 'hejin' };
+
 export const NARRATIVE_SCRIPTS = {
     'intro_poem': [
         { bg: 'peach_garden', type: 'command', action: 'fade', target: 0, speed: 0.001 },
@@ -3803,6 +3808,321 @@ export const NARRATIVE_SCRIPTS = {
                 en: 'He Jin chose Yuan Shao, gathered the imperial troops, and prepared to enter before Emperor Ling\'s coffin.',
                 zh: '何进大喜，遂点御林军，欲引众臣入宫，于灵帝柩前扶立太子辩。'
             }
+        },
+        { type: 'command', action: 'fade', target: 1, speed: 0.001 }
+    ],
+    'chapter2_hejin_enthronement': [
+        { bg: 'luoyang_imperial_palace_gate', fg: 'luoyang_imperial_palace_gate_foreground', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_hj_enthrone_narrator_01',
+            position: 'top',
+            text: {
+                en: 'Yuan Shao borrowed five thousand imperial troops. He Yong, Xun You, Zheng Tai, and the ministers followed He Jin toward the palace.',
+                zh: '袁绍借御林军五千，何颙、荀攸、郑泰等诸臣随何进入宫。'
+            }
+        },
+        { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: -36, y: 214, actorAction: 'walk', speed: 0.76, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'yuanshao', imgKey: 'yuanshao', x: -66, y: 214, actorAction: 'walk', speed: 0.74, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: -94, y: 214, actorAction: 'walk', speed: 0.72, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'minister', imgKey: 'zhoujing', x: -122, y: 214, actorAction: 'walk', speed: 0.7, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'troop_left', imgKey: 'soldier', x: -150, y: 218, actorAction: 'walk', speed: 0.68, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'troop_right', imgKey: 'soldier', x: -176, y: 218, actorAction: 'walk', speed: 0.68, drawAboveForeground: true },
+        { type: 'command', action: 'move', id: 'hejin', x: 86, y: 214, wait: false },
+        { type: 'command', action: 'move', id: 'yuanshao', x: 124, y: 214, wait: false },
+        { type: 'command', action: 'move', id: 'caocao', x: 162, y: 214, wait: false },
+        { type: 'command', action: 'move', id: 'minister', x: 202, y: 214, wait: false },
+        { type: 'command', action: 'move', id: 'troop_left', x: 52, y: 218, wait: false },
+        { type: 'command', action: 'move', id: 'troop_right', x: 240, y: 218, wait: true },
+        {
+            condition: HEJIN_ENTRY_DISCIPLINED,
+            type: 'dialogue',
+            portraitKey: 'hejin',
+            name: 'He Jin',
+            voiceId: 'ch2_hj_enthrone_hj_disciplined_01',
+            position: 'top',
+            text: {
+                en: 'No one breaks ranks. No one enters a chamber not named. We come to set the throne in order.',
+                zh: '诸军不得乱行，不得擅入别殿。我等入宫，只为正君位。'
+            }
+        },
+        {
+            condition: HEJIN_ENTRY_SHOW_FORCE,
+            type: 'dialogue',
+            portraitKey: 'yuan-shao',
+            name: 'Yuan Shao',
+            voiceId: 'ch2_hj_enthrone_ys_force_01',
+            position: 'top',
+            text: {
+                en: 'Let every gate see the troops. If the eunuchs whisper, let them whisper behind spear-points.',
+                zh: '让诸门都看见兵威。宦官若要低语，也叫他们对着枪尖低语。'
+            }
+        },
+        {
+            condition: HEJIN_CAO_CAO_HEEDED,
+            type: 'dialogue',
+            portraitKey: 'cao-cao',
+            name: 'Cao Cao',
+            voiceId: 'ch2_hj_enthrone_cc_heeded_01',
+            position: 'top',
+            text: {
+                en: 'The fewer doors we open, the fewer lies escape. Go straight to the coffin and the seals.',
+                zh: '少开一门，便少漏一分奸计。直趋梓宫与玺绶。'
+            }
+        },
+        {
+            condition: HEJIN_CAO_CAO_DISMISSED,
+            type: 'dialogue',
+            portraitKey: 'cao-cao',
+            name: 'Cao Cao',
+            voiceId: 'ch2_hj_enthrone_cc_dismissed_01',
+            position: 'top',
+            text: {
+                en: 'If force must lead, then at least let purpose follow close behind it.',
+                zh: '若兵威在前，至少让名义紧随其后。'
+            }
+        },
+        { type: 'command', action: 'fade', target: 1, speed: 0.001 },
+        { bg: 'imperial_chamber', fg: null, type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        {
+            type: 'command',
+            action: 'addProp',
+            id: 'emperor_ling_coffin',
+            imgKey: 'emperor_ling_deathbed',
+            imgKeys: ['emperor_ling_deathbed', 'emperor_ling_deathbed02'],
+            frameMs: 1100,
+            x: 92,
+            y: 122,
+            sortY: 154
+        },
+        { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: 92, y: 206 },
+        { type: 'command', action: 'addActor', id: 'liubian', imgKey: 'liubian', x: 146, y: 206 },
+        { type: 'command', action: 'addActor', id: 'yuanshao', imgKey: 'yuanshao', x: 48, y: 208 },
+        { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: 214, y: 208, flip: true },
+        { type: 'command', action: 'addActor', id: 'minister_left', imgKey: 'zhoujing', x: 22, y: 210 },
+        { type: 'command', action: 'addActor', id: 'minister_right', imgKey: 'panyin', x: 242, y: 210, flip: true },
+        {
+            type: 'dialogue',
+            portraitKey: 'hejin',
+            name: 'He Jin',
+            voiceId: 'ch2_hj_enthrone_hj_01',
+            position: 'top',
+            text: {
+                en: 'Before the late Emperor Ling, let Prince Bian receive the seals and mount the throne.',
+                zh: '于灵帝梓宫之前，奉太子辩受玺绶，即皇帝位。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'yuan-shao',
+            name: 'Yuan Shao',
+            voiceId: 'ch2_hj_enthrone_ys_01',
+            position: 'top',
+            text: {
+                en: 'The new Son of Heaven is seated. Now every false order issued in the dark can be named treason.',
+                zh: '新天子已立。暗中矫诏者，皆可名为逆贼。'
+            }
+        },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_hj_enthrone_narrator_02',
+            text: {
+                en: 'Prince Bian was enthroned as Emperor Shao. Empress He became Empress Dowager, and Prince Xie was made Prince of Chenliu.',
+                zh: '太子辩即位，是为少帝。何后为皇太后，皇子协封陈留王。'
+            }
+        },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_hj_enthrone_narrator_03',
+            text: {
+                en: 'The throne was settled, but Jian Shuo still held forbidden troops and the palace corridors still answered to eunuch voices.',
+                zh: '君位虽定，蹇硕仍握禁兵，宫中廊庑仍听宦官之声。'
+            }
+        },
+        { type: 'command', action: 'setStoryChoice', key: 'hejin_succession_outcome', value: 'liubian_enthroned', routeId: 'hejin' },
+        {
+            condition: HEJIN_ENTRY_DISCIPLINED,
+            type: 'command',
+            action: 'setStoryChoice',
+            key: 'hejin_legitimacy',
+            value: 'orderly_enthronement',
+            routeId: 'hejin'
+        },
+        {
+            condition: HEJIN_ENTRY_SHOW_FORCE,
+            type: 'command',
+            action: 'setStoryChoice',
+            key: 'hejin_legitimacy',
+            value: 'forceful_enthronement',
+            routeId: 'hejin'
+        },
+        { type: 'command', action: 'fade', target: 1, speed: 0.001 }
+    ],
+    'chapter2_hejin_jian_shuo': [
+        { bg: 'luoyang_imperial_garden_night', fg: null, type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_hj_js_narrator_01',
+            position: 'top',
+            text: {
+                en: 'With Emperor Shao enthroned, Yuan Shao moved at once to arrest Jian Shuo.',
+                zh: '少帝既立，袁绍即引兵收蹇硕。'
+            }
+        },
+        { type: 'command', action: 'addActor', id: 'yuanshao', imgKey: 'yuanshao', x: -32, y: 210, actorAction: 'walk', speed: 0.82 },
+        { type: 'command', action: 'addActor', id: 'troop1', imgKey: 'soldier', x: -62, y: 214, actorAction: 'walk', speed: 0.78 },
+        { type: 'command', action: 'addActor', id: 'troop2', imgKey: 'soldier', x: -88, y: 214, actorAction: 'walk', speed: 0.78 },
+        { type: 'command', action: 'addActor', id: 'jianshuo', imgKey: 'eunuch_guard', x: 228, y: 210, flip: true },
+        { type: 'command', action: 'addActor', id: 'guosheng', imgKey: 'eunuch', x: 260, y: 212, flip: true },
+        { type: 'command', action: 'move', id: 'yuanshao', x: 82, y: 210, wait: false },
+        { type: 'command', action: 'move', id: 'troop1', x: 46, y: 214, wait: false },
+        { type: 'command', action: 'move', id: 'troop2', x: 112, y: 214, wait: true },
+        {
+            type: 'dialogue',
+            portraitKey: 'yuan-shao',
+            name: 'Yuan Shao',
+            voiceId: 'ch2_hj_js_ys_01',
+            position: 'top',
+            text: {
+                en: 'Jian Shuo plotted to murder the General-in-Chief and enthrone another prince by forged command. Seize him.',
+                zh: '蹇硕矫诏谋杀大将军，欲别立皇子。拿下。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'eunuch-guard',
+            name: 'Jian Shuo',
+            voiceId: 'ch2_hj_js_jian_01',
+            position: 'top',
+            text: {
+                en: 'Guards! To me! The palace troops answer to me!',
+                zh: '护驾！都来！禁兵听我号令！'
+            }
+        },
+        { type: 'command', action: 'move', id: 'jianshuo', x: 306, y: 210, wait: false },
+        { type: 'command', action: 'move', id: 'guosheng', x: 230, y: 212, wait: true },
+        {
+            type: 'dialogue',
+            portraitKey: 'eunuch',
+            name: 'Guo Sheng',
+            voiceId: 'ch2_hj_js_guo_01',
+            position: 'top',
+            text: {
+                en: 'You tried to drag us all into your murder. I will not die for your ambition.',
+                zh: '你以私谋拖我等共死。我不为你的野心殉葬。'
+            }
+        },
+        { type: 'command', action: 'move', id: 'guosheng', x: 286, y: 212, wait: true },
+        { type: 'command', action: 'playSound', key: 'unsheath_sword', volume: 0.8 },
+        { type: 'command', action: 'animate', id: 'jianshuo', animation: 'hit', wait: false },
+        { type: 'command', action: 'wait', duration: 450 },
+        { type: 'command', action: 'removeActor', id: 'jianshuo' },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_hj_js_narrator_02',
+            text: {
+                en: 'Jian Shuo fled into the imperial garden and was killed by Guo Sheng. The troops under Jian Shuo submitted to He Jin.',
+                zh: '蹇硕走入御园，为郭胜所杀。蹇硕所领禁兵，皆归何进。'
+            }
+        },
+        {
+            condition: HEJIN_ENTRY_DISCIPLINED,
+            type: 'narrator',
+            voiceId: 'ch2_hj_js_narrator_discipline_01',
+            text: {
+                en: 'Because He Jin had kept order at the gates, more palace soldiers surrendered their banners without panic.',
+                zh: '因何进先前约束军伍，宫中兵士多安然解旗归命。'
+            }
+        },
+        {
+            condition: HEJIN_ENTRY_SHOW_FORCE,
+            type: 'narrator',
+            voiceId: 'ch2_hj_js_narrator_force_01',
+            text: {
+                en: 'Because He Jin had displayed force openly, the palace quieted quickly, but fear ran ahead of every messenger.',
+                zh: '因何进张兵示威，宫中虽速静，惧声却先于使者传开。'
+            }
+        },
+        { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: 338, y: 210, actorAction: 'walk', speed: 0.74, flip: true },
+        { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: 366, y: 214, actorAction: 'walk', speed: 0.72, flip: true },
+        { type: 'command', action: 'move', id: 'hejin', x: 168, y: 210, wait: false },
+        { type: 'command', action: 'move', id: 'caocao', x: 204, y: 214, wait: true },
+        {
+            type: 'dialogue',
+            portraitKey: 'yuan-shao',
+            name: 'Yuan Shao',
+            voiceId: 'ch2_hj_js_ys_02',
+            position: 'top',
+            text: {
+                en: 'Jian Shuo is dead. The blade has found one root. Let it find the rest.',
+                zh: '蹇硕已死。刀已断一根恶根，便当尽断其余。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'hejin',
+            name: 'He Jin',
+            voiceId: 'ch2_hj_js_hj_01',
+            position: 'top',
+            text: {
+                en: 'Jian Shuo plotted murder. Zhang Rang and Duan Gui still have the Empress Dowager\'s ear. We move by charge, not by fury.',
+                zh: '蹇硕谋杀，罪在明处。张让、段珪仍得太后左右。行事须以罪名，不可以怒气。'
+            }
+        },
+        {
+            condition: HEJIN_CAO_CAO_HEEDED,
+            type: 'dialogue',
+            portraitKey: 'cao-cao',
+            name: 'Cao Cao',
+            voiceId: 'ch2_hj_js_cc_heeded_01',
+            position: 'top',
+            text: {
+                en: 'One traitor named and struck: that is power. A general cry against all eunuchs will turn power into smoke.',
+                zh: '明其一罪而诛之，此为权。泛呼尽杀宦官，权势便化作烟。'
+            }
+        },
+        {
+            condition: HEJIN_CAO_CAO_DISMISSED,
+            type: 'dialogue',
+            portraitKey: 'cao-cao',
+            name: 'Cao Cao',
+            voiceId: 'ch2_hj_js_cc_dismissed_01',
+            position: 'top',
+            text: {
+                en: 'The garden is quiet, but the inner palace is not. Victory over one eunuch is not mastery of the eunuchs.',
+                zh: '御园已静，内宫未静。胜一宦官，并非制宦官。'
+            }
+        },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_hj_js_narrator_03',
+            text: {
+                en: 'He Jin now held the new emperor, Jian Shuo\'s troops, and a palace full of frightened enemies. Zhang Rang and Duan Gui remained.',
+                zh: '何进手握新君、蹇硕禁兵，亦握住满宫惊惧之敌。张让、段珪等仍在。'
+            }
+        },
+        { type: 'command', action: 'setStoryChoice', key: 'hejin_jian_shuo_outcome', value: 'killed_by_guo_sheng', routeId: 'hejin' },
+        {
+            condition: HEJIN_ENTRY_DISCIPLINED,
+            type: 'command',
+            action: 'setStoryChoice',
+            key: 'hejin_eunuch_hostility',
+            value: 'contained_after_jian_shuo',
+            routeId: 'hejin'
+        },
+        {
+            condition: HEJIN_ENTRY_SHOW_FORCE,
+            type: 'command',
+            action: 'setStoryChoice',
+            key: 'hejin_eunuch_hostility',
+            value: 'fearful_after_jian_shuo',
+            routeId: 'hejin'
         },
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ],

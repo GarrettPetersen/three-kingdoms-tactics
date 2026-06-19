@@ -397,8 +397,8 @@ export const UI_TEXT = {
         zh: '洛阳宫中，灵帝病笃。宫门之前，何进必须决定是否相信一声警告。'
     },
     'campaign_ch2_hejin_complete': {
-        en: 'He Jin heeded Pan Yin and returned home to summon the ministers against the eunuchs.',
-        zh: '何进听从潘隐之言，急归私宅，召诸大臣谋诛宦官。'
+        en: 'He Jin survived Jian Shuo\'s trap, enthroned Liu Bian as Emperor Shao, and took Jian Shuo\'s troops after Guo Sheng killed him.',
+        zh: '何进避过蹇硕之陷，拥立刘辩为少帝；郭胜杀蹇硕后，蹇硕禁兵皆归何进。'
     },
     'campaign_caocao_description': {
         en: 'When the realm nears chaos and Yellow Turbans rise like a tide, a cavalry commander rides from Dunqiu. In the smoke of war, his name begins to spread.',
