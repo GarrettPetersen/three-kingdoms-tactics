@@ -26,6 +26,7 @@ except ImportError:
 
 # --- Configuration ---
 # Use the Python 3.11 virtual environment we just set up
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 VENV_PYTHON = "./tools/venv_xtts/bin/python3.11"
 OUTPUT_DIR = "public/assets/audio/voices"
 # LANGUAGE is set above when determining EXTRACTED_LINES_FILE
@@ -128,6 +129,85 @@ CHAR_TARGETS_MANDARIN = {
 # Models will be loaded lazily only when needed (after checking if there are lines to generate)
 tts = None
 stt_model = None
+_SOURCE_PATH_CACHE = {}
+
+
+def project_relative_path(path):
+    """Return a compact path for logs."""
+    try:
+        return str(Path(path).resolve().relative_to(PROJECT_ROOT))
+    except ValueError:
+        return str(path)
+
+
+def resolve_project_path(path_value):
+    """Resolve a stored relative path from the project root."""
+    path = Path(path_value)
+    if not path.is_absolute():
+        path = PROJECT_ROOT / path
+    return path
+
+
+def resolve_line_source_path(line):
+    """Find the JS source file that owns a voice line."""
+    source_path = line.get("source_path") or line.get("sourcePath")
+    if source_path:
+        path = resolve_project_path(source_path)
+        if path.exists():
+            return path
+
+    source_name = line.get("source")
+    if not source_name:
+        return None
+
+    if source_name in _SOURCE_PATH_CACHE:
+        return _SOURCE_PATH_CACHE[source_name]
+
+    matches = list((PROJECT_ROOT / "src").rglob(source_name))
+    path = matches[0] if len(matches) == 1 else None
+    _SOURCE_PATH_CACHE[source_name] = path
+    return path
+
+
+def voice_dependency_paths(line):
+    """Return files whose newer mtime should make this voice line stale."""
+    paths = []
+    source_path = resolve_line_source_path(line)
+    if source_path:
+        paths.append(source_path)
+
+    for dependency in line.get("voice_dependencies", []):
+        path = resolve_project_path(dependency)
+        if path.exists():
+            paths.append(path)
+
+    return paths
+
+
+def voice_file_generation_status(line, lang_code):
+    """Decide whether a voice line needs audio generated or regenerated."""
+    output_ogg = Path(OUTPUT_DIR) / lang_code / f"{line['id']}.ogg"
+
+    if not output_ogg.exists():
+        return {"needs_generation": True, "reason": "missing", "details": "no audio file"}
+
+    audio_stat = output_ogg.stat()
+    if audio_stat.st_size == 0:
+        return {"needs_generation": True, "reason": "empty", "details": "0-byte audio file"}
+
+    stale_paths = []
+    for path in voice_dependency_paths(line):
+        if path.stat().st_mtime_ns > audio_stat.st_mtime_ns:
+            stale_paths.append(project_relative_path(path))
+
+    if stale_paths:
+        return {
+            "needs_generation": True,
+            "reason": "stale",
+            "details": f"newer dependency: {', '.join(stale_paths)}",
+        }
+
+    return {"needs_generation": False, "reason": "current", "details": ""}
 
 
 def load_models():
@@ -194,11 +274,18 @@ def load_voice_lines_from_extracted():
             "original_text": line["text"],  # Keep original for reference
         }
 
+        for metadata_key in ("source", "source_path", "sourcePath"):
+            if metadata_key in line:
+                entry[metadata_key] = line[metadata_key]
+
+        voice_dependencies = []
+
         # Apply phonetic overrides from external file
         # Only apply phonetic overrides for English (they're English pronunciation guides)
         # For other languages, use the original text
         if line_id in phonetic_overrides and LANGUAGE == "en":
             entry["text"] = phonetic_overrides[line_id]
+            voice_dependencies.append(PHONETIC_OVERRIDES_FILE)
 
         # Apply per-line settings
         if line_id in settings:
@@ -209,6 +296,10 @@ def load_voice_lines_from_extracted():
                 entry["emotion"] = s["emotion"]
             if "phonetic_text" in s:
                 entry["text"] = s["phonetic_text"]
+            voice_dependencies.append(VOICE_SETTINGS_FILE)
+
+        if voice_dependencies:
+            entry["voice_dependencies"] = voice_dependencies
 
         result.append(entry)
 
@@ -320,6 +411,8 @@ def generate_voice(
     emotion=None,
     phonetic_text=None,
     lang_code="en",
+    force=False,
+    regeneration_reason=None,
 ):
     # Create language subdirectory if it doesn't exist
     lang_dir = os.path.join(OUTPUT_DIR, lang_code)
@@ -332,8 +425,14 @@ def generate_voice(
     if os.path.exists(output_ogg):
         # Skip if file exists and has content
         if os.path.getsize(output_ogg) > 0:
-            # Already exists - skip entirely (no re-processing)
-            return None
+            if force:
+                if regeneration_reason:
+                    print(f"Regenerating stale file: {line_id} ({regeneration_reason})")
+                else:
+                    print(f"Regenerating stale file: {line_id}")
+            else:
+                # Already exists - skip entirely (no re-processing)
+                return None
         else:
             print(f"Regenerating 0-byte file: {line_id}")
 
@@ -1272,17 +1371,17 @@ if __name__ == "__main__":
         print("\nFix these duplicates before generating voices!")
         sys.exit(1)
 
-    # Pre-fill list of lines that need generation
-    # Use language-specific output directory
-    lang_dir = os.path.join(OUTPUT_DIR, LANGUAGE)
+    # Pre-fill list of lines that need generation.
     lines_to_generate = []
+    generation_statuses = {}
     for line in voice_lines:
-        output_ogg = os.path.join(lang_dir, f"{line['id']}.ogg")
-        if not os.path.exists(output_ogg) or os.path.getsize(output_ogg) == 0:
+        status = voice_file_generation_status(line, LANGUAGE)
+        if status["needs_generation"]:
             lines_to_generate.append(line)
+            generation_statuses[line["id"]] = status
 
     if len(lines_to_generate) == 0:
-        print("All voice files already exist. Nothing to generate.")
+        print("All voice files are current. Nothing to generate.")
         sys.exit(0)
 
     # Only load models if we actually need to generate something
@@ -1293,13 +1392,18 @@ if __name__ == "__main__":
     print(f"Need to generate {len(lines_to_generate)} voice file(s)...")
     print("\nLines to generate:")
     for line in lines_to_generate:
+        status = generation_statuses[line["id"]]
         print(
-            f"  - {line['id']} ({line['char']}): \"{line['text'][:60]}{'...' if len(line['text']) > 60 else ''}\""
+            f"  - {line['id']} ({line['char']}, {status['reason']}): "
+            f"\"{line['text'][:60]}{'...' if len(line['text']) > 60 else ''}\""
         )
+        if status["details"]:
+            print(f"    {status['details']}")
     print()
 
     report = {}
-    for line in voice_lines:
+    for line in lines_to_generate:
+        status = generation_statuses[line["id"]]
         res = generate_voice(
             line["id"],
             line["char"],
@@ -1308,6 +1412,8 @@ if __name__ == "__main__":
             emotion=line.get("emotion"),
             phonetic_text=line.get("phonetic_text"),
             lang_code=LANGUAGE,
+            force=status["reason"] == "stale",
+            regeneration_reason=status["details"],
         )
         # Use language+id as unique key since same ID can exist in multiple languages
         unique_key = f"{LANGUAGE}:{line['id']}"
