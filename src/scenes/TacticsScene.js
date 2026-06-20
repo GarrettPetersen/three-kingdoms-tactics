@@ -3621,14 +3621,55 @@ export class TacticsScene extends BaseScene {
             }
         }
 
-        if (cells.length > 0) return cells;
-        return this.getAttackableGateCellsForUnit(unit)
+        if (cells.length > 0) return this.filterSiegeLadderTargetsForLane(unit, cells);
+        const fallbackCells = this.getAttackableGateCellsForUnit(unit)
             .flatMap(gate => this.tacticsMap.getNeighbors(gate.r, gate.q))
             .filter(c => c && !this.isCityGateCell(c) && !c.omitted && !c.impassable);
+        return this.filterSiegeLadderTargetsForLane(unit, fallbackCells);
+    }
+
+    getSiegeLadderLane(unit) {
+        const id = String(unit?.id || '').toLowerCase();
+        if (id.includes('left')) return 'left';
+        if (id.includes('right')) return 'right';
+
+        const ladders = this.units
+            .filter(u => this.isActiveSiegeLadder(u) && u.faction === unit?.faction)
+            .sort((a, b) => {
+                if ((a.q || 0) !== (b.q || 0)) return (a.q || 0) - (b.q || 0);
+                return String(a.id || '').localeCompare(String(b.id || ''));
+            });
+        const index = ladders.findIndex(u => u === unit);
+        return index >= 0 && index % 2 === 1 ? 'right' : 'left';
+    }
+
+    filterSiegeLadderTargetsForLane(unit, cells) {
+        if (!Array.isArray(cells) || cells.length <= 1) return cells || [];
+        const lane = this.getSiegeLadderLane(unit);
+        const meta = this.tacticsMap?.cityGateMeta || {};
+        const gateCells = Array.isArray(meta.gateGroundCells) ? meta.gateGroundCells : [];
+        const centerQ = gateCells.length > 0
+            ? gateCells.reduce((sum, cell) => sum + (cell.q || 0), 0) / gateCells.length
+            : ((this.manager?.config?.mapWidth || this.tacticsMap?.width || 10) - 1) / 2;
+
+        const primary = cells.filter(cell => lane === 'left' ? cell.q < centerQ : cell.q > centerQ);
+        if (primary.length > 0) return primary;
+
+        const sorted = [...cells].sort((a, b) => a.q !== b.q ? a.q - b.q : a.r - b.r);
+        const split = Math.ceil(sorted.length / 2);
+        return lane === 'left' ? sorted.slice(0, split) : sorted.slice(Math.max(0, sorted.length - split));
     }
 
     moveSiegeLadderNpc(unit, onComplete) {
         this.syncSiegeLadderCells();
+        if (this.isSiegeLadderOccupied(unit)) {
+            unit.hasActed = true;
+            unit.hasMoved = true;
+            unit.intent = null;
+            onComplete();
+            return;
+        }
+
         const targets = this.getSiegeLadderAssaultCells(unit);
         if (targets.length === 0) {
             unit.hasActed = true;
@@ -6192,6 +6233,18 @@ export class TacticsScene extends BaseScene {
         )) || null;
     }
 
+    isSiegeLadderOccupied(unit) {
+        if (!this.isActiveSiegeLadder(unit)) return false;
+        return this.units.some(u => (
+            u &&
+            u !== unit &&
+            !this.isSiegeLadder(u) &&
+            !u.isGone &&
+            u.hp > 0 &&
+            this.unitOccupiesCell(u, unit.r, unit.q)
+        ));
+    }
+
     getBlockingUnitOccupyingCell(r, q, excludeUnit = null) {
         return this.units.find(u => (
             u &&
@@ -8525,38 +8578,44 @@ export class TacticsScene extends BaseScene {
         return null;
     }
 
-    ensureCustomCityGateSiegeLadder(unitsToPlace) {
+    ensureCustomCityGateSiegeLadders(unitsToPlace) {
         if (!this.isCustom || this.mapGenParams?.layout !== 'city_gate' || !Array.isArray(unitsToPlace)) {
             return unitsToPlace;
         }
-        const hasLadder = unitsToPlace.some(u => (
+        const isLadderRow = u => (
             u?.type === 'siege_ladder' ||
             u?.templateId === 'ladder' ||
             u?.isSiegeLadder
-        ));
-        if (hasLadder) return unitsToPlace;
+        );
+        const existingLadders = unitsToPlace.filter(isLadderRow);
+        if (existingLadders.length >= 2) return unitsToPlace;
 
         const defenderSide = this.mapGenParams?.cityGateDefenderSide || 'player';
         const attackerFaction = defenderSide === 'enemy' ? 'allied' : 'enemy';
-        const meta = this.tacticsMap?.cityGateMeta || {};
-        const gateCells = Array.isArray(meta.gateGroundCells) ? meta.gateGroundCells : [];
-        const centerQ = gateCells.length > 0
-            ? Math.round(gateCells.reduce((sum, cell) => sum + (cell.q || 0), 0) / gateCells.length)
-            : Math.floor((this.manager?.config?.mapWidth || 10) / 2);
+        const mapWidth = this.manager?.config?.mapWidth || 10;
+        const leftSpawnQ = Math.max(0, Math.min(mapWidth - 1, Math.floor(mapWidth * 0.2)));
+        const rightSpawnQ = Math.max(0, Math.min(mapWidth - 1, Math.ceil(mapWidth * 0.8)));
         const spawnR = Math.max(0, (this.manager?.config?.mapHeight || 10) - 2);
-        const spawnQ = Math.max(0, Math.min((this.manager?.config?.mapWidth || 10) - 1, centerQ + 2));
+        const hasLeft = existingLadders.some(u => String(u?.id || '').toLowerCase().includes('left'));
+        const hasRight = existingLadders.some(u => String(u?.id || '').toLowerCase().includes('right'));
+        const sidesToAdd = [];
+        if (!hasLeft && existingLadders.length + sidesToAdd.length < 2) sidesToAdd.push('left');
+        if (!hasRight && existingLadders.length + sidesToAdd.length < 2) sidesToAdd.push('right');
+        while (existingLadders.length + sidesToAdd.length < 2) {
+            sidesToAdd.push(sidesToAdd.includes('left') ? 'right' : 'left');
+        }
 
         return [
             ...unitsToPlace,
-            {
-                id: `custom_${attackerFaction}_siege_ladder`,
+            ...sidesToAdd.map(side => ({
+                id: `custom_${attackerFaction}_siege_ladder_${side}`,
                 type: 'siege_ladder',
                 templateId: 'ladder',
                 faction: attackerFaction,
                 r: spawnR,
-                q: spawnQ,
+                q: side === 'left' ? leftSpawnQ : rightSpawnQ,
                 cityGateSide: 'outside'
-            }
+            }))
         ];
     }
 
@@ -8724,7 +8783,7 @@ export class TacticsScene extends BaseScene {
             }
         }
 
-        unitsToPlace = this.ensureCustomCityGateSiegeLadder(unitsToPlace);
+        unitsToPlace = this.ensureCustomCityGateSiegeLadders(unitsToPlace);
 
         if (unitsToPlace) {
             const gs = this.manager.gameState;

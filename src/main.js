@@ -15,10 +15,13 @@ import { CreditsScene } from './scenes/CreditsScene.js';
 import { OptionsOverlay } from './scenes/OptionsOverlay.js';
 import { LiuboScene } from './scenes/LiuboScene.js';
 import { DebugStoryGraphScene } from './scenes/DebugStoryGraphScene.js';
+import { StoryScriptReaderScene } from './scenes/StoryScriptReaderScene.js';
 
 const canvas = document.getElementById('game-canvas');
 const gameContainer = document.getElementById('game-container');
 const webFullscreenToggle = document.getElementById('web-fullscreen-toggle');
+const mobileCheatKeyboardToggle = document.getElementById('mobile-cheat-keyboard-toggle');
+const mobileCheatKeyboardInput = document.getElementById('mobile-cheat-keyboard-input');
 const ctx = canvas.getContext('2d');
 const WEB_FULLSCREEN_IDLE_MS = 3200;
 const WEB_FULLSCREEN_PROXIMITY_PX = 96;
@@ -252,6 +255,72 @@ function setupWebFullscreenToggle() {
     }, { passive: true });
 }
 
+function isMobileCheatKeyboardAvailable() {
+    const ua = navigator.userAgent || '';
+    const isElectronShell = /\bElectron\b/i.test(ua);
+    const hasTouch = navigator.maxTouchPoints > 0
+        || window.matchMedia?.('(pointer: coarse)').matches
+        || /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+    return !!mobileCheatKeyboardToggle && !!mobileCheatKeyboardInput && hasTouch && !isElectronShell;
+}
+
+function updateMobileCheatKeyboardToggle(shouldReveal = () => true) {
+    if (!mobileCheatKeyboardToggle) return;
+    const shouldShow = isMobileCheatKeyboardAvailable() && !!shouldReveal();
+    if (!shouldShow && mobileCheatKeyboardInput && document.activeElement === mobileCheatKeyboardInput) {
+        mobileCheatKeyboardInput.blur();
+    }
+    mobileCheatKeyboardToggle.hidden = !shouldShow;
+    mobileCheatKeyboardToggle.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
+}
+
+function setupMobileCheatKeyboard(appendCheatText, shouldReveal = () => true) {
+    if (!mobileCheatKeyboardToggle || !mobileCheatKeyboardInput) return;
+
+    const syncToggle = () => updateMobileCheatKeyboardToggle(shouldReveal);
+    const focusCheatInput = () => {
+        if (!isMobileCheatKeyboardAvailable() || !shouldReveal()) return;
+        mobileCheatKeyboardInput.value = '';
+        mobileCheatKeyboardInput.focus({ preventScroll: true });
+        mobileCheatKeyboardToggle.classList.add('mobile-cheat-keyboard-toggle--active');
+        window.setTimeout(() => {
+            if (document.activeElement !== mobileCheatKeyboardInput) {
+                mobileCheatKeyboardToggle.classList.remove('mobile-cheat-keyboard-toggle--active');
+            }
+        }, 1200);
+    };
+
+    syncToggle();
+    mobileCheatKeyboardToggle.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        focusCheatInput();
+    });
+    mobileCheatKeyboardToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        focusCheatInput();
+    });
+    mobileCheatKeyboardInput.addEventListener('input', () => {
+        const value = mobileCheatKeyboardInput.value;
+        if (value) appendCheatText(value);
+        mobileCheatKeyboardInput.value = '';
+    });
+    mobileCheatKeyboardInput.addEventListener('blur', () => {
+        mobileCheatKeyboardToggle.classList.remove('mobile-cheat-keyboard-toggle--active');
+    });
+    mobileCheatKeyboardInput.addEventListener('keydown', (e) => {
+        e.stopPropagation();
+        if (e.key === 'Escape' || e.key === 'Enter') {
+            e.preventDefault();
+            mobileCheatKeyboardInput.blur();
+        }
+    });
+    window.addEventListener('resize', syncToggle, { passive: true });
+    window.addEventListener('orientationchange', syncToggle, { passive: true });
+    return syncToggle;
+}
+
 /**
  * Take 1920x1080 screenshots from the 256x256 canvas
  * Creates three 16:9 crops (top, middle, bottom) and one letterboxed version
@@ -412,6 +481,7 @@ async function init() {
     sceneManager.addScene('levelup', new LevelUpScene());
     sceneManager.addScene('credits', new CreditsScene());
     sceneManager.addScene('debug_story_graph', new DebugStoryGraphScene());
+    sceneManager.addScene('story_script_reader', new StoryScriptReaderScene());
     sceneManager.setOptionsOverlay(new OptionsOverlay());
 
     const actionRecorder = new ActionRecorder(assets, canvas);
@@ -502,6 +572,133 @@ async function init() {
     window.addEventListener('keydown', unlockAudio);
 
     let inputBuffer = "";
+    const markChapterComplete = (chapterNum) => {
+        const n = Number(chapterNum);
+        if (!Number.isFinite(n) || n < 1) return false;
+        const milestone = `chapter${n}_complete`;
+        sceneManager.gameState.addMilestone(milestone);
+        // Canon defaults when skipping content:
+        // - Lu Zhi is NOT freed (lawful/canonical branch)
+        // - Liu Bei restrains Zhang Fei in Dong Zhuo confrontation
+        if (n >= 1) {
+            sceneManager.gameState.setStoryChoice('luzhi_outcome', 'restrained');
+            sceneManager.gameState.setStoryChoice('chapter2_oath_dongzhuo_choice', 'restrain');
+            sceneManager.gameState.setWorldChoice('chapter2_oath_dongzhuo_choice', 'restrain');
+            sceneManager.gameState.removeMilestone('freed_luzhi');
+            sceneManager.gameState.removeMilestone('chapter2_oath_dongzhuo_fought');
+        }
+        // Chapter 1 uses this explicit key in existing unlock checks.
+        if (n === 1) sceneManager.gameState.addMilestone('chapter1_complete');
+        if (n === 1) {
+            sceneManager.gameState.setCurrentCampaign('liubei');
+            sceneManager.gameState.setStoryCursor('chapter1_complete', 'liubei');
+        }
+        if (n === 2) {
+            sceneManager.gameState.setCurrentCampaign('chapter2_oath');
+            sceneManager.gameState.setStoryCursor('chapter2_oath_complete', 'chapter2_oath');
+        }
+        sceneManager.gameState.setLastScene('campaign_selection');
+        sceneManager.switchTo('campaign_selection');
+        console.log(`[CHEAT] Marked Chapter ${n} complete.`);
+        return true;
+    };
+    const checkCheatBuffer = () => {
+        // Cheat: type ch1done, ch2done, ch3done... to mark that chapter complete.
+        const chapterDoneMatch = inputBuffer.match(/ch(\d+)done$/);
+        if (chapterDoneMatch && markChapterComplete(chapterDoneMatch[1])) {
+            inputBuffer = "";
+            return;
+        }
+        if (inputBuffer.endsWith('title')) { sceneManager.switchTo('title'); inputBuffer = ""; }
+        if (inputBuffer.endsWith('camp')) { sceneManager.switchTo('campaign_selection'); inputBuffer = ""; }
+        if (inputBuffer.endsWith('map')) { sceneManager.switchTo('map'); inputBuffer = ""; }
+        if (inputBuffer.endsWith('graphjump')) { sceneManager.switchTo('debug_story_graph'); inputBuffer = ""; }
+        if (inputBuffer.endsWith('scriptreader') || inputBuffer.endsWith('storyaudit')) { sceneManager.switchTo('story_script_reader'); inputBuffer = ""; }
+        if (inputBuffer.endsWith('battle')) {
+            inputBuffer = "";
+            sceneManager.gameState.addMilestone('prologue_complete');
+            sceneManager.switchTo('tactics', { battleId: 'daxing' });
+        }
+        if (inputBuffer.endsWith('screenshot')) {
+            inputBuffer = "";
+            takeScreenshots(ctx, canvas, config, sceneManager).catch(err => {
+                console.error('Screenshot error:', err);
+            });
+        }
+        if (inputBuffer.endsWith('brief')) {
+            inputBuffer = "";
+            // Jump to the Magistrate Briefing (same script as post-prologue; single source of truth in NarrativeScripts.js)
+            sceneManager.gameState.addMilestone('prologue_complete');
+            sceneManager.switchTo('narrative', {
+                scriptId: 'daxing_messenger',
+                musicKey: 'forest',
+                onComplete: () => sceneManager.switchTo('tactics', {
+                    battleId: 'daxing',
+                    mapGen: {
+                        biome: 'northern',
+                        layout: 'foothills',
+                        forestDensity: 0.15,
+                        mountainDensity: 0.1,
+                        riverDensity: 0.05,
+                        houseDensity: 0.04
+                    }
+                })
+            });
+        }
+        if (inputBuffer.endsWith('story')) {
+            inputBuffer = "";
+            sceneManager.switchTo('narrative', {
+                script: [
+                    { type: 'title', text: 'DEBUG: NARRATIVE', subtext: 'Testing narrative scene' },
+                    { type: 'dialogue', name: 'System', voiceId: 'debug_narrative_01', text: { en: 'Cheat code accepted. Narrative scene is functional.', zh: '作弊码已接受。剧情场景运行正常。' } }
+                ]
+            });
+        }
+        if (inputBuffer.endsWith('win')) {
+            if (sceneManager.currentSceneKey === 'tactics' && sceneManager.currentScene) {
+                if (sceneManager.currentScene.cheatWin) {
+                    sceneManager.currentScene.cheatWin();
+                } else {
+                    sceneManager.currentScene.endBattle(true);
+                }
+                inputBuffer = "";
+            }
+        }
+        if (inputBuffer.endsWith('qingzhou')) {
+            inputBuffer = "";
+            sceneManager.gameState.addMilestone('prologue_complete');
+            sceneManager.gameState.addMilestone('daxing');
+            sceneManager.gameState.setCurrentCampaign('liubei');
+            sceneManager.gameState.startStoryRoute('liubei', 'daxing');
+            sceneManager.switchTo('map', { campaignId: 'liubei', partyX: 182, partyY: 85 });
+        }
+        if (inputBuffer.endsWith('guangzong')) {
+            inputBuffer = "";
+            sceneManager.gameState.addMilestone('prologue_complete');
+            sceneManager.gameState.addMilestone('daxing');
+            sceneManager.gameState.addMilestone('qingzhou_siege');
+            sceneManager.gameState.addMilestone('qingzhou_cleanup');
+            sceneManager.gameState.setCurrentCampaign('liubei');
+            sceneManager.gameState.startStoryRoute('liubei', 'qingzhou_cleanup');
+            // Place Liu Bei at Qingzhou (220, 95) - he needs to march to Guangzong
+            sceneManager.switchTo('map', { campaignId: 'liubei', partyX: 220, partyY: 95 });
+        }
+        if (inputBuffer.length > 20) inputBuffer = inputBuffer.slice(-20);
+    };
+    const appendCheatText = (text) => {
+        for (const char of String(text || '').toLowerCase()) {
+            if (char.length !== 1) continue;
+            inputBuffer += char;
+            checkCheatBuffer();
+        }
+    };
+    const syncMobileCheatKeyboard = setupMobileCheatKeyboard(
+        appendCheatText,
+        () => sceneManager.isOptionsOverlayActive()
+    );
+    if (syncMobileCheatKeyboard) {
+        sceneManager.setOptionsOverlayChangeHandler(syncMobileCheatKeyboard);
+    }
     window.addEventListener('keydown', (e) => {
         const isFastSkipCombo = (e.shiftKey && (e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K'));
         if (isFastSkipCombo) {
@@ -518,118 +715,7 @@ async function init() {
         sceneManager.handleKeyDown(e);
 
         if (e.key.length === 1) {
-            inputBuffer += e.key.toLowerCase();
-            const markChapterComplete = (chapterNum) => {
-                const n = Number(chapterNum);
-                if (!Number.isFinite(n) || n < 1) return false;
-                const milestone = `chapter${n}_complete`;
-                sceneManager.gameState.addMilestone(milestone);
-                // Canon defaults when skipping content:
-                // - Lu Zhi is NOT freed (lawful/canonical branch)
-                // - Liu Bei restrains Zhang Fei in Dong Zhuo confrontation
-                if (n >= 1) {
-                    sceneManager.gameState.setStoryChoice('luzhi_outcome', 'restrained');
-                    sceneManager.gameState.setStoryChoice('chapter2_oath_dongzhuo_choice', 'restrain');
-                    sceneManager.gameState.setWorldChoice('chapter2_oath_dongzhuo_choice', 'restrain');
-                    sceneManager.gameState.removeMilestone('freed_luzhi');
-                    sceneManager.gameState.removeMilestone('chapter2_oath_dongzhuo_fought');
-                }
-                // Chapter 1 uses this explicit key in existing unlock checks.
-                if (n === 1) sceneManager.gameState.addMilestone('chapter1_complete');
-                if (n === 1) {
-                    sceneManager.gameState.setCurrentCampaign('liubei');
-                    sceneManager.gameState.setStoryCursor('chapter1_complete', 'liubei');
-                }
-                if (n === 2) {
-                    sceneManager.gameState.setCurrentCampaign('chapter2_oath');
-                    sceneManager.gameState.setStoryCursor('chapter2_oath_complete', 'chapter2_oath');
-                }
-                sceneManager.gameState.setLastScene('campaign_selection');
-                sceneManager.switchTo('campaign_selection');
-                console.log(`[CHEAT] Marked Chapter ${n} complete.`);
-                return true;
-            };
-
-            // Cheat: type ch1done, ch2done, ch3done... to mark that chapter complete.
-            const chapterDoneMatch = inputBuffer.match(/ch(\d+)done$/);
-            if (chapterDoneMatch && markChapterComplete(chapterDoneMatch[1])) {
-                inputBuffer = "";
-                return;
-            }
-            if (inputBuffer.endsWith('title')) { sceneManager.switchTo('title'); inputBuffer = ""; }
-            if (inputBuffer.endsWith('camp')) { sceneManager.switchTo('campaign_selection'); inputBuffer = ""; }
-            if (inputBuffer.endsWith('map')) { sceneManager.switchTo('map'); inputBuffer = ""; }
-            if (inputBuffer.endsWith('graphjump')) { sceneManager.switchTo('debug_story_graph'); inputBuffer = ""; }
-            if (inputBuffer.endsWith('battle')) { 
-                inputBuffer = ""; 
-                sceneManager.gameState.addMilestone('prologue_complete');
-                sceneManager.switchTo('tactics', { battleId: 'daxing' }); 
-            }
-            if (inputBuffer.endsWith('screenshot')) {
-                inputBuffer = "";
-                takeScreenshots(ctx, canvas, config, sceneManager).catch(err => {
-                    console.error('Screenshot error:', err);
-                });
-            }
-            if (inputBuffer.endsWith('brief')) {
-                inputBuffer = "";
-                // Jump to the Magistrate Briefing (same script as post-prologue; single source of truth in NarrativeScripts.js)
-                sceneManager.gameState.addMilestone('prologue_complete');
-                sceneManager.switchTo('narrative', {
-                    scriptId: 'daxing_messenger',
-                    musicKey: 'forest',
-                    onComplete: () => sceneManager.switchTo('tactics', {
-                        battleId: 'daxing',
-                        mapGen: {
-                            biome: 'northern',
-                            layout: 'foothills',
-                            forestDensity: 0.15,
-                            mountainDensity: 0.1,
-                            riverDensity: 0.05,
-                            houseDensity: 0.04
-                        }
-                    })
-                });
-            }
-            if (inputBuffer.endsWith('story')) {
-                inputBuffer = "";
-                sceneManager.switchTo('narrative', {
-                    script: [
-                        { type: 'title', text: 'DEBUG: NARRATIVE', subtext: 'Testing narrative scene' },
-                        { type: 'dialogue', name: 'System', voiceId: 'debug_narrative_01', text: { en: 'Cheat code accepted. Narrative scene is functional.', zh: '作弊码已接受。剧情场景运行正常。' } }
-                    ]
-                });
-            }
-            if (inputBuffer.endsWith('win')) {
-                if (sceneManager.currentSceneKey === 'tactics' && sceneManager.currentScene) {
-                    if (sceneManager.currentScene.cheatWin) {
-                        sceneManager.currentScene.cheatWin();
-                    } else {
-                        sceneManager.currentScene.endBattle(true);
-                    }
-                    inputBuffer = "";
-                }
-            }
-            if (inputBuffer.endsWith('qingzhou')) {
-                inputBuffer = "";
-                sceneManager.gameState.addMilestone('prologue_complete');
-                sceneManager.gameState.addMilestone('daxing');
-                sceneManager.gameState.setCurrentCampaign('liubei');
-                sceneManager.gameState.startStoryRoute('liubei', 'daxing');
-                sceneManager.switchTo('map', { campaignId: 'liubei', partyX: 182, partyY: 85 });
-            }
-            if (inputBuffer.endsWith('guangzong')) {
-                inputBuffer = "";
-                sceneManager.gameState.addMilestone('prologue_complete');
-                sceneManager.gameState.addMilestone('daxing');
-                sceneManager.gameState.addMilestone('qingzhou_siege');
-                sceneManager.gameState.addMilestone('qingzhou_cleanup');
-                sceneManager.gameState.setCurrentCampaign('liubei');
-                sceneManager.gameState.startStoryRoute('liubei', 'qingzhou_cleanup');
-                // Place Liu Bei at Qingzhou (220, 95) - he needs to march to Guangzong
-                sceneManager.switchTo('map', { campaignId: 'liubei', partyX: 220, partyY: 95 });
-            }
-            if (inputBuffer.length > 20) inputBuffer = inputBuffer.slice(-20);
+            appendCheatText(e.key);
         }
     });
 

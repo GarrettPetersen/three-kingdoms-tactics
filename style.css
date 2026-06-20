@@ -203,6 +203,77 @@ canvas {
         linear-gradient(currentColor, currentColor) calc(100% - 5px) calc(100% - 10px) / 2px 7px no-repeat;
 }
 
+.mobile-cheat-keyboard-toggle {
+    position: fixed;
+    left: max(12px, env(safe-area-inset-left));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    z-index: 4;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.42);
+    color: #fff;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    opacity: 0.12;
+    transition: opacity 160ms ease, background-color 160ms ease, border-color 160ms ease, transform 80ms ease;
+}
+
+.mobile-cheat-keyboard-toggle[hidden] {
+    display: none;
+}
+
+.mobile-cheat-keyboard-toggle:hover,
+.mobile-cheat-keyboard-toggle:focus-visible,
+.mobile-cheat-keyboard-toggle--active {
+    background: rgba(0, 0, 0, 0.68);
+    border-color: rgba(255, 255, 255, 0.68);
+    opacity: 0.42;
+    outline: none;
+}
+
+.mobile-cheat-keyboard-toggle:active {
+    transform: translateY(1px);
+}
+
+.mobile-cheat-keyboard-toggle__glyph {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 4px;
+    height: 4px;
+    background: currentColor;
+    box-shadow:
+        -8px -5px currentColor,
+        0 -5px currentColor,
+        8px -5px currentColor,
+        -8px 3px currentColor,
+        0 3px currentColor,
+        8px 3px currentColor;
+    opacity: 0.86;
+    transform: translate(-50%, -50%);
+}
+
+.mobile-cheat-keyboard-input {
+    position: fixed;
+    left: max(14px, env(safe-area-inset-left));
+    bottom: max(14px, env(safe-area-inset-bottom));
+    z-index: 3;
+    width: 1px;
+    height: 1px;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+    color: transparent;
+    background: transparent;
+    caret-color: transparent;
+    font-size: 16px;
+}
+
 @keyframes boot-spinner {
     0%, 24% {
         background: #fff;

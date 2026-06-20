@@ -518,7 +518,7 @@ export class GameState {
     resolveContinueTarget(options = {}) {
         const {
             validateNarrativeState = () => true,
-            excludedScenes = ['title', 'custom_battle', 'summary', 'recovery']
+            excludedScenes = ['title', 'custom_battle', 'summary', 'recovery', 'debug_story_graph', 'story_script_reader']
         } = options;
 
         const campaignId = this.getCurrentCampaign();

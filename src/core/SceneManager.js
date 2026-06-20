@@ -11,6 +11,7 @@ export class SceneManager {
         this.currentScene = null;
         this.scenes = {};
         this.optionsOverlay = null;
+        this.optionsOverlayChangeHandler = null;
         this.optionsButtonRect = null;
         this.gameState = new GameState();
         this.gameState.load();
@@ -125,6 +126,16 @@ export class SceneManager {
         }
     }
 
+    setOptionsOverlayChangeHandler(handler) {
+        this.optionsOverlayChangeHandler = typeof handler === 'function' ? handler : null;
+    }
+
+    notifyOptionsOverlayChange() {
+        if (this.optionsOverlayChangeHandler) {
+            this.optionsOverlayChangeHandler(this.isOptionsOverlayActive());
+        }
+    }
+
     isOptionsOverlayActive() {
         return !!(this.optionsOverlay && this.optionsOverlay.isOpen);
     }
@@ -132,11 +143,13 @@ export class SceneManager {
     openOptionsOverlay(params = {}) {
         if (!this.optionsOverlay) return;
         this.optionsOverlay.open(params);
+        this.notifyOptionsOverlayChange();
     }
 
     closeOptionsOverlay() {
         if (!this.optionsOverlay) return;
         this.optionsOverlay.close();
+        this.notifyOptionsOverlayChange();
     }
 
     toggleOptionsOverlay(params = {}) {
@@ -190,7 +203,7 @@ export class SceneManager {
 
         // Excluded scenes that should never be saved as lastScene
         // campaign_selection is now allowed so users can continue from there
-        const excludedScenes = ['title', 'custom_battle', 'liubo'];
+        const excludedScenes = ['title', 'custom_battle', 'liubo', 'debug_story_graph', 'story_script_reader'];
         
         // Save scene state if the current scene has a saveState method
         if (this.currentScene && typeof this.currentScene.saveState === 'function') {
