@@ -505,6 +505,11 @@ export class StoryScriptReaderScene extends BaseScene {
         return Math.max(1, Math.floor(h / NODE_ROW_H));
     }
 
+    getNodePanelRect(canvas = this.manager?.canvas) {
+        const height = (canvas?.height || 256) - NODE_Y - FOOTER_H;
+        return { x: NODE_X, y: NODE_Y, w: NODE_W, h: height };
+    }
+
     visibleBeatCount() {
         const h = (this.manager?.canvas?.height || 256) - BEAT_Y - FOOTER_H;
         return Math.max(1, Math.floor(h / BEAT_MIN_ROW_H));
@@ -558,6 +563,14 @@ export class StoryScriptReaderScene extends BaseScene {
     scrollBeatPixels(delta) {
         if (!Number.isFinite(delta) || delta === 0) return;
         this.setBeatScroll(this.beatScroll + delta);
+        this.selectFirstVisibleBeat();
+    }
+
+    selectFirstVisibleBeat() {
+        const layouts = this.beatLayouts.length ? this.beatLayouts : this.measureBeatLayouts();
+        const visibleTop = this.beatScroll + 1;
+        const visibleBeat = layouts.find(layout => layout.top + layout.height > visibleTop);
+        if (visibleBeat) this.selectedBeatIndex = visibleBeat.index;
     }
 
     clampNodeScroll() {
@@ -566,6 +579,16 @@ export class StoryScriptReaderScene extends BaseScene {
         if (this.selectedEntryIndex < this.nodeScroll) this.nodeScroll = this.selectedEntryIndex;
         if (this.selectedEntryIndex >= this.nodeScroll + visible) this.nodeScroll = this.selectedEntryIndex - visible + 1;
         this.nodeScroll = Math.max(0, Math.min(Math.max(0, this.entries.length - visible), this.nodeScroll));
+    }
+
+    setNodeScroll(value) {
+        const visible = this.visibleNodeCount();
+        this.nodeScroll = Math.max(0, Math.min(Math.max(0, this.entries.length - visible), value || 0));
+    }
+
+    scrollNodeRows(deltaRows) {
+        if (!Number.isFinite(deltaRows) || deltaRows === 0) return;
+        this.setNodeScroll(this.nodeScroll + deltaRows);
     }
 
     clampBeatScroll() {
@@ -669,7 +692,7 @@ export class StoryScriptReaderScene extends BaseScene {
         const { x } = this.getMousePos(e);
         if (x < DETAIL_X) {
             const rows = Math.sign(e.deltaY) * (Math.abs(e.deltaY) >= 80 ? 3 : 1);
-            this.nodeScroll = Math.max(0, Math.min(Math.max(0, this.entries.length - this.visibleNodeCount()), this.nodeScroll + rows));
+            this.scrollNodeRows(rows);
         } else {
             const amount = Math.sign(e.deltaY) * Math.max(12, Math.min(48, Math.abs(e.deltaY)));
             this.scrollBeatPixels(amount);
@@ -682,10 +705,17 @@ export class StoryScriptReaderScene extends BaseScene {
             this.goBack();
             return;
         }
-        const node = this.nodeRows.find(row => x >= row.x && x <= row.x + row.w && y >= row.y && y <= row.y + row.h);
-        if (node) {
-            this.selectEntry(node.index);
-            assets.playSound('ui_click', 0.35);
+        const nodePanel = this.getNodePanelRect(this.manager?.canvas);
+        if (x >= nodePanel.x && x <= nodePanel.x + nodePanel.w && y >= nodePanel.y && y <= nodePanel.y + nodePanel.h) {
+            const node = this.nodeRows.find(row => x >= row.x && x <= row.x + row.w && y >= row.y && y <= row.y + row.h);
+            this.dragScroll = {
+                pane: 'nodes',
+                lastY: y,
+                startY: y,
+                moved: false,
+                rowRemainder: 0,
+                pendingNodeIndex: node?.index ?? null
+            };
             return;
         }
         const beat = this.beatRows.find(row => x >= row.x && x <= row.x + row.w && y >= row.y && y <= row.y + row.h);
@@ -707,7 +737,17 @@ export class StoryScriptReaderScene extends BaseScene {
             this.dragScroll.moved = true;
         }
         this.dragScroll.lastY = y;
-        if (this.dragScroll.moved) this.scrollBeatPixels(delta);
+        if (!this.dragScroll.moved) return;
+        if (this.dragScroll.pane === 'nodes') {
+            this.dragScroll.rowRemainder += delta;
+            const rows = Math.trunc(this.dragScroll.rowRemainder / NODE_ROW_H);
+            if (rows !== 0) {
+                this.scrollNodeRows(rows);
+                this.dragScroll.rowRemainder -= rows * NODE_ROW_H;
+            }
+        } else {
+            this.scrollBeatPixels(delta);
+        }
     }
 
     handlePointerUp(e) {
@@ -715,6 +755,11 @@ export class StoryScriptReaderScene extends BaseScene {
         const drag = this.dragScroll;
         this.dragScroll = null;
         if (drag.moved) return;
+        if (drag.pendingNodeIndex != null) {
+            this.selectEntry(drag.pendingNodeIndex);
+            assets.playSound('ui_click', 0.35);
+            return;
+        }
         if (drag.pendingBeatIndex != null) {
             this.selectedBeatIndex = drag.pendingBeatIndex;
             this.clampBeatScroll();
@@ -780,26 +825,39 @@ export class StoryScriptReaderScene extends BaseScene {
 
     renderNodes(ctx, canvas) {
         this.nodeRows = [];
-        const h = canvas.height - NODE_Y - FOOTER_H;
-        this.drawPanel(ctx, NODE_X, NODE_Y, NODE_W, h, '#333');
+        const { x, y: panelY, w, h } = this.getNodePanelRect(canvas);
+        this.drawPanel(ctx, x, panelY, w, h, '#333');
         const visible = this.visibleNodeCount();
         const end = Math.min(this.entries.length, this.nodeScroll + visible);
         for (let i = this.nodeScroll; i < end; i++) {
             const entry = this.entries[i];
-            const y = NODE_Y + (i - this.nodeScroll) * NODE_ROW_H;
+            const y = panelY + (i - this.nodeScroll) * NODE_ROW_H;
             const selected = i === this.selectedEntryIndex;
             const tint = this.getRouteTint(entry.routeId);
             ctx.fillStyle = selected ? tint.selectedFill : tint.fill;
-            ctx.fillRect(NODE_X + 1, y + 1, NODE_W - 2, NODE_ROW_H - 2);
+            ctx.fillRect(x + 1, y + 1, w - 2, NODE_ROW_H - 2);
             if (selected) {
                 ctx.strokeStyle = '#ffd700';
-                ctx.strokeRect(NODE_X + 1.5, y + 1.5, NODE_W - 3, NODE_ROW_H - 3);
+                ctx.strokeRect(x + 1.5, y + 1.5, w - 3, NODE_ROW_H - 3);
             }
-            this.drawPixelText(ctx, this.truncateText(entry.nodeId, 22), NODE_X + 5, y + 3, {
+            this.drawPixelText(ctx, this.truncateText(entry.nodeId, 22), x + 5, y + 3, {
                 color: selected ? '#fff' : tint.text,
                 font: '8px Tiny5'
             });
-            this.nodeRows.push({ x: NODE_X, y, w: NODE_W, h: NODE_ROW_H, index: i });
+            this.nodeRows.push({ x, y, w, h: NODE_ROW_H, index: i });
+        }
+
+        const maxScroll = Math.max(0, this.entries.length - visible);
+        if (maxScroll > 0) {
+            const trackX = x + w - 4;
+            const trackY = panelY + 3;
+            const trackH = h - 6;
+            const thumbH = Math.max(10, Math.floor(trackH * (visible / this.entries.length)));
+            const thumbY = trackY + Math.floor((trackH - thumbH) * (this.nodeScroll / maxScroll));
+            ctx.fillStyle = '#242424';
+            ctx.fillRect(trackX, trackY, 2, trackH);
+            ctx.fillStyle = '#777';
+            ctx.fillRect(trackX, thumbY, 2, thumbH);
         }
     }
 
@@ -889,7 +947,7 @@ export class StoryScriptReaderScene extends BaseScene {
         const entry = this.getEntry();
         const beat = this.beats[this.selectedBeatIndex] || null;
         this.drawPixelText(ctx, 'STORY SCRIPT READER', 8, 7, { color: '#ffd700', font: '8px Silkscreen' });
-        this.drawPixelText(ctx, 'Wheel/drag scrolls. Enter opens paths.', 160, 8, { color: '#aaa', font: '8px Tiny5' });
+        this.drawPixelText(ctx, 'Wheel/drag panels. Enter opens paths.', 160, 8, { color: '#aaa', font: '8px Tiny5' });
         this.backRect = { x: canvas.width - 50, y: 5, w: 42, h: 15 };
         ctx.fillStyle = '#151515';
         ctx.fillRect(this.backRect.x, this.backRect.y, this.backRect.w, this.backRect.h);
