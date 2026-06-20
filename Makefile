@@ -5,10 +5,11 @@ VOICES_SCRIPT = tools/generate_voices_xtts.py
 VOICE_REPAIR_SCRIPT = tools/repair_voices.py
 EXTRACT_VOICES_SCRIPT = tools/extract_voice_lines.py
 NARRATIVE_WORKFLOW_SCRIPT = tools/narrative_workflow.py
+WALKMASKS_SCRIPT = tools/generate_walkmasks.py
 VOICE_LANG ?= all
 VOICE_LANGUAGES = en zh
 
-.PHONY: help portrait portraits extract-voices voices voice-repair clean-voices plot-init plot-answer-major plot-answer-pov plot-answer-pov-set plot-pov-qa-start plot-answer-pov-qa plot-answer-pov-b plot-answer-pov-c plot-prompt build build-all build-mac build-win build-linux
+.PHONY: help portrait portraits extract-voices voices voice-repair clean-voices walkmasks walkmask-prompts plot-init plot-answer-major plot-answer-pov plot-answer-pov-set plot-pov-qa-start plot-answer-pov-qa plot-answer-pov-b plot-answer-pov-c plot-prompt build build-all build-mac build-win build-linux
 
 help:
 	@echo "Available commands:"
@@ -18,6 +19,8 @@ help:
 	@echo "  make voice-repair           - Regenerate high-WER voices and keep only improved lines"
 	@echo "  make extract-voices         - Refresh extracted voice line cache (VOICE_LANG=all|en|zh)"
 	@echo "  make clean-voices           - Delete all generated voices"
+	@echo "  make walkmasks              - Generate/clean setting walkmasks (WALKMASKS=\"village_inn urban_street\")"
+	@echo "  make walkmask-prompts       - Write img2img prompts for setting walkmasks"
 	@echo "  make plot-init CHAPTER=<n>  - Initialize narrative workflow for chapter n"
 	@echo "  make plot-answer-major CHARS=\"A, B\" - Save major characters answer for Question 1"
 	@echo "  make plot-answer-pov        - Auto-answer Question 2 from selectable POV routes"
@@ -74,6 +77,13 @@ voice-repair:
 
 clean-voices:
 	rm -f assets/audio/voices/*.ogg
+
+# Setting walkability masks
+walkmasks:
+	$(PYTHON_VENV) $(WALKMASKS_SCRIPT) $(WALKMASKS) --write-prompts $(if $(AI_DRAFT_DIR),--ai-draft-dir "$(AI_DRAFT_DIR)")
+
+walkmask-prompts:
+	$(PYTHON_VENV) $(WALKMASKS_SCRIPT) $(WALKMASKS) --write-prompts --prompts-only
 
 # Narrative workflow
 plot-init:

@@ -1,9 +1,11 @@
 import { BATTLES, UNIT_TEMPLATES } from '../src/data/Battles.js';
 import { GameState } from '../src/core/GameState.js';
+import { NARRATIVE_SCRIPTS } from '../src/data/NarrativeScripts.js';
 import { resolveUnitTemplate } from '../src/data/UnitRules.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import sharp from 'sharp';
 
 const failures = [];
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -288,6 +290,208 @@ function checkBattleDialogueScriptImmutability() {
         `${relPath} should execute battle dialogue choices through temporary dialogue frames.`);
 }
 
+function isAllowedWalkmaskPixel(r, g, b, a) {
+    if (a === 0) return true;
+    return a === 255 && (
+        (r === 0 && g === 0 && b === 0) ||
+        (r === 0 && g === 255 && b === 0) ||
+        (r === 0 && g === 0 && b === 255)
+    );
+}
+
+async function loadWalkmask(stem) {
+    const walkmaskPath = path.join(projectRoot, 'public', 'assets', 'settings', 'walkmasks', `${stem}_walkmask.png`);
+    if (!fs.existsSync(walkmaskPath)) return null;
+    const { data, info } = await sharp(walkmaskPath).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+    return { data, info, path: walkmaskPath };
+}
+
+function readWalkmaskPixel(mask, x, y) {
+    if (!mask) return null;
+    const px = Math.floor(x);
+    const py = Math.floor(y);
+    if (px < 0 || py < 0 || px >= mask.info.width || py >= mask.info.height) return null;
+    const offset = (py * mask.info.width + px) * mask.info.channels;
+    return {
+        r: mask.data[offset],
+        g: mask.data[offset + 1],
+        b: mask.data[offset + 2],
+        a: mask.data[offset + 3],
+        x: px,
+        y: py
+    };
+}
+
+function walkmaskLayerForActor(actor, activeForeground) {
+    if (activeForeground && !actor.drawAboveForeground) return 'behind';
+    return 'front';
+}
+
+function isExpectedWalkmaskPixel(pixel, layer) {
+    if (!pixel || pixel.a === 0) return false;
+    if (layer === 'behind') {
+        return pixel.r === 0 && pixel.g === 0 && pixel.b === 255 && pixel.a === 255;
+    }
+    return pixel.r === 0 && pixel.g === 255 && pixel.b === 0 && pixel.a === 255;
+}
+
+function formatWalkmaskPixel(pixel) {
+    if (!pixel) return 'off-mask';
+    return `rgba(${pixel.r}, ${pixel.g}, ${pixel.b}, ${pixel.a}) at ${pixel.x},${pixel.y}`;
+}
+
+function assertNarrativeFootpointOnWalkmask(mask, context, actor, x, y) {
+    if (!mask) return;
+    if (x < 0 || y < 0 || x >= mask.info.width || y >= mask.info.height) return;
+
+    const layer = walkmaskLayerForActor(actor, context.fgKey);
+    const pixel = readWalkmaskPixel(mask, x, y);
+    if (isExpectedWalkmaskPixel(pixel, layer)) return;
+
+    const expected = layer === 'behind' ? '#0000ff behind-foreground' : '#00ff00 front';
+    failures.push(`${context.scriptId} step ${context.stepIndex} ${actor.id} must stand on ${expected} walkmask pixels for '${context.bgKey}', but found ${formatWalkmaskPixel(pixel)}.`);
+}
+
+function assertNarrativeMoveOnWalkmask(mask, context, actor, fromX, fromY, toX, toY) {
+    if (!mask) return;
+    const steps = Math.max(1, Math.ceil(Math.max(Math.abs(toX - fromX), Math.abs(toY - fromY))));
+    for (let step = 0; step <= steps; step += 1) {
+        const t = step / steps;
+        assertNarrativeFootpointOnWalkmask(
+            mask,
+            context,
+            actor,
+            fromX + ((toX - fromX) * t),
+            fromY + ((toY - fromY) * t)
+        );
+        if (failures.length > 0 && failures[failures.length - 1].includes(`${context.scriptId} step ${context.stepIndex} ${actor.id}`)) {
+            return;
+        }
+    }
+}
+
+async function checkInnNarrativeWalkmaskPaths() {
+    const scriptId = 'noticeboard';
+    const script = NARRATIVE_SCRIPTS[scriptId];
+    assertRule(Array.isArray(script), `${scriptId} narrative script must exist for inn walkmask validation.`);
+    if (!Array.isArray(script)) return;
+
+    const bgToMask = {
+        inn: 'village_inn',
+        inn_evening: 'village_inn_evening'
+    };
+    const masks = new Map();
+    for (const [bgKey, maskStem] of Object.entries(bgToMask)) {
+        const mask = await loadWalkmask(maskStem);
+        assertRule(!!mask, `${scriptId} ${bgKey} must have public/assets/settings/walkmasks/${maskStem}_walkmask.png.`);
+        masks.set(bgKey, mask);
+    }
+
+    const actors = new Map();
+    let bgKey = null;
+    let fgKey = null;
+
+    script.forEach((step, stepIndex) => {
+        if (Object.prototype.hasOwnProperty.call(step, 'bg')) bgKey = step.bg;
+        if (Object.prototype.hasOwnProperty.call(step, 'fg')) fgKey = step.fg;
+
+        const mask = masks.get(bgKey);
+        const context = { scriptId, stepIndex, bgKey, fgKey };
+
+        if (step.type !== 'command') return;
+
+        switch (step.action) {
+            case 'clearActors':
+                actors.clear();
+                break;
+            case 'addActor': {
+                const actor = {
+                    id: step.id,
+                    x: Number(step.x),
+                    y: Number(step.y),
+                    drawAboveForeground: !!step.drawAboveForeground
+                };
+                actors.set(step.id, actor);
+                assertNarrativeFootpointOnWalkmask(mask, context, actor, actor.x, actor.y);
+                break;
+            }
+            case 'move': {
+                const actor = actors.get(step.id);
+                assertRule(!!actor, `${scriptId} step ${stepIndex} moves unknown actor '${step.id}'.`);
+                if (!actor) break;
+                const targetX = Number(step.x);
+                const targetY = Number(step.y);
+                assertNarrativeMoveOnWalkmask(mask, context, actor, actor.x, actor.y, targetX, targetY);
+                actor.x = targetX;
+                actor.y = targetY;
+                break;
+            }
+            case 'setActorLayer': {
+                const actor = actors.get(step.id);
+                assertRule(!!actor, `${scriptId} step ${stepIndex} changes layer for unknown actor '${step.id}'.`);
+                if (!actor) break;
+                actor.drawAboveForeground = !!step.drawAboveForeground;
+                assertNarrativeFootpointOnWalkmask(mask, context, actor, actor.x, actor.y);
+                break;
+            }
+            case 'removeActor':
+                actors.delete(step.id);
+                break;
+            default:
+                break;
+        }
+    });
+}
+
+async function checkSettingWalkmasks() {
+    const settingsDir = path.join(projectRoot, 'public', 'assets', 'settings');
+    const walkmaskDir = path.join(settingsDir, 'walkmasks');
+    if (!fs.existsSync(walkmaskDir)) return;
+
+    const maskFiles = fs.readdirSync(walkmaskDir)
+        .filter(fileName => fileName.endsWith('_walkmask.png'))
+        .sort();
+
+    for (const maskFile of maskFiles) {
+        const maskPath = path.join(walkmaskDir, maskFile);
+        const settingStem = maskFile.replace(/_walkmask\.png$/, '');
+        const settingPath = path.join(settingsDir, `${settingStem}.png`);
+        assertRule(fs.existsSync(settingPath),
+            `${path.relative(projectRoot, maskPath)} must match an existing setting image.`);
+        if (!fs.existsSync(settingPath)) continue;
+
+        const [settingMeta, maskMeta] = await Promise.all([
+            sharp(settingPath).metadata(),
+            sharp(maskPath).metadata()
+        ]);
+
+        assertRule(maskMeta.width === settingMeta.width && maskMeta.height === settingMeta.height,
+            `${path.relative(projectRoot, maskPath)} must match ${path.relative(projectRoot, settingPath)} dimensions.`);
+
+        const { data, info } = await sharp(maskPath).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+        let walkablePixels = 0;
+        for (let i = 0; i < data.length; i += info.channels) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            const a = data[i + 3];
+            if (!isAllowedWalkmaskPixel(r, g, b, a)) {
+                const pixel = i / info.channels;
+                const x = pixel % info.width;
+                const y = Math.floor(pixel / info.width);
+                failures.push(`${path.relative(projectRoot, maskPath)} uses invalid walkmask color rgba(${r}, ${g}, ${b}, ${a}) at ${x},${y}.`);
+                break;
+            }
+            if (a > 0 && ((r === 0 && g === 255 && b === 0) || (r === 0 && g === 0 && b === 255))) {
+                walkablePixels += 1;
+            }
+        }
+
+        assertRule(walkablePixels > 0,
+            `${path.relative(projectRoot, maskPath)} must contain at least one walkable front or behind pixel.`);
+    }
+}
+
 checkSharedForceState();
 checkLegacyForceMigration();
 checkBattleRows();
@@ -296,6 +500,8 @@ checkQingzhouCityGatePrelude();
 checkCanvasTextRendering();
 checkNarrativeScriptImmutability();
 checkBattleDialogueScriptImmutability();
+await checkSettingWalkmasks();
+await checkInnNarrativeWalkmaskPaths();
 
 if (failures.length > 0) {
     console.error('Design rule validation failed:');

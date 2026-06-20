@@ -1,0 +1,13 @@
+Img2img task: create a walkability mask for the provided 256x256 pixel-art location image.
+
+Output requirements:
+- Return a mask image at exactly the same dimensions as the input.
+- Use only three perfectly flat colors, no antialiasing, no gradients, no texture, no labels.
+- #000000 black = unwalkable walls, furniture, props, sky, water, counters, roofs, and decorative background.
+- #00ff00 green = walkable floor/path where the character should draw in front of the foreground.
+- #0000ff blue = walkable floor/path where the character should draw behind a foreground object, wall, doorway, column, or arch.
+- Keep the mask blocky and pixel-perfect. Do not preserve original art colors.
+- Be conservative: if a spot is visually ambiguous, mark it black.
+
+Scene: luoyang_imperial_palace_gateway
+Foreground/occlusion note: This scene has no foreground overlay; use blue only for true doorway/occlusion regions if clearly needed.
