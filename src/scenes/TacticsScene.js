@@ -3337,6 +3337,7 @@ export class TacticsScene extends BaseScene {
                 let score = aoe.score + (isRanged ? dist * 0.5 : (10 - dist) * 0.5);
                 // Tie-breaker: if tactical value is close, staying farther away is safer.
                 score += isRanged ? (dist * 0.15) : 0;
+                score += this.getNpcSiegeWallAttackPositionBonus(unit, c.r, c.q);
                 const targeters = this.units.filter(u => u !== unit && u.faction === unit.faction && u.intent && u.intent.targetId === c.target.id).length;
                 score -= targeters * 2.5;
                 if (unit.faction === 'enemy' && c.target.id === 'dongzhuo') score += 3;
@@ -3368,6 +3369,7 @@ export class TacticsScene extends BaseScene {
                     const { maxRange } = this.getEffectiveAttackRange(unit, c.attackKey);
                     const isRanged = maxRange > 1;
                     let score = isRanged ? dist * 0.45 : (10 - dist) * 0.55;
+                    score += this.getNpcSiegeWallAttackPositionBonus(unit, c.r, c.q);
                     score += Math.random() * 1.0;
                     return { ...c, _score: score };
                 });
@@ -3741,6 +3743,7 @@ export class TacticsScene extends BaseScene {
                 let score = aoe.score + (isRanged ? dist * 0.5 : (10 - dist) * 0.5);
                 // Tie-breaker toward safer spacing for ranged options.
                 score += isRanged ? (dist * 0.15) : 0;
+                score += this.getNpcSiegeWallAttackPositionBonus(unit, unit.r, unit.q);
                 const targeters = this.units.filter(u => u !== unit && u.faction === unit.faction && u.intent && u.intent.targetId === t.id).length;
                 score -= targeters * 2.5;
                 if (unit.faction === 'enemy' && t.id === 'dongzhuo') score += 3;
@@ -3772,6 +3775,7 @@ export class TacticsScene extends BaseScene {
                         dist = Math.min(dist, this.tacticsMap.getDistance(o.r, o.q, g.r, g.q));
                     });
                     let score = isRanged ? dist * 0.45 : (10 - dist) * 0.55;
+                    score += this.getNpcSiegeWallAttackPositionBonus(unit, unit.r, unit.q);
                     score += Math.random() * 1.0;
                     gatePlans.push({ gate: g, attackKey, score });
                 });
@@ -6231,6 +6235,33 @@ export class TacticsScene extends BaseScene {
         if (this.isCityGateCell(cell)) return false;
         if (unit?.onHorse && this.getActiveSiegeLadderAtCell(cell.r, cell.q, unit)) return false;
         return true;
+    }
+
+    isSiegeRampartBattle() {
+        return this.tacticsMap?.cityGateMeta?.orientation === 'top_rampart';
+    }
+
+    isVisibleSiegeWallCell(r, q) {
+        if (!this.isSiegeRampartBattle()) return false;
+        const cell = this.tacticsMap.getCell(r, q);
+        if (!cell || cell.omitted || cell.impassable) return false;
+        if (!this.tacticsMap.isCityGateInsideCell?.(r, q)) return false;
+        return (cell.level || 0) >= 5;
+    }
+
+    getNpcSiegeWallAttackPositionBonus(unit, r, q) {
+        if (!unit || (unit.faction !== 'enemy' && unit.faction !== 'allied')) return 0;
+        if (!this.isSiegeRampartBattle()) return 0;
+
+        const startsOnWall = this.isVisibleSiegeWallCell(unit.r, unit.q);
+        const attacksFromWall = this.isVisibleSiegeWallCell(r, q);
+        const wallAttackBonus = 24;
+        const stayOnWallBonus = 12;
+        const leaveWallPenalty = 12;
+        if (attacksFromWall) {
+            return wallAttackBonus + (startsOnWall ? stayOnWallBonus : 0);
+        }
+        return startsOnWall ? -leaveWallPenalty : 0;
     }
 
     isSolidCityGatehouseCell(cell) {
