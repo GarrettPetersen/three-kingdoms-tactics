@@ -1453,12 +1453,6 @@ export const BATTLES = {
             { id: 'rider2', r: 6, q: 8, type: 'caocao_force', onHorse: true, flip: true },
             { id: 'rider3', r: 5, q: 8, type: 'caocao_force', onHorse: true, horseType: 'brown', flip: true },
 
-            // Government troops in pursuit from the rear.
-            { id: 'imperial1', r: 6, q: 2, type: 'allied_soldier' },
-            { id: 'imperial2', r: 7, q: 2, type: 'allied_soldier' },
-            { id: 'imperial_dead1', r: 5, q: 3, type: 'allied_soldier', isDead: true },
-            { id: 'imperial_dead2', r: 8, q: 3, type: 'allied_soldier', isDead: true },
-
             // Zhang Bao and Zhang Liang survive the novel, so they retreat when routed here.
             {
                 id: 'zhangbao',

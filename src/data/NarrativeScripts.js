@@ -4138,6 +4138,7 @@ export const NARRATIVE_SCRIPTS = {
         {
             type: 'dialogue',
             portraitKey: 'narrator',
+            voiceId: 'cc_ch1_end_01',
             text: {
                 en: "At Yingchuan the routed rebels were cut and scattered. Cao Cao pressed north at once, and from this campaign his name began to spread.",
                 zh: "颍川一役，败贼再遭截击，兵势益乱。曹操旋即北追，自此声名渐起。"

@@ -1,4 +1,11 @@
 {
+  "cc_ch1_end_01": {
+    "character": "narrator",
+    "hash": "8f584a6666256ab9e7f3adedc63b0bb83cc65d5c00e8c6aa492a3473e1586009",
+    "text": "At Yingchuan the routed rebels were cut and scattered. Cao Cao pressed north at once, and from this campaign his name began to spread.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
   "cc_dq_01": {
     "character": "caocao",
     "hash": "b3993337e278e5e108ab77ad6914d5c5dddae964a87ad8958bc1c5db8686405d",

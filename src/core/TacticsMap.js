@@ -395,6 +395,7 @@ export class TacticsMap {
             gateRow,
             approachRow,
             gateState: 'closed',
+            insideUnlocked: false,
             gateHp: 10,
             gateMaxHp: 10,
             gateGroundCells,
@@ -556,7 +557,7 @@ export class TacticsMap {
         const other = fromStair ? toCell : fromCell;
         if (!this.isCityGateEntryCell(other)) return false;
         const state = this.getCityGateState();
-        if (state === 'destroyed') return true;
+        if (state === 'destroyed' || state === 'open' || this.cityGateMeta.insideUnlocked) return true;
         return this.isCityGateDefender(movingUnit);
     }
 
@@ -589,7 +590,7 @@ export class TacticsMap {
         if (!isGate) return !cell.impassable;
 
         const gateState = cell.gateState || (terrain === 'gate_cracked_01' ? 'cracked' : (terrain === 'gate_open_01' ? 'open' : 'closed'));
-        if (gateState === 'broken') return true;
+        if (gateState === 'broken' || gateState === 'open') return true;
 
         const side = cell.gateDefenderSide || this.params?.cityGateDefenderSide || 'player';
         const faction = movingUnit?.faction || null;

@@ -6241,6 +6241,56 @@ export class TacticsScene extends BaseScene {
         return this.tacticsMap?.getCityGateState?.() === 'destroyed';
     }
 
+    isCityGateInsideUnlocked() {
+        return !!(this.tacticsMap?.cityGateMeta?.insideUnlocked && !this.isCityGateDestroyed());
+    }
+
+    isCityGateVisuallyOpen() {
+        const meta = this.tacticsMap?.cityGateMeta;
+        if (!meta || this.isCityGateDestroyed()) return false;
+        const state = meta.gateState || 'closed';
+        const transient = !!(meta.gateTransientOpenUntil && Date.now() < meta.gateTransientOpenUntil);
+        return state === 'open' || !!meta.insideUnlocked || transient;
+    }
+
+    updateCityGateInsideControl(options = {}) {
+        const meta = this.tacticsMap?.cityGateMeta;
+        if (!meta) return;
+        if (this.isCityGateDestroyed()) {
+            meta.insideUnlocked = false;
+            return;
+        }
+
+        const stairCells = this.tacticsMap.getCityGateStairCells?.() || [];
+        if (stairCells.length === 0) return;
+        const stairKeys = new Set(stairCells.map(cell => `${cell.r},${cell.q}`));
+        let hasDefender = false;
+        let hasAttacker = false;
+
+        for (const unit of this.units) {
+            if (!unit || unit.hp <= 0 || unit.isGone || this.isSiegeLadder(unit)) continue;
+            if (unit.faction !== 'player' && unit.faction !== 'allied' && unit.faction !== 'enemy') continue;
+            if (!stairKeys.has(`${unit.r},${unit.q}`)) continue;
+            if (this.isUnitDefenderForCityGate(unit)) hasDefender = true;
+            else hasAttacker = true;
+        }
+
+        let nextUnlocked = !!meta.insideUnlocked;
+        if (hasDefender) nextUnlocked = false;
+        else if (hasAttacker) nextUnlocked = true;
+
+        if (nextUnlocked === !!meta.insideUnlocked) return;
+        meta.insideUnlocked = nextUnlocked;
+        if (!nextUnlocked) {
+            meta.gateTransientOpenUntil = 0;
+            this.tacticsMap.getCityGateGroundCells?.().forEach(cell => {
+                cell.gateTransientOpenUntil = 0;
+            });
+        }
+        if (!options.silent) assets.playSound('heavy_door_unlocking', 0.85);
+        this.invalidateBattlefieldRenderCaches();
+    }
+
     isUnitOnDefenderSideForGate(unit, cell) {
         if (!unit || !cell) return false;
         const defenderSide = cell.gateDefenderSide || this.mapGenParams?.cityGateDefenderSide || 'player';
@@ -6254,7 +6304,13 @@ export class TacticsScene extends BaseScene {
 
     getAttackableGateCellsForUnit(unit) {
         if (!unit || !this.tacticsMap) return [];
-        if (this.tacticsMap.cityGateMeta && !this.isCityGateDestroyed() && !this.isUnitDefenderForCityGate(unit)) {
+        if (
+            this.tacticsMap.cityGateMeta &&
+            !this.isCityGateDestroyed() &&
+            !this.isCityGateInsideUnlocked() &&
+            this.tacticsMap.getCityGateState?.() !== 'open' &&
+            !this.isUnitDefenderForCityGate(unit)
+        ) {
             return this.tacticsMap.getCityGateGroundCells();
         }
         const gates = [];
@@ -6274,7 +6330,7 @@ export class TacticsScene extends BaseScene {
         if (!unit || !ATTACKS[attackKey]) return false;
         const { minRange, maxRange } = this.getEffectiveAttackRange(unit, attackKey);
         const dist = this.tacticsMap.getDistance(fromR, fromQ, toR, toQ);
-        if (!(dist >= minRange && dist <= maxRange)) return false;
+        if (!(dist >= minRange && dist <= maxRange && dist > 0)) return false;
         if (this.isShoutAttack(attackKey) && dist <= 0) return false;
         if (this.isLineAttack(attackKey) && !this.getAxialDirectionToTarget(fromR, fromQ, toR, toQ)) return false;
 
@@ -6296,12 +6352,30 @@ export class TacticsScene extends BaseScene {
         return true;
     }
 
+    canUnitAttackTargetNow(unit, attackKey, targetR, targetQ) {
+        if (!unit || !ATTACKS[attackKey]) return false;
+        const { minRange, maxRange } = this.getEffectiveAttackRange(unit, attackKey);
+        const ignoreWallLOS = this.canAttackIgnoreWallLOS(attackKey);
+        return this.getAttackOrigins(unit).some(origin => {
+            const dist = this.tacticsMap.getDistance(origin.r, origin.q, targetR, targetQ);
+            if (!(dist >= minRange && dist <= maxRange && dist > 0)) return false;
+            if (this.isLineAttack(attackKey) && !this.getAxialDirectionToTarget(origin.r, origin.q, targetR, targetQ)) return false;
+            if (this.isDirectionalBoltAttack(attackKey)) {
+                return !!this.getDirectionalBoltPath(unit, targetR, targetQ)?.path?.length;
+            }
+            if (!this.canAttackTraverseElevation(attackKey, origin.r, origin.q, targetR, targetQ)) return false;
+            if (!ignoreWallLOS && this.hasWallBlockingBetween(origin.r, origin.q, targetR, targetQ)) return false;
+            return true;
+        });
+    }
+
     onUnitEnteredHexCell(unit, fromKey, toKey) {
         if (!unit || unit.hp <= 0 || unit.isGone) return;
         const [fromR, fromQ] = fromKey.split(',').map(Number);
         const [toR, toQ] = toKey.split(',').map(Number);
         const fromCell = this.tacticsMap.getCell(fromR, fromQ);
         const cell = this.tacticsMap.getCell(toR, toQ);
+        this.updateCityGateInsideControl();
         if (
             this.tacticsMap.canUseCityGateTransition?.(fromCell, cell, unit) &&
             this.isUnitDefenderForCityGate(unit) &&
@@ -6330,7 +6404,7 @@ export class TacticsScene extends BaseScene {
     openCityGateTemporarily() {
         if (!this.tacticsMap?.cityGateMeta || this.isCityGateDestroyed()) return;
         const now = Date.now();
-        const wasOpen = (this.tacticsMap.cityGateMeta.gateTransientOpenUntil || 0) > now;
+        const wasOpen = this.isCityGateVisuallyOpen();
         const until = now + 850;
         this.tacticsMap.cityGateMeta.gateTransientOpenUntil = until;
         this.tacticsMap.getCityGateGroundCells().forEach(cell => {
@@ -6352,6 +6426,7 @@ export class TacticsScene extends BaseScene {
         meta.gateHp = nextHp;
         const nextState = nextHp <= 0 ? 'destroyed' : (nextHp < maxHp ? 'cracked' : 'closed');
         this.tacticsMap.setCityGateState(nextState);
+        if (nextState === 'destroyed') meta.insideUnlocked = false;
         this.tacticsMap.cityGateMeta.gateTransientOpenUntil = 0;
         this.tacticsMap.getCityGateGroundCells().forEach(cell => {
             cell.gateTransientOpenUntil = 0;
@@ -6486,6 +6561,11 @@ export class TacticsScene extends BaseScene {
         attacker.intent = null; // Clear intent so arrow disappears
         const attack = ATTACKS[attackKey];
         if (!attack || !this.isScenarioAttackAllowedOnCell(attacker, attackKey, targetR, targetQ)) {
+            assets.playSound('ui_error', 0.4);
+            wrappedOnComplete();
+            return;
+        }
+        if (!this.canUnitAttackTargetNow(attacker, attackKey, targetR, targetQ)) {
             assets.playSound('ui_error', 0.4);
             wrappedOnComplete();
             return;
@@ -6999,10 +7079,14 @@ export class TacticsScene extends BaseScene {
         const oppositeDir = (dirIndex + 3) % 6;
         const backCell = this.tacticsMap.getNeighborInDirection(origin.r, origin.q, oppositeDir);
         const backPos = backCell ? this.getPixelPos(backCell.r, backCell.q) : null;
+        const legalTargets = new Set(
+            this.getAffectedTiles(attacker, attackKey, targetR, targetQ)
+                .map(tile => `${tile.r},${tile.q}`)
+        );
 
         const targetCell = this.tacticsMap.getCell(targetR, targetQ);
-        const frontVictimRaw = targetCell ? targetCell.unit : null;
-        const backVictimRaw = backCell ? backCell.unit : null;
+        const frontVictimRaw = targetCell ? this.getRiderUnitFromCell(targetCell) : null;
+        const backVictimRaw = backCell ? this.getRiderUnitFromCell(backCell) : null;
         // Defensive: prevent self-hit on mounted units.
         const frontVictim = (frontVictimRaw === attacker) ? null : frontVictimRaw;
         const backVictim = (backVictimRaw === attacker) ? null : backVictimRaw;
@@ -7020,16 +7104,18 @@ export class TacticsScene extends BaseScene {
                 struck1 = true;
 
                 // Swish + damage for the front blade
-                this.spawnSwish(
-                    [{ r: targetR, q: targetQ }],
-                    startPos, 'slash',
-                    { maxWidth: 7, duration: 130 }
-                );
-                this.damageCell(targetR, targetQ, attack.damage || 1);
-                if (frontVictim) {
-                    this.applyDamageAndPush(attacker, frontVictim, attack, targetR, targetQ, startPos, frontPos);
-                } else if (!isFrontDestructible) {
-                    assets.playSound('whiff', 0.6);
+                if (legalTargets.has(`${targetR},${targetQ}`)) {
+                    this.spawnSwish(
+                        [{ r: targetR, q: targetQ }],
+                        startPos, 'slash',
+                        { maxWidth: 7, duration: 130 }
+                    );
+                    this.damageCell(targetR, targetQ, attack.damage || 1);
+                    if (frontVictim) {
+                        this.applyDamageAndPush(attacker, frontVictim, attack, targetR, targetQ, startPos, frontPos);
+                    } else if (!isFrontDestructible) {
+                        assets.playSound('whiff', 0.6);
+                    }
                 }
 
                 // Turn around after a brief pause (let the first swing play through)
@@ -7049,7 +7135,7 @@ export class TacticsScene extends BaseScene {
                         if (attacker.frame >= 1) {
                             struck2 = true;
 
-                            if (backCell) {
+                            if (backCell && legalTargets.has(`${backCell.r},${backCell.q}`)) {
                                 // Recompute origin after pivot.
                                 const origin2 = this.getAttackOriginForTarget(attacker, backCell.r, backCell.q);
                                 const startPos2 = this.getPixelPos(origin2.r, origin2.q);
@@ -7065,7 +7151,7 @@ export class TacticsScene extends BaseScene {
                                 } else if (!isBackDestructible) {
                                     assets.playSound('whiff', 0.6);
                                 }
-                            } else if (!isBackDestructible) {
+                            } else if (backCell && !isBackDestructible) {
                                 assets.playSound('whiff', 0.6);
                             }
 
@@ -7091,6 +7177,12 @@ export class TacticsScene extends BaseScene {
         const cells = (targetCells || [])
             .filter(Boolean)
             .filter((cell, index, all) => all.findIndex(other => other.r === cell.r && other.q === cell.q) === index)
+            .filter(cell => {
+                const origin = this.getAttackOriginForTarget(attacker, cell.r, cell.q);
+                if (!this.canAttackTraverseElevation(attackKey, origin.r, origin.q, cell.r, cell.q)) return false;
+                if (!this.hasWallBlockingBetween(origin.r, origin.q, cell.r, cell.q)) return false;
+                return true;
+            })
             .slice(0, 2);
         if (cells.length === 0) {
             if (onComplete) onComplete();
@@ -8402,6 +8494,41 @@ export class TacticsScene extends BaseScene {
         return null;
     }
 
+    ensureCustomCityGateSiegeLadder(unitsToPlace) {
+        if (!this.isCustom || this.mapGenParams?.layout !== 'city_gate' || !Array.isArray(unitsToPlace)) {
+            return unitsToPlace;
+        }
+        const hasLadder = unitsToPlace.some(u => (
+            u?.type === 'siege_ladder' ||
+            u?.templateId === 'ladder' ||
+            u?.isSiegeLadder
+        ));
+        if (hasLadder) return unitsToPlace;
+
+        const defenderSide = this.mapGenParams?.cityGateDefenderSide || 'player';
+        const attackerFaction = defenderSide === 'enemy' ? 'allied' : 'enemy';
+        const meta = this.tacticsMap?.cityGateMeta || {};
+        const gateCells = Array.isArray(meta.gateGroundCells) ? meta.gateGroundCells : [];
+        const centerQ = gateCells.length > 0
+            ? Math.round(gateCells.reduce((sum, cell) => sum + (cell.q || 0), 0) / gateCells.length)
+            : Math.floor((this.manager?.config?.mapWidth || 10) / 2);
+        const spawnR = Math.max(0, (this.manager?.config?.mapHeight || 10) - 2);
+        const spawnQ = Math.max(0, Math.min((this.manager?.config?.mapWidth || 10) - 1, centerQ + 2));
+
+        return [
+            ...unitsToPlace,
+            {
+                id: `custom_${attackerFaction}_siege_ladder`,
+                type: 'siege_ladder',
+                templateId: 'ladder',
+                faction: attackerFaction,
+                r: spawnR,
+                q: spawnQ,
+                cityGateSide: 'outside'
+            }
+        ];
+    }
+
     getXPForLevel(level) {
         if (level <= 1) return 0;
         // Level 2 at 10 XP, Level 3 at 25 XP, Level 4 at 45 XP, etc.
@@ -8566,6 +8693,8 @@ export class TacticsScene extends BaseScene {
             }
         }
 
+        unitsToPlace = this.ensureCustomCityGateSiegeLadder(unitsToPlace);
+
         if (unitsToPlace) {
             const gs = this.manager.gameState;
             const unitXP = gs.getCampaignVar('unitXP') || {};
@@ -8580,7 +8709,7 @@ export class TacticsScene extends BaseScene {
                     for (let q = 0; q < this.manager.config.mapWidth; q++) {
                         const cell = this.tacticsMap.getCell(r, q);
                         if (!cell || cell.omitted || cell.impassable) continue;
-                        if (cell.terrain === 'wall_01' || this.isGateTerrain(cell.terrain)) continue;
+                        if (cell.terrain === 'wall_01' || this.isGateTerrain(cell.terrain) || this.isCityGateCell(cell)) continue;
                         const target = this.tacticsMap.isCityGateInsideCell(r, q) ? insideCells : outsideCells;
                         target.push({ r, q });
                     }
@@ -8791,6 +8920,7 @@ export class TacticsScene extends BaseScene {
                 }
             });
             this.syncSiegeLadderCells();
+            this.updateCityGateInsideControl({ silent: true });
         }
     }
 
@@ -9621,6 +9751,7 @@ export class TacticsScene extends BaseScene {
                 this.triggerImmortalBehavior(u, cause);
             }
         });
+        this.updateCityGateInsideControl();
         this.syncSiegeLadderCells();
 
         const unitHexDriftTargets = this.buildUnitHexDriftMap();
@@ -10194,12 +10325,19 @@ export class TacticsScene extends BaseScene {
             affected.push({ r: targetR, q: targetQ });
         }
 
-        let tilesAfterLos = affected;
-        if (attack && !this.canAttackIgnoreWallLOS(attackKey) && !this.isDirectionalBoltAttack(attackKey)) {
-            const losOrigin = this.getAttackOriginForTarget(attacker, targetR, targetQ);
-            tilesAfterLos = affected.filter(
-                tile => !this.hasWallBlockingBetween(losOrigin.r, losOrigin.q, tile.r, tile.q)
-            );
+        let tilesAfterConstraints = affected;
+        if (attack) {
+            const originForConstraints = this.getAttackOriginForTarget(attacker, targetR, targetQ);
+            const ignoreWallLOS = this.canAttackIgnoreWallLOS(attackKey) || this.isDirectionalBoltAttack(attackKey);
+            tilesAfterConstraints = affected.filter(tile => {
+                if (!this.canAttackTraverseElevation(attackKey, originForConstraints.r, originForConstraints.q, tile.r, tile.q)) {
+                    return false;
+                }
+                if (!ignoreWallLOS && this.hasWallBlockingBetween(originForConstraints.r, originForConstraints.q, tile.r, tile.q)) {
+                    return false;
+                }
+                return true;
+            });
         }
 
         // Never allow an attack to "hit" the attacker itself.
@@ -10208,7 +10346,7 @@ export class TacticsScene extends BaseScene {
         // De-dupe + filter out forbidden tiles + filter out off-map
         const uniq = [];
         const seen = new Set();
-        for (const t of tilesAfterLos) {
+        for (const t of tilesAfterConstraints) {
             if (!t) continue;
             const cell = this.tacticsMap.getCell(t.r, t.q);
             if (!cell) continue;
@@ -14704,6 +14842,7 @@ export class TacticsScene extends BaseScene {
         if (!cell || !this.isGateTerrain(cell.terrain)) return false;
         if (cell.gateState === 'broken' || cell.gateState === 'open') return true;
         if (cell.terrain === 'gate_open_01') return true;
+        if (this.isCityGateInsideUnlocked()) return true;
         if (cell.gateTransientOpenUntil && Date.now() < cell.gateTransientOpenUntil) return true;
         if (r !== undefined && q !== undefined) {
             const occ = this.getLivingUnitOccupyingCell(r, q, null);
@@ -14718,13 +14857,13 @@ export class TacticsScene extends BaseScene {
         const t = cell.terrain || '';
         if (cell.gateState === 'broken' || t === 'gate_open_01') return 'gate_open_01';
         if (t === 'gate_cracked_01') {
-            const transient = cell.gateTransientOpenUntil && Date.now() < cell.gateTransientOpenUntil;
+            const transient = (cell.gateTransientOpenUntil && Date.now() < cell.gateTransientOpenUntil) || this.isCityGateInsideUnlocked();
             const occ = this.getLivingUnitOccupyingCell(r, q, null);
             if (transient || (occ && this.isUnitOnDefenderSideForGate(occ, cell))) return 'gate_open_01';
             return 'gate_cracked_01';
         }
         if (cell.gateState === 'open') return 'gate_open_01';
-        const transient = cell.gateTransientOpenUntil && Date.now() < cell.gateTransientOpenUntil;
+        const transient = (cell.gateTransientOpenUntil && Date.now() < cell.gateTransientOpenUntil) || this.isCityGateInsideUnlocked();
         const occ = this.getLivingUnitOccupyingCell(r, q, null);
         if (transient || (occ && this.isUnitOnDefenderSideForGate(occ, cell))) return 'gate_open_01';
         return 'gate_01';
@@ -14735,7 +14874,7 @@ export class TacticsScene extends BaseScene {
         if (!meta) return null;
         const state = meta.gateState || 'closed';
         if (state === 'destroyed') return 'city_gate_2wide_destroyed';
-        const isOpen = !!(meta.gateTransientOpenUntil && Date.now() < meta.gateTransientOpenUntil);
+        const isOpen = this.isCityGateVisuallyOpen();
         if (state === 'cracked') return isOpen ? 'city_gate_2wide_cracked_open' : 'city_gate_2wide_cracked';
         return isOpen ? 'city_gate_2wide_open' : 'city_gate_2wide';
     }
@@ -15551,6 +15690,16 @@ export class TacticsScene extends BaseScene {
         this.attackRects = [];
     }
 
+    canPushCollisionDamageOccupant(victim, pushCell) {
+        if (!victim || !pushCell) return false;
+        const victimCell = this.tacticsMap.getCell(victim.r, victim.q);
+        if (!victimCell) return false;
+        const levelDiff = (pushCell.level || 0) - (victimCell.level || 0);
+        if (levelDiff > 1) return false;
+        if (this.isSolidCityGatehouseCell(pushCell)) return false;
+        return true;
+    }
+
     executePushCollision(victim, pushCell, victimPos, targetPos, context = {}) {
         setTimeout(() => {
             const isBoulder = victim && victim.name === 'Boulder';
@@ -15578,7 +15727,12 @@ export class TacticsScene extends BaseScene {
 
             const bumpVictim = this.getLivingUnitOccupyingCell(pushCell.r, pushCell.q, victim);
             // Don't double-damage if we "collided" with ourselves.
-            if (bumpVictim && bumpVictim !== victim && bumpVictim.hp > 0) { // Only damage if the unit is still alive
+            if (
+                bumpVictim &&
+                bumpVictim !== victim &&
+                bumpVictim.hp > 0 &&
+                this.canPushCollisionDamageOccupant(victim, pushCell)
+            ) { // Only damage if the unit is still alive and physically reachable.
                 this.applyUnitDamage(bumpVictim, 1);
                 this.addDamageNumber(targetPos.x, targetPos.y - 30, 1);
                 if (bumpVictim) bumpVictim.triggerShake(victimPos.x, victimPos.y, targetPos.x, targetPos.y);

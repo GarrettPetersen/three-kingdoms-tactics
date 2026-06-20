@@ -1,4 +1,11 @@
 {
+  "cc_ch1_end_01": {
+    "character": "narrator",
+    "hash": "10e614d2f867088ba176249b99352d1eb05c1485e6fd5c4abc28215cefae40a4",
+    "text": "颍川一役，败贼再遭截击，兵势益乱。曹操旋即北追，自此声名渐起。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
+  },
   "cc_dq_01": {
     "character": "caocao",
     "hash": "2c78289f3fbdfc09be3caa11312a76a5e435a0ea64db43468833a3758ea2fcee",

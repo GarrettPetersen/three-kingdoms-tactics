@@ -118,6 +118,7 @@ function checkBattleRows() {
 
     Object.entries(BATTLES).forEach(([battleId, battle]) => {
         const unitsById = new Map((battle.units || []).map(unit => [unit.id, unit]));
+        const liveStartCells = new Map();
         const mustSurvive = typeof battle.victoryCondition === 'object' && Array.isArray(battle.victoryCondition?.mustSurvive)
             ? battle.victoryCondition.mustSurvive
             : [];
@@ -131,6 +132,14 @@ function checkBattleRows() {
         });
 
         (battle.units || []).forEach(unit => {
+            if (!unit.isDead) {
+                const startKey = `${unit.r},${unit.q}`;
+                const existingUnitId = liveStartCells.get(startKey);
+                assertRule(!existingUnitId,
+                    `${battleId}.${unit.id} must not share live start cell (${startKey}) with ${existingUnitId}.`);
+                liveStartCells.set(startKey, unit.id);
+            }
+
             assertRule(!!resolveUnitTemplate(unit.type, unit.templateId || unit.id),
                 `${battleId}.${unit.id} must resolve a unit template for type '${unit.type}'.`);
 

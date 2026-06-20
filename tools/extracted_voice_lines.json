@@ -1,5 +1,12 @@
 [
   {
+    "id": "cc_ch1_end_01",
+    "char": "narrator",
+    "text": "At Yingchuan the routed rebels were cut and scattered. Cao Cao pressed north at once, and from this campaign his name began to spread.",
+    "source": "NarrativeScripts.js",
+    "phonetic_text": "At Ying-chwan the rowted rebels were cut and scattered. Tzow Tzow pressed north at once, and from this campaign his name began to spread."
+  },
+  {
     "id": "cc_dq_01",
     "char": "caocao",
     "text": "The court sits idle while the Yellow Turbans spread havoc. If this chaos is to end, someone must move first.",

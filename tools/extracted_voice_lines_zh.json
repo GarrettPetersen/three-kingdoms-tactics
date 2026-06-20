@@ -1,5 +1,11 @@
 [
   {
+    "id": "cc_ch1_end_01",
+    "char": "narrator",
+    "text": "颍川一役，败贼再遭截击，兵势益乱。曹操旋即北追，自此声名渐起。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "cc_dq_01",
     "char": "caocao",
     "text": "朝廷迟疑不决，黄巾蜂起为乱。若要止此祸，终须有人先行。",

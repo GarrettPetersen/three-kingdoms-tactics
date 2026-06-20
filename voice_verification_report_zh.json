@@ -4264,5 +4264,14 @@
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
+    },
+    "zh:cc_ch1_end_01": {
+        "id": "cc_ch1_end_01",
+        "character": "narrator",
+        "original_text": "颍川一役，败贼再遭截击，兵势益乱。曹操旋即北追，自此声名渐起。",
+        "stt_output": "影創一夜,拜賊在遭劫機並是一亂曹操璇及北追四次生命見齊",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
     }
 }

@@ -4264,5 +4264,14 @@
         "wer": 0.08695652173913043,
         "is_bad": false,
         "language": "en"
+    },
+    "en:cc_ch1_end_01": {
+        "id": "cc_ch1_end_01",
+        "character": "narrator",
+        "original_text": "At Yingchuan the routed rebels were cut and scattered. Cao Cao pressed north at once, and from this campaign his name began to spread.",
+        "stt_output": "At Yingquan, the routed rebels were cut and scattered, Tsao Tsao dressed north at once, and from this campaign his name began to spread.",
+        "wer": 0.20833333333333334,
+        "is_bad": false,
+        "language": "en"
     }
 }
