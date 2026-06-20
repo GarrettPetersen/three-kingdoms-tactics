@@ -19,7 +19,12 @@ const PREVIEW_Y = 30;
 const PREVIEW_W = 104;
 const PREVIEW_H = 58;
 const BEAT_Y = 96;
-const BEAT_ROW_H = 18;
+const BEAT_MIN_ROW_H = 18;
+const BEAT_ROW_GAP = 2;
+const BEAT_PAD_X = 5;
+const BEAT_PAD_Y = 3;
+const BEAT_LINE_H = 9;
+const BEAT_DRAG_THRESHOLD = 3;
 
 const ROUTE_LABELS = {
     liubei: 'Liu Bei Ch. 1',
@@ -45,6 +50,9 @@ export class StoryScriptReaderScene extends BaseScene {
         this.beatScroll = 0;
         this.nodeRows = [];
         this.beatRows = [];
+        this.beatLayouts = [];
+        this.beatTotalHeight = 0;
+        this.dragScroll = null;
         this.backRect = null;
         this.expandAllChoices = false;
         this.expandedKeys = new Set();
@@ -60,6 +68,9 @@ export class StoryScriptReaderScene extends BaseScene {
         this.beatScroll = 0;
         this.nodeRows = [];
         this.beatRows = [];
+        this.beatLayouts = [];
+        this.beatTotalHeight = 0;
+        this.dragScroll = null;
         this.backRect = null;
         this.refreshBeats();
     }
@@ -110,6 +121,7 @@ export class StoryScriptReaderScene extends BaseScene {
         beats.push({
             bg: context.bg || null,
             fg: context.fg || null,
+            mapLabel: context.mapLabel || '',
             depth: 0,
             ...beat
         });
@@ -153,6 +165,20 @@ export class StoryScriptReaderScene extends BaseScene {
         if (action === 'clearClickable') return `Clear clickable ${step.id || 'actor'}`;
         if (action === 'setClickableRegion') return `Clickable region ${step.id || '?'} at ${step.x ?? '?'}, ${step.y ?? '?'} (${step.w ?? '?'}x${step.h ?? '?'})`;
         return `${action}${step.id ? `: ${step.id}` : ''}`;
+    }
+
+    formatLabel(value) {
+        return String(value || '')
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, char => char.toUpperCase());
+    }
+
+    describeBattleMap(battle, battleId) {
+        const map = battle?.map || {};
+        const layout = map.layout || 'generated';
+        const biome = map.biome || 'default';
+        const side = map.cityGateDefenderSide ? `, defenders ${map.cityGateDefenderSide}` : '';
+        return `${this.formatLabel(layout)} / ${this.formatLabel(biome)}${side}`;
     }
 
     getChoiceKey(sourceId, index, prefix = 'choice') {
@@ -346,7 +372,11 @@ export class StoryScriptReaderScene extends BaseScene {
             return acc;
         }, {});
         const map = battle.map || {};
-        this.addBeat(beats, context, {
+        const battleContext = {
+            ...context,
+            mapLabel: this.describeBattleMap(battle, battleId)
+        };
+        this.addBeat(beats, battleContext, {
             kind: 'battle',
             title: `Battle: ${battle.name || battleId}`,
             body: `${battleId}. Map ${map.layout || 'generated'} / ${map.biome || 'default'}. Units: player ${unitCounts.player || 0}, allied ${unitCounts.allied || 0}, enemy ${unitCounts.enemy || 0}.`,
@@ -356,7 +386,7 @@ export class StoryScriptReaderScene extends BaseScene {
         if (Array.isArray(battle.choiceOptions) && battle.choiceOptions.length) {
             const key = `${entry.routeId}:${entry.nodeId}:battleChoices`;
             const expanded = this.expandAllChoices || this.expandedKeys.has(key);
-            this.addBeat(beats, context, {
+            this.addBeat(beats, battleContext, {
                 kind: 'choice',
                 title: 'Battle choice',
                 body: battle.choiceOptions.map(option => this.getText(option.text) || option.id).join(' / '),
@@ -365,7 +395,7 @@ export class StoryScriptReaderScene extends BaseScene {
             });
             if (expanded) {
                 battle.choiceOptions.forEach((option, index) => {
-                    this.addBeat(beats, context, {
+                    this.addBeat(beats, battleContext, {
                         kind: 'option',
                         depth: 1,
                         title: `Battle option ${index + 1}: ${this.getText(option.text) || option.id}`,
@@ -382,13 +412,13 @@ export class StoryScriptReaderScene extends BaseScene {
             ['Defeat script', battle.defeatScript || battle.failureScript]
         ].forEach(([label, script]) => {
             if (!Array.isArray(script) || script.length === 0) return;
-            this.addBeat(beats, context, {
+            this.addBeat(beats, battleContext, {
                 kind: 'section',
                 title: label,
                 body: `${script.length} beat${script.length === 1 ? '' : 's'}`,
                 meta: ''
             });
-            this.addScriptSteps(beats, script, `${entry.routeId}:${entry.nodeId}:${label}`, context, 1);
+            this.addScriptSteps(beats, script, `${entry.routeId}:${entry.nodeId}:${label}`, battleContext, 1);
         });
     }
 
@@ -464,6 +494,8 @@ export class StoryScriptReaderScene extends BaseScene {
 
     refreshBeats() {
         this.beats = this.buildBeatsForEntry(this.getEntry());
+        this.beatLayouts = [];
+        this.beatTotalHeight = 0;
         this.selectedBeatIndex = Math.max(0, Math.min(this.beats.length - 1, this.selectedBeatIndex));
         this.clampBeatScroll();
     }
@@ -475,7 +507,57 @@ export class StoryScriptReaderScene extends BaseScene {
 
     visibleBeatCount() {
         const h = (this.manager?.canvas?.height || 256) - BEAT_Y - FOOTER_H;
-        return Math.max(1, Math.floor(h / BEAT_ROW_H));
+        return Math.max(1, Math.floor(h / BEAT_MIN_ROW_H));
+    }
+
+    getBeatPanelRect(canvas = this.manager?.canvas) {
+        const width = (canvas?.width || 455) - DETAIL_X - 8;
+        const height = (canvas?.height || 256) - BEAT_Y - FOOTER_H;
+        return { x: DETAIL_X, y: BEAT_Y, w: width, h: height };
+    }
+
+    measureBeatLayouts(ctx = this.manager?.ctx, panelW = this.getBeatPanelRect().w) {
+        if (!ctx) return [];
+        let y = 0;
+        const layouts = this.beats.map((beat, index) => {
+            const indent = Math.min(28, (beat.depth || 0) * 10);
+            const textW = Math.max(32, panelW - BEAT_PAD_X * 2 - indent - (beat.choiceKey ? 14 : 0));
+            const bodyLines = this.wrapText(ctx, beat.body || '', textW, '8px Tiny5');
+            const metaLines = this.wrapText(ctx, beat.meta || '', textW, '8px Tiny5');
+            const bodyH = bodyLines.length ? 2 + bodyLines.length * BEAT_LINE_H : 0;
+            const metaH = metaLines.length ? 2 + metaLines.length * BEAT_LINE_H : 0;
+            const height = Math.max(BEAT_MIN_ROW_H, BEAT_PAD_Y * 2 + BEAT_LINE_H + bodyH + metaH);
+            const layout = {
+                index,
+                top: y,
+                height,
+                indent,
+                textW,
+                bodyLines,
+                metaLines
+            };
+            y += height + BEAT_ROW_GAP;
+            return layout;
+        });
+        this.beatLayouts = layouts;
+        this.beatTotalHeight = Math.max(0, y - BEAT_ROW_GAP);
+        return layouts;
+    }
+
+    getMaxBeatScroll(ctx = this.manager?.ctx) {
+        const rect = this.getBeatPanelRect();
+        if (!this.beatLayouts.length && this.beats.length) this.measureBeatLayouts(ctx, rect.w);
+        return Math.max(0, this.beatTotalHeight - rect.h);
+    }
+
+    setBeatScroll(value) {
+        const maxScroll = this.getMaxBeatScroll();
+        this.beatScroll = Math.max(0, Math.min(maxScroll, value || 0));
+    }
+
+    scrollBeatPixels(delta) {
+        if (!Number.isFinite(delta) || delta === 0) return;
+        this.setBeatScroll(this.beatScroll + delta);
     }
 
     clampNodeScroll() {
@@ -488,10 +570,15 @@ export class StoryScriptReaderScene extends BaseScene {
 
     clampBeatScroll() {
         this.selectedBeatIndex = Math.max(0, Math.min(this.beats.length - 1, this.selectedBeatIndex));
-        const visible = this.visibleBeatCount();
-        if (this.selectedBeatIndex < this.beatScroll) this.beatScroll = this.selectedBeatIndex;
-        if (this.selectedBeatIndex >= this.beatScroll + visible) this.beatScroll = this.selectedBeatIndex - visible + 1;
-        this.beatScroll = Math.max(0, Math.min(Math.max(0, this.beats.length - visible), this.beatScroll));
+        const rect = this.getBeatPanelRect();
+        const layouts = this.measureBeatLayouts(this.manager?.ctx, rect.w);
+        const selectedLayout = layouts[this.selectedBeatIndex];
+        if (selectedLayout) {
+            if (selectedLayout.top < this.beatScroll) this.beatScroll = selectedLayout.top;
+            const selectedBottom = selectedLayout.top + selectedLayout.height;
+            if (selectedBottom > this.beatScroll + rect.h) this.beatScroll = selectedBottom - rect.h;
+        }
+        this.setBeatScroll(this.beatScroll);
     }
 
     selectEntry(index) {
@@ -580,12 +667,12 @@ export class StoryScriptReaderScene extends BaseScene {
     handleWheel(e) {
         if (typeof e.preventDefault === 'function') e.preventDefault();
         const { x } = this.getMousePos(e);
-        const rows = Math.sign(e.deltaY) * (Math.abs(e.deltaY) >= 80 ? 3 : 1);
         if (x < DETAIL_X) {
+            const rows = Math.sign(e.deltaY) * (Math.abs(e.deltaY) >= 80 ? 3 : 1);
             this.nodeScroll = Math.max(0, Math.min(Math.max(0, this.entries.length - this.visibleNodeCount()), this.nodeScroll + rows));
         } else {
-            this.beatScroll = Math.max(0, Math.min(Math.max(0, this.beats.length - this.visibleBeatCount()), this.beatScroll + rows));
-            this.selectedBeatIndex = Math.max(this.beatScroll, Math.min(this.beatScroll + this.visibleBeatCount() - 1, this.selectedBeatIndex));
+            const amount = Math.sign(e.deltaY) * Math.max(12, Math.min(48, Math.abs(e.deltaY)));
+            this.scrollBeatPixels(amount);
         }
     }
 
@@ -603,7 +690,33 @@ export class StoryScriptReaderScene extends BaseScene {
         }
         const beat = this.beatRows.find(row => x >= row.x && x <= row.x + row.w && y >= row.y && y <= row.y + row.h);
         if (beat) {
-            this.selectedBeatIndex = beat.index;
+            this.dragScroll = {
+                pane: 'beats',
+                lastY: y,
+                startY: y,
+                moved: false,
+                pendingBeatIndex: beat.index
+            };
+        }
+    }
+
+    onMouseInput(x, y) {
+        if (!this.dragScroll) return;
+        const delta = this.dragScroll.lastY - y;
+        if (Math.abs(y - this.dragScroll.startY) >= BEAT_DRAG_THRESHOLD) {
+            this.dragScroll.moved = true;
+        }
+        this.dragScroll.lastY = y;
+        if (this.dragScroll.moved) this.scrollBeatPixels(delta);
+    }
+
+    handlePointerUp(e) {
+        if (!this.dragScroll) return;
+        const drag = this.dragScroll;
+        this.dragScroll = null;
+        if (drag.moved) return;
+        if (drag.pendingBeatIndex != null) {
+            this.selectedBeatIndex = drag.pendingBeatIndex;
             this.clampBeatScroll();
             this.toggleSelectedBeatExpansion();
         }
@@ -614,6 +727,13 @@ export class StoryScriptReaderScene extends BaseScene {
         ctx.fillRect(x, y, w, h);
         ctx.strokeStyle = color;
         ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+    }
+
+    getPreviewLabel(beat) {
+        if (!beat) return 'no background';
+        if (beat.bg) return beat.bg;
+        if (beat.mapLabel) return beat.mapLabel;
+        return 'no background';
     }
 
     drawBackgroundPreview(ctx, beat) {
@@ -634,7 +754,7 @@ export class StoryScriptReaderScene extends BaseScene {
                 ctx.drawImage(img, sx, sy, sw, sh, x, y, PREVIEW_W, PREVIEW_H);
             }
         }
-        this.drawPixelText(ctx, beat?.bg || 'no background', x + 4, y + PREVIEW_H - 11, {
+        this.drawPixelText(ctx, this.truncateText(this.getPreviewLabel(beat), 30), x + 4, y + PREVIEW_H - 11, {
             color: '#ffd700',
             font: '8px Tiny5',
             outline: true
@@ -685,42 +805,76 @@ export class StoryScriptReaderScene extends BaseScene {
 
     renderBeats(ctx, canvas) {
         this.beatRows = [];
-        const x = DETAIL_X;
-        const w = canvas.width - DETAIL_X - 8;
-        const h = canvas.height - BEAT_Y - FOOTER_H;
-        this.drawPanel(ctx, x, BEAT_Y, w, h, '#333');
-        const visible = this.visibleBeatCount();
-        const end = Math.min(this.beats.length, this.beatScroll + visible);
-        for (let i = this.beatScroll; i < end; i++) {
+        const { x, y: panelY, w, h } = this.getBeatPanelRect(canvas);
+        this.drawPanel(ctx, x, panelY, w, h, '#333');
+        const layouts = this.measureBeatLayouts(ctx, w);
+        this.setBeatScroll(this.beatScroll);
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(x + 1, panelY + 1, w - 2, h - 2);
+        ctx.clip();
+
+        for (const layout of layouts) {
+            const i = layout.index;
             const beat = this.beats[i];
-            const y = BEAT_Y + (i - this.beatScroll) * BEAT_ROW_H;
+            const y = panelY + layout.top - this.beatScroll;
+            if (y + layout.height < panelY || y > panelY + h) continue;
             const selected = i === this.selectedBeatIndex;
-            const indent = Math.min(28, (beat.depth || 0) * 10);
             ctx.fillStyle = selected ? '#3a3315' : (i % 2 ? '#141414' : '#101010');
-            ctx.fillRect(x + 1, y + 1, w - 2, BEAT_ROW_H - 2);
+            ctx.fillRect(x + 1, y + 1, w - 2, layout.height - 1);
             if (selected) {
                 ctx.strokeStyle = '#ffd700';
-                ctx.strokeRect(x + 1.5, y + 1.5, w - 3, BEAT_ROW_H - 3);
+                ctx.strokeRect(x + 1.5, y + 1.5, w - 3, layout.height - 2);
             }
             const color = beat.kind === 'choice' || beat.kind === 'interactive'
                 ? '#ffba7a'
                 : (beat.kind === 'command' ? '#8fd0ff' : '#ddd');
-            this.drawPixelText(ctx, this.truncateText(beat.title, 30), x + 5 + indent, y + 2, {
+            const textX = x + BEAT_PAD_X + layout.indent;
+            let textY = y + BEAT_PAD_Y;
+            this.drawPixelText(ctx, this.truncateText(beat.title, 34), textX, textY, {
                 color,
                 font: '8px Tiny5'
             });
-            const body = this.truncateText(beat.body, 72);
-            this.drawPixelText(ctx, body, x + 5 + indent, y + 10, {
-                color: '#aaa',
-                font: '8px Tiny5'
+            textY += BEAT_LINE_H + 2;
+            layout.bodyLines.forEach(line => {
+                this.drawPixelText(ctx, line, textX, textY, {
+                    color: '#aaa',
+                    font: '8px Tiny5'
+                });
+                textY += BEAT_LINE_H;
             });
+            if (layout.metaLines.length) {
+                textY += 1;
+                layout.metaLines.forEach(line => {
+                    this.drawPixelText(ctx, line, textX, textY, {
+                        color: '#777',
+                        font: '8px Tiny5'
+                    });
+                    textY += BEAT_LINE_H;
+                });
+            }
             if (beat.choiceKey) {
-                this.drawPixelText(ctx, '+', x + w - 12, y + 5, {
+                this.drawPixelText(ctx, this.expandedKeys.has(beat.choiceKey) || this.expandAllChoices ? '-' : '+', x + w - 12, y + 5, {
                     color: '#ffd700',
                     font: '8px Tiny5'
                 });
             }
-            this.beatRows.push({ x, y, w, h: BEAT_ROW_H, index: i });
+            this.beatRows.push({ x, y, w, h: layout.height, index: i });
+        }
+        ctx.restore();
+
+        const maxScroll = this.getMaxBeatScroll(ctx);
+        if (maxScroll > 0) {
+            const trackX = x + w - 4;
+            const trackY = panelY + 3;
+            const trackH = h - 6;
+            const thumbH = Math.max(10, Math.floor(trackH * (h / (this.beatTotalHeight || h))));
+            const thumbY = trackY + Math.floor((trackH - thumbH) * (this.beatScroll / maxScroll));
+            ctx.fillStyle = '#242424';
+            ctx.fillRect(trackX, trackY, 2, trackH);
+            ctx.fillStyle = '#777';
+            ctx.fillRect(trackX, thumbY, 2, thumbH);
         }
     }
 
@@ -735,7 +889,7 @@ export class StoryScriptReaderScene extends BaseScene {
         const entry = this.getEntry();
         const beat = this.beats[this.selectedBeatIndex] || null;
         this.drawPixelText(ctx, 'STORY SCRIPT READER', 8, 7, { color: '#ffd700', font: '8px Silkscreen' });
-        this.drawPixelText(ctx, 'Left/right nodes. Up/down beats. Enter opens paths.', 160, 8, { color: '#aaa', font: '8px Tiny5' });
+        this.drawPixelText(ctx, 'Wheel/drag scrolls. Enter opens paths.', 160, 8, { color: '#aaa', font: '8px Tiny5' });
         this.backRect = { x: canvas.width - 50, y: 5, w: 42, h: 15 };
         ctx.fillStyle = '#151515';
         ctx.fillRect(this.backRect.x, this.backRect.y, this.backRect.w, this.backRect.h);
@@ -759,7 +913,7 @@ export class StoryScriptReaderScene extends BaseScene {
         this.drawSelectedBeatSummary(ctx, canvas, beat);
         this.renderBeats(ctx, canvas);
 
-        const footer = `${this.selectedBeatIndex + 1}/${Math.max(1, this.beats.length)} beats - B ${this.expandAllChoices ? 'hides' : 'shows'} all branches - scriptreader`;
+        const footer = `${this.selectedBeatIndex + 1}/${Math.max(1, this.beats.length)} beats - arrows select - B ${this.expandAllChoices ? 'hides' : 'shows'} branches`;
         this.drawPixelText(ctx, footer, 8, canvas.height - 12, { color: '#666', font: '8px Tiny5' });
         ctx.restore();
     }
