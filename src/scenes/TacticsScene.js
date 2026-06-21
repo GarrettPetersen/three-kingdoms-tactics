@@ -26,6 +26,20 @@ const DRAW_CALL_PRIORITIES = {
     front_edge: 2.05,
     gate_overlay: 2.2
 };
+const TEMPLATE_RUNTIME_FIELDS = [
+    'isProp',
+    'spectator',
+    'breaksToImgKey',
+    'keepBrokenOnDefeat',
+    'staticCorpseImgKey',
+    'carryImgKey',
+    'spriteScale',
+    'isSiegeLadder',
+    'isDestroyedSiegeLadder',
+    'crackedImgKey',
+    'destroyedImgKey',
+    'ladderCombatLevel'
+];
 
 export class TacticsScene extends BaseScene {
     constructor() {
@@ -3934,6 +3948,7 @@ export class TacticsScene extends BaseScene {
                 id: u.id,
                 name: u.name,
                 imgKey: u.imgKey,
+                baseImgKey: u.baseImgKey || u.imgKey,
                 faction: u.faction,
                 r: u.r,
                 q: u.q,
@@ -3968,6 +3983,7 @@ export class TacticsScene extends BaseScene {
                 keepBrokenOnDefeat: !!u.keepBrokenOnDefeat,
                 staticCorpseImgKey: u.staticCorpseImgKey || null,
                 carryImgKey: u.carryImgKey || null,
+                spriteScale: Number.isFinite(u.spriteScale) ? u.spriteScale : 1,
                 isSiegeLadder: !!u.isSiegeLadder,
                 isDestroyedSiegeLadder: !!u.isDestroyedSiegeLadder,
                 crackedImgKey: u.crackedImgKey || null,
@@ -4202,6 +4218,7 @@ export class TacticsScene extends BaseScene {
                     id: uData.id,
                     name: uData.name,
                     imgKey: uData.imgKey,
+                    baseImgKey: uData.baseImgKey || uData.imgKey,
                     img: assets.getImage(uData.imgKey),
                     faction: uData.faction,
                     r: uData.r,
@@ -4237,6 +4254,7 @@ export class TacticsScene extends BaseScene {
                     keepBrokenOnDefeat: !!uData.keepBrokenOnDefeat,
                     staticCorpseImgKey: uData.staticCorpseImgKey || null,
                     carryImgKey: uData.carryImgKey || null,
+                    spriteScale: Number.isFinite(uData.spriteScale) ? uData.spriteScale : 1,
                     isSiegeLadder: !!uData.isSiegeLadder,
                     isDestroyedSiegeLadder: !!uData.isDestroyedSiegeLadder,
                     crackedImgKey: uData.crackedImgKey || null,
@@ -4265,6 +4283,7 @@ export class TacticsScene extends BaseScene {
             u.horseId = uData.horseId || null;
             u.horseType = uData.horseType || u.horseType || 'brown';
             u.imgKey = uData.imgKey;
+            u.baseImgKey = uData.baseImgKey || u.baseImgKey || uData.imgKey;
             u.img = assets.getImage(uData.imgKey);
             u.isDestroyedBoulder = !!(uData.isDestroyedBoulder || (u.name === 'Boulder' && uData.imgKey === 'boulder_destroyed'));
             u.pendingDestroyAfterRoll = !!uData.pendingDestroyAfterRoll;
@@ -4274,6 +4293,7 @@ export class TacticsScene extends BaseScene {
             u.keepBrokenOnDefeat = !!uData.keepBrokenOnDefeat;
             u.staticCorpseImgKey = uData.staticCorpseImgKey || u.staticCorpseImgKey || null;
             u.carryImgKey = uData.carryImgKey || null;
+            u.spriteScale = Number.isFinite(uData.spriteScale) ? uData.spriteScale : (Number.isFinite(u.spriteScale) ? u.spriteScale : 1);
             u.isSiegeLadder = !!(uData.isSiegeLadder || u.isSiegeLadder);
             u.isDestroyedSiegeLadder = !!uData.isDestroyedSiegeLadder;
             u.crackedImgKey = uData.crackedImgKey || u.crackedImgKey || null;
@@ -4714,6 +4734,7 @@ export class TacticsScene extends BaseScene {
             u.horseId = uData.horseId || null;
             u.horseType = uData.horseType || u.horseType || 'brown';
             u.imgKey = uData.imgKey;
+            u.baseImgKey = uData.baseImgKey || u.baseImgKey || uData.imgKey;
             u.img = assets.getImage(uData.imgKey);
             u.isDestroyedBoulder = !!(uData.isDestroyedBoulder || (u.name === 'Boulder' && uData.imgKey === 'boulder_destroyed'));
             u.pendingDestroyAfterRoll = !!uData.pendingDestroyAfterRoll;
@@ -4723,6 +4744,7 @@ export class TacticsScene extends BaseScene {
             u.keepBrokenOnDefeat = !!uData.keepBrokenOnDefeat;
             u.staticCorpseImgKey = uData.staticCorpseImgKey || u.staticCorpseImgKey || null;
             u.carryImgKey = uData.carryImgKey || null;
+            u.spriteScale = Number.isFinite(uData.spriteScale) ? uData.spriteScale : (Number.isFinite(u.spriteScale) ? u.spriteScale : 1);
             u.isSiegeLadder = !!(uData.isSiegeLadder || u.isSiegeLadder);
             u.isDestroyedSiegeLadder = !!uData.isDestroyedSiegeLadder;
             u.crackedImgKey = uData.crackedImgKey || u.crackedImgKey || null;
@@ -6224,6 +6246,43 @@ export class TacticsScene extends BaseScene {
         return !!(this.isSiegeLadder(unit) && unit.hp > 0 && !unit.isGone && !unit.isDestroyedSiegeLadder);
     }
 
+    syncSiegeLadderVisualState(unit) {
+        if (!this.isSiegeLadder(unit)) return;
+
+        const maxHp = Number.isFinite(unit.maxHp) ? unit.maxHp : 1;
+        const baseImgKey = unit.baseImgKey || 'siege_ladder';
+        const crackedImgKey = unit.crackedImgKey || 'siege_ladder_cracked';
+        const destroyedImgKey = unit.destroyedImgKey || 'siege_ladder_destroyed';
+        const isDestroyed = unit.hp <= 0 || unit.isDestroyedSiegeLadder;
+        const nextImgKey = isDestroyed
+            ? destroyedImgKey
+            : (unit.hp < maxHp ? crackedImgKey : baseImgKey);
+
+        unit.baseImgKey = baseImgKey;
+        unit.isProp = true;
+        unit.isGone = false;
+
+        if (isDestroyed) {
+            unit.hp = 0;
+            unit.isDestroyedSiegeLadder = true;
+            unit.keepBrokenOnDefeat = true;
+            unit.action = 'standby';
+            unit.currentAnimAction = 'standby';
+            unit.frame = 0;
+            unit.intent = null;
+            unit.isMoving = false;
+            unit.path = [];
+            unit.pathIndex = 0;
+            unit.moveProgress = 0;
+        }
+
+        if (unit.imgKey !== nextImgKey || !unit.img) {
+            unit.imgKey = nextImgKey;
+            const img = assets.getImage(nextImgKey);
+            if (img) unit.img = img;
+        }
+    }
+
     getActiveSiegeLadderAtCell(r, q, excludeUnit = null) {
         return this.units.find(u => (
             u &&
@@ -6265,6 +6324,7 @@ export class TacticsScene extends BaseScene {
             }
         }
         for (const u of this.units) {
+            if (this.isSiegeLadder(u)) this.syncSiegeLadderVisualState(u);
             if (!this.isActiveSiegeLadder(u)) continue;
             const cell = this.tacticsMap.getCell(u.r, u.q);
             if (cell) cell.siegeLadderUnitId = u.id;
@@ -7913,28 +7973,18 @@ export class TacticsScene extends BaseScene {
             if (typeof victim.triggerDamageFlash === 'function') {
                 victim.triggerDamageFlash();
             }
+            this.syncSiegeLadderVisualState(victim);
 
             const pos = this.getPixelPos(victim.r, victim.q);
-            if (victim.hp <= 0) {
-                victim.hp = 0;
-                victim.imgKey = victim.destroyedImgKey || 'siege_ladder_destroyed';
-                victim.img = assets.getImage(victim.imgKey);
-                victim.isDestroyedSiegeLadder = true;
-                victim.isGone = false;
-                victim.action = 'standby';
-                victim.currentAnimAction = 'standby';
-                victim.intent = null;
+            if (victim.isDestroyedSiegeLadder) {
                 this.syncSiegeLadderCells();
                 this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({ en: "BROKEN", zh: "毁坏" }));
                 assets.playSound('building_damage', 0.9);
             } else {
-                if (victim.hp < victim.maxHp) {
-                    victim.imgKey = victim.crackedImgKey || 'siege_ladder_cracked';
-                    victim.img = assets.getImage(victim.imgKey);
-                }
+                const maxHp = Number.isFinite(victim.maxHp) ? victim.maxHp : victim.hp;
                 this.addDamageNumber(pos.x, pos.y - 20, getLocalizedText({
-                    en: `LADDER: ${victim.hp}/${victim.maxHp}`,
-                    zh: `云梯：${victim.hp}/${victim.maxHp}`
+                    en: `LADDER: ${victim.hp}/${maxHp}`,
+                    zh: `云梯：${victim.hp}/${maxHp}`
                 }));
                 assets.playSound('building_damage', 0.7);
             }
@@ -8732,6 +8782,17 @@ export class TacticsScene extends BaseScene {
         });
     }
 
+    applyTemplateRuntimeDefaults(unitDef, template) {
+        if (!unitDef || !template) return unitDef;
+        TEMPLATE_RUNTIME_FIELDS.forEach(field => {
+            if (unitDef[field] === undefined && template[field] !== undefined) {
+                unitDef[field] = template[field];
+            }
+        });
+        if (!unitDef.baseImgKey && template.imgKey) unitDef.baseImgKey = template.imgKey;
+        return unitDef;
+    }
+
     placeInitialUnits(specifiedUnits) {
         this.units = [];
         let unitsToPlace = specifiedUnits;
@@ -8905,6 +8966,19 @@ export class TacticsScene extends BaseScene {
                 // Check for class change (e.g. Soldier -> Archer)
                 let imgKey = u.imgKey;
                 let attacks = u.attacks ? [...u.attacks] : [];
+                const template = resolveUnitTemplate(u.type, u.templateId || u.id);
+                if (template) {
+                    this.applyTemplateRuntimeDefaults(u, template);
+                    if (!attacks.length) attacks = [...(template.attacks || [])];
+                    if (u.moveRange === undefined || u.moveRange === null) u.moveRange = template.moveRange;
+                    if (!imgKey) imgKey = template.imgKey;
+                    if (!u.name) u.name = template.name;
+                    if (!u.faction) u.faction = template.faction;
+                    if (!u.maxHp && !u.hp && template.hp !== undefined) {
+                        u.maxHp = template.hp;
+                        u.hp = template.hp;
+                    }
+                }
                 
                 let unitClass = u.templateId || u.id.replace(/\d+$/, '');
                 if (!this.isCustom) {
@@ -8939,20 +9013,6 @@ export class TacticsScene extends BaseScene {
                 } else if (unitClass === 'crossbowman') {
                     imgKey = 'crossbowman';
                     attacks = ['crossbow_bolt'];
-                }
-
-                // Apply canonical unit template when roster row references one.
-                const template = resolveUnitTemplate(u.type, u.templateId || u.id);
-                if (template) {
-                    if (!attacks.length) attacks = [...template.attacks];
-                    if (!u.moveRange) u.moveRange = template.moveRange;
-                    if (!imgKey) imgKey = template.imgKey;
-                    if (!u.name) u.name = template.name;
-                    if (!u.faction) u.faction = template.faction;
-                    if (!u.maxHp && !u.hp && template.hp !== undefined) {
-                        u.maxHp = template.hp;
-                        u.hp = template.hp;
-                    }
                 }
 
                 attacks = applyLevelAttackUpgrades(attacks, unitClass, level, unitClass === 'archer', unitClass === 'crossbowman');
@@ -9184,6 +9244,9 @@ export class TacticsScene extends BaseScene {
                 const cell = this.tacticsMap.getCell(r, q);
                 if (cell) cell.unit = null;
             }
+        }
+        for (const u of this.units) {
+            if (this.isSiegeLadder(u)) this.syncSiegeLadderVisualState(u);
         }
         // Place destroyed boulders on cells first (they don't block; pathfinding checks hp > 0)
         for (const u of this.units) {
@@ -10020,7 +10083,8 @@ export class TacticsScene extends BaseScene {
                     } else if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, hx, hy, {
                             flip: u.flip,
                             sinkOffset,
-                            isProp: u.name === 'Boulder' || u.isProp
+                            isProp: u.name === 'Boulder' || u.isProp,
+                            scale: Number.isFinite(u.spriteScale) ? u.spriteScale : 1
                         })) {
                         hoveredUnit = u;
                         hoveredUnitCell = this.tacticsMap.getCell(u.r, u.q);
@@ -10858,7 +10922,8 @@ export class TacticsScene extends BaseScene {
                 
                 let drawOptions = { 
                     flip: u.flip,
-                    isProp: u.name === 'Boulder' || u.isProp
+                    isProp: u.name === 'Boulder' || u.isProp,
+                    scale: Number.isFinite(u.spriteScale) ? u.spriteScale : 1
                 };
 
                 // Raise living units if they are standing on a corpse
@@ -12587,6 +12652,9 @@ export class TacticsScene extends BaseScene {
     }
 
     drawUnitSpriteOnly(ctx, u, surfaceY, drawOptions, cell, timestamp) {
+        if (this.isSiegeLadder(u)) {
+            this.syncSiegeLadderVisualState(u);
+        }
         const hexOffsetX = drawOptions?.hexOffsetX || 0;
         const hexOffsetY = drawOptions?.hexOffsetY || 0;
         if (u.onHorse) {
@@ -15599,7 +15667,8 @@ export class TacticsScene extends BaseScene {
             if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, x, y, { 
                 flip: u.flip, 
                 sinkOffset,
-                isProp: u.name === 'Boulder' || u.isProp
+                isProp: u.name === 'Boulder' || u.isProp,
+                scale: Number.isFinite(u.spriteScale) ? u.spriteScale : 1
             })) {
                 spriteUnit = u;
                 spriteHitCell = this.tacticsMap.getCell(u.r, u.q);

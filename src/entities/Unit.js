@@ -6,6 +6,7 @@ export class Unit {
         this.id = id;
         this.name = config.name || "Unknown";
         this.imgKey = config.imgKey;
+        this.baseImgKey = config.baseImgKey || config.imgKey;
         this.img = config.img; // Loaded image
         this.faction = config.faction || 'player'; // 'player', 'enemy'
         
@@ -78,6 +79,7 @@ export class Unit {
         this.keepBrokenOnDefeat = !!config.keepBrokenOnDefeat;
         this.staticCorpseImgKey = config.staticCorpseImgKey || null;
         this.carryImgKey = config.carryImgKey || null;
+        this.spriteScale = Number.isFinite(config.spriteScale) ? config.spriteScale : 1;
         this.isSiegeLadder = !!config.isSiegeLadder;
         this.isDestroyedSiegeLadder = !!config.isDestroyedSiegeLadder;
         this.crackedImgKey = config.crackedImgKey || null;

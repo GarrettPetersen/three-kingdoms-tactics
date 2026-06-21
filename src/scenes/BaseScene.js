@@ -471,15 +471,21 @@ export class BaseScene {
 
     checkCharacterHit(img, action, frame, x, y, clickX, clickY, options = {}) {
         if (!img) return false;
-        const { flip = false, sinkOffset = 0, isProp = false, alphaThreshold = 254 } = options;
+        const { flip = false, sinkOffset = 0, isProp = false, alphaThreshold = 254, scale = 1.0 } = options;
         const sourceSize = 72;
 
         if (isProp) {
-            const bx = x - img.width / 2;
-            const by = y + sinkOffset - (img.height - 5);
-            if (clickX < bx || clickX > bx + img.width || clickY < by || clickY > by + img.height) {
+            const propScale = Number.isFinite(scale) && scale > 0 ? scale : 1;
+            const drawW = img.width * propScale;
+            const drawH = img.height * propScale;
+            const bx = x - drawW / 2;
+            const by = y + sinkOffset - ((img.height - 5) * propScale);
+            if (clickX < bx || clickX > bx + drawW || clickY < by || clickY > by + drawH) {
                 return false;
             }
+            const localX = Math.floor((clickX - bx) / propScale);
+            const localY = Math.floor((clickY - by) / propScale);
+            const sourceX = flip ? (img.width - 1 - localX) : localX;
             // Pixel perfect check for props
             if (!this._hitCanvas) {
                 this._hitCanvas = document.createElement('canvas');
@@ -490,12 +496,7 @@ export class BaseScene {
             const hctx = this._hitCtx;
             hctx.clearRect(0, 0, 1, 1);
             hctx.save();
-            hctx.translate(-(clickX - bx), -(clickY - by));
-            if (flip) {
-                hctx.translate(img.width / 2, 0);
-                hctx.scale(-1, 1);
-                hctx.translate(-img.width / 2, 0);
-            }
+            hctx.translate(-sourceX, -localY);
             hctx.drawImage(img, 0, 0);
             hctx.restore();
             const alpha = hctx.getImageData(0, 0, 1, 1).data[3];
