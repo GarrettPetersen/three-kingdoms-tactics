@@ -54,7 +54,7 @@ export class StoryScriptReaderScene extends BaseScene {
         this.beatTotalHeight = 0;
         this.dragScroll = null;
         this.backRect = null;
-        this.expandAllChoices = false;
+        this.expandAllChoices = true;
         this.expandedKeys = new Set();
         this.beats = [];
         collectChapterSceneMetadata();
@@ -105,10 +105,22 @@ export class StoryScriptReaderScene extends BaseScene {
     getText(value) {
         if (value == null) return '';
         if (typeof value === 'string') return value;
+        if (Array.isArray(value)) return value.map(item => this.getText(item)).filter(Boolean).join(' ');
         if (typeof value === 'object') {
-            return value.en || value.zh || Object.values(value).find(v => typeof v === 'string') || '';
+            if (value.en != null) return this.getText(value.en);
+            if (value.zh != null) return this.getText(value.zh);
+            const fallback = Object.values(value).find(v => typeof v === 'string' || Array.isArray(v));
+            return this.getText(fallback);
         }
         return String(value);
+    }
+
+    getOptionLabel(option, index = 0) {
+        return this.getText(option?.buttonText)
+            || this.getText(option?.lines)
+            || this.getText(option?.text)
+            || option?.id
+            || `Choice ${index + 1}`;
     }
 
     truncateText(text, maxChars = 64) {
@@ -161,6 +173,7 @@ export class StoryScriptReaderScene extends BaseScene {
         if (action === 'jump') return `Jump to label ${step.label || '?'}`;
         if (action === 'saveReturn') return 'Save return point';
         if (action === 'return') return 'Return to saved point';
+        if (action === 'setStoryChoice') return `Set ${step.routeId ? `${step.routeId}.` : ''}${step.key || 'choice'} = ${step.value ?? '?'}`;
         if (action === 'setClickable') return `Make ${step.id || 'actor'} clickable`;
         if (action === 'clearClickable') return `Clear clickable ${step.id || 'actor'}`;
         if (action === 'setClickableRegion') return `Clickable region ${step.id || '?'} at ${step.x ?? '?'}, ${step.y ?? '?'} (${step.w ?? '?'}x${step.h ?? '?'})`;
@@ -253,7 +266,7 @@ export class StoryScriptReaderScene extends BaseScene {
                 kind: 'choice',
                 depth,
                 title: `Choice: ${step.name || step.speaker || 'Player'}`,
-                body: `${notePrefix}${options.map(opt => this.getText(opt.buttonText) || this.getText(opt.text)).filter(Boolean).join(' / ')}`,
+                body: `${notePrefix}${options.map((opt, optionIndex) => this.getOptionLabel(opt, optionIndex)).filter(Boolean).join(' / ')}`,
                 meta: expanded ? 'paths shown' : 'enter/click to show paths',
                 choiceKey: key
             });
@@ -263,7 +276,7 @@ export class StoryScriptReaderScene extends BaseScene {
                     this.addBeat(beats, optionContext, {
                         kind: 'option',
                         depth: depth + 1,
-                        title: `Path ${optionIndex + 1}: ${this.getText(option.buttonText) || 'choice'}`,
+                        title: `Path ${optionIndex + 1}: ${this.getOptionLabel(option, optionIndex)}`,
                         body: this.getText(option.text),
                         meta: option.voiceId ? `voice ${option.voiceId}` : ''
                     });
@@ -353,6 +366,60 @@ export class StoryScriptReaderScene extends BaseScene {
         });
     }
 
+    getDefaultBattleChoiceOptions(battleId) {
+        if (battleId === 'guangzong_encounter') {
+            return [
+                { lines: { en: ['Stay your hand,', 'brother!'], zh: ['住手，', '兄弟！'] } },
+                { lines: { en: ['Free him,', 'brothers!'], zh: ['放了他，', '兄弟们！'] } }
+            ];
+        }
+        return [];
+    }
+
+    getBattleChoiceBranchSummary(battleId, optionIndex) {
+        if (battleId === 'guangzong_encounter') {
+            return optionIndex === 0
+                ? 'Callback branch: restrain Zhang Fei, part ways with Lu Zhi, and return to the map.'
+                : 'Callback branch: fight the escort, free Lu Zhi on victory, and continue from the battle outcome.';
+        }
+        if (battleId === 'chapter2_oath_dongzhuo_choice') {
+            return optionIndex === 0
+                ? 'Callback branch: set chapter2_oath_dongzhuo_choice=restrain, play the restraint dialogue, then march toward Zhu Jun.'
+                : 'Callback branch: set chapter2_oath_dongzhuo_choice=strike and start the fight with Dong Zhuo.';
+        }
+        return 'Callback branch handled by TacticsScene.';
+    }
+
+    addBattleChoiceBeats(beats, entry, battle, battleId, context, depth = 1) {
+        if (!battle?.hasChoice) return;
+        const options = Array.isArray(battle.choiceOptions) && battle.choiceOptions.length
+            ? battle.choiceOptions
+            : this.getDefaultBattleChoiceOptions(battleId);
+        if (!options.length) return;
+
+        const key = `${entry.routeId}:${entry.nodeId}:battleUiChoice`;
+        const expanded = this.expandAllChoices || this.expandedKeys.has(key);
+        this.addBeat(beats, context, {
+            kind: 'choice',
+            depth,
+            title: 'Battle UI choice',
+            body: options.map((option, index) => this.getOptionLabel(option, index)).join(' / '),
+            meta: expanded ? 'callback paths shown' : 'enter/click to show callback paths',
+            choiceKey: key
+        });
+        if (!expanded) return;
+
+        options.forEach((option, index) => {
+            this.addBeat(beats, context, {
+                kind: 'option',
+                depth: depth + 1,
+                title: `Path ${index + 1}: ${this.getOptionLabel(option, index)}`,
+                body: this.getBattleChoiceBranchSummary(battleId, index),
+                meta: ''
+            });
+        });
+    }
+
     addBattleBeats(beats, entry, battleId, context) {
         const battle = BATTLES[battleId];
         if (!battle) {
@@ -383,34 +450,7 @@ export class StoryScriptReaderScene extends BaseScene {
             meta: battle.cutsceneAutoCombat ? 'cutscene battle' : ''
         });
 
-        if (Array.isArray(battle.choiceOptions) && battle.choiceOptions.length) {
-            const key = `${entry.routeId}:${entry.nodeId}:battleChoices`;
-            const expanded = this.expandAllChoices || this.expandedKeys.has(key);
-            this.addBeat(beats, battleContext, {
-                kind: 'choice',
-                title: 'Battle choice',
-                body: battle.choiceOptions.map(option => this.getText(option.text) || option.id).join(' / '),
-                meta: expanded ? 'options shown' : 'enter/click to show options',
-                choiceKey: key
-            });
-            if (expanded) {
-                battle.choiceOptions.forEach((option, index) => {
-                    this.addBeat(beats, battleContext, {
-                        kind: 'option',
-                        depth: 1,
-                        title: `Battle option ${index + 1}: ${this.getText(option.text) || option.id}`,
-                        body: option.id || '',
-                        meta: ''
-                    });
-                });
-            }
-        }
-
-        [
-            ['Intro script', battle.introScript],
-            ['Post-combat script', battle.postCombatScript],
-            ['Defeat script', battle.defeatScript || battle.failureScript]
-        ].forEach(([label, script]) => {
+        const addScriptSection = (label, script) => {
             if (!Array.isArray(script) || script.length === 0) return;
             this.addBeat(beats, battleContext, {
                 kind: 'section',
@@ -419,7 +459,12 @@ export class StoryScriptReaderScene extends BaseScene {
                 meta: ''
             });
             this.addScriptSteps(beats, script, `${entry.routeId}:${entry.nodeId}:${label}`, battleContext, 1);
-        });
+        };
+
+        addScriptSection('Intro script', battle.introScript);
+        this.addBattleChoiceBeats(beats, entry, battle, battleId, battleContext, 1);
+        addScriptSection('Post-combat script', battle.postCombatScript);
+        addScriptSection('Defeat script', battle.defeatScript || battle.failureScript);
     }
 
     addGraphTransitionBeat(beats, entry, context) {
