@@ -915,8 +915,8 @@ export class NarrativeScene extends BaseScene {
             this.manager.switchTo('liubo', {
                 mode: 'campaign',
                 activityId: cmd.activityId || 'campaign_liubo',
-                humanPlayer: cmd.humanPlayer || 'white',
-                firstPlayer: cmd.firstPlayer || 'white'
+                humanPlayer: cmd.humanPlayer,
+                firstPlayer: cmd.firstPlayer
             });
         } else if (cmd.action === 'startBattle') {
             this.saveNarrativeState();

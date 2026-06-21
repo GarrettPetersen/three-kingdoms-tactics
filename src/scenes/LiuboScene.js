@@ -4,6 +4,7 @@ import { getCurrentLanguage, getLocalizedText } from '../core/Language.js';
 import { UI_TEXT } from '../data/Translations.js';
 import {
     LIUBO_BOARD_PADDED_SIZE,
+    LIUBO_PLAYERS,
     getBoardPointPosition,
     isLiuboNest
 } from '../minigames/liubo/LiuboBoard.js';
@@ -237,10 +238,7 @@ export class LiuboScene extends BaseScene {
             this.campaignComplete = false;
             const record = this.mode === 'campaign' ? this.manager.gameState.getCampaignLiuboRecord() : null;
             this.previousActivityPlays = record?.activities?.[this.activityId]?.played || 0;
-            this.startOptions = {
-                humanPlayer: params.humanPlayer || 'white',
-                firstPlayer: params.firstPlayer || 'white'
-            };
+            this.startOptions = this.createStartOptions(params);
             this.state = createLiuboState(this.startOptions);
             this.saveState();
         }
@@ -410,7 +408,15 @@ export class LiuboScene extends BaseScene {
         this.boardLayout = layout;
         const board = assets.getImage('liubo_board');
         if (board) {
-            ctx.drawImage(board, layout.boardX, layout.boardY, BOARD_DRAW_SIZE, BOARD_DRAW_SIZE);
+            ctx.save();
+            if (this.shouldFlipBoardForHuman()) {
+                ctx.translate(layout.boardX + BOARD_DRAW_SIZE, layout.boardY + BOARD_DRAW_SIZE);
+                ctx.rotate(Math.PI);
+                ctx.drawImage(board, 0, 0, BOARD_DRAW_SIZE, BOARD_DRAW_SIZE);
+            } else {
+                ctx.drawImage(board, layout.boardX, layout.boardY, BOARD_DRAW_SIZE, BOARD_DRAW_SIZE);
+            }
+            ctx.restore();
         } else {
             ctx.fillStyle = '#8d6a40';
             ctx.fillRect(layout.boardX, layout.boardY, BOARD_DRAW_SIZE, BOARD_DRAW_SIZE);
@@ -654,7 +660,7 @@ export class LiuboScene extends BaseScene {
 
         const shake = isRolling ? Math.sin(this.rollAnimation.age * 0.045) * 3 : 0;
         const lift = isRolling ? Math.sin(this.rollAnimation.age * 0.028) * 2 : 0;
-        const flip = this.getCupFacingPlayer() === 'black';
+        const flip = this.getCupFacingPlayer() !== this.state.humanPlayer;
         ctx.save();
         ctx.globalAlpha = canRoll || isRolling ? 1 : 0.58;
         if (cup) {
@@ -741,7 +747,7 @@ export class LiuboScene extends BaseScene {
     }
 
     getStickThrowDirection() {
-        return this.getCupFacingPlayer() === 'black' ? 1 : -1;
+        return this.getCupFacingPlayer() === this.state.humanPlayer ? -1 : 1;
     }
 
     getCupFacingPlayer() {
@@ -1057,10 +1063,22 @@ export class LiuboScene extends BaseScene {
         if (!point) return null;
         const scale = BOARD_DRAW_SIZE / LIUBO_BOARD_PADDED_SIZE;
         const layout = this.boardLayout || this.getLayout(this.manager.canvas);
+        const px = point.x * scale;
+        const py = point.y * scale;
+        if (this.shouldFlipBoardForHuman()) {
+            return {
+                x: Math.round(layout.boardX + BOARD_DRAW_SIZE - px),
+                y: Math.round(layout.boardY + BOARD_DRAW_SIZE - py)
+            };
+        }
         return {
-            x: Math.round(layout.boardX + point.x * scale),
-            y: Math.round(layout.boardY + point.y * scale)
+            x: Math.round(layout.boardX + px),
+            y: Math.round(layout.boardY + py)
         };
+    }
+
+    shouldFlipBoardForHuman() {
+        return this.state?.humanPlayer === 'black';
     }
 
     getSelectablePieceIds() {
@@ -1434,6 +1452,7 @@ export class LiuboScene extends BaseScene {
     }
 
     resetGame() {
+        this.startOptions = this.refreshStartOptionsForNewGame(this.startOptions);
         this.state = createLiuboState(this.startOptions);
         this.rollAnimation = null;
         this.moveAnimations = [];
@@ -1470,6 +1489,46 @@ export class LiuboScene extends BaseScene {
     }
 
     shouldUseInnLiuboTutorial() {
+        return this.isCampaignMode()
+            && this.activityId === INN_LIUBO_TUTORIAL_ACTIVITY
+            && this.previousActivityPlays === 0
+            && !this.campaignComplete;
+    }
+
+    createStartOptions(params = {}) {
+        if (this.shouldForceInnTutorialStart()) {
+            return {
+                humanPlayer: 'white',
+                firstPlayer: 'white',
+                randomizeHumanPlayer: false
+            };
+        }
+        const forcedHumanPlayer = normalizeLiuboPlayer(params.humanPlayer);
+        const randomizeHumanPlayer = !forcedHumanPlayer;
+        return {
+            humanPlayer: forcedHumanPlayer || randomLiuboPlayer(),
+            firstPlayer: 'white',
+            randomizeHumanPlayer
+        };
+    }
+
+    refreshStartOptionsForNewGame(startOptions = {}) {
+        if (!startOptions.randomizeHumanPlayer) {
+            return {
+                humanPlayer: normalizeLiuboPlayer(startOptions.humanPlayer) || 'white',
+                firstPlayer: 'white',
+                randomizeHumanPlayer: false
+            };
+        }
+        return {
+            ...startOptions,
+            humanPlayer: randomLiuboPlayer(),
+            firstPlayer: 'white',
+            randomizeHumanPlayer: true
+        };
+    }
+
+    shouldForceInnTutorialStart() {
         return this.isCampaignMode()
             && this.activityId === INN_LIUBO_TUTORIAL_ACTIVITY
             && this.previousActivityPlays === 0
@@ -1575,7 +1634,7 @@ export class LiuboScene extends BaseScene {
         this.mode = savedState.mode || 'campaign';
         this.activityId = savedState.activityId || null;
         this.campaignComplete = false;
-        this.startOptions = savedState.startOptions || { humanPlayer: 'white', firstPlayer: 'white' };
+        this.startOptions = savedState.startOptions || { humanPlayer: 'white', firstPlayer: 'white', randomizeHumanPlayer: false };
         this.state = savedState.state || createLiuboState(this.startOptions);
         this.resultRecorded = !!savedState.resultRecorded;
         this.previousActivityPlays = savedState.previousActivityPlays || 0;
@@ -1664,6 +1723,14 @@ function buildCampaignLiuboResultScript({ won, previousActivityPlays = 0 }) {
 
 function pointInRect(x, y, rect) {
     return rect && x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
+}
+
+function normalizeLiuboPlayer(player) {
+    return LIUBO_PLAYERS.includes(player) ? player : null;
+}
+
+function randomLiuboPlayer() {
+    return Math.random() < 0.5 ? 'white' : 'black';
 }
 
 function classifyLiuboMove(state, move) {

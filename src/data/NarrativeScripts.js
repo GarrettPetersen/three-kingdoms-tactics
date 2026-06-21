@@ -1370,7 +1370,7 @@ export const NARRATIVE_SCRIPTS = {
                                     zh: "好。我们博一局。"
                                 },
                                 result: [
-                                    { type: 'command', action: 'startCampaignLiubo', activityId: 'inn_first_liubo', humanPlayer: 'white', firstPlayer: 'white' }
+                                    { type: 'command', action: 'startCampaignLiubo', activityId: 'inn_first_liubo' }
                                 ]
                             },
                             {
@@ -1767,7 +1767,7 @@ export const NARRATIVE_SCRIPTS = {
                                         zh: "好。我们博一局。"
                                     },
                                     result: [
-                                        { type: 'command', action: 'startCampaignLiubo', activityId: 'inn_first_liubo', humanPlayer: 'white', firstPlayer: 'white' }
+                                        { type: 'command', action: 'startCampaignLiubo', activityId: 'inn_first_liubo' }
                                     ]
                                 },
                                 {
