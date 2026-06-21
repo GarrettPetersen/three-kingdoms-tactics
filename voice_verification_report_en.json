@@ -4390,5 +4390,248 @@
         "wer": 0.13636363636363635,
         "is_bad": false,
         "language": "en"
+    },
+    "en:ch2_anxi_govern_clerk_01": {
+        "id": "ch2_anxi_govern_clerk_01",
+        "character": "zhoujing",
+        "original_text": "My lord, the inspector comes wrapped in authority. He asks without asking. A bribe is what he means.",
+        "stt_output": "A lord, the inspector, comes wrapped in authority. He asks, without asking. A bribe is what he means.",
+        "wer": 0.05555555555555555,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_govern_elder_01": {
+        "id": "ch2_anxi_govern_elder_01",
+        "character": "farmer",
+        "original_text": "General Zhang, the inspector means to ruin Lord Liu. We came to testify, but his men will not let us in.",
+        "stt_output": "General Chang, the inspector means to ruin Lord Liu, who came to testify, but his men will not let us in.",
+        "wer": 0.09523809523809523,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_govern_gy_01": {
+        "id": "ch2_anxi_govern_gy_01",
+        "character": "guanyu",
+        "original_text": "Brother, a thornbush is no perch for phoenixes. Return the seal and seek a larger road.",
+        "stt_output": "A thorn bush is no perch for phoenixes. Return the seal and seek a larger road.",
+        "wer": 0.1875,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_govern_inspector_01": {
+        "id": "ch2_anxi_govern_inspector_01",
+        "character": "merchant",
+        "original_text": "Liu Xuande. What is your origin, and by what merit did you receive office?",
+        "stt_output": "Liyue, Shawanda, Oroah! What is your origin? And by what merit did you receive of?",
+        "wer": 0.2857142857142857,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_govern_inspector_02": {
+        "id": "ch2_anxi_govern_inspector_02",
+        "character": "merchant",
+        "original_text": "False kinship, false merit. The court now purges corrupt military upstarts. You may be exactly the man it means.",
+        "stt_output": "False kinship, false merit, the court now purges corrupt military upstarts. You may be exactly the man it means.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_govern_inspector_03": {
+        "id": "ch2_anxi_govern_inspector_03",
+        "character": "merchant",
+        "original_text": "Liu Xuande! Save my life!",
+        "stt_output": "Liu Shwanda, save my life!",
+        "wer": 0.2,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_govern_lb_01": {
+        "id": "ch2_anxi_govern_lb_01",
+        "character": "liubei",
+        "original_text": "I am descended from Prince Jing of Zhongshan. Since Zhuo County I have fought the Yellow Turbans in more than thirty actions.",
+        "stt_output": "I am descended from Prince Jing of Zhongshan, since Shu-O county I have fought the yellow turbines in more than 30 actions.",
+        "wer": 0.13636363636363635,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_govern_lb_02": {
+        "id": "ch2_anxi_govern_lb_02",
+        "character": "liubei",
+        "original_text": "I have taken nothing from the people. What treasure could I hand him without first becoming what he accuses me of being?",
+        "stt_output": "I have taken nothing from the people. What treasure could I hand in without first becoming what he accuses me of being?",
+        "wer": 0.045454545454545456,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_govern_lb_03": {
+        "id": "ch2_anxi_govern_lb_03",
+        "character": "liubei",
+        "original_text": "Yide, enough. He deserves punishment, but not death by our anger.",
+        "stt_output": "Either, enough, he deserves punishment but not death by our anger.",
+        "wer": 0.09090909090909091,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_govern_lb_04": {
+        "id": "ch2_anxi_govern_lb_04",
+        "character": "liubei",
+        "original_text": "Inspector, by your harm to the people you should die. I spare you. Take this seal back to those who sell honor so cheaply.",
+        "stt_output": "Inspector, by your harm to the people you should die, I spare you. Take this seal back to those who sell honor so cheaply.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_govern_narrator_01": {
+        "id": "ch2_anxi_govern_narrator_01",
+        "character": "narrator",
+        "original_text": "For one month Liu Bei governed Anxi without taking so much as a hair from the people, and the county began to trust the new commandant.",
+        "stt_output": "For one month, Liu Baigou and Anxi, without taking so much as a hair from the people, and the county began to trust the new commandant.",
+        "wer": 0.07692307692307693,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_govern_narrator_02": {
+        "id": "ch2_anxi_govern_narrator_02",
+        "character": "narrator",
+        "original_text": "He ate and slept beside Guan Yu and Zhang Fei, and when he sat in public the brothers stood attendance all day without complaint.",
+        "stt_output": "He ate and slept beside Guanyu, and Zhang Fei, and when he sat in public, the brothers stood attendants all day without complaint.",
+        "wer": 0.125,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_govern_narrator_03": {
+        "id": "ch2_anxi_govern_narrator_03",
+        "character": "narrator",
+        "original_text": "The next day, the inspector seized the county clerks and forced them to accuse Liu Bei. Elders came to plead for him and were beaten away from the gate.",
+        "stt_output": "The next day the inspectors seized the county clerks and forced them to accuse LuBai. Eldas came to pre-train them and were beaten away from the gate.",
+        "wer": 0.2413793103448276,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_govern_narrator_04": {
+        "id": "ch2_anxi_govern_narrator_04",
+        "character": "narrator",
+        "original_text": "Liu Bei hung the seal on the inspector, left Anxi with Guan Yu and Zhang Fei, and turned north toward Liu Hui of Dai.",
+        "stt_output": "Liu by home the seal on the inspector, left Angxi with Guan Yu and Zhang Fei, and turned north toward Luai Huui of Dai.",
+        "wer": 0.20833333333333334,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_govern_narrator_one_01": {
+        "id": "ch2_anxi_govern_narrator_one_01",
+        "character": "narrator",
+        "original_text": "Though another seal hung above him, Liu Bei handled Anxi business without taking so much as a hair from the people.",
+        "stt_output": "though another seal hung above him, loyal by handled angsty business without taking so much as a hair from the people.",
+        "wer": 0.14285714285714285,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_govern_zf_01": {
+        "id": "ch2_anxi_govern_zf_01",
+        "character": "zhangfei",
+        "original_text": "A thief who harms the people dares call my brother corrupt? Let him hear the truth from my hand.",
+        "stt_output": "A thief who harms the people, dares call my brother corrupt. Let him hear the truth from my hand.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_gy_both_02": {
+        "id": "ch2_anxi_gy_both_02",
+        "character": "guanyu",
+        "original_text": "Then we should leave before the court changes its mind. A pardon spoken in fear may not survive a second whisper.",
+        "stt_output": "Then we should leave before the court changes its mind, a pardon spoken in fear may not survive a second whisper.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_liuhui_gy_01": {
+        "id": "ch2_liuhui_gy_01",
+        "character": "guanyu",
+        "original_text": "A righteous road sometimes passes through another man's gate. We accept your shelter with gratitude.",
+        "stt_output": "A righteous road sometimes passes through another man's gate. We accept your shoulder with gratitude.",
+        "wer": 0.06666666666666667,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_liuhui_lb_01": {
+        "id": "ch2_liuhui_lb_01",
+        "character": "liubei",
+        "original_text": "Liu Hui of Dai is also of the Han house. If he will receive us, we may wait there until the realm has need of us again.",
+        "stt_output": "Liu Huihui of Da is also of the Han House. If he will receive us, we may wait there until the realm has need of us again.",
+        "wer": 0.07407407407407407,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_liuhui_lb_02": {
+        "id": "ch2_liuhui_lb_02",
+        "character": "liubei",
+        "original_text": "Then we remain quiet, protect those near us, and wait for a summons worthy of the oath we swore.",
+        "stt_output": "Then we remain quiet, protect those near us, and wait for a summons worthy of the oath we swore.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_liuhui_lh_01": {
+        "id": "ch2_liuhui_lh_01",
+        "character": "zhoujing",
+        "original_text": "Xuande, I know your name and your blood. The Han is poorer when men like you are hunted. My house is open.",
+        "stt_output": "Shwanda, I know your name and your blood. The Huns' poro, when men like you are hunted, my house is open.",
+        "wer": 0.18181818181818182,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_liuhui_narrator_02": {
+        "id": "ch2_liuhui_narrator_02",
+        "character": "narrator",
+        "original_text": "Liu Hui sheltered the brothers in Dai. For a time, Liu Bei vanished from court ledgers, but not from the troubled roads of the Han.",
+        "stt_output": "Liu Huyi sheltered the brothers in Die. For a time, Liu by vanished from court ledges, but not from the troubled roads of the Han Doth.",
+        "wer": 0.2,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_liuhui_narrator_anxi_01": {
+        "id": "ch2_liuhui_narrator_anxi_01",
+        "character": "narrator",
+        "original_text": "After the seal was returned and Anxi left behind, Liu Bei, Guan Yu, and Zhang Fei traveled north with warrants already likely riding after them.",
+        "stt_output": "After the seal was returned and Anxi left behind, Liu Baiguan Yu and Zhang Fei travelled north with warrants already likely riding after them.",
+        "wer": 0.12,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_liuhui_narrator_both_01": {
+        "id": "ch2_liuhui_narrator_both_01",
+        "character": "narrator",
+        "original_text": "The court had pardoned Liu Bei but granted no post. He dismissed the volunteers to their villages and left Luoyang before pardon curdled into pursuit.",
+        "stt_output": "The court had pardoned Liu Bai Bai, but granted no post. He dismissed the volunteers to their villages, and left Luoyang before pardon curdled into pursuit.",
+        "wer": 0.08,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_liuhui_zf_01": {
+        "id": "ch2_liuhui_zf_01",
+        "character": "zhangfei",
+        "original_text": "Hiding sits badly on my shoulders. Still, better here than bowing to an inspector with a hungry palm.",
+        "stt_output": "Heinsits badly on my shoulders. Still, better hear than bowing to an inspector with a hungry palm.",
+        "wer": 0.16666666666666666,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:map_lb_ch2_anxi_01": {
+        "id": "map_lb_ch2_anxi_01",
+        "character": "liubei",
+        "original_text": "The court has named our place. We march to Anxi and serve the people there as cleanly as we can.",
+        "stt_output": "The Corps has named our place. We march to Angsi and serve the people there as cleanly as we can.",
+        "wer": 0.1,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:map_lb_ch2_liuhui_01": {
+        "id": "map_lb_ch2_liuhui_01",
+        "character": "liubei",
+        "original_text": "We cannot remain under the court's eye. Liu Hui of Dai may shelter us until a better summons comes.",
+        "stt_output": "We cannot remain under the court's eye, Liu Huoyi of Daimei shelter us until a better summons comes.",
+        "wer": 0.15789473684210525,
+        "is_bad": false,
+        "language": "en"
     }
 }

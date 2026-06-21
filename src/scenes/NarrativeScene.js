@@ -1131,6 +1131,15 @@ export class NarrativeScene extends BaseScene {
                 } else if (this.scriptId === 'chapter2_wan_reversal') {
                     completeStoryNode(this.manager, 'chapter2_oath', 'chapter2_wan_reversal');
                     return;
+                } else if (this.scriptId === 'chapter2_anxi_appointment') {
+                    completeStoryNode(this.manager, 'chapter2_oath', 'chapter2_anxi_appointment');
+                    return;
+                } else if (this.scriptId === 'chapter2_anxi_governance') {
+                    completeStoryNode(this.manager, 'chapter2_oath', 'chapter2_anxi_governance');
+                    return;
+                } else if (this.scriptId === 'chapter2_liuhui_shelter') {
+                    completeStoryNode(this.manager, 'chapter2_oath', 'chapter2_liuhui_shelter');
+                    return;
                 }
                 this.manager.switchTo(savedState.nextScene, savedState.nextParams || {});
                 return;
@@ -2393,6 +2402,8 @@ export class NarrativeScene extends BaseScene {
             'chapter2_wan_strategy': 'campaign_selection',
             'chapter2_wan_reversal': 'campaign_selection',
             'chapter2_anxi_appointment': 'campaign_selection',
+            'chapter2_anxi_governance': 'campaign_selection',
+            'chapter2_liuhui_shelter': 'campaign_selection',
             'noticeboard': 'narrative', // Goes to inn scene next
             'noticeboard_after_training': 'narrative',
             'inn': 'map',
@@ -2432,6 +2443,8 @@ export class NarrativeScene extends BaseScene {
             'chapter2_wan_strategy': {},
             'chapter2_wan_reversal': {},
             'chapter2_anxi_appointment': {},
+            'chapter2_anxi_governance': {},
+            'chapter2_liuhui_shelter': {},
             'noticeboard': { scriptId: 'inn' }, // Chain to inn scene
             'noticeboard_after_training': { scriptId: 'inn' },
             'inn': {}, // After inn, goes to map (milestone added in onComplete)

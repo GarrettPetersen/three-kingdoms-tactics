@@ -216,6 +216,118 @@
     "version": 1,
     "voice_target": "movies/clean/clean_uncle-iroh.wav"
   },
+  "ch2_anxi_govern_clerk_01": {
+    "character": "zhoujing",
+    "hash": "6b6879470bf61c3a4691b6dc0e286ec825f3a39785229423ab02fb96a20aa623",
+    "text": "My lord, the inspector comes wrapped in authority. He asks without asking. A bribe is what he means.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_anxi_govern_elder_01": {
+    "character": "farmer",
+    "hash": "c7ac514051c8cc2b7c0ee63b61656d4fec2ecb9241913dfb40202172e7adf00c",
+    "text": "General Zhang, the inspector means to ruin Lord Liu. We came to testify, but his men will not let us in.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_anxi_govern_gy_01": {
+    "character": "guanyu",
+    "hash": "366fce27f2989bc87a0420a8ae5ad9b88c5b96787101c68dedb2ddbae53570db",
+    "text": "Brother, a thornbush is no perch for phoenixes. Return the seal and seek a larger road.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "ch2_anxi_govern_inspector_01": {
+    "character": "merchant",
+    "hash": "e32e485e99c80dccc4c8d1ec3c0a193bee1d889b857342849c9535f6b3ea9bac",
+    "text": "Liu Xuande. What is your origin, and by what merit did you receive office?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "ch2_anxi_govern_inspector_02": {
+    "character": "merchant",
+    "hash": "ef1ab0e80d0bfc88ce505c76a888fc09fff8c7bc133f8a0f75e1a0ad72a05ce7",
+    "text": "False kinship, false merit. The court now purges corrupt military upstarts. You may be exactly the man it means.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "ch2_anxi_govern_inspector_03": {
+    "character": "merchant",
+    "hash": "383753e840ea8912bc48b68ce87a5a7569ccd50338d32428c828e81dc19416fa",
+    "text": "Liu Xuande! Save my life!",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "ch2_anxi_govern_lb_01": {
+    "character": "liubei",
+    "hash": "012aa529484ffd452782887c7e0485c07236230eb5c28701572be400290d6d73",
+    "text": "I am descended from Prince Jing of Zhongshan. Since Zhuo County I have fought the Yellow Turbans in more than thirty actions.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_anxi_govern_lb_02": {
+    "character": "liubei",
+    "hash": "4467fca14870c995a3c329626d40692b3d19d8f6512770544823bf366c09a7f7",
+    "text": "I have taken nothing from the people. What treasure could I hand him without first becoming what he accuses me of being?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_anxi_govern_lb_03": {
+    "character": "liubei",
+    "hash": "dfde63e6c853708ccc1e7d5ef36c16f8c23019f889bebe06ba9e91af8f54bac4",
+    "text": "Yide, enough. He deserves punishment, but not death by our anger.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_anxi_govern_lb_04": {
+    "character": "liubei",
+    "hash": "9d5f0d49af07f584a307d1b2aef2e27ef5fbbb6d6eb6b577988e8ac40b1b217b",
+    "text": "Inspector, by your harm to the people you should die. I spare you. Take this seal back to those who sell honor so cheaply.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_anxi_govern_narrator_01": {
+    "character": "narrator",
+    "hash": "4102e99d6f52a4ab38831231c7308c32cd5debf4258b2f1f7901b2d082c76ebe",
+    "text": "For one month Liu Bei governed Anxi without taking so much as a hair from the people, and the county began to trust the new commandant.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_anxi_govern_narrator_02": {
+    "character": "narrator",
+    "hash": "a63286318ac0393650e3c868594f4b0171e70f5032b3944fd20e10f7a0c8a174",
+    "text": "He ate and slept beside Guan Yu and Zhang Fei, and when he sat in public the brothers stood attendance all day without complaint.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_anxi_govern_narrator_03": {
+    "character": "narrator",
+    "hash": "d5723dc17763203c5c4685e28dedf00f12a70ff422694b69d9cea17010368086",
+    "text": "The next day, the inspector seized the county clerks and forced them to accuse Liu Bei. Elders came to plead for him and were beaten away from the gate.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_anxi_govern_narrator_04": {
+    "character": "narrator",
+    "hash": "ed8996bef20ca1b14c46936129a9d6383e922a43418480d687c48de608439b93",
+    "text": "Liu Bei hung the seal on the inspector, left Anxi with Guan Yu and Zhang Fei, and turned north toward Liu Hui of Dai.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_anxi_govern_narrator_one_01": {
+    "character": "narrator",
+    "hash": "6ef9af5db539a34bcf43e564e191b8dcad121e03e53aec5688161762d1d8285b",
+    "text": "Though another seal hung above him, Liu Bei handled Anxi business without taking so much as a hair from the people.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_anxi_govern_zf_01": {
+    "character": "zhangfei",
+    "hash": "b0c4e9065466c63aa4d9303a54a889b21ac0a85a8203f0a349d5cbef4082118d",
+    "text": "A thief who harms the people dares call my brother corrupt? Let him hear the truth from my hand.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
+  },
   "ch2_anxi_gy_01": {
     "character": "guanyu",
     "hash": "9d25bb7f96e61ac41d20c47b534af392473dad8a6425d89556a476ba5119c69a",
@@ -234,6 +346,13 @@
     "character": "guanyu",
     "hash": "6e4ef6b467cbb3fa8476c0271787754d30af5a7ac8d11c44edae80d76bd46670",
     "text": "Then we cannot serve through an office, but we can still guard the people wherever chaos opens a road.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "ch2_anxi_gy_both_02": {
+    "character": "guanyu",
+    "hash": "0c90b8b905de20b9c728e6a0d79b5432208620c0af33b019fbf768acde079081",
+    "text": "Then we should leave before the court changes its mind. A pardon spoken in fear may not survive a second whisper.",
     "version": 1,
     "voice_target": "movies/clean/clean_master_xehanort.wav"
   },
@@ -297,13 +416,6 @@
     "character": "narrator",
     "hash": "35e2e59b5d3f8ef49e7bbf518724e0df48a36b76762f7484f5ca52ff829f44d6",
     "text": "Liu Bei dismissed the volunteers to their villages and took only a small retinue with Guan Yu and Zhang Fei to Anxi.",
-    "version": 1,
-    "voice_target": "movies/clean/clean_uncle-iroh.wav"
-  },
-  "ch2_anxi_narrator_both_02": {
-    "character": "narrator",
-    "hash": "6b6e4abff775e055fa031e091420d1388d78cae2cf388d686c8b678d17fa97d0",
-    "text": "Liu Bei dismissed the volunteers to their villages and went north to Dai. Liu Hui could shelter the brothers until a new summons called them back into the open.",
     "version": 1,
     "voice_target": "movies/clean/clean_uncle-iroh.wav"
   },
@@ -950,6 +1062,62 @@
     "text": "My lord, no. This is exactly what they want.",
     "version": 1,
     "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_liuhui_gy_01": {
+    "character": "guanyu",
+    "hash": "c2633cbe3d4b48f67f92996c367b2b882db7edb6cb3e03c4bfb0e1492754f620",
+    "text": "A righteous road sometimes passes through another man's gate. We accept your shelter with gratitude.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
+  "ch2_liuhui_lb_01": {
+    "character": "liubei",
+    "hash": "4b2f96f890c0a4a55538b8b5fe224946a5985833f03527916a8a29959bea3c40",
+    "text": "Liu Hui of Dai is also of the Han house. If he will receive us, we may wait there until the realm has need of us again.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_liuhui_lb_02": {
+    "character": "liubei",
+    "hash": "34321d0fb9391b596ce092b725656c049ab2bc50783465a2f6238509bd3c6a1f",
+    "text": "Then we remain quiet, protect those near us, and wait for a summons worthy of the oath we swore.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_liuhui_lh_01": {
+    "character": "zhoujing",
+    "hash": "0469de9146dd2fa74fc5cf699b7570c10af661176d924b869950545157595d2d",
+    "text": "Xuande, I know your name and your blood. The Han is poorer when men like you are hunted. My house is open.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_liuhui_narrator_02": {
+    "character": "narrator",
+    "hash": "9588fcb2df54ea4c88a7b03a094b3c6b206963b2c1f2e6fd2d4a889ca772a57c",
+    "text": "Liu Hui sheltered the brothers in Dai. For a time, Liu Bei vanished from court ledgers, but not from the troubled roads of the Han.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_liuhui_narrator_anxi_01": {
+    "character": "narrator",
+    "hash": "445e31f95a20aab1483abe30293bfa3f273c108c0a583a358b1bf887800dafd8",
+    "text": "After the seal was returned and Anxi left behind, Liu Bei, Guan Yu, and Zhang Fei traveled north with warrants already likely riding after them.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_liuhui_narrator_both_01": {
+    "character": "narrator",
+    "hash": "33a16bd677426c5c7f38a5d226e1ae0c9a42f20bf050be0291529bc9a78f7c2f",
+    "text": "The court had pardoned Liu Bei but granted no post. He dismissed the volunteers to their villages and left Luoyang before pardon curdled into pursuit.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
+  "ch2_liuhui_zf_01": {
+    "character": "zhangfei",
+    "hash": "c3da8cc4b9e26f19ebefaf0475e7790e8bf6911362405d1fbe6da029ed88303f",
+    "text": "Hiding sits badly on my shoulders. Still, better here than bowing to an inspector with a hungry palm.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_kublai-khan.wav"
   },
   "ch2_oath_dz_restrain_01": {
     "character": "dongzhuo",
@@ -2659,6 +2827,13 @@
     "version": 1,
     "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
   },
+  "map_lb_ch2_anxi_01": {
+    "character": "liubei",
+    "hash": "faae6533f2e70592178ad63b206112a87fc493a9fd707c3ce3f1e2f24d24a8d7",
+    "text": "The court has named our place. We march to Anxi and serve the people there as cleanly as we can.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
   "map_lb_ch2_counter_01": {
     "character": "liubei",
     "hash": "58777bd9be00e26c581d6b040c59a611c8f37e007683f63931f0386971d369a8",
@@ -2670,6 +2845,13 @@
     "character": "liubei",
     "hash": "ff1809403435ec4e486acdf23f44090af558341af3073508b5539222cbde84d2",
     "text": "The counter is prepared. We return to the valley, close the pincer, and break Zhang Bao's thunder.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_ch2_liuhui_01": {
+    "character": "liubei",
+    "hash": "9a31410014c4dd0b0bcd2bb718c4a9e5aa733eef3029af8ce2c21db954acb508",
+    "text": "We cannot remain under the court's eye. Liu Hui of Dai may shelter us until a better summons comes.",
     "version": 1,
     "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
   },

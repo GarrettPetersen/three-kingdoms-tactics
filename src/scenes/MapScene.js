@@ -156,6 +156,40 @@ const LIUBEI_LOCATIONS = {
             ) && !hasCompletedChapter2Node(gs, 'chapter2_anxi_appointment'),
         isCompleted: (gs) =>
             hasCompletedChapter2Node(gs, 'chapter2_anxi_appointment')
+    },
+    chapter2_anxi_governance: {
+        id: 'chapter2_anxi_governance',
+        x: 176,
+        y: 77,
+        name: 'Anxi County',
+        imgKey: 'city',
+        storyRouteId: CHAPTER2_ROUTE_ID,
+        storyNodeId: 'chapter2_anxi_governance',
+        unlockCondition: (gs) =>
+            (
+                gs.getStoryCursor(CHAPTER2_ROUTE_ID).nodeId === 'chapter2_anxi_governance'
+                || gs.getStoryCursor(CHAPTER2_LEGACY_ROUTE_ID).nodeId === 'chapter2_anxi_governance'
+                || hasChapter2Node(gs, 'chapter2_anxi_governance')
+            ) && !hasCompletedChapter2Node(gs, 'chapter2_anxi_governance'),
+        isCompleted: (gs) =>
+            hasCompletedChapter2Node(gs, 'chapter2_anxi_governance')
+    },
+    chapter2_liuhui_shelter: {
+        id: 'chapter2_liuhui_shelter',
+        x: 171,
+        y: 44,
+        name: "Liu Hui's Residence",
+        imgKey: 'camp_tent',
+        storyRouteId: CHAPTER2_ROUTE_ID,
+        storyNodeId: 'chapter2_liuhui_shelter',
+        unlockCondition: (gs) =>
+            (
+                gs.getStoryCursor(CHAPTER2_ROUTE_ID).nodeId === 'chapter2_liuhui_shelter'
+                || gs.getStoryCursor(CHAPTER2_LEGACY_ROUTE_ID).nodeId === 'chapter2_liuhui_shelter'
+                || hasChapter2Node(gs, 'chapter2_liuhui_shelter')
+            ) && !hasCompletedChapter2Node(gs, 'chapter2_liuhui_shelter'),
+        isCompleted: (gs) =>
+            hasCompletedChapter2Node(gs, 'chapter2_liuhui_shelter')
     }
 };
 
@@ -341,6 +375,24 @@ const HERO_REMINDERS = {
             en: "Wan is settled. General Zhu Jun returns to Luoyang to report the victory; we should follow and wait on the court's judgment.",
             zh: "宛城已定。朱儁将军班师洛阳奏捷，我等也该随行，听候朝廷铨注。"
         }
+    },
+    'chapter2_anxi_governance': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_ch2_anxi_01',
+        text: {
+            en: "The court has named our place. We march to Anxi and serve the people there as cleanly as we can.",
+            zh: "朝廷已定我等去处。我们往安喜去，尽力清白为民。"
+        }
+    },
+    'chapter2_liuhui_shelter': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_ch2_liuhui_01',
+        text: {
+            en: "We cannot remain under the court's eye. Liu Hui of Dai may shelter us until a better summons comes.",
+            zh: "不可再留在朝廷眼下。代州刘恢或可暂容我等，待来日再听征召。"
+        }
     }
 };
 
@@ -392,13 +444,33 @@ const MAP_SCREEN_DEFINITIONS = {
             chapter2_luoyang: makeMapScreenLocation(LIUBEI_LOCATIONS.chapter2_luoyang)
         },
         reminderKey: 'chapter2_anxi_appointment'
+    },
+    chapter2_anxi: {
+        id: 'chapter2_anxi',
+        campaignId: CHAPTER2_ROUTE_ID,
+        party: { id: 'liubei', name: 'Liu Bei', x: 176, y: 77, imgKey: 'liubei' },
+        locations: {
+            chapter2_anxi_governance: makeMapScreenLocation(LIUBEI_LOCATIONS.chapter2_anxi_governance)
+        },
+        reminderKey: 'chapter2_anxi_governance'
+    },
+    chapter2_liuhui: {
+        id: 'chapter2_liuhui',
+        campaignId: CHAPTER2_ROUTE_ID,
+        party: { id: 'liubei', name: 'Liu Bei', x: 171, y: 44, imgKey: 'liubei' },
+        locations: {
+            chapter2_liuhui_shelter: makeMapScreenLocation(LIUBEI_LOCATIONS.chapter2_liuhui_shelter)
+        },
+        reminderKey: 'chapter2_liuhui_shelter'
     }
 };
 
 const MAP_SCREEN_BY_STORY_NODE = {
     chapter2_zhujun_camp: 'chapter2_zhujun_camp',
     chapter2_wan_strategy: 'chapter2_wan_strategy',
-    chapter2_anxi_appointment: 'chapter2_luoyang'
+    chapter2_anxi_appointment: 'chapter2_luoyang',
+    chapter2_anxi_governance: 'chapter2_anxi',
+    chapter2_liuhui_shelter: 'chapter2_liuhui'
 };
 
 export class MapScene extends BaseScene {
@@ -1360,6 +1432,8 @@ export class MapScene extends BaseScene {
         }
 
         // Highest-priority progression first.
+        if (hasChapter2Node(gs, 'chapter2_liuhui_shelter')) return 'chapter2_liuhui_shelter';
+        if (hasChapter2Node(gs, 'chapter2_anxi_governance')) return 'chapter2_anxi_governance';
         if (hasChapter2Node(gs, 'chapter2_anxi_appointment')) return 'chapter2_anxi_appointment';
         if (hasChapter2Node(gs, 'chapter2_wan_gate')) return 'chapter2_wan_gate';
         if (hasChapter2Node(gs, 'chapter2_wan_field')) return 'chapter2_wan_field';

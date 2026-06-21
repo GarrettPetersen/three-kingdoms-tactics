@@ -3145,11 +3145,6 @@ export const NARRATIVE_SCRIPTS = {
         { condition: CH2_NO_POLITICAL_CRIMES, type: 'command', action: 'setStoryChoice', key: 'chapter2_oath_political_outcome', value: 'anxi_commandant', routeId: 'chapter2_oath' },
         { condition: CH2_ONE_POLITICAL_CRIME, type: 'command', action: 'setStoryChoice', key: 'chapter2_oath_political_outcome', value: 'anxi_assistant', routeId: 'chapter2_oath' },
         { condition: CH2_BOTH_POLITICAL_CRIMES, type: 'command', action: 'setStoryChoice', key: 'chapter2_oath_political_outcome', value: 'pardoned_outlaw', routeId: 'chapter2_oath' },
-        { bg: 'dirt_road_city_in_distance', fg: null, type: 'command', action: 'clearActors' },
-        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 104, y: 192 },
-        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 72, y: 192 },
-        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 46, y: 192 },
         {
             condition: CH2_NO_POLITICAL_CRIMES,
             type: 'dialogue',
@@ -3187,15 +3182,6 @@ export const NARRATIVE_SCRIPTS = {
             }
         },
         {
-            condition: CH2_NO_POLITICAL_CRIMES,
-            type: 'narrator',
-            voiceId: 'ch2_anxi_narrator_04',
-            text: {
-                en: 'Liu Bei dismissed the volunteers to their villages and took only a small retinue with Guan Yu and Zhang Fei to Anxi.',
-                zh: '刘备遂遣军士各归乡里，只带少数亲随，与关羽、张飞赴安喜县上任。'
-            }
-        },
-        {
             condition: CH2_ONE_POLITICAL_CRIME,
             type: 'dialogue',
             portraitKey: 'liu-bei',
@@ -3229,15 +3215,6 @@ export const NARRATIVE_SCRIPTS = {
             text: {
                 en: 'A half-reward for a whole battlefield. Hmph. I will still walk beside you to Anxi.',
                 zh: '一场大战，只给半截赏赐。哼。去安喜，俺仍陪大哥。'
-            }
-        },
-        {
-            condition: CH2_ONE_POLITICAL_CRIME,
-            type: 'narrator',
-            voiceId: 'ch2_anxi_narrator_one_02',
-            text: {
-                en: 'Liu Bei dismissed the volunteers to their villages and took a small retinue with Guan Yu and Zhang Fei to Anxi, there to serve beneath another man\'s seal.',
-                zh: '刘备遂遣军士各归乡里，只带少数亲随，与关羽、张飞赴安喜，在他人印下供职。'
             }
         },
         {
@@ -3278,16 +3255,346 @@ export const NARRATIVE_SCRIPTS = {
         },
         {
             condition: CH2_BOTH_POLITICAL_CRIMES,
-            type: 'narrator',
-            voiceId: 'ch2_anxi_narrator_both_02',
+            type: 'dialogue',
+            portraitKey: 'guan-yu',
+            name: 'Guan Yu',
+            voiceId: 'ch2_anxi_gy_both_02',
+            position: 'top',
             text: {
-                en: 'Liu Bei dismissed the volunteers to their villages and went north to Dai. Liu Hui could shelter the brothers until a new summons called them back into the open.',
-                zh: '刘备遂遣军士各归乡里，北往代州。刘恢可暂匿兄弟三人，待新的征召再使其重入世局。'
+                en: 'Then we should leave before the court changes its mind. A pardon spoken in fear may not survive a second whisper.',
+                zh: '那就该在朝廷改口之前离开。因惧而赦，未必经得起第二句谗言。'
             }
         },
-        { type: 'command', action: 'move', id: 'zhangfei', x: 320, y: 192, wait: false },
-        { type: 'command', action: 'move', id: 'guanyu', x: 350, y: 192, wait: false },
-        { type: 'command', action: 'move', id: 'liubei', x: 380, y: 192, wait: true },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 320, y: 190, wait: false },
+        { type: 'command', action: 'move', id: 'guanyu', x: 350, y: 190, wait: false },
+        { type: 'command', action: 'move', id: 'liubei', x: 380, y: 190, wait: true },
+        { type: 'command', action: 'removeActor', id: 'zhangjun' },
+        { type: 'command', action: 'removeActor', id: 'liubei' },
+        { type: 'command', action: 'removeActor', id: 'guanyu' },
+        { type: 'command', action: 'removeActor', id: 'zhangfei' },
+        { type: 'command', action: 'fade', target: 1, speed: 0.001 }
+    ],
+    'chapter2_anxi_governance': [
+        { bg: 'dirt_road_city_in_distance', fg: null, type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: -34, y: 192, actorAction: 'walk', speed: 0.72 },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: -64, y: 192, actorAction: 'walk', speed: 0.68 },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: -94, y: 192, actorAction: 'walk', speed: 0.72 },
+        { type: 'command', action: 'move', id: 'liubei', x: 112, y: 192, wait: false },
+        { type: 'command', action: 'move', id: 'guanyu', x: 80, y: 192, wait: false },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 50, y: 192, wait: true },
+        {
+            condition: CH2_NO_POLITICAL_CRIMES,
+            type: 'narrator',
+            voiceId: 'ch2_anxi_narrator_04',
+            text: {
+                en: 'Liu Bei dismissed the volunteers to their villages and took only a small retinue with Guan Yu and Zhang Fei to Anxi.',
+                zh: '刘备遂遣军士各归乡里，只带少数亲随，与关羽、张飞赴安喜县上任。'
+            }
+        },
+        {
+            condition: CH2_ONE_POLITICAL_CRIME,
+            type: 'narrator',
+            voiceId: 'ch2_anxi_narrator_one_02',
+            text: {
+                en: 'Liu Bei dismissed the volunteers to their villages and took a small retinue with Guan Yu and Zhang Fei to Anxi, there to serve beneath another man\'s seal.',
+                zh: '刘备遂遣军士各归乡里，只带少数亲随，与关羽、张飞赴安喜，在他人印下供职。'
+            }
+        },
+        { bg: 'urban_street', fg: 'urban_street_foreground', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 118, y: 214, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 82, y: 216, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 50, y: 216, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'clerk', imgKey: 'zhoujing', x: 176, y: 204, flip: true, drawAboveForeground: true },
+        {
+            condition: CH2_NO_POLITICAL_CRIMES,
+            type: 'narrator',
+            voiceId: 'ch2_anxi_govern_narrator_01',
+            text: {
+                en: 'For one month Liu Bei governed Anxi without taking so much as a hair from the people, and the county began to trust the new commandant.',
+                zh: '署县事一月，刘备与民秋毫无犯，安喜百姓渐渐信服这位新县尉。'
+            }
+        },
+        {
+            condition: CH2_ONE_POLITICAL_CRIME,
+            type: 'narrator',
+            voiceId: 'ch2_anxi_govern_narrator_one_01',
+            text: {
+                en: 'Though another seal hung above him, Liu Bei handled Anxi business without taking so much as a hair from the people.',
+                zh: '虽在他人印下供职，刘备处置安喜县事，仍与民秋毫无犯。'
+            }
+        },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_anxi_govern_narrator_02',
+            text: {
+                en: 'He ate and slept beside Guan Yu and Zhang Fei, and when he sat in public the brothers stood attendance all day without complaint.',
+                zh: '到任之后，与关、张食则同桌，寝则同床。稠人广坐之中，关、张侍立终日不倦。'
+            }
+        },
+        { type: 'command', action: 'addActor', id: 'inspector', imgKey: 'merchant', x: 340, y: 204, actorAction: 'walk', speed: 0.58, flip: true, drawAboveForeground: true },
+        { type: 'command', action: 'move', id: 'inspector', x: 214, y: 204, wait: true },
+        {
+            type: 'dialogue',
+            portraitKey: 'merchant',
+            name: 'Inspector',
+            voiceId: 'ch2_anxi_govern_inspector_01',
+            position: 'top',
+            text: {
+                en: 'Liu Xuande. What is your origin, and by what merit did you receive office?',
+                zh: '刘玄德。你是何出身，又凭何功得授职任？'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_anxi_govern_lb_01',
+            position: 'top',
+            text: {
+                en: 'I am descended from Prince Jing of Zhongshan. Since Zhuo County I have fought the Yellow Turbans in more than thirty actions.',
+                zh: '备乃中山靖王之后。自涿郡起兵以来，大小三十余战，讨剿黄巾。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'merchant',
+            name: 'Inspector',
+            voiceId: 'ch2_anxi_govern_inspector_02',
+            position: 'top',
+            text: {
+                en: 'False kinship, false merit. The court now purges corrupt military upstarts. You may be exactly the man it means.',
+                zh: '诈称皇亲，虚报功绩。朝廷正要沙汰这等军功滥官，你恐怕正合其例。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhou-jing',
+            name: 'County Clerk',
+            voiceId: 'ch2_anxi_govern_clerk_01',
+            position: 'top',
+            text: {
+                en: 'My lord, the inspector comes wrapped in authority. He asks without asking. A bribe is what he means.',
+                zh: '刘公，督邮以威压人。他口中不说，心里所要，无非贿赂。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_anxi_govern_lb_02',
+            position: 'top',
+            text: {
+                en: 'I have taken nothing from the people. What treasure could I hand him without first becoming what he accuses me of being?',
+                zh: '我与民秋毫无犯。若要献财，岂不是先成了他口中的贪吏？'
+            }
+        },
+        { type: 'command', action: 'fade', target: 1, speed: 0.001 },
+        { bg: 'urban_street', fg: 'urban_street_foreground', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'addActor', id: 'inspector', imgKey: 'merchant', x: 210, y: 198, flip: true, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'clerk', imgKey: 'zhoujing', x: 172, y: 214, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'elder1', imgKey: 'farmer', x: 88, y: 218, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'elder2', imgKey: 'farmer2', x: 64, y: 218, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: -34, y: 220, actorAction: 'walk', speed: 0.92, drawAboveForeground: true },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_anxi_govern_narrator_03',
+            text: {
+                en: 'The next day, the inspector seized the county clerks and forced them to accuse Liu Bei. Elders came to plead for him and were beaten away from the gate.',
+                zh: '次日，督邮先提县吏，勒令指称刘备害民。乡老前来苦告，又被门人赶打。'
+            }
+        },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 136, y: 218, wait: true },
+        {
+            type: 'dialogue',
+            portraitKey: 'farmer',
+            name: 'Elder',
+            voiceId: 'ch2_anxi_govern_elder_01',
+            position: 'top',
+            text: {
+                en: 'General Zhang, the inspector means to ruin Lord Liu. We came to testify, but his men will not let us in.',
+                zh: '张将军，督邮要害刘公。我等来作证，却被他手下拦在门外。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhang-fei',
+            name: 'Zhang Fei',
+            voiceId: 'ch2_anxi_govern_zf_01',
+            position: 'top',
+            text: {
+                en: 'A thief who harms the people dares call my brother corrupt? Let him hear the truth from my hand.',
+                zh: '害民的贼，倒敢说俺哥哥贪污？让他的皮肉听听真话！'
+            }
+        },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 202, y: 204, wait: true },
+        { type: 'command', action: 'animate', id: 'zhangfei', animation: 'attack_1', wait: true },
+        { type: 'command', action: 'playSound', key: 'bash', volume: 0.8 },
+        { type: 'command', action: 'animate', id: 'inspector', animation: 'hit', wait: false },
+        { type: 'command', action: 'wait', duration: 350 },
+        { type: 'command', action: 'animate', id: 'zhangfei', animation: 'attack_1', wait: true },
+        { type: 'command', action: 'playSound', key: 'bash', volume: 0.8 },
+        { type: 'command', action: 'animate', id: 'inspector', animation: 'hit', wait: false },
+        {
+            type: 'dialogue',
+            portraitKey: 'merchant',
+            name: 'Inspector',
+            voiceId: 'ch2_anxi_govern_inspector_03',
+            position: 'top',
+            text: {
+                en: 'Liu Xuande! Save my life!',
+                zh: '玄德公！救我性命！'
+            }
+        },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: -40, y: 220, actorAction: 'walk', speed: 0.84, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: -68, y: 220, actorAction: 'walk', speed: 0.8, drawAboveForeground: true },
+        { type: 'command', action: 'move', id: 'liubei', x: 110, y: 218, wait: false },
+        { type: 'command', action: 'move', id: 'guanyu', x: 82, y: 218, wait: true },
+        {
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_anxi_govern_lb_03',
+            position: 'top',
+            text: {
+                en: 'Yide, enough. He deserves punishment, but not death by our anger.',
+                zh: '翼德，够了。他当受责罚，却不该死于我等怒气。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'guan-yu',
+            name: 'Guan Yu',
+            voiceId: 'ch2_anxi_govern_gy_01',
+            position: 'top',
+            text: {
+                en: 'Brother, a thornbush is no perch for phoenixes. Return the seal and seek a larger road.',
+                zh: '兄长，枳棘丛中，非栖鸾凤之所。不如缴还印绶，另图远计。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_anxi_govern_lb_04',
+            position: 'top',
+            text: {
+                en: 'Inspector, by your harm to the people you should die. I spare you. Take this seal back to those who sell honor so cheaply.',
+                zh: '督邮，据你害民，本当杀却。今姑饶汝命。把这印绶带回给那些轻卖功名的人。'
+            }
+        },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_anxi_govern_narrator_04',
+            text: {
+                en: 'Liu Bei hung the seal on the inspector, left Anxi with Guan Yu and Zhang Fei, and turned north toward Liu Hui of Dai.',
+                zh: '刘备将印绶挂在督邮颈上，与关羽、张飞离开安喜，北往代州投刘恢。'
+            }
+        },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 340, y: 216, wait: false },
+        { type: 'command', action: 'move', id: 'guanyu', x: 370, y: 216, wait: false },
+        { type: 'command', action: 'move', id: 'liubei', x: 400, y: 216, wait: true },
+        { type: 'command', action: 'fade', target: 1, speed: 0.001 }
+    ],
+    'chapter2_liuhui_shelter': [
+        { bg: 'dirt_road_city_in_distance', fg: null, type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: -34, y: 192, actorAction: 'walk', speed: 0.72 },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: -64, y: 192, actorAction: 'walk', speed: 0.68 },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: -94, y: 192, actorAction: 'walk', speed: 0.72 },
+        { type: 'command', action: 'addActor', id: 'liuhui', imgKey: 'zhoujing', x: 246, y: 192, flip: true },
+        { type: 'command', action: 'move', id: 'liubei', x: 120, y: 192, wait: false },
+        { type: 'command', action: 'move', id: 'guanyu', x: 88, y: 192, wait: false },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 58, y: 192, wait: true },
+        {
+            condition: CH2_BOTH_POLITICAL_CRIMES,
+            type: 'narrator',
+            voiceId: 'ch2_liuhui_narrator_both_01',
+            text: {
+                en: 'The court had pardoned Liu Bei but granted no post. He dismissed the volunteers to their villages and left Luoyang before pardon curdled into pursuit.',
+                zh: '朝廷赦了刘备，却不授一官。刘备遣军士各归乡里，趁赦命未变，离开洛阳。'
+            }
+        },
+        {
+            condition: { not: CH2_BOTH_POLITICAL_CRIMES },
+            type: 'narrator',
+            voiceId: 'ch2_liuhui_narrator_anxi_01',
+            text: {
+                en: 'After the seal was returned and Anxi left behind, Liu Bei, Guan Yu, and Zhang Fei traveled north with warrants already likely riding after them.',
+                zh: '印绶既还，安喜已别，刘备、关羽、张飞北行而去，追捕文书只怕已在路上。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_liuhui_lb_01',
+            position: 'top',
+            text: {
+                en: 'Liu Hui of Dai is also of the Han house. If he will receive us, we may wait there until the realm has need of us again.',
+                zh: '代州刘恢亦是汉室宗亲。若他肯收留，我等可暂候其处，待天下再有用我等之日。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhou-jing',
+            name: 'Liu Hui',
+            voiceId: 'ch2_liuhui_lh_01',
+            position: 'top',
+            text: {
+                en: 'Xuande, I know your name and your blood. The Han is poorer when men like you are hunted. My house is open.',
+                zh: '玄德，我知你名，也知你宗。似你这等人为朝廷所逼，汉家更贫。寒舍可容。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'zhang-fei',
+            name: 'Zhang Fei',
+            voiceId: 'ch2_liuhui_zf_01',
+            position: 'top',
+            text: {
+                en: 'Hiding sits badly on my shoulders. Still, better here than bowing to an inspector with a hungry palm.',
+                zh: '躲藏这事压得俺肩膀难受。可比向伸手要钱的督邮低头强。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'guan-yu',
+            name: 'Guan Yu',
+            voiceId: 'ch2_liuhui_gy_01',
+            position: 'top',
+            text: {
+                en: 'A righteous road sometimes passes through another man\'s gate. We accept your shelter with gratitude.',
+                zh: '义路有时也须借人门庭而过。承蒙收留，关某铭感。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'liu-bei',
+            name: 'Liu Bei',
+            voiceId: 'ch2_liuhui_lb_02',
+            position: 'top',
+            text: {
+                en: 'Then we remain quiet, protect those near us, and wait for a summons worthy of the oath we swore.',
+                zh: '那便暂且安身，护近处百姓，待一个不负桃园之誓的征召。'
+            }
+        },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_liuhui_narrator_02',
+            text: {
+                en: 'Liu Hui sheltered the brothers in Dai. For a time, Liu Bei vanished from court ledgers, but not from the troubled roads of the Han.',
+                zh: '刘恢遂留匿兄弟三人。刘备一时隐于朝廷簿书之外，却未离汉家乱路之中。'
+            }
+        },
+        { type: 'command', action: 'move', id: 'liuhui', x: 320, y: 192, wait: false },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 340, y: 192, wait: false },
+        { type: 'command', action: 'move', id: 'guanyu', x: 370, y: 192, wait: false },
+        { type: 'command', action: 'move', id: 'liubei', x: 400, y: 192, wait: true },
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ],
     'chapter2_hejin_gate': [

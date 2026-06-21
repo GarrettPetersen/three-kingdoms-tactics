@@ -191,6 +191,102 @@
     "phonetic_text": "But slaying the ungrateful would Mean many deaths a year. Dong Jwoh's fate will be unrolled in later chapters."
   },
   {
+    "id": "ch2_anxi_govern_clerk_01",
+    "char": "zhoujing",
+    "text": "My lord, the inspector comes wrapped in authority. He asks without asking. A bribe is what he means.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_elder_01",
+    "char": "farmer",
+    "text": "General Zhang, the inspector means to ruin Lord Liu. We came to testify, but his men will not let us in.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_gy_01",
+    "char": "guanyu",
+    "text": "Brother, a thornbush is no perch for phoenixes. Return the seal and seek a larger road.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_inspector_01",
+    "char": "merchant",
+    "text": "Liu Xuande. What is your origin, and by what merit did you receive office?",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_inspector_02",
+    "char": "merchant",
+    "text": "False kinship, false merit. The court now purges corrupt military upstarts. You may be exactly the man it means.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_inspector_03",
+    "char": "merchant",
+    "text": "Liu Xuande! Save my life!",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_lb_01",
+    "char": "liubei",
+    "text": "I am descended from Prince Jing of Zhongshan. Since Zhuo County I have fought the Yellow Turbans in more than thirty actions.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_lb_02",
+    "char": "liubei",
+    "text": "I have taken nothing from the people. What treasure could I hand him without first becoming what he accuses me of being?",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_lb_03",
+    "char": "liubei",
+    "text": "Yide, enough. He deserves punishment, but not death by our anger.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_lb_04",
+    "char": "liubei",
+    "text": "Inspector, by your harm to the people you should die. I spare you. Take this seal back to those who sell honor so cheaply.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_narrator_01",
+    "char": "narrator",
+    "text": "For one month Liu Bei governed Anxi without taking so much as a hair from the people, and the county began to trust the new commandant.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_narrator_02",
+    "char": "narrator",
+    "text": "He ate and slept beside Guan Yu and Zhang Fei, and when he sat in public the brothers stood attendance all day without complaint.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_narrator_03",
+    "char": "narrator",
+    "text": "The next day, the inspector seized the county clerks and forced them to accuse Liu Bei. Elders came to plead for him and were beaten away from the gate.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_narrator_04",
+    "char": "narrator",
+    "text": "Liu Bei hung the seal on the inspector, left Anxi with Guan Yu and Zhang Fei, and turned north toward Liu Hui of Dai.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_narrator_one_01",
+    "char": "narrator",
+    "text": "Though another seal hung above him, Liu Bei handled Anxi business without taking so much as a hair from the people.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_zf_01",
+    "char": "zhangfei",
+    "text": "A thief who harms the people dares call my brother corrupt? Let him hear the truth from my hand.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_anxi_gy_01",
     "char": "guanyu",
     "text": "Merit should speak for itself. Yet at court, even merit seems to need an usher.",
@@ -206,6 +302,12 @@
     "id": "ch2_anxi_gy_both_01",
     "char": "guanyu",
     "text": "Then we cannot serve through an office, but we can still guard the people wherever chaos opens a road.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_gy_both_02",
+    "char": "guanyu",
+    "text": "Then we should leave before the court changes its mind. A pardon spoken in fear may not survive a second whisper.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -260,12 +362,6 @@
     "id": "ch2_anxi_narrator_04",
     "char": "narrator",
     "text": "Liu Bei dismissed the volunteers to their villages and took only a small retinue with Guan Yu and Zhang Fei to Anxi.",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_anxi_narrator_both_02",
-    "char": "narrator",
-    "text": "Liu Bei dismissed the volunteers to their villages and went north to Dai. Liu Hui could shelter the brothers until a new summons called them back into the open.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -818,6 +914,54 @@
     "id": "ch2_hj_panyin_03",
     "char": "panyin",
     "text": "My lord, no. This is exactly what they want.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_liuhui_gy_01",
+    "char": "guanyu",
+    "text": "A righteous road sometimes passes through another man's gate. We accept your shelter with gratitude.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_liuhui_lb_01",
+    "char": "liubei",
+    "text": "Liu Hui of Dai is also of the Han house. If he will receive us, we may wait there until the realm has need of us again.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_liuhui_lb_02",
+    "char": "liubei",
+    "text": "Then we remain quiet, protect those near us, and wait for a summons worthy of the oath we swore.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_liuhui_lh_01",
+    "char": "zhoujing",
+    "text": "Xuande, I know your name and your blood. The Han is poorer when men like you are hunted. My house is open.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_liuhui_narrator_02",
+    "char": "narrator",
+    "text": "Liu Hui sheltered the brothers in Dai. For a time, Liu Bei vanished from court ledgers, but not from the troubled roads of the Han.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_liuhui_narrator_anxi_01",
+    "char": "narrator",
+    "text": "After the seal was returned and Anxi left behind, Liu Bei, Guan Yu, and Zhang Fei traveled north with warrants already likely riding after them.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_liuhui_narrator_both_01",
+    "char": "narrator",
+    "text": "The court had pardoned Liu Bei but granted no post. He dismissed the volunteers to their villages and left Luoyang before pardon curdled into pursuit.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_liuhui_zf_01",
+    "char": "zhangfei",
+    "text": "Hiding sits badly on my shoulders. Still, better here than bowing to an inspector with a hungry palm.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -2297,6 +2441,12 @@
     "source": "MapScene.js"
   },
   {
+    "id": "map_lb_ch2_anxi_01",
+    "char": "liubei",
+    "text": "The court has named our place. We march to Anxi and serve the people there as cleanly as we can.",
+    "source": "MapScene.js"
+  },
+  {
     "id": "map_lb_ch2_counter_01",
     "char": "liubei",
     "text": "Zhang Bao has fled to Yangcheng. Press on before the city can steady itself.",
@@ -2306,6 +2456,12 @@
     "id": "map_lb_ch2_counter_council_01",
     "char": "liubei",
     "text": "The counter is prepared. We return to the valley, close the pincer, and break Zhang Bao's thunder.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_liuhui_01",
+    "char": "liubei",
+    "text": "We cannot remain under the court's eye. Liu Hui of Dai may shelter us until a better summons comes.",
     "source": "MapScene.js"
   },
   {

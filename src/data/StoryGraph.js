@@ -56,7 +56,16 @@ export const STORY_ROUTES = {
             },
             chapter2_wan_north_road: { next: 'chapter2_anxi_appointment' },
             chapter2_wan_final_assault: { next: 'chapter2_anxi_appointment' },
-            chapter2_anxi_appointment: { next: 'chapter2_oath_complete' },
+            chapter2_anxi_appointment: {
+                transitions: [
+                    { choice: 'chapter2_oath_political_outcome', value: 'pardoned_outlaw', to: 'chapter2_liuhui_shelter' },
+                    { choice: 'chapter2_oath_political_outcome', value: 'anxi_commandant', to: 'chapter2_anxi_governance' },
+                    { choice: 'chapter2_oath_political_outcome', value: 'anxi_assistant', to: 'chapter2_anxi_governance' },
+                    { to: 'chapter2_anxi_governance' }
+                ]
+            },
+            chapter2_anxi_governance: { next: 'chapter2_liuhui_shelter' },
+            chapter2_liuhui_shelter: { next: 'chapter2_oath_complete' },
             chapter2_oath_complete: { next: null }
         }
     },

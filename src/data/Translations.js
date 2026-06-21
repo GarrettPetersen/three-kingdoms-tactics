@@ -353,8 +353,8 @@ export const UI_TEXT = {
         zh: '兄弟三人离开董卓战场后继续前行。是克制守义，还是怒火开路？'
     },
     'campaign_ch2_oath_complete': {
-        en: 'The brothers have left Dong Zhuo behind, joined Zhu Jun at Yingchuan, broken Zhang Bao\'s sorcery, pacified Wan, and received the meager Anxi County appointment.',
-        zh: '兄弟三人离开董卓，投奔颍川朱儁，破了张宝妖法，平定宛城，最终只得安喜县尉微职。'
+        en: 'The brothers have left Dong Zhuo behind, joined Zhu Jun at Yingchuan, broken Zhang Bao\'s sorcery, pacified Wan, received the court\'s judgment, and found shelter with Liu Hui.',
+        zh: '兄弟三人离开董卓，投奔颍川朱儁，破了张宝妖法，平定宛城，经受朝廷铨注之果，最终投刘恢暂避。'
     },
     'campaign_ch2_oath_complete_intro': {
         en: 'Zhang Bao fell; Wan was settled.',

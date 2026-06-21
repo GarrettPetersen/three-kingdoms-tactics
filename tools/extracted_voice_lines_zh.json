@@ -186,6 +186,102 @@
     "source": "MapScene.js"
   },
   {
+    "id": "ch2_anxi_govern_clerk_01",
+    "char": "zhoujing",
+    "text": "刘公，督邮以威压人。他口中不说，心里所要，无非贿赂。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_elder_01",
+    "char": "farmer",
+    "text": "张将军，督邮要害刘公。我等来作证，却被他手下拦在门外。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_gy_01",
+    "char": "guanyu",
+    "text": "兄长，枳棘丛中，非栖鸾凤之所。不如缴还印绶，另图远计。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_inspector_01",
+    "char": "merchant",
+    "text": "刘玄德。你是何出身，又凭何功得授职任？",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_inspector_02",
+    "char": "merchant",
+    "text": "诈称皇亲，虚报功绩。朝廷正要沙汰这等军功滥官，你恐怕正合其例。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_inspector_03",
+    "char": "merchant",
+    "text": "玄德公！救我性命！",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_lb_01",
+    "char": "liubei",
+    "text": "备乃中山靖王之后。自涿郡起兵以来，大小三十余战，讨剿黄巾。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_lb_02",
+    "char": "liubei",
+    "text": "我与民秋毫无犯。若要献财，岂不是先成了他口中的贪吏？",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_lb_03",
+    "char": "liubei",
+    "text": "翼德，够了。他当受责罚，却不该死于我等怒气。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_lb_04",
+    "char": "liubei",
+    "text": "督邮，据你害民，本当杀却。今姑饶汝命。把这印绶带回给那些轻卖功名的人。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_narrator_01",
+    "char": "narrator",
+    "text": "署县事一月，刘备与民秋毫无犯，安喜百姓渐渐信服这位新县尉。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_narrator_02",
+    "char": "narrator",
+    "text": "到任之后，与关、张食则同桌，寝则同床。稠人广坐之中，关、张侍立终日不倦。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_narrator_03",
+    "char": "narrator",
+    "text": "次日，督邮先提县吏，勒令指称刘备害民。乡老前来苦告，又被门人赶打。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_narrator_04",
+    "char": "narrator",
+    "text": "刘备将印绶挂在督邮颈上，与关羽、张飞离开安喜，北往代州投刘恢。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_narrator_one_01",
+    "char": "narrator",
+    "text": "虽在他人印下供职，刘备处置安喜县事，仍与民秋毫无犯。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_zf_01",
+    "char": "zhangfei",
+    "text": "害民的贼，倒敢说俺哥哥贪污？让他的皮肉听听真话！",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_anxi_gy_01",
     "char": "guanyu",
     "text": "功劳本当自明。只是朝堂之上，功劳也似乎要人引见。",
@@ -201,6 +297,12 @@
     "id": "ch2_anxi_gy_both_01",
     "char": "guanyu",
     "text": "既不能以官职效力，仍可在乱处护民。义路未绝。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_gy_both_02",
+    "char": "guanyu",
+    "text": "那就该在朝廷改口之前离开。因惧而赦，未必经得起第二句谗言。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -255,12 +357,6 @@
     "id": "ch2_anxi_narrator_04",
     "char": "narrator",
     "text": "刘备遂遣军士各归乡里，只带少数亲随，与关羽、张飞赴安喜县上任。",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_anxi_narrator_both_02",
-    "char": "narrator",
-    "text": "刘备遂遣军士各归乡里，北往代州。刘恢可暂匿兄弟三人，待新的征召再使其重入世局。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -813,6 +909,54 @@
     "id": "ch2_hj_panyin_03",
     "char": "panyin",
     "text": "公不可。此正中其计。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_liuhui_gy_01",
+    "char": "guanyu",
+    "text": "义路有时也须借人门庭而过。承蒙收留，关某铭感。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_liuhui_lb_01",
+    "char": "liubei",
+    "text": "代州刘恢亦是汉室宗亲。若他肯收留，我等可暂候其处，待天下再有用我等之日。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_liuhui_lb_02",
+    "char": "liubei",
+    "text": "那便暂且安身，护近处百姓，待一个不负桃园之誓的征召。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_liuhui_lh_01",
+    "char": "zhoujing",
+    "text": "玄德，我知你名，也知你宗。似你这等人为朝廷所逼，汉家更贫。寒舍可容。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_liuhui_narrator_02",
+    "char": "narrator",
+    "text": "刘恢遂留匿兄弟三人。刘备一时隐于朝廷簿书之外，却未离汉家乱路之中。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_liuhui_narrator_anxi_01",
+    "char": "narrator",
+    "text": "印绶既还，安喜已别，刘备、关羽、张飞北行而去，追捕文书只怕已在路上。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_liuhui_narrator_both_01",
+    "char": "narrator",
+    "text": "朝廷赦了刘备，却不授一官。刘备遣军士各归乡里，趁赦命未变，离开洛阳。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_liuhui_zf_01",
+    "char": "zhangfei",
+    "text": "躲藏这事压得俺肩膀难受。可比向伸手要钱的督邮低头强。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -2280,6 +2424,12 @@
     "source": "MapScene.js"
   },
   {
+    "id": "map_lb_ch2_anxi_01",
+    "char": "liubei",
+    "text": "朝廷已定我等去处。我们往安喜去，尽力清白为民。",
+    "source": "MapScene.js"
+  },
+  {
     "id": "map_lb_ch2_counter_01",
     "char": "liubei",
     "text": "张宝已退入阳城。趁城中未定，立刻追击。",
@@ -2289,6 +2439,12 @@
     "id": "map_lb_ch2_counter_council_01",
     "char": "liubei",
     "text": "破术之策已备。我们回到谷中，合围进逼，破张宝天雷。",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_liuhui_01",
+    "char": "liubei",
+    "text": "不可再留在朝廷眼下。代州刘恢或可暂容我等，待来日再听征召。",
     "source": "MapScene.js"
   },
   {
