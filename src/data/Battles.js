@@ -815,8 +815,8 @@ export const BATTLES = {
                 name: 'Zhu Jun',
                 voiceId: 'ch2_yc_zj_01',
                 text: {
-                    en: "Zhang Bao! Your brother is dead, your sorcery is broken, and the counties are returning to the Han.",
-                    zh: "张宝！张角已死，妖法已破，诸郡皆归汉廷。"
+                    en: "Zhang Bao! Zhang Jue died at Guangzong, and Huangfu Song cut down Zhang Liang at Quyang. Your brothers are gone, your sorcery is broken, and the counties return to the Han.",
+                    zh: "张宝！张角已死于广宗，张梁又在曲阳为皇甫嵩所破。你兄弟皆亡，妖法已破，诸郡皆归汉廷。"
                 }
             },
             {
@@ -1266,8 +1266,28 @@ export const BATTLES = {
                 name: 'Zhu Jun',
                 voiceId: 'ch2_wan_north_zj_02',
                 text: {
-                    en: "Then Wan is settled. Nanyang is quiet, and the court will hear who held the road.",
-                    zh: "如此宛城已定，南阳复平。朝廷自会知道是谁守住此路。"
+                    en: "Then Wan is settled. Zhao Hong and Sun Zhong are dead, and Nanyang's commanderies are quiet again.",
+                    zh: "如此宛城已定，赵弘、孙仲皆死，南阳诸郡复平。"
+                }
+            },
+            {
+                speaker: 'zhujun',
+                portraitKey: 'zhu-jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'ch2_wan_north_zj_03',
+                text: {
+                    en: "Huangfu Song has broken Zhang Liang at Quyang, and Zhang Jue is already dead. In this region, the Yellow Turban fire is nearly spent.",
+                    zh: "皇甫嵩已于曲阳破张梁，张角也早已身死。此一路黄巾之火，至此几尽。"
+                }
+            },
+            {
+                speaker: 'zhujun',
+                portraitKey: 'zhu-jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'ch2_wan_north_zj_04',
+                text: {
+                    en: "We return to Luoyang. I will report the victory and memorialize the merit of Sun Jian, Liu Bei, and all who stood here.",
+                    zh: "我等班师洛阳。此捷须奏闻朝廷，孙坚、刘备以及此役有功者，也当一并表奏。"
                 }
             }
         ],
@@ -1382,8 +1402,8 @@ export const BATTLES = {
                 name: 'Zhu Jun',
                 voiceId: 'ch2_wan_final_zj_02',
                 text: {
-                    en: "Zhao Hong is dead, Sun Zhong has fallen, and the rebels have broken. Nanyang is quiet again.",
-                    zh: "赵弘已死，孙仲亦伏，贼众溃散。南阳一路复平。"
+                    en: "Zhao Hong is dead, Sun Zhong has fallen, and the rebels have broken. Nanyang's commanderies are quiet again.",
+                    zh: "赵弘已死，孙仲亦伏，贼众溃散。南阳诸郡复平。"
                 }
             },
             {
@@ -1404,6 +1424,26 @@ export const BATTLES = {
                 text: {
                     en: "Well said. The wall is taken; now the officers must hold the city better than the rebels did.",
                     zh: "玄德所言甚是。城墙既取，官军更当守出法度。"
+                }
+            },
+            {
+                speaker: 'zhujun',
+                portraitKey: 'zhu-jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'ch2_wan_final_zj_03',
+                text: {
+                    en: "Huangfu Song has broken Zhang Liang at Quyang, and Zhang Jue is already dead. In this region, the Yellow Turban fire is nearly spent.",
+                    zh: "皇甫嵩已于曲阳破张梁，张角也早已身死。此一路黄巾之火，至此几尽。"
+                }
+            },
+            {
+                speaker: 'zhujun',
+                portraitKey: 'zhu-jun-generic',
+                name: 'Zhu Jun',
+                voiceId: 'ch2_wan_final_zj_04',
+                text: {
+                    en: "We return to Luoyang. I will report the victory and memorialize the merit of Sun Jian, Liu Bei, and all who stood here.",
+                    zh: "我等班师洛阳。此捷须奏闻朝廷，孙坚、刘备以及此役有功者，也当一并表奏。"
                 }
             }
         ],

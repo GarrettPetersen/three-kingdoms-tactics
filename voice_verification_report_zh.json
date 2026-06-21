@@ -3116,10 +3116,10 @@
     "zh:ch2_yc_zj_01": {
         "id": "ch2_yc_zj_01",
         "character": "zhujun",
-        "original_text": "张宝！张角已死，妖法已破，诸郡皆归汉廷。",
-        "stt_output": "",
-        "wer": 0,
-        "is_bad": false,
+        "original_text": "张宝！张角已死于广宗，张梁又在曲阳为皇甫嵩所破。你兄弟皆亡，妖法已破，诸郡皆归汉廷。",
+        "stt_output": "张宝 张脚已死于广宗张梁又在区阳为皇府松所破你兄弟皆王 妖法已破竹俊皆 归汉庭门",
+        "wer": 4.0,
+        "is_bad": true,
         "language": "zh"
     },
     "zh:ch2_yc_zj_02": {
@@ -3629,8 +3629,8 @@
     "zh:ch2_anxi_gy_both_01": {
         "id": "ch2_anxi_gy_both_01",
         "character": "guanyu",
-        "original_text": "此等人手中赦免，非荣也；然兄弟之誓因此得存。",
-        "stt_output": "此等人手中射面,非容也,然兄弟之事,因此得存。",
+        "original_text": "既不能以官职效力，仍可在乱处护民。义路未绝。",
+        "stt_output": "既不能以官職效力,仍可再亂出护民,一路未決。",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
@@ -3656,8 +3656,8 @@
     "zh:ch2_anxi_lb_02": {
         "id": "ch2_anxi_lb_02",
         "character": "liubei",
-        "original_text": "我等名籍已上，只待朝廷铨注。除此之外，备无可为。",
-        "stt_output": "我等名记以上直带朝廷全住,出此之外被无可谓。",
+        "original_text": "朱将军已上名籍。我等只待朝廷铨注。除此之外，备无可为。",
+        "stt_output": "朱江君已上民籍,我等之待朝廷全住,除此之外,被無可危。",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
@@ -3692,8 +3692,8 @@
     "zh:ch2_anxi_narrator_01": {
         "id": "ch2_anxi_narrator_01",
         "character": "narrator",
-        "original_text": "宛城既定，南阳平息，朱儁班师洛阳，上表奏孙坚、刘备等人之功。",
-        "stt_output": "完成基定南洋平息朱俊班湿洛杨上表做瞬间刘备等人之功",
+        "original_text": "宛城既定，南阳平息，朱儁班师洛阳奏捷，并上表奏孙坚、刘备等人之功。",
+        "stt_output": "完成既定南洋平西朱俊班失落洋作节并上表作瞬间劉備等任志工",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
@@ -3701,8 +3701,8 @@
     "zh:ch2_anxi_narrator_02": {
         "id": "ch2_anxi_narrator_02",
         "character": "narrator",
-        "original_text": "孙坚有人情，不久便得别郡司马之任。刘备在京候命，日复一日，却始终不得除授。",
-        "stt_output": "孫建有人勤不久變得別墜司馬之人劉備在今後命日富一日卻始終不得處受",
+        "original_text": "孙坚有人情，不久便得别郡司马之任。刘备在宫门外候命，日复一日，却始终不得除授。",
+        "stt_output": "孙奸有人勤不久變得別徵司馬之刃留為在公門外後命日付一日確實中不得處受",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
@@ -3737,8 +3737,8 @@
     "zh:ch2_anxi_narrator_both_02": {
         "id": "ch2_anxi_narrator_both_02",
         "character": "narrator",
-        "original_text": "刘备遂遣军士各归乡里，与关羽、张飞离洛阳。罪名虽赦，朝中名籍仍被涂黑。",
-        "stt_output": "由被岁前軍事各規相理與關於張飛离落陽罪名衰射朝中名及人被土黑",
+        "original_text": "刘备遂遣军士各归乡里，北往代州。刘恢可暂匿兄弟三人，待新的征召再使其重入世局。",
+        "stt_output": "劉備歲前軍事各規相里,北往帶州劉輝可在尼兄第三人擔心的征兆在時期中路失局",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
@@ -3764,8 +3764,8 @@
     "zh:ch2_anxi_zf_01": {
         "id": "ch2_anxi_zf_01",
         "character": "zhangfei",
-        "original_text": "咱们破贼、攻城、追杀渠帅，难道要在客舍里等到胡子都白了？",
-        "stt_output": "咱們破賊工程追殺其率難道要在客設裡等到鬍子都白了",
+        "original_text": "咱们破张宝、定阳城，又助取宛城。难道要在这宫门石上走出沟来，才有人理会？",
+        "stt_output": "咱们破账宝定阳城又住期晚男的要在这公门时尚走出狗来他有人理会",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
@@ -3800,8 +3800,8 @@
     "zh:ch2_anxi_zj_01": {
         "id": "ch2_anxi_zj_01",
         "character": "zhoujing",
-        "original_text": "你便是刘玄德？军报中屡闻其名。为何反在街上徘徊，如无功小吏？",
-        "stt_output": "你便是留玄德軍報中履文其名為何反在街上排緩如無功效力",
+        "original_text": "你便是刘玄德？军报中屡闻其名。为何在此久候，如无功小吏？",
+        "stt_output": "你便是留玄德軍報中舉文其名為何在此久後如無功效力",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
@@ -3809,8 +3809,8 @@
     "zh:ch2_anxi_zj_02": {
         "id": "ch2_anxi_zj_02",
         "character": "zhoujing",
-        "original_text": "既如此，我便替这沉默开口。将士为汉流血而只得沉默，这沉默本身便是误国。",
-        "stt_output": "既如此我便替这沉默开口将是为汉流血而指得沉默这沉默本身便是物国",
+        "original_text": "既如此，我便替这沉默开口。将士为汉流血，官爵却在门内买卖。",
+        "stt_output": "即如此我便替这程末开口相识为汉流血官觉却在门内买卖",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
@@ -3818,8 +3818,8 @@
     "zh:ch2_anxi_zj_03": {
         "id": "ch2_anxi_zj_03",
         "character": "zhoujing",
-        "original_text": "黄巾之乱，正因卖官鬻爵、任亲害仇，贤者有功，反须乞命于门外。",
-        "stt_output": "黃金之亂正因邁官預決任青海籌顯著有功反需起命於門外",
+        "original_text": "我已直奏天子：黄巾之乱，正因卖官鬻爵、任亲害仇，贤者有功，反须乞命。",
+        "stt_output": "我已執照天子黃金之亂正因邁官預決任親害仇顯著有功返復其名",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
@@ -3827,9 +3827,9 @@
     "zh:ch2_anxi_zj_04": {
         "id": "ch2_anxi_zj_04",
         "character": "zhoujing",
-        "original_text": "请诛十常侍之蠹，重赏讨贼有功者，则四海尚可清平。",
-        "stt_output": "请诸石尝试之度 重上讨贼有公者 则似海上可轻平",
-        "wer": 3.0,
+        "original_text": "我请诛十常侍之蠹，重赏讨贼有功者。宦官却称我欺主，将我逐出。",
+        "stt_output": "我请诸石尝试制度逐场跑贼有公者换官却称我其主将我逐出",
+        "wer": 1.0,
         "is_bad": true,
         "language": "zh"
     },
@@ -4205,8 +4205,8 @@
     "zh:ch2_wan_north_zj_02": {
         "id": "ch2_wan_north_zj_02",
         "character": "zhujun",
-        "original_text": "如此宛城已定，南阳复平。朝廷自会知道是谁守住此路。",
-        "stt_output": "如此晚成已定,南洋副品,朝廷自會知道是誰,守住此路。",
+        "original_text": "如此宛城已定，赵弘、孙仲皆死，南阳诸郡复平。",
+        "stt_output": "如此晚成已定,趙鴻,孙重皆死,南陽招勁副平。",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
@@ -4271,6 +4271,123 @@
         "original_text": "颍川一役，败贼再遭截击，兵势益乱。曹操旋即北追，自此声名渐起。",
         "stt_output": "影創一夜,拜賊在遭劫機並是一亂曹操璇及北追四次生命見齊",
         "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_narrator_wait_01": {
+        "id": "ch2_anxi_narrator_wait_01",
+        "character": "narrator",
+        "original_text": "数个时辰后，张钧自宫门复出，衣冠带尘，怒气未消，所幸性命尚在。",
+        "stt_output": "数个十成后,张军子宫门付出一关大城,怒气为销,所信性命上在",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_zj_both_01": {
+        "id": "ch2_anxi_zj_both_01",
+        "character": "zhoujing",
+        "original_text": "他们两罪并提：以兵私放卢植，又向董卓举刃。朱儁可救你性命，却救不得官职。",
+        "stt_output": "他們兩對並提以兵司法盧旨又向董卓舉任朱俊可救你性命卻就不得關職",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_zj_both_02": {
+        "id": "ch2_anxi_zj_both_02",
+        "character": "zhoujing",
+        "original_text": "朝廷免你罪名，不授一官。趁尚无人再借叛名生事，速离洛阳。",
+        "stt_output": "朝廷免以罪名不受已關趁上無人再借怕名生事素離落羊",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_zj_clean_01": {
+        "id": "ch2_anxi_zj_clean_01",
+        "character": "zhoujing",
+        "original_text": "然而他们惧有功之士再生怨言，已将你铨注为安喜县尉。",
+        "stt_output": "然而他们具有公知识的声愿言以将你全驻为安喜相",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_zj_dz_01": {
+        "id": "ch2_anxi_zj_dz_01",
+        "character": "zhoujing",
+        "original_text": "他们又提董卓之事：你兄弟曾向朝廷将帅举刃。朱儁力言你功不可刑。",
+        "stt_output": "他们又提动着之事你兄弟曾向朝廷将率局认诸俊立言你公布可行",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_zj_freed_01": {
+        "id": "ch2_anxi_zj_freed_01",
+        "character": "zhoujing",
+        "original_text": "他们又提卢植之事：你劫夺朝廷解送，私放其身。朱儁力言你功不可刑。",
+        "stt_output": "他们又提如知之事你解夺朝廷借送私放其身诸俊立言你公布可行",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_zj_one_01": {
+        "id": "ch2_anxi_zj_one_01",
+        "character": "zhoujing",
+        "original_text": "朝廷赦其罪，减其赏。你得赴安喜供职，却非自掌县尉之印。",
+        "stt_output": "朝廷社期最減期上你得复安喜共职却非自掌线为之应",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_final_zj_02": {
+        "id": "ch2_wan_final_zj_02",
+        "character": "zhujun",
+        "original_text": "赵弘已死，孙仲亦伏，贼众溃散。南阳诸郡复平。",
+        "stt_output": "趙鴻宜死孫重一福,賊重虧散,南陽諸俊復平。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_final_zj_03": {
+        "id": "ch2_wan_final_zj_03",
+        "character": "zhujun",
+        "original_text": "皇甫嵩已于曲阳破张梁，张角也早已身死。此一路黄巾之火，至此几尽。",
+        "stt_output": "皇府松已于趋阳破张良,张角也早已深死,此一路皇京之火,至此极景。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_final_zj_04": {
+        "id": "ch2_wan_final_zj_04",
+        "character": "zhujun",
+        "original_text": "我等班师洛阳。此捷须奏闻朝廷，孙坚、刘备以及此役有功者，也当一并表奏。",
+        "stt_output": "我等班失落洋此皆虛作文朝廷孫奸劉備以及此一有公者也當一病表走",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_north_zj_03": {
+        "id": "ch2_wan_north_zj_03",
+        "character": "zhujun",
+        "original_text": "皇甫嵩已于曲阳破张梁，张角也早已身死。此一路黄巾之火，至此几尽。",
+        "stt_output": "皇府松宜,于区阳破张良,张角也早已深死,此一路皇金之火,至此极景。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_north_zj_04": {
+        "id": "ch2_wan_north_zj_04",
+        "character": "zhujun",
+        "original_text": "我等班师洛阳。此捷须奏闻朝廷，孙坚、刘备以及此役有功者，也当一并表奏。",
+        "stt_output": "我等班失落洋,此捷虛奏文朝廷,孙奸流辈以及此意有公者也当一定表揍。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:map_lb_ch2_luoyang_01": {
+        "id": "map_lb_ch2_luoyang_01",
+        "character": "liubei",
+        "original_text": "宛城已定。朱儁将军班师洛阳奏捷，我等也该随行，听候朝廷铨注。",
+        "stt_output": "完成已定 朱俊将军班失落洋作结我等也该随行 听候朝廷全住",
+        "wer": 3.0,
         "is_bad": true,
         "language": "zh"
     }

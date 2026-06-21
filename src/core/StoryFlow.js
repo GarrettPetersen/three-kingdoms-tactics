@@ -37,13 +37,15 @@ const PARTY_POSITIONS = {
     },
     chapter2_oath: {
         default: { partyX: 220, partyY: 95 },
-        chapter2_wan_strategy: { partyX: 188, partyY: 92 }
+        chapter2_wan_strategy: { partyX: 188, partyY: 92 },
+        chapter2_anxi_appointment: { partyX: 181, partyY: 120 }
     }
 };
 
 const MAP_SCREEN_BY_STORY_NODE = {
     chapter2_zhujun_camp: 'chapter2_zhujun_camp',
-    chapter2_wan_strategy: 'chapter2_wan_strategy'
+    chapter2_wan_strategy: 'chapter2_wan_strategy',
+    chapter2_anxi_appointment: 'chapter2_luoyang'
 };
 
 const INTERACTIVE_MAP_TRANSITIONS = {
@@ -52,6 +54,16 @@ const INTERACTIVE_MAP_TRANSITIONS = {
             mapScreenId: 'chapter2_wan_strategy',
             partyX: 188,
             partyY: 92
+        },
+        chapter2_wan_north_road: {
+            mapScreenId: 'chapter2_luoyang',
+            partyX: 181,
+            partyY: 120
+        },
+        chapter2_wan_final_assault: {
+            mapScreenId: 'chapter2_luoyang',
+            partyX: 181,
+            partyY: 120
         }
     }
 };

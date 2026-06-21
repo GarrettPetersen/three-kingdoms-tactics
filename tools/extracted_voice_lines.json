@@ -191,30 +191,6 @@
     "phonetic_text": "But slaying the ungrateful would Mean many deaths a year. Dong Jwoh's fate will be unrolled in later chapters."
   },
   {
-    "id": "ch2_anxi_eunuch_01",
-    "char": "eunuch",
-    "text": "Zhang Jun deceives the throne. These complaints come from men who resent their place, not men who love the Han.",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_anxi_eunuch_both_01",
-    "char": "eunuch",
-    "text": "Liu Bei freed Lu Zhi by force, then raised blades against Dong Zhuo. This is not merit; it is rebellion wearing campaign dust.",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_anxi_eunuch_dz_01",
-    "char": "eunuch",
-    "text": "Liu Bei is also the man whose brothers raised steel against Dong Zhuo, an imperial general in the field. Is that loyalty?",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_anxi_eunuch_freed_01",
-    "char": "eunuch",
-    "text": "Liu Bei is also the man who took arms against imperial escorts and released Lu Zhi. Are we to reward disorder with a seal?",
-    "source": "NarrativeScripts.js"
-  },
-  {
     "id": "ch2_anxi_gy_01",
     "char": "guanyu",
     "text": "Merit should speak for itself. Yet at court, even merit seems to need an usher.",
@@ -229,7 +205,7 @@
   {
     "id": "ch2_anxi_gy_both_01",
     "char": "guanyu",
-    "text": "A pardon from such hands is not honor, but it keeps the oath alive.",
+    "text": "Then we cannot serve through an office, but we can still guard the people wherever chaos opens a road.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -247,7 +223,7 @@
   {
     "id": "ch2_anxi_lb_02",
     "char": "liubei",
-    "text": "We have submitted our names and wait on the court. Nothing more is in my hands.",
+    "text": "General Zhu has submitted our names. We wait on the court. Nothing more is in my hands.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -271,19 +247,13 @@
   {
     "id": "ch2_anxi_narrator_01",
     "char": "narrator",
-    "text": "With Wan settled and Nanyang quiet, Zhu Jun returned to Luoyang and memorialized the merit of Sun Jian and Liu Bei.",
+    "text": "With Wan settled and Nanyang quiet, Zhu Jun returned to Luoyang to report the victory and memorialize the merit of Sun Jian and Liu Bei.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_anxi_narrator_02",
     "char": "narrator",
-    "text": "Sun Jian had patrons and soon departed to a new post. Liu Bei waited in the capital, day after day, and no summons came.",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_anxi_narrator_03",
-    "char": "narrator",
-    "text": "Zhang Jun was driven out. The eunuchs, fearing that unrewarded soldiers would make more noise, wrote Liu Bei down for a minor office.",
+    "text": "Sun Jian had patrons and soon departed to a new post. Liu Bei waited outside the palace, day after day, and no summons came.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -293,21 +263,9 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "ch2_anxi_narrator_both_01",
-    "char": "narrator",
-    "text": "Zhang Jun was driven out. Zhu Jun's memorial saved Liu Bei's life, not his future. The court remitted the capital charges and granted no office.",
-    "source": "NarrativeScripts.js"
-  },
-  {
     "id": "ch2_anxi_narrator_both_02",
     "char": "narrator",
-    "text": "Liu Bei dismissed the volunteers to their villages and left Luoyang with Guan Yu and Zhang Fei, their crimes forgiven but their names still darkened at court.",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_anxi_narrator_one_01",
-    "char": "narrator",
-    "text": "Zhang Jun was driven out. Zhu Jun's memorial could not erase Liu Bei's offense, but it made punishment inconvenient. The court forgave the crime and cut down the reward.",
+    "text": "Liu Bei dismissed the volunteers to their villages and went north to Dai. Liu Hui could shelter the brothers until a new summons called them back into the open.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -317,9 +275,15 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_anxi_narrator_wait_01",
+    "char": "narrator",
+    "text": "Several hours later, Zhang Jun came back through the palace gate, dusty, angry, and very much alive.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_anxi_zf_01",
     "char": "zhangfei",
-    "text": "We broke rebels, scaled walls, and chased their chiefs into the dust. Are we to live in an inn until our beards turn white?",
+    "text": "We broke Zhang Bao, settled Yangcheng, and helped take Wan. Are we to wear a path into these stones before anyone speaks to us?",
     "source": "NarrativeScripts.js"
   },
   {
@@ -343,25 +307,61 @@
   {
     "id": "ch2_anxi_zj_01",
     "char": "zhoujing",
-    "text": "You are Liu Xuande? I have heard your name in the campaign reports. Why do you idle in the street like an unrewarded clerk?",
+    "text": "You are Liu Xuande? I have heard your name in the campaign reports. Why do you wait here like an unrewarded clerk?",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_anxi_zj_02",
     "char": "zhoujing",
-    "text": "Then I will speak where waiting cannot. If soldiers bleed for the Han and receive only silence, the silence itself is treason.",
+    "text": "Then I will speak where waiting cannot. Soldiers bleed for the Han while offices are sold at the gate.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_anxi_zj_03",
     "char": "zhoujing",
-    "text": "The Yellow Turbans rose because offices are sold, kin are favored, enemies are ruined, and worthy men are made to beg at the gate.",
+    "text": "I told the emperor plainly: the Yellow Turbans rose because offices are sold, kin are favored, enemies are ruined, and worthy men are made to beg.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_anxi_zj_04",
     "char": "zhoujing",
-    "text": "Cut away the corruption of the Ten Attendants, reward those who fought, and the four seas may yet be quiet.",
+    "text": "I urged him to cut away the corruption of the Ten Attendants and reward those who fought. The eunuchs called me a deceiver and had me driven out.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_both_01",
+    "char": "zhoujing",
+    "text": "They named both charges: Lu Zhi freed by force, and blades raised against Dong Zhuo. Zhu Jun could save your life, not your office.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_both_02",
+    "char": "zhoujing",
+    "text": "The court pardons the crimes and grants no post. Leave Luoyang before another tongue finds profit in naming you rebel.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_clean_01",
+    "char": "zhoujing",
+    "text": "Yet they fear more unrewarded soldiers will speak. Your name has been written down for Anxi County commandant.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_dz_01",
+    "char": "zhoujing",
+    "text": "They also named Dong Zhuo: your brothers raised steel against an imperial general. Zhu Jun argued that your merit made punishment unwise.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_freed_01",
+    "char": "zhoujing",
+    "text": "They also named Lu Zhi: you took arms against imperial escorts and released him. Zhu Jun argued that your merit made punishment unwise.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_one_01",
+    "char": "zhoujing",
+    "text": "The court forgives the offense, but cuts down the reward. You are assigned beneath the Anxi commandant, not over him.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -1003,7 +1003,19 @@
   {
     "id": "ch2_wan_final_zj_02",
     "char": "zhujun",
-    "text": "Zhao Hong is dead, Sun Zhong has fallen, and the rebels have broken. Nanyang is quiet again.",
+    "text": "Zhao Hong is dead, Sun Zhong has fallen, and the rebels have broken. Nanyang's commanderies are quiet again.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_zj_03",
+    "char": "zhujun",
+    "text": "Huangfu Song has broken Zhang Liang at Quyang, and Zhang Jue is already dead. In this region, the Yellow Turban fire is nearly spent.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_zj_04",
+    "char": "zhujun",
+    "text": "We return to Luoyang. I will report the victory and memorialize the merit of Sun Jian, Liu Bei, and all who stood here.",
     "source": "Battles.js"
   },
   {
@@ -1093,7 +1105,19 @@
   {
     "id": "ch2_wan_north_zj_02",
     "char": "zhujun",
-    "text": "Then Wan is settled. Nanyang is quiet, and the court will hear who held the road.",
+    "text": "Then Wan is settled. Zhao Hong and Sun Zhong are dead, and Nanyang's commanderies are quiet again.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_zj_03",
+    "char": "zhujun",
+    "text": "Huangfu Song has broken Zhang Liang at Quyang, and Zhang Jue is already dead. In this region, the Yellow Turban fire is nearly spent.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_zj_04",
+    "char": "zhujun",
+    "text": "We return to Luoyang. I will report the victory and memorialize the merit of Sun Jian, Liu Bei, and all who stood here.",
     "source": "Battles.js"
   },
   {
@@ -1315,7 +1339,7 @@
   {
     "id": "ch2_yc_zj_01",
     "char": "zhujun",
-    "text": "Zhang Bao! Your brother is dead, your sorcery is broken, and the counties are returning to the Han.",
+    "text": "Zhang Bao! Zhang Jue died at Guangzong, and Huangfu Song cut down Zhang Liang at Quyang. Your brothers are gone, your sorcery is broken, and the counties return to the Han.",
     "source": "Battles.js"
   },
   {
@@ -2282,6 +2306,12 @@
     "id": "map_lb_ch2_counter_council_01",
     "char": "liubei",
     "text": "The counter is prepared. We return to the valley, close the pincer, and break Zhang Bao's thunder.",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_luoyang_01",
+    "char": "liubei",
+    "text": "Wan is settled. General Zhu Jun returns to Luoyang to report the victory; we should follow and wait on the court's judgment.",
     "source": "MapScene.js"
   },
   {

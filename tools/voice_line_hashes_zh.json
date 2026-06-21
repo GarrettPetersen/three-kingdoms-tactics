@@ -216,34 +216,6 @@
     "version": 1,
     "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
   },
-  "ch2_anxi_eunuch_01": {
-    "character": "eunuch",
-    "hash": "47c5c436276514bf8883b98e9f562935bacc7b74bb38e2100d97914f381062f7",
-    "text": "张钧欺主。此等怨言，不过出自不得除授之徒，非真为汉室。",
-    "version": 1,
-    "voice_target": "mandarin/clean/clean_grandiose_male_mandarin.wav"
-  },
-  "ch2_anxi_eunuch_both_01": {
-    "character": "eunuch",
-    "hash": "219d8f9a2edb100cadca08d3dd311e786362dba7c11b6daf2cb58b8fa65b38a1",
-    "text": "刘备以兵私放卢植，又向董卓举刃。此非功劳，不过披着征尘的叛逆。",
-    "version": 1,
-    "voice_target": "mandarin/clean/clean_grandiose_male_mandarin.wav"
-  },
-  "ch2_anxi_eunuch_dz_01": {
-    "character": "eunuch",
-    "hash": "024004e098eb079772c27646f86f6d66c8faf5afcefce2fa06cab2e198a63873",
-    "text": "刘备又是纵兄弟向董卓举兵之人。董卓乃朝廷将帅，这也算忠义么？",
-    "version": 1,
-    "voice_target": "mandarin/clean/clean_grandiose_male_mandarin.wav"
-  },
-  "ch2_anxi_eunuch_freed_01": {
-    "character": "eunuch",
-    "hash": "d5526dc470682da86ca381bb73a7ba42b7a78f68f2a4c1715824c0ef99f20656",
-    "text": "刘备又是劫夺朝廷解送、私放卢植之人。难道要以印绶赏其乱法？",
-    "version": 1,
-    "voice_target": "mandarin/clean/clean_grandiose_male_mandarin.wav"
-  },
   "ch2_anxi_gy_01": {
     "character": "guanyu",
     "hash": "966b9edb753344556c7379c9c497da02a85164ea518640d0f039ab9b38d91b58",
@@ -260,8 +232,8 @@
   },
   "ch2_anxi_gy_both_01": {
     "character": "guanyu",
-    "hash": "69e9dc4792affe007ce75f62f0eb1d30d19b6291cbdef97e27d3a768ed120aca",
-    "text": "此等人手中赦免，非荣也；然兄弟之誓因此得存。",
+    "hash": "737218d7a34f54410ae490f14323acb108a2adf806c663cfce69cedf05022a9c",
+    "text": "既不能以官职效力，仍可在乱处护民。义路未绝。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
   },
@@ -281,8 +253,8 @@
   },
   "ch2_anxi_lb_02": {
     "character": "liubei",
-    "hash": "cb2f570975469777648bfb7dc28282a08f7c9df7b33fd8e0cc49cc0c9e88d546",
-    "text": "我等名籍已上，只待朝廷铨注。除此之外，备无可为。",
+    "hash": "86a47294fa60b847e4b063b2d269e3ac9d5abf677d6b316d7e5e4c8c459215dc",
+    "text": "朱将军已上名籍。我等只待朝廷铨注。除此之外，备无可为。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
   },
@@ -309,22 +281,15 @@
   },
   "ch2_anxi_narrator_01": {
     "character": "narrator",
-    "hash": "67ece7cc2acf8d91cc1e7db53d088e5f7a9d8aa7017a6a70b3cac667ccba982c",
-    "text": "宛城既定，南阳平息，朱儁班师洛阳，上表奏孙坚、刘备等人之功。",
+    "hash": "778baced997307096506476f32577a3423e20a5a6a8bf154b03dafa68a86ca4c",
+    "text": "宛城既定，南阳平息，朱儁班师洛阳奏捷，并上表奏孙坚、刘备等人之功。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
   },
   "ch2_anxi_narrator_02": {
     "character": "narrator",
-    "hash": "d13ffc4155b6c7082c1720cefa1427e0ba15769d0af3347b31b3e7a2401647da",
-    "text": "孙坚有人情，不久便得别郡司马之任。刘备在京候命，日复一日，却始终不得除授。",
-    "version": 1,
-    "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
-  },
-  "ch2_anxi_narrator_03": {
-    "character": "narrator",
-    "hash": "63ebda21f21c2dc3a0a7d6671b51110eb34927c63e51d49d55f88a458cb04db7",
-    "text": "张钧被逐。宦官惧有功之士再生怨言，便权且将刘备铨注微名。",
+    "hash": "d84564b35538146e45aac36fc9fda9cc2b97d0aa8dc9d3fbe9ed9c1992fef5ee",
+    "text": "孙坚有人情，不久便得别郡司马之任。刘备在宫门外候命，日复一日，却始终不得除授。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
   },
@@ -335,24 +300,10 @@
     "version": 1,
     "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
   },
-  "ch2_anxi_narrator_both_01": {
-    "character": "narrator",
-    "hash": "5082e59e2145c9281ee158c07a32ff78fadde9da89b24b5748c2590fc0c6e417",
-    "text": "张钧被逐。朱儁表奏救了刘备之命，却救不得前程。朝廷免其死罪，不授官职。",
-    "version": 1,
-    "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
-  },
   "ch2_anxi_narrator_both_02": {
     "character": "narrator",
-    "hash": "012534c200bacecb8e5d15be19a7521405cec468a4dddf641b5dee6ed4f76707",
-    "text": "刘备遂遣军士各归乡里，与关羽、张飞离洛阳。罪名虽赦，朝中名籍仍被涂黑。",
-    "version": 1,
-    "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
-  },
-  "ch2_anxi_narrator_one_01": {
-    "character": "narrator",
-    "hash": "fb6e17efd3095fd6fc60636a2e873d0091ded14156297610c28c56e9cc3997ee",
-    "text": "张钧被逐。朱儁表奏不能抹去刘备之罪，却使朝廷不便加刑。于是赦其罪，减其赏。",
+    "hash": "2248e78c1917f5474c5b3d332db84844c43ae80f160a646f521670a67e85f981",
+    "text": "刘备遂遣军士各归乡里，北往代州。刘恢可暂匿兄弟三人，待新的征召再使其重入世局。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
   },
@@ -363,10 +314,17 @@
     "version": 1,
     "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
   },
+  "ch2_anxi_narrator_wait_01": {
+    "character": "narrator",
+    "hash": "890823d9241955af81763a2d072c68cdeced923b04e8d542aabc873f591f43d6",
+    "text": "数个时辰后，张钧自宫门复出，衣冠带尘，怒气未消，所幸性命尚在。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
+  },
   "ch2_anxi_zf_01": {
     "character": "zhangfei",
-    "hash": "9fcd382b75a3cf6cce93f592b42c2f71c5d6023c23509fbbf7578c5b78558f43",
-    "text": "咱们破贼、攻城、追杀渠帅，难道要在客舍里等到胡子都白了？",
+    "hash": "02b21b1e7f77d619672c95e2e64aa73175076511e2fcce57ff6c9a626cd2cb23",
+    "text": "咱们破张宝、定阳城，又助取宛城。难道要在这宫门石上走出沟来，才有人理会？",
     "version": 1,
     "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
   },
@@ -393,29 +351,71 @@
   },
   "ch2_anxi_zj_01": {
     "character": "zhoujing",
-    "hash": "c79ee1dca13a889136d82fdc9912d460d97c56413685a9797a1fca445b480166",
-    "text": "你便是刘玄德？军报中屡闻其名。为何反在街上徘徊，如无功小吏？",
+    "hash": "801c0b3416b4b517c1edfaa66a8c8d835dc390780d957235f253033743b057c0",
+    "text": "你便是刘玄德？军报中屡闻其名。为何在此久候，如无功小吏？",
     "version": 1,
     "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
   },
   "ch2_anxi_zj_02": {
     "character": "zhoujing",
-    "hash": "1ed23390348b7b47f25e474d29baa76b23f40891a71eaf1bf7adc7b487616d28",
-    "text": "既如此，我便替这沉默开口。将士为汉流血而只得沉默，这沉默本身便是误国。",
+    "hash": "c225012548d11a8d66376e88ff34812928ecc6e5b12c62db1bf87da4ef4dc12c",
+    "text": "既如此，我便替这沉默开口。将士为汉流血，官爵却在门内买卖。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
   },
   "ch2_anxi_zj_03": {
     "character": "zhoujing",
-    "hash": "319813a3a9657a4a11f4562c760c1e429c9117cfa2ef620b4e20fbb5e0cb2aff",
-    "text": "黄巾之乱，正因卖官鬻爵、任亲害仇，贤者有功，反须乞命于门外。",
+    "hash": "7566c7dc3efdfbf5346f87af56feafb913e621316d324fb49d6be1abd6fd287b",
+    "text": "我已直奏天子：黄巾之乱，正因卖官鬻爵、任亲害仇，贤者有功，反须乞命。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
   },
   "ch2_anxi_zj_04": {
     "character": "zhoujing",
-    "hash": "2918970417022a0864fe60d2c8a2f1a3005e5e7453a7dccd0c56f5d01f54fac9",
-    "text": "请诛十常侍之蠹，重赏讨贼有功者，则四海尚可清平。",
+    "hash": "c19427e6a14a99ae0c53a32381f927f483a8cb409daceff52168530f1a830ce3",
+    "text": "我请诛十常侍之蠹，重赏讨贼有功者。宦官却称我欺主，将我逐出。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+  },
+  "ch2_anxi_zj_both_01": {
+    "character": "zhoujing",
+    "hash": "e40b39cdb97959b6133162b10cca8e1f80afc1e7fa5859e5c7060ab77579ee91",
+    "text": "他们两罪并提：以兵私放卢植，又向董卓举刃。朱儁可救你性命，却救不得官职。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+  },
+  "ch2_anxi_zj_both_02": {
+    "character": "zhoujing",
+    "hash": "33494e8d429bbb8eddaf630add1e04e5780e4a4032e8a432580bc1779b116880",
+    "text": "朝廷免你罪名，不授一官。趁尚无人再借叛名生事，速离洛阳。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+  },
+  "ch2_anxi_zj_clean_01": {
+    "character": "zhoujing",
+    "hash": "26fbb4bc0ae0e5a7903097194e145af183fd1384da41936ebac0f6c24b594259",
+    "text": "然而他们惧有功之士再生怨言，已将你铨注为安喜县尉。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+  },
+  "ch2_anxi_zj_dz_01": {
+    "character": "zhoujing",
+    "hash": "8487a6c4870c77cb210bae9f5b2295ed3ea2cbe57b045228c7f9785082eb1cc8",
+    "text": "他们又提董卓之事：你兄弟曾向朝廷将帅举刃。朱儁力言你功不可刑。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+  },
+  "ch2_anxi_zj_freed_01": {
+    "character": "zhoujing",
+    "hash": "7894f6b84df48ab9a80a51be231ebd5ae23e506e74f051a16d67c1991513f642",
+    "text": "他们又提卢植之事：你劫夺朝廷解送，私放其身。朱儁力言你功不可刑。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+  },
+  "ch2_anxi_zj_one_01": {
+    "character": "zhoujing",
+    "hash": "59899e7e9b30873e81c8bac682118c2137219292dd326746a5c6f3f1525d220a",
+    "text": "朝廷赦其罪，减其赏。你得赴安喜供职，却非自掌县尉之印。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
   },
@@ -1163,8 +1163,22 @@
   },
   "ch2_wan_final_zj_02": {
     "character": "zhujun",
-    "hash": "eba672e7d1ca023e952c3f925a07f972f03ff28bed337c744c3ef6cb44008465",
-    "text": "赵弘已死，孙仲亦伏，贼众溃散。南阳一路复平。",
+    "hash": "523ef81defa615702ef7629910c1a56e133a2136874257b73cbdef7b442d32f3",
+    "text": "赵弘已死，孙仲亦伏，贼众溃散。南阳诸郡复平。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "ch2_wan_final_zj_03": {
+    "character": "zhujun",
+    "hash": "cdc3a80df9c71b10f73ee836e761aa490eac62739da4105fcefcb20fee885ce6",
+    "text": "皇甫嵩已于曲阳破张梁，张角也早已身死。此一路黄巾之火，至此几尽。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "ch2_wan_final_zj_04": {
+    "character": "zhujun",
+    "hash": "ccf26812df317b3ef284567bb5e12f53e081adfd344c4dbff0f1704d15d8ee44",
+    "text": "我等班师洛阳。此捷须奏闻朝廷，孙坚、刘备以及此役有功者，也当一并表奏。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
   },
@@ -1268,8 +1282,22 @@
   },
   "ch2_wan_north_zj_02": {
     "character": "zhujun",
-    "hash": "f342400713f15c61623779ac0b9e3589f21ca54a2c2e04b98cd8dc123310be39",
-    "text": "如此宛城已定，南阳复平。朝廷自会知道是谁守住此路。",
+    "hash": "6d3b1b6fa462892c93cb0318b701ed0182b4e31677ae2f3e8e1fa0caa9fbe6e7",
+    "text": "如此宛城已定，赵弘、孙仲皆死，南阳诸郡复平。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "ch2_wan_north_zj_03": {
+    "character": "zhujun",
+    "hash": "970d5a1fb12a937f4b23d0620e31444cdfc26eb5fe95703e5249c0185ce656bc",
+    "text": "皇甫嵩已于曲阳破张梁，张角也早已身死。此一路黄巾之火，至此几尽。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "ch2_wan_north_zj_04": {
+    "character": "zhujun",
+    "hash": "38c56b5a4a2e29b48770a426c19c431bdc7feb380ef6a6512a6f0731b9629820",
+    "text": "我等班师洛阳。此捷须奏闻朝廷，孙坚、刘备以及此役有功者，也当一并表奏。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
   },
@@ -1527,8 +1555,8 @@
   },
   "ch2_yc_zj_01": {
     "character": "zhujun",
-    "hash": "26e074e3888dcf62e6f2b2b045ffd27c7a37528edc2408c9885271824d8fb8a0",
-    "text": "张宝！张角已死，妖法已破，诸郡皆归汉廷。",
+    "hash": "5d508c2dd4e7112364b29e14a59253ebd2508e872c884e7e9ad8b45dd201fd0a",
+    "text": "张宝！张角已死于广宗，张梁又在曲阳为皇甫嵩所破。你兄弟皆亡，妖法已破，诸郡皆归汉廷。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
   },
@@ -2642,6 +2670,13 @@
     "character": "liubei",
     "hash": "e7b76c4cdf42e09a971e08925d52b351eb8156526072e607d26a185fcdfb5234",
     "text": "破术之策已备。我们回到谷中，合围进逼，破张宝天雷。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "map_lb_ch2_luoyang_01": {
+    "character": "liubei",
+    "hash": "0657fa6528f0484648640e5ebe9ee41bf6099f9a4db73a960de570f2c72dfd2c",
+    "text": "宛城已定。朱儁将军班师洛阳奏捷，我等也该随行，听候朝廷铨注。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
   },

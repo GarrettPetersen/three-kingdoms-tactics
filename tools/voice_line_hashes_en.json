@@ -216,34 +216,6 @@
     "version": 1,
     "voice_target": "movies/clean/clean_uncle-iroh.wav"
   },
-  "ch2_anxi_eunuch_01": {
-    "character": "eunuch",
-    "hash": "7a1d08d861fc07631cf6ece9f87630a32839e9679529474ad626d4aecaaa1806",
-    "text": "Zhang Jun deceives the throne. These complaints come from men who resent their place, not men who love the Han.",
-    "version": 1,
-    "voice_target": "movies/clean/clean_disney_hades.wav"
-  },
-  "ch2_anxi_eunuch_both_01": {
-    "character": "eunuch",
-    "hash": "2556e0b4237f1a07efa47f63bc05ea98c152db51a59782a18d6d77f7ffe9b08f",
-    "text": "Liu Bei freed Lu Zhi by force, then raised blades against Dong Zhuo. This is not merit; it is rebellion wearing campaign dust.",
-    "version": 1,
-    "voice_target": "movies/clean/clean_disney_hades.wav"
-  },
-  "ch2_anxi_eunuch_dz_01": {
-    "character": "eunuch",
-    "hash": "a23b1006558174df3294c06181406d98d085bbff17919c9109e399c6684c266f",
-    "text": "Liu Bei is also the man whose brothers raised steel against Dong Zhuo, an imperial general in the field. Is that loyalty?",
-    "version": 1,
-    "voice_target": "movies/clean/clean_disney_hades.wav"
-  },
-  "ch2_anxi_eunuch_freed_01": {
-    "character": "eunuch",
-    "hash": "6d6b24ef051ccc6cfbe055471c46e0af81f56fa35412481d0dd4a9181f0e34d0",
-    "text": "Liu Bei is also the man who took arms against imperial escorts and released Lu Zhi. Are we to reward disorder with a seal?",
-    "version": 1,
-    "voice_target": "movies/clean/clean_disney_hades.wav"
-  },
   "ch2_anxi_gy_01": {
     "character": "guanyu",
     "hash": "9d25bb7f96e61ac41d20c47b534af392473dad8a6425d89556a476ba5119c69a",
@@ -260,8 +232,8 @@
   },
   "ch2_anxi_gy_both_01": {
     "character": "guanyu",
-    "hash": "9ab38e80260f160b5395cfb29db7cf4cac8c9f5c26993cbae6aa224a8c53b0f0",
-    "text": "A pardon from such hands is not honor, but it keeps the oath alive.",
+    "hash": "6e4ef6b467cbb3fa8476c0271787754d30af5a7ac8d11c44edae80d76bd46670",
+    "text": "Then we cannot serve through an office, but we can still guard the people wherever chaos opens a road.",
     "version": 1,
     "voice_target": "movies/clean/clean_master_xehanort.wav"
   },
@@ -281,8 +253,8 @@
   },
   "ch2_anxi_lb_02": {
     "character": "liubei",
-    "hash": "572395b92b5da866f7001aad09153996318743c67b9c26c1801e802fa38cdf8a",
-    "text": "We have submitted our names and wait on the court. Nothing more is in my hands.",
+    "hash": "1fded9146e71989ebf4637bf156f8760a08b785b32f034af7f9caea4e0da14ef",
+    "text": "General Zhu has submitted our names. We wait on the court. Nothing more is in my hands.",
     "version": 1,
     "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
   },
@@ -309,22 +281,15 @@
   },
   "ch2_anxi_narrator_01": {
     "character": "narrator",
-    "hash": "3176fc3bc63a6be53a9148ea92088e8d27bb4a7e41ac1e977fc283e6ec1013bb",
-    "text": "With Wan settled and Nanyang quiet, Zhu Jun returned to Luoyang and memorialized the merit of Sun Jian and Liu Bei.",
+    "hash": "9f664f008bc7b9a27014aed1cb28dc66f90ed91fa32edb77eaab41afefc66aef",
+    "text": "With Wan settled and Nanyang quiet, Zhu Jun returned to Luoyang to report the victory and memorialize the merit of Sun Jian and Liu Bei.",
     "version": 1,
     "voice_target": "movies/clean/clean_uncle-iroh.wav"
   },
   "ch2_anxi_narrator_02": {
     "character": "narrator",
-    "hash": "4890ff6796bb039234bd5bd54f8e4bb67b27cda70062b29c8988613f7a368e0c",
-    "text": "Sun Jian had patrons and soon departed to a new post. Liu Bei waited in the capital, day after day, and no summons came.",
-    "version": 1,
-    "voice_target": "movies/clean/clean_uncle-iroh.wav"
-  },
-  "ch2_anxi_narrator_03": {
-    "character": "narrator",
-    "hash": "43c2a2ecebb2df9dd4b1e411976f8674aa9194467b787a46a14fac572d47d47d",
-    "text": "Zhang Jun was driven out. The eunuchs, fearing that unrewarded soldiers would make more noise, wrote Liu Bei down for a minor office.",
+    "hash": "16a5457658f693d85f7be4c4572a93022a88bd71bfa6a7ba772ce63ebc3c576c",
+    "text": "Sun Jian had patrons and soon departed to a new post. Liu Bei waited outside the palace, day after day, and no summons came.",
     "version": 1,
     "voice_target": "movies/clean/clean_uncle-iroh.wav"
   },
@@ -335,24 +300,10 @@
     "version": 1,
     "voice_target": "movies/clean/clean_uncle-iroh.wav"
   },
-  "ch2_anxi_narrator_both_01": {
-    "character": "narrator",
-    "hash": "6680f50d45ef8155c14c3548d23118518acfa6789ee92391d76ab0aba1c5a206",
-    "text": "Zhang Jun was driven out. Zhu Jun's memorial saved Liu Bei's life, not his future. The court remitted the capital charges and granted no office.",
-    "version": 1,
-    "voice_target": "movies/clean/clean_uncle-iroh.wav"
-  },
   "ch2_anxi_narrator_both_02": {
     "character": "narrator",
-    "hash": "386d5118ccb5a899ec7e11a07114c90feccedc8a7d3ee6d18470124a18427595",
-    "text": "Liu Bei dismissed the volunteers to their villages and left Luoyang with Guan Yu and Zhang Fei, their crimes forgiven but their names still darkened at court.",
-    "version": 1,
-    "voice_target": "movies/clean/clean_uncle-iroh.wav"
-  },
-  "ch2_anxi_narrator_one_01": {
-    "character": "narrator",
-    "hash": "2419ebf0f97475d10b9ab3af7ec5f39e4c9da1a5ca37828d5855d9bf97a976b5",
-    "text": "Zhang Jun was driven out. Zhu Jun's memorial could not erase Liu Bei's offense, but it made punishment inconvenient. The court forgave the crime and cut down the reward.",
+    "hash": "6b6e4abff775e055fa031e091420d1388d78cae2cf388d686c8b678d17fa97d0",
+    "text": "Liu Bei dismissed the volunteers to their villages and went north to Dai. Liu Hui could shelter the brothers until a new summons called them back into the open.",
     "version": 1,
     "voice_target": "movies/clean/clean_uncle-iroh.wav"
   },
@@ -363,10 +314,17 @@
     "version": 1,
     "voice_target": "movies/clean/clean_uncle-iroh.wav"
   },
+  "ch2_anxi_narrator_wait_01": {
+    "character": "narrator",
+    "hash": "f4ae89bc056904a1948435d91650754f0572bfcd7b569d74d0d39ebce42f19fb",
+    "text": "Several hours later, Zhang Jun came back through the palace gate, dusty, angry, and very much alive.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_uncle-iroh.wav"
+  },
   "ch2_anxi_zf_01": {
     "character": "zhangfei",
-    "hash": "cf252ecf69c8268c6065453810a6496329b7bde07b4a6e1b22c48f129e7f4e54",
-    "text": "We broke rebels, scaled walls, and chased their chiefs into the dust. Are we to live in an inn until our beards turn white?",
+    "hash": "d34d818c822c91daddaccd6f9e14eb156a607c0dc6584ab5c8a3c11b6be269cd",
+    "text": "We broke Zhang Bao, settled Yangcheng, and helped take Wan. Are we to wear a path into these stones before anyone speaks to us?",
     "version": 1,
     "voice_target": "movies/clean/clean_kublai-khan.wav"
   },
@@ -393,29 +351,71 @@
   },
   "ch2_anxi_zj_01": {
     "character": "zhoujing",
-    "hash": "986c74fe0dc1556c10f2abf2387c36676ceb058411c147911cf4612c769f7140",
-    "text": "You are Liu Xuande? I have heard your name in the campaign reports. Why do you idle in the street like an unrewarded clerk?",
+    "hash": "a89a9c41235d46cfa30c7208a87d5446036844cfb0004822a58aa2bdbe98e20a",
+    "text": "You are Liu Xuande? I have heard your name in the campaign reports. Why do you wait here like an unrewarded clerk?",
     "version": 1,
     "voice_target": "movies/clean/clean_mulans-dad.wav"
   },
   "ch2_anxi_zj_02": {
     "character": "zhoujing",
-    "hash": "b159eb4c8c22c05115dd26116c80bfb119b0871d33f5ec0efb6db23358c30140",
-    "text": "Then I will speak where waiting cannot. If soldiers bleed for the Han and receive only silence, the silence itself is treason.",
+    "hash": "8c6d7b7be030f1e7c7583230b963c564c45ad3e5765f49052f67d1896f0c54bc",
+    "text": "Then I will speak where waiting cannot. Soldiers bleed for the Han while offices are sold at the gate.",
     "version": 1,
     "voice_target": "movies/clean/clean_mulans-dad.wav"
   },
   "ch2_anxi_zj_03": {
     "character": "zhoujing",
-    "hash": "00d4362f5321c028d08a4852fc20ffe65f6623875622aec1a353c59564655f29",
-    "text": "The Yellow Turbans rose because offices are sold, kin are favored, enemies are ruined, and worthy men are made to beg at the gate.",
+    "hash": "c256785ea8192f848322c9f6620228ded3c330b5caa1bc576da606380aa7f9df",
+    "text": "I told the emperor plainly: the Yellow Turbans rose because offices are sold, kin are favored, enemies are ruined, and worthy men are made to beg.",
     "version": 1,
     "voice_target": "movies/clean/clean_mulans-dad.wav"
   },
   "ch2_anxi_zj_04": {
     "character": "zhoujing",
-    "hash": "9d64a87134b5f84d4516339e53cb26d5f35bb4639263192ddd658de762584083",
-    "text": "Cut away the corruption of the Ten Attendants, reward those who fought, and the four seas may yet be quiet.",
+    "hash": "af10350805a654c22e5f338147ca1e0d8a18f06f2b957aa4ed5f88ab914bd61b",
+    "text": "I urged him to cut away the corruption of the Ten Attendants and reward those who fought. The eunuchs called me a deceiver and had me driven out.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_anxi_zj_both_01": {
+    "character": "zhoujing",
+    "hash": "b7cb2f55607a459e52b4e74f3fcaa70c910b8761cee1cff958c4ed0bb29e8227",
+    "text": "They named both charges: Lu Zhi freed by force, and blades raised against Dong Zhuo. Zhu Jun could save your life, not your office.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_anxi_zj_both_02": {
+    "character": "zhoujing",
+    "hash": "6046eeaa97571d8d06a0b844320a5936faedb3f50716da478538ed96d2e0827c",
+    "text": "The court pardons the crimes and grants no post. Leave Luoyang before another tongue finds profit in naming you rebel.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_anxi_zj_clean_01": {
+    "character": "zhoujing",
+    "hash": "d94dd71bd133097db8fa21b17276c2f6b6abf8b0716a97af9340974652f49148",
+    "text": "Yet they fear more unrewarded soldiers will speak. Your name has been written down for Anxi County commandant.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_anxi_zj_dz_01": {
+    "character": "zhoujing",
+    "hash": "11e7c78c858307bd3579fdcc68ef830b77ef484e68221ec7e6a6a8bcafddb2e8",
+    "text": "They also named Dong Zhuo: your brothers raised steel against an imperial general. Zhu Jun argued that your merit made punishment unwise.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_anxi_zj_freed_01": {
+    "character": "zhoujing",
+    "hash": "1335df1954cc0ed689b1e45f20d996944d5aec1eb25aca2e04d85a5c814b5a69",
+    "text": "They also named Lu Zhi: you took arms against imperial escorts and released him. Zhu Jun argued that your merit made punishment unwise.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_anxi_zj_one_01": {
+    "character": "zhoujing",
+    "hash": "5df96d24edb7e20e8299b954684cf8055384d238f1ef990665e967126e587eab",
+    "text": "The court forgives the offense, but cuts down the reward. You are assigned beneath the Anxi commandant, not over him.",
     "version": 1,
     "voice_target": "movies/clean/clean_mulans-dad.wav"
   },
@@ -1163,8 +1163,22 @@
   },
   "ch2_wan_final_zj_02": {
     "character": "zhujun",
-    "hash": "77a9f8dc01244de80674c5512c5255dfdadead6340759887dc218f557868b776",
-    "text": "Zhao Hong is dead, Sun Zhong has fallen, and the rebels have broken. Nanyang is quiet again.",
+    "hash": "0d8e5a3da803b3deb4b2962cb3d02e2ffafefa1aa2e0361af9cf61e5cdf53456",
+    "text": "Zhao Hong is dead, Sun Zhong has fallen, and the rebels have broken. Nanyang's commanderies are quiet again.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_final_zj_03": {
+    "character": "zhujun",
+    "hash": "da7e45190f10961c778d6e7a09347f6830c88328e4aa80ab149fa30ebb00bbc5",
+    "text": "Huangfu Song has broken Zhang Liang at Quyang, and Zhang Jue is already dead. In this region, the Yellow Turban fire is nearly spent.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_final_zj_04": {
+    "character": "zhujun",
+    "hash": "312fe0b48473ec68bd17a650b8a3de50d053e6d207a9833a44c9bd2b375df54e",
+    "text": "We return to Luoyang. I will report the victory and memorialize the merit of Sun Jian, Liu Bei, and all who stood here.",
     "version": 1,
     "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
   },
@@ -1268,8 +1282,22 @@
   },
   "ch2_wan_north_zj_02": {
     "character": "zhujun",
-    "hash": "5033efd35454143cc245b9aae165f98cc0ee6029eb3ce3b94b56d299fe5cbd9d",
-    "text": "Then Wan is settled. Nanyang is quiet, and the court will hear who held the road.",
+    "hash": "fc54d61095e0f63dcacde6f1ddf4e2e4331c73baab6dbcdc7c26b8fcedc61b85",
+    "text": "Then Wan is settled. Zhao Hong and Sun Zhong are dead, and Nanyang's commanderies are quiet again.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_north_zj_03": {
+    "character": "zhujun",
+    "hash": "d5923d177e5484e2a24c8a5f8b1cd0b2892db21900055cb7aa7283e4af8a4cd4",
+    "text": "Huangfu Song has broken Zhang Liang at Quyang, and Zhang Jue is already dead. In this region, the Yellow Turban fire is nearly spent.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
+  },
+  "ch2_wan_north_zj_04": {
+    "character": "zhujun",
+    "hash": "88fbbfdfe545dfc0693aa8b4492ed2a257807dfb9b11700b8b58962e79659992",
+    "text": "We return to Luoyang. I will report the victory and memorialize the merit of Sun Jian, Liu Bei, and all who stood here.",
     "version": 1,
     "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
   },
@@ -1527,8 +1555,8 @@
   },
   "ch2_yc_zj_01": {
     "character": "zhujun",
-    "hash": "6e4ad99f44a5b239e826d58fb3beae3bc01834b30b46db785727572f5511a215",
-    "text": "Zhang Bao! Your brother is dead, your sorcery is broken, and the counties are returning to the Han.",
+    "hash": "08e1fc17b83068322ff23b225acf273a49421edffe81dc113c408cdb5863d4c4",
+    "text": "Zhang Bao! Zhang Jue died at Guangzong, and Huangfu Song cut down Zhang Liang at Quyang. Your brothers are gone, your sorcery is broken, and the counties return to the Han.",
     "version": 1,
     "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
   },
@@ -2642,6 +2670,13 @@
     "character": "liubei",
     "hash": "ff1809403435ec4e486acdf23f44090af558341af3073508b5539222cbde84d2",
     "text": "The counter is prepared. We return to the valley, close the pincer, and break Zhang Bao's thunder.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "map_lb_ch2_luoyang_01": {
+    "character": "liubei",
+    "hash": "468c1e3d9e82a746ab76282d547087c456a297044e4b966ea272aa7bd8aabca3",
+    "text": "Wan is settled. General Zhu Jun returns to Luoyang to report the victory; we should follow and wait on the court's judgment.",
     "version": 1,
     "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
   },

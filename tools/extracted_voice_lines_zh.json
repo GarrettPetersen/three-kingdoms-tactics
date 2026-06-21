@@ -186,30 +186,6 @@
     "source": "MapScene.js"
   },
   {
-    "id": "ch2_anxi_eunuch_01",
-    "char": "eunuch",
-    "text": "张钧欺主。此等怨言，不过出自不得除授之徒，非真为汉室。",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_anxi_eunuch_both_01",
-    "char": "eunuch",
-    "text": "刘备以兵私放卢植，又向董卓举刃。此非功劳，不过披着征尘的叛逆。",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_anxi_eunuch_dz_01",
-    "char": "eunuch",
-    "text": "刘备又是纵兄弟向董卓举兵之人。董卓乃朝廷将帅，这也算忠义么？",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_anxi_eunuch_freed_01",
-    "char": "eunuch",
-    "text": "刘备又是劫夺朝廷解送、私放卢植之人。难道要以印绶赏其乱法？",
-    "source": "NarrativeScripts.js"
-  },
-  {
     "id": "ch2_anxi_gy_01",
     "char": "guanyu",
     "text": "功劳本当自明。只是朝堂之上，功劳也似乎要人引见。",
@@ -224,7 +200,7 @@
   {
     "id": "ch2_anxi_gy_both_01",
     "char": "guanyu",
-    "text": "此等人手中赦免，非荣也；然兄弟之誓因此得存。",
+    "text": "既不能以官职效力，仍可在乱处护民。义路未绝。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -242,7 +218,7 @@
   {
     "id": "ch2_anxi_lb_02",
     "char": "liubei",
-    "text": "我等名籍已上，只待朝廷铨注。除此之外，备无可为。",
+    "text": "朱将军已上名籍。我等只待朝廷铨注。除此之外，备无可为。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -266,19 +242,13 @@
   {
     "id": "ch2_anxi_narrator_01",
     "char": "narrator",
-    "text": "宛城既定，南阳平息，朱儁班师洛阳，上表奏孙坚、刘备等人之功。",
+    "text": "宛城既定，南阳平息，朱儁班师洛阳奏捷，并上表奏孙坚、刘备等人之功。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_anxi_narrator_02",
     "char": "narrator",
-    "text": "孙坚有人情，不久便得别郡司马之任。刘备在京候命，日复一日，却始终不得除授。",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_anxi_narrator_03",
-    "char": "narrator",
-    "text": "张钧被逐。宦官惧有功之士再生怨言，便权且将刘备铨注微名。",
+    "text": "孙坚有人情，不久便得别郡司马之任。刘备在宫门外候命，日复一日，却始终不得除授。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -288,21 +258,9 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "ch2_anxi_narrator_both_01",
-    "char": "narrator",
-    "text": "张钧被逐。朱儁表奏救了刘备之命，却救不得前程。朝廷免其死罪，不授官职。",
-    "source": "NarrativeScripts.js"
-  },
-  {
     "id": "ch2_anxi_narrator_both_02",
     "char": "narrator",
-    "text": "刘备遂遣军士各归乡里，与关羽、张飞离洛阳。罪名虽赦，朝中名籍仍被涂黑。",
-    "source": "NarrativeScripts.js"
-  },
-  {
-    "id": "ch2_anxi_narrator_one_01",
-    "char": "narrator",
-    "text": "张钧被逐。朱儁表奏不能抹去刘备之罪，却使朝廷不便加刑。于是赦其罪，减其赏。",
+    "text": "刘备遂遣军士各归乡里，北往代州。刘恢可暂匿兄弟三人，待新的征召再使其重入世局。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -312,9 +270,15 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_anxi_narrator_wait_01",
+    "char": "narrator",
+    "text": "数个时辰后，张钧自宫门复出，衣冠带尘，怒气未消，所幸性命尚在。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_anxi_zf_01",
     "char": "zhangfei",
-    "text": "咱们破贼、攻城、追杀渠帅，难道要在客舍里等到胡子都白了？",
+    "text": "咱们破张宝、定阳城，又助取宛城。难道要在这宫门石上走出沟来，才有人理会？",
     "source": "NarrativeScripts.js"
   },
   {
@@ -338,25 +302,61 @@
   {
     "id": "ch2_anxi_zj_01",
     "char": "zhoujing",
-    "text": "你便是刘玄德？军报中屡闻其名。为何反在街上徘徊，如无功小吏？",
+    "text": "你便是刘玄德？军报中屡闻其名。为何在此久候，如无功小吏？",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_anxi_zj_02",
     "char": "zhoujing",
-    "text": "既如此，我便替这沉默开口。将士为汉流血而只得沉默，这沉默本身便是误国。",
+    "text": "既如此，我便替这沉默开口。将士为汉流血，官爵却在门内买卖。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_anxi_zj_03",
     "char": "zhoujing",
-    "text": "黄巾之乱，正因卖官鬻爵、任亲害仇，贤者有功，反须乞命于门外。",
+    "text": "我已直奏天子：黄巾之乱，正因卖官鬻爵、任亲害仇，贤者有功，反须乞命。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_anxi_zj_04",
     "char": "zhoujing",
-    "text": "请诛十常侍之蠹，重赏讨贼有功者，则四海尚可清平。",
+    "text": "我请诛十常侍之蠹，重赏讨贼有功者。宦官却称我欺主，将我逐出。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_both_01",
+    "char": "zhoujing",
+    "text": "他们两罪并提：以兵私放卢植，又向董卓举刃。朱儁可救你性命，却救不得官职。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_both_02",
+    "char": "zhoujing",
+    "text": "朝廷免你罪名，不授一官。趁尚无人再借叛名生事，速离洛阳。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_clean_01",
+    "char": "zhoujing",
+    "text": "然而他们惧有功之士再生怨言，已将你铨注为安喜县尉。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_dz_01",
+    "char": "zhoujing",
+    "text": "他们又提董卓之事：你兄弟曾向朝廷将帅举刃。朱儁力言你功不可刑。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_freed_01",
+    "char": "zhoujing",
+    "text": "他们又提卢植之事：你劫夺朝廷解送，私放其身。朱儁力言你功不可刑。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_zj_one_01",
+    "char": "zhoujing",
+    "text": "朝廷赦其罪，减其赏。你得赴安喜供职，却非自掌县尉之印。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -998,7 +998,19 @@
   {
     "id": "ch2_wan_final_zj_02",
     "char": "zhujun",
-    "text": "赵弘已死，孙仲亦伏，贼众溃散。南阳一路复平。",
+    "text": "赵弘已死，孙仲亦伏，贼众溃散。南阳诸郡复平。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_zj_03",
+    "char": "zhujun",
+    "text": "皇甫嵩已于曲阳破张梁，张角也早已身死。此一路黄巾之火，至此几尽。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_final_zj_04",
+    "char": "zhujun",
+    "text": "我等班师洛阳。此捷须奏闻朝廷，孙坚、刘备以及此役有功者，也当一并表奏。",
     "source": "Battles.js"
   },
   {
@@ -1088,7 +1100,19 @@
   {
     "id": "ch2_wan_north_zj_02",
     "char": "zhujun",
-    "text": "如此宛城已定，南阳复平。朝廷自会知道是谁守住此路。",
+    "text": "如此宛城已定，赵弘、孙仲皆死，南阳诸郡复平。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_zj_03",
+    "char": "zhujun",
+    "text": "皇甫嵩已于曲阳破张梁，张角也早已身死。此一路黄巾之火，至此几尽。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_wan_north_zj_04",
+    "char": "zhujun",
+    "text": "我等班师洛阳。此捷须奏闻朝廷，孙坚、刘备以及此役有功者，也当一并表奏。",
     "source": "Battles.js"
   },
   {
@@ -1310,7 +1334,7 @@
   {
     "id": "ch2_yc_zj_01",
     "char": "zhujun",
-    "text": "张宝！张角已死，妖法已破，诸郡皆归汉廷。",
+    "text": "张宝！张角已死于广宗，张梁又在曲阳为皇甫嵩所破。你兄弟皆亡，妖法已破，诸郡皆归汉廷。",
     "source": "Battles.js"
   },
   {
@@ -2265,6 +2289,12 @@
     "id": "map_lb_ch2_counter_council_01",
     "char": "liubei",
     "text": "破术之策已备。我们回到谷中，合围进逼，破张宝天雷。",
+    "source": "MapScene.js"
+  },
+  {
+    "id": "map_lb_ch2_luoyang_01",
+    "char": "liubei",
+    "text": "宛城已定。朱儁将军班师洛阳奏捷，我等也该随行，听候朝廷铨注。",
     "source": "MapScene.js"
   },
   {

@@ -2943,30 +2943,31 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
         {
             type: 'title',
-            text: { en: 'AFTER WAN', zh: '宛城之后' },
-            subtext: { en: 'Merit waits at Luoyang', zh: '功名滞于洛阳' }
+            text: { en: 'LUOYANG', zh: '洛阳' },
+            subtext: { en: 'Merit waits outside the gate', zh: '功名候于宫门外' }
         },
         {
             type: 'narrator',
             voiceId: 'ch2_anxi_narrator_01',
             text: {
-                en: 'With Wan settled and Nanyang quiet, Zhu Jun returned to Luoyang and memorialized the merit of Sun Jian and Liu Bei.',
-                zh: '宛城既定，南阳平息，朱儁班师洛阳，上表奏孙坚、刘备等人之功。'
+                en: 'With Wan settled and Nanyang quiet, Zhu Jun returned to Luoyang to report the victory and memorialize the merit of Sun Jian and Liu Bei.',
+                zh: '宛城既定，南阳平息，朱儁班师洛阳奏捷，并上表奏孙坚、刘备等人之功。'
             }
         },
-        { bg: 'urban_street', fg: 'urban_street_foreground', type: 'command', action: 'clearActors' },
-        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 92, y: 238, drawAboveForeground: true },
-        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 58, y: 238, drawAboveForeground: true },
-        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 32, y: 238, drawAboveForeground: true },
         {
             type: 'narrator',
             voiceId: 'ch2_anxi_narrator_02',
             text: {
-                en: 'Sun Jian had patrons and soon departed to a new post. Liu Bei waited in the capital, day after day, and no summons came.',
-                zh: '孙坚有人情，不久便得别郡司马之任。刘备在京候命，日复一日，却始终不得除授。'
+                en: 'Sun Jian had patrons and soon departed to a new post. Liu Bei waited outside the palace, day after day, and no summons came.',
+                zh: '孙坚有人情，不久便得别郡司马之任。刘备在宫门外候命，日复一日，却始终不得除授。'
             }
         },
+        { bg: 'luoyang_imperial_palace_gate', fg: 'luoyang_imperial_palace_gate_foreground', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 108, y: 190, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 76, y: 190, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 46, y: 190, drawAboveForeground: true },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 56, y: 190, wait: false },
         {
             type: 'dialogue',
             portraitKey: 'zhang-fei',
@@ -2974,8 +2975,8 @@ export const NARRATIVE_SCRIPTS = {
             voiceId: 'ch2_anxi_zf_01',
             position: 'top',
             text: {
-                en: 'We broke rebels, scaled walls, and chased their chiefs into the dust. Are we to live in an inn until our beards turn white?',
-                zh: '咱们破贼、攻城、追杀渠帅，难道要在客舍里等到胡子都白了？'
+                en: 'We broke Zhang Bao, settled Yangcheng, and helped take Wan. Are we to wear a path into these stones before anyone speaks to us?',
+                zh: '咱们破张宝、定阳城，又助取宛城。难道要在这宫门石上走出沟来，才有人理会？'
             }
         },
         {
@@ -3000,8 +3001,8 @@ export const NARRATIVE_SCRIPTS = {
                 zh: '有官则尽职，无官亦守义。只是随我等出生入死之人，也该见朝廷公道。'
             }
         },
-        { type: 'command', action: 'addActor', id: 'zhoujing', imgKey: 'zhoujing', x: 340, y: 234, actorAction: 'walk', speed: 0.72, flip: true, drawAboveForeground: true },
-        { type: 'command', action: 'move', id: 'zhoujing', x: 178, y: 234, wait: true },
+        { type: 'command', action: 'addActor', id: 'zhangjun', imgKey: 'zhoujing', x: 336, y: 190, actorAction: 'walk', speed: 0.72, flip: true, drawAboveForeground: true },
+        { type: 'command', action: 'move', id: 'zhangjun', x: 198, y: 190, wait: true },
         {
             type: 'dialogue',
             portraitKey: 'zhou-jing',
@@ -3009,8 +3010,8 @@ export const NARRATIVE_SCRIPTS = {
             voiceId: 'ch2_anxi_zj_01',
             position: 'top',
             text: {
-                en: 'You are Liu Xuande? I have heard your name in the campaign reports. Why do you idle in the street like an unrewarded clerk?',
-                zh: '你便是刘玄德？军报中屡闻其名。为何反在街上徘徊，如无功小吏？'
+                en: 'You are Liu Xuande? I have heard your name in the campaign reports. Why do you wait here like an unrewarded clerk?',
+                zh: '你便是刘玄德？军报中屡闻其名。为何在此久候，如无功小吏？'
             }
         },
         {
@@ -3020,8 +3021,8 @@ export const NARRATIVE_SCRIPTS = {
             voiceId: 'ch2_anxi_lb_02',
             position: 'top',
             text: {
-                en: 'We have submitted our names and wait on the court. Nothing more is in my hands.',
-                zh: '我等名籍已上，只待朝廷铨注。除此之外，备无可为。'
+                en: 'General Zhu has submitted our names. We wait on the court. Nothing more is in my hands.',
+                zh: '朱将军已上名籍。我等只待朝廷铨注。除此之外，备无可为。'
             }
         },
         {
@@ -3031,15 +3032,22 @@ export const NARRATIVE_SCRIPTS = {
             voiceId: 'ch2_anxi_zj_02',
             position: 'top',
             text: {
-                en: 'Then I will speak where waiting cannot. If soldiers bleed for the Han and receive only silence, the silence itself is treason.',
-                zh: '既如此，我便替这沉默开口。将士为汉流血而只得沉默，这沉默本身便是误国。'
+                en: 'Then I will speak where waiting cannot. Soldiers bleed for the Han while offices are sold at the gate.',
+                zh: '既如此，我便替这沉默开口。将士为汉流血，官爵却在门内买卖。'
             }
         },
-        { bg: 'luoyang_council_hall', fg: null, type: 'command', action: 'clearActors' },
-        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-        { type: 'command', action: 'addActor', id: 'zhoujing', imgKey: 'zhoujing', x: 82, y: 206 },
-        { type: 'command', action: 'addActor', id: 'eunuch_left', imgKey: 'eunuch', x: 210, y: 206, flip: true },
-        { type: 'command', action: 'addActor', id: 'eunuch', imgKey: 'eunuch', x: 242, y: 206, flip: true },
+        { type: 'command', action: 'move', id: 'zhangjun', x: 174, y: 178, wait: true },
+        { type: 'command', action: 'removeActor', id: 'zhangjun' },
+        {
+            type: 'narrator',
+            voiceId: 'ch2_anxi_narrator_wait_01',
+            text: {
+                en: 'Several hours later, Zhang Jun came back through the palace gate, dusty, angry, and very much alive.',
+                zh: '数个时辰后，张钧自宫门复出，衣冠带尘，怒气未消，所幸性命尚在。'
+            }
+        },
+        { type: 'command', action: 'addActor', id: 'zhangjun', imgKey: 'zhoujing', x: 174, y: 178, actorAction: 'walk', speed: 0.72, drawAboveForeground: true },
+        { type: 'command', action: 'move', id: 'zhangjun', x: 198, y: 190, wait: true },
         {
             type: 'dialogue',
             portraitKey: 'zhou-jing',
@@ -3047,8 +3055,8 @@ export const NARRATIVE_SCRIPTS = {
             voiceId: 'ch2_anxi_zj_03',
             position: 'top',
             text: {
-                en: 'The Yellow Turbans rose because offices are sold, kin are favored, enemies are ruined, and worthy men are made to beg at the gate.',
-                zh: '黄巾之乱，正因卖官鬻爵、任亲害仇，贤者有功，反须乞命于门外。'
+                en: 'I told the emperor plainly: the Yellow Turbans rose because offices are sold, kin are favored, enemies are ruined, and worthy men are made to beg.',
+                zh: '我已直奏天子：黄巾之乱，正因卖官鬻爵、任亲害仇，贤者有功，反须乞命。'
             }
         },
         {
@@ -3058,82 +3066,80 @@ export const NARRATIVE_SCRIPTS = {
             voiceId: 'ch2_anxi_zj_04',
             position: 'top',
             text: {
-                en: 'Cut away the corruption of the Ten Attendants, reward those who fought, and the four seas may yet be quiet.',
-                zh: '请诛十常侍之蠹，重赏讨贼有功者，则四海尚可清平。'
+                en: 'I urged him to cut away the corruption of the Ten Attendants and reward those who fought. The eunuchs called me a deceiver and had me driven out.',
+                zh: '我请诛十常侍之蠹，重赏讨贼有功者。宦官却称我欺主，将我逐出。'
             }
         },
         {
+            condition: CH2_NO_POLITICAL_CRIMES,
             type: 'dialogue',
-            portraitKey: 'eunuch',
-            name: 'Palace Eunuch',
-            voiceId: 'ch2_anxi_eunuch_01',
+            portraitKey: 'zhou-jing',
+            name: 'Zhang Jun',
+            voiceId: 'ch2_anxi_zj_clean_01',
             position: 'top',
             text: {
-                en: 'Zhang Jun deceives the throne. These complaints come from men who resent their place, not men who love the Han.',
-                zh: '张钧欺主。此等怨言，不过出自不得除授之徒，非真为汉室。'
+                en: 'Yet they fear more unrewarded soldiers will speak. Your name has been written down for Anxi County commandant.',
+                zh: '然而他们惧有功之士再生怨言，已将你铨注为安喜县尉。'
             }
         },
         {
             condition: CH2_FREED_ONLY,
             type: 'dialogue',
-            portraitKey: 'eunuch',
-            name: 'Palace Eunuch',
-            voiceId: 'ch2_anxi_eunuch_freed_01',
+            portraitKey: 'zhou-jing',
+            name: 'Zhang Jun',
+            voiceId: 'ch2_anxi_zj_freed_01',
             position: 'top',
             text: {
-                en: 'Liu Bei is also the man who took arms against imperial escorts and released Lu Zhi. Are we to reward disorder with a seal?',
-                zh: '刘备又是劫夺朝廷解送、私放卢植之人。难道要以印绶赏其乱法？'
+                en: 'They also named Lu Zhi: you took arms against imperial escorts and released him. Zhu Jun argued that your merit made punishment unwise.',
+                zh: '他们又提卢植之事：你劫夺朝廷解送，私放其身。朱儁力言你功不可刑。'
             }
         },
         {
             condition: CH2_ATTACKED_ONLY,
             type: 'dialogue',
-            portraitKey: 'eunuch',
-            name: 'Palace Eunuch',
-            voiceId: 'ch2_anxi_eunuch_dz_01',
+            portraitKey: 'zhou-jing',
+            name: 'Zhang Jun',
+            voiceId: 'ch2_anxi_zj_dz_01',
             position: 'top',
             text: {
-                en: 'Liu Bei is also the man whose brothers raised steel against Dong Zhuo, an imperial general in the field. Is that loyalty?',
-                zh: '刘备又是纵兄弟向董卓举兵之人。董卓乃朝廷将帅，这也算忠义么？'
+                en: 'They also named Dong Zhuo: your brothers raised steel against an imperial general. Zhu Jun argued that your merit made punishment unwise.',
+                zh: '他们又提董卓之事：你兄弟曾向朝廷将帅举刃。朱儁力言你功不可刑。'
+            }
+        },
+        {
+            condition: CH2_ONE_POLITICAL_CRIME,
+            type: 'dialogue',
+            portraitKey: 'zhou-jing',
+            name: 'Zhang Jun',
+            voiceId: 'ch2_anxi_zj_one_01',
+            position: 'top',
+            text: {
+                en: 'The court forgives the offense, but cuts down the reward. You are assigned beneath the Anxi commandant, not over him.',
+                zh: '朝廷赦其罪，减其赏。你得赴安喜供职，却非自掌县尉之印。'
             }
         },
         {
             condition: CH2_BOTH_POLITICAL_CRIMES,
             type: 'dialogue',
-            portraitKey: 'eunuch',
-            name: 'Palace Eunuch',
-            voiceId: 'ch2_anxi_eunuch_both_01',
+            portraitKey: 'zhou-jing',
+            name: 'Zhang Jun',
+            voiceId: 'ch2_anxi_zj_both_01',
             position: 'top',
             text: {
-                en: 'Liu Bei freed Lu Zhi by force, then raised blades against Dong Zhuo. This is not merit; it is rebellion wearing campaign dust.',
-                zh: '刘备以兵私放卢植，又向董卓举刃。此非功劳，不过披着征尘的叛逆。'
-            }
-        },
-        {
-            condition: CH2_NO_POLITICAL_CRIMES,
-            type: 'narrator',
-            voiceId: 'ch2_anxi_narrator_03',
-            text: {
-                en: 'Zhang Jun was driven out. The eunuchs, fearing that unrewarded soldiers would make more noise, wrote Liu Bei down for a minor office.',
-                zh: '张钧被逐。宦官惧有功之士再生怨言，便权且将刘备铨注微名。'
-            }
-        },
-        {
-            condition: CH2_ONE_POLITICAL_CRIME,
-            type: 'narrator',
-            voiceId: 'ch2_anxi_narrator_one_01',
-            text: {
-                en: "Zhang Jun was driven out. Zhu Jun's memorial could not erase Liu Bei's offense, but it made punishment inconvenient. The court forgave the crime and cut down the reward.",
-                zh: '张钧被逐。朱儁表奏不能抹去刘备之罪，却使朝廷不便加刑。于是赦其罪，减其赏。'
+                en: 'They named both charges: Lu Zhi freed by force, and blades raised against Dong Zhuo. Zhu Jun could save your life, not your office.',
+                zh: '他们两罪并提：以兵私放卢植，又向董卓举刃。朱儁可救你性命，却救不得官职。'
             }
         },
         {
             condition: CH2_BOTH_POLITICAL_CRIMES,
-            type: 'narrator',
-            voiceId: 'ch2_anxi_narrator_both_01',
+            type: 'dialogue',
+            portraitKey: 'zhou-jing',
+            name: 'Zhang Jun',
+            voiceId: 'ch2_anxi_zj_both_02',
+            position: 'top',
             text: {
-                en: "Zhang Jun was driven out. Zhu Jun's memorial saved Liu Bei's life, not his future. The court remitted the capital charges and granted no office.",
-                zh: '张钧被逐。朱儁表奏救了刘备之命，却救不得前程。朝廷免其死罪，不授官职。'
+                en: 'The court pardons the crimes and grants no post. Leave Luoyang before another tongue finds profit in naming you rebel.',
+                zh: '朝廷免你罪名，不授一官。趁尚无人再借叛名生事，速离洛阳。'
             }
         },
         { condition: CH2_NO_POLITICAL_CRIMES, type: 'command', action: 'setStoryChoice', key: 'chapter2_oath_political_outcome', value: 'anxi_commandant', routeId: 'chapter2_oath' },
@@ -3254,8 +3260,8 @@ export const NARRATIVE_SCRIPTS = {
             voiceId: 'ch2_anxi_gy_both_01',
             position: 'top',
             text: {
-                en: 'A pardon from such hands is not honor, but it keeps the oath alive.',
-                zh: '此等人手中赦免，非荣也；然兄弟之誓因此得存。'
+                en: 'Then we cannot serve through an office, but we can still guard the people wherever chaos opens a road.',
+                zh: '既不能以官职效力，仍可在乱处护民。义路未绝。'
             }
         },
         {
@@ -3275,8 +3281,8 @@ export const NARRATIVE_SCRIPTS = {
             type: 'narrator',
             voiceId: 'ch2_anxi_narrator_both_02',
             text: {
-                en: 'Liu Bei dismissed the volunteers to their villages and left Luoyang with Guan Yu and Zhang Fei, their crimes forgiven but their names still darkened at court.',
-                zh: '刘备遂遣军士各归乡里，与关羽、张飞离洛阳。罪名虽赦，朝中名籍仍被涂黑。'
+                en: 'Liu Bei dismissed the volunteers to their villages and went north to Dai. Liu Hui could shelter the brothers until a new summons called them back into the open.',
+                zh: '刘备遂遣军士各归乡里，北往代州。刘恢可暂匿兄弟三人，待新的征召再使其重入世局。'
             }
         },
         { type: 'command', action: 'move', id: 'zhangfei', x: 320, y: 192, wait: false },

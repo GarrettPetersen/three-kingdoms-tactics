@@ -139,6 +139,23 @@ const LIUBEI_LOCATIONS = {
             ) && !hasCompletedChapter2Node(gs, 'chapter2_wan_strategy'),
         isCompleted: (gs) =>
             hasCompletedChapter2Node(gs, 'chapter2_wan_strategy')
+    },
+    chapter2_luoyang: {
+        id: 'chapter2_luoyang',
+        x: 154,
+        y: 84,
+        name: 'Luoyang',
+        imgKey: 'city',
+        storyRouteId: CHAPTER2_ROUTE_ID,
+        storyNodeId: 'chapter2_anxi_appointment',
+        unlockCondition: (gs) =>
+            (
+                gs.getStoryCursor(CHAPTER2_ROUTE_ID).nodeId === 'chapter2_anxi_appointment'
+                || gs.getStoryCursor(CHAPTER2_LEGACY_ROUTE_ID).nodeId === 'chapter2_anxi_appointment'
+                || hasChapter2Node(gs, 'chapter2_anxi_appointment')
+            ) && !hasCompletedChapter2Node(gs, 'chapter2_anxi_appointment'),
+        isCompleted: (gs) =>
+            hasCompletedChapter2Node(gs, 'chapter2_anxi_appointment')
     }
 };
 
@@ -315,6 +332,15 @@ const HERO_REMINDERS = {
             en: "Wan's gate stands before us. Break it quickly, then keep order inside the city.",
             zh: "宛城城门在前。速破其门，入城后须严整军纪。"
         }
+    },
+    'chapter2_anxi_appointment': {
+        portraitKey: 'liu-bei',
+        name: 'Liu Bei',
+        voiceId: 'map_lb_ch2_luoyang_01',
+        text: {
+            en: "Wan is settled. General Zhu Jun returns to Luoyang to report the victory; we should follow and wait on the court's judgment.",
+            zh: "宛城已定。朱儁将军班师洛阳奏捷，我等也该随行，听候朝廷铨注。"
+        }
     }
 };
 
@@ -357,12 +383,22 @@ const MAP_SCREEN_DEFINITIONS = {
             chapter2_wan_strategy: makeMapScreenLocation(LIUBEI_LOCATIONS.chapter2_wan_strategy)
         },
         reminderKey: 'chapter2_wan_strategy'
+    },
+    chapter2_luoyang: {
+        id: 'chapter2_luoyang',
+        campaignId: CHAPTER2_ROUTE_ID,
+        party: { id: 'liubei', name: 'Liu Bei', x: 181, y: 120, imgKey: 'liubei' },
+        locations: {
+            chapter2_luoyang: makeMapScreenLocation(LIUBEI_LOCATIONS.chapter2_luoyang)
+        },
+        reminderKey: 'chapter2_anxi_appointment'
     }
 };
 
 const MAP_SCREEN_BY_STORY_NODE = {
     chapter2_zhujun_camp: 'chapter2_zhujun_camp',
-    chapter2_wan_strategy: 'chapter2_wan_strategy'
+    chapter2_wan_strategy: 'chapter2_wan_strategy',
+    chapter2_anxi_appointment: 'chapter2_luoyang'
 };
 
 export class MapScene extends BaseScene {
@@ -1324,6 +1360,7 @@ export class MapScene extends BaseScene {
         }
 
         // Highest-priority progression first.
+        if (hasChapter2Node(gs, 'chapter2_anxi_appointment')) return 'chapter2_anxi_appointment';
         if (hasChapter2Node(gs, 'chapter2_wan_gate')) return 'chapter2_wan_gate';
         if (hasChapter2Node(gs, 'chapter2_wan_field')) return 'chapter2_wan_field';
         if (hasChapter2Node(gs, 'chapter2_wan_strategy')) return 'chapter2_wan_strategy';

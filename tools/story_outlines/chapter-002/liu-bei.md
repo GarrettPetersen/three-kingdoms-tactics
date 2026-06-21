@@ -15,8 +15,9 @@
 1) [narrative] Zhu Jun camp: Liu Bei, Guan Yu, and Zhang Fei join Zhu Jun after leaving Dong Zhuo's command; strategy is set against Zhang Bao.
 2) [battle] Mountain-front / Yangcheng approach: Liu Bei engages Zhang Bao, is forced back by sorcery, then executes the blood-and-filth counterplan with Guan Yu and Zhang Fei, routs the rebels, wounds Zhang Bao, and begins the Yangcheng pressure.
 3) [battle] Wan city campaign: Liu Bei fights through Han Zhong, Zhao Hong, and Sun Zhong operations around Wan, argues for opening an escape lane to avoid desperate last-stand resistance, and helps secure victory.
-4) [map] Courtward transition: After battlefield success but delayed promotion, Liu Bei transitions from campaign front to civil post assignment at Anxi.
-5) [narrative] Anxi county office: Liu Bei governs cleanly, faces extortion by the inspector (督郵), then after Zhang Fei's intervention chooses to resign rather than submit to corruption.
-6) [map] Flight and redeployment: Liu Bei leaves with Guan Yu and Zhang Fei, shelters under Liu Hui, then redeploys north under Liu Yu against Zhang Ju and Zhang Chun.
-7) [battle] Youzhou/Yuyang suppression: Liu Bei contributes to anti-rebel operations that end the northern uprising.
-8) [narrative] Post-campaign restoration: Liu Bei's offense is pardoned and he returns to office at lower rank, ending the chapter reset but still ascending through merit.
+4) [map/narrative] Courtward transition: After Wan, Zhu Jun returns to Luoyang to report victory and memorialize Sun Jian and Liu Bei. Liu Bei waits outside the palace while Zhang Jun denounces eunuch corruption; the outcome depends on whether Liu Bei previously freed Lu Zhi or struck Dong Zhuo.
+5) [narrative] Anxi / outlaw consequence: Clean Liu Bei receives Anxi county commandant; one unlawful act reduces him to service beneath the Anxi commandant; both unlawful acts leave him pardoned but without office, forcing him north toward Liu Hui in Dai until later service restores him.
+6) [narrative] Anxi county office: Liu Bei governs cleanly when he has an Anxi post, faces extortion by the inspector (督郵), then after Zhang Fei's intervention chooses to resign rather than submit to corruption.
+7) [map] Flight and redeployment: Liu Bei leaves with Guan Yu and Zhang Fei, shelters under Liu Hui, then redeploys north under Liu Yu against Zhang Ju and Zhang Chun.
+8) [battle] Youzhou/Yuyang suppression: Liu Bei contributes to anti-rebel operations that end the northern uprising.
+9) [narrative] Post-campaign restoration: Liu Bei's offense is pardoned and he returns to office at lower rank, ending the chapter reset but still ascending through merit.
