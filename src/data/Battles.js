@@ -1858,8 +1858,7 @@ export const UNIT_TEMPLATES = {
             isSiegeLadder: true,
             crackedImgKey: 'siege_ladder_cracked',
             destroyedImgKey: 'siege_ladder_destroyed',
-            ladderCombatLevel: 3,
-            spriteScale: 2
+            ladderCombatLevel: 3
         }
     }
 };
