@@ -662,6 +662,52 @@ export class StoryScriptReaderScene extends BaseScene {
         this.clampBeatScroll();
     }
 
+    isBeatExpanded(beat) {
+        return !!(beat?.choiceKey && (this.expandAllChoices || this.expandedKeys.has(beat.choiceKey)));
+    }
+
+    findFirstChildBeatIndex(parentIndex) {
+        const parent = this.beats[parentIndex];
+        if (!parent) return -1;
+        const parentDepth = parent.depth || 0;
+        for (let i = parentIndex + 1; i < this.beats.length; i++) {
+            const depth = this.beats[i]?.depth || 0;
+            if (depth <= parentDepth) return -1;
+            return i;
+        }
+        return -1;
+    }
+
+    enterSelectedBeatPath() {
+        const beat = this.beats[this.selectedBeatIndex];
+        if (!beat) return false;
+
+        if (beat.choiceKey) {
+            const key = beat.choiceKey;
+            if (!this.isBeatExpanded(beat)) {
+                this.expandedKeys.add(key);
+                this.refreshBeats();
+            }
+            const choiceIndex = this.beats.findIndex(b => b.choiceKey === key);
+            const childIndex = this.findFirstChildBeatIndex(choiceIndex);
+            this.selectedBeatIndex = childIndex >= 0 ? childIndex : Math.max(0, choiceIndex);
+            this.clampBeatScroll();
+            assets.playSound('ui_click', 0.45);
+            return true;
+        }
+
+        if (beat.kind === 'option') {
+            const childIndex = this.findFirstChildBeatIndex(this.selectedBeatIndex);
+            if (childIndex < 0) return false;
+            this.selectedBeatIndex = childIndex;
+            this.clampBeatScroll();
+            assets.playSound('ui_click', 0.45);
+            return true;
+        }
+
+        return false;
+    }
+
     toggleSelectedBeatExpansion() {
         const beat = this.beats[this.selectedBeatIndex];
         if (!beat?.choiceKey) return false;
@@ -716,7 +762,7 @@ export class StoryScriptReaderScene extends BaseScene {
         }
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            if (!this.toggleSelectedBeatExpansion()) assets.playSound('ui_click', 0.25);
+            if (!this.enterSelectedBeatPath()) assets.playSound('ui_click', 0.25);
             return;
         }
         if (e.key.toLowerCase() === 'b') {
@@ -808,7 +854,7 @@ export class StoryScriptReaderScene extends BaseScene {
         if (drag.pendingBeatIndex != null) {
             this.selectedBeatIndex = drag.pendingBeatIndex;
             this.clampBeatScroll();
-            this.toggleSelectedBeatExpansion();
+            if (!this.enterSelectedBeatPath()) assets.playSound('ui_click', 0.25);
         }
     }
 
