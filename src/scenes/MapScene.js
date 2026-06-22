@@ -448,7 +448,7 @@ const MAP_SCREEN_DEFINITIONS = {
     chapter2_anxi: {
         id: 'chapter2_anxi',
         campaignId: CHAPTER2_ROUTE_ID,
-        party: { id: 'liubei', name: 'Liu Bei', x: 176, y: 77, imgKey: 'liubei' },
+        party: { id: 'liubei', name: 'Liu Bei', x: 154, y: 84, imgKey: 'liubei' },
         locations: {
             chapter2_anxi_governance: makeMapScreenLocation(LIUBEI_LOCATIONS.chapter2_anxi_governance)
         },
@@ -457,7 +457,7 @@ const MAP_SCREEN_DEFINITIONS = {
     chapter2_liuhui: {
         id: 'chapter2_liuhui',
         campaignId: CHAPTER2_ROUTE_ID,
-        party: { id: 'liubei', name: 'Liu Bei', x: 171, y: 44, imgKey: 'liubei' },
+        party: { id: 'liubei', name: 'Liu Bei', x: 176, y: 77, imgKey: 'liubei' },
         locations: {
             chapter2_liuhui_shelter: makeMapScreenLocation(LIUBEI_LOCATIONS.chapter2_liuhui_shelter)
         },

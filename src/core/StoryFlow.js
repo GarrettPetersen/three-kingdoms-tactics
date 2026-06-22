@@ -39,8 +39,8 @@ const PARTY_POSITIONS = {
         default: { partyX: 220, partyY: 95 },
         chapter2_wan_strategy: { partyX: 188, partyY: 92 },
         chapter2_anxi_appointment: { partyX: 181, partyY: 120 },
-        chapter2_anxi_governance: { partyX: 176, partyY: 77 },
-        chapter2_liuhui_shelter: { partyX: 171, partyY: 44 }
+        chapter2_anxi_governance: { partyX: 154, partyY: 84 },
+        chapter2_liuhui_shelter: { partyX: 176, partyY: 77 }
     }
 };
 
@@ -69,8 +69,14 @@ const INTERACTIVE_MAP_TRANSITIONS = {
             partyX: 181,
             partyY: 120
         },
-        chapter2_anxi_appointment: {},
-        chapter2_anxi_governance: {}
+        chapter2_anxi_appointment: {
+            partyX: 154,
+            partyY: 84
+        },
+        chapter2_anxi_governance: {
+            partyX: 176,
+            partyY: 77
+        }
     }
 };
 
