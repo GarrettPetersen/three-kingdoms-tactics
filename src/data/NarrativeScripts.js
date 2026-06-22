@@ -3038,6 +3038,85 @@ export const NARRATIVE_SCRIPTS = {
         },
         { type: 'command', action: 'move', id: 'zhangjun', x: 174, y: 178, wait: true },
         { type: 'command', action: 'removeActor', id: 'zhangjun' },
+        { type: 'command', action: 'addActor', id: 'luoyang_liubo_player', imgKey: 'xiaoer', x: 258, y: 190, flip: true, drawAboveForeground: true },
+        { type: 'command', action: 'animate', id: 'luoyang_liubo_player', animation: 'recovery' },
+        { type: 'command', action: 'addProp', id: 'luoyang_liubo_table', imgKey: 'liubo_table', x: 222, y: 166, sortY: 226 },
+        {
+            type: 'interactive',
+            clickableActors: {
+                'luoyang_liubo_player': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'xiaoer',
+                            position: 'top',
+                            name: 'Liubo Player',
+                            voiceId: 'ch2_luoyang_liubo_intro_01',
+                            text: {
+                                en: 'Waiting at court is its own campaign. Sit for a game of Liubo while the palace decides your fate?',
+                                zh: '候在宫门外，也像一场战役。趁宫中议事未定，坐下博一局如何？'
+                            },
+                            _isInserted: true
+                        },
+                        {
+                            type: 'choice',
+                            portraitKey: 'xiaoer',
+                            name: 'Liubo Player',
+                            options: [
+                                {
+                                    buttonText: { en: 'Play Liubo.', zh: '博一局。' },
+                                    speaker: 'xiaoer',
+                                    voiceId: 'ch2_luoyang_liubo_accept_01',
+                                    text: {
+                                        en: 'Then let the sticks speak while the ministers keep silent.',
+                                        zh: '那就让博箸先开口，等诸公慢慢议。'
+                                    },
+                                    result: [
+                                        { type: 'command', action: 'startCampaignLiubo', activityId: 'chapter2_luoyang_wait_liubo' }
+                                    ]
+                                },
+                                {
+                                    buttonText: { en: 'Not now.', zh: '现在不玩。' },
+                                    speaker: 'xiaoer',
+                                    voiceId: 'ch2_luoyang_liubo_decline_01',
+                                    text: {
+                                        en: 'Another time. We should keep our eyes on the gate.',
+                                        zh: '改日吧。我们还是盯着宫门。'
+                                    },
+                                    result: [
+                                        {
+                                            type: 'dialogue',
+                                            portraitKey: 'xiaoer',
+                                            position: 'top',
+                                            name: 'Liubo Player',
+                                            voiceId: 'ch2_luoyang_liubo_decline_reply_01',
+                                            text: {
+                                                en: 'As you wish. The board moves faster than the court.',
+                                                zh: '随你。棋盘走得总比朝廷快。'
+                                            }
+                                        }
+                                    ]
+                                }
+                            ],
+                            _isInserted: true
+                        }
+                    ]
+                }
+            },
+            promptOptions: [
+                {
+                    id: 'continue_waiting',
+                    text: { en: 'Keep waiting.', zh: '继续等候。' },
+                    position: 'right',
+                    y: 204,
+                    w: 86,
+                    h: 24,
+                    advanceOnClick: true
+                }
+            ]
+        },
+        { type: 'command', action: 'removeProp', id: 'luoyang_liubo_table' },
+        { type: 'command', action: 'removeActor', id: 'luoyang_liubo_player' },
         {
             type: 'narrator',
             voiceId: 'ch2_anxi_narrator_wait_01',

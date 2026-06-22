@@ -965,6 +965,42 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_luoyang_liubo_accept_01",
+    "char": "xiaoer",
+    "text": "Then let the sticks speak while the ministers keep silent.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_luoyang_liubo_decline_01",
+    "char": "xiaoer",
+    "text": "Another time. We should keep our eyes on the gate.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_luoyang_liubo_decline_reply_01",
+    "char": "xiaoer",
+    "text": "As you wish. The board moves faster than the court.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_luoyang_liubo_intro_01",
+    "char": "xiaoer",
+    "text": "Waiting at court is its own campaign. Sit for a game of Liubo while the palace decides your fate?",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_luoyang_liubo_loss_01",
+    "char": "xiaoer",
+    "text": "Liubo teaches patience. A useful lesson when palace doors open slowly.",
+    "source": "LiuboScene.js"
+  },
+  {
+    "id": "ch2_luoyang_liubo_win_01",
+    "char": "xiaoer",
+    "text": "A clean victory. May the court read merit as clearly as you read the board.",
+    "source": "LiuboScene.js"
+  },
+  {
     "id": "ch2_oath_dz_restrain_01",
     "char": "dongzhuo",
     "text": "Know your place, commoners. Be grateful I even speak to you.",

@@ -4633,5 +4633,59 @@
         "wer": 0.15789473684210525,
         "is_bad": false,
         "language": "en"
+    },
+    "en:ch2_luoyang_liubo_accept_01": {
+        "id": "ch2_luoyang_liubo_accept_01",
+        "character": "xiaoer",
+        "original_text": "Then let the sticks speak while the ministers keep silent.",
+        "stt_output": "Then let the stick speak while the ministers keep silent.",
+        "wer": 0.1,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_luoyang_liubo_decline_01": {
+        "id": "ch2_luoyang_liubo_decline_01",
+        "character": "xiaoer",
+        "original_text": "Another time. We should keep our eyes on the gate.",
+        "stt_output": "Another time. We should keep our eyes on the gate.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_luoyang_liubo_decline_reply_01": {
+        "id": "ch2_luoyang_liubo_decline_reply_01",
+        "character": "xiaoer",
+        "original_text": "As you wish. The board moves faster than the court.",
+        "stt_output": "As you wish, the board moves faster than the court.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_luoyang_liubo_intro_01": {
+        "id": "ch2_luoyang_liubo_intro_01",
+        "character": "xiaoer",
+        "original_text": "Waiting at court is its own campaign. Sit for a game of Liubo while the palace decides your fate?",
+        "stt_output": "Waiting at court is its own campaign. Sit for a game of Leuibo while the palace decides your fate.",
+        "wer": 0.05263157894736842,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_luoyang_liubo_loss_01": {
+        "id": "ch2_luoyang_liubo_loss_01",
+        "character": "xiaoer",
+        "original_text": "Liubo teaches patience. A useful lesson when palace doors open slowly.",
+        "stt_output": "Liu Bo teaches patience a useful lesson when palestores open slowly.",
+        "wer": 0.36363636363636365,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_luoyang_liubo_win_01": {
+        "id": "ch2_luoyang_liubo_win_01",
+        "character": "xiaoer",
+        "original_text": "A clean victory. May the court read merit as clearly as you read the board.",
+        "stt_output": "a clean victory. May the court read merit as clearly as you read the board.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
     }
 }

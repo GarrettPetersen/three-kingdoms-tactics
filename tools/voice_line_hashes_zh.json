@@ -1119,6 +1119,48 @@
     "version": 1,
     "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
   },
+  "ch2_luoyang_liubo_accept_01": {
+    "character": "xiaoer",
+    "hash": "0fc5aff0f3a316bec98e2c0df8ede6cfb1ad7a32ab08ffe61b7db42001a174c6",
+    "text": "那就让博箸先开口，等诸公慢慢议。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
+  },
+  "ch2_luoyang_liubo_decline_01": {
+    "character": "xiaoer",
+    "hash": "591871d9ddc84c7274104a40053504da30e20dbd11856f428a03f66bc2959862",
+    "text": "改日吧。我们还是盯着宫门。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
+  },
+  "ch2_luoyang_liubo_decline_reply_01": {
+    "character": "xiaoer",
+    "hash": "4a6a2f088125c269a90fed5f9a424bad9b9d6c4686dc0fde17f147b859a78567",
+    "text": "随你。棋盘走得总比朝廷快。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
+  },
+  "ch2_luoyang_liubo_intro_01": {
+    "character": "xiaoer",
+    "hash": "1d0effa0fc2691110c91f565ea5f2686b78a90e79df915d808da9fe3547559a4",
+    "text": "候在宫门外，也像一场战役。趁宫中议事未定，坐下博一局如何？",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
+  },
+  "ch2_luoyang_liubo_loss_01": {
+    "character": "xiaoer",
+    "hash": "6d8a9db8e148066763ad2e7c237f75c4e689ef8c16f6dfebd4ae92e981d12032",
+    "text": "六博教人耐心。宫门开得慢时，这道理倒也有用。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
+  },
+  "ch2_luoyang_liubo_win_01": {
+    "character": "xiaoer",
+    "hash": "acee15aaa667cc8895c552bdff03f601b27989ad128e59420b92b5c56dd1694c",
+    "text": "胜得干净。只愿朝廷看功劳，也能如你看棋局这般分明。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
+  },
   "ch2_oath_dz_restrain_01": {
     "character": "dongzhuo",
     "hash": "22bfbf930b7d486eeca243ab443b5bed4a22a27a3f86e42c645405f40c77c100",

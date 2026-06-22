@@ -1119,6 +1119,48 @@
     "version": 1,
     "voice_target": "movies/clean/clean_kublai-khan.wav"
   },
+  "ch2_luoyang_liubo_accept_01": {
+    "character": "xiaoer",
+    "hash": "354da4d43982d97fe3ed02f463d9054c1f1febd3b9315d2e605993db4e83f26b",
+    "text": "Then let the sticks speak while the ministers keep silent.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "ch2_luoyang_liubo_decline_01": {
+    "character": "xiaoer",
+    "hash": "30fe062971ee09a0bb16928d264e0b1be3001b12a398c60bef11a43930e39a59",
+    "text": "Another time. We should keep our eyes on the gate.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "ch2_luoyang_liubo_decline_reply_01": {
+    "character": "xiaoer",
+    "hash": "4968c4d5e871ae782e12013858bc5c69fdc30e2eaea422430609d8c62616a0ea",
+    "text": "As you wish. The board moves faster than the court.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "ch2_luoyang_liubo_intro_01": {
+    "character": "xiaoer",
+    "hash": "3609eb47f9205d82c5178ed0f9715387252c34cd32a65a5ccbe74bdec8f8f856",
+    "text": "Waiting at court is its own campaign. Sit for a game of Liubo while the palace decides your fate?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "ch2_luoyang_liubo_loss_01": {
+    "character": "xiaoer",
+    "hash": "5cc4688aafd799c37a9d932d34a298d53cc2d0f9b126db127d0a4b482270c0af",
+    "text": "Liubo teaches patience. A useful lesson when palace doors open slowly.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "ch2_luoyang_liubo_win_01": {
+    "character": "xiaoer",
+    "hash": "cfb3f8b20bdfc63bbdf63a82372df7c74dba44e51fd6e3cd2ed42bf4ab737ff4",
+    "text": "A clean victory. May the court read merit as clearly as you read the board.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
   "ch2_oath_dz_restrain_01": {
     "character": "dongzhuo",
     "hash": "ad7e77cd5d55a621b9305f946554fa924bbcee255b4043b3ae96d1e80bb3bafe",
