@@ -244,6 +244,7 @@ export class BaseScene {
             hideBottom = 0,
             scale = 1.0,
             isProp = false,
+            propBottomPadding = 5,
             waterMaskCanvas = null,
             waterEffectTime = 0,
             waterClipRect = null
@@ -257,9 +258,9 @@ export class BaseScene {
             if (flip) ctx.scale(-1, 1);
             if (scale !== 1.0) ctx.scale(scale, scale);
             
-            // Draw centered horizontally. 
-            // For vertical, we align the visible bottom (assuming 5px padding) to the ground.
-            const visibleHeight = img.height - 5;
+            // Draw centered horizontally. For vertical, align the visible bottom to the ground.
+            const bottomPadding = Number.isFinite(propBottomPadding) ? propBottomPadding : 5;
+            const visibleHeight = img.height - bottomPadding;
             ctx.drawImage(img, -img.width / 2, -visibleHeight);
             ctx.restore();
             return;
@@ -471,15 +472,16 @@ export class BaseScene {
 
     checkCharacterHit(img, action, frame, x, y, clickX, clickY, options = {}) {
         if (!img) return false;
-        const { flip = false, sinkOffset = 0, isProp = false, alphaThreshold = 254, scale = 1.0 } = options;
+        const { flip = false, sinkOffset = 0, isProp = false, alphaThreshold = 254, scale = 1.0, propBottomPadding = 5 } = options;
         const sourceSize = 72;
 
         if (isProp) {
             const propScale = Number.isFinite(scale) && scale > 0 ? scale : 1;
+            const bottomPadding = Number.isFinite(propBottomPadding) ? propBottomPadding : 5;
             const drawW = img.width * propScale;
             const drawH = img.height * propScale;
             const bx = x - drawW / 2;
-            const by = y + sinkOffset - ((img.height - 5) * propScale);
+            const by = y + sinkOffset - ((img.height - bottomPadding) * propScale);
             if (clickX < bx || clickX > bx + drawW || clickY < by || clickY > by + drawH) {
                 return false;
             }

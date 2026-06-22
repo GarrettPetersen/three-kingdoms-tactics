@@ -6292,6 +6292,42 @@ export class TacticsScene extends BaseScene {
         )) || null;
     }
 
+    getSiegeLadderCombatLevel(ladder) {
+        return Number.isFinite(ladder?.ladderCombatLevel) ? ladder.ladderCombatLevel : 3;
+    }
+
+    getPropBottomPaddingForUnit(unit) {
+        return this.isSiegeLadder(unit) ? 14 : 5;
+    }
+
+    getCombatLevelForCell(r, q, { useLadder = false, excludeUnit = null } = {}) {
+        const cell = this.tacticsMap.getCell(r, q);
+        const baseLevel = cell?.level || 0;
+        if (useLadder) {
+            const ladder = this.getActiveSiegeLadderAtCell(r, q, excludeUnit);
+            if (ladder) return Math.max(baseLevel, this.getSiegeLadderCombatLevel(ladder));
+        }
+        return baseLevel;
+    }
+
+    getLadderVisualLiftAtCell(r, q, excludeUnit = null) {
+        const cell = this.tacticsMap.getCell(r, q);
+        if (!cell) return 0;
+        const ladder = this.getActiveSiegeLadderAtCell(r, q, excludeUnit);
+        if (!ladder) return 0;
+        const baseLevel = cell.level || 0;
+        const ladderLevel = this.getSiegeLadderCombatLevel(ladder);
+        return Math.max(0, ladderLevel - baseLevel) * (this.tacticsMap.elevationStep || 0);
+    }
+
+    getPixelPosForUnit(unit, r, q) {
+        const pos = this.getPixelPos(r, q);
+        if (!unit || this.isSiegeLadder(unit)) return pos;
+        const lift = this.getLadderVisualLiftAtCell(r, q, unit);
+        if (!lift) return pos;
+        return { x: pos.x, y: pos.y - lift };
+    }
+
     isSiegeLadderOccupied(unit) {
         if (!this.isActiveSiegeLadder(unit)) return false;
         return this.units.some(u => (
@@ -6333,12 +6369,10 @@ export class TacticsScene extends BaseScene {
 
     getCombatLevelForUnit(unit) {
         if (!unit) return 0;
-        const cell = this.tacticsMap.getCell(unit.r, unit.q);
-        const baseLevel = cell?.level || 0;
-        if (!this.isSiegeLadder(unit) && this.getActiveSiegeLadderAtCell(unit.r, unit.q, unit)) {
-            return Number.isFinite(unit.ladderCombatLevel) ? unit.ladderCombatLevel : 3;
-        }
-        return baseLevel;
+        return this.getCombatLevelForCell(unit.r, unit.q, {
+            useLadder: !this.isSiegeLadder(unit),
+            excludeUnit: unit
+        });
     }
 
     canStopOnCell(unit, cell) {
@@ -9887,7 +9921,7 @@ export class TacticsScene extends BaseScene {
             const terrainType = cell ? cell.terrain : 'grass_01';
             
             const movementDt = this.applyCityGatePassageDelay(u, dt);
-            u.update(movementDt, (r, q) => this.getPixelPos(r, q), shouldAnimate, terrainType);
+            u.update(movementDt, (r, q) => this.getPixelPosForUnit(u, r, q), shouldAnimate, terrainType);
             if (!u.isMoving) {
                 u._cityGatePassage = null;
                 u._hiddenBehindCityGatehouse = false;
@@ -10084,7 +10118,8 @@ export class TacticsScene extends BaseScene {
                             flip: u.flip,
                             sinkOffset,
                             isProp: u.name === 'Boulder' || u.isProp,
-                            scale: Number.isFinite(u.spriteScale) ? u.spriteScale : 1
+                            scale: Number.isFinite(u.spriteScale) ? u.spriteScale : 1,
+                            propBottomPadding: this.getPropBottomPaddingForUnit(u)
                         })) {
                         hoveredUnit = u;
                         hoveredUnitCell = this.tacticsMap.getCell(u.r, u.q);
@@ -10923,7 +10958,8 @@ export class TacticsScene extends BaseScene {
                 let drawOptions = { 
                     flip: u.flip,
                     isProp: u.name === 'Boulder' || u.isProp,
-                    scale: Number.isFinite(u.spriteScale) ? u.spriteScale : 1
+                    scale: Number.isFinite(u.spriteScale) ? u.spriteScale : 1,
+                    propBottomPadding: this.getPropBottomPaddingForUnit(u)
                 };
 
                 // Raise living units if they are standing on a corpse
@@ -15155,7 +15191,11 @@ export class TacticsScene extends BaseScene {
             const a = this.tacticsMap.getCell(line[i].r, line[i].q);
             const b = this.tacticsMap.getCell(line[i + 1].r, line[i + 1].q);
             if (!a || !b) continue;
-            if (Math.abs((a.level || 0) - (b.level || 0)) >= 5) return false;
+            const aIsEndpoint = (a.r === fromR && a.q === fromQ) || (a.r === toR && a.q === toQ);
+            const bIsEndpoint = (b.r === fromR && b.q === fromQ) || (b.r === toR && b.q === toQ);
+            const aLevel = this.getCombatLevelForCell(a.r, a.q, { useLadder: aIsEndpoint });
+            const bLevel = this.getCombatLevelForCell(b.r, b.q, { useLadder: bIsEndpoint });
+            if (Math.abs(aLevel - bLevel) >= 5) return false;
         }
         return true;
     }
@@ -15668,7 +15708,8 @@ export class TacticsScene extends BaseScene {
                 flip: u.flip, 
                 sinkOffset,
                 isProp: u.name === 'Boulder' || u.isProp,
-                scale: Number.isFinite(u.spriteScale) ? u.spriteScale : 1
+                scale: Number.isFinite(u.spriteScale) ? u.spriteScale : 1,
+                propBottomPadding: this.getPropBottomPaddingForUnit(u)
             })) {
                 spriteUnit = u;
                 spriteHitCell = this.tacticsMap.getCell(u.r, u.q);
