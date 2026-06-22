@@ -457,8 +457,26 @@ export class GameState {
         this.save();
     }
 
+    clearStoryChoice(key, routeId = null) {
+        const resolvedRouteId = routeId || this.getCurrentCampaign();
+        if (!resolvedRouteId) {
+            this.clearWorldChoice(key);
+            return;
+        }
+        const run = this.getRunState(resolvedRouteId, { create: false });
+        if (!run?.choices || run.choices[key] === undefined) return;
+        delete run.choices[key];
+        this.save();
+    }
+
     setWorldChoice(key, value) {
         this.data.world.choices[key] = value;
+        this.save();
+    }
+
+    clearWorldChoice(key) {
+        if (this.data.world?.choices?.[key] === undefined) return;
+        delete this.data.world.choices[key];
         this.save();
     }
 

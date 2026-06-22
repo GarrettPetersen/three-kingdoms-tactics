@@ -26,6 +26,55 @@ const ROUTE_TINTS = {
     hejin: { label: 'HJ2', fill: '#352015', selectedFill: '#583825', text: '#ffba7a' }
 };
 
+const CHAPTER2_PREFLIGHT_CHOICES = [
+    {
+        key: 'luzhi_outcome',
+        label: 'Lu Zhi',
+        alwaysPastForRoute: 'chapter2_oath',
+        options: [
+            { value: 'restrained', label: 'obey law' },
+            { value: 'freed', label: 'free him' }
+        ]
+    },
+    {
+        key: 'chapter2_oath_dongzhuo_choice',
+        label: 'Dong Zhuo',
+        decisionNode: 'chapter2_oath_dongzhuo_choice',
+        options: [
+            { value: 'restrain', label: 'restrain' },
+            { value: 'strike', label: 'attack' }
+        ]
+    },
+    {
+        key: 'chapter2_wan_strategy',
+        label: 'Wan first',
+        decisionNode: 'chapter2_wan_strategy',
+        impliedByTarget: {
+            chapter2_wan_field: 'open_southeast',
+            chapter2_wan_gate: 'assault_walls'
+        },
+        options: [
+            { value: 'open_southeast', label: 'open road' },
+            { value: 'assault_walls', label: 'force gate' }
+        ]
+    },
+    {
+        key: 'chapter2_wan_second_siege',
+        label: 'Wan second',
+        decisionNode: 'chapter2_wan_reversal',
+        impliedByTarget: {
+            chapter2_wan_north_road: 'hold_north_road',
+            chapter2_wan_final_assault: 'join_wall'
+        },
+        options: [
+            { value: 'hold_north_road', label: 'hold road' },
+            { value: 'join_wall', label: 'join wall' }
+        ]
+    }
+];
+
+const CHAPTER2_MANAGED_PREFLIGHT_KEYS = CHAPTER2_PREFLIGHT_CHOICES.map(choice => choice.key);
+
 export class DebugStoryGraphScene extends BaseScene {
     constructor() {
         super();
@@ -81,7 +130,7 @@ export class DebugStoryGraphScene extends BaseScene {
     }
 
     shouldShowPreflight(entry) {
-        return entry?.routeId === 'chapter2_oath';
+        return this.getPreflightStateForEntry(entry).config.length > 0;
     }
 
     getCurrentPreflightChoices() {
@@ -98,50 +147,79 @@ export class DebugStoryGraphScene extends BaseScene {
         };
     }
 
-    getPreflightConfig() {
-        return [
-            {
-                key: 'luzhi_outcome',
-                label: 'Lu Zhi',
-                options: [
-                    { value: 'restrained', label: 'obey law' },
-                    { value: 'freed', label: 'free him' }
-                ]
-            },
-            {
-                key: 'chapter2_oath_dongzhuo_choice',
-                label: 'Dong Zhuo',
-                options: [
-                    { value: 'restrain', label: 'restrain' },
-                    { value: 'strike', label: 'attack' }
-                ]
-            },
-            {
-                key: 'chapter2_wan_strategy',
-                label: 'Wan first',
-                options: [
-                    { value: 'open_southeast', label: 'open road' },
-                    { value: 'assault_walls', label: 'force gate' }
-                ]
-            },
-            {
-                key: 'chapter2_wan_second_siege',
-                label: 'Wan second',
-                options: [
-                    { value: 'hold_north_road', label: 'hold road' },
-                    { value: 'join_wall', label: 'join wall' }
-                ]
-            }
-        ];
+    getRouteNodeIndex(routeId, nodeId) {
+        const nodes = Object.keys(STORY_ROUTES?.[routeId]?.nodes || {});
+        return nodes.indexOf(nodeId);
     }
 
-    beginPreflight(index) {
+    isChoicePastForEntry(choice, entry) {
+        if (!entry || entry.routeId !== 'chapter2_oath') return false;
+        if (choice.alwaysPastForRoute === entry.routeId) return true;
+        if (!choice.decisionNode) return false;
+        const decisionIndex = this.getRouteNodeIndex(entry.routeId, choice.decisionNode);
+        const targetIndex = this.getRouteNodeIndex(entry.routeId, entry.nodeId);
+        return decisionIndex >= 0 && targetIndex > decisionIndex;
+    }
+
+    getImpliedPreflightChoices(entry) {
+        if (!entry || entry.routeId !== 'chapter2_oath') return {};
+        const implied = {};
+        for (const choice of CHAPTER2_PREFLIGHT_CHOICES) {
+            const value = choice.impliedByTarget?.[entry.nodeId];
+            if (value !== undefined) implied[choice.key] = value;
+        }
+        return implied;
+    }
+
+    getPreflightConfig(entry = this.pendingJump?.entry) {
+        if (!entry || entry.routeId !== 'chapter2_oath') return [];
+        const implied = this.getImpliedPreflightChoices(entry);
+        return CHAPTER2_PREFLIGHT_CHOICES.filter(choice => (
+            implied[choice.key] === undefined && this.isChoicePastForEntry(choice, entry)
+        ));
+    }
+
+    getPreflightStateForEntry(entry) {
+        if (!entry || entry.routeId !== 'chapter2_oath') {
+            return { config: [], choices: {}, impliedChoices: {}, activeKeys: [] };
+        }
+        const impliedChoices = this.getImpliedPreflightChoices(entry);
+        const config = this.getPreflightConfig(entry);
+        const choices = {
+            ...this.getCurrentPreflightChoices(),
+            ...impliedChoices
+        };
+        this.sanitizePreflightChoicesForEntry(entry, choices);
+        const activeKeys = [...new Set([
+            ...config.map(choice => choice.key),
+            ...Object.keys(impliedChoices)
+        ])];
+        return { config, choices, impliedChoices, activeKeys };
+    }
+
+    sanitizePreflightChoicesForEntry(entry, choices, changedKey = null) {
+        if (entry?.routeId !== 'chapter2_oath' || entry.nodeId !== 'chapter2_anxi_governance') return;
+        const freedLuZhi = choices.luzhi_outcome === 'freed';
+        const attackedDongZhuo = choices.chapter2_oath_dongzhuo_choice === 'strike';
+        if (!freedLuZhi || !attackedDongZhuo) return;
+        if (changedKey === 'luzhi_outcome') {
+            choices.chapter2_oath_dongzhuo_choice = 'restrain';
+        } else {
+            choices.luzhi_outcome = 'restrained';
+        }
+    }
+
+    beginPreflight(index, preflightState = null) {
         const entry = this.entries[index];
         if (!entry) return;
+        const state = preflightState || this.getPreflightStateForEntry(entry);
         this.pendingJump = {
             index,
             entry,
-            choices: this.getCurrentPreflightChoices()
+            choices: state.choices,
+            config: state.config,
+            impliedChoices: state.impliedChoices,
+            activeKeys: state.activeKeys
         };
         this.preflightSelectedIndex = 0;
         this.preflightRows = [];
@@ -152,12 +230,13 @@ export class DebugStoryGraphScene extends BaseScene {
     setPreflightChoice(key, value) {
         if (!this.pendingJump?.choices) return;
         this.pendingJump.choices[key] = value;
+        this.sanitizePreflightChoicesForEntry(this.pendingJump.entry, this.pendingJump.choices, key);
         assets.playSound('ui_click', 0.35);
     }
 
     cyclePreflightChoice(delta) {
         if (!this.pendingJump) return;
-        const config = this.getPreflightConfig()[this.preflightSelectedIndex];
+        const config = (this.pendingJump.config || [])[this.preflightSelectedIndex];
         if (!config) return;
         const options = config.options || [];
         const current = this.pendingJump.choices[config.key];
@@ -166,36 +245,93 @@ export class DebugStoryGraphScene extends BaseScene {
         if (next) this.setPreflightChoice(config.key, next.value);
     }
 
-    applyPreflightChoices() {
+    clearManagedPreflightChoices(activeKeys = []) {
         const gs = this.manager.gameState;
-        const choices = this.pendingJump?.choices || {};
+        const active = new Set(activeKeys);
+        for (const key of CHAPTER2_MANAGED_PREFLIGHT_KEYS) {
+            if (active.has(key)) continue;
+            if (key === 'luzhi_outcome') {
+                gs.clearStoryChoice('luzhi_outcome', 'liubei');
+                gs.clearWorldChoice('luzhi_outcome');
+                gs.removeMilestone('freed_luzhi', 'liubei');
+                continue;
+            }
+            gs.clearStoryChoice(key, 'chapter2_oath');
+            gs.clearWorldChoice(key);
+            if (key === 'chapter2_oath_dongzhuo_choice') {
+                gs.removeMilestone('chapter2_oath_dongzhuo_restrained', 'chapter2_oath');
+                gs.removeMilestone('chapter2_oath_dongzhuo_fought', 'chapter2_oath');
+            }
+        }
+    }
 
-        if (choices.luzhi_outcome === 'freed') {
+    syncDerivedPreflightChoices(entry, choices, activeKeys = []) {
+        const gs = this.manager.gameState;
+        const active = new Set(activeKeys);
+        const appointmentIndex = this.getRouteNodeIndex('chapter2_oath', 'chapter2_anxi_appointment');
+        const targetIndex = this.getRouteNodeIndex(entry?.routeId, entry?.nodeId);
+        const hasPassedAppointment = entry?.routeId === 'chapter2_oath'
+            && appointmentIndex >= 0
+            && targetIndex > appointmentIndex;
+
+        if (!hasPassedAppointment) {
+            gs.clearStoryChoice('chapter2_oath_political_outcome', 'chapter2_oath');
+            gs.clearWorldChoice('chapter2_oath_political_outcome');
+            return;
+        }
+
+        if (!active.has('luzhi_outcome') || !active.has('chapter2_oath_dongzhuo_choice')) return;
+        const freedLuZhi = choices.luzhi_outcome === 'freed';
+        const attackedDongZhuo = choices.chapter2_oath_dongzhuo_choice === 'strike';
+        let outcome = 'anxi_commandant';
+        if (freedLuZhi && attackedDongZhuo) {
+            outcome = 'pardoned_outlaw';
+        } else if (freedLuZhi || attackedDongZhuo) {
+            outcome = 'anxi_assistant';
+        }
+        gs.setStoryChoice('chapter2_oath_political_outcome', outcome, 'chapter2_oath');
+    }
+
+    applyPreflightChoices(choices = this.pendingJump?.choices || {}, activeKeys = this.pendingJump?.activeKeys || [], entry = this.pendingJump?.entry || null) {
+        const gs = this.manager.gameState;
+        const active = new Set(activeKeys);
+
+        this.clearManagedPreflightChoices(activeKeys);
+
+        if (active.has('luzhi_outcome') && choices.luzhi_outcome === 'freed') {
             gs.setStoryChoice('luzhi_outcome', 'freed', 'liubei');
             gs.setWorldChoice('luzhi_outcome', 'freed');
             gs.addMilestone('freed_luzhi', 'liubei');
             gs.addWorldMilestone('freed_luzhi');
-        } else {
+        } else if (active.has('luzhi_outcome')) {
             gs.setStoryChoice('luzhi_outcome', 'restrained', 'liubei');
             gs.setWorldChoice('luzhi_outcome', 'restrained');
             gs.removeMilestone('freed_luzhi', 'liubei');
         }
 
-        const dongZhuoChoice = choices.chapter2_oath_dongzhuo_choice === 'strike' ? 'strike' : 'restrain';
-        gs.setStoryChoice('chapter2_oath_dongzhuo_choice', dongZhuoChoice, 'chapter2_oath');
-        gs.setWorldChoice('chapter2_oath_dongzhuo_choice', dongZhuoChoice);
-        if (dongZhuoChoice === 'strike') {
-            gs.addMilestone('chapter2_oath_dongzhuo_fought', 'chapter2_oath');
-            gs.addWorldMilestone('chapter2_oath_dongzhuo_fought');
-            gs.removeMilestone('chapter2_oath_dongzhuo_restrained', 'chapter2_oath');
-        } else {
-            gs.addMilestone('chapter2_oath_dongzhuo_restrained', 'chapter2_oath');
-            gs.addWorldMilestone('chapter2_oath_dongzhuo_restrained');
-            gs.removeMilestone('chapter2_oath_dongzhuo_fought', 'chapter2_oath');
+        if (active.has('chapter2_oath_dongzhuo_choice')) {
+            const dongZhuoChoice = choices.chapter2_oath_dongzhuo_choice === 'strike' ? 'strike' : 'restrain';
+            gs.setStoryChoice('chapter2_oath_dongzhuo_choice', dongZhuoChoice, 'chapter2_oath');
+            gs.setWorldChoice('chapter2_oath_dongzhuo_choice', dongZhuoChoice);
+            if (dongZhuoChoice === 'strike') {
+                gs.addMilestone('chapter2_oath_dongzhuo_fought', 'chapter2_oath');
+                gs.addWorldMilestone('chapter2_oath_dongzhuo_fought');
+                gs.removeMilestone('chapter2_oath_dongzhuo_restrained', 'chapter2_oath');
+            } else {
+                gs.addMilestone('chapter2_oath_dongzhuo_restrained', 'chapter2_oath');
+                gs.addWorldMilestone('chapter2_oath_dongzhuo_restrained');
+                gs.removeMilestone('chapter2_oath_dongzhuo_fought', 'chapter2_oath');
+            }
         }
 
-        gs.setStoryChoice('chapter2_wan_strategy', choices.chapter2_wan_strategy || 'open_southeast', 'chapter2_oath');
-        gs.setStoryChoice('chapter2_wan_second_siege', choices.chapter2_wan_second_siege || 'hold_north_road', 'chapter2_oath');
+        if (active.has('chapter2_wan_strategy')) {
+            gs.setStoryChoice('chapter2_wan_strategy', choices.chapter2_wan_strategy || 'open_southeast', 'chapter2_oath');
+        }
+        if (active.has('chapter2_wan_second_siege')) {
+            gs.setStoryChoice('chapter2_wan_second_siege', choices.chapter2_wan_second_siege || 'hold_north_road', 'chapter2_oath');
+        }
+
+        this.syncDerivedPreflightChoices(entry, choices, activeKeys);
     }
 
     buildGraphLaunchParams(routeId, nodeId, launch) {
@@ -238,11 +374,6 @@ export class DebugStoryGraphScene extends BaseScene {
             gs.addMilestone('chapter1_complete', 'liubei');
         }
 
-        if (routeId === 'chapter2_oath' && gs.getStoryChoice('chapter2_oath_dongzhuo_choice', null, routeId) == null) {
-            gs.setStoryChoice('chapter2_oath_dongzhuo_choice', 'restrain', routeId);
-            gs.setWorldChoice('chapter2_oath_dongzhuo_choice', 'restrain');
-        }
-
         gs.setStoryCursor(nodeId, routeId);
         ['map', 'tactics', 'narrative', 'levelup', 'liubo'].forEach(sceneName => {
             gs.clearSceneState(sceneName, routeId);
@@ -252,9 +383,13 @@ export class DebugStoryGraphScene extends BaseScene {
     jumpToEntry(index = this.selectedIndex) {
         const entry = this.entries[index];
         if (!entry) return;
-        if (this.shouldShowPreflight(entry)) {
-            this.beginPreflight(index);
+        const preflightState = this.getPreflightStateForEntry(entry);
+        if (preflightState.config.length > 0) {
+            this.beginPreflight(index, preflightState);
             return;
+        }
+        if (preflightState.activeKeys.length > 0) {
+            this.applyPreflightChoices(preflightState.choices, preflightState.activeKeys, entry);
         }
         this.performJumpToEntry(index);
     }
@@ -274,7 +409,7 @@ export class DebugStoryGraphScene extends BaseScene {
     confirmPreflightJump() {
         if (!this.pendingJump) return;
         const index = this.pendingJump.index;
-        this.applyPreflightChoices();
+        this.applyPreflightChoices(this.pendingJump.choices, this.pendingJump.activeKeys, this.pendingJump.entry);
         this.pendingJump = null;
         this.preflightRows = [];
         this.preflightButtons = {};
@@ -295,7 +430,7 @@ export class DebugStoryGraphScene extends BaseScene {
 
     handleKeyDown(e) {
         if (this.pendingJump) {
-            const config = this.getPreflightConfig();
+            const config = this.pendingJump.config || [];
             if (e.key === 'ArrowUp') {
                 e.preventDefault();
                 this.preflightSelectedIndex = (this.preflightSelectedIndex - 1 + config.length) % config.length;
@@ -562,7 +697,7 @@ export class DebugStoryGraphScene extends BaseScene {
 
     renderPreflight(ctx, canvas) {
         const entry = this.pendingJump.entry;
-        const config = this.getPreflightConfig();
+        const config = this.pendingJump.config || [];
         this.preflightRows = [];
         this.preflightButtons = {};
 
@@ -601,7 +736,7 @@ export class DebugStoryGraphScene extends BaseScene {
         });
 
         const helpY = panelY + config.length * rowH + 20;
-        this.drawPixelText(ctx, 'Set prior choices before graphjump.', panelX, helpY, { color: '#777', font: '8px Tiny5' });
+        this.drawPixelText(ctx, 'Set actual prior choices before graphjump.', panelX, helpY, { color: '#777', font: '8px Tiny5' });
         this.drawPixelText(ctx, 'Enter confirms. Esc cancels.', panelX, helpY + 11, { color: '#777', font: '8px Tiny5' });
 
         const buttonY = canvas.height - 28;
