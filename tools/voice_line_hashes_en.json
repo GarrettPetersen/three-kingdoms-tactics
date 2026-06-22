@@ -1345,17 +1345,17 @@
   },
   "ch2_wan_final_sj_01": {
     "character": "sunjian",
-    "hash": "3fe8ea32ce20eecfdc7d13743bda4431981e39dd9ee75f8bc10791e16697d006",
+    "hash": "5f829da38d71c0971ac1fd0d36ac2453d0fafc536c7f71bbe2a36b40839249b4",
     "text": "Then I will be first on the wall. Zhao Hong will learn how little his reclaimed city is worth.",
     "version": 1,
-    "voice_target": "movies/clean/clean_angry-mulans-dad.wav"
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
   },
   "ch2_wan_final_sj_02": {
     "character": "sunjian",
-    "hash": "e597ee804baa7f23129e5173078d2c2c0cad79be8f13f78d39810faa50ba9dbc",
+    "hash": "b3f1393b894f7445c28e584b0d97775a5a54f42da2a29fddf160e909ece5bb1a",
     "text": "Well said. The wall is taken; now the officers must hold the city better than the rebels did.",
     "version": 1,
-    "voice_target": "movies/clean/clean_angry-mulans-dad.wav"
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
   },
   "ch2_wan_final_sz_01": {
     "character": "sunzhong",
@@ -1471,10 +1471,10 @@
   },
   "ch2_wan_north_sj_01": {
     "character": "sunjian",
-    "hash": "bf9592728bf7800269ea4a5b40f612948c7e9401adae263ae97632528eb645af",
+    "hash": "f6aa4222e1c0b71298adc5dcc12e599d19a964ad0f4e88f803bb9f3217420f55",
     "text": "The wall is ours, and Zhao Hong is dead. Your roadblock kept the rebels from becoming an army again.",
     "version": 1,
-    "voice_target": "movies/clean/clean_angry-mulans-dad.wav"
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
   },
   "ch2_wan_north_sz_01": {
     "character": "sunzhong",
@@ -1562,24 +1562,24 @@
   },
   "ch2_wan_rev_sj_01": {
     "character": "sunjian",
-    "hash": "7e95bdd259883103e65e527648d460b26f14133f1ab9cf78d90503b7b81a73a7",
+    "hash": "28c2dab8fc71ba9c6caa9f4b1b73e2b229e51c9fc998e488aa7ee93beef0d5cb",
     "text": "General Zhu Jun, Sun Jian of Xiapi answers the imperial call. My men are ready to strike Wan.",
     "version": 1,
-    "voice_target": "movies/clean/clean_angry-mulans-dad.wav"
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
   },
   "ch2_wan_rev_sj_02_road": {
     "character": "sunjian",
-    "hash": "dc1956818e5636148f3853f19c2503e2e61f5afdc62d050b305518cb1f0c9621",
+    "hash": "294b2cf2ccd1ee2489c0378614260fec28def2bc0e304381a132e445525275cd",
     "text": "Leave the wall to me. If the rebels flee north, make the road narrower than the gate.",
     "version": 1,
-    "voice_target": "movies/clean/clean_angry-mulans-dad.wav"
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
   },
   "ch2_wan_rev_sj_02_wall": {
     "character": "sunjian",
-    "hash": "6cbf0684ec8fdd67c65e76e490047d83ff04f483836eabf96383a9348ebfb94b",
+    "hash": "de829286e3fdba126762216fd7869aa0a80767ea8602c808793c057b154d3710",
     "text": "Good. We will climb together and settle Zhao Hong before his courage hardens.",
     "version": 1,
-    "voice_target": "movies/clean/clean_angry-mulans-dad.wav"
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
   },
   "ch2_wan_rev_zf_01": {
     "character": "zhangfei",

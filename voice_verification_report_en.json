@@ -4179,7 +4179,7 @@
         "id": "ch2_wan_north_sj_01",
         "character": "sunjian",
         "original_text": "The wall is ours, and Zhao Hong is dead. Your roadblock kept the rebels from becoming an army again.",
-        "stt_output": "The wall is ours and Zhao Hong is dead. Your roadblock kept the rebels from becoming an army again.",
+        "stt_output": "The wall is ours, and Zhao Hong is dead. Your roadblock kept the rebels from becoming an army again.",
         "wer": 0.0,
         "is_bad": false,
         "language": "en"
@@ -4233,8 +4233,8 @@
         "id": "ch2_wan_rev_sj_02_road",
         "character": "sunjian",
         "original_text": "Leave the wall to me. If the rebels flee north, make the road narrower than the gate.",
-        "stt_output": "Leave the wall to me if the rebels flee north. Make the road narrower than the gates.",
-        "wer": 0.058823529411764705,
+        "stt_output": "Leave the wall to me. If the rebels flee north, make the road narrower than the gate.",
+        "wer": 0.0,
         "is_bad": false,
         "language": "en"
     },
@@ -4242,8 +4242,8 @@
         "id": "ch2_wan_rev_sj_02_wall",
         "character": "sunjian",
         "original_text": "Good. We will climb together and settle Zhao Hong before his courage hardens.",
-        "stt_output": "Good. We will climb together and settle Zao Hong before his courage hardens.",
-        "wer": 0.07692307692307693,
+        "stt_output": "Good! Wo-wa! We will climb together and settle Zauhome before his courage hardens.",
+        "wer": 0.23076923076923078,
         "is_bad": false,
         "language": "en"
     },
@@ -4685,6 +4685,51 @@
         "original_text": "A clean victory. May the court read merit as clearly as you read the board.",
         "stt_output": "a clean victory. May the court read merit as clearly as you read the board.",
         "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_final_sj_01": {
+        "id": "ch2_wan_final_sj_01",
+        "character": "sunjian",
+        "original_text": "Then I will be first on the wall. Zhao Hong will learn how little his reclaimed city is worth.",
+        "stt_output": "Then I will be first on the wall. Zhao Hong will learn how little his reclaimed city is worth.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_final_sj_02": {
+        "id": "ch2_wan_final_sj_02",
+        "character": "sunjian",
+        "original_text": "Well said. The wall is taken; now the officers must hold the city better than the rebels did.",
+        "stt_output": "Well said, the wall is taken. Now the officers must hold the city better than the rebels did.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_rev_sj_01": {
+        "id": "ch2_wan_rev_sj_01",
+        "character": "sunjian",
+        "original_text": "General Zhu Jun, Sun Jian of Xiapi answers the imperial call. My men are ready to strike Wan.",
+        "stt_output": "General Chuyun, Son Jian of Siapi, answers the imperial call. My men are ready to strike one.",
+        "wer": 0.2777777777777778,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_final_lb_01": {
+        "id": "ch2_wan_final_lb_01",
+        "character": "liubei",
+        "original_text": "Brothers, press the gate with Sun Jian. Break Zhao Hong and Sun Zhong here before the rebellion scatters again.",
+        "stt_output": "Brothers, press the gate with Sun Jian. Break Zhao Hong and Sun Zhong here before the rebellion scatters again.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_final_zj_01": {
+        "id": "ch2_wan_final_zj_01",
+        "character": "zhujun",
+        "original_text": "Xuande has chosen to join Sun Jian at the wall. My remaining troops will watch the roads; your task is to break this gate.",
+        "stt_output": "To ande has chosen to join Son Jan at the wall. My remaining troops will watch the roads. Your task is to break this gate.",
+        "wer": 0.16666666666666666,
         "is_bad": false,
         "language": "en"
     }

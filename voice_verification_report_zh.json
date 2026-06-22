@@ -4179,8 +4179,8 @@
         "id": "ch2_wan_north_sj_01",
         "character": "sunjian",
         "original_text": "城墙已取，赵弘已死。你等守路，使贼众不能复成军势。",
-        "stt_output": "承强一曲 赵鸿一死你等手路 使贼重不能复成军事",
-        "wer": 3.0,
+        "stt_output": "成强一曲 赵鸿一死你等手入使贼重不能复成君世",
+        "wer": 2.0,
         "is_bad": true,
         "language": "zh"
     },
@@ -4233,8 +4233,8 @@
         "id": "ch2_wan_rev_sj_02_road",
         "character": "sunjian",
         "original_text": "城墙交给孙坚。贼若北逃，便请诸君使其路窄于城门。",
-        "stt_output": "成强交给孙奸 贼弱北陶便请诸军 时期录寨与成门",
-        "wer": 3.0,
+        "stt_output": "成强交给孙奸 贼弱背头变性诸军 史奇 录载与成门",
+        "wer": 4.0,
         "is_bad": true,
         "language": "zh"
     },
@@ -4242,8 +4242,8 @@
         "id": "ch2_wan_rev_sj_02_wall",
         "character": "sunjian",
         "original_text": "好。并力登城，趁赵弘胆气未固，便定此役。",
-        "stt_output": "好,那病密登城,趁趙紅膽起,為故辯定此意。",
-        "wer": 1.0,
+        "stt_output": "好 合 病例登城趁照红胆气围故辩定此意",
+        "wer": 3.0,
         "is_bad": true,
         "language": "zh"
     },
@@ -4684,6 +4684,51 @@
         "character": "xiaoer",
         "original_text": "胜得干净。只愿朝廷看功劳，也能如你看棋局这般分明。",
         "stt_output": "聖德甘静,職院朝廷看功勞,也能如你看其局這般分明。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_final_sj_01": {
+        "id": "ch2_wan_final_sj_01",
+        "character": "sunjian",
+        "original_text": "坚愿先登。赵弘复得宛城，也不过再失一次。",
+        "stt_output": "簡易院鮮登 趙洪富德晚城也不過再試一次",
+        "wer": 2.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_final_sj_02": {
+        "id": "ch2_wan_final_sj_02",
+        "character": "sunjian",
+        "original_text": "玄德所言甚是。城墙既取，官军更当守出法度。",
+        "stt_output": "選擇所言甚至成強進去萬軍更當首出法度",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_rev_sj_01": {
+        "id": "ch2_wan_rev_sj_01",
+        "character": "sunjian",
+        "original_text": "朱儁将军，下邳孙坚奉诏而来。麾下兵马，愿攻宛城。",
+        "stt_output": "出警将军下批孙兼奉赵尔回下冰马院公晚城",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_final_lb_01": {
+        "id": "ch2_wan_final_lb_01",
+        "character": "liubei",
+        "original_text": "二弟三弟，与孙将军并力攻门。就在此处破赵弘、孙仲，勿使乱势复散。",
+        "stt_output": "二第三帝與孫將軍並立公門就在此處破罩紅孫重物使亂世復散",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_wan_final_zj_01": {
+        "id": "ch2_wan_final_zj_01",
+        "character": "zhujun",
+        "original_text": "玄德已决意同孙坚攻城。余兵守道路；你等所任，便是破此城门。",
+        "stt_output": "選得以絕意同孫尖工程,於兵手道路,你等所認,便是破此成門。",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"

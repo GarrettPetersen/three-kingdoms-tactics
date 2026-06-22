@@ -1345,17 +1345,17 @@
   },
   "ch2_wan_final_sj_01": {
     "character": "sunjian",
-    "hash": "3d991e0706e66016920f734aa9922bbf0d5e6b4a9e0dc93fa77879b34af85e73",
+    "hash": "403a239d5cb9accd82209b5bf387b12fd2e1adc5a6007f52517aa2b194e0fc90",
     "text": "坚愿先登。赵弘复得宛城，也不过再失一次。",
     "version": 1,
-    "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
+    "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
   },
   "ch2_wan_final_sj_02": {
     "character": "sunjian",
-    "hash": "a14d770bcfaa06187fd355c8af35b57cdce6bd9bfc20e9c371373bc06ce010ce",
+    "hash": "5f6ba60d4992c23c840f0116224bffab39c6b30eba6ba57f012af16e59f19211",
     "text": "玄德所言甚是。城墙既取，官军更当守出法度。",
     "version": 1,
-    "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
+    "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
   },
   "ch2_wan_final_sz_01": {
     "character": "sunzhong",
@@ -1471,10 +1471,10 @@
   },
   "ch2_wan_north_sj_01": {
     "character": "sunjian",
-    "hash": "d3bd981ec8ddc5e74d9636f93124d2c7fe5f4045ddeed581af119a1ca790fdc2",
+    "hash": "a14e3089bbf840073b3e7587a4bc5b05b477ea2f3171bc0221bc022afa5febf5",
     "text": "城墙已取，赵弘已死。你等守路，使贼众不能复成军势。",
     "version": 1,
-    "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
+    "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
   },
   "ch2_wan_north_sz_01": {
     "character": "sunzhong",
@@ -1562,24 +1562,24 @@
   },
   "ch2_wan_rev_sj_01": {
     "character": "sunjian",
-    "hash": "04182cba89400f607101e4a83a0accea52100dd9ef87c086eb5ea79a76f21c6c",
+    "hash": "1f55ced34ce19096a879fdea694b5edc591d2f34061cb98d56328984b8429621",
     "text": "朱儁将军，下邳孙坚奉诏而来。麾下兵马，愿攻宛城。",
     "version": 1,
-    "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
+    "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
   },
   "ch2_wan_rev_sj_02_road": {
     "character": "sunjian",
-    "hash": "022fa32ec3c84640578f0ab04b0f057eed835e805a41ad004b2b0d392f1c1d17",
+    "hash": "ac095584961e3676fa394a0122da0dae0712ba3044cfaa652b3a9aaf528f6aa6",
     "text": "城墙交给孙坚。贼若北逃，便请诸君使其路窄于城门。",
     "version": 1,
-    "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
+    "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
   },
   "ch2_wan_rev_sj_02_wall": {
     "character": "sunjian",
-    "hash": "669ef40203ecf163286f7e3df51490115bcd62e8743e55a5b46251c07c38799a",
+    "hash": "c819c6a6b63c635e7f76b6ac2b25d82eb8933017d9d6c3885944c154bafe6c45",
     "text": "好。并力登城，趁赵弘胆气未固，便定此役。",
     "version": 1,
-    "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
+    "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
   },
   "ch2_wan_rev_zf_01": {
     "character": "zhangfei",
