@@ -374,6 +374,14 @@ export class TacticsScene extends BaseScene {
             if (step.action === 'setStoryChoice' && step.key) {
                 const routeId = step.routeId || this.manager.gameState.getCurrentCampaign() || null;
                 this.manager.gameState.setStoryChoice(step.key, step.value, routeId);
+            } else if (step.action === 'spawnDelayedIntroUnits' && step.groupId) {
+                if (!step._commandStarted) {
+                    step._commandStarted = true;
+                    this.spawnDelayedIntroUnitGroup(step, () => {
+                        this.advanceActiveDialogueStep();
+                    });
+                }
+                return;
             } else {
                 console.warn('Skipping unsupported battle dialogue command:', step);
             }
@@ -576,6 +584,7 @@ export class TacticsScene extends BaseScene {
 
         if (this.isIntroDialogueActive || this.isVictoryDialogueActive) {
             if (this.isIntroDialogueActive) {
+                this.completePendingDialogueCommandsInstantly(activeScript, activeIndex);
                 this.isIntroDialogueActive = false;
                 this.dialogueStep = 0;
                 this.subStep = 0;
@@ -8856,6 +8865,261 @@ export class TacticsScene extends BaseScene {
         return unitDef;
     }
 
+    prepareBattleUnitDefinition(uDef) {
+        if (!uDef) return null;
+        const template = resolveUnitTemplate(uDef.type, uDef.templateId || uDef.id);
+        if (!template) {
+            console.warn(`No template found for unit ${uDef.id} (type: ${uDef.type})`);
+            return null;
+        }
+
+        return {
+            ...template,
+            type: uDef.type,
+            templateId: uDef.templateId || template.templateId,
+            id: uDef.id,
+            r: uDef.r,
+            q: uDef.q,
+            faction: uDef.faction || template.faction,
+            level: uDef.level !== undefined ? uDef.level : template.level,
+            moveRange: uDef.moveRange !== undefined ? uDef.moveRange : template.moveRange,
+            attacks: uDef.attacks ? [...uDef.attacks] : [...(template.attacks || [])],
+            storyCasualtyKey: uDef.storyCasualtyKey || null,
+            cityGateSide: uDef.cityGateSide,
+            delayedIntroGroup: uDef.delayedIntroGroup || null,
+            spectator: !!uDef.spectator,
+            onHorse: !!uDef.onHorse,
+            horseType: uDef.horseType || template.horseType || 'brown',
+            flip: uDef.flip !== undefined ? !!uDef.flip : !!template.flip,
+            immortal: uDef.immortal ? JSON.parse(JSON.stringify(uDef.immortal)) : null,
+            isDead: uDef.isDead || false,
+            isPreDead: uDef.isDead || false,
+            caged: uDef.caged || false,
+            frame: uDef.frame !== undefined ? uDef.frame : undefined
+        };
+    }
+
+    createRuntimeUnitFromBattleDefinition(unitDef, r, q, overrides = {}) {
+        const template = resolveUnitTemplate(unitDef.type, unitDef.templateId || unitDef.id);
+        if (!template) return null;
+
+        const u = this.applyTemplateRuntimeDefaults({ ...unitDef }, template);
+        const gs = this.manager.gameState;
+        const unitXP = gs.getCampaignVar('unitXP') || {};
+        const unitClasses = gs.getCampaignVar('unitClasses') || {};
+        const allyPartyOwnerId = u.allyPartyOwnerId || this.getAllyPartyOwnerId(u.id);
+        const traits = { ...(u.traits || {}), ...this.getPersistentUnitTraits(u.id) };
+        const resolvedHorseType = this.resolvePersistentHorseType(u, traits);
+
+        let level = u.level;
+        if (!this.isCustom) {
+            const hasTrackedXP = Object.prototype.hasOwnProperty.call(unitXP, u.id);
+            level = hasTrackedXP ? this.getLevelFromXP(unitXP[u.id] || 0) : (level || 1);
+        } else if (!level) {
+            level = this.getLevelFromXP(unitXP[u.id] || 0);
+        }
+
+        let imgKey = u.imgKey || template.imgKey;
+        let attacks = u.attacks ? [...u.attacks] : [...(template.attacks || [])];
+        let unitClass = u.templateId || u.id.replace(/\d+$/, '');
+        if (!this.isCustom) {
+            unitClass = unitClasses[u.id] || u.templateId || (u.id.startsWith('ally') ? 'soldier' : u.id);
+        }
+
+        const isAlly = u.id.startsWith('ally')
+            || u.id.startsWith('guard')
+            || u.id.includes('custom_ally')
+            || u.id.includes('custom_guard')
+            || (u.faction === 'allied' && unitClass === 'soldier');
+        const isArcher = unitClass === 'archer';
+        const isCrossbowman = unitClass === 'crossbowman';
+        let baseHp = u.maxHp || u.hp || 4;
+        if (isAlly) {
+            baseHp = (isArcher || isCrossbowman) ? 2 : (level >= 2 ? 3 : 2);
+        }
+        const finalMaxHp = this.getMaxHpForLevel(level, baseHp);
+
+        if (isArcher) {
+            imgKey = 'archer';
+            attacks = ['arrow_shot'];
+        } else if (isCrossbowman) {
+            imgKey = 'crossbowman';
+            attacks = ['crossbow_bolt'];
+        }
+        attacks = applyLevelAttackUpgrades(attacks, unitClass, level, isArcher, isCrossbowman);
+
+        const unit = new Unit(u.id, {
+            ...u,
+            ...overrides,
+            allyPartyOwnerId,
+            traits,
+            imgKey,
+            r,
+            q,
+            level,
+            hp: u.isDead ? 0 : finalMaxHp,
+            isPreDead: u.isPreDead || false,
+            maxHp: finalMaxHp,
+            attacks,
+            img: assets.getImage(imgKey),
+            horseType: resolvedHorseType,
+            action: overrides.action || (u.isDead ? 'death' : 'standby'),
+            currentAnimAction: overrides.currentAnimAction || overrides.action || (u.isDead ? 'death' : 'standby'),
+            frame: overrides.frame !== undefined ? overrides.frame : (u.isDead ? 100 : 0)
+        });
+        this.applyScenarioAttackRulesToUnit(unit);
+        if (u.isDead) unit.isGone = false;
+        return unit;
+    }
+
+    getDelayedIntroUnitDefinitions(groupId) {
+        const battleDef = BATTLES[this.battleId];
+        if (!groupId || !Array.isArray(battleDef?.units)) return [];
+        return battleDef.units
+            .filter(uDef => uDef.delayedIntroGroup === groupId)
+            .map(uDef => this.prepareBattleUnitDefinition(uDef))
+            .filter(Boolean);
+    }
+
+    getIntroEntryPath(targetR, targetQ, entryFrom = 'right') {
+        const mapWidth = Math.max(1, this.manager.config.mapWidth || this.tacticsMap?.width || 10);
+        const mapHeight = Math.max(1, this.manager.config.mapHeight || this.tacticsMap?.height || 10);
+        let path;
+        if (entryFrom === 'left') {
+            path = [
+                { r: targetR, q: -3 },
+                { r: targetR, q: 0 },
+                { r: targetR, q: targetQ }
+            ];
+        } else if (entryFrom === 'top') {
+            path = [
+                { r: -3, q: targetQ },
+                { r: 0, q: targetQ },
+                { r: targetR, q: targetQ }
+            ];
+        } else if (entryFrom === 'bottom') {
+            path = [
+                { r: mapHeight + 2, q: targetQ },
+                { r: mapHeight - 1, q: targetQ },
+                { r: targetR, q: targetQ }
+            ];
+        } else {
+            path = [
+                { r: targetR, q: mapWidth + 2 },
+                { r: targetR, q: mapWidth - 1 },
+                { r: targetR, q: targetQ }
+            ];
+        }
+
+        return path.filter((point, index, points) => {
+            const prev = points[index - 1];
+            return !prev || prev.r !== point.r || prev.q !== point.q;
+        });
+    }
+
+    spawnDelayedIntroUnitGroup(command, onComplete) {
+        const groupId = command?.groupId;
+        const unitDefs = this.getDelayedIntroUnitDefinitions(groupId);
+        if (unitDefs.length === 0) {
+            if (onComplete) onComplete();
+            return;
+        }
+
+        this.isProcessingTurn = true;
+        const spawned = [];
+        const reservedTargets = new Set();
+
+        unitDefs.forEach(unitDef => {
+            if (this.units.some(u => u.id === unitDef.id)) return;
+            const mapped = this.remapLegacyCoordToCurrent(unitDef.r, unitDef.q);
+            let targetCell = this.tacticsMap.getCell(mapped.r, mapped.q);
+            const targetKey = targetCell ? `${targetCell.r},${targetCell.q}` : null;
+            if (!targetCell || targetCell.omitted || targetCell.impassable || targetCell.unit || reservedTargets.has(targetKey)) {
+                targetCell = this.findNearestFreeCell(mapped.r, mapped.q, 6);
+            }
+            if (!targetCell) {
+                console.warn(`Could not find a free intro-entry spot for unit ${unitDef.id} at (${unitDef.r},${unitDef.q})`);
+                return;
+            }
+
+            reservedTargets.add(`${targetCell.r},${targetCell.q}`);
+            const path = this.getIntroEntryPath(targetCell.r, targetCell.q, command.entryFrom || 'right');
+            const start = path[0] || { r: targetCell.r, q: targetCell.q };
+            const unit = this.createRuntimeUnitFromBattleDefinition(unitDef, start.r, start.q, {
+                action: 'walk',
+                currentAnimAction: 'walk',
+                flip: command.flip !== undefined ? !!command.flip : !!unitDef.flip
+            });
+            if (!unit) return;
+            unit._introEntryTarget = { r: targetCell.r, q: targetCell.q };
+            const startPos = this.getPixelPos(start.r, start.q);
+            unit.visualX = startPos.x;
+            unit.visualY = startPos.y;
+            unit.startPath(path);
+            this.units.push(unit);
+            spawned.push(unit);
+        });
+
+        if (spawned.length === 0) {
+            this.isProcessingTurn = false;
+            if (onComplete) onComplete();
+            return;
+        }
+
+        assets.playSound('step_sand', 0.55);
+        const finish = () => {
+            if (spawned.some(unit => unit.isMoving)) {
+                setTimeout(finish, 50);
+                return;
+            }
+            spawned.forEach(unit => {
+                const target = unit._introEntryTarget || { r: unit.r, q: unit.q };
+                unit.setPosition(target.r, target.q);
+                unit.action = 'standby';
+                unit.currentAnimAction = 'standby';
+                unit.frame = 0;
+                delete unit._introEntryTarget;
+                const cell = this.tacticsMap.getCell(unit.r, unit.q);
+                if (cell) cell.unit = unit;
+            });
+            this.rebuildLivingUnitOccupancy();
+            this.history = [];
+            this.pushHistory();
+            this.isProcessingTurn = false;
+            if (onComplete) onComplete();
+        };
+        finish();
+    }
+
+    completePendingDialogueCommandsInstantly(script, startIndex = 0) {
+        if (!Array.isArray(script)) return;
+        let changed = false;
+        for (let i = Math.max(0, startIndex || 0); i < script.length; i++) {
+            const step = script[i];
+            if (!step || step.type !== 'command') continue;
+            if (step.action === 'spawnDelayedIntroUnits' && step.groupId) {
+                const unitDefs = this.getDelayedIntroUnitDefinitions(step.groupId);
+                unitDefs.forEach(unitDef => {
+                    if (this.units.some(u => u.id === unitDef.id)) return;
+                    const mapped = this.remapLegacyCoordToCurrent(unitDef.r, unitDef.q);
+                    const cell = this.findNearestFreeCell(mapped.r, mapped.q, 6);
+                    if (!cell) return;
+                    const unit = this.createRuntimeUnitFromBattleDefinition(unitDef, cell.r, cell.q, {
+                        flip: step.flip !== undefined ? !!step.flip : !!unitDef.flip
+                    });
+                    if (!unit) return;
+                    this.units.push(unit);
+                    cell.unit = unit;
+                    changed = true;
+                });
+            }
+        }
+        if (!changed) return;
+        this.rebuildLivingUnitOccupancy();
+        this.history = [];
+        this.pushHistory();
+    }
+
     placeInitialUnits(specifiedUnits) {
         this.units = [];
         let unitsToPlace = specifiedUnits;
@@ -8863,35 +9127,10 @@ export class TacticsScene extends BaseScene {
         if (!unitsToPlace) {
             const battleDef = BATTLES[this.battleId];
             if (battleDef && battleDef.units) {
-                unitsToPlace = battleDef.units.map(uDef => {
-                    const template = resolveUnitTemplate(uDef.type, uDef.templateId || uDef.id);
-                    if (!template) {
-                        console.warn(`No template found for unit ${uDef.id} (type: ${uDef.type})`);
-                        return null;
-                    }
-
-                    return {
-                        ...template,
-                        id: uDef.id,
-                        r: uDef.r,
-                        q: uDef.q,
-                        faction: uDef.faction || template.faction,
-                        level: uDef.level !== undefined ? uDef.level : template.level,
-                        moveRange: uDef.moveRange !== undefined ? uDef.moveRange : template.moveRange,
-                        attacks: uDef.attacks ? [...uDef.attacks] : [...(template.attacks || [])],
-                        storyCasualtyKey: uDef.storyCasualtyKey || null,
-                        cityGateSide: uDef.cityGateSide,
-                        spectator: !!uDef.spectator,
-                        onHorse: !!uDef.onHorse,
-                        horseType: uDef.horseType || template.horseType || 'brown',
-                        flip: uDef.flip !== undefined ? !!uDef.flip : !!template.flip,
-                        immortal: uDef.immortal ? JSON.parse(JSON.stringify(uDef.immortal)) : null,
-                        isDead: uDef.isDead || false,  // Preserve isDead flag for corpses
-                        isPreDead: uDef.isDead || false, // NEW: Track if unit started dead
-                        caged: uDef.caged || false,     // Preserve caged flag
-                        frame: uDef.frame !== undefined ? uDef.frame : undefined
-                    };
-                }).filter(u => u !== null);
+                unitsToPlace = battleDef.units
+                    .filter(uDef => !uDef.delayedIntroGroup)
+                    .map(uDef => this.prepareBattleUnitDefinition(uDef))
+                    .filter(u => u !== null);
             } else if (this.battleId === 'custom') {
                 // Roster provided by CustomBattleMenuScene
                 unitsToPlace = specifiedUnits || [];
@@ -11429,6 +11668,9 @@ export class TacticsScene extends BaseScene {
             if (step) {
                 if (step.type === 'choice') {
                     this.isChoiceActive = true;
+                } else if (step.type === 'command') {
+                    this.isChoiceActive = false;
+                    return;
                 } else {
                     this.isChoiceActive = false;
                 }
@@ -15505,6 +15747,7 @@ export class TacticsScene extends BaseScene {
                 console.error(`Dialogue step ${dialogueIndex} is null or undefined`);
                 return;
             }
+            if (step.type === 'command') return;
             if (step.type === 'choice') {
                 this.isChoiceActive = true;
                 if (x !== -1000 && this.choiceRects) {

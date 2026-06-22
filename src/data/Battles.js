@@ -1196,12 +1196,12 @@ export const BATTLES = {
             { id: 'ally1', r: 5, q: 1, type: 'allied_soldier' },
             { id: 'ally2', r: 7, q: 1, type: 'allied_soldier' },
             { id: 'imperial1', r: 6, q: 1, type: 'imperial_soldier' },
-            { id: 'sunzhong', r: 6, q: 8, type: 'enemy_captain', templateId: 'sunzhong' },
-            { id: 'rebel1', r: 5, q: 8, type: 'enemy_soldier', templateId: 'rebel_archer' },
-            { id: 'rebel2', r: 7, q: 8, type: 'enemy_soldier' },
-            { id: 'rebel3', r: 4, q: 9, type: 'enemy_soldier' },
-            { id: 'rebel4', r: 8, q: 9, type: 'enemy_soldier', templateId: 'rebel_archer' },
-            { id: 'rebel5', r: 6, q: 9, type: 'enemy_soldier' }
+            { id: 'sunzhong', r: 6, q: 8, type: 'enemy_captain', templateId: 'sunzhong', delayedIntroGroup: 'sunzhong_north_road' },
+            { id: 'rebel1', r: 5, q: 8, type: 'enemy_soldier', templateId: 'rebel_archer', delayedIntroGroup: 'sunzhong_north_road' },
+            { id: 'rebel2', r: 7, q: 8, type: 'enemy_soldier', delayedIntroGroup: 'sunzhong_north_road' },
+            { id: 'rebel3', r: 4, q: 9, type: 'enemy_soldier', delayedIntroGroup: 'sunzhong_north_road' },
+            { id: 'rebel4', r: 8, q: 9, type: 'enemy_soldier', templateId: 'rebel_archer', delayedIntroGroup: 'sunzhong_north_road' },
+            { id: 'rebel5', r: 6, q: 9, type: 'enemy_soldier', delayedIntroGroup: 'sunzhong_north_road' }
         ],
         victoryCondition: {
             type: 'defeat_all_enemies',
@@ -1237,6 +1237,13 @@ export const BATTLES = {
                     en: "The wall is shaking. Run north before Sun Jian shuts us inside Wan!",
                     zh: "城墙将破！趁孙坚未封住宛城，向北杀出去！"
                 }
+            },
+            {
+                type: 'command',
+                action: 'spawnDelayedIntroUnits',
+                groupId: 'sunzhong_north_road',
+                entryFrom: 'right',
+                flip: true
             }
         ],
         postCombatScript: [
