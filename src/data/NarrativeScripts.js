@@ -2583,15 +2583,8 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ],
     'chapter2_wan_strategy': [
-        { bg: 'china_map', type: 'command', action: 'clearActors' },
-        { type: 'command', action: 'clearProps' },
-        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-        {
-            type: 'title',
-            text: { en: 'THE MARCH TO WAN', zh: '进军宛城' },
-            subtext: { en: 'Zhu Jun turns south', zh: '朱儁南征' }
-        },
         { bg: 'outside_city_walls', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'clearProps' },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
         { type: 'command', action: 'addActor', id: 'zhujun', imgKey: 'zhujun_sprite', x: 164, y: 178 },
         { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 74, y: 192 },
