@@ -906,6 +906,7 @@ async function init() {
                 guanyu: 'assets/characters/049_guanyu.png',
                 zhangfei: 'assets/characters/050_zhangfei.png',
                 zhugeliang: 'assets/characters/051_zhugeliang.png',
+                sunjian: 'assets/characters/016_sunjian.png',
                 zhoujing: 'assets/characters/071_chendeng.png',
                 gongjing_sprite: 'assets/characters/067_dongyun.png',
                 huangfusong_sprite: 'assets/characters/072_liyan.png',

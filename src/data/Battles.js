@@ -1820,7 +1820,7 @@ export const UNIT_TEMPLATES = {
         'huangfusong': { name: 'Huangfu Song', imgKey: 'huangfusong_sprite', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' },
         'zhujun': { name: 'Zhu Jun', imgKey: 'zhujun_sprite', hp: 6, moveRange: 3, attacks: ['slash'], faction: 'allied' },
         'zhujun_observer': { name: 'Zhu Jun', imgKey: 'zhujun_sprite', hp: 6, moveRange: 0, attacks: [], faction: 'player' },
-        'sunjian': { name: 'Sun Jian', imgKey: 'chengyuanzhi', hp: 6, moveRange: 4, attacks: ['slash'], faction: 'allied', level: 2 },
+        'sunjian': { name: 'Sun Jian', imgKey: 'sunjian', hp: 6, moveRange: 4, attacks: ['slash'], faction: 'allied', level: 2 },
         'yanzheng': { name: 'Yan Zheng', imgKey: 'yellowturban', hp: 3, moveRange: 0, attacks: ['slash'], faction: 'allied' }
     },
     'warlord': {

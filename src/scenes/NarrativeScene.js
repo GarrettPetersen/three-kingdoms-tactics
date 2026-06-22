@@ -1353,9 +1353,11 @@ export class NarrativeScene extends BaseScene {
         // Determine current speaker for animation (only speaker animates during dialogue)
         const currentStep = this.script[this.currentStep];
         let currentSpeakerId = null;
-        if (currentStep && currentStep.type === 'dialogue' && currentStep.portraitKey) {
-            // Convert portrait key to actor id (e.g., 'zhou-jing' -> 'zhoujing', 'liu-bei' -> 'liubei')
-            currentSpeakerId = currentStep.portraitKey.replace(/-/g, '');
+        if (currentStep && currentStep.type === 'dialogue') {
+            // Prefer explicit speaker IDs so a fallback portrait can still animate
+            // the correct on-screen actor.
+            const speakerSource = currentStep.speaker || currentStep.portraitKey;
+            currentSpeakerId = speakerSource ? String(speakerSource).replace(/-/g, '') : null;
         }
 
         let allMoved = true;
