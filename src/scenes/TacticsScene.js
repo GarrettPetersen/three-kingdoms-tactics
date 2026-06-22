@@ -8163,6 +8163,31 @@ export class TacticsScene extends BaseScene {
         }, Math.max(0, delayMs));
     }
 
+    runAfterPushCompletes(unit, callback, fallbackMs = 900) {
+        const startedAt = Date.now();
+        const check = () => {
+            if (!unit || unit.isGone) return;
+            if (!unit.pushData || Date.now() - startedAt >= fallbackMs) {
+                callback();
+                return;
+            }
+            setTimeout(check, 16);
+        };
+        setTimeout(check, 16);
+    }
+
+    deferDeathAnimationUntilPushLands(unit) {
+        if (!unit?.pushData || unit.hp > 0 || unit.name === 'Boulder') return;
+        unit.pushData.deferDeathUntilLanding = true;
+        unit.action = 'hit';
+        unit.currentAnimAction = 'hit';
+        unit.frame = 0;
+    }
+
+    finishDeferredOverkillAfterPush(victim, attacker = null, fallbackMs = 900) {
+        this.runAfterPushCompletes(victim, () => this.finishDeferredOverkill(victim, attacker, 0), fallbackMs);
+    }
+
     applyMultiHexPush(attacker, victim, attack, targetR, targetQ, dirIndex, pushDamageContext, hasDeferredOverkill) {
         const pushDistance = this.getAttackPushDistance(attack);
         if (pushDistance <= 1 || !victim || victim.hp <= 0 || victim.isGone) return false;
@@ -8181,7 +8206,6 @@ export class TacticsScene extends BaseScene {
         let finalQ = victimPushQ;
         let finalLevelDiff = 0;
         let finalIsDeepWater = false;
-        let stoppedBySpecialLanding = false;
 
         for (let step = 0; step < pushDistance; step++) {
             const currentCell = this.tacticsMap.getCell(finalR, finalQ);
@@ -8225,7 +8249,6 @@ export class TacticsScene extends BaseScene {
             finalIsDeepWater = !!isDeepWater;
 
             if (levelDiff < -1 || isDeepWater) {
-                stoppedBySpecialLanding = true;
                 break;
             }
         }
@@ -8244,33 +8267,36 @@ export class TacticsScene extends BaseScene {
         }
         const fallHeight = finalLevelDiff < -1 ? Math.abs(finalLevelDiff) : (wasMounted ? 1 : 0);
         victim.startPush(startPos.x, startPos.y, finalPos.x, finalPos.y, false, fallHeight);
+        if (fallHeight > 0 && hasDeferredOverkill) this.deferDeathAnimationUntilPushLands(victim);
 
         if (crushOccupant) {
+            this.shiftIntentTargetWithDisplacement(victim, victimPushR, victimPushQ, finalR, finalQ);
+            victim.setPosition(finalR, finalQ);
             this.handleCrushLanding(victim, crushOccupant, finalCell, finalLevelDiff, finalPos);
-            if (hasDeferredOverkill) this.finishDeferredOverkill(victim, attacker, 460);
+            if (hasDeferredOverkill) this.finishDeferredOverkillAfterPush(victim, attacker);
         } else if (hasDeferredOverkill) {
-            setTimeout(() => {
+            this.runAfterPushCompletes(victim, () => {
                 assets.playSound(finalIsDeepWater ? 'drown' : 'bash', finalIsDeepWater ? 1 : 0.5);
-            }, stoppedBySpecialLanding ? 400 : 250);
+            });
             victim.setPosition(finalR, finalQ);
             if (finalCell && !crushOccupant) finalCell.unit = victim;
-            this.finishDeferredOverkill(victim, attacker, stoppedBySpecialLanding ? 430 : 280);
+            this.finishDeferredOverkillAfterPush(victim, attacker);
         } else if (finalIsDeepWater) {
             victim.setPosition(finalR, finalQ);
             if (finalCell && !crushOccupant) finalCell.unit = victim;
-            setTimeout(() => {
+            this.runAfterPushCompletes(victim, () => {
                 victim.isDrowning = true;
                 assets.playSound('drown');
-            }, 250);
+            });
         } else if (finalLevelDiff < -1) {
             victim.setPosition(finalR, finalQ);
             if (finalCell) finalCell.unit = victim;
             const fallDamage = Math.max(0, Math.abs(finalLevelDiff) - 1);
-            setTimeout(() => {
+            this.runAfterPushCompletes(victim, () => {
                 assets.playSound('collision', 0.8);
                 this.applyUnitDamage(victim, fallDamage);
                 this.addDamageNumber(finalPos.x, finalPos.y - 30, fallDamage);
-            }, 400);
+            });
         } else {
             victim.setPosition(finalR, finalQ);
             if (finalCell) finalCell.unit = victim;
@@ -8478,24 +8504,27 @@ export class TacticsScene extends BaseScene {
                     // Displaced push: if mounted, fall off horse (horse stays) before resolving fall.
                     if (wasMounted) this.dismountUnitLeaveHorse(victim);
                     victim.startPush(victimPos.x, victimPos.y, targetPos.x, targetPos.y, false, Math.abs(levelDiff));
+                    if (hasDeferredOverkill) this.deferDeathAnimationUntilPushLands(victim);
                     if (victimCellForPush) victimCellForPush.unit = null;
 
                     if (occupant && occupant.hp > 0) {
                         // CRUSH MECHANIC
+                        this.shiftIntentTargetWithDisplacement(victim, victimPushR, victimPushQ, pushCell.r, pushCell.q);
+                        victim.setPosition(pushCell.r, pushCell.q);
                         this.handleCrushLanding(victim, occupant, pushCell, levelDiff, targetPos);
-                        if (hasDeferredOverkill) this.finishDeferredOverkill(victim, attacker, 460);
+                        if (hasDeferredOverkill) this.finishDeferredOverkillAfterPush(victim, attacker);
                     } else {
                         this.shiftIntentTargetWithDisplacement(victim, victimPushR, victimPushQ, pushCell.r, pushCell.q);
                         victim.setPosition(pushCell.r, pushCell.q);
                         pushCell.unit = victim;
                         if (hasDeferredOverkill) {
-                            setTimeout(() => {
+                            this.runAfterPushCompletes(victim, () => {
                                 assets.playSound(isDeepWater ? 'drown' : 'collision', isDeepWater ? 1 : 0.8);
-                            }, 400);
-                            this.finishDeferredOverkill(victim, attacker, 430);
+                            });
+                            this.finishDeferredOverkillAfterPush(victim, attacker);
                         } else {
                             // Normal fall landing
-                            setTimeout(() => {
+                            this.runAfterPushCompletes(victim, () => {
                                 if (isDeepWater) {
                                     victim.isDrowning = true;
                                     assets.playSound('drown');
@@ -8504,7 +8533,7 @@ export class TacticsScene extends BaseScene {
                                     this.applyUnitDamage(victim, fallDamage);
                                     this.addDamageNumber(targetPos.x, targetPos.y - 30, fallDamage);
                                 }
-                            }, 400);
+                            });
                         }
                     }
                 }
@@ -15941,9 +15970,7 @@ export class TacticsScene extends BaseScene {
     }
 
     handleCrushLanding(faller, occupant, targetCell, levelDiff, targetPos) {
-        // Short delay so impact sound plays as boulder lands (boulder roll already did parabolic fall in one motion)
-        const delayMs = (faller && faller.name === 'Boulder') ? 80 : 400;
-        setTimeout(() => {
+        const resolveLanding = () => {
             const isBoulder = faller && faller.name === 'Boulder';
             assets.playSound(isBoulder ? 'boulder_impact' : 'collision');
             
@@ -15986,7 +16013,15 @@ export class TacticsScene extends BaseScene {
                     targetCell.unit = (faller.hp > 0) ? faller : null;
                 }
             }
-        }, delayMs);
+        };
+
+        if (faller && faller.name !== 'Boulder' && faller.pushData) {
+            this.runAfterPushCompletes(faller, resolveLanding);
+            return;
+        }
+
+        // Boulder roll already does its parabolic fall in one motion, so keep only a short impact delay.
+        setTimeout(resolveLanding, (faller && faller.name === 'Boulder') ? 80 : 0);
     }
 
     handleKeyDown(e) {

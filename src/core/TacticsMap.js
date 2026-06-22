@@ -1412,8 +1412,8 @@ export class TacticsMap {
         if (!startCell) return new Map();
 
         const data = new Map(); // key: "r,q", value: { cost, parent: "r,q" }
-        const queue = [{ r: startR, q: startQ, cost: 0, level: startCell.level, gatePassageEntrySide: null, ladderStepLocked: false }];
-        data.set(`${startR},${startQ}`, { cost: 0, parent: null, gatePassageEntrySide: null, ladderStepLocked: false });
+        const queue = [{ r: startR, q: startQ, cost: 0, level: startCell.level, gatePassageEntrySide: null }];
+        data.set(`${startR},${startQ}`, { cost: 0, parent: null, gatePassageEntrySide: null });
 
         while (queue.length > 0) {
             // Sort by cost for Dijkstra
@@ -1421,7 +1421,6 @@ export class TacticsMap {
             const current = queue.shift();
 
             if (current.cost >= range) continue;
-            if (current.ladderStepLocked) continue;
 
             const neighbors = this.getMovementNeighbors(current.r, current.q, movingUnit);
             neighbors.forEach(({ cell: n, cityGateTransition }) => {
@@ -1475,14 +1474,13 @@ export class TacticsMap {
                 const isDifficult = n.terrain.includes('forest') || n.terrain.includes('water_shallow');
                 const moveCost = isDifficult ? 2 : 1;
                 const newCost = current.cost + moveCost;
-                const ladderStepLocked = ladderTransition;
 
                 if (newCost > range) return;
 
                 const key = `${n.r},${n.q}`;
                 if (!data.has(key) || data.get(key).cost > newCost) {
-                    data.set(key, { cost: newCost, parent: `${current.r},${current.q}`, gatePassageEntrySide, ladderStepLocked });
-                    queue.push({ r: n.r, q: n.q, cost: newCost, level: n.level, gatePassageEntrySide, ladderStepLocked });
+                    data.set(key, { cost: newCost, parent: `${current.r},${current.q}`, gatePassageEntrySide });
+                    queue.push({ r: n.r, q: n.q, cost: newCost, level: n.level, gatePassageEntrySide });
                 }
             });
         }

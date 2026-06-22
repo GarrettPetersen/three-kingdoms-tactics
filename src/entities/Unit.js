@@ -155,6 +155,8 @@ export class Unit {
             return;
         }
 
+        const deferDeathUntilPushLands = this.hp <= 0 && !!this.pushData?.deferDeathUntilLanding;
+
         // Ensure hp=0 units stay in death animation
         if (this.hp <= 0 && this.keepBrokenOnDefeat) {
             this.action = 'standby';
@@ -166,7 +168,7 @@ export class Unit {
             this.currentSortR = this.r;
             return;
         }
-        if (this.hp <= 0 && this.action !== 'death') {
+        if (this.hp <= 0 && !deferDeathUntilPushLands && this.action !== 'death') {
             this.action = 'death';
             this.frame = 0;
             this.playDeathSoundOnce();
@@ -297,7 +299,7 @@ export class Unit {
             }
         } else if (this.pushData) {
             if (this.name !== 'Boulder') {
-            this.action = 'hit';
+                this.action = 'hit';
             }
             // Pushes are 250ms (0.004), Falls are slower 400ms (0.0025)
             const speed = this.pushData.fallHeight > 0 ? 0.0025 : 0.004;
@@ -325,8 +327,14 @@ export class Unit {
             }
 
             if (p >= 1) {
+                const shouldStartDeferredDeath = !!this.pushData.deferDeathUntilLanding && this.hp <= 0;
                 this.pushData = null;
-                this.action = 'standby';
+                this.action = shouldStartDeferredDeath ? 'death' : 'standby';
+                if (shouldStartDeferredDeath) {
+                    this.currentAnimAction = 'death';
+                    this.frame = 0;
+                    this.playDeathSoundOnce();
+                }
             }
         }
 
