@@ -3410,7 +3410,7 @@ export const NARRATIVE_SCRIPTS = {
                 zh: '刘备遂遣军士各归乡里，只带少数亲随，与关羽、张飞赴安喜，在他人印下供职。'
             }
         },
-        { bg: 'urban_street', fg: 'urban_street_foreground', type: 'command', action: 'clearActors' },
+        { bg: 'anxi_village', fg: null, type: 'command', action: 'clearActors' },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
         { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 118, y: 214, drawAboveForeground: true },
         { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 82, y: 216, drawAboveForeground: true },
@@ -3500,7 +3500,7 @@ export const NARRATIVE_SCRIPTS = {
             }
         },
         { type: 'command', action: 'fade', target: 1, speed: 0.001 },
-        { bg: 'urban_street', fg: 'urban_street_foreground', type: 'command', action: 'clearActors' },
+        { bg: 'anxi_village', fg: null, type: 'command', action: 'clearActors' },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
         { type: 'command', action: 'addActor', id: 'inspector', imgKey: 'merchant', x: 210, y: 198, flip: true, drawAboveForeground: true },
         { type: 'command', action: 'addActor', id: 'clerk', imgKey: 'zhoujing', x: 172, y: 214, drawAboveForeground: true },

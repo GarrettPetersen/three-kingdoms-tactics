@@ -870,6 +870,7 @@ async function init() {
                 inn_evening: 'assets/settings/village_inn_evening.png',
                 peach_garden: 'assets/settings/peach_garden.png',
                 army_camp: 'assets/settings/army_camp.png',
+                anxi_village: 'assets/settings/anxi_village.png',
                 urban_street: 'assets/settings/urban_street.png',
                 urban_street_foreground: 'assets/settings/urban_street_foreground.png',
                 dirt_road_city_in_distance: 'assets/settings/dirt_road_city_in_distance.png',
