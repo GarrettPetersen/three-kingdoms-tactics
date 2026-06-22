@@ -204,6 +204,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_anxi_govern_gy_stop_01",
+    "char": "guanyu",
+    "text": "翼德，够了。惩恶是义，任怒伤人便非义了。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_anxi_govern_inspector_01",
     "char": "merchant",
     "text": "刘玄德。你是何出身，又凭何功得授职任？",
@@ -243,6 +249,12 @@
     "id": "ch2_anxi_govern_lb_04",
     "char": "liubei",
     "text": "督邮，据你害民，本当杀却。今姑饶汝命。把这印绶带回给那些轻卖功名的人。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_lb_harder_01",
+    "char": "liubei",
+    "text": "让他替所害百姓，再受这一记。",
     "source": "NarrativeScripts.js"
   },
   {

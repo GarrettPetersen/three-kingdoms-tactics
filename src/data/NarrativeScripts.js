@@ -3388,19 +3388,17 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ],
     'chapter2_anxi_governance': [
-        { bg: 'dirt_road_city_in_distance', fg: null, type: 'command', action: 'clearActors' },
+        { bg: 'anxi_village', fg: null, type: 'command', action: 'clearActors' },
         { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 118, y: 214, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 82, y: 216, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 50, y: 216, drawAboveForeground: true },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: -34, y: 192, actorAction: 'walk', speed: 0.72 },
-        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: -64, y: 192, actorAction: 'walk', speed: 0.68 },
-        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: -94, y: 192, actorAction: 'walk', speed: 0.72 },
-        { type: 'command', action: 'move', id: 'liubei', x: 112, y: 192, wait: false },
-        { type: 'command', action: 'move', id: 'guanyu', x: 80, y: 192, wait: false },
-        { type: 'command', action: 'move', id: 'zhangfei', x: 50, y: 192, wait: true },
         {
             condition: CH2_NO_POLITICAL_CRIMES,
             type: 'narrator',
             voiceId: 'ch2_anxi_narrator_04',
+            position: 'top',
             text: {
                 en: 'Liu Bei dismissed the volunteers to their villages and took only a small retinue with Guan Yu and Zhang Fei to Anxi.',
                 zh: '刘备遂遣军士各归乡里，只带少数亲随，与关羽、张飞赴安喜县上任。'
@@ -3410,21 +3408,18 @@ export const NARRATIVE_SCRIPTS = {
             condition: CH2_ONE_POLITICAL_CRIME,
             type: 'narrator',
             voiceId: 'ch2_anxi_narrator_one_02',
+            position: 'top',
             text: {
                 en: 'Liu Bei dismissed the volunteers to their villages and took a small retinue with Guan Yu and Zhang Fei to Anxi, there to serve beneath another man\'s seal.',
                 zh: '刘备遂遣军士各归乡里，只带少数亲随，与关羽、张飞赴安喜，在他人印下供职。'
             }
         },
-        { bg: 'anxi_village', fg: null, type: 'command', action: 'clearActors' },
-        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 118, y: 214, drawAboveForeground: true },
-        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 82, y: 216, drawAboveForeground: true },
-        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 50, y: 216, drawAboveForeground: true },
         { type: 'command', action: 'addActor', id: 'clerk', imgKey: 'zhoujing', x: 176, y: 204, flip: true, drawAboveForeground: true },
         {
             condition: CH2_NO_POLITICAL_CRIMES,
             type: 'narrator',
             voiceId: 'ch2_anxi_govern_narrator_01',
+            position: 'top',
             text: {
                 en: 'For one month Liu Bei governed Anxi without taking so much as a hair from the people, and the county began to trust the new commandant.',
                 zh: '署县事一月，刘备与民秋毫无犯，安喜百姓渐渐信服这位新县尉。'
@@ -3434,6 +3429,7 @@ export const NARRATIVE_SCRIPTS = {
             condition: CH2_ONE_POLITICAL_CRIME,
             type: 'narrator',
             voiceId: 'ch2_anxi_govern_narrator_one_01',
+            position: 'top',
             text: {
                 en: 'Though another seal hung above him, Liu Bei handled Anxi business without taking so much as a hair from the people.',
                 zh: '虽在他人印下供职，刘备处置安喜县事，仍与民秋毫无犯。'
@@ -3442,6 +3438,7 @@ export const NARRATIVE_SCRIPTS = {
         {
             type: 'narrator',
             voiceId: 'ch2_anxi_govern_narrator_02',
+            position: 'top',
             text: {
                 en: 'He ate and slept beside Guan Yu and Zhang Fei, and when he sat in public the brothers stood attendance all day without complaint.',
                 zh: '到任之后，与关、张食则同桌，寝则同床。稠人广坐之中，关、张侍立终日不倦。'
@@ -3515,6 +3512,7 @@ export const NARRATIVE_SCRIPTS = {
         {
             type: 'narrator',
             voiceId: 'ch2_anxi_govern_narrator_03',
+            position: 'top',
             text: {
                 en: 'The next day, the inspector seized the county clerks and forced them to accuse Liu Bei. Elders came to plead for him and were beaten away from the gate.',
                 zh: '次日，督邮先提县吏，勒令指称刘备害民。乡老前来苦告，又被门人赶打。'
@@ -3567,15 +3565,48 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'move', id: 'liubei', x: 110, y: 218, wait: false },
         { type: 'command', action: 'move', id: 'guanyu', x: 82, y: 218, wait: true },
         {
-            type: 'dialogue',
+            type: 'choice',
             portraitKey: 'liu-bei',
             name: 'Liu Bei',
-            voiceId: 'ch2_anxi_govern_lb_03',
             position: 'top',
-            text: {
-                en: 'Yide, enough. He deserves punishment, but not death by our anger.',
-                zh: '翼德，够了。他当受责罚，却不该死于我等怒气。'
-            }
+            options: [
+                {
+                    buttonText: { en: 'Enough.', zh: '住手。' },
+                    speaker: 'liubei',
+                    voiceId: 'ch2_anxi_govern_lb_03',
+                    text: {
+                        en: 'Yide, enough. He deserves punishment, but not death by our anger.',
+                        zh: '翼德，够了。他当受责罚，却不该死于我等怒气。'
+                    },
+                    result: []
+                },
+                {
+                    buttonText: { en: 'One more stroke.', zh: '再打一记。' },
+                    speaker: 'liubei',
+                    voiceId: 'ch2_anxi_govern_lb_harder_01',
+                    text: {
+                        en: 'Let him feel one more stroke for the people he harmed.',
+                        zh: '让他替所害百姓，再受这一记。'
+                    },
+                    result: [
+                        { type: 'command', action: 'animate', id: 'zhangfei', animation: 'attack_1', wait: true },
+                        { type: 'command', action: 'playSound', key: 'bash', volume: 0.8 },
+                        { type: 'command', action: 'animate', id: 'inspector', animation: 'hit', wait: false },
+                        { type: 'command', action: 'wait', duration: 350 },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'guan-yu',
+                            name: 'Guan Yu',
+                            voiceId: 'ch2_anxi_govern_gy_stop_01',
+                            position: 'top',
+                            text: {
+                                en: 'Yide, enough. To punish a wicked man is justice; to be ruled by anger is not.',
+                                zh: '翼德，够了。惩恶是义，任怒伤人便非义了。'
+                            }
+                        }
+                    ]
+                }
+            ]
         },
         {
             type: 'dialogue',
@@ -3602,6 +3633,7 @@ export const NARRATIVE_SCRIPTS = {
         {
             type: 'narrator',
             voiceId: 'ch2_anxi_govern_narrator_04',
+            position: 'top',
             text: {
                 en: 'Liu Bei hung the seal on the inspector, left Anxi with Guan Yu and Zhang Fei, and turned north toward Liu Hui of Dai.',
                 zh: '刘备将印绶挂在督邮颈上，与关羽、张飞离开安喜，北往代州投刘恢。'
@@ -3613,16 +3645,19 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ],
     'chapter2_liuhui_shelter': [
-        { bg: 'dirt_road_city_in_distance', fg: null, type: 'command', action: 'clearActors' },
+        { bg: 'dirt_road_city_in_distance', fg: 'dirt_road_city_in_distance_foreground', type: 'command', action: 'clearActors' },
         { type: 'command', action: 'clearProps' },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: -34, y: 192, actorAction: 'walk', speed: 0.72 },
-        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: -64, y: 192, actorAction: 'walk', speed: 0.68 },
-        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: -94, y: 192, actorAction: 'walk', speed: 0.72 },
-        { type: 'command', action: 'addActor', id: 'liuhui', imgKey: 'zhoujing', x: 246, y: 192, flip: true },
-        { type: 'command', action: 'move', id: 'liubei', x: 120, y: 192, wait: false },
-        { type: 'command', action: 'move', id: 'guanyu', x: 88, y: 192, wait: false },
-        { type: 'command', action: 'move', id: 'zhangfei', x: 58, y: 192, wait: true },
+        { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: -34, y: 170, actorAction: 'walk', speed: 0.72 },
+        { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: -64, y: 170, actorAction: 'walk', speed: 0.68 },
+        { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: -94, y: 170, actorAction: 'walk', speed: 0.72 },
+        { type: 'command', action: 'addActor', id: 'liuhui', imgKey: 'zhoujing', x: 320, y: 150, actorAction: 'walk', speed: 0.72, flip: true },
+        { type: 'command', action: 'move', id: 'liubei', x: 146, y: 170, wait: false },
+        { type: 'command', action: 'move', id: 'guanyu', x: 118, y: 170, wait: false },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 90, y: 170, wait: true },
+        { type: 'command', action: 'move', id: 'liuhui', x: 210, y: 150, wait: true },
+        { type: 'command', action: 'move', id: 'liuhui', x: 200, y: 160, wait: true },
+        { type: 'command', action: 'move', id: 'liuhui', x: 167, y: 167, wait: true },
         {
             condition: CH2_BOTH_POLITICAL_CRIMES,
             type: 'narrator',
@@ -3704,10 +3739,24 @@ export const NARRATIVE_SCRIPTS = {
                 zh: '刘恢遂留匿兄弟三人。刘备一时隐于朝廷簿书之外，却未离汉家乱路之中。'
             }
         },
-        { type: 'command', action: 'move', id: 'liuhui', x: 320, y: 192, wait: false },
-        { type: 'command', action: 'move', id: 'zhangfei', x: 340, y: 192, wait: false },
-        { type: 'command', action: 'move', id: 'guanyu', x: 370, y: 192, wait: false },
-        { type: 'command', action: 'move', id: 'liubei', x: 400, y: 192, wait: true },
+        { type: 'command', action: 'move', id: 'liuhui', x: 200, y: 160, wait: false },
+        { type: 'command', action: 'move', id: 'liubei', x: 167, y: 167, wait: false },
+        { type: 'command', action: 'move', id: 'guanyu', x: 146, y: 170, wait: false },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 118, y: 170, wait: true },
+        { type: 'command', action: 'move', id: 'liuhui', x: 210, y: 150, wait: false },
+        { type: 'command', action: 'move', id: 'liubei', x: 200, y: 160, wait: false },
+        { type: 'command', action: 'move', id: 'guanyu', x: 167, y: 167, wait: false },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 146, y: 170, wait: true },
+        { type: 'command', action: 'move', id: 'liuhui', x: 320, y: 150, wait: false },
+        { type: 'command', action: 'move', id: 'liubei', x: 210, y: 150, wait: false },
+        { type: 'command', action: 'move', id: 'guanyu', x: 200, y: 160, wait: false },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 167, y: 167, wait: true },
+        { type: 'command', action: 'move', id: 'liubei', x: 320, y: 150, wait: false },
+        { type: 'command', action: 'move', id: 'guanyu', x: 210, y: 150, wait: false },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 200, y: 160, wait: true },
+        { type: 'command', action: 'move', id: 'guanyu', x: 320, y: 150, wait: false },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 210, y: 150, wait: true },
+        { type: 'command', action: 'move', id: 'zhangfei', x: 320, y: 150, wait: true },
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ],
     'chapter2_hejin_gate': [

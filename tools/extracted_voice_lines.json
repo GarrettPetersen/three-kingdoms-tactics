@@ -209,6 +209,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_anxi_govern_gy_stop_01",
+    "char": "guanyu",
+    "text": "Yide, enough. To punish a wicked man is justice; to be ruled by anger is not.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_anxi_govern_inspector_01",
     "char": "merchant",
     "text": "Liu Xuande. What is your origin, and by what merit did you receive office?",
@@ -248,6 +254,12 @@
     "id": "ch2_anxi_govern_lb_04",
     "char": "liubei",
     "text": "Inspector, by your harm to the people you should die. I spare you. Take this seal back to those who sell honor so cheaply.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_anxi_govern_lb_harder_01",
+    "char": "liubei",
+    "text": "Let him feel one more stroke for the people he harmed.",
     "source": "NarrativeScripts.js"
   },
   {

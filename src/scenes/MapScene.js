@@ -179,7 +179,7 @@ const LIUBEI_LOCATIONS = {
         x: 171,
         y: 44,
         name: "Liu Hui's Residence",
-        imgKey: 'camp_tent',
+        imgKey: 'city',
         storyRouteId: CHAPTER2_ROUTE_ID,
         storyNodeId: 'chapter2_liuhui_shelter',
         unlockCondition: (gs) =>
