@@ -1120,32 +1120,32 @@
     "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
   },
   "ch2_luoyang_liubo_accept_01": {
-    "character": "xiaoer",
-    "hash": "0fc5aff0f3a316bec98e2c0df8ede6cfb1ad7a32ab08ffe61b7db42001a174c6",
+    "character": "merchant",
+    "hash": "de307f0954a8a4bd532a7c0df5c3e95e66491031141ad0d189a917b06607c855",
     "text": "那就让博箸先开口，等诸公慢慢议。",
     "version": 1,
-    "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
   },
   "ch2_luoyang_liubo_decline_01": {
-    "character": "xiaoer",
-    "hash": "591871d9ddc84c7274104a40053504da30e20dbd11856f428a03f66bc2959862",
+    "character": "merchant",
+    "hash": "2a5fab4d7536b22faab52aabcd087ccfb158ad5a1a872b57c774dc5c391b9af3",
     "text": "改日吧。我们还是盯着宫门。",
     "version": 1,
-    "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
   },
   "ch2_luoyang_liubo_decline_reply_01": {
-    "character": "xiaoer",
-    "hash": "4a6a2f088125c269a90fed5f9a424bad9b9d6c4686dc0fde17f147b859a78567",
+    "character": "merchant",
+    "hash": "4aba7c05893eb955a45033122517d13f3e7227f739ccba422455ad190dfe5991",
     "text": "随你。棋盘走得总比朝廷快。",
     "version": 1,
-    "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
   },
   "ch2_luoyang_liubo_intro_01": {
-    "character": "xiaoer",
-    "hash": "1d0effa0fc2691110c91f565ea5f2686b78a90e79df915d808da9fe3547559a4",
+    "character": "merchant",
+    "hash": "c0fdea323ab270ae3e6d37e5097328c9999b6622ad9dd201584d086e1b9eda43",
     "text": "候在宫门外，也像一场战役。趁宫中议事未定，坐下博一局如何？",
     "version": 1,
-    "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
   },
   "ch2_luoyang_liubo_loss_01": {
     "character": "xiaoer",

@@ -961,25 +961,25 @@
   },
   {
     "id": "ch2_luoyang_liubo_accept_01",
-    "char": "xiaoer",
+    "char": "merchant",
     "text": "那就让博箸先开口，等诸公慢慢议。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_luoyang_liubo_decline_01",
-    "char": "xiaoer",
+    "char": "merchant",
     "text": "改日吧。我们还是盯着宫门。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_luoyang_liubo_decline_reply_01",
-    "char": "xiaoer",
+    "char": "merchant",
     "text": "随你。棋盘走得总比朝廷快。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_luoyang_liubo_intro_01",
-    "char": "xiaoer",
+    "char": "merchant",
     "text": "候在宫门外，也像一场战役。趁宫中议事未定，坐下博一局如何？",
     "source": "NarrativeScripts.js"
   },

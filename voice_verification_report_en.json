@@ -2199,8 +2199,8 @@
         "id": "ch2_probe_zb_sorcery_01",
         "character": "zhangbao",
         "original_text": "You cannot kill me while Heaven's lightning answers my command!",
-        "stt_output": "",
-        "wer": 0,
+        "stt_output": "You cannot kill me while Heaven's lightning answers my command.",
+        "wer": 0.0,
         "is_bad": false,
         "language": "en"
     },
@@ -4636,25 +4636,25 @@
     },
     "en:ch2_luoyang_liubo_accept_01": {
         "id": "ch2_luoyang_liubo_accept_01",
-        "character": "xiaoer",
+        "character": "merchant",
         "original_text": "Then let the sticks speak while the ministers keep silent.",
-        "stt_output": "Then let the stick speak while the ministers keep silent.",
+        "stt_output": "then let the stick speak while the ministers keep silent.",
         "wer": 0.1,
         "is_bad": false,
         "language": "en"
     },
     "en:ch2_luoyang_liubo_decline_01": {
         "id": "ch2_luoyang_liubo_decline_01",
-        "character": "xiaoer",
+        "character": "merchant",
         "original_text": "Another time. We should keep our eyes on the gate.",
-        "stt_output": "Another time. We should keep our eyes on the gate.",
+        "stt_output": "Another time! We should keep our eyes on the gate!",
         "wer": 0.0,
         "is_bad": false,
         "language": "en"
     },
     "en:ch2_luoyang_liubo_decline_reply_01": {
         "id": "ch2_luoyang_liubo_decline_reply_01",
-        "character": "xiaoer",
+        "character": "merchant",
         "original_text": "As you wish. The board moves faster than the court.",
         "stt_output": "As you wish, the board moves faster than the court.",
         "wer": 0.0,
@@ -4663,10 +4663,10 @@
     },
     "en:ch2_luoyang_liubo_intro_01": {
         "id": "ch2_luoyang_liubo_intro_01",
-        "character": "xiaoer",
+        "character": "merchant",
         "original_text": "Waiting at court is its own campaign. Sit for a game of Liubo while the palace decides your fate?",
-        "stt_output": "Waiting at court is its own campaign. Sit for a game of Leuibo while the palace decides your fate.",
-        "wer": 0.05263157894736842,
+        "stt_output": "Waiting at court is its own campaign. Sit for a game of liubo while the palace decides your fate.",
+        "wer": 0.0,
         "is_bad": false,
         "language": "en"
     },

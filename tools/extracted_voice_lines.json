@@ -966,25 +966,25 @@
   },
   {
     "id": "ch2_luoyang_liubo_accept_01",
-    "char": "xiaoer",
+    "char": "merchant",
     "text": "Then let the sticks speak while the ministers keep silent.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_luoyang_liubo_decline_01",
-    "char": "xiaoer",
+    "char": "merchant",
     "text": "Another time. We should keep our eyes on the gate.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_luoyang_liubo_decline_reply_01",
-    "char": "xiaoer",
+    "char": "merchant",
     "text": "As you wish. The board moves faster than the court.",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_luoyang_liubo_intro_01",
-    "char": "xiaoer",
+    "char": "merchant",
     "text": "Waiting at court is its own campaign. Sit for a game of Liubo while the palace decides your fate?",
     "source": "NarrativeScripts.js"
   },

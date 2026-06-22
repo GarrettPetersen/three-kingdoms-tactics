@@ -1120,32 +1120,32 @@
     "voice_target": "movies/clean/clean_kublai-khan.wav"
   },
   "ch2_luoyang_liubo_accept_01": {
-    "character": "xiaoer",
-    "hash": "354da4d43982d97fe3ed02f463d9054c1f1febd3b9315d2e605993db4e83f26b",
+    "character": "merchant",
+    "hash": "5bf06a253074999e23024aadc8c609cc65e0739a17b87f5ecfcd79e20083397f",
     "text": "Then let the sticks speak while the ministers keep silent.",
     "version": 1,
-    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
   },
   "ch2_luoyang_liubo_decline_01": {
-    "character": "xiaoer",
-    "hash": "30fe062971ee09a0bb16928d264e0b1be3001b12a398c60bef11a43930e39a59",
+    "character": "merchant",
+    "hash": "b9b89a5d2d53c34a4cb30eff6026517110e854bd20c54a9b16fc75a860e33ca4",
     "text": "Another time. We should keep our eyes on the gate.",
     "version": 1,
-    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
   },
   "ch2_luoyang_liubo_decline_reply_01": {
-    "character": "xiaoer",
-    "hash": "4968c4d5e871ae782e12013858bc5c69fdc30e2eaea422430609d8c62616a0ea",
+    "character": "merchant",
+    "hash": "68913fa91a0bf923533494abab152c6e0b92eddd816b807745459b3d51ec871b",
     "text": "As you wish. The board moves faster than the court.",
     "version": 1,
-    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
   },
   "ch2_luoyang_liubo_intro_01": {
-    "character": "xiaoer",
-    "hash": "3609eb47f9205d82c5178ed0f9715387252c34cd32a65a5ccbe74bdec8f8f856",
+    "character": "merchant",
+    "hash": "5076034bada7c7f95c0da6e8d97b9ee89f836556a4cb1269f15c18db2352b478",
     "text": "Waiting at court is its own campaign. Sit for a game of Liubo while the palace decides your fate?",
     "version": 1,
-    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
   },
   "ch2_luoyang_liubo_loss_01": {
     "character": "xiaoer",
