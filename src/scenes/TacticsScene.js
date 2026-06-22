@@ -13,6 +13,7 @@ import { completeStoryNode } from '../core/StoryFlow.js';
 /** Vertical offset for drawing horse + rider (was 10; 6 moves them up 4px so they are not "underground"). */
 const MOUNTED_Y_OFFSET = 6;
 const CITY_GATEHOUSE_Y_OFFSET = 33;
+const SIEGE_LADDER_PROP_BOTTOM_PADDING = 18;
 const DRAW_CALL_PRIORITIES = {
     hex: 0,
     blood_decal: 0.82,
@@ -6306,7 +6307,7 @@ export class TacticsScene extends BaseScene {
     }
 
     getPropBottomPaddingForUnit(unit) {
-        return this.isSiegeLadder(unit) ? 14 : 5;
+        return this.isSiegeLadder(unit) ? SIEGE_LADDER_PROP_BOTTOM_PADDING : 5;
     }
 
     getCombatLevelForCell(r, q, { useLadder = false, excludeUnit = null } = {}) {
@@ -12194,7 +12195,7 @@ export class TacticsScene extends BaseScene {
         const drifts = new Map();
         const occupied = new Set();
         this.units.forEach(u => {
-            if (u.hp <= 0 || u.isGone || u.name === 'Boulder') return;
+            if (u.hp <= 0 || u.isGone || u.name === 'Boulder' || this.isSiegeLadder(u)) return;
             occupied.add(`${u.r},${u.q}`);
         });
         this.units.forEach(u => {
@@ -12248,7 +12249,7 @@ export class TacticsScene extends BaseScene {
      * - Ignore boulders/corpses for occupancy
      */
     getUnitHexDriftOffset(u, occupied) {
-        if (!u || u.hp <= 0 || u.isGone || u.name === 'Boulder') return { x: 0, y: 0 };
+        if (!u || u.hp <= 0 || u.isGone || u.name === 'Boulder' || this.isSiegeLadder(u)) return { x: 0, y: 0 };
         const dirs = this.tacticsMap.getDirections(u.r) || [];
         if (dirs.length === 0) return { x: 0, y: 0 };
 
