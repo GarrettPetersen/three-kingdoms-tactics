@@ -3130,7 +3130,9 @@ export const NARRATIVE_SCRIPTS = {
                 zh: '数个时辰后，张钧自宫门复出，衣冠带尘，怒气未消，所幸性命尚在。'
             }
         },
-        { type: 'command', action: 'addActor', id: 'zhangjun', imgKey: 'zhoujing', x: 174, y: 178, actorAction: 'walk', speed: 0.72, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'zhangjun', imgKey: 'zhoujing', x: 340, y: 170, actorAction: 'walk', speed: 0.72, flip: true, drawAboveForeground: false },
+        { type: 'command', action: 'move', id: 'zhangjun', x: 147, y: 170, wait: true },
+        { type: 'command', action: 'setActorLayer', id: 'zhangjun', drawAboveForeground: true },
         { type: 'command', action: 'move', id: 'zhangjun', x: 198, y: 190, wait: true },
         {
             type: 'dialogue',
