@@ -2972,7 +2972,7 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'addActor', id: 'palace_traffic_soldier_01', imgKey: 'soldier', x: -34, y: 240, actorAction: 'walk', speed: 0.48, loopXStart: -58, loopXEnd: 292, drawAboveForeground: true },
         { type: 'command', action: 'addActor', id: 'palace_traffic_messenger_01', imgKey: 'xiaoer', x: 292, y: 230, actorAction: 'walk', speed: 0.58, loopXStart: 304, loopXEnd: -96, flip: true, drawAboveForeground: true },
         { type: 'command', action: 'addActor', id: 'palace_traffic_soldier_02', imgKey: 'soldier', x: 152, y: 240, actorAction: 'walk', speed: 0.42, loopXStart: -130, loopXEnd: 298, drawAboveForeground: true },
-        { type: 'command', action: 'addActor', id: 'palace_gate_guard', imgKey: 'soldier', x: 158, y: 190, flip: true, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'palace_gate_guard', imgKey: 'soldier', x: 163, y: 185, flip: true, drawAboveForeground: true },
         { type: 'command', action: 'addActor', id: 'luoyang_liubo_player', imgKey: 'merchant', x: 216, y: 190, flip: true, drawAboveForeground: true },
         { type: 'command', action: 'animate', id: 'luoyang_liubo_player', animation: 'recovery' },
         { type: 'command', action: 'addProp', id: 'luoyang_liubo_table', imgKey: 'liubo_table', x: 176, y: 166, sortY: 226, drawAboveForeground: true },
@@ -3011,18 +3011,6 @@ export const NARRATIVE_SCRIPTS = {
             text: {
                 en: 'If office comes, we serve. If none comes, our oath remains. Still, the men who followed us deserve to see justice done.',
                 zh: '有官则尽职，无官亦守义。只是随我等出生入死之人，也该见朝廷公道。'
-            }
-        },
-        {
-            type: 'dialogue',
-            speaker: 'soldier',
-            portraitKey: 'soldier',
-            name: 'Palace Guard',
-            voiceId: 'ch2_anxi_palace_guard_01',
-            position: 'top',
-            text: {
-                en: 'Palace order: only summoned officers and court officials bearing memorials may pass. Soldiers awaiting reward must remain outside.',
-                zh: '宫门有令：奉诏者、持表奏事的朝官方可入内；待赏军士，一概候门外。'
             }
         },
         { type: 'command', action: 'addActor', id: 'zhangjun', imgKey: 'zhoujing', x: 336, y: 190, actorAction: 'walk', speed: 0.72, flip: true, drawAboveForeground: true },
@@ -3067,6 +3055,23 @@ export const NARRATIVE_SCRIPTS = {
         {
             type: 'interactive',
             clickableActors: {
+                'palace_gate_guard': {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            speaker: 'soldier',
+                            portraitKey: 'soldier',
+                            name: 'Palace Guard',
+                            voiceId: 'ch2_anxi_palace_guard_01',
+                            position: 'top',
+                            text: {
+                                en: 'Palace order: only summoned officers and court officials bearing memorials may pass. Soldiers awaiting reward must remain outside.',
+                                zh: '宫门有令：奉诏者、持表奏事的朝官方可入内；待赏军士，一概候门外。'
+                            },
+                            _isInserted: true
+                        }
+                    ]
+                },
                 'luoyang_liubo_player': {
                     onClick: [
                         {
@@ -3763,7 +3768,7 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'addActor', id: 'palace_traffic_soldier_01', imgKey: 'soldier', x: -34, y: 240, actorAction: 'walk', speed: 0.48, loopXStart: -58, loopXEnd: 292, drawAboveForeground: true },
         { type: 'command', action: 'addActor', id: 'palace_traffic_messenger_01', imgKey: 'xiaoer', x: 292, y: 230, actorAction: 'walk', speed: 0.58, loopXStart: 304, loopXEnd: -96, flip: true, drawAboveForeground: true },
         { type: 'command', action: 'addActor', id: 'palace_traffic_soldier_02', imgKey: 'soldier', x: 152, y: 240, actorAction: 'walk', speed: 0.42, loopXStart: -130, loopXEnd: 298, drawAboveForeground: true },
-        { type: 'command', action: 'addActor', id: 'palace_gate_guard', imgKey: 'soldier', x: 158, y: 190, flip: true, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'palace_gate_guard', imgKey: 'soldier', x: 163, y: 185, flip: true, drawAboveForeground: true },
         { type: 'command', action: 'addActor', id: 'gate_eunuch', imgKey: 'eunuch', x: 178, y: 185, flip: true, drawAboveForeground: true },
         { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: -34, y: 214, actorAction: 'walk', speed: 0.72, drawAboveForeground: true },
         { type: 'command', action: 'move', id: 'hejin', x: 94, y: 214, wait: true },

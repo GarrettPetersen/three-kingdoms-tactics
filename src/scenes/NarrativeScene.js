@@ -1745,6 +1745,10 @@ export class NarrativeScene extends BaseScene {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
+        if (this.shouldRenderInteractiveRegions(step)) {
+            this.renderClickableRegions(ctx, canvas, step);
+        }
+
         if (step && step.type === 'title') {
             this.renderTitleCard(step);
         } else if (step && (step.type === 'dialogue' || step.type === 'narrator')) {
@@ -1758,11 +1762,11 @@ export class NarrativeScene extends BaseScene {
         } else if (step && step.type === 'choice') {
             this.renderChoice(step);
         }
-        
-        // Render clickable region boxes in interactive mode
-        if (this.isInteractive && this.clickableRegions) {
-            this.renderClickableRegions(ctx, canvas, step);
-        }
+    }
+
+    shouldRenderInteractiveRegions(step) {
+        if (!this.isInteractive || !this.clickableRegions) return false;
+        return step?.type === 'interactive' || step?.type === 'prompt';
     }
     
     renderClickableRegions(ctx, canvas, step) {
