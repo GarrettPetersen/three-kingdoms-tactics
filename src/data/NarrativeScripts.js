@@ -2964,6 +2964,9 @@ export const NARRATIVE_SCRIPTS = {
         },
         { bg: 'luoyang_imperial_palace_gate', fg: 'luoyang_imperial_palace_gate_foreground', type: 'command', action: 'clearActors' },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
+        { type: 'command', action: 'addActor', id: 'palace_traffic_soldier_01', imgKey: 'soldier', x: -34, y: 226, actorAction: 'walk', speed: 0.48, loopXStart: -58, loopXEnd: 292, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'palace_traffic_messenger_01', imgKey: 'xiaoer', x: 64, y: 230, actorAction: 'walk', speed: 0.58, loopXStart: -96, loopXEnd: 304, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'palace_traffic_soldier_02', imgKey: 'soldier', x: 152, y: 228, actorAction: 'walk', speed: 0.42, loopXStart: -130, loopXEnd: 298, drawAboveForeground: true },
         { type: 'command', action: 'addActor', id: 'liubei', imgKey: 'liubei', x: 108, y: 190, drawAboveForeground: true },
         { type: 'command', action: 'addActor', id: 'guanyu', imgKey: 'guanyu', x: 76, y: 190, drawAboveForeground: true },
         { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 46, y: 190, drawAboveForeground: true },
@@ -3036,11 +3039,13 @@ export const NARRATIVE_SCRIPTS = {
                 zh: '既如此，我便替这沉默开口。将士为汉流血，官爵却在门内买卖。'
             }
         },
-        { type: 'command', action: 'move', id: 'zhangjun', x: 174, y: 178, wait: true },
+        { type: 'command', action: 'move', id: 'zhangjun', x: 147, y: 170, wait: true },
+        { type: 'command', action: 'setActorLayer', id: 'zhangjun', drawAboveForeground: false },
+        { type: 'command', action: 'move', id: 'zhangjun', x: 340, y: 170, wait: true },
         { type: 'command', action: 'removeActor', id: 'zhangjun' },
-        { type: 'command', action: 'addActor', id: 'luoyang_liubo_player', imgKey: 'xiaoer', x: 258, y: 190, flip: true, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'luoyang_liubo_player', imgKey: 'merchant', x: 216, y: 190, flip: true, drawAboveForeground: true },
         { type: 'command', action: 'animate', id: 'luoyang_liubo_player', animation: 'recovery' },
-        { type: 'command', action: 'addProp', id: 'luoyang_liubo_table', imgKey: 'liubo_table', x: 222, y: 166, sortY: 226 },
+        { type: 'command', action: 'addProp', id: 'luoyang_liubo_table', imgKey: 'liubo_table', x: 176, y: 166, sortY: 226 },
         {
             type: 'interactive',
             clickableActors: {
@@ -3048,7 +3053,7 @@ export const NARRATIVE_SCRIPTS = {
                     onClick: [
                         {
                             type: 'dialogue',
-                            portraitKey: 'xiaoer',
+                            portraitKey: 'merchant',
                             position: 'top',
                             name: 'Liubo Player',
                             voiceId: 'ch2_luoyang_liubo_intro_01',
@@ -3060,12 +3065,12 @@ export const NARRATIVE_SCRIPTS = {
                         },
                         {
                             type: 'choice',
-                            portraitKey: 'xiaoer',
+                            portraitKey: 'merchant',
                             name: 'Liubo Player',
                             options: [
                                 {
                                     buttonText: { en: 'Play Liubo.', zh: '博一局。' },
-                                    speaker: 'xiaoer',
+                                    speaker: 'merchant',
                                     voiceId: 'ch2_luoyang_liubo_accept_01',
                                     text: {
                                         en: 'Then let the sticks speak while the ministers keep silent.',
@@ -3077,7 +3082,7 @@ export const NARRATIVE_SCRIPTS = {
                                 },
                                 {
                                     buttonText: { en: 'Not now.', zh: '现在不玩。' },
-                                    speaker: 'xiaoer',
+                                    speaker: 'merchant',
                                     voiceId: 'ch2_luoyang_liubo_decline_01',
                                     text: {
                                         en: 'Another time. We should keep our eyes on the gate.',
@@ -3086,7 +3091,7 @@ export const NARRATIVE_SCRIPTS = {
                                     result: [
                                         {
                                             type: 'dialogue',
-                                            portraitKey: 'xiaoer',
+                                            portraitKey: 'merchant',
                                             position: 'top',
                                             name: 'Liubo Player',
                                             voiceId: 'ch2_luoyang_liubo_decline_reply_01',
