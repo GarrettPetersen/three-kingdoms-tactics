@@ -1656,32 +1656,36 @@ export class LiuboScene extends BaseScene {
         }
         this.campaignComplete = true;
         const narrativeResumeState = this.manager.gameState.getSceneState('narrative');
+        const resultScript = buildCampaignLiuboResultScript({
+            won,
+            previousActivityPlays: this.previousActivityPlays,
+            activityId: this.activityId
+        });
         if (narrativeResumeState) {
-            this.manager.gameState.setCampaignVar('narrativeResumeAfterLiubo', narrativeResumeState);
+            this.manager.gameState.setSceneState('narrative', narrativeResumeState);
+            this.manager.gameState.setCampaignVar('pendingNarrativeRuntimeFrameAfterLiubo', resultScript);
+            this.manager.gameState.setCampaignVar('narrativeResumeAfterLiubo', null);
         }
         this.manager.gameState.clearSceneState('liubo');
-        this.manager.switchTo('narrative', {
-            keepMusic: true,
-            script: buildCampaignLiuboResultScript({
-                won,
-                previousActivityPlays: this.previousActivityPlays,
-                activityId: this.activityId
-            })
-        });
+        if (narrativeResumeState) {
+            this.manager.switchTo('narrative', { keepMusic: true, isResume: true });
+        } else {
+            this.manager.switchTo('narrative', { keepMusic: true, script: resultScript });
+        }
     }
 }
 
 function buildCampaignLiuboResultScript({ won, previousActivityPlays = 0, activityId = null }) {
     if (activityId === 'chapter2_luoyang_wait_liubo') {
         const result = won ? {
-            speaker: 'xiaoer',
+            speaker: 'merchant',
             voiceId: 'ch2_luoyang_liubo_win_01',
             text: {
                 en: 'A clean victory. May the court read merit as clearly as you read the board.',
                 zh: '胜得干净。只愿朝廷看功劳，也能如你看棋局这般分明。'
             }
         } : {
-            speaker: 'xiaoer',
+            speaker: 'merchant',
             voiceId: 'ch2_luoyang_liubo_loss_01',
             text: {
                 en: 'Liubo teaches patience. A useful lesson when palace doors open slowly.',
@@ -1691,14 +1695,13 @@ function buildCampaignLiuboResultScript({ won, previousActivityPlays = 0, activi
         return [
             {
                 type: 'dialogue',
-                portraitKey: 'xiaoer',
+                portraitKey: 'merchant',
                 position: 'top',
                 name: 'Liubo Player',
                 voiceId: result.voiceId,
                 speaker: result.speaker,
                 text: result.text
-            },
-            { type: 'command', action: 'resumeSavedNarrative' }
+            }
         ];
     }
 
@@ -1750,8 +1753,7 @@ function buildCampaignLiuboResultScript({ won, previousActivityPlays = 0, activi
             voiceId: result.voiceId,
             speaker: result.speaker,
             text: result.text
-        },
-        { type: 'command', action: 'resumeSavedNarrative' }
+        }
     ];
 }
 

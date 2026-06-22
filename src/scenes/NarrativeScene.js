@@ -42,6 +42,7 @@ export class NarrativeScene extends BaseScene {
         this.storyRouteId = null;
         this.storyNodeId = null;
         this.skipNextExitSave = false;
+        this.visualPaletteCache = new Map();
     }
 
     cloneScriptSteps(steps) {
@@ -182,6 +183,96 @@ export class NarrativeScene extends BaseScene {
             }
         }
         return null;
+    }
+
+    findActiveVisualPaletteStep() {
+        const frames = this.executionFrames?.length
+            ? this.executionFrames
+            : [{ steps: this.script, index: this.currentStep }];
+        const activeBg = this.getActiveVisualKey('bg');
+        for (let frameIndex = frames.length - 1; frameIndex >= 0; frameIndex--) {
+            const frame = frames[frameIndex];
+            const startIndex = Math.min(frame.index || 0, Math.max(0, (frame.steps?.length || 1) - 1));
+            for (let i = startIndex; i >= 0; i--) {
+                const step = frame.steps?.[i];
+                if (!step) continue;
+                if (step.bgPaletteShift) {
+                    return {
+                        step,
+                        isCurrentStep: frameIndex === frames.length - 1 && i === startIndex
+                    };
+                }
+                if (Object.prototype.hasOwnProperty.call(step, 'bg')) {
+                    if (!activeBg || step.bg === activeBg) return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    getVisualPaletteProgress(paletteInfo) {
+        if (!paletteInfo?.step || paletteInfo.step.bgPaletteShift !== 'sunset') return 0;
+        const step = paletteInfo.step;
+        const start = Number.isFinite(step.bgPaletteStart) ? step.bgPaletteStart : 0;
+        const end = Number.isFinite(step.bgPaletteEnd) ? step.bgPaletteEnd : start;
+        if (!paletteInfo.isCurrentStep) {
+            return Math.max(0, Math.min(1, end));
+        }
+
+        const voice = (assets.currentVoice && assets.currentVoice.duration > 0) ? assets.currentVoice : null;
+        const configuredDuration = Number.isFinite(step.bgPaletteDurationMs) ? step.bgPaletteDurationMs : null;
+        const durationMs = Math.max(800, configuredDuration || (voice ? voice.duration * 1000 : 5000));
+        const t = Math.max(0, Math.min(1, (this.elapsedInStep || 0) / durationMs));
+        return Math.max(0, Math.min(1, start + (end - start) * t));
+    }
+
+    getSunsetPaletteImage(img, progress) {
+        if (!img || progress <= 0) return img;
+        const bucket = Math.max(0, Math.min(24, Math.round(progress * 24)));
+        if (bucket <= 0) return img;
+        const key = `${img.src || img.width + 'x' + img.height}:sunset:${bucket}`;
+        if (this.visualPaletteCache.has(key)) {
+            return this.visualPaletteCache.get(key);
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const paletteCtx = canvas.getContext('2d', { willReadFrequently: true });
+        paletteCtx.imageSmoothingEnabled = false;
+        paletteCtx.drawImage(img, 0, 0);
+
+        try {
+            const imageData = paletteCtx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            const t = bucket / 24;
+            for (let i = 0; i < data.length; i += 4) {
+                if (data[i + 3] === 0) continue;
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+                const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                const shadow = Math.max(0, 1 - lum / 150);
+                const sunsetR = Math.min(255, lum * 1.08 + 58 + shadow * 18);
+                const sunsetG = Math.min(255, lum * 0.72 + 34 - shadow * 8);
+                const sunsetB = Math.min(255, lum * 0.44 + 22 + shadow * 32);
+                data[i] = Math.round(r + (sunsetR - r) * t);
+                data[i + 1] = Math.round(g + (sunsetG - g) * t);
+                data[i + 2] = Math.round(b + (sunsetB - b) * t);
+            }
+            paletteCtx.putImageData(imageData, 0, 0);
+        } catch (err) {
+            console.warn('Could not palette-shift narrative image:', err);
+            return img;
+        }
+
+        this.visualPaletteCache.set(key, canvas);
+        return canvas;
+    }
+
+    getPaletteShiftedVisualImage(img, paletteInfo, progress) {
+        if (!img || paletteInfo?.step?.bgPaletteShift !== 'sunset') return img;
+        return this.getSunsetPaletteImage(img, progress);
     }
 
     conditionPasses(condition) {
@@ -452,6 +543,10 @@ export class NarrativeScene extends BaseScene {
                 sortY: prop.sortY !== undefined ? prop.sortY : (prop.y || 0),
                 imgKey: prop.imgKey,
                 img: prop.imgKey ? assets.getImage(prop.imgKey) : null,
+                imgKeys: Array.isArray(prop.imgKeys) ? prop.imgKeys : null,
+                frameMs: Number.isFinite(prop.frameMs) ? prop.frameMs : 900,
+                frameOffsetMs: Number.isFinite(prop.frameOffsetMs) ? prop.frameOffsetMs : 0,
+                drawAboveForeground: !!prop.drawAboveForeground,
                 w: prop.w,
                 h: prop.h
             };
@@ -573,6 +668,16 @@ export class NarrativeScene extends BaseScene {
             // Don't replay voice on resume - user already heard it
             // Timer and isWaiting already restored from saved state
         }
+
+        const pendingRuntimeSteps = this.manager.gameState.getCampaignVar('pendingNarrativeRuntimeFrameAfterLiubo');
+        if (Array.isArray(pendingRuntimeSteps) && pendingRuntimeSteps.length > 0) {
+            this.manager.gameState.setCampaignVar('pendingNarrativeRuntimeFrameAfterLiubo', null);
+            const shouldReturnToInteractive = !!(this.isInteractive && this.interactiveStepIndex >= 0);
+            if (this.pushRuntimeFrame(pendingRuntimeSteps, { returnToInteractive: shouldReturnToInteractive })) {
+                this.processStep();
+                this.saveNarrativeState();
+            }
+        }
     }
     
     handleCommandForResume(cmd) {
@@ -642,6 +747,10 @@ export class NarrativeScene extends BaseScene {
                     sortY: cmd.sortY !== undefined ? cmd.sortY : (cmd.y || 0),
                     imgKey: cmd.imgKey,
                     img: cmd.imgKey ? assets.getImage(cmd.imgKey) : null,
+                    imgKeys: Array.isArray(cmd.imgKeys) ? cmd.imgKeys : null,
+                    frameMs: Number.isFinite(cmd.frameMs) ? cmd.frameMs : 900,
+                    frameOffsetMs: Number.isFinite(cmd.frameOffsetMs) ? cmd.frameOffsetMs : 0,
+                    drawAboveForeground: !!cmd.drawAboveForeground,
                     w: cmd.w,
                     h: cmd.h
                 };
@@ -879,6 +988,7 @@ export class NarrativeScene extends BaseScene {
                 imgKeys: Array.isArray(cmd.imgKeys) ? cmd.imgKeys : null,
                 frameMs: Number.isFinite(cmd.frameMs) ? cmd.frameMs : 900,
                 frameOffsetMs: Number.isFinite(cmd.frameOffsetMs) ? cmd.frameOffsetMs : 0,
+                drawAboveForeground: !!cmd.drawAboveForeground,
                 w: cmd.w,
                 h: cmd.h
             };
@@ -1410,7 +1520,8 @@ export class NarrativeScene extends BaseScene {
             const dist = Math.sqrt(dx*dx + dy*dy);
             
             if (dist > 1) {
-                allMoved = false;
+                const isAmbientLoop = a.loopXStart !== null && a.loopXEnd !== null;
+                if (!isAmbientLoop) allMoved = false;
                 let moveDist = a.speed * (dt / 16);
                 
                 // Cap movement to prevent overshooting
@@ -1432,7 +1543,7 @@ export class NarrativeScene extends BaseScene {
                     a.targetX = a.loopXEnd;
                     a.targetY = a.y;
                     a.action = 'walk';
-                    a.flip = false;
+                    a.flip = a.loopXEnd < a.loopXStart;
                 } else if (a.action === 'walk') {
                     a.action = 'standby';
                 }
@@ -1512,6 +1623,8 @@ export class NarrativeScene extends BaseScene {
         const fgKey = this.getActiveVisualKey('fg');
         const fgAlphaRaw = this.getActiveVisualKey('fgAlpha');
         const fgAlpha = (typeof fgAlphaRaw === 'number') ? Math.max(0, Math.min(1, fgAlphaRaw)) : 1;
+        const visualPaletteInfo = this.findActiveVisualPaletteStep();
+        const visualPaletteProgress = this.getVisualPaletteProgress(visualPaletteInfo);
 
         let bgX = 0;
         let bgY = 0;
@@ -1525,7 +1638,7 @@ export class NarrativeScene extends BaseScene {
             if (!resolvedBg && this.scriptId === 'caocao_dunqiu_intro') {
                 resolvedBg = assets.getImage('urban_street') || assets.getImage('army_camp');
             }
-            const bg = resolvedBg;
+            const bg = this.getPaletteShiftedVisualImage(resolvedBg, visualPaletteInfo, visualPaletteProgress);
             if (bg) {
                 bgWidth = bg.width;
                 bgHeight = bg.height;
@@ -1546,9 +1659,12 @@ export class NarrativeScene extends BaseScene {
         const actorEntries = Object.entries(this.actors).map(([id, actor]) => ({ id, type: 'actor', item: actor, sortY: actor.y }));
         const propEntries = Object.entries(this.props || {}).map(([id, prop]) => ({ id, type: 'prop', item: prop, sortY: prop.sortY ?? prop.y }));
         const sortedDrawables = [...actorEntries, ...propEntries].sort((a, b) => a.sortY - b.sortY);
-        const drawablesBelowForeground = sortedDrawables.filter(entry => !(entry.type === 'actor' && entry.item.drawAboveForeground));
-        const actorsAboveForeground = sortedDrawables.filter(entry => entry.type === 'actor' && !!entry.item.drawAboveForeground);
-        let hoveredActorOutline = null;
+        const drawablesBelowForeground = sortedDrawables.filter(entry => !entry.item.drawAboveForeground);
+        const drawablesAboveForeground = sortedDrawables.filter(entry => !!entry.item.drawAboveForeground);
+        const hoveredActorOutlines = {
+            below: null,
+            above: null
+        };
         const drawActor = (a, actorId) => {
             if (!a.img && a.imgKey) {
                 a.img = assets.getImage(a.imgKey);
@@ -1564,7 +1680,8 @@ export class NarrativeScene extends BaseScene {
             this.drawCharacter(ctx, a.img, a.action, a.frame, actorScreenX, actorScreenY, { flip: a.flip });
             
             if (isHovered) {
-                hoveredActorOutline = {
+                const outlineLayer = a.drawAboveForeground ? 'above' : 'below';
+                hoveredActorOutlines[outlineLayer] = {
                     img: a.img,
                     action: a.action,
                     frame: a.frame,
@@ -1594,21 +1711,23 @@ export class NarrativeScene extends BaseScene {
             if (entry.type === 'prop') drawProp(entry.item);
             else drawActor(entry.item, entry.id);
         };
-        drawablesBelowForeground.forEach(drawDrawable);
-        if (hoveredActorOutline) {
+        const drawHoveredActorOutline = (outline) => {
+            if (!outline) return;
             this.drawCharacterPixelOutline(
                 ctx,
-                hoveredActorOutline.img,
-                hoveredActorOutline.action,
-                hoveredActorOutline.frame,
-                hoveredActorOutline.x,
-                hoveredActorOutline.y,
-                { flip: hoveredActorOutline.flip, color: '#ffd700' }
+                outline.img,
+                outline.action,
+                outline.frame,
+                outline.x,
+                outline.y,
+                { flip: outline.flip, color: '#ffd700' }
             );
-        }
+        };
+        drawablesBelowForeground.forEach(drawDrawable);
+        drawHoveredActorOutline(hoveredActorOutlines.below);
 
         if (fgKey && resolvedBg) {
-            const fg = assets.getImage(fgKey);
+            const fg = this.getPaletteShiftedVisualImage(assets.getImage(fgKey), visualPaletteInfo, visualPaletteProgress);
             if (fg) {
                 ctx.save();
                 ctx.globalAlpha *= fgAlpha;
@@ -1616,7 +1735,8 @@ export class NarrativeScene extends BaseScene {
                 ctx.restore();
             }
         }
-        actorsAboveForeground.forEach(drawDrawable);
+        drawablesAboveForeground.forEach(drawDrawable);
+        drawHoveredActorOutline(hoveredActorOutlines.above);
         ctx.restore();
 
         // Fade overlay

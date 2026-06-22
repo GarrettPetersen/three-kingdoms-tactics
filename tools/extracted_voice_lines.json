@@ -377,6 +377,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_anxi_palace_guard_01",
+    "char": "soldier",
+    "text": "Palace order: only summoned officers and court officials bearing memorials may pass. Soldiers awaiting reward must remain outside.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_anxi_zf_01",
     "char": "zhangfei",
     "text": "We broke Zhang Bao, settled Yangcheng, and helped take Wan. Are we to wear a path into these stones before anyone speaks to us?",
@@ -990,13 +996,13 @@
   },
   {
     "id": "ch2_luoyang_liubo_loss_01",
-    "char": "xiaoer",
+    "char": "merchant",
     "text": "Liubo teaches patience. A useful lesson when palace doors open slowly.",
     "source": "LiuboScene.js"
   },
   {
     "id": "ch2_luoyang_liubo_win_01",
-    "char": "xiaoer",
+    "char": "merchant",
     "text": "A clean victory. May the court read merit as clearly as you read the board.",
     "source": "LiuboScene.js"
   },
