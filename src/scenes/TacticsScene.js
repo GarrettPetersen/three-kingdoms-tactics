@@ -7917,6 +7917,42 @@ export class TacticsScene extends BaseScene {
         return Math.max(1, Math.floor(Number.isFinite(attack.pushDistance) ? attack.pushDistance : 1));
     }
 
+    getBoulderRollChainTarget(path, bumpAtEnd) {
+        if (!bumpAtEnd || !path || path.length < 2) return null;
+        const end = path[path.length - 1];
+        const endCell = this.tacticsMap.getCell(end.r, end.q);
+        const occupant = this.getLivingUnitOccupyingCell(end.r, end.q) || endCell?.unit || null;
+        if (!occupant || occupant.name !== 'Boulder' || occupant.isDestroyedBoulder || occupant.hp <= 0) return null;
+        return occupant;
+    }
+
+    canBoulderChainRoll(boulder, dirIndex, seen = new Set()) {
+        if (!boulder || seen.has(boulder)) return false;
+        const { path } = this.getBoulderRollPath(boulder.r, boulder.q, dirIndex);
+        return !!(path && path.length >= 2);
+    }
+
+    drawBoulderRollPreviewArrows(ctx, boulder, dirIndex, alpha = 1, seen = new Set()) {
+        if (!boulder || boulder.name !== 'Boulder' || boulder.isDestroyedBoulder || seen.has(boulder)) return false;
+        seen.add(boulder);
+
+        const { path, bumpAtEnd } = this.getBoulderRollPath(boulder.r, boulder.q, dirIndex);
+        if (!path || path.length < 2) return true;
+
+        const chainTarget = this.getBoulderRollChainTarget(path, bumpAtEnd);
+        const willChain = !!(chainTarget && this.canBoulderChainRoll(chainTarget, dirIndex, seen));
+
+        for (let i = 0; i < path.length - 1; i++) {
+            const isTerminalArrow = i === path.length - 2;
+            this.drawPushArrow(ctx, path[i].r, path[i].q, dirIndex, isTerminalArrow && bumpAtEnd && !willChain, alpha);
+        }
+
+        if (willChain) {
+            this.drawBoulderRollPreviewArrows(ctx, chainTarget, dirIndex, alpha, seen);
+        }
+        return true;
+    }
+
     drawPushPreviewArrowsForAttack(ctx, attacker, attackKey, targetR, targetQ, alpha = 1) {
         const attack = ATTACKS[attackKey];
         if (!attacker || !attack?.push) return false;
@@ -7932,18 +7968,15 @@ export class TacticsScene extends BaseScene {
             const cell = this.tacticsMap.getCell(tile.r, tile.q);
             const victim = this.getRiderUnitFromCell(cell);
             if (!victim || shownVictims.has(victim)) continue;
-            shownVictims.add(victim);
 
             const origin = this.getAttackOriginForTarget(attacker, tile.r, tile.q);
             const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, tile.r, tile.q);
             if (dirIndex === -1) continue;
 
             if (victim.name === 'Boulder') {
-                const { path, bumpAtEnd } = this.getBoulderRollPath(victim.r, victim.q, dirIndex);
-                for (let i = 0; i < path.length - 1; i++) {
-                    this.drawPushArrow(ctx, path[i].r, path[i].q, dirIndex, i === path.length - 2 && bumpAtEnd, alpha);
-                }
+                this.drawBoulderRollPreviewArrows(ctx, victim, dirIndex, alpha, shownVictims);
             } else {
+                shownVictims.add(victim);
                 const distance = this.getAttackPushDistance(attack);
                 let arrowR = tile.r;
                 let arrowQ = tile.q;
@@ -11668,10 +11701,7 @@ export class TacticsScene extends BaseScene {
                         const dirIndex = this.tacticsMap.getDirectionIndex(origin.r, origin.q, this.hoveredCell.r, this.hoveredCell.q);
                         if (dirIndex !== -1 && this.hoveredCell.unit) {
                             if (this.hoveredCell.unit.name === 'Boulder') {
-                                const { path, bumpAtEnd } = this.getBoulderRollPath(this.hoveredCell.unit.r, this.hoveredCell.unit.q, dirIndex);
-                                for (let i = 0; i < path.length - 1; i++) {
-                                    this.drawPushArrow(ctx, path[i].r, path[i].q, dirIndex, i === path.length - 2 && bumpAtEnd, selectedPushAlpha);
-                                }
+                                this.drawBoulderRollPreviewArrows(ctx, this.hoveredCell.unit, dirIndex, selectedPushAlpha);
                             } else {
                                 this.drawPushArrow(ctx, this.hoveredCell.r, this.hoveredCell.q, dirIndex, false, selectedPushAlpha);
                             }
