@@ -291,6 +291,19 @@ function checkLiuboPerchRules() {
         toSpaceId: 'l_top_right'
     }).join(',') === 'b1',
     'Liubo third-piece captures must resolve on the exact contested perch.');
+
+    state = createLiuboState({ firstPlayer: 'white' });
+    state.phase = 'choose_piece';
+    state.currentPlayer = 'white';
+    state.movesRemaining = [2];
+    state.pieces = [
+        makeLiuboBoardPiece('w1', 'white', 't_top_inner')
+    ];
+    const pondCrossingMoves = getLegalMovesForPiece(state, state.pieces[0]);
+    assertRule(!pondCrossingMoves.some(move => move.toSpaceId === 't_top_inner' && move.path?.join('.') === 't_top_inner.pond.t_top_inner'),
+        'Liubo movement must not backtrack through the central pond to return to the same perch.');
+    assertRule(pondCrossingMoves.some(move => move.toSpaceId === 't_right_inner' && move.path?.join('.') === 't_top_inner.pond.t_right_inner'),
+        'Liubo movement should still allow crossing the central pond to a different inner T perch.');
 }
 
 function listJsFiles(dir) {

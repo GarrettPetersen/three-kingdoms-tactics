@@ -258,7 +258,7 @@ function findLiuboPaths(state, piece, startSpace, steps, options = {}) {
         const nextPaths = [];
         for (const path of paths) {
             for (const next of getAdjacentLiuboSpaces(path.spaceId, { allowPond: options.allowPond })) {
-                if (next !== 'pond' && path.path.includes(next)) continue;
+                if (path.path.includes(next)) continue;
                 const isFinalStep = step === steps - 1;
                 if (!canMoveThroughOrLand(state, piece, next, isFinalStep, path)) continue;
                 nextPaths.push({
