@@ -44,6 +44,7 @@ export class AssetLoader {
         this._voicePlaySeq = 0;
         this.baseMusicVolume = 0.5;
         this.loopingSounds = new Map(); // key -> { audio, fadeInterval }
+        this.loopingSoundRequests = new Map(); // key -> request id, cancels async loop starts
         this.audioUnlocked = false;
         this.pendingMusic = null; // { key, targetVolume }
         this.onNextVoiceEnd = null; // one-time callback when current voice finishes (for action recording)
@@ -790,10 +791,16 @@ export class AssetLoader {
     }
 
     playLoopingSound(key, volume = 1.0, fadeInMs = 0) {
+        const requestId = (this.loopingSoundRequests.get(key) || 0) + 1;
+        this.loopingSoundRequests.set(key, requestId);
         const base = this.getSound(key);
         if (!base) {
             if (this.soundSources[key]) {
-                this.loadSound(key).then(() => this.playLoopingSound(key, volume, fadeInMs));
+                this.loadSound(key).then(loaded => {
+                    if (loaded && this.loopingSoundRequests.get(key) === requestId) {
+                        this.playLoopingSound(key, volume, fadeInMs);
+                    }
+                });
             }
             return;
         }
@@ -848,6 +855,7 @@ export class AssetLoader {
     }
 
     stopLoopingSound(key, fadeOutMs = 120) {
+        this.loopingSoundRequests.set(key, (this.loopingSoundRequests.get(key) || 0) + 1);
         const entry = this.loopingSounds.get(key);
         if (!entry) return;
         if (entry.fadeInterval) {

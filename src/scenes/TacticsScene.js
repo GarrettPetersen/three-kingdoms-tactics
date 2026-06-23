@@ -5907,12 +5907,16 @@ export class TacticsScene extends BaseScene {
     }
 
     /** Stop rolling rock SFX if no boulder is currently rolling (not in bounce-back). */
+    hasActiveBoulderRoll() {
+        return this.units.some(u => u.name === 'Boulder' && u.rollData && !u.rollData.bounceBack && !u.rollData.bounceComplete);
+    }
+
     stopBoulderRollSoundIfDone() {
-        const anyStillRolling = this.units.some(u => u.name === 'Boulder' && u.rollData && !u.rollData.bounceBack && !u.rollData.bounceComplete);
-        if (anyStillRolling) return;
+        if (this.hasActiveBoulderRoll()) return;
         assets.stopLoopingSound('boulder_roll', 300);
         assets.stopLoopingSound('boulder_roll_2', 300);
         this.boulderRollSoundKey = null;
+        this.boulderRollStartTime = 0;
     }
 
     /** Called after unit updates when a boulder has rollData.segmentComplete. Applies bump/crush/water and advances or clears roll. */
@@ -10293,13 +10297,17 @@ export class TacticsScene extends BaseScene {
                 this.processBoulderRollSegment(u);
             }
         });
-        // Crossfade rolling rock SFX with itself if roll exceeds 6 seconds
-        if (this.boulderRollSoundKey && (Date.now() - this.boulderRollStartTime) >= 6000) {
-            const nextKey = this.boulderRollSoundKey === 'boulder_roll' ? 'boulder_roll_2' : 'boulder_roll';
-            assets.stopLoopingSound(this.boulderRollSoundKey, 1500);
-            assets.playLoopingSound(nextKey, 0.5, 1500);
-            this.boulderRollSoundKey = nextKey;
-            this.boulderRollStartTime = Date.now();
+        // Crossfade rolling rock SFX with itself if roll exceeds 6 seconds.
+        if (this.boulderRollSoundKey) {
+            if (!this.hasActiveBoulderRoll()) {
+                this.stopBoulderRollSoundIfDone();
+            } else if ((Date.now() - this.boulderRollStartTime) >= 6000) {
+                const nextKey = this.boulderRollSoundKey === 'boulder_roll' ? 'boulder_roll_2' : 'boulder_roll';
+                assets.stopLoopingSound(this.boulderRollSoundKey, 1500);
+                assets.playLoopingSound(nextKey, 0.5, 1500);
+                this.boulderRollSoundKey = nextKey;
+                this.boulderRollStartTime = Date.now();
+            }
         }
         this.updateMountedRunAudio(dt);
 
