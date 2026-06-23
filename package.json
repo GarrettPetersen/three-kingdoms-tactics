@@ -7,6 +7,8 @@
     "validate:design": "node tools/validate_design_rules.mjs",
     "dev": "vite",
     "build": "npm run validate:design && vite build",
+    "build:demo": "npm run validate:design && vite build --mode demo",
+    "package:demo:itch": "npm run build:demo && node tools/package_itch_demo.mjs",
     "preview": "vite preview",
     "electron": "electron .",
     "electron:dev": "NODE_ENV=development electron .",
