@@ -4643,7 +4643,10 @@ export const NARRATIVE_SCRIPTS = {
             subtext: { en: "Cao Cao's Story will continue...", zh: '曹操的故事仍将继续……' },
             duration: 5000
         },
-        ...(IS_DEMO ? [createDemoWishlistCard()] : []),
+        ...(IS_DEMO ? [{
+            ...createDemoWishlistCard(),
+            condition: { milestone: 'chapter1_complete', routeId: 'liubei' }
+        }] : []),
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ]
     // Note: Guangzong scene is now handled inline in MapScene.startGuangzongBriefing()

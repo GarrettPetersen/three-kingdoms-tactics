@@ -5,39 +5,39 @@ export const LIUBO_BOARD_PADDED_SIZE = 256;
 // Liubo Lab's board reads as visible marks with separate branch landing points:
 // each V/corner, L, and T can hold two pieces because each arm is its own space.
 export const LIUBO_SPACES = {
-    l_top_left: { id: 'l_top_left', feature: 'l_top', kind: 'l', x: 118, y: 82 },
-    l_top_right: { id: 'l_top_right', feature: 'l_top', kind: 'l', x: 128, y: 62 },
-    l_right_top: { id: 'l_right_top', feature: 'l_right', kind: 'l', x: 194, y: 128 },
-    l_right_bottom: { id: 'l_right_bottom', feature: 'l_right', kind: 'l', x: 214, y: 138 },
-    l_bottom_right: { id: 'l_bottom_right', feature: 'l_bottom', kind: 'l', x: 138, y: 194 },
-    l_bottom_left: { id: 'l_bottom_left', feature: 'l_bottom', kind: 'l', x: 128, y: 214 },
-    l_left_bottom: { id: 'l_left_bottom', feature: 'l_left', kind: 'l', x: 62, y: 128 },
-    l_left_top: { id: 'l_left_top', feature: 'l_left', kind: 'l', x: 42, y: 118 },
+    l_top_left: { id: 'l_top_left', kind: 'l', x: 118, y: 82 },
+    l_top_right: { id: 'l_top_right', kind: 'l', x: 128, y: 62 },
+    l_right_top: { id: 'l_right_top', kind: 'l', x: 194, y: 128 },
+    l_right_bottom: { id: 'l_right_bottom', kind: 'l', x: 214, y: 138 },
+    l_bottom_right: { id: 'l_bottom_right', kind: 'l', x: 138, y: 194 },
+    l_bottom_left: { id: 'l_bottom_left', kind: 'l', x: 128, y: 214 },
+    l_left_bottom: { id: 'l_left_bottom', kind: 'l', x: 62, y: 128 },
+    l_left_top: { id: 'l_left_top', kind: 'l', x: 42, y: 118 },
 
-    corner_ne_top: { id: 'corner_ne_top', feature: 'corner_ne', kind: 'v', x: 198, y: 42 },
-    corner_ne_right: { id: 'corner_ne_right', feature: 'corner_ne', kind: 'v', x: 214, y: 58 },
-    corner_se_right: { id: 'corner_se_right', feature: 'corner_se', kind: 'v', x: 214, y: 198 },
-    corner_se_bottom: { id: 'corner_se_bottom', feature: 'corner_se', kind: 'v', x: 198, y: 214 },
-    corner_sw_bottom: { id: 'corner_sw_bottom', feature: 'corner_sw', kind: 'v', x: 58, y: 214 },
-    corner_sw_left: { id: 'corner_sw_left', feature: 'corner_sw', kind: 'v', x: 42, y: 198 },
-    corner_nw_left: { id: 'corner_nw_left', feature: 'corner_nw', kind: 'v', x: 42, y: 58 },
-    corner_nw_top: { id: 'corner_nw_top', feature: 'corner_nw', kind: 'v', x: 58, y: 42 },
+    corner_ne_top: { id: 'corner_ne_top', kind: 'v', x: 198, y: 42 },
+    corner_ne_right: { id: 'corner_ne_right', kind: 'v', x: 214, y: 58 },
+    corner_se_right: { id: 'corner_se_right', kind: 'v', x: 214, y: 198 },
+    corner_se_bottom: { id: 'corner_se_bottom', kind: 'v', x: 198, y: 214 },
+    corner_sw_bottom: { id: 'corner_sw_bottom', kind: 'v', x: 58, y: 214 },
+    corner_sw_left: { id: 'corner_sw_left', kind: 'v', x: 42, y: 198 },
+    corner_nw_left: { id: 'corner_nw_left', kind: 'v', x: 42, y: 58 },
+    corner_nw_top: { id: 'corner_nw_top', kind: 'v', x: 58, y: 42 },
 
-    circle_ne: { id: 'circle_ne', feature: 'circle_ne', kind: 'nest', x: 174, y: 82 },
-    circle_se: { id: 'circle_se', feature: 'circle_se', kind: 'nest', x: 174, y: 174 },
-    circle_sw: { id: 'circle_sw', feature: 'circle_sw', kind: 'nest', x: 82, y: 174 },
-    circle_nw: { id: 'circle_nw', feature: 'circle_nw', kind: 'nest', x: 82, y: 82 },
+    circle_ne: { id: 'circle_ne', kind: 'nest', x: 174, y: 82 },
+    circle_se: { id: 'circle_se', kind: 'nest', x: 174, y: 174 },
+    circle_sw: { id: 'circle_sw', kind: 'nest', x: 82, y: 174 },
+    circle_nw: { id: 'circle_nw', kind: 'nest', x: 82, y: 82 },
 
-    t_top_outer: { id: 't_top_outer', feature: 't_top', kind: 't', x: 128, y: 82 },
-    t_top_inner: { id: 't_top_inner', feature: 't_top', kind: 't', x: 128, y: 104 },
-    t_right_outer: { id: 't_right_outer', feature: 't_right', kind: 't', x: 174, y: 128 },
-    t_right_inner: { id: 't_right_inner', feature: 't_right', kind: 't', x: 152, y: 128 },
-    t_bottom_outer: { id: 't_bottom_outer', feature: 't_bottom', kind: 't', x: 128, y: 174 },
-    t_bottom_inner: { id: 't_bottom_inner', feature: 't_bottom', kind: 't', x: 128, y: 152 },
-    t_left_outer: { id: 't_left_outer', feature: 't_left', kind: 't', x: 82, y: 128 },
-    t_left_inner: { id: 't_left_inner', feature: 't_left', kind: 't', x: 104, y: 128 },
+    t_top_outer: { id: 't_top_outer', kind: 't', x: 128, y: 82 },
+    t_top_inner: { id: 't_top_inner', kind: 't', x: 128, y: 104 },
+    t_right_outer: { id: 't_right_outer', kind: 't', x: 174, y: 128 },
+    t_right_inner: { id: 't_right_inner', kind: 't', x: 152, y: 128 },
+    t_bottom_outer: { id: 't_bottom_outer', kind: 't', x: 128, y: 174 },
+    t_bottom_inner: { id: 't_bottom_inner', kind: 't', x: 128, y: 152 },
+    t_left_outer: { id: 't_left_outer', kind: 't', x: 82, y: 128 },
+    t_left_inner: { id: 't_left_inner', kind: 't', x: 104, y: 128 },
 
-    pond: { id: 'pond', feature: 'pond', kind: 'pond', x: 128, y: 128 }
+    pond: { id: 'pond', kind: 'pond', x: 128, y: 128 }
 };
 
 export const LIUBO_ENTRY_SPACES = {
@@ -111,18 +111,8 @@ export function getLiuboSpaceCapacity(spaceId) {
     return 2;
 }
 
-export function getLiuboFeatureId(spaceId) {
-    return LIUBO_SPACES[spaceId]?.feature || spaceId;
-}
-
 export function getLiuboSpaceKind(spaceId) {
     return LIUBO_SPACES[spaceId]?.kind || null;
-}
-
-export function getLiuboFeatureCapacity(spaceId) {
-    if (LIUBO_SPACES[spaceId]?.kind === 'pond') return 6;
-    const feature = getLiuboFeatureId(spaceId);
-    return Object.values(LIUBO_SPACES).filter(space => space.feature === feature).length || 1;
 }
 
 export function otherPlayer(player) {

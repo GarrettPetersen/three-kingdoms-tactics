@@ -6,7 +6,6 @@ import {
     LIUBO_BOARD_PADDED_SIZE,
     LIUBO_PLAYERS,
     getBoardPointPosition,
-    getLiuboFeatureId,
     isLiuboNest
 } from '../minigames/liubo/LiuboBoard.js';
 import {
@@ -1779,10 +1778,9 @@ function classifyLiuboMove(state, move) {
     if (move.scoreFish) return 'score';
     if (move.promoteToOwl) return 'promote';
     const moverIsOwlAfterMove = mover.isOwl || !!move.promoteToOwl;
-    const destinationFeatureId = getLiuboFeatureId(move.toSpaceId);
     const pieces = state.pieces.filter(piece => (
         piece.state === 'board'
-        && getLiuboFeatureId(piece.spaceId) === destinationFeatureId
+        && piece.spaceId === move.toSpaceId
         && piece.id !== mover.id
     ));
     const friendly = pieces.filter(piece => piece.player === mover.player);
@@ -1830,7 +1828,7 @@ function getPerchPieces(state) {
 function hasBlockedPerch(state) {
     const counts = new Map();
     getPerchPieces(state).forEach(piece => {
-        const key = `${getLiuboFeatureId(piece.spaceId)}:${piece.player}`;
+        const key = `${piece.spaceId}:${piece.player}`;
         counts.set(key, (counts.get(key) || 0) + 1);
     });
     return [...counts.values()].some(count => count >= 2);
@@ -1839,7 +1837,7 @@ function hasBlockedPerch(state) {
 function hasContestedPerch(state) {
     const grouped = new Map();
     getPerchPieces(state).forEach(piece => {
-        const key = `${getLiuboFeatureId(piece.spaceId)}:${piece.isOwl ? 'owl' : 'bird'}`;
+        const key = `${piece.spaceId}:${piece.isOwl ? 'owl' : 'bird'}`;
         if (!grouped.has(key)) grouped.set(key, new Set());
         grouped.get(key).add(piece.player);
     });

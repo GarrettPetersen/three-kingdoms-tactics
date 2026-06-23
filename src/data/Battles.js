@@ -32,8 +32,8 @@ export const BATTLES = {
         cutsceneAutoCombat: true, // Enable automatic combat animations
         watchOnlyHint: {
             title: { en: 'WATCH ONLY', zh: '仅观看' },
-            body: { en: 'Battle plays automatically.', zh: '战斗会自动进行。' },
-            blockedBody: { en: 'Watch for now. You will command soon.', zh: '现在先观察。稍后由你指挥。' }
+            body: { en: 'This battle plays automatically.', zh: '本场战斗会自动进行。' },
+            blockedBody: { en: 'This battle is watch-only. You will command soon.', zh: '本场战斗只能观看。稍后由你指挥。' }
         },
         introScript: [], // Combat happens first, then dialogue
         postCombatScript: [

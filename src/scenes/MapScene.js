@@ -1550,7 +1550,7 @@ export class MapScene extends BaseScene {
                 duration: 5000
             }
         ];
-        if (IS_DEMO) {
+        if (IS_DEMO && this.manager.gameState.isCampaignComplete('caocao')) {
             baseScript.push(createDemoWishlistCard());
         }
         baseScript.push({ type: 'command', action: 'fade', target: 1, speed: 0.001 });
@@ -1559,7 +1559,7 @@ export class MapScene extends BaseScene {
             musicKey: 'oath',
             onComplete: () => {
                 this.manager.gameState.setStoryCursor('chapter1_complete', 'liubei');
-                this.manager.gameState.addMilestone('chapter1_complete');
+                this.manager.gameState.addMilestone('chapter1_complete', 'liubei');
                 this.manager.switchTo('campaign_selection');
             },
             script: baseScript

@@ -1,5 +1,6 @@
 import { BATTLES, UNIT_TEMPLATES } from '../src/data/Battles.js';
 import { GameState } from '../src/core/GameState.js';
+import { createLiuboState, getLegalMovesForPiece, getLiuboMoveCaptureIds } from '../src/minigames/liubo/LiuboRules.js';
 import { NARRATIVE_SCRIPTS } from '../src/data/NarrativeScripts.js';
 import { resolveUnitTemplate } from '../src/data/UnitRules.js';
 import fs from 'node:fs';
@@ -217,6 +218,79 @@ function checkQingzhouCityGatePrelude() {
             assertRule(unit.cityGateSide === 'outside',
                 `qingzhou_prelude.${unit.id} should besiege from outside the walls.`);
         });
+}
+
+function makeLiuboBoardPiece(id, player, spaceId, isOwl = false) {
+    return {
+        id,
+        player,
+        index: Number(id.slice(1)) - 1 || 0,
+        state: 'board',
+        spaceId,
+        isOwl,
+        carryingFish: isOwl
+    };
+}
+
+function checkLiuboPerchRules() {
+    const liuboPaths = [
+        'src/minigames/liubo/LiuboBoard.js',
+        'src/minigames/liubo/LiuboRules.js',
+        'src/scenes/LiuboScene.js'
+    ];
+    const forbiddenPatterns = [
+        { pattern: /getLiuboFeature/g, label: 'Liubo gameplay must not use feature helper APIs.' },
+        { pattern: /getPiecesAtFeature/g, label: 'Liubo gameplay must not group pieces by visual feature.' },
+        { pattern: /feature\s*:/g, label: 'Liubo board spaces should not keep feature metadata; perches are exact spaces.' },
+        { pattern: /\.feature\b/g, label: 'Liubo gameplay must not read visual feature metadata.' }
+    ];
+
+    liuboPaths.forEach(relPath => {
+        const source = fs.readFileSync(path.join(projectRoot, relPath), 'utf8');
+        forbiddenPatterns.forEach(({ pattern, label }) => {
+            pattern.lastIndex = 0;
+            const match = pattern.exec(source);
+            if (!match) return;
+            const lineNo = source.slice(0, match.index).split(/\r?\n/).length;
+            failures.push(`${relPath}:${lineNo} ${label}`);
+        });
+    });
+
+    let state = createLiuboState({ firstPlayer: 'black' });
+    state.phase = 'choose_piece';
+    state.currentPlayer = 'black';
+    state.movesRemaining = [1];
+    state.pieces = [
+        makeLiuboBoardPiece('b1', 'black', 't_top_outer'),
+        makeLiuboBoardPiece('w1', 'white', 'l_top_right'),
+        makeLiuboBoardPiece('w2', 'white', 'l_top_right')
+    ];
+    const blackMoves = getLegalMovesForPiece(state, state.pieces[0]);
+    assertRule(blackMoves.some(move => move.toSpaceId === 'l_top_left'),
+        'Liubo pieces on one perch must not block movement to a different perch on the same visible mark.');
+    assertRule(!blackMoves.some(move => move.toSpaceId === 'l_top_right'),
+        'Liubo two-piece blocks must apply to the exact occupied perch.');
+
+    state = createLiuboState({ firstPlayer: 'white' });
+    state.phase = 'choose_piece';
+    state.currentPlayer = 'white';
+    state.pieces = [
+        makeLiuboBoardPiece('w1', 'white', 't_top_outer'),
+        makeLiuboBoardPiece('w2', 'white', 'l_top_right'),
+        makeLiuboBoardPiece('b1', 'black', 'l_top_right')
+    ];
+    assertRule(getLiuboMoveCaptureIds(state, {
+        pieceId: 'w1',
+        toState: 'board',
+        toSpaceId: 'l_top_left'
+    }).length === 0,
+    'Liubo captures must not reach across perches on the same visible mark.');
+    assertRule(getLiuboMoveCaptureIds(state, {
+        pieceId: 'w1',
+        toState: 'board',
+        toSpaceId: 'l_top_right'
+    }).join(',') === 'b1',
+    'Liubo third-piece captures must resolve on the exact contested perch.');
 }
 
 function listJsFiles(dir) {
@@ -542,6 +616,7 @@ checkLegacyForceMigration();
 checkBattleRows();
 checkZhuoTrainingBattle();
 checkQingzhouCityGatePrelude();
+checkLiuboPerchRules();
 checkCanvasTextRendering();
 checkNarrativeScriptImmutability();
 checkBattleDialogueScriptImmutability();

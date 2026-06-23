@@ -2,8 +2,7 @@ import {
     LIUBO_ENTRY_SPACES,
     LIUBO_PLAYERS,
     getAdjacentLiuboSpaces,
-    getLiuboFeatureCapacity,
-    getLiuboFeatureId,
+    getLiuboSpaceCapacity,
     isLiuboNest,
     isScoringNest,
     otherPlayer
@@ -100,15 +99,6 @@ export function isActive(piece) {
 
 export function getPiecesAt(state, spaceId, player = null) {
     return state.pieces.filter(piece => isActive(piece) && piece.spaceId === spaceId && (!player || piece.player === player));
-}
-
-function getPiecesAtFeature(state, spaceId, player = null) {
-    const featureId = getLiuboFeatureId(spaceId);
-    return state.pieces.filter(piece => (
-        isActive(piece)
-        && getLiuboFeatureId(piece.spaceId) === featureId
-        && (!player || piece.player === player)
-    ));
 }
 
 export function selectLiuboPiece(state, pieceId) {
@@ -269,7 +259,6 @@ function findLiuboPaths(state, piece, startSpace, steps, options = {}) {
         for (const path of paths) {
             for (const next of getAdjacentLiuboSpaces(path.spaceId, { allowPond: options.allowPond })) {
                 if (next !== 'pond' && path.path.includes(next)) continue;
-                if (isBacktrackingAcrossFeature(path, next)) continue;
                 const isFinalStep = step === steps - 1;
                 if (!canMoveThroughOrLand(state, piece, next, isFinalStep, path)) continue;
                 nextPaths.push({
@@ -291,16 +280,6 @@ function findLiuboPaths(state, piece, startSpace, steps, options = {}) {
     });
 }
 
-function isBacktrackingAcrossFeature(path, nextSpaceId) {
-    if (!path?.path || path.path.length < 2) return false;
-    const nextFeature = getLiuboFeatureId(nextSpaceId);
-    const currentFeature = getLiuboFeatureId(path.spaceId);
-    if (nextFeature !== currentFeature && path.path.slice(0, -1).some(spaceId => getLiuboFeatureId(spaceId) === nextFeature)) {
-        return true;
-    }
-    return false;
-}
-
 function canMoveThroughOrLand(state, piece, spaceId, isFinalStep, path = null) {
     const effectiveMoverIsOwl = !!piece.isOwl || (isFinalStep && !!path?.visitedPond);
 
@@ -311,10 +290,10 @@ function canMoveThroughOrLand(state, piece, spaceId, isFinalStep, path = null) {
         if (!canEnterNest) return false;
     }
 
-    const friendly = getPiecesAtFeature(state, spaceId, piece.player).filter(other => other.id !== piece.id);
-    const enemies = getPiecesAtFeature(state, spaceId, otherPlayer(piece.player));
-    const spaceCapacity = getLiuboFeatureCapacity(spaceId);
-    const occupants = getPiecesAtFeature(state, spaceId).filter(other => other.id !== piece.id);
+    const friendly = getPiecesAt(state, spaceId, piece.player).filter(other => other.id !== piece.id);
+    const enemies = getPiecesAt(state, spaceId, otherPlayer(piece.player));
+    const spaceCapacity = getLiuboSpaceCapacity(spaceId);
+    const occupants = getPiecesAt(state, spaceId).filter(other => other.id !== piece.id);
 
     if (isBlockade(occupants)) return false;
 
@@ -336,7 +315,7 @@ function canEnterEnemyOccupiedSpace(state, piece, spaceId, friendly, enemies, ef
     const target = enemies[0];
     if (friendly.length === 1) return true;
     if (target.isOwl !== effectiveMoverIsOwl) return true;
-    return getLiuboFeatureCapacity(spaceId) > 1;
+    return getLiuboSpaceCapacity(spaceId) > 1;
 }
 
 function canCaptureOnSpace(state, piece, spaceId, friendly, enemies) {
@@ -345,7 +324,7 @@ function canCaptureOnSpace(state, piece, spaceId, friendly, enemies) {
     if (friendly.some(other => other.isOwl !== piece.isOwl)) return false;
     const target = enemies[0];
     if (friendly.length === 1) return true;
-    const contested = isContested(getPiecesAtFeature(state, spaceId).filter(other => other.id !== piece.id));
+    const contested = isContested(getPiecesAt(state, spaceId).filter(other => other.id !== piece.id));
     if (contested) return true;
     if (!piece.isOwl && target.isOwl) return true;
     if (piece.isOwl && !target.isOwl) return true;
@@ -380,8 +359,8 @@ function resolveCaptures(state, mover) {
 
 function getCapturablePiecesAt(state, mover, spaceId) {
     if (!mover || !spaceId) return [];
-    const friendly = getPiecesAtFeature(state, spaceId, mover.player).filter(other => other.id !== mover.id);
-    const enemies = getPiecesAtFeature(state, spaceId, otherPlayer(mover.player)).filter(other => other.id !== mover.id);
+    const friendly = getPiecesAt(state, spaceId, mover.player).filter(other => other.id !== mover.id);
+    const enemies = getPiecesAt(state, spaceId, otherPlayer(mover.player)).filter(other => other.id !== mover.id);
     if (!canCaptureOnSpace(state, mover, spaceId, friendly, enemies)) return [];
     return enemies;
 }
@@ -423,9 +402,8 @@ function moveResultFitsCapacity(state, piece, move) {
         && isActive(candidate)
         && !capturedIds.has(candidate.id)
     ));
-    const destinationFeatureId = getLiuboFeatureId(move.toSpaceId);
-    const destinationCount = remaining.filter(candidate => getLiuboFeatureId(candidate.spaceId) === destinationFeatureId).length + 1;
-    return destinationCount <= getLiuboFeatureCapacity(move.toSpaceId);
+    const destinationCount = remaining.filter(candidate => candidate.spaceId === move.toSpaceId).length + 1;
+    return destinationCount <= getLiuboSpaceCapacity(move.toSpaceId);
 }
 
 function isBlockade(pieces) {

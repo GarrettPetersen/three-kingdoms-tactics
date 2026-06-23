@@ -14592,7 +14592,7 @@ export class TacticsScene extends BaseScene {
         if (!hint) return;
         const now = performance.now();
         const title = getLocalizedText(hint.title || { en: 'WATCH ONLY', zh: '仅观看' });
-        const body = getLocalizedText(hint.body);
+        const body = getLocalizedText(hint.blockedBody || hint.body);
         const boxW = Math.min(canvas.width - 16, Math.max(160, Math.max(title.length * 7, body.length * 5) + 18));
         const boxH = 30;
         const boxX = Math.floor((canvas.width - boxW) / 2);
@@ -14617,6 +14617,75 @@ export class TacticsScene extends BaseScene {
         ctx.restore();
     }
 
+    drawProjectiles(ctx) {
+        this.projectiles.forEach(p => {
+            if (p.type === 'arrow') {
+                const dx = p.targetX - p.startX;
+                const dy = p.targetY - p.startY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                // Parabola: y = startY + progress * dy - height * sin(progress * PI)
+                const arcHeight = Math.min(100, dist * 0.5);
+                const x = p.startX + p.progress * dx;
+                const y = p.startY + p.progress * dy - Math.sin(p.progress * Math.PI) * arcHeight;
+
+                // Draw arrow (longer line so it reads as an arrow, not a dart)
+                const nextX = p.startX + (p.progress + 0.01) * dx;
+                const nextY = p.startY + (p.progress + 0.01) * dy - Math.sin((p.progress + 0.01) * Math.PI) * arcHeight;
+                const angle = Math.atan2(nextY - y, nextX - x);
+                const arrowLen = 14;
+                ctx.save();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + Math.cos(angle) * arrowLen, y + Math.sin(angle) * arrowLen);
+                ctx.stroke();
+                ctx.restore();
+            } else if (p.type === 'bolt') {
+                const dx = p.targetX - p.startX;
+                const dy = p.targetY - p.startY;
+                const x = p.startX + p.progress * dx;
+                const y = p.startY + p.progress * dy;
+
+                const nextX = p.startX + (p.progress + 0.01) * dx;
+                const nextY = p.startY + (p.progress + 0.01) * dy;
+                const angle = Math.atan2(nextY - y, nextX - x);
+                const boltLen = 14;
+                ctx.save();
+                ctx.strokeStyle = '#ffcccc';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + Math.cos(angle) * boltLen, y + Math.sin(angle) * boltLen);
+                ctx.stroke();
+                ctx.restore();
+            } else if (p.type === 'swipe_straight') {
+                this.drawStraightSwipe(ctx, p);
+            } else if (p.type === 'swipe_arc') {
+                this.drawArcSwipe(ctx, p);
+            } else if (p.type === 'lightning_strike') {
+                const sheet = assets.getImage('lightning_sheet');
+                if (!sheet) return;
+                const cols = 6;
+                const rows = 5;
+                const total = cols * rows;
+                const frameW = Math.floor((sheet.width || 0) / cols);
+                const frameH = Math.floor((sheet.height || 0) / rows);
+                if (!frameW || !frameH) return;
+                const frameIdx = Math.max(0, Math.min(total - 1, Math.floor(p.progress * total)));
+                const sx = (frameIdx % cols) * frameW;
+                const sy = Math.floor(frameIdx / cols) * frameH;
+                const strikePos = this.getPixelPos(p.r, p.q);
+                const dx = Math.floor(strikePos.x - frameW / 2);
+                const dy = Math.floor(strikePos.y - frameH);
+                ctx.drawImage(sheet, sx, sy, frameW, frameH, dx, dy, frameW, frameH);
+            } else if (p.type === 'swish') {
+                this.drawSwish(ctx, p);
+            }
+        });
+    }
+
     drawUI() {
         if (this.isChoiceActive) {
             this.drawChoiceUI();
@@ -14626,6 +14695,7 @@ export class TacticsScene extends BaseScene {
         // Lu Zhi rescue: after choosing Fight we stay in guangzong_encounter but isFightMode is true — show normal battle UI, not cutscene prompt
         if (this.isCutscene && !(this.battleId === 'guangzong_encounter' && this.isFightMode)) {
             const { ctx, canvas } = this.manager;
+            this.drawProjectiles(ctx);
             if (this.isIntroAnimating) return;
             if (this.isWatchOnlyCutsceneCombatActive()) {
                 if (this.isWatchOnlyHintVisible()) {
@@ -14763,72 +14833,7 @@ export class TacticsScene extends BaseScene {
         });
 
         // 2b. Projectiles
-        this.projectiles.forEach(p => {
-            if (p.type === 'arrow') {
-                const dx = p.targetX - p.startX;
-                const dy = p.targetY - p.startY;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                
-                // Parabola: y = startY + progress * dy - height * sin(progress * PI)
-                const arcHeight = Math.min(100, dist * 0.5);
-                const x = p.startX + p.progress * dx;
-                const y = p.startY + p.progress * dy - Math.sin(p.progress * Math.PI) * arcHeight;
-                
-                // Draw arrow (longer line so it reads as an arrow, not a dart)
-                const nextX = p.startX + (p.progress + 0.01) * dx;
-                const nextY = p.startY + (p.progress + 0.01) * dy - Math.sin((p.progress + 0.01) * Math.PI) * arcHeight;
-                const angle = Math.atan2(nextY - y, nextX - x);
-                const arrowLen = 14;
-                ctx.save();
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                ctx.lineTo(x + Math.cos(angle) * arrowLen, y + Math.sin(angle) * arrowLen);
-                ctx.stroke();
-                ctx.restore();
-            } else if (p.type === 'bolt') {
-                const dx = p.targetX - p.startX;
-                const dy = p.targetY - p.startY;
-                const x = p.startX + p.progress * dx;
-                const y = p.startY + p.progress * dy;
-
-                const nextX = p.startX + (p.progress + 0.01) * dx;
-                const nextY = p.startY + (p.progress + 0.01) * dy;
-                const angle = Math.atan2(nextY - y, nextX - x);
-                const boltLen = 14;
-                ctx.save();
-                ctx.strokeStyle = '#ffcccc';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                ctx.lineTo(x + Math.cos(angle) * boltLen, y + Math.sin(angle) * boltLen);
-                ctx.stroke();
-                ctx.restore();
-            } else if (p.type === 'swipe_straight') {
-                this.drawStraightSwipe(ctx, p);
-            } else if (p.type === 'swipe_arc') {
-                this.drawArcSwipe(ctx, p);
-            } else if (p.type === 'lightning_strike') {
-                const sheet = assets.getImage('lightning_sheet');
-                if (!sheet) return;
-                const cols = 6;
-                const rows = 5;
-                const total = cols * rows;
-                const frameW = Math.floor((sheet.width || 0) / cols);
-                const frameH = Math.floor((sheet.height || 0) / rows);
-                if (!frameW || !frameH) return;
-                const frameIdx = Math.max(0, Math.min(total - 1, Math.floor(p.progress * total)));
-                const sx = (frameIdx % cols) * frameW;
-                const sy = Math.floor(frameIdx / cols) * frameH;
-                const strikePos = this.getPixelPos(p.r, p.q);
-                const dx = Math.floor(strikePos.x - frameW / 2);
-                const dy = Math.floor(strikePos.y - frameH);
-                ctx.drawImage(sheet, sx, sy, frameW, frameH, dx, dy, frameW, frameH);
-            } else if (p.type === 'swish') {
-                this.drawSwish(ctx, p);
-            }
-        });
+        this.drawProjectiles(ctx);
 
         // 3. Turn Indicator (Top Left)
         let turnTextKey = "YOUR TURN";
