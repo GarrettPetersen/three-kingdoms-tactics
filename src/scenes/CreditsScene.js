@@ -10,6 +10,7 @@ export class CreditsScene extends BaseScene {
         this.timer = 0;
         this.isLoaded = false;
         this.returnToMenu = false;
+        this.lastTime = 0;
     }
 
     async enter(params = {}) {
@@ -17,6 +18,7 @@ export class CreditsScene extends BaseScene {
         this.scrollPos = 0;
         this.isLoaded = false;
         this.returnToMenu = !!params.returnToMenu;
+        this.lastTime = 0;
         
         if (assets.currentMusicKey !== 'title') {
             assets.playMusic('title', 0.3);
@@ -39,8 +41,12 @@ export class CreditsScene extends BaseScene {
         this.lines = text.split('\n').map(line => line.trim());
     }
 
-    update(dt) {
+    update(timestamp) {
         if (!this.isLoaded) return;
+
+        if (this.lastTime === 0) this.lastTime = timestamp;
+        const dt = timestamp - this.lastTime;
+        this.lastTime = timestamp;
         
         this.timer += dt;
         // Scroll speed: ~20 pixels per second
@@ -121,4 +127,3 @@ export class CreditsScene extends BaseScene {
         this.manager.switchTo('title', { showMenu: this.returnToMenu });
     }
 }
-
