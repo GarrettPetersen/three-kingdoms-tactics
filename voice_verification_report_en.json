@@ -4672,18 +4672,18 @@
     },
     "en:ch2_luoyang_liubo_loss_01": {
         "id": "ch2_luoyang_liubo_loss_01",
-        "character": "xiaoer",
+        "character": "merchant",
         "original_text": "Liubo teaches patience. A useful lesson when palace doors open slowly.",
-        "stt_output": "Liu Bo teaches patience a useful lesson when palestores open slowly.",
-        "wer": 0.36363636363636365,
+        "stt_output": "Liewbaugh teaches patience. A useful lesson when palestores open slowly.",
+        "wer": 0.2727272727272727,
         "is_bad": false,
         "language": "en"
     },
     "en:ch2_luoyang_liubo_win_01": {
         "id": "ch2_luoyang_liubo_win_01",
-        "character": "xiaoer",
+        "character": "merchant",
         "original_text": "A clean victory. May the court read merit as clearly as you read the board.",
-        "stt_output": "a clean victory. May the court read merit as clearly as you read the board.",
+        "stt_output": "A clean victory. May the court read merit as clearly as you read the board.",
         "wer": 0.0,
         "is_bad": false,
         "language": "en"
@@ -4730,6 +4730,15 @@
         "original_text": "Xuande has chosen to join Sun Jian at the wall. My remaining troops will watch the roads; your task is to break this gate.",
         "stt_output": "To ande has chosen to join Son Jan at the wall. My remaining troops will watch the roads. Your task is to break this gate.",
         "wer": 0.16666666666666666,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_anxi_palace_guard_01": {
+        "id": "ch2_anxi_palace_guard_01",
+        "character": "soldier",
+        "original_text": "Palace order: only summoned officers and court officials bearing memorials may pass. Soldiers awaiting reward must remain outside.",
+        "stt_output": "Palace Order. Only summoned officers and court officials bearing memorials may pass. Soldiers awaiting reward must remain outside.",
+        "wer": 0.0,
         "is_bad": false,
         "language": "en"
     }

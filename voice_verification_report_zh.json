@@ -4672,18 +4672,18 @@
     },
     "zh:ch2_luoyang_liubo_loss_01": {
         "id": "ch2_luoyang_liubo_loss_01",
-        "character": "xiaoer",
+        "character": "merchant",
         "original_text": "六博教人耐心。宫门开得慢时，这道理倒也有用。",
-        "stt_output": "六博教人耐心功能开的慢时这道礼道也有用",
+        "stt_output": "六博教人耐心,公門開的賣食,這道禮道也有用",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
     },
     "zh:ch2_luoyang_liubo_win_01": {
         "id": "ch2_luoyang_liubo_win_01",
-        "character": "xiaoer",
+        "character": "merchant",
         "original_text": "胜得干净。只愿朝廷看功劳，也能如你看棋局这般分明。",
-        "stt_output": "聖德甘静,職院朝廷看功勞,也能如你看其局這般分明。",
+        "stt_output": "聖德干净,只愿朝廷看功劳,也能如,你看其局这班分明。",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"
@@ -4729,6 +4729,15 @@
         "character": "zhujun",
         "original_text": "玄德已决意同孙坚攻城。余兵守道路；你等所任，便是破此城门。",
         "stt_output": "選得以絕意同孫尖工程,於兵手道路,你等所認,便是破此成門。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh"
+    },
+    "zh:ch2_anxi_palace_guard_01": {
+        "id": "ch2_anxi_palace_guard_01",
+        "character": "soldier",
+        "original_text": "宫门有令：奉诏者、持表奏事的朝官方可入内；待赏军士，一概候门外。",
+        "stt_output": "公門有令封照者實表作勢的朝官方可入內戴上軍事一戴後門外",
         "wer": 1.0,
         "is_bad": true,
         "language": "zh"

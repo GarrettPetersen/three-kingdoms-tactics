@@ -433,6 +433,13 @@
     "version": 1,
     "voice_target": "movies/clean/clean_uncle-iroh.wav"
   },
+  "ch2_anxi_palace_guard_01": {
+    "character": "soldier",
+    "hash": "d1305024b5ff0704da20c1ff851a48eb8a4a060e916147a2433ccf15f33adeb5",
+    "text": "Palace order: only summoned officers and court officials bearing memorials may pass. Soldiers awaiting reward must remain outside.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
   "ch2_anxi_zf_01": {
     "character": "zhangfei",
     "hash": "d34d818c822c91daddaccd6f9e14eb156a607c0dc6584ab5c8a3c11b6be269cd",
@@ -1148,18 +1155,18 @@
     "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
   },
   "ch2_luoyang_liubo_loss_01": {
-    "character": "xiaoer",
-    "hash": "5cc4688aafd799c37a9d932d34a298d53cc2d0f9b126db127d0a4b482270c0af",
+    "character": "merchant",
+    "hash": "7f22d62b148193204dda7edb391138483f03035c9e397efe10be2beb50b5ed1e",
     "text": "Liubo teaches patience. A useful lesson when palace doors open slowly.",
     "version": 1,
-    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
   },
   "ch2_luoyang_liubo_win_01": {
-    "character": "xiaoer",
-    "hash": "cfb3f8b20bdfc63bbdf63a82372df7c74dba44e51fd6e3cd2ed42bf4ab737ff4",
+    "character": "merchant",
+    "hash": "463e420bf7c331efcd53b9f4628f53c31b0b9cd92df19bed63ce2fd711b2ac47",
     "text": "A clean victory. May the court read merit as clearly as you read the board.",
     "version": 1,
-    "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
   },
   "ch2_oath_dz_restrain_01": {
     "character": "dongzhuo",
