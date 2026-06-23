@@ -2826,6 +2826,7 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'playSound', key: 'war_horn', volume: 0.85 },
         { type: 'command', action: 'playMusic', key: 'oath', volume: 0.52 },
         { type: 'command', action: 'wait', duration: 420 },
+        { type: 'command', action: 'move', id: 'zhujun', x: 118, y: 188, wait: false },
         { type: 'command', action: 'addActor', id: 'sunjian', imgKey: 'sunjian', x: 344, y: 188, actorAction: 'walk', speed: 0.92, flip: true },
         { type: 'command', action: 'addActor', id: 'sunjian_soldier_1', imgKey: 'soldier', x: 374, y: 192, actorAction: 'walk', speed: 0.86, flip: true },
         { type: 'command', action: 'addActor', id: 'sunjian_soldier_2', imgKey: 'soldier', x: 402, y: 196, actorAction: 'walk', speed: 0.84, flip: true },
@@ -2838,10 +2839,11 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'move', id: 'sunjian_soldier_3', x: 224, y: 200, wait: false },
         { type: 'command', action: 'move', id: 'sunjian_soldier_4', x: 186, y: 208, wait: false },
         { type: 'command', action: 'move', id: 'sunjian_soldier_5', x: 212, y: 212, wait: true },
+        { type: 'command', action: 'flip', id: 'zhujun', flip: false },
         {
             type: 'dialogue',
             speaker: 'sunjian',
-            portraitKey: 'chengyuanzhi',
+            portraitKey: 'sunjian',
             name: 'Sun Jian',
             voiceId: 'ch2_wan_rev_sj_01',
             position: 'top',
@@ -2891,7 +2893,7 @@ export const NARRATIVE_SCRIPTS = {
                         {
                             type: 'dialogue',
                             speaker: 'sunjian',
-                            portraitKey: 'chengyuanzhi',
+                            portraitKey: 'sunjian',
                             name: 'Sun Jian',
                             voiceId: 'ch2_wan_rev_sj_02_road',
                             position: 'top',
@@ -2926,7 +2928,7 @@ export const NARRATIVE_SCRIPTS = {
                         {
                             type: 'dialogue',
                             speaker: 'sunjian',
-                            portraitKey: 'chengyuanzhi',
+                            portraitKey: 'sunjian',
                             name: 'Sun Jian',
                             voiceId: 'ch2_wan_rev_sj_02_wall',
                             position: 'top',

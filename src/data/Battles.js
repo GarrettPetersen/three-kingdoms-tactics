@@ -1243,6 +1243,7 @@ export const BATTLES = {
                 action: 'spawnDelayedIntroUnits',
                 groupId: 'sunzhong_north_road',
                 entryFrom: 'right',
+                entryStride: 1,
                 flip: true
             }
         ],

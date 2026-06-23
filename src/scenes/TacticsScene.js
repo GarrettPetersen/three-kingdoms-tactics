@@ -8982,34 +8982,58 @@ export class TacticsScene extends BaseScene {
             .filter(Boolean);
     }
 
-    getIntroEntryPath(targetR, targetQ, entryFrom = 'right') {
+    getIntroEntryPath(targetR, targetQ, entryFrom = 'right', entryStride = null) {
         const mapWidth = Math.max(1, this.manager.config.mapWidth || this.tacticsMap?.width || 10);
         const mapHeight = Math.max(1, this.manager.config.mapHeight || this.tacticsMap?.height || 10);
+        const hasCustomStride = Number.isFinite(entryStride);
+        const stride = hasCustomStride ? Math.max(1, Math.floor(entryStride)) : 3;
+        const makeLine = (start, end, axis) => {
+            const path = [{ ...start }];
+            const startValue = start[axis];
+            const endValue = end[axis];
+            const direction = Math.sign(endValue - startValue);
+            if (direction === 0) return path;
+            let currentValue = startValue;
+            while (currentValue !== endValue) {
+                const remaining = Math.abs(endValue - currentValue);
+                currentValue += direction * Math.min(stride, remaining);
+                path.push({ ...start, [axis]: currentValue });
+            }
+            return path;
+        };
         let path;
         if (entryFrom === 'left') {
-            path = [
-                { r: targetR, q: -3 },
-                { r: targetR, q: 0 },
-                { r: targetR, q: targetQ }
-            ];
+            path = hasCustomStride
+                ? makeLine({ r: targetR, q: -3 }, { r: targetR, q: targetQ }, 'q')
+                : [
+                    { r: targetR, q: -3 },
+                    { r: targetR, q: 0 },
+                    { r: targetR, q: targetQ }
+                ];
         } else if (entryFrom === 'top') {
-            path = [
-                { r: -3, q: targetQ },
-                { r: 0, q: targetQ },
-                { r: targetR, q: targetQ }
-            ];
+            path = hasCustomStride
+                ? makeLine({ r: -3, q: targetQ }, { r: targetR, q: targetQ }, 'r')
+                : [
+                    { r: -3, q: targetQ },
+                    { r: 0, q: targetQ },
+                    { r: targetR, q: targetQ }
+                ];
         } else if (entryFrom === 'bottom') {
-            path = [
-                { r: mapHeight + 2, q: targetQ },
-                { r: mapHeight - 1, q: targetQ },
-                { r: targetR, q: targetQ }
-            ];
+            path = hasCustomStride
+                ? makeLine({ r: mapHeight + 2, q: targetQ }, { r: targetR, q: targetQ }, 'r')
+                : [
+                    { r: mapHeight + 2, q: targetQ },
+                    { r: mapHeight - 1, q: targetQ },
+                    { r: targetR, q: targetQ }
+                ];
         } else {
-            path = [
-                { r: targetR, q: mapWidth + 2 },
-                { r: targetR, q: mapWidth - 1 },
-                { r: targetR, q: targetQ }
-            ];
+            path = hasCustomStride
+                ? makeLine({ r: targetR, q: mapWidth + 2 }, { r: targetR, q: targetQ }, 'q')
+                : [
+                    { r: targetR, q: mapWidth + 2 },
+                    { r: targetR, q: mapWidth - 1 },
+                    { r: targetR, q: targetQ }
+                ];
         }
 
         return path.filter((point, index, points) => {
@@ -9044,7 +9068,7 @@ export class TacticsScene extends BaseScene {
             }
 
             reservedTargets.add(`${targetCell.r},${targetCell.q}`);
-            const path = this.getIntroEntryPath(targetCell.r, targetCell.q, command.entryFrom || 'right');
+            const path = this.getIntroEntryPath(targetCell.r, targetCell.q, command.entryFrom || 'right', command.entryStride);
             const start = path[0] || { r: targetCell.r, q: targetCell.q };
             const unit = this.createRuntimeUnitFromBattleDefinition(unitDef, start.r, start.q, {
                 action: 'walk',
