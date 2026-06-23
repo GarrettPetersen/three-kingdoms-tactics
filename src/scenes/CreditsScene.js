@@ -9,12 +9,14 @@ export class CreditsScene extends BaseScene {
         this.scrollPos = 0;
         this.timer = 0;
         this.isLoaded = false;
+        this.returnToMenu = false;
     }
 
-    async enter() {
+    async enter(params = {}) {
         this.timer = 0;
         this.scrollPos = 0;
         this.isLoaded = false;
+        this.returnToMenu = !!params.returnToMenu;
         
         if (assets.currentMusicKey !== 'title') {
             assets.playMusic('title', 0.3);
@@ -107,9 +109,16 @@ export class CreditsScene extends BaseScene {
         }
     }
 
+    handleKeyDown(e) {
+        if (this.timer <= 1000) return;
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
+            e.preventDefault();
+            this.exitToTitle();
+        }
+    }
+
     exitToTitle() {
-        this.manager.switchTo('title');
+        this.manager.switchTo('title', { showMenu: this.returnToMenu });
     }
 }
-
 

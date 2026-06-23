@@ -1,7 +1,7 @@
 import { assets } from './core/AssetLoader.js';
 import { SceneManager } from './core/SceneManager.js';
 import { ActionRecorder } from './core/ActionRecorder.js';
-import { LANGUAGE, setLanguage } from './core/Language.js';
+import { LANGUAGE } from './core/Language.js';
 import { TitleScene } from './scenes/TitleScene.js';
 import { CustomBattleMenuScene } from './scenes/CustomBattleMenuScene.js';
 import { CampaignSelectionScene } from './scenes/CampaignSelectionScene.js';
@@ -322,121 +322,39 @@ function setupMobileCheatKeyboard(appendCheatText, shouldReveal = () => true) {
 }
 
 /**
- * Take 1920x1080 screenshots from the 256x256 canvas
- * Creates three 16:9 crops (top, middle, bottom) and one letterboxed version
- * Saves one set in the current language and one set in Chinese (filenames ending with _schinese)
- * All screenshots are saved in a single zip file
+ * Export the current wide canvas as one 1920x1080 screenshot.
  */
-async function takeScreenshots(ctx, canvas, config, sceneManager) {
-    const SOURCE_WIDTH = 256;
-    const SOURCE_HEIGHT = 256;
-    const CROP_HEIGHT = 144; // 16:9 aspect ratio: 256 * 9/16 = 144
+async function takeScreenshots(_ctx, canvas, _config, sceneManager) {
     const TARGET_WIDTH = 1920;
     const TARGET_HEIGHT = 1080;
-    
-    // Generate timestamp for unique filename
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5); // Format: 2026-02-17T19-30-45
-    
-    // Load JSZip from CDN if not already loaded
-    if (typeof JSZip === 'undefined') {
-        console.log('Loading JSZip library...');
-        await new Promise((resolve, reject) => {
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-            script.onload = resolve;
-            script.onerror = reject;
-            document.head.appendChild(script);
-        });
-    }
-    
-    // Create a temporary canvas to capture the current frame
-    const sourceCanvas = document.createElement('canvas');
-    sourceCanvas.width = SOURCE_WIDTH;
-    sourceCanvas.height = SOURCE_HEIGHT;
-    const sourceCtx = sourceCanvas.getContext('2d');
-    sourceCtx.imageSmoothingEnabled = false;
-    
-    // Create output canvas for scaling
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+
+    if (sceneManager) sceneManager.render(Date.now());
+
     const outputCanvas = document.createElement('canvas');
     outputCanvas.width = TARGET_WIDTH;
     outputCanvas.height = TARGET_HEIGHT;
     const outputCtx = outputCanvas.getContext('2d');
     outputCtx.imageSmoothingEnabled = false;
-    
-    const cropYPositions = [
-        { y: 0, name: 'top' },
-        { y: Math.floor((SOURCE_HEIGHT - CROP_HEIGHT) / 2), name: 'middle' },
-        { y: SOURCE_HEIGHT - CROP_HEIGHT, name: 'bottom' }
-    ];
-    
-    const letterboxScale = TARGET_HEIGHT / SOURCE_HEIGHT;
-    const letterboxWidth = Math.floor(SOURCE_WIDTH * letterboxScale);
-    const letterboxX = Math.floor((TARGET_WIDTH - letterboxWidth) / 2);
-    
-    /** Generate the 4 screenshot blobs from the current sourceCanvas; filenameSuffix is '' or '_schinese' */
-    async function captureSet(filenameSuffix) {
-        const list = [];
-        function generateScreenshot(cropX, cropY, cropW, cropH) {
-            return new Promise((resolve) => {
-                outputCtx.fillStyle = '#000';
-                outputCtx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
-                outputCtx.drawImage(sourceCanvas, cropX, cropY, cropW, cropH, 0, 0, TARGET_WIDTH, TARGET_HEIGHT);
-                outputCanvas.toBlob((blob) => resolve(blob), 'image/png');
-            });
-        }
-        for (const { y, name } of cropYPositions) {
-            const blob = await generateScreenshot(0, y, SOURCE_WIDTH, CROP_HEIGHT);
-            const base = `screenshot_${name}_1920x1080`;
-            list.push({ blob, filename: `${base}${filenameSuffix}.png` });
-        }
-        outputCtx.fillStyle = '#000';
-        outputCtx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
-        outputCtx.drawImage(sourceCanvas, 0, 0, SOURCE_WIDTH, SOURCE_HEIGHT, letterboxX, 0, letterboxWidth, TARGET_HEIGHT);
-        const letterboxBlob = await new Promise((resolve) => outputCanvas.toBlob((blob) => resolve(blob), 'image/png'));
-        const letterboxBase = 'screenshot_letterbox_1920x1080';
-        list.push({ blob: letterboxBlob, filename: `${letterboxBase}${filenameSuffix}.png` });
-        return list;
-    }
-    
-    const screenshots = [];
-    const savedLang = LANGUAGE.current;
-    
-    // 1) English set (base filenames)
-    if (sceneManager) setLanguage('en');
-    if (sceneManager) sceneManager.render(Date.now());
-    sourceCtx.drawImage(canvas, 0, 0);
-    console.log('Generating screenshots (English)...');
-    screenshots.push(...(await captureSet('')));
-    
-    // 2) Chinese set (filenames ending with _schinese)
-    if (sceneManager) setLanguage('zh');
-    if (sceneManager) sceneManager.render(Date.now());
-    sourceCtx.drawImage(canvas, 0, 0);
-    console.log('Generating screenshots (Chinese)...');
-    screenshots.push(...(await captureSet('_schinese')));
-    
-    if (sceneManager) setLanguage(savedLang);
-    if (sceneManager) sceneManager.render(Date.now());
-    
-    // Create zip file
-    console.log('Creating zip file...');
-    const zip = new JSZip();
-    for (const { blob, filename } of screenshots) {
-        zip.file(filename, blob);
-    }
-    
-    const zipBlob = await zip.generateAsync({ type: 'blob' });
-    const zipFilename = `screenshots_${timestamp}.zip`;
-    
-    const url = URL.createObjectURL(zipBlob);
+
+    outputCtx.fillStyle = '#000';
+    outputCtx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+    outputCtx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+
+    const blob = await new Promise((resolve) => outputCanvas.toBlob((result) => resolve(result), 'image/png'));
+    if (!blob) throw new Error('Failed to create screenshot PNG.');
+
+    const langSuffix = LANGUAGE.current === 'zh' ? '_schinese' : '';
+    const filename = `screenshot_1920x1080${langSuffix}_${timestamp}.png`;
+    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = zipFilename;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    console.log(`Screenshots saved to: ${zipFilename}`);
+    console.log(`Screenshot saved to: ${filename}`);
 }
 
 async function init() {

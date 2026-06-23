@@ -1,5 +1,6 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
+import { IS_DEMO } from '../core/Constants.js';
 import { getLocalizedText, LANGUAGE } from '../core/Language.js';
 import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
 import { launchStoryNode } from '../core/StoryFlow.js';
@@ -79,6 +80,38 @@ export class CampaignSelectionScene extends BaseScene {
         return this.campaigns.filter(c => (c.chapters || ['1']).includes(selectedChapter));
     }
 
+    refreshChapterAvailability() {
+        const gs = this.manager.gameState;
+        this.chapters.forEach((chapter, index) => {
+            if (index === 0) {
+                chapter.available = true;
+                return;
+            }
+            const previousChapterId = Number(this.chapters[index - 1]?.id);
+            chapter.available = Number.isFinite(previousChapterId) && this.isChapterCompleteForProgression(previousChapterId);
+        });
+    }
+
+    isChapterCompleteForProgression(chapterId) {
+        const gs = this.manager.gameState;
+        if (gs.isChapterComplete(chapterId)) return true;
+        const milestone = `chapter${chapterId}_complete`;
+        if (gs.hasMilestone(milestone) || gs.hasMilestone(milestone, 'liubei')) return true;
+        return gs.hasReachedStoryNode(milestone, 'liubei');
+    }
+
+    getDefaultChapterIndex() {
+        if (IS_DEMO) return this.selectedChapterIndex;
+        const nextChapterIndex = this.chapters.findIndex(chapter => (
+            chapter.available && !this.isChapterCompleteForProgression(Number(chapter.id))
+        ));
+        if (nextChapterIndex >= 0) return nextChapterIndex;
+        for (let i = this.chapters.length - 1; i >= 0; i--) {
+            if (this.chapters[i].available) return i;
+        }
+        return 0;
+    }
+
     applyChapterViewState() {
         const gs = this.manager.gameState;
         const liubei = this.campaigns.find(c => c.id === 'liubei');
@@ -87,7 +120,7 @@ export class CampaignSelectionScene extends BaseScene {
         const selectedChapter = this.chapters[this.selectedChapterIndex]?.id || '1';
         const visible = this.getVisibleCampaigns();
         this.selectedIndex = Math.min(this.selectedIndex, Math.max(0, visible.length - 1));
-        const chapter1Complete = gs.isChapterComplete(1);
+        const chapter1Complete = this.isChapterCompleteForProgression(1);
         const liubeiChapter1Complete = gs.isCampaignComplete('liubei');
         const chapter2OathComplete = gs.isCampaignComplete('chapter2_oath');
         const freedLuZhi = gs.getStoryChoice('luzhi_outcome', null, 'liubei') === 'freed' || gs.hasMilestone('freed_luzhi', 'liubei');
@@ -274,11 +307,10 @@ export class CampaignSelectionScene extends BaseScene {
         }
         
         this.fadeAlpha = 1;
-        const gs = this.manager.gameState;
-        const isComplete = gs.isChapterComplete(1);
-
-        // Chapter 2 is available only if Chapter 1 is complete
-        this.chapters.find(ch => ch.id === '2').available = isComplete;
+        this.refreshChapterAvailability();
+        this.selectedChapterIndex = this.getDefaultChapterIndex();
+        this.selectedIndex = 0;
+        this.navIndex = -1;
 
         this.applyChapterViewState();
 

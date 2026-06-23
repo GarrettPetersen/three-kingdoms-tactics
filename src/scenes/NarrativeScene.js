@@ -43,6 +43,8 @@ export class NarrativeScene extends BaseScene {
         this.storyNodeId = null;
         this.skipNextExitSave = false;
         this.visualPaletteCache = new Map();
+        this.titleLinkRegion = null;
+        this.titleImageCache = new Map();
     }
 
     cloneScriptSteps(steps) {
@@ -1749,6 +1751,7 @@ export class NarrativeScene extends BaseScene {
             this.renderClickableRegions(ctx, canvas, step);
         }
 
+        this.titleLinkRegion = null;
         if (step && step.type === 'title') {
             this.renderTitleCard(step);
         } else if (step && (step.type === 'dialogue' || step.type === 'narrator')) {
@@ -2002,13 +2005,51 @@ export class NarrativeScene extends BaseScene {
         
         const cx = Math.floor(canvas.width / 2);
         const cy = Math.floor(canvas.height / 2);
-        
-        const localizedText = getLocalizedText(step.text);
-        this.drawPixelText(ctx, localizedText, cx, cy - 10, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+
+        const titleImage = this.getTitleCardImage(step);
+        let nextY = cy + 6;
+        if (titleImage) {
+            const maxTitleW = Math.floor(canvas.width * 0.76);
+            const maxTitleH = Math.floor(canvas.height * 0.42);
+            const scale = Math.min(maxTitleW / titleImage.width, maxTitleH / titleImage.height, 1);
+            const drawW = Math.max(1, Math.floor(titleImage.width * scale));
+            const drawH = Math.max(1, Math.floor(titleImage.height * scale));
+            const drawX = Math.floor((canvas.width - drawW) / 2);
+            const drawY = Math.floor(cy - drawH / 2 - 16);
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(titleImage, drawX, drawY, drawW, drawH);
+            nextY = drawY + drawH + 14;
+        } else {
+            const localizedText = getLocalizedText(step.text);
+            this.drawPixelText(ctx, localizedText, cx, cy - 10, { color: '#ffd700', font: '8px Silkscreen', align: 'center' });
+        }
         
         if (step.subtext) {
             const localizedSubtext = getLocalizedText(step.subtext);
-            this.drawPixelText(ctx, localizedSubtext, cx, cy + 6, { color: '#eee', font: '8px Silkscreen', align: 'center' });
+            const lines = String(localizedSubtext).split('\n');
+            lines.forEach((line, index) => {
+                this.drawPixelText(ctx, line, cx, nextY + index * 12, { color: '#eee', font: '8px Silkscreen', align: 'center' });
+            });
+            nextY += lines.length * 12;
+        }
+
+        if (step.linkUrl && step.linkText) {
+            const localizedLinkText = getLocalizedText(step.linkText);
+            const linkY = nextY + 2;
+            const metrics = this.drawPixelText(ctx, localizedLinkText, cx, linkY, { color: '#7ec8ff', font: '8px Silkscreen', align: 'center' });
+            if (metrics) {
+                const underlineY = Math.round(linkY + 10);
+                ctx.fillStyle = '#7ec8ff';
+                ctx.fillRect(metrics.drawX, underlineY, Math.max(1, Math.round(metrics.width)), 1);
+                this.titleLinkRegion = {
+                    step,
+                    url: step.linkUrl,
+                    x: metrics.drawX - 3,
+                    y: linkY - 3,
+                    w: metrics.width + 6,
+                    h: 16
+                };
+            }
         }
 
         // Pulse "CLICK TO CONTINUE" if player is waiting
@@ -2023,6 +2064,53 @@ export class NarrativeScene extends BaseScene {
             });
             ctx.globalAlpha = 1.0;
         }
+    }
+
+    getTitleCardImage(step) {
+        if (!step?.titleImageKey) return null;
+        const lang = getCurrentLanguage();
+        const imageKey = typeof step.titleImageKey === 'string'
+            ? step.titleImageKey
+            : (step.titleImageKey[lang] || step.titleImageKey.en);
+        if (!imageKey) return null;
+        const source = assets.getImage(imageKey);
+        if (!source) return null;
+        if (imageKey === 'title_en') return source;
+        if (this.titleImageCache.has(imageKey)) return this.titleImageCache.get(imageKey);
+
+        const processed = document.createElement('canvas');
+        processed.width = source.width;
+        processed.height = source.height;
+        const pctx = processed.getContext('2d');
+        pctx.imageSmoothingEnabled = false;
+        pctx.drawImage(source, 0, 0);
+        const imageData = pctx.getImageData(0, 0, processed.width, processed.height);
+        const data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+            const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+            if (avg < 128) {
+                data[i] = 255;
+                data[i + 1] = 255;
+                data[i + 2] = 255;
+                data[i + 3] = 255;
+            } else {
+                data[i + 3] = 0;
+            }
+        }
+        pctx.putImageData(imageData, 0, 0);
+        this.titleImageCache.set(imageKey, processed);
+        return processed;
+    }
+
+    activateTitleLinkAt(x, y, step) {
+        const region = this.titleLinkRegion;
+        if (!region || region.step !== step || !region.url) return false;
+        if (x < region.x || x > region.x + region.w || y < region.y || y > region.y + region.h) return false;
+        assets.playSound('ui_click', 0.5);
+        if (typeof window !== 'undefined' && typeof window.open === 'function') {
+            window.open(region.url, '_blank', 'noopener,noreferrer');
+        }
+        return true;
     }
 
     activateInteractiveRegion(regionId) {
@@ -2181,6 +2269,10 @@ export class NarrativeScene extends BaseScene {
         // Update hover state for interactive mode
         if (this.isInteractive && x !== -1000 && y !== -1000) {
             this.updateHoverState(x, y);
+        }
+
+        if (step && step.type === 'title' && x !== -1000 && y !== -1000 && this.activateTitleLinkAt(x, y, step)) {
+            return;
         }
 
         if (step && step.type === 'choice' && step._panelMetadata) {

@@ -1,5 +1,8 @@
-/** Set to true for the demo build; shows wishlist card after Chapter 1 (Dong Zhuo rescue). */
-export const IS_DEMO = false;
+const VITE_ENV = import.meta.env || {};
+
+/** Set VITE_DEMO=1 (or true) for demo builds that end Chapter 1 on the wishlist card. */
+export const IS_DEMO = VITE_ENV.VITE_DEMO === '1' || VITE_ENV.VITE_DEMO === 'true';
+export const STEAM_STORE_URL = 'https://store.steampowered.com/app/4430250/Three_Kingdoms_Stratagem';
 
 export const ANIMATIONS = {
     standby:  { start: 0,  length: 4 },

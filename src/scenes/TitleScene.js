@@ -36,22 +36,24 @@ export class TitleScene extends BaseScene {
         this.confirmSelection = null; // Selection state for confirm dialog
     }
 
-    enter() {
+    enter(params = {}) {
         this.processTitleImage();
-        this.state = 'START';
-        this.waitingForInteraction = true;
+        const showMenu = !!params.showMenu;
+        this.state = showMenu ? 'MENU' : 'START';
+        this.waitingForInteraction = !showMenu;
         this.isAnimating = false;
-        this.panX = 0;
-        this.animationProgress = 0;
+        this.animationProgress = showMenu ? 1 : 0;
         const canvasWidth = this.manager?.canvas?.width || 256;
         this.horseX = canvasWidth + 80;
-        this.guandaoY = -260;
-        this.titleAlpha = 0;
-        this.menuAlpha = 0;
+        this.panX = showMenu ? ((this.horseX + 100) / 2.2) : 0;
+        this.guandaoY = showMenu ? this.guandaoTargetY : -260;
+        this.titleAlpha = showMenu ? 1 : 0;
+        this.menuAlpha = showMenu ? 1 : 0;
         this.menuOptions = [];
         this.selection = null;
         this.optionsRect = null;
         this.liuboRect = null;
+        this.creditsRect = null;
         this.showConfirm = false; // Reset confirmation dialog state
         this.confirmSelection = null;
         this._recordingIntro = false;
@@ -313,6 +315,7 @@ export class TitleScene extends BaseScene {
             { textKey: 'NEW GAME', action: 'newgame', rectKey: 'newGameRect' },
             { textKey: 'CUSTOM BATTLE', action: 'custombattle', rectKey: 'customBattleRect' },
             { textKey: 'PLAY LIUBO', action: 'liubo', rectKey: 'liuboRect' },
+            { textKey: 'CREDITS', action: 'credits', rectKey: 'creditsRect' },
             { textKey: 'OPTIONS', action: 'options', rectKey: 'optionsRect' }
         ];
     }
@@ -322,7 +325,7 @@ export class TitleScene extends BaseScene {
         const cy = canvas.height - 70;
         const pulse = Math.abs(Math.sin(Date.now() / 500)) * 0.5 + 0.5;
         const entries = this.getMenuEntries();
-        const itemGap = 24;
+        const itemGap = 20;
         const firstY = cy - Math.floor(((entries.length - 1) * itemGap) / 2);
 
         // Draw a subtle background for the menu area to ensure visibility
@@ -335,6 +338,7 @@ export class TitleScene extends BaseScene {
         this.newGameRect = null;
         this.customBattleRect = null;
         this.liuboRect = null;
+        this.creditsRect = null;
         this.optionsRect = null;
 
         entries.forEach((entry, i) => {
@@ -555,6 +559,12 @@ export class TitleScene extends BaseScene {
             return;
         }
 
+        if (this.creditsRect && x >= this.creditsRect.x && x <= this.creditsRect.x + this.creditsRect.w &&
+            y >= this.creditsRect.y && y <= this.creditsRect.y + this.creditsRect.h) {
+            this.executeMenuAction('credits');
+            return;
+        }
+
         if (this.optionsRect && x >= this.optionsRect.x && x <= this.optionsRect.x + this.optionsRect.w &&
             y >= this.optionsRect.y && y <= this.optionsRect.y + this.optionsRect.h) {
             this.executeMenuAction('options');
@@ -662,6 +672,9 @@ export class TitleScene extends BaseScene {
             this.manager.switchTo('custom_battle');
         } else if (action === 'liubo') {
             this.manager.switchTo('liubo');
+        } else if (action === 'credits') {
+            assets.playSound('ui_click', 0.5);
+            this.manager.switchTo('credits', { returnToMenu: true });
         } else if (action === 'options') {
             this.manager.openOptionsOverlay({ sourceScene: 'title' });
         } else if (action === 'toggleLanguage') {

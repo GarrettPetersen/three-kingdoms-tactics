@@ -63,6 +63,7 @@ const LIBRARY_SIZES = [
 const LIBRARY_LOGO_SIZE = { width: 1280, height: 720 }; // Aspect ratio maintained
 const SHORTCUT_ICON_SIZE = { width: 256, height: 256, name: 'shortcut_icon' };
 const SOCIAL_SHARE_SIZE = { width: 1200, height: 630, name: 'social_share' };
+const ITCHIO_COVER_SIZE = { width: 630, height: 500, name: 'itchio_cover' };
 
 /**
  * Copy title as-is (e.g. white brush text on transparency). No dark-pixel extraction.
@@ -175,6 +176,8 @@ function drawHorse(ctx, canvas, horseImg, panX, scale, sizeName) {
         horseYOffset = 5 * scale; // Less offset for library capsule to reduce gap
     } else if (sizeName === 'social_share') {
         horseYOffset = 0; // Keep the horseman tight to the top edge on social cards
+    } else if (sizeName === 'itchio_cover') {
+        horseYOffset = 2 * scale; // Tall landscape cover; keep the rider close to the top
     } else if (sizeName === 'shortcut_icon') {
         horseYOffset = 4 * scale; // Keep horse reaching the top edge on 256x256
     }
@@ -188,6 +191,8 @@ function drawHorse(ctx, canvas, horseImg, panX, scale, sizeName) {
         baseExtraHeight = 10; // More extension for library capsule
     } else if (sizeName === 'social_share') {
         baseExtraHeight = 12; // Prevent a black gap above the horseman in 1200x630 cards
+    } else if (sizeName === 'itchio_cover') {
+        baseExtraHeight = 10; // Match tight top coverage for itch.io's taller landscape card
     } else if (sizeName === 'shortcut_icon') {
         baseExtraHeight = 10; // Match tighter top extension used on tall compositions
     }
@@ -251,6 +256,8 @@ function drawGuandao(ctx, canvas, guandaoImg, horseRightEdge, horseImg, scale, s
         baseSpacing = -155; // Slightly more for vertical
     } else if (sizeName === 'shortcut_icon') {
         baseSpacing = -170; // Keep left-side composition tight on square icon
+    } else if (sizeName === 'itchio_cover') {
+        baseSpacing = -175; // Similar to social/header compositions: rider plus weapon as one left mass
     }
     
     // Scale the spacing to match everything else
@@ -764,6 +771,58 @@ async function generateCapsules() {
     }
     fs.writeFileSync(path.join(publicMiscDir, 'social_share_en.png'), socialShareEnBuffer);
     console.log(`  ✓ public/assets/misc/social_share_en.png (${SOCIAL_SHARE_SIZE.width}x${SOCIAL_SHARE_SIZE.height})`);
+
+    // itch.io cover image (630x500)
+    console.log('\nGenerating itch.io cover image...');
+    const itchScaleX = ITCHIO_COVER_SIZE.width / ORIGINAL_WIDTH;
+    const itchScaleY = ITCHIO_COVER_SIZE.height / ORIGINAL_HEIGHT;
+    const itchScale = Math.max(itchScaleX, itchScaleY);
+    const itchTitleScale = itchScale * 1.25;
+    const itchMaxTitleHeight = Math.floor(ITCHIO_COVER_SIZE.height * 0.78);
+    const itchMaxTitleWidth = Math.floor(ITCHIO_COVER_SIZE.width * 0.56);
+    const itchTitleEnDims = getTitleDimensions(processedTitleEn, itchTitleScale, itchMaxTitleWidth, itchMaxTitleHeight);
+    const itchTitleZhDims = getTitleDimensions(processedTitleZh, itchTitleScale, itchMaxTitleWidth, itchMaxTitleHeight);
+    const itchTitleEnBuffer = await scaleImage(
+        canvasToBuffer(processedTitleEn),
+        itchTitleEnDims.width,
+        itchTitleEnDims.height,
+        { smooth: true }
+    );
+    const itchTitleEn = await loadImage(itchTitleEnBuffer);
+    const itchTitleZhBuffer = await scaleImage(
+        canvasToBuffer(processedTitleZh),
+        itchTitleZhDims.width,
+        itchTitleZhDims.height
+    );
+    const itchTitleZh = await loadImage(itchTitleZhBuffer);
+
+    const itchBaseCanvas = createCanvas(ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
+    const itchBaseCtx = itchBaseCanvas.getContext('2d');
+    Object.assign(itchBaseCtx, pixelArtConfig);
+    drawLayers(itchBaseCtx, itchBaseCanvas, layerImages, PAN_X, true, -12);
+    const itchBaseBuffer = canvasToBuffer(itchBaseCanvas);
+    const itchScaledBaseBuffer = await scaleImage(itchBaseBuffer, ITCHIO_COVER_SIZE.width, ITCHIO_COVER_SIZE.height);
+    const itchScaledBase = await loadImage(itchScaledBaseBuffer);
+
+    const writeItchioCover = (language, titleImg) => {
+        const canvas = createCanvas(ITCHIO_COVER_SIZE.width, ITCHIO_COVER_SIZE.height);
+        const ctx = canvas.getContext('2d');
+        Object.assign(ctx, pixelArtConfig);
+        ctx.drawImage(itchScaledBase, 0, 0);
+        const horseRight = drawHorse(ctx, canvas, horseImg, PAN_X, itchScale, ITCHIO_COVER_SIZE.name);
+        drawGuandao(ctx, canvas, guandaoImg, horseRight, horseImg, itchScale, ITCHIO_COVER_SIZE.name);
+        const titlePos = getTitlePosition('right', ITCHIO_COVER_SIZE.width, ITCHIO_COVER_SIZE.height, titleImg.width, titleImg.height);
+        ctx.drawImage(titleImg, titlePos.x, titlePos.y);
+        const filename = `itchio_cover_${language}.png`;
+        const file = path.join(outputDir, filename);
+        const buffer = canvas.toBuffer('image/png');
+        fs.writeFileSync(file, buffer);
+        console.log(`  ✓ ${filename} (${ITCHIO_COVER_SIZE.width}x${ITCHIO_COVER_SIZE.height})`);
+        return buffer;
+    };
+
+    writeItchioCover('en', itchTitleEn);
+    writeItchioCover('schinese', itchTitleZh);
 
     // Shortcut icon (256x256) - same composition approach as capsules
     console.log('\nGenerating shortcut icon...');

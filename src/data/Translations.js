@@ -24,6 +24,10 @@ export const UI_TEXT = {
         en: 'PLAY LIUBO',
         zh: '六博'
     },
+    'CREDITS': {
+        en: 'CREDITS',
+        zh: '制作人员'
+    },
     'LIUBO': {
         en: 'LIUBO',
         zh: '六博'

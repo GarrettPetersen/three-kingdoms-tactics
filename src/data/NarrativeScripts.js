@@ -1,3 +1,6 @@
+import { IS_DEMO } from '../core/Constants.js';
+import { createDemoWishlistCard } from './DemoEndCard.js';
+
 const CH2_FREED_LU_ZHI = {
     any: [
         { choice: 'luzhi_outcome', value: 'freed', routeId: 'liubei' },
@@ -4640,6 +4643,7 @@ export const NARRATIVE_SCRIPTS = {
             subtext: { en: "Cao Cao's Story will continue...", zh: '曹操的故事仍将继续……' },
             duration: 5000
         },
+        ...(IS_DEMO ? [createDemoWishlistCard()] : []),
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ]
     // Note: Guangzong scene is now handled inline in MapScene.startGuangzongBriefing()

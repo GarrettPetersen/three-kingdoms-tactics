@@ -5,6 +5,7 @@ import { CHAPTERS } from '../data/Chapters.js';
 import { getLocalizedText, LANGUAGE, getFontForLanguage, getTextContainerSize } from '../core/Language.js';
 import { UI_TEXT } from '../data/Translations.js';
 import { launchStoryNode } from '../core/StoryFlow.js';
+import { createDemoWishlistCard } from '../data/DemoEndCard.js';
 
 const CHAPTER2_ROUTE_ID = 'chapter2_oath';
 const CHAPTER2_LEGACY_ROUTE_ID = 'liubei';
@@ -1550,12 +1551,7 @@ export class MapScene extends BaseScene {
             }
         ];
         if (IS_DEMO) {
-            baseScript.push({
-                type: 'title',
-                text: { en: "The full version of Three Kingdoms Stratagem will release in 2026. Please wishlist it on Steam.", zh: "《三国玄机》完整版将于2026年发售。请在Steam上添加愿望单。" },
-                subtext: null,
-                duration: 6000
-            });
+            baseScript.push(createDemoWishlistCard());
         }
         baseScript.push({ type: 'command', action: 'fade', target: 1, speed: 0.001 });
 
