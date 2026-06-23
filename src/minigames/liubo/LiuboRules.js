@@ -214,8 +214,8 @@ function scoreMove(state, move) {
     if (move.scoreFish) score += 120;
     if (move.promoteToOwl) score += 60;
     if (piece?.isOwl) score += 8;
-    const enemies = getCapturablePiecesAt(state, piece, move.toSpaceId);
-    score += enemies.length * 45;
+    const capturedIds = getLiuboMoveCaptureIds(state, move);
+    score += capturedIds.length * 45;
     if (piece?.state === 'offboard') score += 10;
     score += Math.random() * 2;
     return score;
@@ -377,19 +377,36 @@ function getCapturablePiecesAt(state, mover, spaceId) {
     return enemies;
 }
 
-function moveResultFitsCapacity(state, piece, move) {
+export function getLiuboMoveCaptureIds(state, move) {
+    if (!state || !move) return [];
+    const piece = getPiece(state, move.pieceId);
+    if (!piece) return [];
+    const simulatedMove = simulateLiuboMove(state, piece, move);
+    if (!simulatedMove?.mover) return [];
+    return getCapturablePiecesAt(simulatedMove.state, simulatedMove.mover, move.toSpaceId)
+        .map(target => target.id);
+}
+
+function simulateLiuboMove(state, piece, move) {
     const simulated = {
         ...state,
         pieces: state.pieces.map(candidate => ({ ...candidate }))
     };
     const mover = simulated.pieces.find(candidate => candidate.id === piece.id);
-    if (!mover) return false;
-    mover.state = move.toState;
+    if (!mover) return null;
+    mover.state = move.toState || 'board';
     mover.spaceId = move.toSpaceId;
     if (move.promoteToOwl) {
         mover.isOwl = true;
         mover.carryingFish = true;
     }
+    return { state: simulated, mover };
+}
+
+function moveResultFitsCapacity(state, piece, move) {
+    const simulatedMove = simulateLiuboMove(state, piece, move);
+    if (!simulatedMove?.mover) return false;
+    const { state: simulated, mover } = simulatedMove;
 
     const capturedIds = new Set(getCapturablePiecesAt(simulated, mover, move.toSpaceId).map(candidate => candidate.id));
     const remaining = simulated.pieces.filter(candidate => (

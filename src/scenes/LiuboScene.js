@@ -15,6 +15,7 @@ import {
     createLiuboState,
     getAllLegalMoves,
     getLegalMovesForPiece,
+    getLiuboMoveCaptureIds,
     getPiece,
     getPlayerPieces,
     rollLiuboSticks,
@@ -426,7 +427,7 @@ export class LiuboScene extends BaseScene {
         const legalMoves = this.state.legalMoves || [];
         legalMoves.forEach(move => this.renderMovePath(ctx, move));
         this.renderEntryGateAffordances(ctx, legalMoves, layout);
-        legalMoves.forEach(move => {
+        getBestLiuboMovesByDestination(this.state, legalMoves).forEach(move => {
             const pos = this.boardToScreen(getBoardPointPosition(move.toSpaceId));
             if (!pos) return;
             this.moveRects.push({ x: pos.x - 10, y: pos.y - 10, w: 20, h: 20, move });
@@ -435,7 +436,7 @@ export class LiuboScene extends BaseScene {
 
     renderMoveAffordances(ctx) {
         const legalMoves = this.state.legalMoves || [];
-        legalMoves.forEach(move => {
+        getBestLiuboMovesByDestination(this.state, legalMoves).forEach(move => {
             const pos = this.boardToScreen(getBoardPointPosition(move.toSpaceId));
             if (!pos) return;
             const style = this.getMoveAffordance(move);
@@ -1770,10 +1771,12 @@ function randomLiuboPlayer() {
 }
 
 function classifyLiuboMove(state, move) {
-    if (move.scoreFish) return 'score';
-    if (move.promoteToOwl) return 'promote';
     const mover = state.pieces.find(piece => piece.id === move.pieceId);
     if (!mover) return 'move';
+    if (getLiuboMoveCaptureIds(state, move).length) return 'capture';
+    if (move.scoreFish) return 'score';
+    if (move.promoteToOwl) return 'promote';
+    const moverIsOwlAfterMove = mover.isOwl || !!move.promoteToOwl;
     const pieces = state.pieces.filter(piece => (
         piece.state === 'board'
         && piece.spaceId === move.toSpaceId
@@ -1783,11 +1786,33 @@ function classifyLiuboMove(state, move) {
     const enemies = pieces.filter(piece => piece.player !== mover.player);
     if (enemies.length) {
         if (friendly.length === 1) return 'capture';
-        if (enemies.some(piece => piece.isOwl !== mover.isOwl)) return 'capture';
+        if (enemies.some(piece => piece.isOwl !== moverIsOwlAfterMove)) return 'capture';
         return 'contest';
     }
     if (friendly.length) return 'block';
     return 'move';
+}
+
+function getBestLiuboMovesByDestination(state, moves) {
+    const bestByDestination = new Map();
+    for (const move of moves || []) {
+        const key = move.toSpaceId || move.key;
+        const existing = bestByDestination.get(key);
+        if (!existing || getLiuboMovePriority(state, move) > getLiuboMovePriority(state, existing)) {
+            bestByDestination.set(key, move);
+        }
+    }
+    return [...bestByDestination.values()];
+}
+
+function getLiuboMovePriority(state, move) {
+    const kind = classifyLiuboMove(state, move);
+    if (kind === 'score') return 60;
+    if (kind === 'capture') return 50;
+    if (kind === 'promote') return 40;
+    if (kind === 'contest') return 30;
+    if (kind === 'block') return 20;
+    return 10;
 }
 
 function getPerchPieces(state) {
