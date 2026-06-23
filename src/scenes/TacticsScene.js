@@ -127,6 +127,7 @@ export class TacticsScene extends BaseScene {
         this.activeBattlePaletteIndex = 0;
         this.paletteToastText = '';
         this.paletteToastUntil = 0;
+        this.watchOnlyHintUntil = 0;
         this.environmentPaletteImageKeys = [];
         this.environmentPaletteBaseImages = new Map();
         this.uiTopReserve = 8;
@@ -764,6 +765,7 @@ export class TacticsScene extends BaseScene {
         this.activeBattlePaletteIndex = Math.max(0, this.battlePaletteKeys.indexOf(this.manager?.getGlobalPaletteKey?.() || 'off'));
         this.paletteToastText = '';
         this.paletteToastUntil = 0;
+        this.watchOnlyHintUntil = 0;
         this.environmentPaletteImageKeys = [];
         this.environmentPaletteBaseImages = new Map();
         assets.stopLoopingSound('horse_gallop_loop', 0);
@@ -12162,11 +12164,16 @@ export class TacticsScene extends BaseScene {
                 const by = Math.floor(u.visualY - (u.img.height - 5));
                 this.drawImageFramePixelOutline(ctx, u.img, 0, 0, u.img.width, u.img.height, bx, by, { color });
             } else {
-                const outlineY = u.visualY + (u.onHorse ? MOUNTED_Y_OFFSET : 0) + drift.y;
+                const outlineY = u.onHorse
+                    ? u.visualY + MOUNTED_Y_OFFSET + drift.y - 14
+                    : u.visualY + drift.y;
+                const outlineAction = u.onHorse && u.action === 'walk'
+                    ? 'standby'
+                    : (u.currentAnimAction || u.action);
                 this.drawCharacterPixelOutline(
                     ctx,
                     u.img,
-                    u.currentAnimAction || u.action,
+                    outlineAction,
                     u.frame,
                     u.visualX + drift.x,
                     outlineY,
@@ -14467,6 +14474,51 @@ export class TacticsScene extends BaseScene {
         }
     }
 
+    isWatchOnlyCutsceneCombatActive() {
+        if (!this.isCutscene || !this.battleDef?.watchOnlyHint) return false;
+        if (this.battleId === 'guangzong_encounter' && this.isFightMode) return false;
+        if (this.isIntroAnimating || this.isGameOver) return false;
+        if (this.isIntroDialogueActive || this.isVictoryDialogueActive || this.isCleanupDialogueActive || this.isPostCombatDialogue) return false;
+        const livingEnemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.isGone);
+        return this.isProcessingTurn || this.turn !== 'player' || livingEnemies.length > 0;
+    }
+
+    showWatchOnlyInputHint() {
+        this.watchOnlyHintUntil = performance.now() + 2600;
+        assets.playSound('ui_error', 0.3);
+    }
+
+    drawWatchOnlyHint(ctx, canvas) {
+        const hint = this.battleDef?.watchOnlyHint;
+        if (!hint) return;
+        const now = performance.now();
+        const isNudge = now < (this.watchOnlyHintUntil || 0);
+        const title = getLocalizedText(hint.title || { en: 'WATCH ONLY', zh: '仅观看' });
+        const body = getLocalizedText((isNudge && hint.blockedBody) ? hint.blockedBody : hint.body);
+        const boxW = Math.min(canvas.width - 16, Math.max(160, Math.max(title.length * 7, body.length * 5) + 18));
+        const boxH = 30;
+        const boxX = Math.floor((canvas.width - boxW) / 2);
+        const boxY = Math.floor(canvas.height - boxH - 8);
+        const pulse = isNudge ? 1 : (0.72 + Math.abs(Math.sin(now * 0.004)) * 0.18);
+
+        ctx.save();
+        ctx.fillStyle = `rgba(0, 0, 0, ${isNudge ? 0.82 : 0.66})`;
+        ctx.fillRect(boxX, boxY, boxW, boxH);
+        ctx.strokeStyle = isNudge ? '#ffd700' : '#8f7a42';
+        ctx.strokeRect(boxX + 0.5, boxY + 0.5, boxW - 1, boxH - 1);
+        this.drawPixelText(ctx, title, canvas.width / 2, boxY + 6, {
+            color: `rgba(255, 215, 0, ${pulse})`,
+            font: '8px Silkscreen',
+            align: 'center'
+        });
+        this.drawPixelText(ctx, body, canvas.width / 2, boxY + 18, {
+            color: '#ddd6c0',
+            font: '8px Tiny5',
+            align: 'center'
+        });
+        ctx.restore();
+    }
+
     drawUI() {
         if (this.isChoiceActive) {
             this.drawChoiceUI();
@@ -14476,7 +14528,12 @@ export class TacticsScene extends BaseScene {
         // Lu Zhi rescue: after choosing Fight we stay in guangzong_encounter but isFightMode is true — show normal battle UI, not cutscene prompt
         if (this.isCutscene && !(this.battleId === 'guangzong_encounter' && this.isFightMode)) {
             const { ctx, canvas } = this.manager;
-            if (this.isIntroAnimating || this.isProcessingTurn) return;
+            if (this.isIntroAnimating) return;
+            if (this.isWatchOnlyCutsceneCombatActive()) {
+                this.drawWatchOnlyHint(ctx, canvas);
+                return;
+            }
+            if (this.isProcessingTurn) return;
             
             // For view-only battles, only show "CLICK TO CONTINUE" when combat is actually complete
             if (this.battleId === 'qingzhou_prelude') {
@@ -15651,6 +15708,11 @@ export class TacticsScene extends BaseScene {
             const pos = this.getMousePos(e);
             x = pos.x;
             y = pos.y;
+        }
+
+        if (x !== -1000 && this.isWatchOnlyCutsceneCombatActive()) {
+            this.showWatchOnlyInputHint();
+            return;
         }
 
         // Handle choice selection

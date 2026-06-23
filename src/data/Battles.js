@@ -30,6 +30,11 @@ export const BATTLES = {
         ],
         isCutscene: true,
         cutsceneAutoCombat: true, // Enable automatic combat animations
+        watchOnlyHint: {
+            title: { en: 'WATCH ONLY', zh: '仅观看' },
+            body: { en: 'Battle plays automatically.', zh: '战斗会自动进行。' },
+            blockedBody: { en: 'Watch for now. You will command soon.', zh: '现在先观察。稍后由你指挥。' }
+        },
         introScript: [], // Combat happens first, then dialogue
         postCombatScript: [
             { name: 'Zhang Jue', voiceId: 'intro_zj_01', text: { en: "The good fortune of the Han is exhausted! The Wise and Worthy Man has appeared!", zh: "汉运将终，大贤出矣！" } },
