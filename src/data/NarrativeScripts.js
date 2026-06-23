@@ -733,6 +733,15 @@ export const NARRATIVE_SCRIPTS = {
                                 en: "A sound judgment. Victory in the pass means little if the city falls behind us.",
                                 zh: "兄长所断甚当。若身后城池失守，此处得胜也无意义。"
                             }
+                        },
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'narrator',
+                            voiceId: 'qz_vic_nar_01',
+                            text: {
+                                en: "Though fierce as tigers soldiers be, Battles are won by strategy.\nA hero comes; he gains renown, Already destined for a crown.",
+                                zh: "運籌決算有神功，二虎還須遜一龍。初出便能垂偉績，自應分鼎在孤窮。"
+                            }
                         }
                     ]
                 },
@@ -793,23 +802,23 @@ export const NARRATIVE_SCRIPTS = {
                                 en: "Enough. They will not trouble Qingzhou tonight. Now back to the city before the gates ask why we delayed.",
                                 zh: "够了。今夜他们再不能扰青州。现在回城，莫让城门前的人问我们为何迟来。"
                             }
+                        },
+                        {
+                            type: 'dialogue',
+                            bg: 'valley_aerial_shot',
+                            bgPaletteShift: 'sunset',
+                            bgPaletteStart: 0.82,
+                            bgPaletteEnd: 1,
+                            portraitKey: 'narrator',
+                            voiceId: 'qz_vic_nar_01',
+                            text: {
+                                en: "Though fierce as tigers soldiers be, Battles are won by strategy.\nA hero comes; he gains renown, Already destined for a crown.",
+                                zh: "運籌決算有神功，二虎還須遜一龍。初出便能垂偉績，自應分鼎在孤窮。"
+                            }
                         }
                     ]
                 }
             ]
-        },
-        {
-            type: 'dialogue',
-            bg: 'valley_aerial_shot',
-            bgPaletteShift: 'sunset',
-            bgPaletteStart: 0.82,
-            bgPaletteEnd: 1,
-            portraitKey: 'narrator',
-            voiceId: 'qz_vic_nar_01',
-            text: {
-                en: "Though fierce as tigers soldiers be, Battles are won by strategy.\nA hero comes; he gains renown, Already destined for a crown.",
-                zh: "運籌決算有神功，二虎還須遜一龍。初出便能垂偉績，自應分鼎在孤窮。"
-            }
         }
     ],
     'qingzhou_gate_return': [
@@ -4624,6 +4633,12 @@ export const NARRATIVE_SCRIPTS = {
                 en: "At Yingchuan the routed rebels were cut and scattered. Cao Cao pressed north at once, and from this campaign his name began to spread.",
                 zh: "颍川一役，败贼再遭截击，兵势益乱。曹操旋即北追，自此声名渐起。"
             }
+        },
+        {
+            type: 'title',
+            text: { en: 'END OF CHAPTER 1', zh: '第一章终' },
+            subtext: { en: "Cao Cao's Story will continue...", zh: '曹操的故事仍将继续……' },
+            duration: 5000
         },
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ]
