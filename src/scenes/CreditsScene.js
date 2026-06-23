@@ -25,8 +25,7 @@ export class CreditsScene extends BaseScene {
         }
 
         try {
-            const response = await fetch('credits.md');
-            const text = await response.text();
+            const text = await this.loadCreditsText();
             this.parseCredits(text);
             this.isLoaded = true;
         } catch (e) {
@@ -39,6 +38,46 @@ export class CreditsScene extends BaseScene {
     parseCredits(text) {
         // Simple parser for markdown-like credits
         this.lines = text.split('\n').map(line => line.trim());
+    }
+
+    async loadCreditsText() {
+        let lastError = null;
+        for (const url of this.getCreditsUrls()) {
+            try {
+                const response = await fetch(url, { cache: 'no-cache' });
+                if (!response.ok) {
+                    throw new Error(`Credits request failed: ${response.status}`);
+                }
+                const text = await response.text();
+                if (this.isHtmlResponse(response, text)) {
+                    throw new Error(`Credits request returned HTML from ${url}`);
+                }
+                return text;
+            } catch (error) {
+                lastError = error;
+            }
+        }
+        throw lastError || new Error('Credits request failed');
+    }
+
+    getCreditsUrls() {
+        const urls = [];
+        if (typeof document !== 'undefined' && document.baseURI) {
+            urls.push(new URL('credits.md', document.baseURI).href);
+        }
+        if (typeof window !== 'undefined' && window.location?.origin && window.location.protocol !== 'file:') {
+            urls.push(new URL('credits.md', `${window.location.origin}/`).href);
+        }
+        urls.push('credits.md');
+        return [...new Set(urls)];
+    }
+
+    isHtmlResponse(response, text) {
+        const contentType = response.headers?.get?.('content-type') || '';
+        const trimmed = text.trimStart().slice(0, 120).toLowerCase();
+        return contentType.includes('text/html') ||
+            trimmed.startsWith('<!doctype html') ||
+            trimmed.startsWith('<html');
     }
 
     update(timestamp) {

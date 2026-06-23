@@ -10,4 +10,6 @@ Hex art by Retro Diffusion and Garrett Petersen
 
 Location backgrounds by Retro Diffusion
 
+Title font: Sukajan Brush by tkzgraphic
+
 Original novel by Guanzhong Luo
