@@ -6,7 +6,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:daxing_gy_01": {
         "id": "daxing_gy_01",
@@ -15,7 +16,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:daxing_gy_choice_01": {
         "id": "daxing_gy_choice_01",
@@ -24,7 +26,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:daxing_lb_01": {
         "id": "daxing_lb_01",
@@ -33,7 +36,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:daxing_lb_02": {
         "id": "daxing_lb_02",
@@ -42,7 +46,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:daxing_lb_03": {
         "id": "daxing_lb_03",
@@ -51,7 +56,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:daxing_lb_choice_01": {
         "id": "daxing_lb_choice_01",
@@ -60,7 +66,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:daxing_lb_choice_02": {
         "id": "daxing_lb_choice_02",
@@ -69,7 +76,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:daxing_lb_choice_03": {
         "id": "daxing_lb_choice_03",
@@ -78,7 +86,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:daxing_zf_01": {
         "id": "daxing_zf_01",
@@ -87,7 +96,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:daxing_zj_01": {
         "id": "daxing_zj_01",
@@ -96,7 +106,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:daxing_zj_02": {
         "id": "daxing_zj_02",
@@ -105,7 +116,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:daxing_zj_02_alt": {
         "id": "daxing_zj_02_alt",
@@ -114,7 +126,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:daxing_zj_03": {
         "id": "daxing_zj_03",
@@ -123,7 +136,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:daxing_zj_04": {
         "id": "daxing_zj_04",
@@ -132,7 +146,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:daxing_zj_04_alt": {
         "id": "daxing_zj_04_alt",
@@ -141,7 +156,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:debug_narrative_01": {
         "id": "debug_narrative_01",
@@ -150,7 +166,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:dx_cyz_01": {
         "id": "dx_cyz_01",
@@ -159,7 +176,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:dx_dm_01": {
         "id": "dx_dm_01",
@@ -168,7 +186,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:dx_gy_01": {
         "id": "dx_gy_01",
@@ -177,7 +196,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:dx_lb_01": {
         "id": "dx_lb_01",
@@ -186,7 +206,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:dx_lb_02": {
         "id": "dx_lb_02",
@@ -195,7 +216,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:dx_zf_01": {
         "id": "dx_zf_01",
@@ -204,7 +226,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:gz_dz_01": {
         "id": "gz_dz_01",
@@ -213,7 +236,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:gz_dz_02": {
         "id": "gz_dz_02",
@@ -222,7 +246,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:gz_dz_help_01": {
         "id": "gz_dz_help_01",
@@ -231,7 +256,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:gz_dz_outlaw_01": {
         "id": "gz_dz_outlaw_01",
@@ -240,7 +266,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:gz_dz_outlaw_02": {
         "id": "gz_dz_outlaw_02",
@@ -249,7 +276,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:gz_gy_free_01": {
         "id": "gz_gy_free_01",
@@ -258,7 +286,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:gz_gy_outlaw_01": {
         "id": "gz_gy_outlaw_01",
@@ -267,7 +296,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:gz_gy_restrain_01": {
         "id": "gz_gy_restrain_01",
@@ -276,7 +306,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:gz_gy_return_01": {
         "id": "gz_gy_return_01",
@@ -285,7 +316,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:gz_lb_01": {
         "id": "gz_lb_01",
@@ -294,7 +326,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_lb_attack_01": {
         "id": "gz_lb_attack_01",
@@ -303,7 +336,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_lb_defend_01": {
         "id": "gz_lb_defend_01",
@@ -312,7 +346,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_lb_fight_01": {
         "id": "gz_lb_fight_01",
@@ -321,7 +356,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_lb_free_02": {
         "id": "gz_lb_free_02",
@@ -330,7 +366,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_lb_freed_02": {
         "id": "gz_lb_freed_02",
@@ -339,7 +376,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_lb_office_01": {
         "id": "gz_lb_office_01",
@@ -348,7 +386,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_lb_restrain_01": {
         "id": "gz_lb_restrain_01",
@@ -357,7 +396,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_lz_explain_01": {
         "id": "gz_lz_explain_01",
@@ -366,7 +406,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_lz_explain_02": {
         "id": "gz_lz_explain_02",
@@ -375,7 +416,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_lz_explain_03": {
         "id": "gz_lz_explain_03",
@@ -384,7 +426,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_lz_freed_01": {
         "id": "gz_lz_freed_01",
@@ -393,7 +436,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_lz_freed_02": {
         "id": "gz_lz_freed_02",
@@ -402,7 +446,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_nar_poem_01": {
         "id": "gz_nar_poem_01",
@@ -411,7 +456,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:gz_nar_restrain_01": {
         "id": "gz_nar_restrain_01",
@@ -420,7 +466,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:gz_zf_01": {
         "id": "gz_zf_01",
@@ -429,7 +476,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:gz_zf_attack_01": {
         "id": "gz_zf_attack_01",
@@ -438,7 +486,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:gz_zf_free_01": {
         "id": "gz_zf_free_01",
@@ -447,7 +496,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:gz_zf_rage_01": {
         "id": "gz_zf_rage_01",
@@ -456,7 +506,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:gz_zf_rage_outlaw_01": {
         "id": "gz_zf_rage_outlaw_01",
@@ -465,7 +516,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:gz_zf_restrain_01": {
         "id": "gz_zf_restrain_01",
@@ -474,7 +526,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:inn_farmer_01": {
         "id": "inn_farmer_01",
@@ -483,7 +536,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:inn_gy_01": {
         "id": "inn_gy_01",
@@ -492,7 +546,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:inn_gy_02": {
         "id": "inn_gy_02",
@@ -501,7 +556,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:inn_gy_03": {
         "id": "inn_gy_03",
@@ -510,7 +566,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:inn_gy_04": {
         "id": "inn_gy_04",
@@ -519,7 +576,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:inn_gy_05": {
         "id": "inn_gy_05",
@@ -528,7 +586,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:inn_gy_choice_01": {
         "id": "inn_gy_choice_01",
@@ -537,7 +596,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:inn_gy_choice_02": {
         "id": "inn_gy_choice_02",
@@ -546,7 +606,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:inn_lb_01": {
         "id": "inn_lb_01",
@@ -555,7 +616,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:inn_lb_02": {
         "id": "inn_lb_02",
@@ -564,7 +626,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:inn_lb_03": {
         "id": "inn_lb_03",
@@ -573,7 +636,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:inn_lb_04": {
         "id": "inn_lb_04",
@@ -582,7 +646,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:inn_lb_05": {
         "id": "inn_lb_05",
@@ -591,7 +656,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:inn_lb_choice_01": {
         "id": "inn_lb_choice_01",
@@ -600,7 +666,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:inn_lb_choice_02": {
         "id": "inn_lb_choice_02",
@@ -609,7 +676,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:inn_lb_click_01": {
         "id": "inn_lb_click_01",
@@ -618,7 +686,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:inn_lb_wine_01": {
         "id": "inn_lb_wine_01",
@@ -627,7 +696,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:inn_zf_01": {
         "id": "inn_zf_01",
@@ -636,7 +706,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:inn_zf_02": {
         "id": "inn_zf_02",
@@ -645,7 +716,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:inn_zf_03": {
         "id": "inn_zf_03",
@@ -654,7 +726,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:inn_zf_04": {
         "id": "inn_zf_04",
@@ -663,7 +736,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:inn_zf_05": {
         "id": "inn_zf_05",
@@ -672,7 +746,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:inn_zf_06": {
         "id": "inn_zf_06",
@@ -681,7 +756,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:inn_zf_07": {
         "id": "inn_zf_07",
@@ -690,7 +766,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:intro_narrator_01": {
         "id": "intro_narrator_01",
@@ -699,7 +776,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:intro_narrator_02a": {
         "id": "intro_narrator_02a",
@@ -708,7 +786,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:intro_narrator_02b": {
         "id": "intro_narrator_02b",
@@ -717,7 +796,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:intro_narrator_02c": {
         "id": "intro_narrator_02c",
@@ -726,7 +806,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:intro_narrator_03a": {
         "id": "intro_narrator_03a",
@@ -735,7 +816,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:intro_narrator_03b": {
         "id": "intro_narrator_03b",
@@ -744,7 +826,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:intro_narrator_03c": {
         "id": "intro_narrator_03c",
@@ -753,7 +836,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:intro_narrator_04a": {
         "id": "intro_narrator_04a",
@@ -762,7 +846,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:intro_narrator_04b": {
         "id": "intro_narrator_04b",
@@ -771,7 +856,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:intro_narrator_04c": {
         "id": "intro_narrator_04c",
@@ -780,7 +866,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:intro_narrator_05a": {
         "id": "intro_narrator_05a",
@@ -789,7 +876,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:intro_narrator_05b": {
         "id": "intro_narrator_05b",
@@ -798,7 +886,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:intro_narrator_05c": {
         "id": "intro_narrator_05c",
@@ -807,7 +896,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:intro_zb_01": {
         "id": "intro_zb_01",
@@ -816,7 +906,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:intro_zb_02": {
         "id": "intro_zb_02",
@@ -825,7 +916,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:intro_zj_01": {
         "id": "intro_zj_01",
@@ -834,7 +926,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_fearsome_elder_male_mandarin.wav"
     },
     "zh:intro_zj_02": {
         "id": "intro_zj_02",
@@ -843,7 +936,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_fearsome_elder_male_mandarin.wav"
     },
     "zh:intro_zj_03": {
         "id": "intro_zj_03",
@@ -852,7 +946,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_fearsome_elder_male_mandarin.wav"
     },
     "zh:intro_zj_04": {
         "id": "intro_zj_04",
@@ -861,7 +956,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_fearsome_elder_male_mandarin.wav"
     },
     "zh:intro_zj_05": {
         "id": "intro_zj_05",
@@ -870,7 +966,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_fearsome_elder_male_mandarin.wav"
     },
     "zh:intro_zl_01": {
         "id": "intro_zl_01",
@@ -879,7 +976,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:intro_zl_02": {
         "id": "intro_zl_02",
@@ -888,7 +986,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:map_lb_defeat": {
         "id": "map_lb_defeat",
@@ -897,7 +996,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:map_lb_rem_01": {
         "id": "map_lb_rem_01",
@@ -906,7 +1006,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:map_lb_rem_02": {
         "id": "map_lb_rem_02",
@@ -915,7 +1016,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:map_lb_rem_03": {
         "id": "map_lb_rem_03",
@@ -924,7 +1026,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:map_lb_rem_04": {
         "id": "map_lb_rem_04",
@@ -933,7 +1036,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:map_lb_rem_05": {
         "id": "map_lb_rem_05",
@@ -942,7 +1046,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:pg_gy_01": {
         "id": "pg_gy_01",
@@ -951,7 +1056,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:pg_lb_01": {
         "id": "pg_lb_01",
@@ -960,7 +1066,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:pg_lb_02": {
         "id": "pg_lb_02",
@@ -969,7 +1076,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:pg_lb_03": {
         "id": "pg_lb_03",
@@ -978,7 +1086,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:pg_lb_04": {
         "id": "pg_lb_04",
@@ -987,7 +1096,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:pg_nar_01": {
         "id": "pg_nar_01",
@@ -996,7 +1106,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:pg_nar_02": {
         "id": "pg_nar_02",
@@ -1005,7 +1116,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:pg_zf_01": {
         "id": "pg_zf_01",
@@ -1014,7 +1126,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:pro_farmer2_01": {
         "id": "pro_farmer2_01",
@@ -1023,7 +1136,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_female_mandarin.wav"
     },
     "zh:pro_farmer_01": {
         "id": "pro_farmer_01",
@@ -1032,7 +1146,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:pro_lb_01": {
         "id": "pro_lb_01",
@@ -1041,7 +1156,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:pro_lb_02": {
         "id": "pro_lb_02",
@@ -1050,7 +1166,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:pro_lb_03": {
         "id": "pro_lb_03",
@@ -1059,7 +1176,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:pro_lb_04": {
         "id": "pro_lb_04",
@@ -1068,7 +1186,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:pro_lb_05": {
         "id": "pro_lb_05",
@@ -1077,7 +1196,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:pro_lb_06": {
         "id": "pro_lb_06",
@@ -1086,7 +1206,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:pro_lb_choice_01": {
         "id": "pro_lb_choice_01",
@@ -1095,7 +1216,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:pro_lb_choice_02": {
         "id": "pro_lb_choice_02",
@@ -1104,7 +1226,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:pro_nb_01": {
         "id": "pro_nb_01",
@@ -1113,7 +1236,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:pro_nb_02": {
         "id": "pro_nb_02",
@@ -1122,7 +1246,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:pro_nb_03": {
         "id": "pro_nb_03",
@@ -1131,7 +1256,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:pro_zf_01": {
         "id": "pro_zf_01",
@@ -1140,7 +1266,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:pro_zf_02": {
         "id": "pro_zf_02",
@@ -1149,7 +1276,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:pro_zf_03": {
         "id": "pro_zf_03",
@@ -1158,7 +1286,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:pro_zf_04": {
         "id": "pro_zf_04",
@@ -1167,7 +1296,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:pro_zf_05": {
         "id": "pro_zf_05",
@@ -1176,7 +1306,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:pro_zf_06": {
         "id": "pro_zf_06",
@@ -1185,7 +1316,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:pro_zf_07": {
         "id": "pro_zf_07",
@@ -1194,7 +1326,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:pro_zf_08": {
         "id": "pro_zf_08",
@@ -1203,7 +1336,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:qz_bt_lb_03": {
         "id": "qz_bt_lb_03",
@@ -1212,7 +1346,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_gy_01": {
         "id": "qz_gy_01",
@@ -1221,7 +1356,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:qz_lb_01": {
         "id": "qz_lb_01",
@@ -1239,7 +1375,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_lb_03": {
         "id": "qz_lb_03",
@@ -1248,7 +1385,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_lb_choice_01": {
         "id": "qz_lb_choice_01",
@@ -1266,7 +1404,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
     },
     "zh:qz_ret_gj_01": {
         "id": "qz_ret_gj_01",
@@ -1275,7 +1414,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_ret_gj_02": {
         "id": "qz_ret_gj_02",
@@ -1284,7 +1424,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_ret_gj_choice_01": {
         "id": "qz_ret_gj_choice_01",
@@ -1293,7 +1434,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_ret_gy_choice_01": {
         "id": "qz_ret_gy_choice_01",
@@ -1302,7 +1444,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:qz_ret_lb_01": {
         "id": "qz_ret_lb_01",
@@ -1311,7 +1454,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_ret_lb_02": {
         "id": "qz_ret_lb_02",
@@ -1320,7 +1464,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_ret_lb_choice_01": {
         "id": "qz_ret_lb_choice_01",
@@ -1329,7 +1474,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_ret_lb_choice_02": {
         "id": "qz_ret_lb_choice_02",
@@ -1338,7 +1484,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_vic_gy_01": {
         "id": "qz_vic_gy_01",
@@ -1347,7 +1494,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:qz_vic_lb_01": {
         "id": "qz_vic_lb_01",
@@ -1374,7 +1522,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:qz_vic_zf_01": {
         "id": "qz_vic_zf_01",
@@ -1383,7 +1532,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:qz_vic_zf_choice_01": {
         "id": "qz_vic_zf_choice_01",
@@ -1401,7 +1551,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_zf_choice_01": {
         "id": "qz_zf_choice_01",
@@ -1419,7 +1570,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:rec_gy_01": {
         "id": "rec_gy_01",
@@ -1428,7 +1580,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:rec_lb_01": {
         "id": "rec_lb_01",
@@ -1437,7 +1590,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:rec_lb_02": {
         "id": "rec_lb_02",
@@ -1446,7 +1600,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:rec_vol_01": {
         "id": "rec_vol_01",
@@ -1455,7 +1610,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
     },
     "zh:rec_zf_01": {
         "id": "rec_zf_01",
@@ -1464,7 +1620,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:recov_gy_01": {
         "id": "recov_gy_01",
@@ -1473,7 +1630,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:recov_lb_01": {
         "id": "recov_lb_01",
@@ -1482,7 +1640,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:recov_zf_01": {
         "id": "recov_zf_01",
@@ -1491,7 +1650,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_oath_dz_restrain_01": {
         "id": "ch2_oath_dz_restrain_01",
@@ -1500,7 +1660,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_oath_dz_strike_01": {
         "id": "ch2_oath_dz_strike_01",
@@ -1509,7 +1670,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_oath_gy_restrain_01": {
         "id": "ch2_oath_gy_restrain_01",
@@ -1518,7 +1680,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_oath_gy_strike_after_01": {
         "id": "ch2_oath_gy_strike_after_01",
@@ -1527,7 +1690,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_oath_lb_restrain_01": {
         "id": "ch2_oath_lb_restrain_01",
@@ -1536,7 +1700,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_oath_lb_strike_01": {
         "id": "ch2_oath_lb_strike_01",
@@ -1545,7 +1710,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_oath_zf_restrain_01": {
         "id": "ch2_oath_zf_restrain_01",
@@ -1554,7 +1720,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_oath_zf_strike_01": {
         "id": "ch2_oath_zf_strike_01",
@@ -1563,7 +1730,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_oath_zf_strike_after_01": {
         "id": "ch2_oath_zf_strike_after_01",
@@ -1572,7 +1740,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_oath_zf_strike_water_after_01": {
         "id": "ch2_oath_zf_strike_water_after_01",
@@ -1581,7 +1750,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:daxing_int_blacksmith_01": {
         "id": "daxing_int_blacksmith_01",
@@ -1590,7 +1760,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:daxing_int_guard1_01": {
         "id": "daxing_int_guard1_01",
@@ -1617,7 +1788,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:daxing_int_lb_01": {
         "id": "daxing_int_lb_01",
@@ -1626,7 +1798,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:daxing_int_merchant_01": {
         "id": "daxing_int_merchant_01",
@@ -1635,7 +1808,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:daxing_int_soldier3_01": {
         "id": "daxing_int_soldier3_01",
@@ -1653,7 +1827,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:daxing_int_volunteer1_01": {
         "id": "daxing_int_volunteer1_01",
@@ -1662,7 +1837,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
     },
     "zh:daxing_int_volunteer2_01": {
         "id": "daxing_int_volunteer2_01",
@@ -1671,7 +1847,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
     },
     "zh:daxing_int_zf_01": {
         "id": "daxing_int_zf_01",
@@ -1680,7 +1857,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:daxing_int_zj_01": {
         "id": "daxing_int_zj_01",
@@ -1689,7 +1867,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:gz_zj_rescue_01": {
         "id": "gz_zj_rescue_01",
@@ -1698,7 +1877,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_fearsome_elder_male_mandarin.wav"
     },
     "zh:gz_zj_retreat_01": {
         "id": "gz_zj_retreat_01",
@@ -1707,7 +1887,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_fearsome_elder_male_mandarin.wav"
     },
     "zh:gz_camp_gy_01": {
         "id": "gz_camp_gy_01",
@@ -1716,7 +1897,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:gz_camp_lb_01": {
         "id": "gz_camp_lb_01",
@@ -1725,7 +1907,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_camp_lb_choice_01": {
         "id": "gz_camp_lb_choice_01",
@@ -1734,7 +1917,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_camp_lb_choice_02": {
         "id": "gz_camp_lb_choice_02",
@@ -1743,7 +1927,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_camp_lz_01": {
         "id": "gz_camp_lz_01",
@@ -1752,7 +1937,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_camp_lz_02": {
         "id": "gz_camp_lz_02",
@@ -1761,7 +1947,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:gz_camp_lz_choice_01": {
         "id": "gz_camp_lz_choice_01",
@@ -1770,7 +1957,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:yc_af_hfs_01": {
         "id": "yc_af_hfs_01",
@@ -1779,7 +1967,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:yc_af_lb_choice_01": {
         "id": "yc_af_lb_choice_01",
@@ -1788,7 +1977,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:yc_af_lb_choice_02": {
         "id": "yc_af_lb_choice_02",
@@ -1797,7 +1987,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:yc_af_zf_01": {
         "id": "yc_af_zf_01",
@@ -1806,7 +1997,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:yc_af_zj_01": {
         "id": "yc_af_zj_01",
@@ -1815,7 +2007,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:yc_af_zj_choice_01": {
         "id": "yc_af_zj_choice_01",
@@ -1824,7 +2017,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:cc_dq_01": {
         "id": "cc_dq_01",
@@ -1833,7 +2027,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:cc_dq_02": {
         "id": "cc_dq_02",
@@ -1842,7 +2037,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:cc_dq_03": {
         "id": "cc_dq_03",
@@ -1851,7 +2047,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:cc_dq_04": {
         "id": "cc_dq_04",
@@ -1860,7 +2057,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:cc_dq_05": {
         "id": "cc_dq_05",
@@ -1869,7 +2067,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:cc_dq_06": {
         "id": "cc_dq_06",
@@ -1878,7 +2077,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:cc_dq_att_01": {
         "id": "cc_dq_att_01",
@@ -1887,7 +2087,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:cc_dq_att_02": {
         "id": "cc_dq_att_02",
@@ -1896,7 +2097,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:cc_dq_att_03": {
         "id": "cc_dq_att_03",
@@ -1905,7 +2107,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:cc_dq_choice_01": {
         "id": "cc_dq_choice_01",
@@ -1914,7 +2117,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:cc_dq_choice_02": {
         "id": "cc_dq_choice_02",
@@ -1923,7 +2127,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:cc_dq_msg_01": {
         "id": "cc_dq_msg_01",
@@ -1932,7 +2137,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
     },
     "zh:cc_dq_msg_02": {
         "id": "cc_dq_msg_02",
@@ -1941,7 +2147,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
     },
     "zh:cc_dq_msg_03": {
         "id": "cc_dq_msg_03",
@@ -1950,7 +2157,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
     },
     "zh:cc_yc_01": {
         "id": "cc_yc_01",
@@ -1959,7 +2167,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:cc_yc_02": {
         "id": "cc_yc_02",
@@ -1968,7 +2177,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:cc_yc_choice_01": {
         "id": "cc_yc_choice_01",
@@ -1977,7 +2187,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:cc_yc_choice_02": {
         "id": "cc_yc_choice_02",
@@ -1986,7 +2197,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:cc_yc_cr_01": {
         "id": "cc_yc_cr_01",
@@ -1995,7 +2207,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:cc_yc_cr_02": {
         "id": "cc_yc_cr_02",
@@ -2004,7 +2217,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:cc_yc_hfs_01": {
         "id": "cc_yc_hfs_01",
@@ -2013,7 +2227,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:cc_yc_hfs_choice_01": {
         "id": "cc_yc_hfs_choice_01",
@@ -2022,7 +2237,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:cc_yc_zb_01": {
         "id": "cc_yc_zb_01",
@@ -2031,7 +2247,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:cc_yc_zb_retreat_01": {
         "id": "cc_yc_zb_retreat_01",
@@ -2040,7 +2257,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:cc_yc_zj_01": {
         "id": "cc_yc_zj_01",
@@ -2049,7 +2267,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:cc_yc_zl_retreat_01": {
         "id": "cc_yc_zl_retreat_01",
@@ -2058,7 +2277,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:map_cc_rem_01": {
         "id": "map_cc_rem_01",
@@ -2067,7 +2287,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:cc_dq_att_00": {
         "id": "cc_dq_att_00",
@@ -2076,7 +2297,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:cc_yc_cr_post_01": {
         "id": "cc_yc_cr_post_01",
@@ -2085,7 +2307,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:cc_yc_cr_cmd_tutorial_01": {
         "id": "cc_yc_cr_cmd_tutorial_01",
@@ -2094,7 +2317,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:dx_lb_03": {
         "id": "dx_lb_03",
@@ -2103,7 +2327,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:dx_yt_01": {
         "id": "dx_yt_01",
@@ -2112,7 +2337,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:gz_lb_ret_01": {
         "id": "gz_lb_ret_01",
@@ -2121,7 +2347,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_gy_surp_01": {
         "id": "qz_gy_surp_01",
@@ -2130,7 +2357,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:qz_lb_amb_01": {
         "id": "qz_lb_amb_01",
@@ -2139,7 +2367,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_lb_surp_01": {
         "id": "qz_lb_surp_01",
@@ -2148,7 +2377,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:map_lb_rem_06": {
         "id": "map_lb_rem_06",
@@ -2157,7 +2387,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:map_lb_rem_07": {
         "id": "map_lb_rem_07",
@@ -2166,7 +2397,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_probe_lb_01": {
         "id": "ch2_probe_lb_01",
@@ -2175,7 +2407,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_probe_lb_retreat_01": {
         "id": "ch2_probe_lb_retreat_01",
@@ -2184,7 +2417,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_probe_zb_01": {
         "id": "ch2_probe_zb_01",
@@ -2193,7 +2427,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_probe_zb_sorcery_01": {
         "id": "ch2_probe_zb_sorcery_01",
@@ -2202,7 +2437,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_zj_camp_lb_01": {
         "id": "ch2_zj_camp_lb_01",
@@ -2211,7 +2447,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_zj_camp_zj_00": {
         "id": "ch2_zj_camp_zj_00",
@@ -2220,7 +2457,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_zj_camp_zj_01": {
         "id": "ch2_zj_camp_zj_01",
@@ -2229,7 +2467,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_zj_camp_zj_02": {
         "id": "ch2_zj_camp_zj_02",
@@ -2238,7 +2477,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:inn_liubo_accept_01": {
         "id": "inn_liubo_accept_01",
@@ -2247,7 +2487,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_accept_repeat_01": {
         "id": "inn_liubo_accept_repeat_01",
@@ -2265,7 +2506,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_decline_reply_01": {
         "id": "inn_liubo_decline_reply_01",
@@ -2274,7 +2516,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_decline_reply_02": {
         "id": "inn_liubo_decline_reply_02",
@@ -2292,7 +2535,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_loss_first_01": {
         "id": "inn_liubo_loss_first_01",
@@ -2301,7 +2545,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_loss_repeat_01": {
         "id": "inn_liubo_loss_repeat_01",
@@ -2310,7 +2555,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_repeat_01": {
         "id": "inn_liubo_repeat_01",
@@ -2328,7 +2574,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_win_repeat_01": {
         "id": "inn_liubo_win_repeat_01",
@@ -2337,7 +2584,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:map_lb_ch2_probe_01": {
         "id": "map_lb_ch2_probe_01",
@@ -2346,7 +2594,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:map_lb_ch2_probe_02": {
         "id": "map_lb_ch2_probe_02",
@@ -2355,7 +2604,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:map_lb_ch2_zhujun_01": {
         "id": "map_lb_ch2_zhujun_01",
@@ -2364,7 +2614,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:map_lb_ch2_zhujun_02": {
         "id": "map_lb_ch2_zhujun_02",
@@ -2373,7 +2624,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:inn_liubo_tutorial_block_01": {
         "id": "inn_liubo_tutorial_block_01",
@@ -2382,7 +2634,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_tutorial_block_02": {
         "id": "inn_liubo_tutorial_block_02",
@@ -2391,7 +2644,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_tutorial_contest_01": {
         "id": "inn_liubo_tutorial_contest_01",
@@ -2400,7 +2654,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_tutorial_contest_02": {
         "id": "inn_liubo_tutorial_contest_02",
@@ -2409,7 +2664,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_tutorial_goal_01": {
         "id": "inn_liubo_tutorial_goal_01",
@@ -2418,7 +2674,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_tutorial_goal_02": {
         "id": "inn_liubo_tutorial_goal_02",
@@ -2427,7 +2684,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_tutorial_goal_03": {
         "id": "inn_liubo_tutorial_goal_03",
@@ -2436,7 +2694,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_tutorial_goal_04": {
         "id": "inn_liubo_tutorial_goal_04",
@@ -2445,7 +2704,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_tutorial_goal_05": {
         "id": "inn_liubo_tutorial_goal_05",
@@ -2454,7 +2714,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_tutorial_move_01": {
         "id": "inn_liubo_tutorial_move_01",
@@ -2463,7 +2724,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_tutorial_move_02": {
         "id": "inn_liubo_tutorial_move_02",
@@ -2472,7 +2734,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_tutorial_owl_01": {
         "id": "inn_liubo_tutorial_owl_01",
@@ -2481,7 +2744,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_tutorial_owl_02": {
         "id": "inn_liubo_tutorial_owl_02",
@@ -2490,7 +2754,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_tutorial_owl_03": {
         "id": "inn_liubo_tutorial_owl_03",
@@ -2499,7 +2764,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:inn_liubo_tutorial_start_01": {
         "id": "inn_liubo_tutorial_start_01",
@@ -2508,7 +2774,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:rec_lb_train_no_01": {
         "id": "rec_lb_train_no_01",
@@ -2517,7 +2784,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:rec_zf_train_prompt_01": {
         "id": "rec_zf_train_prompt_01",
@@ -2526,7 +2794,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:rec_zf_train_yes_01": {
         "id": "rec_zf_train_yes_01",
@@ -2535,7 +2804,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:train_gy_01": {
         "id": "train_gy_01",
@@ -2544,7 +2814,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:train_gy_02": {
         "id": "train_gy_02",
@@ -2553,7 +2824,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:train_gy_03": {
         "id": "train_gy_03",
@@ -2562,7 +2834,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:train_gy_watch_01": {
         "id": "train_gy_watch_01",
@@ -2571,7 +2844,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:train_lb_01": {
         "id": "train_lb_01",
@@ -2580,7 +2854,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:train_lb_02": {
         "id": "train_lb_02",
@@ -2589,7 +2864,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:train_lb_03": {
         "id": "train_lb_03",
@@ -2598,7 +2874,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:train_lb_04": {
         "id": "train_lb_04",
@@ -2607,7 +2884,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:train_lb_05": {
         "id": "train_lb_05",
@@ -2616,7 +2894,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:train_lb_06": {
         "id": "train_lb_06",
@@ -2625,7 +2904,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:train_lb_07": {
         "id": "train_lb_07",
@@ -2634,7 +2914,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:train_lb_end_turn_01": {
         "id": "train_lb_end_turn_01",
@@ -2643,7 +2924,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:train_lb_end_turn_02": {
         "id": "train_lb_end_turn_02",
@@ -2652,7 +2934,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:train_zf_01": {
         "id": "train_zf_01",
@@ -2661,7 +2944,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:train_zf_02": {
         "id": "train_zf_02",
@@ -2670,7 +2954,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:train_zf_03": {
         "id": "train_zf_03",
@@ -2679,7 +2964,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:train_zf_04": {
         "id": "train_zf_04",
@@ -2688,7 +2974,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:train_zf_finish_01": {
         "id": "train_zf_finish_01",
@@ -2697,7 +2984,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_hj_choice_enter": {
         "id": "ch2_hj_choice_enter",
@@ -2706,7 +2994,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
     },
     "zh:ch2_hj_choice_return": {
         "id": "ch2_hj_choice_return",
@@ -2715,7 +3004,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
     },
     "zh:ch2_hj_eunuch_01": {
         "id": "ch2_hj_eunuch_01",
@@ -2724,7 +3014,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_grandiose_male_mandarin.wav"
     },
     "zh:ch2_hj_guard_01": {
         "id": "ch2_hj_guard_01",
@@ -2733,7 +3024,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_hj_hejin_01": {
         "id": "ch2_hj_hejin_01",
@@ -2742,7 +3034,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
     },
     "zh:ch2_hj_narrator_01": {
         "id": "ch2_hj_narrator_01",
@@ -2751,7 +3044,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_hj_narrator_02": {
         "id": "ch2_hj_narrator_02",
@@ -2760,7 +3054,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_hj_narrator_03": {
         "id": "ch2_hj_narrator_03",
@@ -2769,7 +3064,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_hj_narrator_04": {
         "id": "ch2_hj_narrator_04",
@@ -2778,7 +3074,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_hj_narrator_bad_end": {
         "id": "ch2_hj_narrator_bad_end",
@@ -2787,7 +3084,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_hj_panyin_01": {
         "id": "ch2_hj_panyin_01",
@@ -2796,7 +3094,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
     },
     "zh:ch2_hj_panyin_02": {
         "id": "ch2_hj_panyin_02",
@@ -2805,7 +3104,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
     },
     "zh:ch2_hj_panyin_03": {
         "id": "ch2_hj_panyin_03",
@@ -2814,7 +3114,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
     },
     "zh:inn_gy_choice_unlawful_01": {
         "id": "inn_gy_choice_unlawful_01",
@@ -2823,7 +3124,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:inn_lb_choice_unlawful_01": {
         "id": "inn_lb_choice_unlawful_01",
@@ -2832,7 +3134,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_lb_ask_danger_01": {
         "id": "qz_lb_ask_danger_01",
@@ -2841,7 +3144,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_lb_ride_now_01": {
         "id": "qz_lb_ride_now_01",
@@ -2850,7 +3154,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_ms_ask_danger_01": {
         "id": "qz_ms_ask_danger_01",
@@ -2859,7 +3164,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:qz_vic_gy_secure_city_01": {
         "id": "qz_vic_gy_secure_city_01",
@@ -2868,7 +3174,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:qz_vic_lb_pursue_01": {
         "id": "qz_vic_lb_pursue_01",
@@ -2877,7 +3184,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_vic_lb_return_after_pursuit_01": {
         "id": "qz_vic_lb_return_after_pursuit_01",
@@ -2886,7 +3194,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_vic_lb_secure_city_01": {
         "id": "qz_vic_lb_secure_city_01",
@@ -2895,7 +3204,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:qz_vic_nar_pursue_01": {
         "id": "qz_vic_nar_pursue_01",
@@ -2904,7 +3214,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:qz_vic_zf_pursue_01": {
         "id": "qz_vic_zf_pursue_01",
@@ -2913,7 +3224,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:qz_zf_ride_now_01": {
         "id": "qz_zf_ride_now_01",
@@ -2922,7 +3234,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_oath_gy_strike_escape_after_01": {
         "id": "ch2_oath_gy_strike_escape_after_01",
@@ -2931,7 +3244,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_counter_camp_choice_reluctant": {
         "id": "ch2_counter_camp_choice_reluctant",
@@ -2940,7 +3254,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_counter_camp_choice_use": {
         "id": "ch2_counter_camp_choice_use",
@@ -2949,7 +3264,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_counter_camp_gy_01": {
         "id": "ch2_counter_camp_gy_01",
@@ -2958,7 +3274,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_counter_camp_lb_01": {
         "id": "ch2_counter_camp_lb_01",
@@ -2967,7 +3284,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_counter_camp_lb_02": {
         "id": "ch2_counter_camp_lb_02",
@@ -2976,7 +3294,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_counter_camp_zf_01": {
         "id": "ch2_counter_camp_zf_01",
@@ -2985,7 +3304,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_counter_camp_zj_01": {
         "id": "ch2_counter_camp_zj_01",
@@ -2994,7 +3314,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_counter_camp_zj_02": {
         "id": "ch2_counter_camp_zj_02",
@@ -3003,7 +3324,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_counter_camp_zj_03": {
         "id": "ch2_counter_camp_zj_03",
@@ -3012,7 +3334,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_counter_gy_01": {
         "id": "ch2_counter_gy_01",
@@ -3021,7 +3344,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_counter_lb_01": {
         "id": "ch2_counter_lb_01",
@@ -3030,7 +3354,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_counter_zb_01": {
         "id": "ch2_counter_zb_01",
@@ -3039,7 +3364,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_counter_zb_filth_01": {
         "id": "ch2_counter_zb_filth_01",
@@ -3048,7 +3374,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_counter_zb_retreat_01": {
         "id": "ch2_counter_zb_retreat_01",
@@ -3057,7 +3384,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_yc_lb_01": {
         "id": "ch2_yc_lb_01",
@@ -3075,7 +3403,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_yc_yz_01": {
         "id": "ch2_yc_yz_01",
@@ -3084,7 +3413,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
     },
     "zh:ch2_yc_yz_02": {
         "id": "ch2_yc_yz_02",
@@ -3093,7 +3423,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
     },
     "zh:ch2_yc_zb_01": {
         "id": "ch2_yc_zb_01",
@@ -3102,7 +3433,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_yc_zb_02": {
         "id": "ch2_yc_zb_02",
@@ -3111,16 +3443,18 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_yc_zj_01": {
         "id": "ch2_yc_zj_01",
         "character": "zhujun",
         "original_text": "张宝！张角已死于广宗，张梁又在曲阳为皇甫嵩所破。你兄弟皆亡，妖法已破，诸郡皆归汉廷。",
-        "stt_output": "张宝 张脚已死于广宗张梁又在区阳为皇府松所破你兄弟皆王 妖法已破竹俊皆 归汉庭门",
-        "wer": 4.0,
+        "stt_output": "張寶張腳已死於廣宗張娘又在趨揚為皇府松所破你兄弟皆王妖法已破竹俊皆貴漢庭",
+        "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_yc_zj_02": {
         "id": "ch2_yc_zj_02",
@@ -3129,7 +3463,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_yc_zj_03": {
         "id": "ch2_yc_zj_03",
@@ -3138,7 +3473,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_yc_lb_choice_threat": {
         "id": "ch2_yc_lb_choice_threat",
@@ -3156,7 +3492,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_counter_lb_filth_reminder_01": {
         "id": "ch2_counter_lb_filth_reminder_01",
@@ -3165,7 +3502,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_counter_zf_filth_reminder_01": {
         "id": "ch2_counter_zf_filth_reminder_01",
@@ -3174,7 +3512,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:map_lb_ch2_counter_01": {
         "id": "map_lb_ch2_counter_01",
@@ -3183,7 +3522,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:map_lb_ch2_counter_council_01": {
         "id": "map_lb_ch2_counter_council_01",
@@ -3192,7 +3532,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:map_lb_ch2_yangcheng_01": {
         "id": "map_lb_ch2_yangcheng_01",
@@ -3201,7 +3542,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_yc_lb_clemency_01": {
         "id": "ch2_yc_lb_clemency_01",
@@ -3210,7 +3552,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_yc_lb_threat_01": {
         "id": "ch2_yc_lb_threat_01",
@@ -3219,7 +3562,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_yc_zb_refuse_01": {
         "id": "ch2_yc_zb_refuse_01",
@@ -3228,7 +3572,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_wan_gy_01": {
         "id": "ch2_wan_gy_01",
@@ -3318,7 +3663,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:inn_butcher_npc_01": {
         "id": "inn_butcher_npc_01",
@@ -3327,7 +3673,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:inn_soldier_npc_01": {
         "id": "inn_soldier_npc_01",
@@ -3336,7 +3683,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:daxing_int_guard1_push_01": {
         "id": "daxing_int_guard1_push_01",
@@ -3345,7 +3693,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:daxing_int_guard2_push_01": {
         "id": "daxing_int_guard2_push_01",
@@ -3354,7 +3703,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:daxing_int_soldier3_push_01": {
         "id": "daxing_int_soldier3_push_01",
@@ -3363,7 +3713,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
     },
     "zh:pro_lb_noticeboard_wait_01": {
         "id": "pro_lb_noticeboard_wait_01",
@@ -3372,7 +3723,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:pro_zf_noticeboard_wait_01": {
         "id": "pro_zf_noticeboard_wait_01",
@@ -3381,7 +3733,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_wan_field_defeat_lb_01": {
         "id": "ch2_wan_field_defeat_lb_01",
@@ -3390,7 +3743,8 @@
         "stt_output": "此技仍可行,虚在野外引机不令其复震",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_wan_field_defeat_zj_01": {
         "id": "ch2_wan_field_defeat_zj_01",
@@ -3399,16 +3753,18 @@
         "stt_output": "韓中脱围是开路而逼迫不足忠正军阵在设此计",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_wan_field_hz_01": {
         "id": "ch2_wan_field_hz_01",
         "character": "hanzhong",
         "original_text": "官军开路，果是诱我！趁伏兵未合，杀出去！",
-        "stt_output": "官軍開入 果是由我 趁腐兵為何殺出去",
-        "wer": 3.0,
+        "stt_output": "官軍開入,國事右我,趁福兵為何殺出去",
+        "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_wan_field_lb_01": {
         "id": "ch2_wan_field_lb_01",
@@ -3417,7 +3773,8 @@
         "stt_output": "不可令其絕望成有先破頭目其於自散",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_wan_field_lb_02": {
         "id": "ch2_wan_field_lb_02",
@@ -3426,7 +3783,8 @@
         "stt_output": "流一路升門,升過怒雞城牆,可少傷心命",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_wan_field_zj_01": {
         "id": "ch2_wan_field_zj_01",
@@ -3435,7 +3793,8 @@
         "stt_output": "韩中国走此路,沿整军阵,激破其散乱之对。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_wan_field_zj_02": {
         "id": "ch2_wan_field_zj_02",
@@ -3444,7 +3803,8 @@
         "stt_output": "也占以胜如此受晚成之将便非清醒地门之言",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_wan_gate_defeat_lb_01": {
         "id": "ch2_wan_gate_defeat_lb_01",
@@ -3453,7 +3813,8 @@
         "stt_output": "记则显图,下次虚警逼城门,并护住门前军事。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_wan_gate_defeat_zj_01": {
         "id": "ch2_wan_gate_defeat_zj_01",
@@ -3462,7 +3823,8 @@
         "stt_output": "公門最計亂收兵整隊再攻一次",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_wan_gate_hz_01": {
         "id": "ch2_wan_gate_hz_01",
@@ -3471,7 +3833,8 @@
         "stt_output": "官軍已刀踢回應緊箱守住成強",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_wan_gate_lb_01": {
         "id": "ch2_wan_gate_lb_01",
@@ -3480,7 +3843,8 @@
         "stt_output": "责众闭门不真讲速战速决不可拖延",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_wan_gate_lb_02": {
         "id": "ch2_wan_gate_lb_02",
@@ -3489,7 +3853,8 @@
         "stt_output": "县林百姓看见汉军入城,随志而来的释法度",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_wan_gate_zj_01": {
         "id": "ch2_wan_gate_zj_01",
@@ -3498,7 +3863,8 @@
         "stt_output": "晚成成文在前,破門入,但虛敬軍事焚略。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_wan_gate_zj_02": {
         "id": "ch2_wan_gate_zj_02",
@@ -3507,7 +3873,8 @@
         "stt_output": "完成一曲,死路教開東南威烈,城中更需要安撫整肅。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_wan_gy_02": {
         "id": "ch2_wan_gy_02",
@@ -3561,7 +3928,8 @@
         "stt_output": "東南一路已開,寒中出城,虛振齊,為整而機制。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:map_lb_ch2_wan_gate_01": {
         "id": "map_lb_ch2_wan_gate_01",
@@ -3570,7 +3938,8 @@
         "stt_output": "完成成文在前,速破起門,入城後,需嚴正軍機。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_anxi_eunuch_01": {
         "id": "ch2_anxi_eunuch_01",
@@ -3615,7 +3984,8 @@
         "stt_output": "功勞本當自明,只是朝堂之上,功勞也似乎要人引見。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_anxi_gy_02": {
         "id": "ch2_anxi_gy_02",
@@ -3624,7 +3994,8 @@
         "stt_output": "那便清清白白去,以一手微觀,勝過一尺買高尾。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_anxi_gy_both_01": {
         "id": "ch2_anxi_gy_both_01",
@@ -3633,7 +4004,8 @@
         "stt_output": "既不能以官職效力,仍可再亂出护民,一路未決。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_anxi_gy_one_01": {
         "id": "ch2_anxi_gy_one_01",
@@ -3642,7 +4014,8 @@
         "stt_output": "他們不能沒你的功,便把關直壓的小郭功勞。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_anxi_lb_01": {
         "id": "ch2_anxi_lb_01",
@@ -3651,7 +4024,8 @@
         "stt_output": "有關則禁止,無關一手一,只是隨我等出生入死之人,也該見朝廷公道。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_anxi_lb_02": {
         "id": "ch2_anxi_lb_02",
@@ -3660,7 +4034,8 @@
         "stt_output": "朱江君已上民籍,我等之待朝廷全住,除此之外,被無可危。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_anxi_lb_03": {
         "id": "ch2_anxi_lb_03",
@@ -3669,7 +4044,8 @@
         "stt_output": "安喜线为 硬受碎小 印下百姓却不可清",
         "wer": 3.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_anxi_lb_both_01": {
         "id": "ch2_anxi_lb_both_01",
@@ -3678,7 +4054,8 @@
         "stt_output": "如此我登所的不是印奏而是上流此生意口气此气上在仍可则意而行",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_anxi_lb_one_01": {
         "id": "ch2_anxi_lb_one_01",
@@ -3687,7 +4064,8 @@
         "stt_output": "安喜憲為左,雖無自長之印,然此之所其仍是漢家百姓。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_anxi_narrator_01": {
         "id": "ch2_anxi_narrator_01",
@@ -3696,7 +4074,8 @@
         "stt_output": "完成既定南洋平西朱俊班失落洋作节并上表作瞬间劉備等任志工",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_anxi_narrator_02": {
         "id": "ch2_anxi_narrator_02",
@@ -3705,7 +4084,8 @@
         "stt_output": "孙奸有人勤不久變得別徵司馬之刃留為在公門外後命日付一日確實中不得處受",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_anxi_narrator_03": {
         "id": "ch2_anxi_narrator_03",
@@ -3723,7 +4103,8 @@
         "stt_output": "劉備歲前軍事各規象裡職貸少數精髓與關於張飛復安喜憲上任",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_anxi_narrator_both_01": {
         "id": "ch2_anxi_narrator_both_01",
@@ -3759,7 +4140,8 @@
         "stt_output": "劉備歲前軍是各閨鄉裡直帶少數青髓與關於張飛輔安喜在他人印下共職",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_anxi_zf_01": {
         "id": "ch2_anxi_zf_01",
@@ -3768,7 +4150,8 @@
         "stt_output": "咱们破账宝定阳城又住期晚男的要在这公门时尚走出狗来他有人理会",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_anxi_zf_02": {
         "id": "ch2_anxi_zf_02",
@@ -3777,7 +4160,8 @@
         "stt_output": "也罢也罢若有欢面关来西亚两名可别叫按陪他笑脸",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_anxi_zf_both_01": {
         "id": "ch2_anxi_zf_both_01",
@@ -3786,7 +4170,8 @@
         "stt_output": "是我们我们救了他们的天下若怒气是久暗能把若阳贯成",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_anxi_zf_one_01": {
         "id": "ch2_anxi_zf_one_01",
@@ -3795,7 +4180,8 @@
         "stt_output": "一城大站只给半截赏似哼去安喜按任陪大哥",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_anxi_zj_01": {
         "id": "ch2_anxi_zj_01",
@@ -3804,7 +4190,8 @@
         "stt_output": "你便是留玄德軍報中舉文其名為何在此久後如無功效力",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:ch2_anxi_zj_02": {
         "id": "ch2_anxi_zj_02",
@@ -3813,7 +4200,8 @@
         "stt_output": "即如此我便替这程末开口相识为汉流血官觉却在门内买卖",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:ch2_anxi_zj_03": {
         "id": "ch2_anxi_zj_03",
@@ -3822,7 +4210,8 @@
         "stt_output": "我已執照天子黃金之亂正因邁官預決任親害仇顯著有功返復其名",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:ch2_anxi_zj_04": {
         "id": "ch2_anxi_zj_04",
@@ -3831,7 +4220,8 @@
         "stt_output": "我请诸石尝试制度逐场跑贼有公者换官却称我其主将我逐出",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:ch2_hj_death_cc_01": {
         "id": "ch2_hj_death_cc_01",
@@ -3840,7 +4230,8 @@
         "stt_output": "此便是罗网,确批做照明",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_hj_death_cc_02": {
         "id": "ch2_hj_death_cc_02",
@@ -3849,7 +4240,8 @@
         "stt_output": "今日之際,先一正軍為,然後徒賊",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_hj_death_cc_03": {
         "id": "ch2_hj_death_cc_03",
@@ -3858,7 +4250,8 @@
         "stt_output": "如此,素于整箱可为工所用",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_hj_death_eunuch_01": {
         "id": "ch2_hj_death_eunuch_01",
@@ -3867,7 +4260,8 @@
         "stt_output": "公中有命請大將軍送入以定後事",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_grandiose_male_mandarin.wav"
     },
     "zh:ch2_hj_death_hj_01": {
         "id": "ch2_hj_death_hj_01",
@@ -3876,7 +4270,8 @@
         "stt_output": "誰敢與吳魯公正軍討賊掃清朝廷",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
     },
     "zh:ch2_hj_death_hj_discipline": {
         "id": "ch2_hj_death_hj_discipline",
@@ -3885,7 +4280,8 @@
         "stt_output": "可典兵入宫,但需严令约束入宫为政均为不为结略",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
     },
     "zh:ch2_hj_death_hj_force": {
         "id": "ch2_hj_death_hj_force",
@@ -3894,7 +4290,8 @@
         "stt_output": "讓共中先見我冰威再趕開口",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
     },
     "zh:ch2_hj_death_narrator_01": {
         "id": "ch2_hj_death_narrator_01",
@@ -3903,7 +4300,8 @@
         "stt_output": "何靖大喜碎點玉玲軍,律宇宙城入宮,玉玲地就先福立太子邊。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_hj_death_panyin_01": {
         "id": "ch2_hj_death_panyin_01",
@@ -3912,7 +4310,8 @@
         "stt_output": "大将军林地以崩",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
     },
     "zh:ch2_hj_death_panyin_02": {
         "id": "ch2_hj_death_panyin_02",
@@ -3921,7 +4320,8 @@
         "stt_output": "簡述與時常事密不發生又你腳趙在照公入公",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
     },
     "zh:ch2_hj_death_panyin_03": {
         "id": "ch2_hj_death_panyin_03",
@@ -3930,7 +4330,8 @@
         "stt_output": "其一先絕功之後換再立皇子協",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
     },
     "zh:ch2_hj_death_ys_01": {
         "id": "ch2_hj_death_ys_01",
@@ -3939,7 +4340,8 @@
         "stt_output": "燕姐金兵五千掌關入內策理新軍緊諸嚴肅",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
     },
     "zh:ch2_hj_death_ys_02": {
         "id": "ch2_hj_death_ys_02",
@@ -3948,7 +4350,8 @@
         "stt_output": "善患罐所懂的朝廷化正是微距二字",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
     },
     "zh:ch2_hj_enthrone_cc_dismissed_01": {
         "id": "ch2_hj_enthrone_cc_dismissed_01",
@@ -3957,7 +4360,8 @@
         "stt_output": "若冰味在前,至少让民意紧随其后。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_hj_enthrone_cc_heeded_01": {
         "id": "ch2_hj_enthrone_cc_heeded_01",
@@ -3966,7 +4370,8 @@
         "stt_output": "少开一门,变少露一分,监几,直去子宫与洗售。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_hj_enthrone_hj_01": {
         "id": "ch2_hj_enthrone_hj_01",
@@ -3975,7 +4380,8 @@
         "stt_output": "于林地子公之前奉太子变受喜受极皇帝为",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
     },
     "zh:ch2_hj_enthrone_hj_disciplined_01": {
         "id": "ch2_hj_enthrone_hj_disciplined_01",
@@ -3984,7 +4390,8 @@
         "stt_output": "中軍不得亂行不得善入別墊我懂入功只為正軍為",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
     },
     "zh:ch2_hj_enthrone_narrator_01": {
         "id": "ch2_hj_enthrone_narrator_01",
@@ -3993,7 +4400,8 @@
         "stt_output": "元少界玉林君五千和勇巡邮正太等朱城随和进入宫",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_hj_enthrone_narrator_02": {
         "id": "ch2_hj_enthrone_narrator_02",
@@ -4002,16 +4410,18 @@
         "stt_output": "太子為便記為世為少大何後為皇太后皇子協封城流亡",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_hj_enthrone_narrator_03": {
         "id": "ch2_hj_enthrone_narrator_03",
         "character": "narrator",
         "original_text": "君位虽定，蹇硕仍握禁兵，宫中廊庑仍听宦官之声。",
-        "stt_output": "居為隧定 檢輸人物禁兵 公中老五 人聽喚關之聲",
-        "wer": 4.0,
+        "stt_output": "均為隨頂,簡述人物握緊兵,共中南武人聽喚關之聲。",
+        "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_hj_enthrone_ys_01": {
         "id": "ch2_hj_enthrone_ys_01",
@@ -4020,7 +4430,8 @@
         "stt_output": "今天此以一暗中角照者皆可名為逆賊",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
     },
     "zh:ch2_hj_enthrone_ys_force_01": {
         "id": "ch2_hj_enthrone_ys_force_01",
@@ -4029,7 +4440,8 @@
         "stt_output": "兩桌門都看見冰妹慣關落要低雨也叫他們對著槍間低雨",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
     },
     "zh:ch2_hj_js_cc_dismissed_01": {
         "id": "ch2_hj_js_cc_dismissed_01",
@@ -4038,7 +4450,8 @@
         "stt_output": "預員已進,內工為進,生意換官,定非制換官",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_hj_js_cc_heeded_01": {
         "id": "ch2_hj_js_cc_heeded_01",
@@ -4047,7 +4460,8 @@
         "stt_output": "民旗一罪而诸之,死未全,犯乎警杀患馆,全是变化作业。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_hj_js_guo_01": {
         "id": "ch2_hj_js_guo_01",
@@ -4056,16 +4470,18 @@
         "stt_output": "你以私謀脫我等共死我不為你的野心遜漲",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_grandiose_male_mandarin.wav"
     },
     "zh:ch2_hj_js_hj_01": {
         "id": "ch2_hj_js_hj_01",
         "character": "hejin",
         "original_text": "蹇硕谋杀，罪在明处。张让、段珪仍得太后左右。行事须以罪名，不可以怒气。",
-        "stt_output": "渐速謀殺 最在民處張讓 斷歸 仍得太后左右形勢 虛易罪名 不可以怒氣",
-        "wer": 6.0,
+        "stt_output": "減速謀殺最在民促罩讓斷歸扔得太后左右形式虛擬罪名不可以怒氣",
+        "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
     },
     "zh:ch2_hj_js_jian_01": {
         "id": "ch2_hj_js_jian_01",
@@ -4074,7 +4490,8 @@
         "stt_output": "胡家都来进兵听我号令",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_fearsome_elder_male_mandarin.wav"
     },
     "zh:ch2_hj_js_narrator_01": {
         "id": "ch2_hj_js_narrator_01",
@@ -4083,16 +4500,18 @@
         "stt_output": "少地基地元少吉隐兵收检数",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_hj_js_narrator_02": {
         "id": "ch2_hj_js_narrator_02",
         "character": "narrator",
         "original_text": "蹇硕走入御园，为郭胜所杀。蹇硕所领禁兵，皆归何进。",
-        "stt_output": "检朔走路語言為郭盛所殺检朔所領慶兵 皆歸何謹",
-        "wer": 2.0,
+        "stt_output": "检朔走路运为国盛所杀检朔所领进兵皆归合进",
+        "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_hj_js_narrator_03": {
         "id": "ch2_hj_js_narrator_03",
@@ -4101,7 +4520,8 @@
         "stt_output": "和敬守握新军,减述近兵,以握住满公经局之敌,张让段归等仍在。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_hj_js_narrator_discipline_01": {
         "id": "ch2_hj_js_narrator_discipline_01",
@@ -4110,7 +4530,8 @@
         "stt_output": "因何近新前约束军务,公中兵使多案解极规明。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_hj_js_narrator_force_01": {
         "id": "ch2_hj_js_narrator_force_01",
@@ -4119,7 +4540,8 @@
         "stt_output": "任何緊張兵士位公中雖俗禁舉升卻先於使者傳開",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_hj_js_ys_01": {
         "id": "ch2_hj_js_ys_01",
@@ -4128,7 +4550,8 @@
         "stt_output": "竟說叫趙謀殺大將軍玉別離皇子那下",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
     },
     "zh:ch2_hj_js_ys_02": {
         "id": "ch2_hj_js_ys_02",
@@ -4137,7 +4560,8 @@
         "stt_output": "建设意思,刀一段一根恶根,便当尽端其余。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
     },
     "zh:ch2_wan_north_defeat_lb_01": {
         "id": "ch2_wan_north_defeat_lb_01",
@@ -4146,7 +4570,8 @@
         "stt_output": "工程知识要考词路不识,即刻再站",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_wan_north_defeat_zj_01": {
         "id": "ch2_wan_north_defeat_zj_01",
@@ -4155,7 +4580,8 @@
         "stt_output": "孫重衝破北路撐於眾為劇立刻種整軍政",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_wan_north_lb_01": {
         "id": "ch2_wan_north_lb_01",
@@ -4164,7 +4590,8 @@
         "stt_output": "横裂于道路之上,除祥福之外,不给贼重流露。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_wan_north_lb_02": {
         "id": "ch2_wan_north_lb_02",
@@ -4173,7 +4600,8 @@
         "stt_output": "孫眾一對一破 收起冰淇 氣泄著殼棉",
         "wer": 3.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_wan_north_sj_01": {
         "id": "ch2_wan_north_sj_01",
@@ -4182,7 +4610,8 @@
         "stt_output": "成强一曲 赵鸿一死你等手入使贼重不能复成君世",
         "wer": 2.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_wan_north_sz_01": {
         "id": "ch2_wan_north_sz_01",
@@ -4191,7 +4620,8 @@
         "stt_output": "成强将破,趁孙尖为封住晚城,向北沙出去。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_wan_north_zj_01": {
         "id": "ch2_wan_north_zj_01",
@@ -4200,7 +4630,8 @@
         "stt_output": "孫奸正宫城墙,選得守住這條北路,不可令孫重帶,造紅魚重逃去。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_wan_north_zj_02": {
         "id": "ch2_wan_north_zj_02",
@@ -4209,7 +4640,8 @@
         "stt_output": "如此晚成已定,趙鴻,孙重皆死,南陽招勁副平。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_wan_rev_lb_02_road": {
         "id": "ch2_wan_rev_lb_02_road",
@@ -4218,7 +4650,8 @@
         "stt_output": "那便請孫江軍工程,我兄弟手背入,繁從成本突為者,競結智。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_wan_rev_lb_02_wall": {
         "id": "ch2_wan_rev_lb_02_wall",
@@ -4227,7 +4660,8 @@
         "stt_output": "那我等同孫將軍工程,若速破成門,孫重變無路可走。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_wan_rev_sj_02_road": {
         "id": "ch2_wan_rev_sj_02_road",
@@ -4236,7 +4670,8 @@
         "stt_output": "成强交给孙奸 贼弱背头变性诸军 史奇 录载与成门",
         "wer": 4.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_wan_rev_sj_02_wall": {
         "id": "ch2_wan_rev_sj_02_wall",
@@ -4245,7 +4680,8 @@
         "stt_output": "好 合 病例登城趁照红胆气围故辩定此意",
         "wer": 3.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_wan_rev_zj_03_road": {
         "id": "ch2_wan_rev_zj_03_road",
@@ -4254,7 +4690,8 @@
         "stt_output": "善,孙奸宫城,玄德,你兄弟王手北路,孙重弱走,必使其遇你。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_wan_rev_zj_03_wall": {
         "id": "ch2_wan_rev_zj_03_wall",
@@ -4263,7 +4700,8 @@
         "stt_output": "如此,工程一路當用我軍銳起,與兵手道路,你與孫間定力破門。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:cc_ch1_end_01": {
         "id": "cc_ch1_end_01",
@@ -4272,7 +4710,8 @@
         "stt_output": "影創一夜,拜賊在遭劫機並是一亂曹操璇及北追四次生命見齊",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_anxi_narrator_wait_01": {
         "id": "ch2_anxi_narrator_wait_01",
@@ -4281,7 +4720,8 @@
         "stt_output": "数个十成后,张军子宫门付出一关大城,怒气为销,所信性命上在",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_anxi_zj_both_01": {
         "id": "ch2_anxi_zj_both_01",
@@ -4290,7 +4730,8 @@
         "stt_output": "他們兩對並提以兵司法盧旨又向董卓舉任朱俊可救你性命卻就不得關職",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:ch2_anxi_zj_both_02": {
         "id": "ch2_anxi_zj_both_02",
@@ -4299,7 +4740,8 @@
         "stt_output": "朝廷免以罪名不受已關趁上無人再借怕名生事素離落羊",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:ch2_anxi_zj_clean_01": {
         "id": "ch2_anxi_zj_clean_01",
@@ -4308,7 +4750,8 @@
         "stt_output": "然而他们具有公知识的声愿言以将你全驻为安喜相",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:ch2_anxi_zj_dz_01": {
         "id": "ch2_anxi_zj_dz_01",
@@ -4317,7 +4760,8 @@
         "stt_output": "他们又提动着之事你兄弟曾向朝廷将率局认诸俊立言你公布可行",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:ch2_anxi_zj_freed_01": {
         "id": "ch2_anxi_zj_freed_01",
@@ -4326,7 +4770,8 @@
         "stt_output": "他们又提如知之事你解夺朝廷借送私放其身诸俊立言你公布可行",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:ch2_anxi_zj_one_01": {
         "id": "ch2_anxi_zj_one_01",
@@ -4335,7 +4780,8 @@
         "stt_output": "朝廷社期最減期上你得复安喜共职却非自掌线为之应",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:ch2_wan_final_zj_02": {
         "id": "ch2_wan_final_zj_02",
@@ -4344,7 +4790,8 @@
         "stt_output": "趙鴻宜死孫重一福,賊重虧散,南陽諸俊復平。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_wan_final_zj_03": {
         "id": "ch2_wan_final_zj_03",
@@ -4353,7 +4800,8 @@
         "stt_output": "皇府松已于趋阳破张良,张角也早已深死,此一路皇京之火,至此极景。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_wan_final_zj_04": {
         "id": "ch2_wan_final_zj_04",
@@ -4362,7 +4810,8 @@
         "stt_output": "我等班失落洋此皆虛作文朝廷孫奸劉備以及此一有公者也當一病表走",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_wan_north_zj_03": {
         "id": "ch2_wan_north_zj_03",
@@ -4371,7 +4820,8 @@
         "stt_output": "皇府松宜,于区阳破张良,张角也早已深死,此一路皇金之火,至此极景。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_wan_north_zj_04": {
         "id": "ch2_wan_north_zj_04",
@@ -4380,16 +4830,18 @@
         "stt_output": "我等班失落洋,此捷虛奏文朝廷,孙奸流辈以及此意有公者也当一定表揍。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:map_lb_ch2_luoyang_01": {
         "id": "map_lb_ch2_luoyang_01",
         "character": "liubei",
         "original_text": "宛城已定。朱儁将军班师洛阳奏捷，我等也该随行，听候朝廷铨注。",
-        "stt_output": "完成已定 朱俊将军班失落洋作结我等也该随行 听候朝廷全住",
-        "wer": 3.0,
+        "stt_output": "完成已定,朱俊将军班师落杨祖杰我等也该随行听后朝廷传注",
+        "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_anxi_govern_clerk_01": {
         "id": "ch2_anxi_govern_clerk_01",
@@ -4398,7 +4850,8 @@
         "stt_output": "劉公都由以威压人他口中不说心里所要无非愧录",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:ch2_anxi_govern_elder_01": {
         "id": "ch2_anxi_govern_elder_01",
@@ -4407,7 +4860,8 @@
         "stt_output": "張將軍都要害流供我等來作證卻被他手下爛在門外",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:ch2_anxi_govern_gy_01": {
         "id": "ch2_anxi_govern_gy_01",
@@ -4416,7 +4870,8 @@
         "stt_output": "胸掌指擊從中飛起軟縫之所不如腳還硬瘦 令圖遠跡",
         "wer": 2.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_anxi_govern_inspector_01": {
         "id": "ch2_anxi_govern_inspector_01",
@@ -4425,7 +4880,8 @@
         "stt_output": "留選得你是何出生又平和功德受執任",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_anxi_govern_inspector_02": {
         "id": "ch2_anxi_govern_inspector_02",
@@ -4434,7 +4890,8 @@
         "stt_output": "詐稱黃清,需報攻擊,朝廷正要殺台這等軍功難關,你恐怕任何勤力。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_anxi_govern_inspector_03": {
         "id": "ch2_anxi_govern_inspector_03",
@@ -4443,7 +4900,8 @@
         "stt_output": "選得功就我性命",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_anxi_govern_lb_01": {
         "id": "ch2_anxi_govern_lb_01",
@@ -4452,7 +4910,8 @@
         "stt_output": "被乃中山禁王之后自捉俊起兵以来大小三十余战逃脚黄金",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_anxi_govern_lb_02": {
         "id": "ch2_anxi_govern_lb_02",
@@ -4461,7 +4920,8 @@
         "stt_output": "我與明秋好無法,若要現在起步實現成了他口中的貪力",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_anxi_govern_lb_03": {
         "id": "ch2_anxi_govern_lb_03",
@@ -4470,7 +4930,8 @@
         "stt_output": "一得夠了,他當受则罰,卻不該死於,我等怒氣。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_anxi_govern_lb_04": {
         "id": "ch2_anxi_govern_lb_04",
@@ -4479,7 +4940,8 @@
         "stt_output": "都由,據你害民,本當殺卻,經孤老辱命,把這印獸帶回給那些親邁公民的人。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_anxi_govern_narrator_01": {
         "id": "ch2_anxi_govern_narrator_01",
@@ -4488,7 +4950,8 @@
         "stt_output": "數限十一月流被與民秋毫無犯安喜百姓見幸福這位新憲為",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_anxi_govern_narrator_02": {
         "id": "ch2_anxi_govern_narrator_02",
@@ -4497,7 +4960,8 @@
         "stt_output": "到人之后 与官张时则同着 请则同床仇人广作之中 官张时李中日不见",
         "wer": 4.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_anxi_govern_narrator_03": {
         "id": "ch2_anxi_govern_narrator_03",
@@ -4506,16 +4970,18 @@
         "stt_output": "四日都由先提线里,乐令指称刘卫海明向老前来苦告,又被门人看打",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_anxi_govern_narrator_04": {
         "id": "ch2_anxi_govern_narrator_04",
         "character": "narrator",
         "original_text": "刘备将印绶挂在督邮颈上，与关羽、张飞离开安喜，北往代州投刘恢。",
-        "stt_output": "劉備將一手掛在獨有景上 與關與張飛離開安喜北網帶周頭流灰",
-        "wer": 2.0,
+        "stt_output": "劉備將應受掛在獨有景上與關於張飛離開安喜北網帶州投流會",
+        "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_anxi_govern_narrator_one_01": {
         "id": "ch2_anxi_govern_narrator_one_01",
@@ -4524,7 +4990,8 @@
         "stt_output": "所以在他人印下共职刘备处置安喜县市仍与明秋毫无饭",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_anxi_govern_zf_01": {
         "id": "ch2_anxi_govern_zf_01",
@@ -4533,7 +5000,8 @@
         "stt_output": "害民的贼倒敢说按哥哥贪污让他的皮肉听听真话",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_anxi_gy_both_02": {
         "id": "ch2_anxi_gy_both_02",
@@ -4542,7 +5010,8 @@
         "stt_output": "那就该在朝廷改口之前离开音剧而射未必经得起第二句产业",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_liuhui_gy_01": {
         "id": "ch2_liuhui_gy_01",
@@ -4551,16 +5020,18 @@
         "stt_output": "一路有时也须借人们听而过成盟收留 官某敏感",
         "wer": 2.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_liuhui_lb_01": {
         "id": "ch2_liuhui_lb_01",
         "character": "liubei",
         "original_text": "代州刘恢亦是汉室宗亲。若他肯收留，我等可暂候其处，待天下再有用我等之日。",
-        "stt_output": "帶著流灰意是漢式中情若他肯收流 我等可暫後起初帶天下載由用我等之日",
-        "wer": 2.0,
+        "stt_output": "帶州流會以石漢市中清若它肯收流,我等可在喉其處帶天下載由用我等之日",
+        "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_liuhui_lb_02": {
         "id": "ch2_liuhui_lb_02",
@@ -4569,7 +5040,8 @@
         "stt_output": "那邊暫且安身附近觸白性帶一個不復桃園知識的徵照",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_liuhui_lh_01": {
         "id": "ch2_liuhui_lh_01",
@@ -4578,7 +5050,8 @@
         "stt_output": "我知你明 也知你中",
         "wer": 2.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
     },
     "zh:ch2_liuhui_narrator_02": {
         "id": "ch2_liuhui_narrator_02",
@@ -4587,7 +5060,8 @@
         "stt_output": "流灰碎,流泥胸第三人,流被衣食隱魚朝廷不舒之外,卻為離汗加亂路之中。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_liuhui_narrator_anxi_01": {
         "id": "ch2_liuhui_narrator_anxi_01",
@@ -4596,16 +5070,18 @@
         "stt_output": "印説記還安息以別劉備關於張飛北行而去追捕文書只怕一再路上",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_liuhui_narrator_both_01": {
         "id": "ch2_liuhui_narrator_both_01",
         "character": "narrator",
         "original_text": "朝廷赦了刘备，却不授一官。刘备遣军士各归乡里，趁赦命未变，离开洛阳。",
-        "stt_output": "桃丁瘦了刘备 却不受已关刘备前军事各卫项里趁热命违遍 离开入洋",
-        "wer": 3.0,
+        "stt_output": "朝廷瘦流被卻不受一關流被前軍事各規相理刺受命為便離開洛陽",
+        "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
     },
     "zh:ch2_liuhui_zf_01": {
         "id": "ch2_liuhui_zf_01",
@@ -4614,7 +5090,8 @@
         "stt_output": "躲藏这是压的按键榜难受可比向身首要前的都有低头墙",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:map_lb_ch2_anxi_01": {
         "id": "map_lb_ch2_anxi_01",
@@ -4623,7 +5100,8 @@
         "stt_output": "朝廷一定我等去處,我們往安喜去盡力清白微明。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:map_lb_ch2_liuhui_01": {
         "id": "map_lb_ch2_liuhui_01",
@@ -4632,7 +5110,8 @@
         "stt_output": "不可再留在朝廷眼下帶州流灰火可暫容我等帶來日仔聽真照",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_luoyang_liubo_accept_01": {
         "id": "ch2_luoyang_liubo_accept_01",
@@ -4641,7 +5120,8 @@
         "stt_output": "那就讓博助先開口,等著工慢慢移",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_luoyang_liubo_decline_01": {
         "id": "ch2_luoyang_liubo_decline_01",
@@ -4650,7 +5130,8 @@
         "stt_output": "改日吧,我们还是听着公门",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_luoyang_liubo_decline_reply_01": {
         "id": "ch2_luoyang_liubo_decline_reply_01",
@@ -4659,7 +5140,8 @@
         "stt_output": "隨你,期盼走的總比朝廷快",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_luoyang_liubo_intro_01": {
         "id": "ch2_luoyang_liubo_intro_01",
@@ -4668,7 +5150,8 @@
         "stt_output": "后在公门外也像一场战役称公中意识围定做下薄一局如何",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_luoyang_liubo_loss_01": {
         "id": "ch2_luoyang_liubo_loss_01",
@@ -4677,7 +5160,8 @@
         "stt_output": "六博教人耐心,公門開的賣食,這道禮道也有用",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_luoyang_liubo_win_01": {
         "id": "ch2_luoyang_liubo_win_01",
@@ -4686,16 +5170,18 @@
         "stt_output": "聖德干净,只愿朝廷看功劳,也能如,你看其局这班分明。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_wan_final_sj_01": {
         "id": "ch2_wan_final_sj_01",
         "character": "sunjian",
         "original_text": "坚愿先登。赵弘复得宛城，也不过再失一次。",
-        "stt_output": "簡易院鮮登 趙洪富德晚城也不過再試一次",
-        "wer": 2.0,
+        "stt_output": "先怨先登赵红负的晚程也不过再试一次",
+        "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_wan_final_sj_02": {
         "id": "ch2_wan_final_sj_02",
@@ -4704,7 +5190,8 @@
         "stt_output": "選擇所言甚至成強進去萬軍更當首出法度",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_wan_rev_sj_01": {
         "id": "ch2_wan_rev_sj_01",
@@ -4713,7 +5200,8 @@
         "stt_output": "出警将军下批孙兼奉赵尔回下冰马院公晚城",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
     },
     "zh:ch2_wan_final_lb_01": {
         "id": "ch2_wan_final_lb_01",
@@ -4722,7 +5210,8 @@
         "stt_output": "二第三帝與孫將軍並立公門就在此處破罩紅孫重物使亂世復散",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
     },
     "zh:ch2_wan_final_zj_01": {
         "id": "ch2_wan_final_zj_01",
@@ -4731,7 +5220,8 @@
         "stt_output": "選得以絕意同孫尖工程,於兵手道路,你等所認,便是破此成門。",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
     },
     "zh:ch2_anxi_palace_guard_01": {
         "id": "ch2_anxi_palace_guard_01",
@@ -4740,6 +5230,445 @@
         "stt_output": "公門有令封照者實表作勢的朝官方可入內戴上軍事一戴後門外",
         "wer": 1.0,
         "is_bad": true,
-        "language": "zh"
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
+    },
+    "zh:ch2_anxi_govern_gy_stop_01": {
+        "id": "ch2_anxi_govern_gy_stop_01",
+        "character": "guanyu",
+        "original_text": "翼德，够了。惩恶是义，任怒伤人便非义了。",
+        "stt_output": "亦得夠了,成惡事意,任怒商人便非意了。",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+    },
+    "zh:ch2_anxi_govern_lb_harder_01": {
+        "id": "ch2_anxi_govern_lb_harder_01",
+        "character": "liubei",
+        "original_text": "让他替所害百姓，再受这一记。",
+        "stt_output": "让他替索害百姓再受这一击",
+        "wer": 1.0,
+        "is_bad": true,
+        "language": "zh",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+    },
+    "zh:ch2_hj_council_cc_01": {
+        "id": "ch2_hj_council_cc_01",
+        "character": "caocao",
+        "original_text": "宦官世在禁中，帘幕廊庑之间，皆有其耳目。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_hj_council_cc_02": {
+        "id": "ch2_hj_council_cc_02",
+        "character": "caocao",
+        "original_text": "若欲行事，须密而准。大张杀伐，必有灭族之祸。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_hj_council_cc_03": {
+        "id": "ch2_hj_council_cc_03",
+        "character": "caocao",
+        "original_text": "那便令知者少。诸臣皆知之计，张让亦已知之。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_hj_council_cc_04": {
+        "id": "ch2_hj_council_cc_04",
+        "character": "caocao",
+        "original_text": "操言尽于此。只愿宫墙不如人多口。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_hj_council_hj_01": {
+        "id": "ch2_hj_council_hj_01",
+        "character": "hejin",
+        "original_text": "蹇硕在宫门设刃害我。此毒根已遍禁中。",
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_hj_council_hj_02": {
+        "id": "ch2_hj_council_hj_02",
+        "character": "hejin",
+        "original_text": "宦官若能以杀人定储位，则我等皆非为汉效力。",
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_hj_council_hj_03": {
+        "id": "ch2_hj_council_hj_03",
+        "character": "hejin",
+        "original_text": "刀兵未动，先定储位。遣人守宫中消息，等潘隐再报。",
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_hj_council_hj_dismiss": {
+        "id": "ch2_hj_council_hj_dismiss",
+        "character": "hejin",
+        "original_text": "孟德年少，不可在众臣前以惧为智。",
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_hj_council_hj_heed": {
+        "id": "ch2_hj_council_hj_heed",
+        "character": "hejin",
+        "original_text": "孟德之慎，言中要害。先查明谁与蹇硕同党。",
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_hj_council_narrator_02": {
+        "id": "ch2_hj_council_narrator_02",
+        "character": "narrator",
+        "original_text": "诸臣议论未定，宫中已秘不发丧，并拟矫诏再召何进。",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_hj_council_ys_01": {
+        "id": "ch2_hj_council_ys_01",
+        "character": "yuanshao",
+        "original_text": "大将军，此事分明。列其奸名，发兵入宫，一扫而尽。",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_hj_council_ys_02": {
+        "id": "ch2_hj_council_ys_02",
+        "character": "yuanshao",
+        "original_text": "谨慎固然有用，迁延只会养肥奸贼。",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_hj_council_ys_03": {
+        "id": "ch2_hj_council_ys_03",
+        "character": "yuanshao",
+        "original_text": "大将军明断。以兵制奸，正当其时。",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_final_defeat_lb_01": {
+        "id": "ch2_wan_final_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "不可令孙仲携余党逃去。即刻回攻城门。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_final_defeat_zj_01": {
+        "id": "ch2_wan_final_defeat_zj_01",
+        "character": "zhujun",
+        "original_text": "赵弘凭城之势，胜于所料。重整门前之阵，与孙坚再攻。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_final_lb_02": {
+        "id": "ch2_wan_final_lb_02",
+        "character": "liubei",
+        "original_text": "请清点降众，收其兵器。胜利当止杀，不可养杀。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_final_sz_01": {
+        "id": "ch2_wan_final_sz_01",
+        "character": "sunzhong",
+        "original_text": "突围！若死守城石，宛城便真完了！",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_rev_gy_01": {
+        "id": "ch2_wan_rev_gy_01",
+        "character": "guanyu",
+        "original_text": "当待其隙，不可怒驱士卒撞墙。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_rev_lb_01": {
+        "id": "ch2_wan_rev_lb_01",
+        "character": "liubei",
+        "original_text": "韩忠出城而败。赵弘若复据城墙，便更难破。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_rev_messenger_01": {
+        "id": "ch2_wan_rev_messenger_01",
+        "character": "soldier",
+        "original_text": "朱将军！赵弘、孙仲收合余党，声势甚盛。",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_rev_messenger_02": {
+        "id": "ch2_wan_rev_messenger_02",
+        "character": "soldier",
+        "original_text": "贼众反扑宛城，城外诸军已被逼退。",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_rev_narrator_01": {
+        "id": "ch2_wan_rev_narrator_01",
+        "character": "narrator",
+        "original_text": "韩忠既死，余众四散。然而宛城之役并未就此结束。",
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_rev_zf_01": {
+        "id": "ch2_wan_rev_zf_01",
+        "character": "zhangfei",
+        "original_text": "哼。孙仲若从北门逃，便交给俺。",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_rev_zj_01": {
+        "id": "ch2_wan_rev_zj_01",
+        "character": "zhujun",
+        "original_text": "蛇断一首，余首尚动。退军十里下寨，先保军势。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_rev_zj_02": {
+        "id": "ch2_wan_rev_zj_02",
+        "character": "zhujun",
+        "original_text": "善。贼众以为勇气复来，我等便让他们知道，不过喧嚣而已。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_wall_gy_01": {
+        "id": "ch2_wan_wall_gy_01",
+        "character": "guanyu",
+        "original_text": "困兽之兵坚如铁，奔逃之众则如草芥。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_wall_gy_02": {
+        "id": "ch2_wan_wall_gy_02",
+        "character": "guanyu",
+        "original_text": "若军心整肃，重击城门，也可速断其诈。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_wall_lb_01": {
+        "id": "ch2_wan_wall_lb_01",
+        "character": "liubei",
+        "original_text": "将军，宛城非阳城。此刻须决断：诱韩忠出城，还是趁其诈计未成先破城门。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_wall_lb_02": {
+        "id": "ch2_wan_wall_lb_02",
+        "character": "liubei",
+        "original_text": "可独开东南一路。韩忠若出，便于野外击其散乱之阵。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_wall_lb_03": {
+        "id": "ch2_wan_wall_lb_03",
+        "character": "liubei",
+        "original_text": "那便即刻攻城。若韩忠借诈降藏身墙后，便先破其城门，使其无利可图。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_wall_zf_01": {
+        "id": "ch2_wan_wall_zf_01",
+        "character": "zhangfei",
+        "original_text": "好！让他们以为有路可走，俺再用蛇矛替他们截路！",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_wall_zf_02": {
+        "id": "ch2_wan_wall_zf_02",
+        "character": "zhangfei",
+        "original_text": "哈哈！一边求饶一边闭门，俺便敲得全宛城都听见！",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_wall_zj_01": {
+        "id": "ch2_wan_wall_zj_01",
+        "character": "zhujun",
+        "original_text": "宛城就在眼前。韩忠遣使请降，然而城门仍闭，城头旗帜仍在。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_wall_zj_02": {
+        "id": "ch2_wan_wall_zj_02",
+        "character": "zhujun",
+        "original_text": "阳城是严政斩张宝后从城中开门。宛城如今只是隔着闭门空言请降。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_wall_zj_03": {
+        "id": "ch2_wan_wall_zj_03",
+        "character": "zhujun",
+        "original_text": "若这是缓兵之计，眼前城墙便会令我军付出代价。玄德，你以为该如何应对？",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_wall_zj_04": {
+        "id": "ch2_wan_wall_zj_04",
+        "character": "zhujun",
+        "original_text": "玄德之言有理。东南稍解围势，精锐伏于狭路。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_wan_wall_zj_05": {
+        "id": "ch2_wan_wall_zj_05",
+        "character": "zhujun",
+        "original_text": "也罢。就在城门前列攻城之阵。取宛城，不许焚掠。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "zh:ch2_yc_zj_04": {
+        "id": "ch2_yc_zj_04",
+        "character": "zhujun",
+        "original_text": "阳城已定。下一步进军宛城，韩忠已在那里收聚余贼。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "language": "zh",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
     }
 }

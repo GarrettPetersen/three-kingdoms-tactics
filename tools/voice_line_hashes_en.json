@@ -237,6 +237,13 @@
     "version": 1,
     "voice_target": "movies/clean/clean_master_xehanort.wav"
   },
+  "ch2_anxi_govern_gy_stop_01": {
+    "character": "guanyu",
+    "hash": "87432178608873b3d5c165e7ca69624c919ce6e09d55b76f954dbf33f4e8ba29",
+    "text": "Yide, enough. To punish a wicked man is justice; to be ruled by anger is not.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_master_xehanort.wav"
+  },
   "ch2_anxi_govern_inspector_01": {
     "character": "merchant",
     "hash": "e32e485e99c80dccc4c8d1ec3c0a193bee1d889b857342849c9535f6b3ea9bac",
@@ -283,6 +290,13 @@
     "character": "liubei",
     "hash": "9d5f0d49af07f584a307d1b2aef2e27ef5fbbb6d6eb6b577988e8ac40b1b217b",
     "text": "Inspector, by your harm to the people you should die. I spare you. Take this seal back to those who sell honor so cheaply.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+  },
+  "ch2_anxi_govern_lb_harder_01": {
+    "character": "liubei",
+    "hash": "25400b9a6e25b08ed30ef5a4857319a46acdfd4204b29ab6f05d3624fc6c039d",
+    "text": "Let him feel one more stroke for the people he harmed.",
     "version": 1,
     "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
   },
@@ -435,10 +449,10 @@
   },
   "ch2_anxi_palace_guard_01": {
     "character": "soldier",
-    "hash": "d1305024b5ff0704da20c1ff851a48eb8a4a060e916147a2433ccf15f33adeb5",
+    "hash": "8186b7817cf85d15a03787e2599801bd600d98724105bc9f7796d7f694e4682b",
     "text": "Palace order: only summoned officers and court officials bearing memorials may pass. Soldiers awaiting reward must remain outside.",
     "version": 1,
-    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+    "voice_target": "movies/clean/clean_devious_adult_male.wav"
   },
   "ch2_anxi_zf_01": {
     "character": "zhangfei",
@@ -1352,17 +1366,17 @@
   },
   "ch2_wan_final_sj_01": {
     "character": "sunjian",
-    "hash": "5f829da38d71c0971ac1fd0d36ac2453d0fafc536c7f71bbe2a36b40839249b4",
+    "hash": "f7f5c2fbcd99e0b9e78568c46cb8cc1fe5df4fba6f187023e7eb3f36d5a0d9af",
     "text": "Then I will be first on the wall. Zhao Hong will learn how little his reclaimed city is worth.",
     "version": 1,
-    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+    "voice_target": "movies/clean/clean_large_vaguely_russian_man.wav"
   },
   "ch2_wan_final_sj_02": {
     "character": "sunjian",
-    "hash": "b3f1393b894f7445c28e584b0d97775a5a54f42da2a29fddf160e909ece5bb1a",
+    "hash": "39705997d7f6e6048849c2b12de27448b78f366585f8b0fae5e26a5a52a6b15d",
     "text": "Well said. The wall is taken; now the officers must hold the city better than the rebels did.",
     "version": 1,
-    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+    "voice_target": "movies/clean/clean_large_vaguely_russian_man.wav"
   },
   "ch2_wan_final_sz_01": {
     "character": "sunzhong",
@@ -1478,10 +1492,10 @@
   },
   "ch2_wan_north_sj_01": {
     "character": "sunjian",
-    "hash": "f6aa4222e1c0b71298adc5dcc12e599d19a964ad0f4e88f803bb9f3217420f55",
+    "hash": "bcb5e1c6626d4a4ff0b704ddc6e74c34eb449ddc32ea38af8a8d6768e9a1c449",
     "text": "The wall is ours, and Zhao Hong is dead. Your roadblock kept the rebels from becoming an army again.",
     "version": 1,
-    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+    "voice_target": "movies/clean/clean_large_vaguely_russian_man.wav"
   },
   "ch2_wan_north_sz_01": {
     "character": "sunzhong",
@@ -1548,17 +1562,17 @@
   },
   "ch2_wan_rev_messenger_01": {
     "character": "soldier",
-    "hash": "7e3026501fb479feff1bc70ad97e2561f973b7829de466ed421237bee78b315e",
+    "hash": "647ae69712b96a7492f12066437d247195139e072e4879f622b8fad7343a7484",
     "text": "General Zhu! Zhao Hong and Sun Zhong have gathered the remaining rebels. Their numbers are strong.",
     "version": 1,
-    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+    "voice_target": "movies/clean/clean_devious_adult_male.wav"
   },
   "ch2_wan_rev_messenger_02": {
     "character": "soldier",
-    "hash": "c30aa7385e35be5acd0e56a50a929347099960219033cdd92bb1d6d676952cd8",
+    "hash": "3ad284d398eefee7f37c874c7024adc64a79d4858df6225b577eee633a71158e",
     "text": "They have struck back toward Wan. The outer troops are falling away from the walls.",
     "version": 1,
-    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+    "voice_target": "movies/clean/clean_devious_adult_male.wav"
   },
   "ch2_wan_rev_narrator_01": {
     "character": "narrator",
@@ -1569,24 +1583,24 @@
   },
   "ch2_wan_rev_sj_01": {
     "character": "sunjian",
-    "hash": "28c2dab8fc71ba9c6caa9f4b1b73e2b229e51c9fc998e488aa7ee93beef0d5cb",
+    "hash": "d39ce828857b9ea1012903e0446fc29de9313f396721dddf0e1d049ab30858fc",
     "text": "General Zhu Jun, Sun Jian of Xiapi answers the imperial call. My men are ready to strike Wan.",
     "version": 1,
-    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+    "voice_target": "movies/clean/clean_large_vaguely_russian_man.wav"
   },
   "ch2_wan_rev_sj_02_road": {
     "character": "sunjian",
-    "hash": "294b2cf2ccd1ee2489c0378614260fec28def2bc0e304381a132e445525275cd",
+    "hash": "fff8d96e5ffe01320f748348d62c0970ce6eef6de273900d8aacf89976b3d4f0",
     "text": "Leave the wall to me. If the rebels flee north, make the road narrower than the gate.",
     "version": 1,
-    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+    "voice_target": "movies/clean/clean_large_vaguely_russian_man.wav"
   },
   "ch2_wan_rev_sj_02_wall": {
     "character": "sunjian",
-    "hash": "de829286e3fdba126762216fd7869aa0a80767ea8602c808793c057b154d3710",
+    "hash": "a50aafe3178868b884df861e9d2ad0868d7dbd848939da0c9123e786bc17a899",
     "text": "Good. We will climb together and settle Zhao Hong before his courage hardens.",
     "version": 1,
-    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+    "voice_target": "movies/clean/clean_large_vaguely_russian_man.wav"
   },
   "ch2_wan_rev_zf_01": {
     "character": "zhangfei",
@@ -1849,17 +1863,17 @@
   },
   "daxing_int_guard1_push_01": {
     "character": "soldier",
-    "hash": "e96e584dafb63e56bdac5f9e59a0652c3dc789a54833efbcec95892945d4e069",
+    "hash": "ed376f880a9a5e83b294966cab3b0c4382ba5b3b7fd532d13ca00bbbf6f3a15f",
     "text": "Some attacks can push enemies, redirecting their blows away from allied soldiers.",
     "version": 1,
-    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+    "voice_target": "movies/clean/clean_devious_adult_male.wav"
   },
   "daxing_int_guard2_push_01": {
     "character": "soldier",
-    "hash": "d6a76ef888ff3bb32129d5069da0d5513d9801d14e648161598a692998b37eb8",
+    "hash": "75cab396d8451f380d79032b7629eb5ad89f3166aba277830ff38d0521d0aab7",
     "text": "Pushing an enemy off a cliff deals extra damage. Height can turn one strike into a rout.",
     "version": 1,
-    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+    "voice_target": "movies/clean/clean_devious_adult_male.wav"
   },
   "daxing_int_gy_01": {
     "character": "guanyu",
@@ -1884,17 +1898,17 @@
   },
   "daxing_int_soldier3_push_01": {
     "character": "soldier",
-    "hash": "c3419b1b786e969433ec90da84609c7a82248e422a74165ad8c4a54eee3b9782",
+    "hash": "ffa9cf058bae7870461596e223c0aca92462ab406fffc8be65205c62f0ed51af",
     "text": "If you push enemies into deep water, they drown. Watch the riverbanks when you choose your target.",
     "version": 1,
-    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+    "voice_target": "movies/clean/clean_devious_adult_male.wav"
   },
   "daxing_int_soldier4_01": {
     "character": "soldier",
-    "hash": "a4d78b8e48f5c27bfb4ebff999c75c224fa6bc12d9199a939a9c6f445fa8f2a6",
+    "hash": "91709a6e3a4ca30e55aa862d6564c7fa663a393dac48f9db92018cc67b4c9f9a",
     "text": "After Cheng Yuanzhi, more rebel captains will come. We have to win this first clash cleanly.",
     "version": 1,
-    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+    "voice_target": "movies/clean/clean_devious_adult_male.wav"
   },
   "daxing_int_volunteer1_01": {
     "character": "volunteer",
@@ -2661,10 +2675,10 @@
   },
   "inn_soldier_npc_01": {
     "character": "soldier",
-    "hash": "7ad9705421c50829ad741034374806ccb1e1ceada24852db229cfe43af6248f4",
+    "hash": "e2d2b90708f068e1f7c4c4a5c0e9dc08a739c3ad71bcfc89ba0f93c50cea1a2f",
     "text": "If you three raise the banner, men will follow. The county is waiting for someone to stand first.",
     "version": 1,
-    "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+    "voice_target": "movies/clean/clean_devious_adult_male.wav"
   },
   "inn_zf_01": {
     "character": "zhangfei",

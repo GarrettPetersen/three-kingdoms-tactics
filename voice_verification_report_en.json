@@ -6,7 +6,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_oath_dz_restrain_01": {
         "id": "ch2_oath_dz_restrain_01",
@@ -15,7 +16,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_oath_dz_strike_01": {
         "id": "ch2_oath_dz_strike_01",
@@ -24,7 +26,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_oath_gy_restrain_01": {
         "id": "ch2_oath_gy_restrain_01",
@@ -33,7 +36,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:ch2_oath_gy_strike_after_01": {
         "id": "ch2_oath_gy_strike_after_01",
@@ -42,7 +46,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:ch2_oath_lb_restrain_01": {
         "id": "ch2_oath_lb_restrain_01",
@@ -51,7 +56,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_oath_lb_strike_01": {
         "id": "ch2_oath_lb_strike_01",
@@ -60,7 +66,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_oath_zf_restrain_01": {
         "id": "ch2_oath_zf_restrain_01",
@@ -69,7 +76,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_oath_zf_strike_01": {
         "id": "ch2_oath_zf_strike_01",
@@ -78,7 +86,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_oath_zf_strike_after_01": {
         "id": "ch2_oath_zf_strike_after_01",
@@ -87,7 +96,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_oath_zf_strike_water_after_01": {
         "id": "ch2_oath_zf_strike_water_after_01",
@@ -96,7 +106,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:daxing_gy_01": {
         "id": "daxing_gy_01",
@@ -105,7 +116,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:daxing_gy_choice_01": {
         "id": "daxing_gy_choice_01",
@@ -114,7 +126,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:daxing_lb_01": {
         "id": "daxing_lb_01",
@@ -123,7 +136,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:daxing_lb_02": {
         "id": "daxing_lb_02",
@@ -132,7 +146,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:daxing_lb_03": {
         "id": "daxing_lb_03",
@@ -141,7 +156,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:daxing_lb_choice_01": {
         "id": "daxing_lb_choice_01",
@@ -150,7 +166,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:daxing_lb_choice_02": {
         "id": "daxing_lb_choice_02",
@@ -159,7 +176,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:daxing_lb_choice_03": {
         "id": "daxing_lb_choice_03",
@@ -168,7 +186,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:daxing_zf_01": {
         "id": "daxing_zf_01",
@@ -177,7 +196,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:daxing_zj_01": {
         "id": "daxing_zj_01",
@@ -186,7 +206,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:daxing_zj_02": {
         "id": "daxing_zj_02",
@@ -195,7 +216,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:daxing_zj_02_alt": {
         "id": "daxing_zj_02_alt",
@@ -204,7 +226,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:daxing_zj_03": {
         "id": "daxing_zj_03",
@@ -213,7 +236,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:daxing_zj_04": {
         "id": "daxing_zj_04",
@@ -222,7 +246,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:daxing_zj_04_alt": {
         "id": "daxing_zj_04_alt",
@@ -231,7 +256,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:debug_narrative_01": {
         "id": "debug_narrative_01",
@@ -240,7 +266,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:dx_cyz_01": {
         "id": "dx_cyz_01",
@@ -249,7 +276,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:dx_dm_01": {
         "id": "dx_dm_01",
@@ -258,7 +286,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:dx_gy_01": {
         "id": "dx_gy_01",
@@ -267,7 +296,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:dx_lb_01": {
         "id": "dx_lb_01",
@@ -276,7 +306,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:dx_lb_02": {
         "id": "dx_lb_02",
@@ -285,7 +316,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:dx_zf_01": {
         "id": "dx_zf_01",
@@ -294,7 +326,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:gz_dz_01": {
         "id": "gz_dz_01",
@@ -303,7 +336,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:gz_dz_02": {
         "id": "gz_dz_02",
@@ -312,7 +346,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:gz_dz_help_01": {
         "id": "gz_dz_help_01",
@@ -321,7 +356,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:gz_dz_outlaw_01": {
         "id": "gz_dz_outlaw_01",
@@ -330,7 +366,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:gz_dz_outlaw_02": {
         "id": "gz_dz_outlaw_02",
@@ -339,7 +376,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:gz_gy_free_01": {
         "id": "gz_gy_free_01",
@@ -348,7 +386,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:gz_gy_outlaw_01": {
         "id": "gz_gy_outlaw_01",
@@ -357,7 +396,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:gz_gy_restrain_01": {
         "id": "gz_gy_restrain_01",
@@ -366,7 +406,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:gz_gy_return_01": {
         "id": "gz_gy_return_01",
@@ -375,7 +416,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:gz_lb_01": {
         "id": "gz_lb_01",
@@ -384,7 +426,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:gz_lb_attack_01": {
         "id": "gz_lb_attack_01",
@@ -393,7 +436,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:gz_lb_defend_01": {
         "id": "gz_lb_defend_01",
@@ -402,7 +446,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:gz_lb_fight_01": {
         "id": "gz_lb_fight_01",
@@ -411,7 +456,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:gz_lb_free_02": {
         "id": "gz_lb_free_02",
@@ -420,7 +466,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:gz_lb_freed_02": {
         "id": "gz_lb_freed_02",
@@ -429,7 +476,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:gz_lb_office_01": {
         "id": "gz_lb_office_01",
@@ -438,7 +486,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:gz_lb_restrain_01": {
         "id": "gz_lb_restrain_01",
@@ -447,7 +496,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:gz_lz_explain_01": {
         "id": "gz_lz_explain_01",
@@ -456,7 +506,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:gz_lz_explain_02": {
         "id": "gz_lz_explain_02",
@@ -465,7 +516,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:gz_lz_explain_03": {
         "id": "gz_lz_explain_03",
@@ -474,7 +526,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:gz_lz_freed_01": {
         "id": "gz_lz_freed_01",
@@ -483,7 +536,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:gz_lz_freed_02": {
         "id": "gz_lz_freed_02",
@@ -492,7 +546,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:gz_nar_poem_01": {
         "id": "gz_nar_poem_01",
@@ -501,7 +556,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:gz_nar_restrain_01": {
         "id": "gz_nar_restrain_01",
@@ -510,7 +566,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:gz_zf_01": {
         "id": "gz_zf_01",
@@ -519,7 +576,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:gz_zf_attack_01": {
         "id": "gz_zf_attack_01",
@@ -528,7 +586,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:gz_zf_free_01": {
         "id": "gz_zf_free_01",
@@ -537,7 +596,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:gz_zf_rage_01": {
         "id": "gz_zf_rage_01",
@@ -546,7 +606,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:gz_zf_rage_outlaw_01": {
         "id": "gz_zf_rage_outlaw_01",
@@ -555,7 +616,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:gz_zf_restrain_01": {
         "id": "gz_zf_restrain_01",
@@ -564,7 +626,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:inn_farmer_01": {
         "id": "inn_farmer_01",
@@ -573,7 +636,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:inn_gy_01": {
         "id": "inn_gy_01",
@@ -582,7 +646,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:inn_gy_02": {
         "id": "inn_gy_02",
@@ -591,7 +656,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:inn_gy_03": {
         "id": "inn_gy_03",
@@ -600,7 +666,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:inn_gy_04": {
         "id": "inn_gy_04",
@@ -609,7 +676,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:inn_gy_05": {
         "id": "inn_gy_05",
@@ -618,7 +686,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:inn_gy_choice_01": {
         "id": "inn_gy_choice_01",
@@ -627,7 +696,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:inn_gy_choice_02": {
         "id": "inn_gy_choice_02",
@@ -636,7 +706,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:inn_lb_01": {
         "id": "inn_lb_01",
@@ -645,7 +716,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:inn_lb_02": {
         "id": "inn_lb_02",
@@ -654,7 +726,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:inn_lb_03": {
         "id": "inn_lb_03",
@@ -663,7 +736,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:inn_lb_04": {
         "id": "inn_lb_04",
@@ -672,7 +746,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:inn_lb_05": {
         "id": "inn_lb_05",
@@ -681,7 +756,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:inn_lb_choice_01": {
         "id": "inn_lb_choice_01",
@@ -690,7 +766,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:inn_lb_choice_02": {
         "id": "inn_lb_choice_02",
@@ -699,7 +776,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:inn_lb_click_01": {
         "id": "inn_lb_click_01",
@@ -708,7 +786,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:inn_lb_wine_01": {
         "id": "inn_lb_wine_01",
@@ -717,7 +796,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:inn_zf_01": {
         "id": "inn_zf_01",
@@ -726,7 +806,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:inn_zf_02": {
         "id": "inn_zf_02",
@@ -735,7 +816,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:inn_zf_03": {
         "id": "inn_zf_03",
@@ -744,7 +826,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:inn_zf_04": {
         "id": "inn_zf_04",
@@ -753,7 +836,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:inn_zf_05": {
         "id": "inn_zf_05",
@@ -762,7 +846,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:inn_zf_06": {
         "id": "inn_zf_06",
@@ -771,7 +856,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:inn_zf_07": {
         "id": "inn_zf_07",
@@ -780,7 +866,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:intro_narrator_01": {
         "id": "intro_narrator_01",
@@ -789,7 +876,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:intro_narrator_02a": {
         "id": "intro_narrator_02a",
@@ -798,7 +886,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:intro_narrator_02b": {
         "id": "intro_narrator_02b",
@@ -807,7 +896,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:intro_narrator_02c": {
         "id": "intro_narrator_02c",
@@ -816,7 +906,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:intro_narrator_03a": {
         "id": "intro_narrator_03a",
@@ -825,7 +916,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:intro_narrator_03b": {
         "id": "intro_narrator_03b",
@@ -834,7 +926,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:intro_narrator_03c": {
         "id": "intro_narrator_03c",
@@ -843,7 +936,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:intro_narrator_04a": {
         "id": "intro_narrator_04a",
@@ -852,7 +946,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:intro_narrator_04b": {
         "id": "intro_narrator_04b",
@@ -861,7 +956,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:intro_narrator_04c": {
         "id": "intro_narrator_04c",
@@ -870,7 +966,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:intro_narrator_05a": {
         "id": "intro_narrator_05a",
@@ -879,7 +976,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:intro_narrator_05b": {
         "id": "intro_narrator_05b",
@@ -888,7 +986,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:intro_narrator_05c": {
         "id": "intro_narrator_05c",
@@ -897,7 +996,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:intro_zb_01": {
         "id": "intro_zb_01",
@@ -906,7 +1006,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:intro_zb_02": {
         "id": "intro_zb_02",
@@ -915,7 +1016,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:intro_zj_01": {
         "id": "intro_zj_01",
@@ -924,7 +1026,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:intro_zj_02": {
         "id": "intro_zj_02",
@@ -933,7 +1036,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:intro_zj_03": {
         "id": "intro_zj_03",
@@ -942,7 +1046,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:intro_zj_04": {
         "id": "intro_zj_04",
@@ -951,7 +1056,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:intro_zj_05": {
         "id": "intro_zj_05",
@@ -960,7 +1066,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:intro_zl_01": {
         "id": "intro_zl_01",
@@ -969,7 +1076,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:intro_zl_02": {
         "id": "intro_zl_02",
@@ -978,7 +1086,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:map_lb_defeat": {
         "id": "map_lb_defeat",
@@ -987,7 +1096,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:map_lb_rem_01": {
         "id": "map_lb_rem_01",
@@ -996,7 +1106,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:map_lb_rem_02": {
         "id": "map_lb_rem_02",
@@ -1005,7 +1116,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:map_lb_rem_03": {
         "id": "map_lb_rem_03",
@@ -1014,7 +1126,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:map_lb_rem_04": {
         "id": "map_lb_rem_04",
@@ -1023,7 +1136,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:map_lb_rem_05": {
         "id": "map_lb_rem_05",
@@ -1032,7 +1146,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:pg_gy_01": {
         "id": "pg_gy_01",
@@ -1041,7 +1156,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:pg_lb_01": {
         "id": "pg_lb_01",
@@ -1050,7 +1166,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:pg_lb_02": {
         "id": "pg_lb_02",
@@ -1059,7 +1176,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:pg_lb_03": {
         "id": "pg_lb_03",
@@ -1068,7 +1186,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:pg_lb_04": {
         "id": "pg_lb_04",
@@ -1077,7 +1196,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:pg_nar_01": {
         "id": "pg_nar_01",
@@ -1086,7 +1206,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:pg_nar_02": {
         "id": "pg_nar_02",
@@ -1095,7 +1216,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:pg_zf_01": {
         "id": "pg_zf_01",
@@ -1104,7 +1226,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:pro_farmer2_01": {
         "id": "pro_farmer2_01",
@@ -1113,7 +1236,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anna_frozen_young_adult_woman.wav"
     },
     "en:pro_farmer_01": {
         "id": "pro_farmer_01",
@@ -1122,7 +1246,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:pro_lb_01": {
         "id": "pro_lb_01",
@@ -1131,7 +1256,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:pro_lb_02": {
         "id": "pro_lb_02",
@@ -1140,7 +1266,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:pro_lb_03": {
         "id": "pro_lb_03",
@@ -1149,7 +1276,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:pro_lb_04": {
         "id": "pro_lb_04",
@@ -1158,7 +1286,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:pro_lb_05": {
         "id": "pro_lb_05",
@@ -1167,7 +1296,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:pro_lb_06": {
         "id": "pro_lb_06",
@@ -1176,7 +1306,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:pro_lb_choice_01": {
         "id": "pro_lb_choice_01",
@@ -1185,7 +1316,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:pro_lb_choice_02": {
         "id": "pro_lb_choice_02",
@@ -1194,7 +1326,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:pro_nb_01": {
         "id": "pro_nb_01",
@@ -1203,7 +1336,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:pro_nb_02": {
         "id": "pro_nb_02",
@@ -1212,7 +1346,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:pro_nb_03": {
         "id": "pro_nb_03",
@@ -1221,7 +1356,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:pro_zf_01": {
         "id": "pro_zf_01",
@@ -1230,7 +1366,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:pro_zf_02": {
         "id": "pro_zf_02",
@@ -1239,7 +1376,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:pro_zf_03": {
         "id": "pro_zf_03",
@@ -1248,7 +1386,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:pro_zf_04": {
         "id": "pro_zf_04",
@@ -1257,7 +1396,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:pro_zf_05": {
         "id": "pro_zf_05",
@@ -1266,7 +1406,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:pro_zf_06": {
         "id": "pro_zf_06",
@@ -1275,7 +1416,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:pro_zf_07": {
         "id": "pro_zf_07",
@@ -1284,7 +1426,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:pro_zf_08": {
         "id": "pro_zf_08",
@@ -1293,7 +1436,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:qz_bt_lb_03": {
         "id": "qz_bt_lb_03",
@@ -1302,7 +1446,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:qz_gy_01": {
         "id": "qz_gy_01",
@@ -1311,7 +1456,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:qz_lb_01": {
         "id": "qz_lb_01",
@@ -1329,7 +1475,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:qz_lb_03": {
         "id": "qz_lb_03",
@@ -1338,7 +1485,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:qz_lb_choice_01": {
         "id": "qz_lb_choice_01",
@@ -1356,7 +1504,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:qz_ret_gj_01": {
         "id": "qz_ret_gj_01",
@@ -1365,7 +1514,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:qz_ret_gj_02": {
         "id": "qz_ret_gj_02",
@@ -1374,7 +1524,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:qz_ret_gj_choice_01": {
         "id": "qz_ret_gj_choice_01",
@@ -1383,7 +1534,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:qz_ret_gy_choice_01": {
         "id": "qz_ret_gy_choice_01",
@@ -1392,7 +1544,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:qz_ret_lb_01": {
         "id": "qz_ret_lb_01",
@@ -1401,7 +1554,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:qz_ret_lb_02": {
         "id": "qz_ret_lb_02",
@@ -1410,7 +1564,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:qz_ret_lb_choice_01": {
         "id": "qz_ret_lb_choice_01",
@@ -1419,7 +1574,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:qz_ret_lb_choice_02": {
         "id": "qz_ret_lb_choice_02",
@@ -1428,7 +1584,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:qz_vic_gy_01": {
         "id": "qz_vic_gy_01",
@@ -1437,7 +1594,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:qz_vic_lb_01": {
         "id": "qz_vic_lb_01",
@@ -1464,7 +1622,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:qz_vic_zf_01": {
         "id": "qz_vic_zf_01",
@@ -1473,7 +1632,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:qz_vic_zf_choice_01": {
         "id": "qz_vic_zf_choice_01",
@@ -1491,7 +1651,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:qz_zf_choice_01": {
         "id": "qz_zf_choice_01",
@@ -1509,7 +1670,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:rec_gy_01": {
         "id": "rec_gy_01",
@@ -1518,7 +1680,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:rec_lb_01": {
         "id": "rec_lb_01",
@@ -1527,7 +1690,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:rec_lb_02": {
         "id": "rec_lb_02",
@@ -1536,7 +1700,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:rec_vol_01": {
         "id": "rec_vol_01",
@@ -1545,7 +1710,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:rec_zf_01": {
         "id": "rec_zf_01",
@@ -1554,7 +1720,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:recov_gy_01": {
         "id": "recov_gy_01",
@@ -1563,7 +1730,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:recov_lb_01": {
         "id": "recov_lb_01",
@@ -1572,7 +1740,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:recov_zf_01": {
         "id": "recov_zf_01",
@@ -1581,7 +1750,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:daxing_int_blacksmith_01": {
         "id": "daxing_int_blacksmith_01",
@@ -1590,7 +1760,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:daxing_int_guard1_01": {
         "id": "daxing_int_guard1_01",
@@ -1617,7 +1788,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:daxing_int_lb_01": {
         "id": "daxing_int_lb_01",
@@ -1626,7 +1798,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:daxing_int_merchant_01": {
         "id": "daxing_int_merchant_01",
@@ -1635,7 +1808,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:daxing_int_soldier3_01": {
         "id": "daxing_int_soldier3_01",
@@ -1650,8 +1824,9 @@
         "id": "daxing_int_soldier4_01",
         "character": "soldier",
         "original_text": "After Cheng Yuanzhi, more rebel captains will come. We have to win this first clash cleanly.",
-        "stt_output": "",
-        "wer": 0,
+        "voice_target": "movies/clean/clean_devious_adult_male.wav",
+        "stt_output": "After Cheng Yuanqi, more rebel captains will come. We have to win this first clash, cleanly!",
+        "wer": 0.0625,
         "is_bad": false,
         "language": "en"
     },
@@ -1662,7 +1837,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:daxing_int_volunteer2_01": {
         "id": "daxing_int_volunteer2_01",
@@ -1671,7 +1847,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:daxing_int_zf_01": {
         "id": "daxing_int_zf_01",
@@ -1680,7 +1857,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:daxing_int_zj_01": {
         "id": "daxing_int_zj_01",
@@ -1689,7 +1867,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:gz_zj_rescue_01": {
         "id": "gz_zj_rescue_01",
@@ -1698,7 +1877,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:gz_zj_retreat_01": {
         "id": "gz_zj_retreat_01",
@@ -1707,7 +1887,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:gz_camp_gy_01": {
         "id": "gz_camp_gy_01",
@@ -1716,7 +1897,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:gz_camp_lb_01": {
         "id": "gz_camp_lb_01",
@@ -1725,7 +1907,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:gz_camp_lb_choice_01": {
         "id": "gz_camp_lb_choice_01",
@@ -1734,7 +1917,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:gz_camp_lb_choice_02": {
         "id": "gz_camp_lb_choice_02",
@@ -1743,7 +1927,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:gz_camp_lz_01": {
         "id": "gz_camp_lz_01",
@@ -1752,7 +1937,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:gz_camp_lz_02": {
         "id": "gz_camp_lz_02",
@@ -1761,7 +1947,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:gz_camp_lz_choice_01": {
         "id": "gz_camp_lz_choice_01",
@@ -1770,7 +1957,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:yc_af_hfs_01": {
         "id": "yc_af_hfs_01",
@@ -1779,7 +1967,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:yc_af_lb_choice_01": {
         "id": "yc_af_lb_choice_01",
@@ -1788,7 +1977,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:yc_af_lb_choice_02": {
         "id": "yc_af_lb_choice_02",
@@ -1797,7 +1987,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:yc_af_zf_01": {
         "id": "yc_af_zf_01",
@@ -1806,7 +1997,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:yc_af_zj_01": {
         "id": "yc_af_zj_01",
@@ -1815,7 +2007,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:yc_af_zj_choice_01": {
         "id": "yc_af_zj_choice_01",
@@ -1824,7 +2017,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:cc_dq_01": {
         "id": "cc_dq_01",
@@ -1833,7 +2027,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:cc_dq_02": {
         "id": "cc_dq_02",
@@ -1842,7 +2037,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:cc_dq_03": {
         "id": "cc_dq_03",
@@ -1851,7 +2047,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:cc_dq_04": {
         "id": "cc_dq_04",
@@ -1860,7 +2057,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:cc_dq_05": {
         "id": "cc_dq_05",
@@ -1869,7 +2067,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:cc_dq_06": {
         "id": "cc_dq_06",
@@ -1878,7 +2077,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:cc_dq_att_01": {
         "id": "cc_dq_att_01",
@@ -1887,7 +2087,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_angry-mulans-dad.wav"
     },
     "en:cc_dq_att_02": {
         "id": "cc_dq_att_02",
@@ -1896,7 +2097,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_angry-mulans-dad.wav"
     },
     "en:cc_dq_att_03": {
         "id": "cc_dq_att_03",
@@ -1905,7 +2107,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:cc_dq_choice_01": {
         "id": "cc_dq_choice_01",
@@ -1914,7 +2117,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:cc_dq_choice_02": {
         "id": "cc_dq_choice_02",
@@ -1923,7 +2127,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:cc_dq_msg_01": {
         "id": "cc_dq_msg_01",
@@ -1932,7 +2137,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:cc_dq_msg_02": {
         "id": "cc_dq_msg_02",
@@ -1941,7 +2147,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:cc_dq_msg_03": {
         "id": "cc_dq_msg_03",
@@ -1950,7 +2157,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:cc_yc_01": {
         "id": "cc_yc_01",
@@ -1959,7 +2167,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:cc_yc_02": {
         "id": "cc_yc_02",
@@ -1968,7 +2177,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:cc_yc_choice_01": {
         "id": "cc_yc_choice_01",
@@ -1977,7 +2187,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:cc_yc_choice_02": {
         "id": "cc_yc_choice_02",
@@ -1986,7 +2197,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:cc_yc_cr_01": {
         "id": "cc_yc_cr_01",
@@ -1995,7 +2207,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:cc_yc_cr_02": {
         "id": "cc_yc_cr_02",
@@ -2004,7 +2217,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:cc_yc_hfs_01": {
         "id": "cc_yc_hfs_01",
@@ -2013,7 +2227,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:cc_yc_hfs_choice_01": {
         "id": "cc_yc_hfs_choice_01",
@@ -2022,7 +2237,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:cc_yc_zb_01": {
         "id": "cc_yc_zb_01",
@@ -2031,7 +2247,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:cc_yc_zb_retreat_01": {
         "id": "cc_yc_zb_retreat_01",
@@ -2040,7 +2257,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:cc_yc_zj_01": {
         "id": "cc_yc_zj_01",
@@ -2049,7 +2267,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:cc_yc_zl_retreat_01": {
         "id": "cc_yc_zl_retreat_01",
@@ -2058,7 +2277,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulan-emperor.wav"
     },
     "en:map_cc_rem_01": {
         "id": "map_cc_rem_01",
@@ -2067,7 +2287,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:cc_dq_att_00": {
         "id": "cc_dq_att_00",
@@ -2076,7 +2297,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:cc_yc_cr_post_01": {
         "id": "cc_yc_cr_post_01",
@@ -2085,7 +2307,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:cc_yc_cr_cmd_tutorial_01": {
         "id": "cc_yc_cr_cmd_tutorial_01",
@@ -2094,7 +2317,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:dx_lb_03": {
         "id": "dx_lb_03",
@@ -2103,7 +2327,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:dx_yt_01": {
         "id": "dx_yt_01",
@@ -2112,7 +2337,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:gz_lb_ret_01": {
         "id": "gz_lb_ret_01",
@@ -2121,7 +2347,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:qz_gy_surp_01": {
         "id": "qz_gy_surp_01",
@@ -2130,7 +2357,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:qz_lb_amb_01": {
         "id": "qz_lb_amb_01",
@@ -2139,7 +2367,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:qz_lb_surp_01": {
         "id": "qz_lb_surp_01",
@@ -2148,7 +2377,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:map_lb_rem_06": {
         "id": "map_lb_rem_06",
@@ -2157,7 +2387,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:map_lb_rem_07": {
         "id": "map_lb_rem_07",
@@ -2166,7 +2397,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_probe_lb_01": {
         "id": "ch2_probe_lb_01",
@@ -2175,7 +2407,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_probe_lb_retreat_01": {
         "id": "ch2_probe_lb_retreat_01",
@@ -2184,7 +2417,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_probe_zb_01": {
         "id": "ch2_probe_zb_01",
@@ -2193,7 +2427,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_probe_zb_sorcery_01": {
         "id": "ch2_probe_zb_sorcery_01",
@@ -2202,7 +2437,8 @@
         "stt_output": "You cannot kill me while Heaven's lightning answers my command.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_zj_camp_lb_01": {
         "id": "ch2_zj_camp_lb_01",
@@ -2211,7 +2447,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_zj_camp_zj_00": {
         "id": "ch2_zj_camp_zj_00",
@@ -2220,7 +2457,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_zj_camp_zj_01": {
         "id": "ch2_zj_camp_zj_01",
@@ -2229,7 +2467,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_zj_camp_zj_02": {
         "id": "ch2_zj_camp_zj_02",
@@ -2238,7 +2477,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:inn_liubo_accept_01": {
         "id": "inn_liubo_accept_01",
@@ -2247,7 +2487,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_accept_repeat_01": {
         "id": "inn_liubo_accept_repeat_01",
@@ -2265,7 +2506,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_decline_reply_01": {
         "id": "inn_liubo_decline_reply_01",
@@ -2274,7 +2516,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_decline_reply_02": {
         "id": "inn_liubo_decline_reply_02",
@@ -2292,7 +2535,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_repeat_01": {
         "id": "inn_liubo_repeat_01",
@@ -2310,7 +2554,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:map_lb_ch2_probe_02": {
         "id": "map_lb_ch2_probe_02",
@@ -2319,7 +2564,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:map_lb_ch2_zhujun_01": {
         "id": "map_lb_ch2_zhujun_01",
@@ -2328,7 +2574,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:map_lb_ch2_zhujun_02": {
         "id": "map_lb_ch2_zhujun_02",
@@ -2337,7 +2584,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:inn_liubo_loss_first_01": {
         "id": "inn_liubo_loss_first_01",
@@ -2346,7 +2594,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_loss_repeat_01": {
         "id": "inn_liubo_loss_repeat_01",
@@ -2355,7 +2604,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_win_first_01": {
         "id": "inn_liubo_win_first_01",
@@ -2364,7 +2614,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_win_repeat_01": {
         "id": "inn_liubo_win_repeat_01",
@@ -2373,7 +2624,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_tutorial_block_01": {
         "id": "inn_liubo_tutorial_block_01",
@@ -2382,7 +2634,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_tutorial_block_02": {
         "id": "inn_liubo_tutorial_block_02",
@@ -2391,7 +2644,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_tutorial_contest_01": {
         "id": "inn_liubo_tutorial_contest_01",
@@ -2400,7 +2654,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_tutorial_contest_02": {
         "id": "inn_liubo_tutorial_contest_02",
@@ -2409,7 +2664,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_tutorial_goal_01": {
         "id": "inn_liubo_tutorial_goal_01",
@@ -2418,7 +2674,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_tutorial_goal_02": {
         "id": "inn_liubo_tutorial_goal_02",
@@ -2427,7 +2684,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_tutorial_goal_03": {
         "id": "inn_liubo_tutorial_goal_03",
@@ -2436,7 +2694,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_tutorial_goal_04": {
         "id": "inn_liubo_tutorial_goal_04",
@@ -2445,7 +2704,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_tutorial_goal_05": {
         "id": "inn_liubo_tutorial_goal_05",
@@ -2454,7 +2714,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_tutorial_move_01": {
         "id": "inn_liubo_tutorial_move_01",
@@ -2463,7 +2724,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_tutorial_move_02": {
         "id": "inn_liubo_tutorial_move_02",
@@ -2472,7 +2734,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_tutorial_owl_01": {
         "id": "inn_liubo_tutorial_owl_01",
@@ -2481,7 +2744,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_tutorial_owl_02": {
         "id": "inn_liubo_tutorial_owl_02",
@@ -2490,7 +2754,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_tutorial_owl_03": {
         "id": "inn_liubo_tutorial_owl_03",
@@ -2499,7 +2764,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:inn_liubo_tutorial_start_01": {
         "id": "inn_liubo_tutorial_start_01",
@@ -2508,7 +2774,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:rec_lb_train_no_01": {
         "id": "rec_lb_train_no_01",
@@ -2517,7 +2784,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:rec_zf_train_prompt_01": {
         "id": "rec_zf_train_prompt_01",
@@ -2526,7 +2794,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:rec_zf_train_yes_01": {
         "id": "rec_zf_train_yes_01",
@@ -2535,7 +2804,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:train_gy_01": {
         "id": "train_gy_01",
@@ -2544,7 +2814,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:train_gy_02": {
         "id": "train_gy_02",
@@ -2553,7 +2824,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:train_gy_03": {
         "id": "train_gy_03",
@@ -2562,7 +2834,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:train_gy_watch_01": {
         "id": "train_gy_watch_01",
@@ -2571,7 +2844,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:train_lb_01": {
         "id": "train_lb_01",
@@ -2580,7 +2854,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:train_lb_02": {
         "id": "train_lb_02",
@@ -2589,7 +2864,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:train_lb_03": {
         "id": "train_lb_03",
@@ -2598,7 +2874,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:train_lb_04": {
         "id": "train_lb_04",
@@ -2607,7 +2884,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:train_lb_05": {
         "id": "train_lb_05",
@@ -2616,7 +2894,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:train_lb_06": {
         "id": "train_lb_06",
@@ -2625,7 +2904,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:train_lb_07": {
         "id": "train_lb_07",
@@ -2634,7 +2914,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:train_lb_end_turn_01": {
         "id": "train_lb_end_turn_01",
@@ -2643,7 +2924,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:train_lb_end_turn_02": {
         "id": "train_lb_end_turn_02",
@@ -2652,7 +2934,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:train_zf_01": {
         "id": "train_zf_01",
@@ -2661,7 +2944,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:train_zf_02": {
         "id": "train_zf_02",
@@ -2670,7 +2954,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:train_zf_03": {
         "id": "train_zf_03",
@@ -2679,7 +2964,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:train_zf_04": {
         "id": "train_zf_04",
@@ -2688,7 +2974,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:train_zf_finish_01": {
         "id": "train_zf_finish_01",
@@ -2697,7 +2984,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_hj_choice_enter": {
         "id": "ch2_hj_choice_enter",
@@ -2706,7 +2994,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:ch2_hj_choice_return": {
         "id": "ch2_hj_choice_return",
@@ -2715,7 +3004,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:ch2_hj_eunuch_01": {
         "id": "ch2_hj_eunuch_01",
@@ -2724,7 +3014,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_disney_hades.wav"
     },
     "en:ch2_hj_guard_01": {
         "id": "ch2_hj_guard_01",
@@ -2733,7 +3024,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:ch2_hj_hejin_01": {
         "id": "ch2_hj_hejin_01",
@@ -2742,7 +3034,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:ch2_hj_narrator_01": {
         "id": "ch2_hj_narrator_01",
@@ -2751,7 +3044,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_hj_narrator_02": {
         "id": "ch2_hj_narrator_02",
@@ -2760,7 +3054,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_hj_narrator_03": {
         "id": "ch2_hj_narrator_03",
@@ -2769,7 +3064,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_hj_narrator_04": {
         "id": "ch2_hj_narrator_04",
@@ -2778,7 +3074,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_hj_narrator_bad_end": {
         "id": "ch2_hj_narrator_bad_end",
@@ -2787,7 +3084,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_hj_panyin_01": {
         "id": "ch2_hj_panyin_01",
@@ -2796,7 +3094,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_hj_panyin_02": {
         "id": "ch2_hj_panyin_02",
@@ -2805,7 +3104,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_hj_panyin_03": {
         "id": "ch2_hj_panyin_03",
@@ -2814,7 +3114,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:inn_gy_choice_unlawful_01": {
         "id": "inn_gy_choice_unlawful_01",
@@ -2823,7 +3124,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:inn_lb_choice_unlawful_01": {
         "id": "inn_lb_choice_unlawful_01",
@@ -2832,7 +3134,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:qz_lb_ask_danger_01": {
         "id": "qz_lb_ask_danger_01",
@@ -2841,7 +3144,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:qz_lb_ride_now_01": {
         "id": "qz_lb_ride_now_01",
@@ -2850,7 +3154,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:qz_ms_ask_danger_01": {
         "id": "qz_ms_ask_danger_01",
@@ -2859,7 +3164,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
     },
     "en:qz_vic_gy_secure_city_01": {
         "id": "qz_vic_gy_secure_city_01",
@@ -2868,7 +3174,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:qz_vic_lb_pursue_01": {
         "id": "qz_vic_lb_pursue_01",
@@ -2877,7 +3184,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:qz_vic_lb_return_after_pursuit_01": {
         "id": "qz_vic_lb_return_after_pursuit_01",
@@ -2886,7 +3194,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:qz_vic_lb_secure_city_01": {
         "id": "qz_vic_lb_secure_city_01",
@@ -2895,7 +3204,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:qz_vic_nar_pursue_01": {
         "id": "qz_vic_nar_pursue_01",
@@ -2904,7 +3214,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:qz_vic_zf_pursue_01": {
         "id": "qz_vic_zf_pursue_01",
@@ -2913,7 +3224,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:qz_zf_ride_now_01": {
         "id": "qz_zf_ride_now_01",
@@ -2922,7 +3234,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_oath_gy_strike_escape_after_01": {
         "id": "ch2_oath_gy_strike_escape_after_01",
@@ -2931,7 +3244,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:ch2_counter_camp_choice_reluctant": {
         "id": "ch2_counter_camp_choice_reluctant",
@@ -2940,7 +3254,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_counter_camp_choice_use": {
         "id": "ch2_counter_camp_choice_use",
@@ -2949,7 +3264,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_counter_camp_gy_01": {
         "id": "ch2_counter_camp_gy_01",
@@ -2958,7 +3274,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:ch2_counter_camp_lb_01": {
         "id": "ch2_counter_camp_lb_01",
@@ -2967,7 +3284,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_counter_camp_lb_02": {
         "id": "ch2_counter_camp_lb_02",
@@ -2976,7 +3294,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_counter_camp_zf_01": {
         "id": "ch2_counter_camp_zf_01",
@@ -2985,7 +3304,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_counter_camp_zj_01": {
         "id": "ch2_counter_camp_zj_01",
@@ -2994,7 +3314,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_counter_camp_zj_02": {
         "id": "ch2_counter_camp_zj_02",
@@ -3003,7 +3324,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_counter_camp_zj_03": {
         "id": "ch2_counter_camp_zj_03",
@@ -3012,7 +3334,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_counter_gy_01": {
         "id": "ch2_counter_gy_01",
@@ -3021,7 +3344,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:ch2_counter_lb_01": {
         "id": "ch2_counter_lb_01",
@@ -3030,7 +3354,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_counter_zb_01": {
         "id": "ch2_counter_zb_01",
@@ -3039,7 +3364,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_counter_zb_filth_01": {
         "id": "ch2_counter_zb_filth_01",
@@ -3048,7 +3374,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_counter_zb_retreat_01": {
         "id": "ch2_counter_zb_retreat_01",
@@ -3057,7 +3384,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_yc_lb_01": {
         "id": "ch2_yc_lb_01",
@@ -3075,7 +3403,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_yc_yz_01": {
         "id": "ch2_yc_yz_01",
@@ -3084,7 +3413,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_brash_australian_man.wav"
     },
     "en:ch2_yc_yz_02": {
         "id": "ch2_yc_yz_02",
@@ -3093,7 +3423,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_brash_australian_man.wav"
     },
     "en:ch2_yc_zb_01": {
         "id": "ch2_yc_zb_01",
@@ -3102,7 +3433,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_yc_zb_02": {
         "id": "ch2_yc_zb_02",
@@ -3111,7 +3443,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_yc_zj_01": {
         "id": "ch2_yc_zj_01",
@@ -3120,7 +3453,8 @@
         "stt_output": "Changbao, Changyue-Dead at Guant Song and one full song. Cut down Zhang Liang at Kruiang. Your brothers are gone, your sorcery is broken, and the Counties return to the Han.",
         "wer": 0.3225806451612903,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_yc_zj_02": {
         "id": "ch2_yc_zj_02",
@@ -3129,7 +3463,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_yc_zj_03": {
         "id": "ch2_yc_zj_03",
@@ -3138,7 +3473,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_yc_lb_choice_threat": {
         "id": "ch2_yc_lb_choice_threat",
@@ -3156,7 +3492,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_counter_lb_filth_reminder_01": {
         "id": "ch2_counter_lb_filth_reminder_01",
@@ -3165,7 +3502,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_counter_zf_filth_reminder_01": {
         "id": "ch2_counter_zf_filth_reminder_01",
@@ -3174,7 +3512,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:map_lb_ch2_counter_01": {
         "id": "map_lb_ch2_counter_01",
@@ -3183,7 +3522,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:map_lb_ch2_counter_council_01": {
         "id": "map_lb_ch2_counter_council_01",
@@ -3192,7 +3532,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:map_lb_ch2_yangcheng_01": {
         "id": "map_lb_ch2_yangcheng_01",
@@ -3201,7 +3542,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_yc_lb_clemency_01": {
         "id": "ch2_yc_lb_clemency_01",
@@ -3210,7 +3552,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_yc_lb_threat_01": {
         "id": "ch2_yc_lb_threat_01",
@@ -3219,7 +3562,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_yc_zb_refuse_01": {
         "id": "ch2_yc_zb_refuse_01",
@@ -3228,7 +3572,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_wan_gy_01": {
         "id": "ch2_wan_gy_01",
@@ -3318,7 +3663,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:inn_butcher_npc_01": {
         "id": "inn_butcher_npc_01",
@@ -3327,14 +3673,16 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:inn_soldier_npc_01": {
         "id": "inn_soldier_npc_01",
         "character": "soldier",
         "original_text": "If you three raise the banner, men will follow. The county is waiting for someone to stand first.",
-        "stt_output": "",
-        "wer": 0,
+        "voice_target": "movies/clean/clean_devious_adult_male.wav",
+        "stt_output": "If you three raise the banner, men will follow. There. There. County is waiting for someone to stand first.",
+        "wer": 0.1111111111111111,
         "is_bad": false,
         "language": "en"
     },
@@ -3342,8 +3690,9 @@
         "id": "daxing_int_guard1_push_01",
         "character": "soldier",
         "original_text": "Some attacks can push enemies, redirecting their blows away from allied soldiers.",
-        "stt_output": "",
-        "wer": 0,
+        "voice_target": "movies/clean/clean_devious_adult_male.wav",
+        "stt_output": "Some attacks can push enemies, redirecting their blows away from allied soldiers.",
+        "wer": 0.0,
         "is_bad": false,
         "language": "en"
     },
@@ -3351,8 +3700,9 @@
         "id": "daxing_int_guard2_push_01",
         "character": "soldier",
         "original_text": "Pushing an enemy off a cliff deals extra damage. Height can turn one strike into a rout.",
-        "stt_output": "",
-        "wer": 0,
+        "voice_target": "movies/clean/clean_devious_adult_male.wav",
+        "stt_output": "pushing an enemy off a cliff deals extra damage. Height can turn one strike into a Rout.",
+        "wer": 0.0,
         "is_bad": false,
         "language": "en"
     },
@@ -3360,8 +3710,9 @@
         "id": "daxing_int_soldier3_push_01",
         "character": "soldier",
         "original_text": "If you push enemies into deep water, they drown. Watch the riverbanks when you choose your target.",
-        "stt_output": "",
-        "wer": 0,
+        "voice_target": "movies/clean/clean_devious_adult_male.wav",
+        "stt_output": "If you push enemies into deep water, they drown. Watch the river banks when you choose your target.",
+        "wer": 0.11764705882352941,
         "is_bad": false,
         "language": "en"
     },
@@ -3372,7 +3723,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:pro_zf_noticeboard_wait_01": {
         "id": "pro_zf_noticeboard_wait_01",
@@ -3381,7 +3733,8 @@
         "stt_output": "",
         "wer": 0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_wan_field_defeat_lb_01": {
         "id": "ch2_wan_field_defeat_lb_01",
@@ -3390,7 +3743,8 @@
         "stt_output": "The plan is still sound. We must meet him in the field before he regains courage.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_wan_field_defeat_zj_01": {
         "id": "ch2_wan_field_defeat_zj_01",
@@ -3399,7 +3753,8 @@
         "stt_output": "And Song slipped the trap because the road was opened without enough pressure. Reform the line and spring it again.",
         "wer": 0.1,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_wan_field_hz_01": {
         "id": "ch2_wan_field_hz_01",
@@ -3408,7 +3763,8 @@
         "stt_output": "They opened the road to bait us. Fight through before the trap closes.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:ch2_wan_field_lb_01": {
         "id": "ch2_wan_field_lb_01",
@@ -3417,7 +3773,8 @@
         "stt_output": "Do not let them turn desperation into courage. Break the captains and the rest will scatter.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_wan_field_lb_02": {
         "id": "ch2_wan_field_lb_02",
@@ -3426,7 +3783,8 @@
         "stt_output": "A road left open saved more lives than a wall battered in anger.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_wan_field_zj_01": {
         "id": "ch2_wan_field_zj_01",
@@ -3435,7 +3793,8 @@
         "stt_output": "Han Song has taken the road. All discipline and cuts through his disordered column.",
         "wer": 0.21428571428571427,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_wan_field_zj_02": {
         "id": "ch2_wan_field_zj_02",
@@ -3444,7 +3803,8 @@
         "stt_output": "The field is ours. Our one can be received without trusting a barred gate.",
         "wer": 0.14285714285714285,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_wan_gate_defeat_lb_01": {
         "id": "ch2_wan_gate_defeat_lb_01",
@@ -3453,7 +3813,8 @@
         "stt_output": "We chose the harder road. Next time, keep pressure on the gate and protect the soldiers beside it.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_wan_gate_defeat_zj_01": {
         "id": "ch2_wan_gate_defeat_zj_01",
@@ -3462,7 +3823,8 @@
         "stt_output": "A gaiter soul punishes disorder at once. Pull the men back, dress the ranks, and try again.",
         "wer": 0.11764705882352941,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_wan_gate_hz_01": {
         "id": "ch2_wan_gate_hz_01",
@@ -3471,7 +3833,8 @@
         "stt_output": "The answer, surrender with ladders and blades. Hold the wall.",
         "wer": 0.1,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:ch2_wan_gate_lb_01": {
         "id": "ch2_wan_gate_lb_01",
@@ -3480,7 +3843,8 @@
         "stt_output": "The rebels chose a closed gate over true surrender. Strike cleanly and end this quickly.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_wan_gate_lb_02": {
         "id": "ch2_wan_gate_lb_02",
@@ -3489,7 +3853,8 @@
         "stt_output": "then let the people see that Han Order follows the soldiers through the gate.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_wan_gate_zj_01": {
         "id": "ch2_wan_gate_zj_01",
@@ -3498,7 +3863,8 @@
         "stt_output": "Once gate stands before us, break it, but keep the soldiers from plunder.",
         "wer": 0.07692307692307693,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_wan_gate_zj_02": {
         "id": "ch2_wan_gate_zj_02",
@@ -3507,7 +3873,8 @@
         "stt_output": "Hun is taken. This was harsher than the open road, but the city must now be kept in order.",
         "wer": 0.05263157894736842,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_wan_gy_02": {
         "id": "ch2_wan_gy_02",
@@ -3561,7 +3928,8 @@
         "stt_output": "The southeast road is open. Han Zhong has come out, and we must strike before his men can rally.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:map_lb_ch2_wan_gate_01": {
         "id": "map_lb_ch2_wan_gate_01",
@@ -3570,7 +3938,8 @@
         "stt_output": "Once gate stands before us, break it quickly, then keep order inside the city.",
         "wer": 0.07142857142857142,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_anxi_eunuch_01": {
         "id": "ch2_anxi_eunuch_01",
@@ -3615,7 +3984,8 @@
         "stt_output": "Marriage should speak for itself, yet at court, even merit seems to need an usher.",
         "wer": 0.06666666666666667,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:ch2_anxi_gy_02": {
         "id": "ch2_anxi_gy_02",
@@ -3624,7 +3994,8 @@
         "stt_output": "Then we go cleanly. A low office held with righteousness is higher than a high office bot with shame.",
         "wer": 0.05263157894736842,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:ch2_anxi_gy_both_01": {
         "id": "ch2_anxi_gy_both_01",
@@ -3633,7 +4004,8 @@
         "stt_output": "Then we cannot serve through an office, but we can still guard the people wherever Chaos opens a road.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:ch2_anxi_gy_one_01": {
         "id": "ch2_anxi_gy_one_01",
@@ -3642,7 +4014,8 @@
         "stt_output": "They could not deny your merit, so they made the post smaller than the deed.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:ch2_anxi_lb_01": {
         "id": "ch2_anxi_lb_01",
@@ -3651,7 +4024,8 @@
         "stt_output": "If office comes, we serve. If non comes, our oath remains. Still, the men who followed us deserve to see justice done.",
         "wer": 0.045454545454545456,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_anxi_lb_02": {
         "id": "ch2_anxi_lb_02",
@@ -3660,7 +4034,8 @@
         "stt_output": "General Chu has submitted our names. We weigh on the court. Nothing more is in my hand.",
         "wer": 0.17647058823529413,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_anxi_lb_03": {
         "id": "ch2_anxi_lb_03",
@@ -3669,7 +4044,8 @@
         "stt_output": "and she counting commandant. The seal is small, but the people beneath it are not small.",
         "wer": 0.2,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_anxi_lb_both_01": {
         "id": "ch2_anxi_lb_both_01",
@@ -3678,7 +4054,8 @@
         "stt_output": "So our reward is not to seal, but breath in our bodies. If that breath remains, we can still choose righteousness.",
         "wer": 0.047619047619047616,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_anxi_lb_one_01": {
         "id": "ch2_anxi_lb_one_01",
@@ -3687,7 +4064,8 @@
         "stt_output": "assistant to the young sea come and done. No seal of my own, yet the people served by that office are still people of the harm.",
         "wer": 0.2608695652173913,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_anxi_narrator_01": {
         "id": "ch2_anxi_narrator_01",
@@ -3696,7 +4074,8 @@
         "stt_output": "With one settled in Anyangquiet, Zhu Jun returned to Loyang to report the victory, and memorialize the merit of Sunjian and Liu Baibuo.",
         "wer": 0.32,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_anxi_narrator_02": {
         "id": "ch2_anxi_narrator_02",
@@ -3705,7 +4084,8 @@
         "stt_output": "Sondhyaan had patrons, and soon departed to a new post, Liu by weighted outside the palace day after day, and no summons came.",
         "wer": 0.16666666666666666,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_anxi_narrator_03": {
         "id": "ch2_anxi_narrator_03",
@@ -3723,7 +4103,8 @@
         "stt_output": "Leo by dismissed the volunteers to their villages and took only a small retinue with Guanyu and Zhang Fei to Angxi.",
         "wer": 0.22727272727272727,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_anxi_narrator_both_01": {
         "id": "ch2_anxi_narrator_both_01",
@@ -3759,7 +4140,8 @@
         "stt_output": "Liu, by dismiss the volunteers to their villages, and took a small retinue with Guanyu and Zhang Fei to Zhang'si, there to serve beneath another man's seat.",
         "wer": 0.21428571428571427,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_anxi_zf_01": {
         "id": "ch2_anxi_zf_01",
@@ -3768,7 +4150,8 @@
         "stt_output": "We broke Zhang Baow, settled Yang Cheng, and helped take one. Are we to wear a path into these stones before anyone speaks to us?",
         "wer": 0.16666666666666666,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_anxi_zf_02": {
         "id": "ch2_anxi_zf_02",
@@ -3777,7 +4160,8 @@
         "stt_output": "Find an idea. Die! But if some painted official comes to bully honest folk, do not ask me to smile at him.",
         "wer": 0.21052631578947367,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_anxi_zf_both_01": {
         "id": "ch2_anxi_zf_both_01",
@@ -3786,7 +4170,8 @@
         "stt_output": "Forgive us after we save their realm. If anger were wine, I could drown Luoyang in it.",
         "wer": 0.058823529411764705,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_anxi_zf_one_01": {
         "id": "ch2_anxi_zf_one_01",
@@ -3795,7 +4180,8 @@
         "stt_output": "A half reward for a whole battlefield. Half? Kendo. I will still walk beside you to Anxie.",
         "wer": 0.3333333333333333,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_anxi_zj_01": {
         "id": "ch2_anxi_zj_01",
@@ -3804,7 +4190,8 @@
         "stt_output": "You are Li Yusha Wande. I have heard your name in the campaign reports. Why do you wait here like an unrewarded clerk?",
         "wer": 0.13636363636363635,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_anxi_zj_02": {
         "id": "ch2_anxi_zj_02",
@@ -3813,7 +4200,8 @@
         "stt_output": "Then, I will speak, where waiting and not. Soldiers bleed for the hunt, while offices are sold at the gate.",
         "wer": 0.15789473684210525,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_anxi_zj_03": {
         "id": "ch2_anxi_zj_03",
@@ -3822,7 +4210,8 @@
         "stt_output": "I told the Emperor plainly, the yellow turban rose because offices are sold, Kina favoured, enemies are ruined, and worthy men are made to beg.",
         "wer": 0.15384615384615385,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_anxi_zj_04": {
         "id": "ch2_anxi_zj_04",
@@ -3831,7 +4220,8 @@
         "stt_output": "I urged him to cut away the corruption of the ten attendance and reward those who fought. The unrux called me a deceiver and had me driven out.",
         "wer": 0.07142857142857142,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_hj_death_cc_01": {
         "id": "ch2_hj_death_cc_01",
@@ -3840,7 +4230,8 @@
         "stt_output": "There is the snare, dressed as command.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:ch2_hj_death_cc_02": {
         "id": "ch2_hj_death_cc_02",
@@ -3849,7 +4240,8 @@
         "stt_output": "The first matter is to make the throne lawful. Set Prince Bian in place, then punish the traitors.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:ch2_hj_death_cc_03": {
         "id": "ch2_hj_death_cc_03",
@@ -3858,7 +4250,8 @@
         "stt_output": "then speed and order may still serve you.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:ch2_hj_death_eunuch_01": {
         "id": "ch2_hj_death_eunuch_01",
@@ -3867,7 +4260,8 @@
         "stt_output": "by Palace Order. General in chief, he jinn is to enter at once and settle the late matter of succession.",
         "wer": 0.2222222222222222,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_disney_hades.wav"
     },
     "en:ch2_hj_death_hj_01": {
         "id": "ch2_hj_death_hj_01",
@@ -3876,7 +4270,8 @@
         "stt_output": "Who here dares enter with me, enthrone the air, and cleanse the palace?",
         "wer": 0.07692307692307693,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:ch2_hj_death_hj_discipline": {
         "id": "ch2_hj_death_hj_discipline",
@@ -3885,7 +4280,8 @@
         "stt_output": "Take the troops, but keep them under command. We enter to secure the throne, not to loot the palace.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:ch2_hj_death_hj_force": {
         "id": "ch2_hj_death_hj_force",
@@ -3894,7 +4290,8 @@
         "stt_output": "Let the palace see our strength before it opens its mouth again.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:ch2_hj_death_narrator_01": {
         "id": "ch2_hj_death_narrator_01",
@@ -3903,7 +4300,8 @@
         "stt_output": "Yi Jin chose Yuan Shao, gathered the Imperial troops, and prepared to enter before Emperor Ling's cuff.",
         "wer": 0.11764705882352941,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_hj_death_panyin_01": {
         "id": "ch2_hj_death_panyin_01",
@@ -3912,7 +4310,8 @@
         "stt_output": "My Lord, Emperor Ling is dead.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_hj_death_panyin_02": {
         "id": "ch2_hj_death_panyin_02",
@@ -3921,7 +4320,8 @@
         "stt_output": "Jiang Shu-uo and the Ten Attendants hide the morning. They prepare a false edict to summon you in again.",
         "wer": 0.15789473684210525,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_hj_death_panyin_03": {
         "id": "ch2_hj_death_panyin_03",
@@ -3930,7 +4330,8 @@
         "stt_output": "Their aim is to end you first, then, in throne Prince Chiu.",
         "wer": 0.2727272727272727,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_hj_death_ys_01": {
         "id": "ch2_hj_death_ys_01",
@@ -3939,7 +4340,8 @@
         "stt_output": "I will borrow 5,000 elite troops. We cut through the gates and thrown the new Lord and killed the Unix.",
         "wer": 0.3,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_brash_australian_man.wav"
     },
     "en:ch2_hj_death_ys_02": {
         "id": "ch2_hj_death_ys_02",
@@ -3948,7 +4350,8 @@
         "stt_output": "Good. Fear is the one court language the unix understand.",
         "wer": 0.1,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_brash_australian_man.wav"
     },
     "en:ch2_hj_enthrone_cc_dismissed_01": {
         "id": "ch2_hj_enthrone_cc_dismissed_01",
@@ -3957,7 +4360,8 @@
         "stt_output": "If force must lead, then at least let purpose follow close behind it.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:ch2_hj_enthrone_cc_heeded_01": {
         "id": "ch2_hj_enthrone_cc_heeded_01",
@@ -3966,7 +4370,8 @@
         "stt_output": "The fewer doors we open, the fewer lies escape. Go straight to the coffin and the seals.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:ch2_hj_enthrone_hj_01": {
         "id": "ch2_hj_enthrone_hj_01",
@@ -3975,7 +4380,8 @@
         "stt_output": "Before the late emperor laying, let Prince B in receive the seals and mount the throne.",
         "wer": 0.2,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:ch2_hj_enthrone_hj_disciplined_01": {
         "id": "ch2_hj_enthrone_hj_disciplined_01",
@@ -3984,7 +4390,8 @@
         "stt_output": "No one breaks ranks. No one enters a chamber not named. We come to set the throne in order.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:ch2_hj_enthrone_narrator_01": {
         "id": "ch2_hj_enthrone_narrator_01",
@@ -3993,7 +4400,8 @@
         "stt_output": "Yuan Shao borrowed 5,000 imperial troops. Yong, Xuanyu, Zheng Tai, and the ministers followed he jinn toward the palace.",
         "wer": 0.2727272727272727,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_hj_enthrone_narrator_02": {
         "id": "ch2_hj_enthrone_narrator_02",
@@ -4002,7 +4410,8 @@
         "stt_output": "Prince Biam was enthroned as Emperor Shah. Empress he became Empress Dowager, and Prince Chowin was made Prince of Chenlew.",
         "wer": 0.2,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_hj_enthrone_narrator_03": {
         "id": "ch2_hj_enthrone_narrator_03",
@@ -4011,7 +4420,8 @@
         "stt_output": "The throne was settled, but Jan Shu also held forbidden troops, and the palace corridors still answered to unuck voices.",
         "wer": 0.2,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_hj_enthrone_ys_01": {
         "id": "ch2_hj_enthrone_ys_01",
@@ -4020,7 +4430,8 @@
         "stt_output": "The new son of heaven is seated. Now every false order issued in the dark can be named treason.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_brash_australian_man.wav"
     },
     "en:ch2_hj_enthrone_ys_force_01": {
         "id": "ch2_hj_enthrone_ys_force_01",
@@ -4029,7 +4440,8 @@
         "stt_output": "Let every gate see the troops. If the Unix whisper, let them whisper behind spear points.",
         "wer": 0.2,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_brash_australian_man.wav"
     },
     "en:ch2_hj_js_cc_dismissed_01": {
         "id": "ch2_hj_js_cc_dismissed_01",
@@ -4038,7 +4450,8 @@
         "stt_output": "The garden is quiet, but the inner palace is not. Victory over one unucks is not mastery of the unucks.",
         "wer": 0.1,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:ch2_hj_js_cc_heeded_01": {
         "id": "ch2_hj_js_cc_heeded_01",
@@ -4047,7 +4460,8 @@
         "stt_output": "one traitor named and struck. That is power. A general cry against our units will turn power into smoke.",
         "wer": 0.10526315789473684,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:ch2_hj_js_guo_01": {
         "id": "ch2_hj_js_guo_01",
@@ -4056,7 +4470,8 @@
         "stt_output": "You tried to drag us all into your murder. I will not die for your ambition.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_disney_hades.wav"
     },
     "en:ch2_hj_js_hj_01": {
         "id": "ch2_hj_js_hj_01",
@@ -4065,7 +4480,8 @@
         "stt_output": "Giancio plotted murder. Zhang Rang and Duan Gi still have the Empress Dowager's ear. We move by charge, not by fury.",
         "wer": 0.13636363636363635,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
     },
     "en:ch2_hj_js_jian_01": {
         "id": "ch2_hj_js_jian_01",
@@ -4074,7 +4490,8 @@
         "stt_output": "GARTS! TO ME! The Palace troops answer to me.",
         "wer": 0.1111111111111111,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:ch2_hj_js_narrator_01": {
         "id": "ch2_hj_js_narrator_01",
@@ -4083,7 +4500,8 @@
         "stt_output": "With Emperor Shao enthroned, you and Shao moved at once to arrest, Gian Shu'o.",
         "wer": 0.23076923076923078,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_hj_js_narrator_02": {
         "id": "ch2_hj_js_narrator_02",
@@ -4092,7 +4510,8 @@
         "stt_output": "Jian Shuoh fled into the Imperial Garden and was killed by Guo Shang. The troops under Jian Shuoh submitted to Hijin. Na.",
         "wer": 0.22727272727272727,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_hj_js_narrator_03": {
         "id": "ch2_hj_js_narrator_03",
@@ -4101,7 +4520,8 @@
         "stt_output": "He jian now held the new emperor, jian shuos troops, and a palace full of frightened enemies, chan rang and wangi remained.",
         "wer": 0.17391304347826086,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_hj_js_narrator_discipline_01": {
         "id": "ch2_hj_js_narrator_discipline_01",
@@ -4110,7 +4530,8 @@
         "stt_output": "because he gin had kept order at the gates, more palace soldiers surrendered their banners without panic.",
         "wer": 0.058823529411764705,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_hj_js_narrator_force_01": {
         "id": "ch2_hj_js_narrator_force_01",
@@ -4119,7 +4540,8 @@
         "stt_output": "because he gin had displayed force openly, palace quieted quickly, but fear ran ahead of every messenger.",
         "wer": 0.1111111111111111,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_hj_js_ys_01": {
         "id": "ch2_hj_js_ys_01",
@@ -4128,7 +4550,8 @@
         "stt_output": "Jian Shu applauded to murder the general in chief and enthrone another prince by forged command. Seize him.",
         "wer": 0.3125,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_brash_australian_man.wav"
     },
     "en:ch2_hj_js_ys_02": {
         "id": "ch2_hj_js_ys_02",
@@ -4137,7 +4560,8 @@
         "stt_output": "Gian Shuou is dead. The blade has found one root. Let it find the rest.",
         "wer": 0.13333333333333333,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_brash_australian_man.wav"
     },
     "en:ch2_wan_north_defeat_lb_01": {
         "id": "ch2_wan_north_defeat_lb_01",
@@ -4146,7 +4570,8 @@
         "stt_output": "The wall assault depends on this road staying closed. We try again at once.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_wan_north_defeat_zj_01": {
         "id": "ch2_wan_north_defeat_zj_01",
@@ -4155,7 +4580,8 @@
         "stt_output": "Sun Chong broke through the North Road, Reformed the line before his remnant gathers strength.",
         "wer": 0.13333333333333333,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_wan_north_lb_01": {
         "id": "ch2_wan_north_lb_01",
@@ -4164,7 +4590,8 @@
         "stt_output": "Form across the road. Leave the Rebels no passage except surrender.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_wan_north_lb_02": {
         "id": "ch2_wan_north_lb_02",
@@ -4173,14 +4600,16 @@
         "stt_output": "Sun's own column is broken. Gather the weapons and spare those who throw them down.",
         "wer": 0.13333333333333333,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_wan_north_sj_01": {
         "id": "ch2_wan_north_sj_01",
         "character": "sunjian",
         "original_text": "The wall is ours, and Zhao Hong is dead. Your roadblock kept the rebels from becoming an army again.",
-        "stt_output": "The wall is ours, and Zhao Hong is dead. Your roadblock kept the rebels from becoming an army again.",
-        "wer": 0.0,
+        "voice_target": "movies/clean/clean_large_vaguely_russian_man.wav",
+        "stt_output": "The war's ours, and Zhao Hong is dead. Your roadblock kept the rebels from becoming an army again.",
+        "wer": 0.10526315789473684,
         "is_bad": false,
         "language": "en"
     },
@@ -4191,7 +4620,8 @@
         "stt_output": "The wall is shaking, but run north before Sun Ji-An shuts us inside one.",
         "wer": 0.15384615384615385,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:ch2_wan_north_zj_01": {
         "id": "ch2_wan_north_zj_01",
@@ -4200,7 +4630,8 @@
         "stt_output": "Sun Jian is striking the wall. Wander, all this north road, Sun Chong must not carry Zhao Heng's remnant away.",
         "wer": 0.2,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_wan_north_zj_02": {
         "id": "ch2_wan_north_zj_02",
@@ -4209,7 +4640,8 @@
         "stt_output": "Then one is settled. Ciao, Hong and Sun Zhong are dead, and then Yang's commandories are quiet again.",
         "wer": 0.29411764705882354,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_wan_rev_lb_02_road": {
         "id": "ch2_wan_rev_lb_02_road",
@@ -4218,7 +4650,8 @@
         "stt_output": "then Sanjian can press the wall. Our brothers will hold the North Road and cut down anyone who breaks from the gate.",
         "wer": 0.08695652173913043,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_wan_rev_lb_02_wall": {
         "id": "ch2_wan_rev_lb_02_wall",
@@ -4227,12 +4660,14 @@
         "stt_output": "Then we will join Sun Jian at the wall. If the gate breaks quickly, Sun Jian will have no road left to use.",
         "wer": 0.043478260869565216,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_wan_rev_sj_02_road": {
         "id": "ch2_wan_rev_sj_02_road",
         "character": "sunjian",
         "original_text": "Leave the wall to me. If the rebels flee north, make the road narrower than the gate.",
+        "voice_target": "movies/clean/clean_large_vaguely_russian_man.wav",
         "stt_output": "Leave the wall to me. If the rebels flee north, make the road narrower than the gate.",
         "wer": 0.0,
         "is_bad": false,
@@ -4242,8 +4677,9 @@
         "id": "ch2_wan_rev_sj_02_wall",
         "character": "sunjian",
         "original_text": "Good. We will climb together and settle Zhao Hong before his courage hardens.",
-        "stt_output": "Good! Wo-wa! We will climb together and settle Zauhome before his courage hardens.",
-        "wer": 0.23076923076923078,
+        "voice_target": "movies/clean/clean_large_vaguely_russian_man.wav",
+        "stt_output": "We will climb together and settle Zhao Hong before his courage hardens.",
+        "wer": 0.07692307692307693,
         "is_bad": false,
         "language": "en"
     },
@@ -4254,7 +4690,8 @@
         "stt_output": "Whoa! Sunji and Sunimville strike the wall. Suwande, take your brothers to the north road. If Sun Jong runs, he must find you there.",
         "wer": 0.25,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_wan_rev_zj_03_wall": {
         "id": "ch2_wan_rev_zj_03_wall",
@@ -4263,7 +4700,8 @@
         "stt_output": "Then the war assault will carry our strength. My remaining troops will watch the roads while you and Sun Giant break the gate.",
         "wer": 0.08695652173913043,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:cc_ch1_end_01": {
         "id": "cc_ch1_end_01",
@@ -4272,7 +4710,8 @@
         "stt_output": "At Yingquan, the routed rebels were cut and scattered, Tsao Tsao dressed north at once, and from this campaign his name began to spread.",
         "wer": 0.20833333333333334,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_anxi_narrator_wait_01": {
         "id": "ch2_anxi_narrator_wait_01",
@@ -4281,7 +4720,8 @@
         "stt_output": "Several hours later, Zhang Jun came back through the palace gate, Dusty, angry and very much alive.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_anxi_zj_both_01": {
         "id": "ch2_anxi_zj_both_01",
@@ -4290,7 +4730,8 @@
         "stt_output": "They named both charges, Blue G-Free'd by force, and Blades raised against Dong Jooh, Shuyun could save your life, not your office.",
         "wer": 0.25,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_anxi_zj_both_02": {
         "id": "ch2_anxi_zj_both_02",
@@ -4299,7 +4740,8 @@
         "stt_output": "The courtundance, the crimes and grants no post. Leave Luoyang before another tongue finds profit in naming you, Rebel.",
         "wer": 0.1,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_anxi_zj_clean_01": {
         "id": "ch2_anxi_zj_clean_01",
@@ -4308,7 +4750,8 @@
         "stt_output": "Yet, they fear more unrewarded soldiers will speak. Your name has been written down for Anxi County Commandant. DOS.",
         "wer": 0.05555555555555555,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_anxi_zj_dz_01": {
         "id": "ch2_anxi_zj_dz_01",
@@ -4317,7 +4760,8 @@
         "stt_output": "They also named Dong Shu. Your brothers raised steel against an imperial general. Shu Yun, argue that your merit made punishment unwise.",
         "wer": 0.18181818181818182,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_anxi_zj_freed_01": {
         "id": "ch2_anxi_zj_freed_01",
@@ -4326,7 +4770,8 @@
         "stt_output": "They also named Lugi, you took arms against imperial escorts and released him. Do you know that your merit made punishment unwise?",
         "wer": 0.21739130434782608,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_anxi_zj_one_01": {
         "id": "ch2_anxi_zj_one_01",
@@ -4335,7 +4780,8 @@
         "stt_output": "The court forgives the offense, but cuts down the reward. You are signed beneath the unxy commandant, not over him.",
         "wer": 0.1,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_wan_final_zj_02": {
         "id": "ch2_wan_final_zj_02",
@@ -4344,7 +4790,8 @@
         "stt_output": "Ciao, homies dead, sun shong has fallen, and the rebels have broken. Nanyan's commandories are quiet again.",
         "wer": 0.3333333333333333,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_wan_final_zj_03": {
         "id": "ch2_wan_final_zj_03",
@@ -4353,7 +4800,8 @@
         "stt_output": "One full song has broken John Liang at Quian, and John Zhu is already dead. In this region, the yellow turban fire is nearly sped.",
         "wer": 0.2916666666666667,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_wan_final_zj_04": {
         "id": "ch2_wan_final_zj_04",
@@ -4362,7 +4810,8 @@
         "stt_output": "We return to Luoyan. I will report the victory and memorialize the merit of Sanjian, Liu Bae, and all who stood here.",
         "wer": 0.17391304347826086,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_wan_north_zj_03": {
         "id": "ch2_wan_north_zj_03",
@@ -4371,7 +4820,8 @@
         "stt_output": "Anfu-song has broken Zhang Yang at Kuyang, and Zhang Yu is already dead. In this region, the yellow turban fire is nearly spent.",
         "wer": 0.20833333333333334,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_wan_north_zj_04": {
         "id": "ch2_wan_north_zj_04",
@@ -4380,7 +4830,8 @@
         "stt_output": "We return to Luaia. I will report the victory and memorialize the merit of San Gian, you by, and all who stood here.",
         "wer": 0.21739130434782608,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:map_lb_ch2_luoyang_01": {
         "id": "map_lb_ch2_luoyang_01",
@@ -4389,7 +4840,8 @@
         "stt_output": "One is settled. General Chuyun returns to Luoyang to report the victory. We should follow and wait on the court's judgment.",
         "wer": 0.13636363636363635,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_anxi_govern_clerk_01": {
         "id": "ch2_anxi_govern_clerk_01",
@@ -4398,7 +4850,8 @@
         "stt_output": "A lord, the inspector, comes wrapped in authority. He asks, without asking. A bribe is what he means.",
         "wer": 0.05555555555555555,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_anxi_govern_elder_01": {
         "id": "ch2_anxi_govern_elder_01",
@@ -4407,7 +4860,8 @@
         "stt_output": "General Chang, the inspector means to ruin Lord Liu, who came to testify, but his men will not let us in.",
         "wer": 0.09523809523809523,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_anxi_govern_gy_01": {
         "id": "ch2_anxi_govern_gy_01",
@@ -4416,7 +4870,8 @@
         "stt_output": "A thorn bush is no perch for phoenixes. Return the seal and seek a larger road.",
         "wer": 0.1875,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:ch2_anxi_govern_inspector_01": {
         "id": "ch2_anxi_govern_inspector_01",
@@ -4425,7 +4880,8 @@
         "stt_output": "Liyue, Shawanda, Oroah! What is your origin? And by what merit did you receive of?",
         "wer": 0.2857142857142857,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:ch2_anxi_govern_inspector_02": {
         "id": "ch2_anxi_govern_inspector_02",
@@ -4434,7 +4890,8 @@
         "stt_output": "False kinship, false merit, the court now purges corrupt military upstarts. You may be exactly the man it means.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:ch2_anxi_govern_inspector_03": {
         "id": "ch2_anxi_govern_inspector_03",
@@ -4443,7 +4900,8 @@
         "stt_output": "Liu Shwanda, save my life!",
         "wer": 0.2,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:ch2_anxi_govern_lb_01": {
         "id": "ch2_anxi_govern_lb_01",
@@ -4452,7 +4910,8 @@
         "stt_output": "I am descended from Prince Jing of Zhongshan, since Shu-O county I have fought the yellow turbines in more than 30 actions.",
         "wer": 0.13636363636363635,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_anxi_govern_lb_02": {
         "id": "ch2_anxi_govern_lb_02",
@@ -4461,7 +4920,8 @@
         "stt_output": "I have taken nothing from the people. What treasure could I hand in without first becoming what he accuses me of being?",
         "wer": 0.045454545454545456,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_anxi_govern_lb_03": {
         "id": "ch2_anxi_govern_lb_03",
@@ -4470,7 +4930,8 @@
         "stt_output": "Either, enough, he deserves punishment but not death by our anger.",
         "wer": 0.09090909090909091,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_anxi_govern_lb_04": {
         "id": "ch2_anxi_govern_lb_04",
@@ -4479,7 +4940,8 @@
         "stt_output": "Inspector, by your harm to the people you should die, I spare you. Take this seal back to those who sell honor so cheaply.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_anxi_govern_narrator_01": {
         "id": "ch2_anxi_govern_narrator_01",
@@ -4488,7 +4950,8 @@
         "stt_output": "For one month, Liu Baigou and Anxi, without taking so much as a hair from the people, and the county began to trust the new commandant.",
         "wer": 0.07692307692307693,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_anxi_govern_narrator_02": {
         "id": "ch2_anxi_govern_narrator_02",
@@ -4497,7 +4960,8 @@
         "stt_output": "He ate and slept beside Guanyu, and Zhang Fei, and when he sat in public, the brothers stood attendants all day without complaint.",
         "wer": 0.125,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_anxi_govern_narrator_03": {
         "id": "ch2_anxi_govern_narrator_03",
@@ -4506,7 +4970,8 @@
         "stt_output": "The next day the inspectors seized the county clerks and forced them to accuse LuBai. Eldas came to pre-train them and were beaten away from the gate.",
         "wer": 0.2413793103448276,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_anxi_govern_narrator_04": {
         "id": "ch2_anxi_govern_narrator_04",
@@ -4515,7 +4980,8 @@
         "stt_output": "Liu by home the seal on the inspector, left Angxi with Guan Yu and Zhang Fei, and turned north toward Luai Huui of Dai.",
         "wer": 0.20833333333333334,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_anxi_govern_narrator_one_01": {
         "id": "ch2_anxi_govern_narrator_one_01",
@@ -4524,7 +4990,8 @@
         "stt_output": "though another seal hung above him, loyal by handled angsty business without taking so much as a hair from the people.",
         "wer": 0.14285714285714285,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_anxi_govern_zf_01": {
         "id": "ch2_anxi_govern_zf_01",
@@ -4533,7 +5000,8 @@
         "stt_output": "A thief who harms the people, dares call my brother corrupt. Let him hear the truth from my hand.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:ch2_anxi_gy_both_02": {
         "id": "ch2_anxi_gy_both_02",
@@ -4542,7 +5010,8 @@
         "stt_output": "Then we should leave before the court changes its mind, a pardon spoken in fear may not survive a second whisper.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:ch2_liuhui_gy_01": {
         "id": "ch2_liuhui_gy_01",
@@ -4551,7 +5020,8 @@
         "stt_output": "A righteous road sometimes passes through another man's gate. We accept your shoulder with gratitude.",
         "wer": 0.06666666666666667,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
     },
     "en:ch2_liuhui_lb_01": {
         "id": "ch2_liuhui_lb_01",
@@ -4560,7 +5030,8 @@
         "stt_output": "Liu Huihui of Da is also of the Han House. If he will receive us, we may wait there until the realm has need of us again.",
         "wer": 0.07407407407407407,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_liuhui_lb_02": {
         "id": "ch2_liuhui_lb_02",
@@ -4569,7 +5040,8 @@
         "stt_output": "Then we remain quiet, protect those near us, and wait for a summons worthy of the oath we swore.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_liuhui_lh_01": {
         "id": "ch2_liuhui_lh_01",
@@ -4578,7 +5050,8 @@
         "stt_output": "Shwanda, I know your name and your blood. The Huns' poro, when men like you are hunted, my house is open.",
         "wer": 0.18181818181818182,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_mulans-dad.wav"
     },
     "en:ch2_liuhui_narrator_02": {
         "id": "ch2_liuhui_narrator_02",
@@ -4587,7 +5060,8 @@
         "stt_output": "Liu Huyi sheltered the brothers in Die. For a time, Liu by vanished from court ledges, but not from the troubled roads of the Han Doth.",
         "wer": 0.2,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_liuhui_narrator_anxi_01": {
         "id": "ch2_liuhui_narrator_anxi_01",
@@ -4596,7 +5070,8 @@
         "stt_output": "After the seal was returned and Anxi left behind, Liu Baiguan Yu and Zhang Fei travelled north with warrants already likely riding after them.",
         "wer": 0.12,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_liuhui_narrator_both_01": {
         "id": "ch2_liuhui_narrator_both_01",
@@ -4605,7 +5080,8 @@
         "stt_output": "The court had pardoned Liu Bai Bai, but granted no post. He dismissed the volunteers to their villages, and left Luoyang before pardon curdled into pursuit.",
         "wer": 0.08,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav"
     },
     "en:ch2_liuhui_zf_01": {
         "id": "ch2_liuhui_zf_01",
@@ -4614,7 +5090,8 @@
         "stt_output": "Heinsits badly on my shoulders. Still, better hear than bowing to an inspector with a hungry palm.",
         "wer": 0.16666666666666666,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_kublai-khan.wav"
     },
     "en:map_lb_ch2_anxi_01": {
         "id": "map_lb_ch2_anxi_01",
@@ -4623,7 +5100,8 @@
         "stt_output": "The Corps has named our place. We march to Angsi and serve the people there as cleanly as we can.",
         "wer": 0.1,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:map_lb_ch2_liuhui_01": {
         "id": "map_lb_ch2_liuhui_01",
@@ -4632,7 +5110,8 @@
         "stt_output": "We cannot remain under the court's eye, Liu Huoyi of Daimei shelter us until a better summons comes.",
         "wer": 0.15789473684210525,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_luoyang_liubo_accept_01": {
         "id": "ch2_luoyang_liubo_accept_01",
@@ -4641,7 +5120,8 @@
         "stt_output": "then let the stick speak while the ministers keep silent.",
         "wer": 0.1,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:ch2_luoyang_liubo_decline_01": {
         "id": "ch2_luoyang_liubo_decline_01",
@@ -4650,7 +5130,8 @@
         "stt_output": "Another time! We should keep our eyes on the gate!",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:ch2_luoyang_liubo_decline_reply_01": {
         "id": "ch2_luoyang_liubo_decline_reply_01",
@@ -4659,7 +5140,8 @@
         "stt_output": "As you wish, the board moves faster than the court.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:ch2_luoyang_liubo_intro_01": {
         "id": "ch2_luoyang_liubo_intro_01",
@@ -4668,7 +5150,8 @@
         "stt_output": "Waiting at court is its own campaign. Sit for a game of liubo while the palace decides your fate.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:ch2_luoyang_liubo_loss_01": {
         "id": "ch2_luoyang_liubo_loss_01",
@@ -4677,7 +5160,8 @@
         "stt_output": "Liewbaugh teaches patience. A useful lesson when palestores open slowly.",
         "wer": 0.2727272727272727,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:ch2_luoyang_liubo_win_01": {
         "id": "ch2_luoyang_liubo_win_01",
@@ -4686,14 +5170,16 @@
         "stt_output": "A clean victory. May the court read merit as clearly as you read the board.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
     },
     "en:ch2_wan_final_sj_01": {
         "id": "ch2_wan_final_sj_01",
         "character": "sunjian",
         "original_text": "Then I will be first on the wall. Zhao Hong will learn how little his reclaimed city is worth.",
-        "stt_output": "Then I will be first on the wall. Zhao Hong will learn how little his reclaimed city is worth.",
-        "wer": 0.0,
+        "voice_target": "movies/clean/clean_large_vaguely_russian_man.wav",
+        "stt_output": "Then I will be first on the wall. Jarl Hound will learn how little his reclaimed city is worth.",
+        "wer": 0.10526315789473684,
         "is_bad": false,
         "language": "en"
     },
@@ -4701,6 +5187,7 @@
         "id": "ch2_wan_final_sj_02",
         "character": "sunjian",
         "original_text": "Well said. The wall is taken; now the officers must hold the city better than the rebels did.",
+        "voice_target": "movies/clean/clean_large_vaguely_russian_man.wav",
         "stt_output": "Well said, the wall is taken. Now the officers must hold the city better than the rebels did.",
         "wer": 0.0,
         "is_bad": false,
@@ -4710,8 +5197,9 @@
         "id": "ch2_wan_rev_sj_01",
         "character": "sunjian",
         "original_text": "General Zhu Jun, Sun Jian of Xiapi answers the imperial call. My men are ready to strike Wan.",
-        "stt_output": "General Chuyun, Son Jian of Siapi, answers the imperial call. My men are ready to strike one.",
-        "wer": 0.2777777777777778,
+        "voice_target": "movies/clean/clean_large_vaguely_russian_man.wav",
+        "stt_output": "General Juyun, Sanjian of Ciappi, answers the Imperial call. My men are ready to strike war.",
+        "wer": 0.3333333333333333,
         "is_bad": false,
         "language": "en"
     },
@@ -4722,7 +5210,8 @@
         "stt_output": "Brothers, press the gate with Sun Jian. Break Zhao Hong and Sun Zhong here before the rebellion scatters again.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
     },
     "en:ch2_wan_final_zj_01": {
         "id": "ch2_wan_final_zj_01",
@@ -4731,15 +5220,453 @@
         "stt_output": "To ande has chosen to join Son Jan at the wall. My remaining troops will watch the roads. Your task is to break this gate.",
         "wer": 0.16666666666666666,
         "is_bad": false,
-        "language": "en"
+        "language": "en",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav"
     },
     "en:ch2_anxi_palace_guard_01": {
         "id": "ch2_anxi_palace_guard_01",
         "character": "soldier",
         "original_text": "Palace order: only summoned officers and court officials bearing memorials may pass. Soldiers awaiting reward must remain outside.",
-        "stt_output": "Palace Order. Only summoned officers and court officials bearing memorials may pass. Soldiers awaiting reward must remain outside.",
+        "voice_target": "movies/clean/clean_devious_adult_male.wav",
+        "stt_output": "Palace Order, only summoned officers and court officials bearing memorials may pass. Soldiers awaiting reward must remain outside.",
         "wer": 0.0,
         "is_bad": false,
         "language": "en"
+    },
+    "en:ch2_anxi_govern_gy_stop_01": {
+        "id": "ch2_anxi_govern_gy_stop_01",
+        "character": "guanyu",
+        "original_text": "Yide, enough. To punish a wicked man is justice; to be ruled by anger is not.",
+        "stt_output": "Yad, enough to punish a wicked man is justice, to be ruled by anger is not.",
+        "wer": 0.0625,
+        "is_bad": false,
+        "language": "en",
+        "voice_target": "movies/clean/clean_master_xehanort.wav"
+    },
+    "en:ch2_anxi_govern_lb_harder_01": {
+        "id": "ch2_anxi_govern_lb_harder_01",
+        "character": "liubei",
+        "original_text": "Let him feel one more stroke for the people he harmed.",
+        "stt_output": "Let him feel one more stroke for the people he harb.",
+        "wer": 0.09090909090909091,
+        "is_bad": false,
+        "language": "en",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav"
+    },
+    "en:ch2_hj_council_cc_01": {
+        "id": "ch2_hj_council_cc_01",
+        "character": "caocao",
+        "original_text": "The eunuchs have served inside the palace for generations. Their ears are in every curtain and corridor.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_hj_council_cc_02": {
+        "id": "ch2_hj_council_cc_02",
+        "character": "caocao",
+        "original_text": "If this is to be done, it must be secret and exact. A broad shout of vengeance will ruin your whole clan.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_hj_council_cc_03": {
+        "id": "ch2_hj_council_cc_03",
+        "character": "caocao",
+        "original_text": "Then keep the circle small. A plan known by all ministers is already known by Zhang Rang.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_hj_council_cc_04": {
+        "id": "ch2_hj_council_cc_04",
+        "character": "caocao",
+        "original_text": "Then I have spoken. May the walls be less talkative than men.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_hj_council_hj_01": {
+        "id": "ch2_hj_council_hj_01",
+        "character": "hejin",
+        "original_text": "Jian Shuo set a blade for me at the palace gate. This poison has roots through the whole forbidden palace.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_hj_council_hj_02": {
+        "id": "ch2_hj_council_hj_02",
+        "character": "hejin",
+        "original_text": "If the eunuchs can choose the emperor by murder, none of us serves the Han any longer.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_hj_council_hj_03": {
+        "id": "ch2_hj_council_hj_03",
+        "character": "hejin",
+        "original_text": "Before steel is drawn, the succession must be secured. Send watchers to the palace and wait for Pan Yin.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_hj_council_hj_dismiss": {
+        "id": "ch2_hj_council_hj_dismiss",
+        "character": "hejin",
+        "original_text": "You are still young, Mengde. Do not dress fear as wisdom before the ministers.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_hj_council_hj_heed": {
+        "id": "ch2_hj_council_hj_heed",
+        "character": "hejin",
+        "original_text": "Your caution is sharp, Mengde. We will first learn who stands with Jian Shuo.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_hj_council_narrator_02": {
+        "id": "ch2_hj_council_narrator_02",
+        "character": "narrator",
+        "original_text": "Even as the ministers argued, the palace concealed Emperor Ling's death and prepared a forged summons.",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_hj_council_ys_01": {
+        "id": "ch2_hj_council_ys_01",
+        "character": "yuanshao",
+        "original_text": "My lord, the matter is plain. Name the traitors, command the troops, and sweep the palace clean.",
+        "voice_target": "movies/clean/clean_brash_australian_man.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_hj_council_ys_02": {
+        "id": "ch2_hj_council_ys_02",
+        "character": "yuanshao",
+        "original_text": "Caution has its place, but delay fattens traitors.",
+        "voice_target": "movies/clean/clean_brash_australian_man.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_hj_council_ys_03": {
+        "id": "ch2_hj_council_ys_03",
+        "character": "yuanshao",
+        "original_text": "The General-in-Chief sees clearly. Let force answer force.",
+        "voice_target": "movies/clean/clean_brash_australian_man.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_final_defeat_lb_01": {
+        "id": "ch2_wan_final_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "Sun Zhong cannot be allowed to carry the remnant away. We return to the gate at once.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_final_defeat_zj_01": {
+        "id": "ch2_wan_final_defeat_zj_01",
+        "character": "zhujun",
+        "original_text": "Zhao Hong used the walls better than expected. Reform before the gate and press again with Sun Jian.",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_final_lb_02": {
+        "id": "ch2_wan_final_lb_02",
+        "character": "liubei",
+        "original_text": "Then let the surrendering men be counted and disarmed. Victory must end the killing, not feed it.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_final_sz_01": {
+        "id": "ch2_wan_final_sz_01",
+        "character": "sunzhong",
+        "original_text": "Break through! Wan is lost if we cling to the stones.",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_rev_gy_01": {
+        "id": "ch2_wan_rev_gy_01",
+        "character": "guanyu",
+        "original_text": "Then we wait for the next opening, not throw men against a wall in anger.",
+        "voice_target": "movies/clean/clean_master_xehanort.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_rev_lb_01": {
+        "id": "ch2_wan_rev_lb_01",
+        "character": "liubei",
+        "original_text": "Han Zhong fell because he left the city broken. Zhao Hong will be harder if he has regained the walls.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_rev_messenger_01": {
+        "id": "ch2_wan_rev_messenger_01",
+        "character": "soldier",
+        "original_text": "General Zhu! Zhao Hong and Sun Zhong have gathered the remaining rebels. Their numbers are strong.",
+        "voice_target": "movies/clean/clean_devious_adult_male.wav",
+        "stt_output": "Genera Chu, Chao Hong and Sun, Zhang have gathered the remaining rebels. Their numbers are strong.",
+        "wer": 0.25,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_rev_messenger_02": {
+        "id": "ch2_wan_rev_messenger_02",
+        "character": "soldier",
+        "original_text": "They have struck back toward Wan. The outer troops are falling away from the walls.",
+        "voice_target": "movies/clean/clean_devious_adult_male.wav",
+        "stt_output": "They have struck back toward what? The outer troops are falling away from the walls.",
+        "wer": 0.06666666666666667,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_wan_rev_narrator_01": {
+        "id": "ch2_wan_rev_narrator_01",
+        "character": "narrator",
+        "original_text": "Han Zhong was slain and his scattered men fled. Yet the Wan campaign did not end there.",
+        "voice_target": "movies/clean/clean_uncle-iroh.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_rev_zf_01": {
+        "id": "ch2_wan_rev_zf_01",
+        "character": "zhangfei",
+        "original_text": "Hmph. If Sun Zhong tries to run north, leave that road to me.",
+        "voice_target": "movies/clean/clean_kublai-khan.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_rev_zj_01": {
+        "id": "ch2_wan_rev_zj_01",
+        "character": "zhujun",
+        "original_text": "So the serpent has another head. Pull the line ten li back and keep the army whole.",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_rev_zj_02": {
+        "id": "ch2_wan_rev_zj_02",
+        "character": "zhujun",
+        "original_text": "Good. The rebels think their courage has returned. We will show them it was only noise.",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_wall_gy_01": {
+        "id": "ch2_wan_wall_gy_01",
+        "character": "guanyu",
+        "original_text": "A trapped army is iron. A fleeing army is reeds before the blade.",
+        "voice_target": "movies/clean/clean_master_xehanort.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_wall_gy_02": {
+        "id": "ch2_wan_wall_gy_02",
+        "character": "guanyu",
+        "original_text": "A hard blow may end deceit quickly, if our men keep discipline at the gate.",
+        "voice_target": "movies/clean/clean_master_xehanort.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_wall_lb_01": {
+        "id": "ch2_wan_wall_lb_01",
+        "character": "liubei",
+        "original_text": "General, Wan is not Yangcheng. We must decide whether to draw Han Zhong out or break the gate before his deceit ripens.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_wall_lb_02": {
+        "id": "ch2_wan_wall_lb_02",
+        "character": "liubei",
+        "original_text": "Leave the southeast road open. When Han Zhong comes out, strike his broken ranks in the field.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_wall_lb_03": {
+        "id": "ch2_wan_wall_lb_03",
+        "character": "liubei",
+        "original_text": "Then strike the walls now. If Han Zhong hides behind a false surrender, break the gate before he can profit from it.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_wall_zf_01": {
+        "id": "ch2_wan_wall_zf_01",
+        "character": "zhangfei",
+        "original_text": "Good! Let them think they have found a road, then I will close it with my spear.",
+        "voice_target": "movies/clean/clean_kublai-khan.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_wall_zf_02": {
+        "id": "ch2_wan_wall_zf_02",
+        "character": "zhangfei",
+        "original_text": "Ha! If they bar the door while begging mercy, I will knock loudly enough for all Wan to hear.",
+        "voice_target": "movies/clean/clean_kublai-khan.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_wall_zj_01": {
+        "id": "ch2_wan_wall_zj_01",
+        "character": "zhujun",
+        "original_text": "There stands Wan. Han Zhong asks to surrender, yet the gate remains barred and his banners still fly on the wall.",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_wall_zj_02": {
+        "id": "ch2_wan_wall_zj_02",
+        "character": "zhujun",
+        "original_text": "Yangcheng opened from within after Yan Zheng struck down Zhang Bao. Wan has offered only words from behind a shut gate.",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_wall_zj_03": {
+        "id": "ch2_wan_wall_zj_03",
+        "character": "zhujun",
+        "original_text": "If this is a trick to buy time, the walls before us will make it costly. Speak, Xuande: how should we answer?",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_wall_zj_04": {
+        "id": "ch2_wan_wall_zj_04",
+        "character": "zhujun",
+        "original_text": "That counsel is wise. Loosen the siege at the southeast. Place our best troops at the narrow road.",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_wan_wall_zj_05": {
+        "id": "ch2_wan_wall_zj_05",
+        "character": "zhujun",
+        "original_text": "So be it. Form the assault column here before the gate. Wan is to be taken, not burned.",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
+    },
+    "en:ch2_yc_zj_04": {
+        "id": "ch2_yc_zj_04",
+        "character": "zhujun",
+        "original_text": "Yangcheng is settled. We march next to Wan, where Han Zhong has gathered the remaining rebels.",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
+        "language": "en",
+        "stt_output": "",
+        "wer": null,
+        "is_bad": false,
+        "verification_status": "metadata_only"
     }
 }

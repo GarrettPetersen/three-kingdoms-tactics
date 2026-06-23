@@ -72,8 +72,8 @@ CHAR_TARGETS = {
     "zhangjue": "movies/clean/clean_anton-ego-villainous-food-critic.wav",  # Villainous, commanding
     "zhangbao": "movies/clean/clean_kublai-khan.wav",  # Aggressive, warrior-like
     "zhangliang": "movies/clean/clean_mulan-emperor.wav",  # Authoritative, imperial
-    "sunjian": "movies/clean/clean_li-shang-captain-from-mulan.wav",  # Tough commander in his prime
-    "soldier": "movies/clean/clean_li-shang-captain-from-mulan.wav",  # Disciplined common soldier voice
+    "sunjian": "movies/clean/clean_large_vaguely_russian_man.wav",  # Tough commander in his prime
+    "soldier": "movies/clean/clean_devious_adult_male.wav",  # Stern common soldier voice
     "soldierv2": "movies/clean/clean_dark_riku_young_adult.wav",  # Alternate young soldier
     "soldierv3": "movies/clean/clean_angry-mulans-dad.wav",  # Older anxious soldier
     "farmer": "movies/clean/clean_mulans-dad.wav",  # Older male villager voice
@@ -239,6 +239,73 @@ def save_voice_hash_manifest(voice_lines, lang_code):
         f.write("\n")
 
 
+def verification_report_path(lang_code):
+    return Path(f"voice_verification_report_{lang_code}.json")
+
+
+def load_verification_report(lang_code):
+    path = verification_report_path(lang_code)
+    if not path.exists():
+        return {}
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            data = json.load(f)
+        except json.JSONDecodeError:
+            return {}
+    return data if isinstance(data, dict) else {}
+
+
+def save_verification_report(lang_code, report):
+    path = verification_report_path(lang_code)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(report, f, indent=4, ensure_ascii=False)
+        f.write("\n")
+
+
+def report_metadata_entry(line, lang_code):
+    return {
+        "id": line["id"],
+        "character": line["char"],
+        "original_text": line.get("original_text", line["text"]),
+        "voice_target": voice_target_filename(line["char"], lang_code),
+        "language": lang_code,
+    }
+
+
+def metadata_only_report_entry(line, lang_code):
+    return {
+        **report_metadata_entry(line, lang_code),
+        "stt_output": "",
+        "wer": None,
+        "is_bad": False,
+        "verification_status": "metadata_only",
+    }
+
+
+def sync_verification_report_metadata(voice_lines, lang_code, report=None):
+    report = report if report is not None else load_verification_report(lang_code)
+
+    changed = False
+    for line in voice_lines:
+        unique_key = f"{lang_code}:{line['id']}"
+        existing = report.get(unique_key)
+        if not isinstance(existing, dict):
+            output_ogg = Path(OUTPUT_DIR) / lang_code / f"{line['id']}.ogg"
+            if output_ogg.exists() and output_ogg.stat().st_size > 0:
+                report[unique_key] = metadata_only_report_entry(line, lang_code)
+                changed = True
+            continue
+
+        for key, value in report_metadata_entry(line, lang_code).items():
+            if existing.get(key) != value:
+                existing[key] = value
+                changed = True
+
+    if changed:
+        save_verification_report(lang_code, report)
+    return report
+
+
 def voice_file_generation_status(line, lang_code, hash_manifest=None):
     """Decide whether a voice line needs audio generated or regenerated."""
     output_ogg = Path(OUTPUT_DIR) / lang_code / f"{line['id']}.ogg"
@@ -252,9 +319,47 @@ def voice_file_generation_status(line, lang_code, hash_manifest=None):
         return {"needs_generation": True, "reason": "empty", "details": "0-byte audio file"}
 
     stored = hash_manifest.get(line["id"])
+    if not stored:
+        return {
+            "needs_generation": True,
+            "reason": "untracked",
+            "details": "no voice generation manifest entry",
+        }
+
+    expected_target = voice_target_filename(line["char"], lang_code)
+    if isinstance(stored, dict):
+        stored_character = stored.get("character")
+        if stored_character and stored_character != line["char"]:
+            return {
+                "needs_generation": True,
+                "reason": "stale",
+                "details": f"voice character changed from {stored_character} to {line['char']}",
+            }
+
+        stored_target = stored.get("voice_target")
+        if not stored_target:
+            return {
+                "needs_generation": True,
+                "reason": "stale",
+                "details": "voice target not recorded",
+            }
+        if stored_target != expected_target:
+            return {
+                "needs_generation": True,
+                "reason": "stale",
+                "details": f"voice target changed from {stored_target} to {expected_target}",
+            }
+
     stored_hash = stored.get("hash") if isinstance(stored, dict) else stored
+    if not stored_hash:
+        return {
+            "needs_generation": True,
+            "reason": "stale",
+            "details": "generation hash not recorded",
+        }
+
     current_hash = voice_line_hash(line, lang_code)
-    if stored_hash and stored_hash != current_hash:
+    if stored_hash != current_hash:
         return {
             "needs_generation": True,
             "reason": "stale",
@@ -1437,6 +1542,7 @@ if __name__ == "__main__":
 
     if len(lines_to_generate) == 0:
         save_voice_hash_manifest(voice_lines, LANGUAGE)
+        sync_verification_report_metadata(voice_lines, LANGUAGE)
         print("All voice files are current. Nothing to generate.")
         sys.exit(0)
 
@@ -1477,6 +1583,7 @@ if __name__ == "__main__":
             "id": line["id"],
             "character": line["char"],
             "original_text": line.get("original_text", line["text"]),
+            "voice_target": voice_target_filename(line["char"], LANGUAGE),
             "stt_output": res.get("transcribed", "") if res else "",
             "wer": res.get("wer", 0) if res else 0,
             "is_bad": res.get("is_bad", False) if res else False,
@@ -1485,20 +1592,13 @@ if __name__ == "__main__":
 
     # Save report - use language-specific report file
     lang_report_file = f"voice_verification_report_{LANGUAGE}.json"
-    if os.path.exists(lang_report_file):
-        with open(lang_report_file, "r") as f:
-            try:
-                existing_report = json.load(f)
-            except:
-                existing_report = {}
-    else:
-        existing_report = {}
+    existing_report = load_verification_report(LANGUAGE)
 
     for unique_key, data in report.items():
         if data is not None:
             existing_report[unique_key] = data
 
-    with open(lang_report_file, "w") as f:
-        json.dump(existing_report, f, indent=4, ensure_ascii=False)
+    sync_verification_report_metadata(voice_lines, LANGUAGE, existing_report)
+    save_verification_report(LANGUAGE, existing_report)
     print(f"\nVerification report updated in {lang_report_file}")
     save_voice_hash_manifest(voice_lines, LANGUAGE)

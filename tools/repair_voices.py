@@ -119,6 +119,7 @@ def report_result(line, lang_code, verification_result):
         "id": line["id"],
         "character": line["char"],
         "original_text": line.get("original_text", line["text"]),
+        "voice_target": voices.voice_target_filename(line["char"], lang_code),
         "stt_output": verification_result.get("transcribed", ""),
         "wer": verification_result.get("wer", 1.0),
         "is_bad": verification_result.get("is_bad", False),

@@ -299,6 +299,42 @@ function checkBattleDialogueScriptImmutability() {
         `${relPath} should execute battle dialogue choices through temporary dialogue frames.`);
 }
 
+function checkVoiceTargetAssignments() {
+    const manifestPath = path.join(projectRoot, 'tools', 'voice_line_hashes_en.json');
+    if (!fs.existsSync(manifestPath)) return;
+
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    const distinctCharacters = new Set(['liubei', 'guanyu', 'zhangfei', 'caocao', 'caoren', 'sunjian', 'soldier']);
+    const targetsByCharacter = new Map();
+
+    Object.values(manifest).forEach(entry => {
+        const character = entry?.character;
+        const voiceTarget = entry?.voice_target;
+        if (!distinctCharacters.has(character) || !voiceTarget) return;
+        if (!targetsByCharacter.has(character)) targetsByCharacter.set(character, new Set());
+        targetsByCharacter.get(character).add(voiceTarget);
+    });
+
+    distinctCharacters.forEach(character => {
+        const targets = targetsByCharacter.get(character);
+        assertRule(targets?.size > 0,
+            `English voice manifest must include generated lines for ${character}.`);
+        assertRule(targets?.size === 1,
+            `${character} should use one consistent English voice target, found ${targets ? [...targets].join(', ') : 'none'}.`);
+    });
+
+    const ownerByTarget = new Map();
+    [...distinctCharacters].sort().forEach(character => {
+        const targets = targetsByCharacter.get(character);
+        if (!targets || targets.size !== 1) return;
+        const [target] = targets;
+        const existingOwner = ownerByTarget.get(target);
+        assertRule(!existingOwner,
+            `${character} and ${existingOwner} must not share English voice target ${target}.`);
+        ownerByTarget.set(target, character);
+    });
+}
+
 function isAllowedWalkmaskPixel(r, g, b, a) {
     if (a === 0) return true;
     return a === 255 && (
@@ -509,6 +545,7 @@ checkQingzhouCityGatePrelude();
 checkCanvasTextRendering();
 checkNarrativeScriptImmutability();
 checkBattleDialogueScriptImmutability();
+checkVoiceTargetAssignments();
 await checkSettingWalkmasks();
 await checkInnNarrativeWalkmaskPaths();
 

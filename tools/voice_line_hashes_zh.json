@@ -237,6 +237,13 @@
     "version": 1,
     "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
   },
+  "ch2_anxi_govern_gy_stop_01": {
+    "character": "guanyu",
+    "hash": "8dfa05163765a094c6ddd89d880f7184b506c183214e7d1323bfdebbc50abeb5",
+    "text": "翼德，够了。惩恶是义，任怒伤人便非义了。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
   "ch2_anxi_govern_inspector_01": {
     "character": "merchant",
     "hash": "a498cddbd3d7bf663c2910f0bfad3f5ce4f4306001a2e8bf28353381cb885be5",
@@ -283,6 +290,13 @@
     "character": "liubei",
     "hash": "002b1becd00ed39712e7154c2476f279ec59809bce98ae9fc3b8d3a8559bd39a",
     "text": "督邮，据你害民，本当杀却。今姑饶汝命。把这印绶带回给那些轻卖功名的人。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "ch2_anxi_govern_lb_harder_01": {
+    "character": "liubei",
+    "hash": "1082e883440c411a23f49443b079e13f352841a9ef45402358841027b59eb737",
+    "text": "让他替所害百姓，再受这一记。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
   },
