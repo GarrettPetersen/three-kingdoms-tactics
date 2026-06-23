@@ -6,6 +6,7 @@ import {
     LIUBO_BOARD_PADDED_SIZE,
     LIUBO_PLAYERS,
     getBoardPointPosition,
+    getLiuboFeatureId,
     isLiuboNest
 } from '../minigames/liubo/LiuboBoard.js';
 import {
@@ -58,7 +59,7 @@ const LIUBO_RULE_SECTIONS = [
     {
         title: { en: 'BLOCKS', zh: '堵塞' },
         lines: [
-            { en: 'Two same-side birds block a perch.', zh: '同方两鸟会堵住栖位。' },
+            { en: 'Two same-side pieces block a perch.', zh: '同方两枚棋子会堵住栖位。' },
             { en: 'One bird vs one bird contests; a helper captures.', zh: '一鸟对一鸟为争夺；同伴再入则吃子。' }
         ]
     },
@@ -1778,9 +1779,10 @@ function classifyLiuboMove(state, move) {
     if (move.scoreFish) return 'score';
     if (move.promoteToOwl) return 'promote';
     const moverIsOwlAfterMove = mover.isOwl || !!move.promoteToOwl;
+    const destinationFeatureId = getLiuboFeatureId(move.toSpaceId);
     const pieces = state.pieces.filter(piece => (
         piece.state === 'board'
-        && piece.spaceId === move.toSpaceId
+        && getLiuboFeatureId(piece.spaceId) === destinationFeatureId
         && piece.id !== mover.id
     ));
     const friendly = pieces.filter(piece => piece.player === mover.player);
@@ -1828,7 +1830,7 @@ function getPerchPieces(state) {
 function hasBlockedPerch(state) {
     const counts = new Map();
     getPerchPieces(state).forEach(piece => {
-        const key = `${piece.spaceId}:${piece.player}`;
+        const key = `${getLiuboFeatureId(piece.spaceId)}:${piece.player}`;
         counts.set(key, (counts.get(key) || 0) + 1);
     });
     return [...counts.values()].some(count => count >= 2);
@@ -1837,7 +1839,7 @@ function hasBlockedPerch(state) {
 function hasContestedPerch(state) {
     const grouped = new Map();
     getPerchPieces(state).forEach(piece => {
-        const key = `${piece.spaceId}:${piece.isOwl ? 'owl' : 'bird'}`;
+        const key = `${getLiuboFeatureId(piece.spaceId)}:${piece.isOwl ? 'owl' : 'bird'}`;
         if (!grouped.has(key)) grouped.set(key, new Set());
         grouped.get(key).add(piece.player);
     });
