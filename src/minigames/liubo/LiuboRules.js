@@ -296,6 +296,7 @@ function canMoveThroughOrLand(state, piece, spaceId, isFinalStep, path = null) {
     const occupants = getPiecesAt(state, spaceId).filter(other => other.id !== piece.id);
 
     if (isBlockade(occupants)) return false;
+    if (!isFinalStep && occupants.length >= spaceCapacity) return false;
 
     if (enemies.length) {
         if (!isFinalStep) return isContested(occupants);

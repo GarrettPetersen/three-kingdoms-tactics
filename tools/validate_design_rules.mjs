@@ -1,5 +1,6 @@
 import { BATTLES, UNIT_TEMPLATES } from '../src/data/Battles.js';
 import { GameState } from '../src/core/GameState.js';
+import { LIUBO_SPACES } from '../src/minigames/liubo/LiuboBoard.js';
 import { createLiuboState, getLegalMovesForPiece, getLiuboMoveCaptureIds } from '../src/minigames/liubo/LiuboRules.js';
 import { NARRATIVE_SCRIPTS } from '../src/data/NarrativeScripts.js';
 import { resolveUnitTemplate } from '../src/data/UnitRules.js';
@@ -256,6 +257,17 @@ function checkLiuboPerchRules() {
         });
     });
 
+    const assertRotationalMirror = (aId, bId) => {
+        const a = LIUBO_SPACES[aId];
+        const b = LIUBO_SPACES[bId];
+        assertRule(!!a && !!b && a.x === 256 - b.x && a.y === 256 - b.y,
+            `Liubo board space ${aId} should be the 180-degree mirror of ${bId}.`);
+    };
+    assertRotationalMirror('l_top_right', 'l_bottom_left');
+    assertRotationalMirror('l_top_left', 'l_bottom_right');
+    assertRotationalMirror('l_right_bottom', 'l_left_top');
+    assertRotationalMirror('l_right_top', 'l_left_bottom');
+
     let state = createLiuboState({ firstPlayer: 'black' });
     state.phase = 'choose_piece';
     state.currentPlayer = 'black';
@@ -304,6 +316,45 @@ function checkLiuboPerchRules() {
         'Liubo movement must not backtrack through the central pond to return to the same perch.');
     assertRule(pondCrossingMoves.some(move => move.toSpaceId === 't_right_inner' && move.path?.join('.') === 't_top_inner.pond.t_right_inner'),
         'Liubo movement should still allow crossing the central pond to a different inner T perch.');
+
+    state = createLiuboState({ firstPlayer: 'white' });
+    state.phase = 'choose_piece';
+    state.currentPlayer = 'white';
+    state.movesRemaining = [2, 3];
+    state.pieces = [
+        { id: 'w1', player: 'white', index: 0, state: 'offboard', spaceId: null, isOwl: false, carryingFish: false },
+        makeLiuboBoardPiece('w2', 'white', 'corner_sw_bottom'),
+        makeLiuboBoardPiece('b1', 'black', 'corner_sw_bottom')
+    ];
+    const offboardMoves = getLegalMovesForPiece(state, state.pieces[0]);
+    assertRule(!offboardMoves.some(move => move.path?.[0] === 'corner_sw_bottom'),
+        'Liubo movement must not pass through a full contested perch as an intermediate step.');
+
+    state = createLiuboState({ firstPlayer: 'white' });
+    state.phase = 'choose_piece';
+    state.currentPlayer = 'white';
+    state.movesRemaining = [2, 3];
+    state.pieces = [
+        { id: 'w1', player: 'white', index: 0, state: 'offboard', spaceId: null, isOwl: false, carryingFish: false },
+        makeLiuboBoardPiece('b1', 'black', 'corner_sw_bottom'),
+        makeLiuboBoardPiece('b2', 'black', 'corner_sw_bottom')
+    ];
+    const blockedEntryMoves = getLegalMovesForPiece(state, state.pieces[0]);
+    assertRule(!blockedEntryMoves.some(move => move.path?.includes('corner_sw_bottom')),
+        'Liubo movement must not pass through or land on a blocked perch.');
+
+    state = createLiuboState({ firstPlayer: 'white' });
+    state.phase = 'choose_piece';
+    state.currentPlayer = 'white';
+    state.movesRemaining = [1];
+    state.pieces = [
+        makeLiuboBoardPiece('w1', 'white', 'l_bottom_left'),
+        makeLiuboBoardPiece('w2', 'white', 'corner_sw_bottom'),
+        makeLiuboBoardPiece('b1', 'black', 'corner_sw_bottom')
+    ];
+    const captureMoves = getLegalMovesForPiece(state, state.pieces[0]);
+    assertRule(captureMoves.some(move => move.toSpaceId === 'corner_sw_bottom'),
+        'Liubo movement should still allow a final move into a contested perch to capture.');
 }
 
 function listJsFiles(dir) {

@@ -5,8 +5,8 @@ export const LIUBO_BOARD_PADDED_SIZE = 256;
 // Liubo Lab's board reads as visible marks with separate branch landing points:
 // each V/corner, L, and T can hold two pieces because each arm is its own space.
 export const LIUBO_SPACES = {
-    l_top_left: { id: 'l_top_left', kind: 'l', x: 118, y: 82 },
-    l_top_right: { id: 'l_top_right', kind: 'l', x: 128, y: 62 },
+    l_top_left: { id: 'l_top_left', kind: 'l', x: 118, y: 62 },
+    l_top_right: { id: 'l_top_right', kind: 'l', x: 128, y: 42 },
     l_right_top: { id: 'l_right_top', kind: 'l', x: 194, y: 128 },
     l_right_bottom: { id: 'l_right_bottom', kind: 'l', x: 214, y: 138 },
     l_bottom_right: { id: 'l_bottom_right', kind: 'l', x: 138, y: 194 },
