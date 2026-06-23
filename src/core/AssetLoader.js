@@ -9,6 +9,16 @@ const DEFAULT_AUDIO_SETTINGS = {
     muted: false
 };
 const MUSIC_CROSSFADE_MS = 1100;
+const SFX_DEFAULT_GAINS = {
+    // These source files measure much hotter than the rest of the effects set.
+    war_horn: 0.35,
+    boulder_roll: 0.35,
+    boulder_roll_2: 0.35,
+    boulder_impact: 0.5,
+    bump_damage: 0.75,
+    splash: 0.8,
+    heavy_door_unlocking: 0.8
+};
 
 export class AssetLoader {
     constructor() {
@@ -126,7 +136,8 @@ export class AssetLoader {
         this.loopingSounds.forEach(entry => {
             if (!entry || !entry.audio) return;
             const baseVolume = this._clamp01(entry.baseVolume ?? 1.0);
-            entry.audio.volume = this.masterMutedByUser ? 0 : this._clamp01(baseVolume * this.masterUserVolume * this.sfxUserVolume);
+            const defaultGain = this.getSoundDefaultGain(entry.key);
+            entry.audio.volume = this.masterMutedByUser ? 0 : this._clamp01(baseVolume * defaultGain * this.masterUserVolume * this.sfxUserVolume);
         });
         return this.getAudioSettings();
     }
@@ -687,10 +698,15 @@ export class AssetLoader {
         return this.music[key];
     }
 
-    _playLoadedSound(sound, volume) {
+    getSoundDefaultGain(key) {
+        return this._clamp01(SFX_DEFAULT_GAINS[key] ?? 1.0);
+    }
+
+    _playLoadedSound(sound, volume, key = null) {
         if (!sound) return;
         const clone = sound.cloneNode();
-        clone.volume = this.masterMutedByUser ? 0 : this._clamp01(volume * this.masterUserVolume * this.sfxUserVolume);
+        const defaultGain = this.getSoundDefaultGain(key);
+        clone.volume = this.masterMutedByUser ? 0 : this._clamp01(volume * defaultGain * this.masterUserVolume * this.sfxUserVolume);
         clone.play().catch(e => {
             this.audioUnlocked = false;
             console.log("Sound play prevented:", e);
@@ -714,12 +730,12 @@ export class AssetLoader {
 
         const sound = this.getSound(resolvedKey);
         if (sound) {
-            this._playLoadedSound(sound, resolvedVolume);
+            this._playLoadedSound(sound, resolvedVolume, resolvedKey);
             return;
         }
 
         if (this.soundSources[resolvedKey]) {
-            this.loadSound(resolvedKey).then(loaded => this._playLoadedSound(loaded, resolvedVolume));
+            this.loadSound(resolvedKey).then(loaded => this._playLoadedSound(loaded, resolvedVolume, resolvedKey));
         }
     }
 
@@ -783,7 +799,8 @@ export class AssetLoader {
         }
 
         const baseVolume = this._clamp01(volume);
-        const targetVolume = this.masterMutedByUser ? 0 : this._clamp01(baseVolume * this.masterUserVolume * this.sfxUserVolume);
+        const defaultGain = this.getSoundDefaultGain(key);
+        const targetVolume = this.masterMutedByUser ? 0 : this._clamp01(baseVolume * defaultGain * this.masterUserVolume * this.sfxUserVolume);
         const existing = this.loopingSounds.get(key);
         if (existing) {
             if (existing.fadeInterval) {
@@ -791,6 +808,7 @@ export class AssetLoader {
                 existing.fadeInterval = null;
             }
             existing.baseVolume = baseVolume;
+            existing.key = key;
             existing.audio.loop = true;
             if (fadeInMs <= 0) {
                 existing.audio.volume = targetVolume;
@@ -812,7 +830,7 @@ export class AssetLoader {
         const audio = base.cloneNode();
         audio.loop = true;
         audio.volume = (fadeInMs > 0) ? 0 : targetVolume;
-        const entry = { audio, fadeInterval: null, baseVolume };
+        const entry = { audio, fadeInterval: null, baseVolume, key };
         this.loopingSounds.set(key, entry);
         audio.play().catch(e => console.log("Looping sound play prevented:", e));
 

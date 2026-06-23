@@ -16,6 +16,7 @@ import { OptionsOverlay } from './scenes/OptionsOverlay.js';
 import { LiuboScene } from './scenes/LiuboScene.js';
 import { DebugStoryGraphScene } from './scenes/DebugStoryGraphScene.js';
 import { StoryScriptReaderScene } from './scenes/StoryScriptReaderScene.js';
+import { STORY_ROUTES } from './data/StoryGraph.js';
 
 const canvas = document.getElementById('game-canvas');
 const gameContainer = document.getElementById('game-container');
@@ -505,15 +506,18 @@ async function init() {
             sceneManager.gameState.removeMilestone('freed_luzhi');
             sceneManager.gameState.removeMilestone('chapter2_oath_dongzhuo_fought');
         }
-        // Chapter 1 uses this explicit key in existing unlock checks.
-        if (n === 1) sceneManager.gameState.addMilestone('chapter1_complete');
+        const routeIds = sceneManager.gameState.getChapterRouteIds?.(n) || [];
+        routeIds.forEach(routeId => {
+            const terminalNode = STORY_ROUTES[routeId]?.terminalNode;
+            if (!terminalNode) return;
+            sceneManager.gameState.setStoryCursor(terminalNode, routeId);
+            sceneManager.gameState.addMilestone(terminalNode, routeId);
+        });
         if (n === 1) {
             sceneManager.gameState.setCurrentCampaign('liubei');
-            sceneManager.gameState.setStoryCursor('chapter1_complete', 'liubei');
         }
         if (n === 2) {
             sceneManager.gameState.setCurrentCampaign('chapter2_oath');
-            sceneManager.gameState.setStoryCursor('chapter2_oath_complete', 'chapter2_oath');
         }
         sceneManager.gameState.setLastScene('campaign_selection');
         sceneManager.switchTo('campaign_selection');

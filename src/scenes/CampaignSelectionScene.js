@@ -94,6 +94,11 @@ export class CampaignSelectionScene extends BaseScene {
 
     isChapterCompleteForProgression(chapterId) {
         const gs = this.manager.gameState;
+        const routeIds = typeof gs.getChapterRouteIds === 'function'
+            ? gs.getChapterRouteIds(chapterId)
+            : [];
+        if (routeIds.length > 0) return gs.isChapterComplete(chapterId);
+
         if (gs.isChapterComplete(chapterId)) return true;
         const milestone = `chapter${chapterId}_complete`;
         if (gs.hasMilestone(milestone) || gs.hasMilestone(milestone, 'liubei')) return true;
