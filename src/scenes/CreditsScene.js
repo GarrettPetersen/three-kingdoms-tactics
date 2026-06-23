@@ -1,6 +1,22 @@
 import { BaseScene } from './BaseScene.js';
 import { assets } from '../core/AssetLoader.js';
 
+const DEFAULT_CREDITS_MARKDOWN = `# Credits
+
+Game design by Garrett Petersen
+
+Character sprites by Px2d and Garrett Petersen
+
+Music by YouFulca
+
+Hex art by Retro Diffusion and Garrett Petersen
+
+Location backgrounds by Retro Diffusion
+
+Title font: Sukajan Brush by tkzgraphic
+
+Original novel by Guanzhong Luo`;
+
 export class CreditsScene extends BaseScene {
     constructor() {
         super();
@@ -30,7 +46,7 @@ export class CreditsScene extends BaseScene {
             this.isLoaded = true;
         } catch (e) {
             console.error("Failed to load credits.md", e);
-            this.lines = ["# CREDITS", "", "Game design by Garrett Petersen"];
+            this.parseCredits(DEFAULT_CREDITS_MARKDOWN);
             this.isLoaded = true;
         }
     }
@@ -67,6 +83,11 @@ export class CreditsScene extends BaseScene {
         }
         if (typeof window !== 'undefined' && window.location?.origin && window.location.protocol !== 'file:') {
             urls.push(new URL('credits.md', `${window.location.origin}/`).href);
+        }
+        if (typeof import.meta !== 'undefined' && import.meta.url) {
+            ['../credits.md', '../../credits.md'].forEach(relativePath => {
+                urls.push(new URL(relativePath, import.meta.url).href);
+            });
         }
         urls.push('credits.md');
         return [...new Set(urls)];
