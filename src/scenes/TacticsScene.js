@@ -14518,23 +14518,91 @@ export class TacticsScene extends BaseScene {
         assets.playSound('ui_error', 0.3);
     }
 
+    isWatchOnlyHintVisible() {
+        return performance.now() < (this.watchOnlyHintUntil || 0);
+    }
+
+    getUnitAtPointer(x, y) {
+        if (x === -1000 || y === -1000) return { unit: null, cell: null };
+
+        const activeUnits = this.units.filter(u => u.hp > 0 && !u.isGone);
+        activeUnits.sort((a, b) => b.currentSortR - a.currentSortR);
+
+        for (const u of activeUnits) {
+            const ux = u.visualX;
+            const uy = u.visualY + (u.onHorse ? MOUNTED_Y_OFFSET : 0);
+            let sinkOffset = 0;
+            if (u.isDrowning) {
+                sinkOffset = Math.min(1, u.drownTimer / 2000) * 40;
+            } else {
+                const cell = this.tacticsMap.getCell(u.r, u.q);
+                if (cell && cell.terrain.includes('water_shallow')) sinkOffset = 4;
+                if (u.hp > 0 && !u.isMoving && !u.pushData && this.hasCorpseAtCell(u.r, u.q, u)) sinkOffset -= 4;
+            }
+
+            if (u.onHorse) {
+                const midX = Math.floor(ux);
+                const midY = uy + sinkOffset;
+                const riderHit = this.checkCharacterHit(u.img, (u.action === 'walk') ? 'standby' : (u.currentAnimAction || u.action), u.frame, midX, midY - 14, x, y, {
+                    flip: u.flip,
+                    sinkOffset: 0,
+                    isProp: false
+                });
+
+                const keys = this.getHorseSpriteKeys(u.horseType || 'brown');
+                const horseStand = assets.getImage(keys.stand) || assets.getImage('horse_stand');
+                const horseRun = assets.getImage(keys.run) || assets.getImage('horse_run');
+                const isRunning = (u.isMoving || u.action === 'walk') && horseRun;
+                const horseImg = isRunning ? horseRun : horseStand;
+                let horseHit = false;
+                if (horseImg) {
+                    const frameW = 48;
+                    const frameH = 48;
+                    const frameCount = Math.max(1, Math.floor((horseImg.width || frameW) / frameW));
+                    const f = isRunning ? (Math.floor(Date.now() / 70) % frameCount) : 0;
+                    const destX = midX - frameW / 2;
+                    const destY = midY + (12 - frameH);
+                    horseHit = this.checkImageFrameHit(horseImg, f * frameW, 0, frameW, frameH, destX, destY, x, y, { flip: u.flip });
+                }
+
+                if (riderHit || horseHit) {
+                    return { unit: u, cell: this.getMountedTargetCellFromPointer(u, x, y, sinkOffset) };
+                }
+                continue;
+            }
+
+            if (this.checkCharacterHit(u.img, u.currentAnimAction || u.action, u.frame, ux, uy, x, y, {
+                flip: u.flip,
+                sinkOffset,
+                isProp: u.name === 'Boulder' || u.isProp,
+                scale: Number.isFinite(u.spriteScale) ? u.spriteScale : 1,
+                propBottomPadding: this.getPropBottomPaddingForUnit(u)
+            })) {
+                return { unit: u, cell: this.tacticsMap.getCell(u.r, u.q) };
+            }
+        }
+
+        const clickedCell = this.getCellAt(x, y);
+        const unit = clickedCell?.unit && clickedCell.unit.hp > 0 && !clickedCell.unit.isGone ? clickedCell.unit : null;
+        return { unit, cell: unit ? clickedCell : null };
+    }
+
     drawWatchOnlyHint(ctx, canvas) {
         const hint = this.battleDef?.watchOnlyHint;
         if (!hint) return;
         const now = performance.now();
-        const isNudge = now < (this.watchOnlyHintUntil || 0);
         const title = getLocalizedText(hint.title || { en: 'WATCH ONLY', zh: '仅观看' });
-        const body = getLocalizedText((isNudge && hint.blockedBody) ? hint.blockedBody : hint.body);
+        const body = getLocalizedText(hint.body);
         const boxW = Math.min(canvas.width - 16, Math.max(160, Math.max(title.length * 7, body.length * 5) + 18));
         const boxH = 30;
         const boxX = Math.floor((canvas.width - boxW) / 2);
         const boxY = Math.floor(canvas.height - boxH - 8);
-        const pulse = isNudge ? 1 : (0.72 + Math.abs(Math.sin(now * 0.004)) * 0.18);
+        const pulse = 0.82 + Math.abs(Math.sin(now * 0.006)) * 0.18;
 
         ctx.save();
-        ctx.fillStyle = `rgba(0, 0, 0, ${isNudge ? 0.82 : 0.66})`;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.82)';
         ctx.fillRect(boxX, boxY, boxW, boxH);
-        ctx.strokeStyle = isNudge ? '#ffd700' : '#8f7a42';
+        ctx.strokeStyle = '#ffd700';
         ctx.strokeRect(boxX + 0.5, boxY + 0.5, boxW - 1, boxH - 1);
         this.drawPixelText(ctx, title, canvas.width / 2, boxY + 6, {
             color: `rgba(255, 215, 0, ${pulse})`,
@@ -14560,7 +14628,9 @@ export class TacticsScene extends BaseScene {
             const { ctx, canvas } = this.manager;
             if (this.isIntroAnimating) return;
             if (this.isWatchOnlyCutsceneCombatActive()) {
-                this.drawWatchOnlyHint(ctx, canvas);
+                if (this.isWatchOnlyHintVisible()) {
+                    this.drawWatchOnlyHint(ctx, canvas);
+                }
                 return;
             }
             if (this.isProcessingTurn) return;
@@ -15741,7 +15811,9 @@ export class TacticsScene extends BaseScene {
         }
 
         if (x !== -1000 && this.isWatchOnlyCutsceneCombatActive()) {
-            this.showWatchOnlyInputHint();
+            if (this.getUnitAtPointer(x, y).unit) {
+                this.showWatchOnlyInputHint();
+            }
             return;
         }
 

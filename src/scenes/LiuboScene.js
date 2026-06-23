@@ -1399,7 +1399,8 @@ export class LiuboScene extends BaseScene {
     }
 
     handleKeyDown(e) {
-        if (e.key === '?' || e.key === 'h' || e.key === 'H') {
+        if (e.key === '?' || e.key === 'F1') {
+            e.preventDefault();
             this.showRules = !this.showRules;
             assets.playSound('ui_click', 0.35);
             return;
