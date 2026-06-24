@@ -783,6 +783,13 @@
     "version": 1,
     "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
   },
+  "ch2_hj_death_cc_order_choice": {
+    "character": "caocao",
+    "hash": "37f4344a148c02bc2a64d24d7c821b067672843f16fb1d03de472ee52979dccc",
+    "text": "If the troops enter under strict orders, the court sees guardians of the succession. Go straight to the coffin and seals, and touch no chamber not named.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
   "ch2_hj_death_eunuch_01": {
     "character": "eunuch",
     "hash": "13e2c41cd83c8f5087b499dfc0a7eecaadeb89bd56e3ea7b2360404badacc83e",
@@ -799,15 +806,15 @@
   },
   "ch2_hj_death_hj_discipline": {
     "character": "hejin",
-    "hash": "e8d215f0cf829bfc4d0b6c8a776f23549bc04107805853d83cc7019a58d2d096",
-    "text": "Take the troops, but keep them under command. We enter to secure the throne, not to loot the palace.",
+    "hash": "0c2138691bc0b77555f208fef43975beffbd7f15fd353f4fd3a1f51b196c5e04",
+    "text": "Take the troops, but bind every man to order. We enter as lawful guardians, not an army of vengeance.",
     "version": 1,
     "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
   },
   "ch2_hj_death_hj_force": {
     "character": "hejin",
-    "hash": "08e470eaa4f1f95ebd26793cc9ca5d2961904e5e6b28f5d3da6f3a4525e8f200",
-    "text": "Let the palace see our strength before it opens its mouth again.",
+    "hash": "4bfc5560cee885de0abff973bf078f03e3ab5a45b3711467811ce2f10d7bcc0b",
+    "text": "Let banners and spear-points fill the gates. If the palace means treachery, let it tremble before it speaks.",
     "version": 1,
     "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
   },
@@ -850,6 +857,13 @@
     "character": "yuanshao",
     "hash": "0a40214ec23dbf94caa073b64124d5f3e9513de70740ada3f349cf60e331d8ee",
     "text": "Good. Fear is the one court language the eunuchs understand.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_brash_australian_man.wav"
+  },
+  "ch2_hj_death_ys_force_choice": {
+    "character": "yuanshao",
+    "hash": "524acb5687f01ea56ef85545b3445ddaa98e75775407df8e796313a586d0bc24",
+    "text": "If every gate sees our spears, the eunuchs may yield before they spring another trap. Fear will clear the way, though it will run ahead of us.",
     "version": 1,
     "voice_target": "movies/clean/clean_brash_australian_man.wav"
   },

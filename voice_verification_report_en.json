@@ -4276,22 +4276,22 @@
     "en:ch2_hj_death_hj_discipline": {
         "id": "ch2_hj_death_hj_discipline",
         "character": "hejin",
-        "original_text": "Take the troops, but keep them under command. We enter to secure the throne, not to loot the palace.",
-        "stt_output": "Take the troops, but keep them under command. We enter to secure the throne, not to loot the palace.",
+        "original_text": "Take the troops, but bind every man to order. We enter as lawful guardians, not an army of vengeance.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "Take the troops, but bind every man to order. We enter as lawful guardians, not an army of vengeance.",
         "wer": 0.0,
         "is_bad": false,
-        "language": "en",
-        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+        "language": "en"
     },
     "en:ch2_hj_death_hj_force": {
         "id": "ch2_hj_death_hj_force",
         "character": "hejin",
-        "original_text": "Let the palace see our strength before it opens its mouth again.",
-        "stt_output": "Let the palace see our strength before it opens its mouth again.",
-        "wer": 0.0,
+        "original_text": "Let banners and spear-points fill the gates. If the palace means treachery, let it tremble before it speaks.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "Let banners and spear points fill the gates. If the palace means treachery, let a tremble before it speaks.",
+        "wer": 0.16666666666666666,
         "is_bad": false,
-        "language": "en",
-        "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+        "language": "en"
     },
     "en:ch2_hj_death_narrator_01": {
         "id": "ch2_hj_death_narrator_01",
@@ -5668,5 +5668,25 @@
         "wer": null,
         "is_bad": false,
         "verification_status": "metadata_only"
+    },
+    "en:ch2_hj_death_cc_order_choice": {
+        "id": "ch2_hj_death_cc_order_choice",
+        "character": "caocao",
+        "original_text": "If the troops enter under strict orders, the court sees guardians of the succession. Go straight to the coffin and seals, and touch no chamber not named.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "If the troops enter under strict orders, the court sees guardians of the succession. Go straight to the coffin and seals, and touch no chamber not named.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_death_ys_force_choice": {
+        "id": "ch2_hj_death_ys_force_choice",
+        "character": "yuanshao",
+        "original_text": "If every gate sees our spears, the eunuchs may yield before they spring another trap. Fear will clear the way, though it will run ahead of us.",
+        "voice_target": "movies/clean/clean_brash_australian_man.wav",
+        "stt_output": "If every gate sees our spears, the unix may yield before they spring another trap. Fear will clear the way, though it will run ahead of us.",
+        "wer": 0.037037037037037035,
+        "is_bad": false,
+        "language": "en"
     }
 }

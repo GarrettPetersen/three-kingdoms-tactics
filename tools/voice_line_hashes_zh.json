@@ -783,6 +783,13 @@
     "version": 1,
     "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
   },
+  "ch2_hj_death_cc_order_choice": {
+    "character": "caocao",
+    "hash": "ee31e62a2a2250601bf90ac2962056a8db7dd604f95f3fb5054ef15772727609",
+    "text": "若严令军伍入宫，朝廷所见便是护立储君。直趋梓宫与玺绶，不得擅入别殿。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
   "ch2_hj_death_eunuch_01": {
     "character": "eunuch",
     "hash": "44490d645642da3af94dbec6cabe4d30134c8f81d3b227b145f299898e663e63",
@@ -799,15 +806,15 @@
   },
   "ch2_hj_death_hj_discipline": {
     "character": "hejin",
-    "hash": "a8ff3d8252b38626bd9e16cdba42f9d30407b019c25ff82dc244a6f50102183c",
-    "text": "可点兵入宫，但须严令约束。入宫为正君位，不为劫掠。",
+    "hash": "e413ce5896f43e2a77918c5143e5f090bb61bf49b583230bcb910e418cf0d532",
+    "text": "可点兵入宫，但人人受令约束。我等是奉法护驾，不是挟怨兴兵。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
   },
   "ch2_hj_death_hj_force": {
     "character": "hejin",
-    "hash": "1d4ff486dd30165078c1b0b149a8aedf83c934881e4804dff4d953ff126a2bd8",
-    "text": "让宫中先见我兵威，再敢开口。",
+    "hash": "a525f992ab05c1c39419ed06aa59c5755238fd17d37987426cd5784d1363bf21",
+    "text": "旌旗枪戟，尽列诸门。宫中若还藏奸，先叫它未言而惧。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
   },
@@ -850,6 +857,13 @@
     "character": "yuanshao",
     "hash": "4832dfac9e391f5d78bf4b5840427da59f862a2728db02f151161a6e4b94f1ba",
     "text": "善。宦官所懂的朝廷话，正是畏惧二字。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
+  },
+  "ch2_hj_death_ys_force_choice": {
+    "character": "yuanshao",
+    "hash": "9ec63436b4312d168fac0c3ad47fcd657f7da96ca6a40d555dba034d2379e4d7",
+    "text": "若使诸门尽见兵锋，宦官未及再设罗网，便先胆寒。畏惧能开路，也会先传遍宫中。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
   },
