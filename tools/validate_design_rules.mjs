@@ -267,6 +267,10 @@ function checkLiuboPerchRules() {
     assertRotationalMirror('l_top_left', 'l_bottom_right');
     assertRotationalMirror('l_right_bottom', 'l_left_top');
     assertRotationalMirror('l_right_top', 'l_left_bottom');
+    assertRotationalMirror('t_top_outer', 't_bottom_outer');
+    assertRotationalMirror('t_right_outer', 't_left_outer');
+    assertRule(LIUBO_SPACES.t_top_outer.y === 75 && LIUBO_SPACES.t_right_outer.x === 181,
+        'Liubo outer T perches should sit on the generated T crossbars.');
 
     let state = createLiuboState({ firstPlayer: 'black' });
     state.phase = 'choose_piece';
@@ -342,6 +346,18 @@ function checkLiuboPerchRules() {
     const blockedEntryMoves = getLegalMovesForPiece(state, state.pieces[0]);
     assertRule(!blockedEntryMoves.some(move => move.path?.includes('corner_sw_bottom')),
         'Liubo movement must not pass through or land on a blocked perch.');
+
+    state = createLiuboState({ firstPlayer: 'white' });
+    state.phase = 'choose_piece';
+    state.currentPlayer = 'white';
+    state.movesRemaining = [2];
+    state.pieces = [
+        makeLiuboBoardPiece('w1', 'white', 'l_top_left'),
+        makeLiuboBoardPiece('b1', 'black', 't_top_outer')
+    ];
+    const singleEnemyPassThroughMoves = getLegalMovesForPiece(state, state.pieces[0]);
+    assertRule(singleEnemyPassThroughMoves.some(move => move.toSpaceId === 't_top_inner' && move.path?.join('.') === 'l_top_left.t_top_outer.t_top_inner'),
+        'Liubo movement should pass through a single enemy-occupied perch.');
 
     state = createLiuboState({ firstPlayer: 'white' });
     state.phase = 'choose_piece';

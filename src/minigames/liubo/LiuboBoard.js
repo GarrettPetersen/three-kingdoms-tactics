@@ -28,13 +28,13 @@ export const LIUBO_SPACES = {
     circle_sw: { id: 'circle_sw', kind: 'nest', x: 82, y: 174 },
     circle_nw: { id: 'circle_nw', kind: 'nest', x: 82, y: 82 },
 
-    t_top_outer: { id: 't_top_outer', kind: 't', x: 128, y: 82 },
+    t_top_outer: { id: 't_top_outer', kind: 't', x: 128, y: 75 },
     t_top_inner: { id: 't_top_inner', kind: 't', x: 128, y: 104 },
-    t_right_outer: { id: 't_right_outer', kind: 't', x: 174, y: 128 },
+    t_right_outer: { id: 't_right_outer', kind: 't', x: 181, y: 128 },
     t_right_inner: { id: 't_right_inner', kind: 't', x: 152, y: 128 },
-    t_bottom_outer: { id: 't_bottom_outer', kind: 't', x: 128, y: 174 },
+    t_bottom_outer: { id: 't_bottom_outer', kind: 't', x: 128, y: 181 },
     t_bottom_inner: { id: 't_bottom_inner', kind: 't', x: 128, y: 152 },
-    t_left_outer: { id: 't_left_outer', kind: 't', x: 82, y: 128 },
+    t_left_outer: { id: 't_left_outer', kind: 't', x: 75, y: 128 },
     t_left_inner: { id: 't_left_inner', kind: 't', x: 104, y: 128 },
 
     pond: { id: 'pond', kind: 'pond', x: 128, y: 128 }

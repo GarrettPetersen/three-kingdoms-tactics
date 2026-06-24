@@ -299,7 +299,7 @@ function canMoveThroughOrLand(state, piece, spaceId, isFinalStep, path = null) {
     if (!isFinalStep && occupants.length >= spaceCapacity) return false;
 
     if (enemies.length) {
-        if (!isFinalStep) return isContested(occupants);
+        if (!isFinalStep) return true;
         return canEnterEnemyOccupiedSpace(state, piece, spaceId, friendly, enemies, effectiveMoverIsOwl);
     }
 
