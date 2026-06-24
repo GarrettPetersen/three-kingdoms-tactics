@@ -584,7 +584,7 @@
   {
     "id": "ch2_hj_council_cc_01",
     "char": "caocao",
-    "text": "宦官世在禁中，帘幕廊庑之间，皆有其耳目。",
+    "text": "宦官世在宫中，帘幕廊庑之间，皆有其耳目。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -608,7 +608,7 @@
   {
     "id": "ch2_hj_council_hj_01",
     "char": "hejin",
-    "text": "蹇硕在宫门设刃害我。此毒根已遍禁中。",
+    "text": "蹇硕在宫门设刃害我。此毒根已遍宫中。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -633,6 +633,42 @@
     "id": "ch2_hj_council_hj_heed",
     "char": "hejin",
     "text": "孟德之慎，言中要害。先查明谁与蹇硕同党。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_march_cc_01",
+    "char": "caocao",
+    "text": "速行，整肃，少言。此三者，便是今日护卫。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_march_hj_01",
+    "char": "hejin",
+    "text": "必须先定君位，不可再给宦官设局之机。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_march_messenger_01",
+    "char": "eunuch",
+    "text": "小人只是奉命传旨。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_march_minister_01",
+    "char": "soldierv1",
+    "text": "府中兵士已集，大将军。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_march_panyin_01",
+    "char": "panyin",
+    "text": "前召既伪，宫中再出的命令，只会更伪。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_march_ys_01",
+    "char": "yuanshao",
+    "text": "兵马只等大将军一令。且叫宫门知道谁可号令。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -801,6 +837,24 @@
     "id": "ch2_hj_eunuch_01",
     "char": "eunuch",
     "text": "大将军何进，陛下在宫中相候。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_gate_click_guard_01",
+    "char": "soldierv1",
+    "text": "大将军。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_gate_click_hejin_01",
+    "char": "hejin",
+    "text": "若此言属实，连宫门也成了陷阱。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_gate_click_panyin_01",
+    "char": "panyin",
+    "text": "大将军，蹇硕之刃只等公一步，不等一时。",
     "source": "NarrativeScripts.js"
   },
   {

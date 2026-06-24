@@ -39,6 +39,7 @@ export class NarrativeScene extends BaseScene {
         this.pendingInteractiveAdvance = false;
         this.invalidScriptRecoveryScheduled = false;
         this.waitingForActorId = null;
+        this.waitingForActorIds = null;
         this.storyRouteId = null;
         this.storyNodeId = null;
         this.skipNextExitSave = false;
@@ -160,6 +161,104 @@ export class NarrativeScene extends BaseScene {
         this.interactiveNavTargets = [];
         this.interactiveNavIndex = -1;
         this.interactiveNavMouseEnabled = true;
+    }
+
+    shouldPreloadDuringFade(step) {
+        return step?.type === 'command'
+            && step.action === 'fade'
+            && step.target === 0
+            && this.fadeAlpha > 0;
+    }
+
+    isFadePreloadCommand(step) {
+        if (step?.type !== 'command' || step._preloadedDuringFade) return false;
+        return [
+            'clearActors',
+            'clearProps',
+            'addActor',
+            'addProp',
+            'animate',
+            'setActorLayer',
+            'setActorLoop'
+        ].includes(step.action);
+    }
+
+    applyFadePreloadCommand(cmd) {
+        if (cmd.action === 'addActor') {
+            const loopXStart = cmd.loopXStart !== undefined ? cmd.loopXStart : null;
+            const loopXEnd = cmd.loopXEnd !== undefined ? cmd.loopXEnd : null;
+            const initialTargetX = (loopXStart !== null && loopXEnd !== null) ? loopXEnd : cmd.x;
+            this.actors[cmd.id] = {
+                x: cmd.x,
+                y: cmd.y,
+                imgKey: cmd.imgKey,
+                img: assets.getImage(cmd.imgKey),
+                action: cmd.actorAction || cmd.animation || 'standby',
+                frame: 0,
+                flip: cmd.flip || false,
+                targetX: initialTargetX,
+                targetY: cmd.y,
+                speed: cmd.speed || 1,
+                loopXStart,
+                loopXEnd,
+                drawAboveForeground: !!cmd.drawAboveForeground
+            };
+        } else if (cmd.action === 'addProp') {
+            this.props[cmd.id] = {
+                x: cmd.x || 0,
+                y: cmd.y || 0,
+                sortY: cmd.sortY !== undefined ? cmd.sortY : (cmd.y || 0),
+                imgKey: cmd.imgKey,
+                img: cmd.imgKey ? assets.getImage(cmd.imgKey) : null,
+                imgKeys: Array.isArray(cmd.imgKeys) ? cmd.imgKeys : null,
+                frameMs: Number.isFinite(cmd.frameMs) ? cmd.frameMs : 900,
+                frameOffsetMs: Number.isFinite(cmd.frameOffsetMs) ? cmd.frameOffsetMs : 0,
+                drawAboveForeground: !!cmd.drawAboveForeground,
+                w: cmd.w,
+                h: cmd.h
+            };
+        } else if (cmd.action === 'clearActors') {
+            this.actors = {};
+        } else if (cmd.action === 'clearProps') {
+            this.props = {};
+        } else if (cmd.action === 'animate') {
+            const actor = this.actors[cmd.id];
+            if (actor) {
+                actor.action = cmd.animation || 'standby';
+                actor.frame = 0;
+            }
+        } else if (cmd.action === 'setActorLayer') {
+            const actor = this.actors[cmd.id];
+            if (actor) actor.drawAboveForeground = !!cmd.drawAboveForeground;
+        } else if (cmd.action === 'setActorLoop') {
+            const actor = this.actors[cmd.id];
+            if (actor) {
+                if (cmd.enabled === false) {
+                    actor.loopXStart = null;
+                    actor.loopXEnd = null;
+                    if (actor.action === 'walk') actor.action = 'standby';
+                } else {
+                    actor.loopXStart = cmd.loopXStart !== undefined ? cmd.loopXStart : actor.loopXStart;
+                    actor.loopXEnd = cmd.loopXEnd !== undefined ? cmd.loopXEnd : actor.loopXEnd;
+                }
+            }
+        }
+    }
+
+    preloadSetupAfterFade(step) {
+        if (!this.shouldPreloadDuringFade(step)) return;
+        let index = this.currentStep + 1;
+        while (index < this.script.length) {
+            const candidate = this.script[index];
+            if (!candidate || !this.conditionPasses(candidate.condition)) {
+                index++;
+                continue;
+            }
+            if (!this.isFadePreloadCommand(candidate)) break;
+            this.applyFadePreloadCommand(candidate);
+            candidate._preloadedDuringFade = true;
+            index++;
+        }
     }
 
     getActiveVisualKey(propName) {
@@ -569,6 +668,7 @@ export class NarrativeScene extends BaseScene {
         this.subStep = state.subStep || 0;
         this.isWaiting = state.isWaiting || false;
         this.waitingForActorId = state.waitingForActorId || null;
+        this.waitingForActorIds = Array.isArray(state.waitingForActorIds) ? [...state.waitingForActorIds] : null;
         this.timer = state.timer || 0;
         this.fadeAlpha = state.fadeAlpha !== undefined ? state.fadeAlpha : 1;
         this.fadeTarget = state.fadeTarget !== undefined ? state.fadeTarget : this.fadeAlpha;
@@ -766,6 +866,8 @@ export class NarrativeScene extends BaseScene {
             this.fadeSpeed = cmd.speed || 0.002;
         } else if (cmd.action === 'wait') {
             // Timer already restored from saved state
+        } else if (cmd.action === 'waitForActors') {
+            // Wait state is restored from saved state.
         } else if (cmd.action === 'playMusic') {
             // Restore music during resume - it may have been lost on page refresh
             if (assets.currentMusicKey !== cmd.key) {
@@ -786,6 +888,7 @@ export class NarrativeScene extends BaseScene {
         this.isInteractive = true;
         this.isWaiting = true;
         this.waitingForActorId = null;
+        this.waitingForActorIds = null;
         this.timer = 0;
         this.returnStack = [];
         this.pendingInteractiveAdvance = false;
@@ -806,6 +909,7 @@ export class NarrativeScene extends BaseScene {
         this.props = {};
         this.isWaiting = false;
         this.waitingForActorId = null;
+        this.waitingForActorIds = null;
         this.timer = 0;
         this.elapsedInStep = 0;
         this.fadeAlpha = 1;
@@ -839,7 +943,7 @@ export class NarrativeScene extends BaseScene {
 
     processStep() {
         let step = this.script[this.currentStep];
-        while (step && !this.conditionPasses(step.condition)) {
+        while (step && (step._preloadedDuringFade || !this.conditionPasses(step.condition))) {
             this.currentStep++;
             this.syncActiveFrame();
             step = this.script[this.currentStep];
@@ -883,6 +987,8 @@ export class NarrativeScene extends BaseScene {
         } else if ((step.type === 'title' || step.type === 'dialogue' || step.type === 'narrator') && step.duration && this.manager.actionRecorder?.recording) {
             setTimeout(() => this.manager.actionRecorder?.signalActionEnd(), step.duration);
         }
+
+        this.preloadSetupAfterFade(step);
 
         if (step.type === 'command') {
             this.handleCommand(step);
@@ -942,12 +1048,22 @@ export class NarrativeScene extends BaseScene {
                 actor.action = 'walk';
                 if (cmd.wait !== false) {
                     this.waitingForActorId = cmd.id;
+                    this.waitingForActorIds = null;
                     this.isWaiting = true;
                 } else {
                     this.nextStep();
                 }
             } else {
                 this.nextStep();
+            }
+        } else if (cmd.action === 'waitForActors') {
+            const ids = Array.isArray(cmd.ids) ? cmd.ids.filter(id => !!this.actors[id]) : [];
+            if (ids.length === 0) {
+                this.nextStep();
+            } else {
+                this.waitingForActorId = null;
+                this.waitingForActorIds = ids;
+                this.isWaiting = true;
             }
         } else if (cmd.action === 'animate') {
             const actor = this.actors[cmd.id];
@@ -1177,6 +1293,7 @@ export class NarrativeScene extends BaseScene {
         this.currentStep++;
         this.isWaiting = false;
         this.waitingForActorId = null;
+        this.waitingForActorIds = null;
         this.timer = 0;
 
         if (this.currentStep >= this.script.length) {
@@ -1291,9 +1408,10 @@ export class NarrativeScene extends BaseScene {
                 return true;
             }
 
-            this.isWaiting = false;
-            this.waitingForActorId = null;
-            this.timer = 0;
+        this.isWaiting = false;
+        this.waitingForActorId = null;
+        this.waitingForActorIds = null;
+        this.timer = 0;
             this.elapsedInStep = 9999;
             this.hasNextChunk = false;
             this.nextStep();
@@ -1361,6 +1479,7 @@ export class NarrativeScene extends BaseScene {
             nextParams: nextParams,
             isWaiting: this.isWaiting,
             waitingForActorId: this.waitingForActorId,
+            waitingForActorIds: Array.isArray(this.waitingForActorIds) ? [...this.waitingForActorIds] : null,
             timer: this.timer,
             fadeAlpha: this.fadeAlpha,
             fadeTarget: this.fadeTarget,
@@ -1549,6 +1668,20 @@ export class NarrativeScene extends BaseScene {
             }
         }
 
+        if (this.isWaiting && Array.isArray(this.waitingForActorIds) && this.waitingForActorIds.length > 0) {
+            const allWaitingActorsArrived = this.waitingForActorIds.every(id => {
+                const actor = this.actors[id];
+                if (!actor) return true;
+                const dx = actor.targetX - actor.x;
+                const dy = actor.targetY - actor.y;
+                return Math.sqrt(dx * dx + dy * dy) <= 1;
+            });
+            if (allWaitingActorsArrived && this.fadeAlpha === this.fadeTarget) {
+                this.nextStep();
+                return;
+            }
+        }
+
         if (this.isWaiting && this.waitingForActorId) {
             const waitingActor = this.actors[this.waitingForActorId];
             if (!waitingActor) {
@@ -1564,7 +1697,7 @@ export class NarrativeScene extends BaseScene {
             }
         }
 
-        if (this.isWaiting && !this.waitingForActorId && allMoved && this.timer === 0 && this.fadeAlpha === this.fadeTarget) {
+        if (this.isWaiting && !this.waitingForActorId && !this.waitingForActorIds && allMoved && this.timer === 0 && this.fadeAlpha === this.fadeTarget) {
             const step = this.script[this.currentStep];
             // Don't auto-advance if we're in interactive mode (wait for click)
             // Also don't auto-advance if the current step is interactive (should wait for click)
@@ -2128,6 +2261,7 @@ export class NarrativeScene extends BaseScene {
                     returnToInteractive: !shouldAdvanceRegion,
                     advanceParentAfter: shouldAdvanceRegion
                 })) {
+                    if (shouldAdvanceRegion) this.clearInteractiveState();
                     this.processStep();
                     return true;
                 }
@@ -2139,6 +2273,7 @@ export class NarrativeScene extends BaseScene {
                         returnToInteractive: returnsToInteractive,
                         advanceParentAfter: !returnsToInteractive
                     })) {
+                        if (!returnsToInteractive) this.clearInteractiveState();
                         this.processStep();
                         return true;
                     }
@@ -2147,6 +2282,7 @@ export class NarrativeScene extends BaseScene {
                         returnToInteractive: clickHandler.return !== false,
                         advanceParentAfter: clickHandler.return === false
                     });
+                    if (clickHandler.return === false) this.clearInteractiveState();
                     this.processStep();
                     return true;
                 }
@@ -2179,6 +2315,7 @@ export class NarrativeScene extends BaseScene {
                     returnToInteractive: !actor.advanceOnClick,
                     advanceParentAfter: !!actor.advanceOnClick
                 })) {
+                    if (actor.advanceOnClick) this.clearInteractiveState();
                     this.processStep();
                     return true;
                 }
@@ -2190,6 +2327,7 @@ export class NarrativeScene extends BaseScene {
                         returnToInteractive: returnsToInteractive,
                         advanceParentAfter: !returnsToInteractive
                     })) {
+                        if (!returnsToInteractive) this.clearInteractiveState();
                         this.processStep();
                         return true;
                     }
@@ -2198,6 +2336,7 @@ export class NarrativeScene extends BaseScene {
                         returnToInteractive: clickHandler.return !== false,
                         advanceParentAfter: clickHandler.return === false
                     });
+                    if (clickHandler.return === false) this.clearInteractiveState();
                     this.processStep();
                     return true;
                 }

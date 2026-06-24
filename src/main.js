@@ -804,6 +804,7 @@ async function init() {
                 valley_aerial_shot: 'assets/settings/valley_aerial_shot.png',
                 luoyang_aerial_shot: 'assets/settings/luoyang_aerial_shot.png',
                 luoyang_council_hall: 'assets/settings/luoyang_council_hall.png',
+                luoyang_council_hall_foreground: 'assets/settings/luoyang_council_hall_foreground.png',
                 luoyang_imperial_garden_night: 'assets/settings/luoyang_imperial_garden_night.png',
                 luoyang_imperial_palace_gate: 'assets/settings/luoyang_imperial_palace_gate.png',
                 luoyang_imperial_palace_gate_foreground: 'assets/settings/luoyang_imperial_palace_gate_foreground.png',

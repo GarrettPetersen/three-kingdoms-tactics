@@ -613,7 +613,7 @@
   {
     "id": "ch2_hj_council_hj_01",
     "char": "hejin",
-    "text": "Jian Shuo set a blade for me at the palace gate. This poison has roots through the whole forbidden palace.",
+    "text": "Jian Shuo set a blade for me at the palace gate. This poison has roots through the whole palace.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -638,6 +638,42 @@
     "id": "ch2_hj_council_hj_heed",
     "char": "hejin",
     "text": "Your caution is sharp, Mengde. We will first learn who stands with Jian Shuo.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_march_cc_01",
+    "char": "caocao",
+    "text": "Speed, order, and few words. Those are our guards now.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_march_hj_01",
+    "char": "hejin",
+    "text": "The throne must be settled before the eunuchs set another snare.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_march_messenger_01",
+    "char": "eunuch",
+    "text": "I carried the order as it was given to me.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_march_minister_01",
+    "char": "soldierv1",
+    "text": "The household troops are assembled, my lord.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_march_panyin_01",
+    "char": "panyin",
+    "text": "If the summons was false, the next order from within will be falser still.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_council_march_ys_01",
+    "char": "yuanshao",
+    "text": "The troops wait for your word. Let the gates learn who commands them.",
     "source": "NarrativeScripts.js"
   },
   {
@@ -806,6 +842,24 @@
     "id": "ch2_hj_eunuch_01",
     "char": "eunuch",
     "text": "General-in-Chief He Jin, His Majesty awaits within.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_gate_click_guard_01",
+    "char": "soldierv1",
+    "text": "Sir.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_gate_click_hejin_01",
+    "char": "hejin",
+    "text": "If this is true, then even the palace gate has become a trap.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_gate_click_panyin_01",
+    "char": "panyin",
+    "text": "My lord, Jian Shuo's blade waits for one step, not one hour.",
     "source": "NarrativeScripts.js"
   },
   {

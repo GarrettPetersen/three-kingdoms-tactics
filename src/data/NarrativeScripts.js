@@ -3062,7 +3062,7 @@ export const NARRATIVE_SCRIPTS = {
                 zh: '既如此，我便替这沉默开口。将士为汉流血，官爵却在门内买卖。'
             }
         },
-        { type: 'command', action: 'move', id: 'zhangjun', x: 147, y: 170, wait: true },
+        { type: 'command', action: 'move', id: 'zhangjun', x: 150, y: 170, wait: true },
         { type: 'command', action: 'setActorLayer', id: 'zhangjun', drawAboveForeground: false },
         { type: 'command', action: 'move', id: 'zhangjun', x: 340, y: 170, wait: true },
         { type: 'command', action: 'removeActor', id: 'zhangjun' },
@@ -3172,7 +3172,7 @@ export const NARRATIVE_SCRIPTS = {
             }
         },
         { type: 'command', action: 'addActor', id: 'zhangjun', imgKey: 'zhoujing', x: 340, y: 170, actorAction: 'walk', speed: 0.72, flip: true, drawAboveForeground: false },
-        { type: 'command', action: 'move', id: 'zhangjun', x: 147, y: 170, wait: true },
+        { type: 'command', action: 'move', id: 'zhangjun', x: 150, y: 170, wait: true },
         { type: 'command', action: 'setActorLayer', id: 'zhangjun', drawAboveForeground: true },
         { type: 'command', action: 'move', id: 'zhangjun', x: 198, y: 190, wait: true },
         {
@@ -3871,19 +3871,90 @@ export const NARRATIVE_SCRIPTS = {
             }
         },
         {
-            type: 'choice',
-            portraitKey: 'hejin',
-            name: 'He Jin',
-            options: [
+            type: 'interactive',
+            clickableActors: {
+                hejin: {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            name: 'He Jin',
+                            portraitKey: 'hejin',
+                            voiceId: 'ch2_hj_gate_click_hejin_01',
+                            position: 'top',
+                            text: {
+                                en: 'If this is true, then even the palace gate has become a trap.',
+                                zh: '若此言属实，连宫门也成了陷阱。'
+                            }
+                        }
+                    ]
+                },
+                panyin: {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            name: 'Pan Yin',
+                            portraitKey: 'panyin',
+                            voiceId: 'ch2_hj_gate_click_panyin_01',
+                            position: 'top',
+                            text: {
+                                en: 'My lord, Jian Shuo\'s blade waits for one step, not one hour.',
+                                zh: '大将军，蹇硕之刃只等公一步，不等一时。'
+                            }
+                        }
+                    ]
+                },
+                palace_gate_guard: {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            name: 'Palace Guard',
+                            portraitKey: 'soldier-v1',
+                            voiceId: 'ch2_hj_gate_click_guard_01',
+                            position: 'top',
+                            text: {
+                                en: 'Sir.',
+                                zh: '大将军。'
+                            }
+                        }
+                    ]
+                },
+                gate_eunuch: {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            name: 'Palace Eunuch',
+                            portraitKey: 'eunuch',
+                            voiceId: 'ch2_hj_eunuch_01',
+                            position: 'top',
+                            text: {
+                                en: 'General-in-Chief He Jin, His Majesty awaits within.',
+                                zh: '大将军何进，陛下在宫中相候。'
+                            }
+                        }
+                    ]
+                }
+            },
+            promptOptions: [
                 {
-                    buttonText: { en: 'Return home.', zh: '急归私宅' },
-                    text: {
-                        en: 'I will not step blindly into Jian Shuo\'s knife. I return home and summon the ministers.',
-                        zh: '我不入蹇硕之刃。即刻归宅，召集诸大臣。'
-                    },
-                    voiceId: 'ch2_hj_choice_return',
-                    speaker: 'hejin',
-                    result: [
+                    id: 'go_home',
+                    text: { en: 'GO HOME', zh: '归宅' },
+                    position: 'left',
+                    y: 214,
+                    w: 88,
+                    h: 24,
+                    advanceOnClick: true,
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            name: 'He Jin',
+                            portraitKey: 'hejin',
+                            voiceId: 'ch2_hj_choice_return',
+                            position: 'top',
+                            text: {
+                                en: 'I will not step blindly into Jian Shuo\'s knife. I return home and summon the ministers.',
+                                zh: '我不入蹇硕之刃。即刻归宅，召集诸大臣。'
+                            }
+                        },
                         {
                             type: 'command',
                             action: 'setStoryChoice',
@@ -3910,14 +3981,25 @@ export const NARRATIVE_SCRIPTS = {
                     ]
                 },
                 {
-                    buttonText: { en: 'Enter the palace.', zh: '径入宫门' },
-                    text: {
-                        en: 'I am General-in-Chief. Let Jian Shuo show his hand if he dares.',
-                        zh: '我乃大将军。蹇硕若敢，便让他露出手来。'
-                    },
-                    voiceId: 'ch2_hj_choice_enter',
-                    speaker: 'hejin',
-                    result: [
+                    id: 'enter_palace',
+                    text: { en: 'ENTER PALACE', zh: '入宫' },
+                    position: 'right',
+                    y: 142,
+                    w: 112,
+                    h: 24,
+                    advanceOnClick: true,
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            name: 'He Jin',
+                            portraitKey: 'hejin',
+                            voiceId: 'ch2_hj_choice_enter',
+                            position: 'top',
+                            text: {
+                                en: 'I am General-in-Chief. Let Jian Shuo show his hand if he dares.',
+                                zh: '我乃大将军。蹇硕若敢，便让他露出手来。'
+                            }
+                        },
                         {
                             type: 'dialogue',
                             name: 'Pan Yin',
@@ -3929,7 +4011,7 @@ export const NARRATIVE_SCRIPTS = {
                                 zh: '公不可。此正中其计。'
                             }
                         },
-                        { type: 'command', action: 'move', id: 'hejin', x: 147, y: 170, wait: true },
+                        { type: 'command', action: 'move', id: 'hejin', x: 150, y: 170, wait: true },
                         { type: 'command', action: 'setActorLayer', id: 'hejin', drawAboveForeground: false },
                         { type: 'command', action: 'addActor', id: 'guard_left', imgKey: 'palace_assassin', x: 92, y: 170, actorAction: 'walk', speed: 0.84 },
                         { type: 'command', action: 'addActor', id: 'guard_right', imgKey: 'palace_assassin', x: 232, y: 170, actorAction: 'walk', speed: 0.84, flip: true },
@@ -3969,10 +4051,10 @@ export const NARRATIVE_SCRIPTS = {
         }
     ],
     'chapter2_hejin_council': [
-        { bg: 'luoyang_council_hall', fg: null, type: 'command', action: 'clearActors' },
+        { bg: 'luoyang_council_hall', fg: 'luoyang_council_hall_foreground', type: 'command', action: 'clearActors' },
         { type: 'command', action: 'clearProps' },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-        { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: 134, y: 202 },
+        { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: 134, y: 197 },
         {
             type: 'narrator',
             voiceId: 'ch2_hj_narrator_04',
@@ -3983,12 +4065,12 @@ export const NARRATIVE_SCRIPTS = {
             }
         },
         { type: 'command', action: 'playSound', key: 'heavy_door_unlocking', volume: 0.75 },
-        { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: -24, y: 204, actorAction: 'walk', speed: 0.72 },
-        { type: 'command', action: 'addActor', id: 'yuanshao', imgKey: 'yuanshao', x: 340, y: 204, actorAction: 'walk', speed: 0.72, flip: true },
-        { type: 'command', action: 'addActor', id: 'minister', imgKey: 'soldier', x: 356, y: 208, actorAction: 'walk', speed: 0.66, flip: true },
+        { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: -24, y: 204, actorAction: 'walk', speed: 0.72, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'yuanshao', imgKey: 'yuanshao', x: 340, y: 204, actorAction: 'walk', speed: 0.72, flip: true, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'minister', imgKey: 'soldier', x: 292, y: 155, actorAction: 'walk', speed: 0.66, flip: true },
         { type: 'command', action: 'move', id: 'caocao', x: 72, y: 204, wait: false },
         { type: 'command', action: 'move', id: 'yuanshao', x: 198, y: 204, wait: false },
-        { type: 'command', action: 'move', id: 'minister', x: 236, y: 208, wait: true },
+        { type: 'command', action: 'move', id: 'minister', x: 206, y: 155, wait: true },
         {
             type: 'dialogue',
             portraitKey: 'hejin',
@@ -3996,8 +4078,8 @@ export const NARRATIVE_SCRIPTS = {
             voiceId: 'ch2_hj_council_hj_01',
             position: 'top',
             text: {
-                en: 'Jian Shuo set a blade for me at the palace gate. This poison has roots through the whole forbidden palace.',
-                zh: '蹇硕在宫门设刃害我。此毒根已遍禁中。'
+                en: 'Jian Shuo set a blade for me at the palace gate. This poison has roots through the whole palace.',
+                zh: '蹇硕在宫门设刃害我。此毒根已遍宫中。'
             }
         },
         {
@@ -4012,6 +4094,13 @@ export const NARRATIVE_SCRIPTS = {
             }
         },
         {
+            type: 'command',
+            action: 'flip',
+            id: 'hejin',
+            flip: false
+        },
+        { type: 'command', action: 'move', id: 'yuanshao', x: 192, y: 204, wait: true },
+        {
             type: 'dialogue',
             portraitKey: 'yuan-shao',
             name: 'Yuan Shao',
@@ -4023,6 +4112,13 @@ export const NARRATIVE_SCRIPTS = {
             }
         },
         {
+            type: 'command',
+            action: 'flip',
+            id: 'hejin',
+            flip: true
+        },
+        { type: 'command', action: 'move', id: 'caocao', x: 78, y: 204, wait: true },
+        {
             type: 'dialogue',
             portraitKey: 'cao-cao',
             name: 'Cao Cao',
@@ -4030,7 +4126,7 @@ export const NARRATIVE_SCRIPTS = {
             position: 'top',
             text: {
                 en: 'The eunuchs have served inside the palace for generations. Their ears are in every curtain and corridor.',
-                zh: '宦官世在禁中，帘幕廊庑之间，皆有其耳目。'
+                zh: '宦官世在宫中，帘幕廊庑之间，皆有其耳目。'
             }
         },
         {
@@ -4060,6 +4156,8 @@ export const NARRATIVE_SCRIPTS = {
                     speaker: 'hejin',
                     result: [
                         { type: 'command', action: 'setStoryChoice', key: 'hejin_cao_cao_trust', value: 'heeded', routeId: 'hejin' },
+                        { type: 'command', action: 'flip', id: 'hejin', flip: true },
+                        { type: 'command', action: 'move', id: 'caocao', x: 72, y: 204, wait: true },
                         {
                             type: 'dialogue',
                             portraitKey: 'cao-cao',
@@ -4071,6 +4169,8 @@ export const NARRATIVE_SCRIPTS = {
                                 zh: '那便令知者少。诸臣皆知之计，张让亦已知之。'
                             }
                         },
+                        { type: 'command', action: 'flip', id: 'hejin', flip: false },
+                        { type: 'command', action: 'move', id: 'yuanshao', x: 198, y: 204, wait: true },
                         {
                             type: 'dialogue',
                             portraitKey: 'yuan-shao',
@@ -4094,6 +4194,8 @@ export const NARRATIVE_SCRIPTS = {
                     speaker: 'hejin',
                     result: [
                         { type: 'command', action: 'setStoryChoice', key: 'hejin_cao_cao_trust', value: 'dismissed', routeId: 'hejin' },
+                        { type: 'command', action: 'flip', id: 'hejin', flip: true },
+                        { type: 'command', action: 'move', id: 'caocao', x: 70, y: 204, wait: true },
                         {
                             type: 'dialogue',
                             portraitKey: 'cao-cao',
@@ -4105,6 +4207,8 @@ export const NARRATIVE_SCRIPTS = {
                                 zh: '操言尽于此。只愿宫墙不如人多口。'
                             }
                         },
+                        { type: 'command', action: 'flip', id: 'hejin', flip: false },
+                        { type: 'command', action: 'move', id: 'yuanshao', x: 194, y: 204, wait: true },
                         {
                             type: 'dialogue',
                             portraitKey: 'yuan-shao',
@@ -4136,8 +4240,9 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'flip', id: 'caocao', flip: false },
         { type: 'command', action: 'flip', id: 'yuanshao', flip: false },
         { type: 'command', action: 'flip', id: 'minister', flip: false },
-        { type: 'command', action: 'addActor', id: 'panyin', imgKey: 'panyin', x: 292, y: 206, actorAction: 'walk', speed: 0.88, flip: true },
-        { type: 'command', action: 'move', id: 'panyin', x: 220, y: 206, wait: true },
+        { type: 'command', action: 'addActor', id: 'panyin', imgKey: 'panyin', x: 292, y: 160, actorAction: 'walk', speed: 0.88, flip: true },
+        { type: 'command', action: 'move', id: 'panyin', x: 128, y: 160, wait: true },
+        { type: 'command', action: 'flip', id: 'yuanshao', flip: true },
         {
             type: 'dialogue',
             portraitKey: 'panyin',
@@ -4171,8 +4276,11 @@ export const NARRATIVE_SCRIPTS = {
                 zh: '其意先绝公之后患，再立皇子协。'
             }
         },
-        { type: 'command', action: 'addActor', id: 'false_messenger', imgKey: 'eunuch', x: 292, y: 206, actorAction: 'walk', speed: 0.74, flip: true },
-        { type: 'command', action: 'move', id: 'false_messenger', x: 224, y: 206, wait: true },
+        { type: 'command', action: 'move', id: 'panyin', x: 52, y: 160, wait: true },
+        { type: 'command', action: 'flip', id: 'panyin', flip: false },
+        { type: 'command', action: 'move', id: 'minister', x: 214, y: 155, wait: false },
+        { type: 'command', action: 'addActor', id: 'false_messenger', imgKey: 'eunuch', x: 292, y: 160, actorAction: 'walk', speed: 0.74, flip: true },
+        { type: 'command', action: 'move', id: 'false_messenger', x: 128, y: 160, wait: true },
         {
             type: 'dialogue',
             portraitKey: 'eunuch',
@@ -4183,6 +4291,12 @@ export const NARRATIVE_SCRIPTS = {
                 en: 'By palace order: General-in-Chief He Jin is to enter at once and settle the late matter of succession.',
                 zh: '宫中有命：请大将军速入，以定后事。'
             }
+        },
+        {
+            type: 'command',
+            action: 'flip',
+            id: 'hejin',
+            flip: true
         },
         {
             type: 'dialogue',
@@ -4207,6 +4321,12 @@ export const NARRATIVE_SCRIPTS = {
             }
         },
         {
+            type: 'command',
+            action: 'flip',
+            id: 'hejin',
+            flip: false
+        },
+        {
             type: 'dialogue',
             portraitKey: 'hejin',
             name: 'He Jin',
@@ -4217,6 +4337,14 @@ export const NARRATIVE_SCRIPTS = {
                 zh: '谁敢与吾入宫，正君讨贼，扫清朝廷？'
             }
         },
+        {
+            type: 'command',
+            action: 'flip',
+            id: 'hejin',
+            flip: false
+        },
+        { type: 'command', action: 'flip', id: 'yuanshao', flip: true },
+        { type: 'command', action: 'move', id: 'yuanshao', x: 190, y: 204, wait: true },
         {
             type: 'dialogue',
             portraitKey: 'yuan-shao',
@@ -4229,6 +4357,13 @@ export const NARRATIVE_SCRIPTS = {
             }
         },
         {
+            type: 'command',
+            action: 'flip',
+            id: 'hejin',
+            flip: true
+        },
+        { type: 'command', action: 'move', id: 'caocao', x: 76, y: 204, wait: true },
+        {
             type: 'dialogue',
             portraitKey: 'cao-cao',
             name: 'Cao Cao',
@@ -4239,6 +4374,14 @@ export const NARRATIVE_SCRIPTS = {
                 zh: '若严令军伍入宫，朝廷所见便是护立储君。直趋梓宫与玺绶，不得擅入别殿。'
             }
         },
+        {
+            type: 'command',
+            action: 'flip',
+            id: 'hejin',
+            flip: false
+        },
+        { type: 'command', action: 'flip', id: 'yuanshao', flip: true },
+        { type: 'command', action: 'move', id: 'yuanshao', x: 196, y: 204, wait: true },
         {
             type: 'dialogue',
             portraitKey: 'yuan-shao',
@@ -4266,6 +4409,8 @@ export const NARRATIVE_SCRIPTS = {
                     speaker: 'hejin',
                     result: [
                         { type: 'command', action: 'setStoryChoice', key: 'hejin_palace_entry_tone', value: 'disciplined', routeId: 'hejin' },
+                        { type: 'command', action: 'flip', id: 'hejin', flip: true },
+                        { type: 'command', action: 'move', id: 'caocao', x: 72, y: 204, wait: true },
                         {
                             type: 'dialogue',
                             portraitKey: 'cao-cao',
@@ -4289,6 +4434,9 @@ export const NARRATIVE_SCRIPTS = {
                     speaker: 'hejin',
                     result: [
                         { type: 'command', action: 'setStoryChoice', key: 'hejin_palace_entry_tone', value: 'show_force', routeId: 'hejin' },
+                        { type: 'command', action: 'flip', id: 'hejin', flip: false },
+                        { type: 'command', action: 'flip', id: 'yuanshao', flip: true },
+                        { type: 'command', action: 'move', id: 'yuanshao', x: 198, y: 204, wait: true },
                         {
                             type: 'dialogue',
                             portraitKey: 'yuan-shao',
@@ -4312,11 +4460,118 @@ export const NARRATIVE_SCRIPTS = {
                 zh: '何进大喜，遂点御林军，欲引众臣入宫，于灵帝柩前扶立太子辩。'
             }
         },
+        {
+            type: 'interactive',
+            clickableActors: {
+                hejin: {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'hejin',
+                            name: 'He Jin',
+                            voiceId: 'ch2_hj_council_march_hj_01',
+                            position: 'top',
+                            text: {
+                                en: 'The throne must be settled before the eunuchs set another snare.',
+                                zh: '必须先定君位，不可再给宦官设局之机。'
+                            }
+                        }
+                    ]
+                },
+                yuanshao: {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'yuan-shao',
+                            name: 'Yuan Shao',
+                            voiceId: 'ch2_hj_council_march_ys_01',
+                            position: 'top',
+                            text: {
+                                en: 'The troops wait for your word. Let the gates learn who commands them.',
+                                zh: '兵马只等大将军一令。且叫宫门知道谁可号令。'
+                            }
+                        }
+                    ]
+                },
+                caocao: {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'cao-cao',
+                            name: 'Cao Cao',
+                            voiceId: 'ch2_hj_council_march_cc_01',
+                            position: 'top',
+                            text: {
+                                en: 'Speed, order, and few words. Those are our guards now.',
+                                zh: '速行，整肃，少言。此三者，便是今日护卫。'
+                            }
+                        }
+                    ]
+                },
+                panyin: {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'panyin',
+                            name: 'Pan Yin',
+                            voiceId: 'ch2_hj_council_march_panyin_01',
+                            position: 'top',
+                            text: {
+                                en: 'If the summons was false, the next order from within will be falser still.',
+                                zh: '前召既伪，宫中再出的命令，只会更伪。'
+                            }
+                        }
+                    ]
+                },
+                minister: {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'soldier-v1',
+                            name: 'Minister',
+                            voiceId: 'ch2_hj_council_march_minister_01',
+                            position: 'top',
+                            text: {
+                                en: 'The household troops are assembled, my lord.',
+                                zh: '府中兵士已集，大将军。'
+                            }
+                        }
+                    ]
+                },
+                false_messenger: {
+                    onClick: [
+                        {
+                            type: 'dialogue',
+                            portraitKey: 'eunuch',
+                            name: 'Palace Messenger',
+                            voiceId: 'ch2_hj_council_march_messenger_01',
+                            position: 'top',
+                            text: {
+                                en: 'I carried the order as it was given to me.',
+                                zh: '小人只是奉命传旨。'
+                            }
+                        }
+                    ]
+                }
+            },
+            promptOptions: [
+                {
+                    id: 'march_to_palace',
+                    text: { en: 'MARCH TO PALACE', zh: '进宫' },
+                    position: 'right',
+                    y: 214,
+                    w: 132,
+                    h: 24,
+                    advanceOnClick: true
+                }
+            ]
+        },
         { type: 'command', action: 'fade', target: 1, speed: 0.001 }
     ],
     'chapter2_hejin_enthronement': [
         { bg: 'luoyang_imperial_palace_gate', fg: 'luoyang_imperial_palace_gate_foreground', type: 'command', action: 'clearActors' },
         { type: 'command', action: 'clearProps' },
+        { type: 'command', action: 'addActor', id: 'gate_eunuch', imgKey: 'eunuch', x: 178, y: 185, flip: true, speed: 1.35, drawAboveForeground: true },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
         {
             type: 'narrator',
@@ -4327,18 +4582,35 @@ export const NARRATIVE_SCRIPTS = {
                 zh: '袁绍借御林军五千，何颙、荀攸、郑泰等诸臣随何进入宫。'
             }
         },
-        { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: -36, y: 214, actorAction: 'walk', speed: 0.76, drawAboveForeground: true },
-        { type: 'command', action: 'addActor', id: 'yuanshao', imgKey: 'yuanshao', x: -66, y: 214, actorAction: 'walk', speed: 0.74, drawAboveForeground: true },
-        { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: -94, y: 214, actorAction: 'walk', speed: 0.72, drawAboveForeground: true },
-        { type: 'command', action: 'addActor', id: 'minister', imgKey: 'zhoujing', x: -122, y: 214, actorAction: 'walk', speed: 0.7, drawAboveForeground: true },
-        { type: 'command', action: 'addActor', id: 'troop_left', imgKey: 'soldier', x: -150, y: 218, actorAction: 'walk', speed: 0.68, drawAboveForeground: true },
-        { type: 'command', action: 'addActor', id: 'troop_right', imgKey: 'soldier', x: -176, y: 218, actorAction: 'walk', speed: 0.68, drawAboveForeground: true },
-        { type: 'command', action: 'move', id: 'hejin', x: 86, y: 214, wait: false },
-        { type: 'command', action: 'move', id: 'yuanshao', x: 124, y: 214, wait: false },
-        { type: 'command', action: 'move', id: 'caocao', x: 162, y: 214, wait: false },
-        { type: 'command', action: 'move', id: 'minister', x: 202, y: 214, wait: false },
-        { type: 'command', action: 'move', id: 'troop_left', x: 52, y: 218, wait: false },
-        { type: 'command', action: 'move', id: 'troop_right', x: 240, y: 218, wait: true },
+        { condition: HEJIN_ENTRY_SHOW_FORCE, type: 'command', action: 'playSound', key: 'war_horn', volume: 0.75 },
+        { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: -36, y: 204, actorAction: 'walk', speed: 0.76, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'yuanshao', imgKey: 'yuanshao', x: -66, y: 208, actorAction: 'walk', speed: 0.74, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: -94, y: 212, actorAction: 'walk', speed: 0.72, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'minister', imgKey: 'zhoujing', x: -122, y: 216, actorAction: 'walk', speed: 0.7, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'troop_left', imgKey: 'soldier', x: -150, y: 222, actorAction: 'walk', speed: 0.68, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'troop_mid_left', imgKey: 'soldier', x: -178, y: 228, actorAction: 'walk', speed: 0.66, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'troop_mid_right', imgKey: 'soldier', x: -206, y: 224, actorAction: 'walk', speed: 0.66, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'troop_far_left', imgKey: 'soldier', x: -234, y: 224, actorAction: 'walk', speed: 0.64, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'troop_far_right', imgKey: 'soldier', x: -262, y: 228, actorAction: 'walk', speed: 0.64, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'troop_right', imgKey: 'soldier', x: -290, y: 222, actorAction: 'walk', speed: 0.68, drawAboveForeground: true },
+        { type: 'command', action: 'move', id: 'hejin', x: 84, y: 204, wait: false },
+        { type: 'command', action: 'move', id: 'yuanshao', x: 116, y: 208, wait: false },
+        { type: 'command', action: 'move', id: 'caocao', x: 156, y: 212, wait: false },
+        { type: 'command', action: 'move', id: 'minister', x: 196, y: 216, wait: false },
+        { type: 'command', action: 'move', id: 'troop_left', x: 18, y: 222, wait: false },
+        { type: 'command', action: 'move', id: 'troop_mid_left', x: 52, y: 228, wait: false },
+        { type: 'command', action: 'move', id: 'troop_mid_right', x: 86, y: 224, wait: false },
+        { type: 'command', action: 'move', id: 'troop_far_left', x: 202, y: 224, wait: false },
+        { type: 'command', action: 'move', id: 'troop_far_right', x: 234, y: 228, wait: false },
+        { type: 'command', action: 'move', id: 'troop_right', x: 266, y: 222, wait: false },
+        { type: 'command', action: 'wait', duration: 450 },
+        { type: 'command', action: 'animate', id: 'gate_eunuch', animation: 'hit', wait: true },
+        { type: 'command', action: 'move', id: 'gate_eunuch', x: 200, y: 170, wait: true },
+        { type: 'command', action: 'setActorLayer', id: 'gate_eunuch', drawAboveForeground: false },
+        { type: 'command', action: 'move', id: 'gate_eunuch', x: 340, y: 170, wait: false },
+        { type: 'command', action: 'waitForActors', ids: ['gate_eunuch'] },
+        { type: 'command', action: 'removeActor', id: 'gate_eunuch' },
+        { type: 'command', action: 'waitForActors', ids: ['troop_right'] },
         {
             condition: HEJIN_ENTRY_DISCIPLINED,
             type: 'dialogue',
@@ -4387,21 +4659,65 @@ export const NARRATIVE_SCRIPTS = {
                 zh: '若兵威在前，至少让名义紧随其后。'
             }
         },
+        {
+            type: 'prompt',
+            promptOptions: [
+                {
+                    id: 'enter_palace',
+                    text: { en: 'ENTER PALACE', zh: '入宫' },
+                    position: 'right',
+                    y: 142,
+                    w: 112,
+                    h: 24,
+                    advanceOnClick: true,
+                    onClick: [
+                        { type: 'command', action: 'playSound', key: 'heavy_door_unlocking', volume: 0.6 },
+                        { type: 'command', action: 'move', id: 'hejin', x: 150, y: 170, wait: false },
+                        { type: 'command', action: 'move', id: 'caocao', x: 200, y: 170, wait: false },
+                        { type: 'command', action: 'waitForActors', ids: ['hejin', 'caocao'] },
+                        { type: 'command', action: 'setActorLayer', id: 'hejin', drawAboveForeground: false },
+                        { type: 'command', action: 'setActorLayer', id: 'caocao', drawAboveForeground: false },
+                        { type: 'command', action: 'move', id: 'hejin', x: 292, y: 170, wait: false },
+                        { type: 'command', action: 'move', id: 'caocao', x: 314, y: 170, wait: false },
+                        { type: 'command', action: 'move', id: 'yuanshao', x: 150, y: 170, wait: false },
+                        { type: 'command', action: 'move', id: 'minister', x: 200, y: 170, wait: false },
+                        { type: 'command', action: 'waitForActors', ids: ['yuanshao', 'minister'] },
+                        { type: 'command', action: 'setActorLayer', id: 'yuanshao', drawAboveForeground: false },
+                        { type: 'command', action: 'setActorLayer', id: 'minister', drawAboveForeground: false },
+                        { type: 'command', action: 'move', id: 'yuanshao', x: 304, y: 170, wait: false },
+                        { type: 'command', action: 'move', id: 'minister', x: 326, y: 170, wait: false },
+                        { type: 'command', action: 'move', id: 'troop_mid_right', x: 150, y: 170, wait: false },
+                        { type: 'command', action: 'move', id: 'troop_far_left', x: 200, y: 170, wait: false },
+                        { type: 'command', action: 'wait', duration: 1000 },
+                        { type: 'command', action: 'move', id: 'troop_mid_left', x: 150, y: 170, wait: false },
+                        { type: 'command', action: 'move', id: 'troop_far_right', x: 200, y: 170, wait: false },
+                        { type: 'command', action: 'waitForActors', ids: ['troop_mid_right', 'troop_far_left'] },
+                        { type: 'command', action: 'setActorLayer', id: 'troop_mid_right', drawAboveForeground: false },
+                        { type: 'command', action: 'setActorLayer', id: 'troop_far_left', drawAboveForeground: false },
+                        { type: 'command', action: 'move', id: 'troop_mid_right', x: 304, y: 170, wait: false },
+                        { type: 'command', action: 'move', id: 'troop_far_left', x: 326, y: 170, wait: false },
+                        { type: 'command', action: 'wait', duration: 350 },
+                        { type: 'command', action: 'move', id: 'troop_left', x: 150, y: 170, wait: false },
+                        { type: 'command', action: 'move', id: 'troop_right', x: 200, y: 170, wait: false },
+                        { type: 'command', action: 'waitForActors', ids: ['troop_mid_left', 'troop_far_right'] },
+                        { type: 'command', action: 'setActorLayer', id: 'troop_mid_left', drawAboveForeground: false },
+                        { type: 'command', action: 'setActorLayer', id: 'troop_far_right', drawAboveForeground: false },
+                        { type: 'command', action: 'move', id: 'troop_mid_left', x: 292, y: 170, wait: false },
+                        { type: 'command', action: 'move', id: 'troop_far_right', x: 336, y: 170, wait: false },
+                        { type: 'command', action: 'waitForActors', ids: ['troop_left', 'troop_right'] },
+                        { type: 'command', action: 'setActorLayer', id: 'troop_left', drawAboveForeground: false },
+                        { type: 'command', action: 'setActorLayer', id: 'troop_right', drawAboveForeground: false },
+                        { type: 'command', action: 'move', id: 'troop_left', x: 314, y: 170, wait: false },
+                        { type: 'command', action: 'move', id: 'troop_right', x: 358, y: 170, wait: false },
+                        { type: 'command', action: 'waitForActors', ids: ['troop_left', 'troop_right'] }
+                    ]
+                }
+            ]
+        },
         { type: 'command', action: 'fade', target: 1, speed: 0.001 },
-        { bg: 'imperial_chamber', fg: null, type: 'command', action: 'clearActors' },
+        { bg: 'imperial_memorial', fg: null, type: 'command', action: 'clearActors' },
         { type: 'command', action: 'clearProps' },
         { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-        {
-            type: 'command',
-            action: 'addProp',
-            id: 'emperor_ling_coffin',
-            imgKey: 'emperor_ling_deathbed',
-            imgKeys: ['emperor_ling_deathbed', 'emperor_ling_deathbed02'],
-            frameMs: 1100,
-            x: 92,
-            y: 122,
-            sortY: 154
-        },
         { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: 92, y: 206 },
         { type: 'command', action: 'addActor', id: 'liubian', imgKey: 'liubian', x: 146, y: 206 },
         { type: 'command', action: 'addActor', id: 'yuanshao', imgKey: 'yuanshao', x: 48, y: 208 },
