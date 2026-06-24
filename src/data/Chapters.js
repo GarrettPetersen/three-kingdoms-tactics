@@ -55,7 +55,6 @@ export const CHAPTERS = {
                 scenes: [
                     { id: 'chapter2_hejin_gate', type: 'narrative', scriptId: 'chapter2_hejin_gate' },
                     { id: 'chapter2_hejin_council', type: 'narrative', scriptId: 'chapter2_hejin_council' },
-                    { id: 'chapter2_hejin_secret_death', type: 'narrative', scriptId: 'chapter2_hejin_secret_death' },
                     { id: 'chapter2_hejin_enthronement', type: 'narrative', scriptId: 'chapter2_hejin_enthronement' },
                     { id: 'chapter2_hejin_jian_shuo', type: 'narrative', scriptId: 'chapter2_hejin_jian_shuo' }
                 ]

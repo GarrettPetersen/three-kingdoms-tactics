@@ -1228,9 +1228,6 @@ export class NarrativeScene extends BaseScene {
                 } else if (this.scriptId === 'chapter2_hejin_council') {
                     completeStoryNode(this.manager, 'hejin', 'chapter2_hejin_council');
                     return;
-                } else if (this.scriptId === 'chapter2_hejin_secret_death') {
-                    completeStoryNode(this.manager, 'hejin', 'chapter2_hejin_secret_death');
-                    return;
                 } else if (this.scriptId === 'chapter2_hejin_enthronement') {
                     completeStoryNode(this.manager, 'hejin', 'chapter2_hejin_enthronement');
                     return;
@@ -2614,7 +2611,6 @@ export class NarrativeScene extends BaseScene {
             'caocao_ch1_end_card': 'campaign_selection',
             'chapter2_hejin_gate': 'campaign_selection',
             'chapter2_hejin_council': 'campaign_selection',
-            'chapter2_hejin_secret_death': 'campaign_selection',
             'chapter2_hejin_enthronement': 'campaign_selection',
             'chapter2_hejin_jian_shuo': 'campaign_selection',
             'chapter2_wan_strategy': 'campaign_selection',
@@ -2655,7 +2651,6 @@ export class NarrativeScene extends BaseScene {
             'caocao_ch1_end_card': {},
             'chapter2_hejin_gate': {},
             'chapter2_hejin_council': {},
-            'chapter2_hejin_secret_death': {},
             'chapter2_hejin_enthronement': {},
             'chapter2_hejin_jian_shuo': {},
             'chapter2_wan_strategy': {},

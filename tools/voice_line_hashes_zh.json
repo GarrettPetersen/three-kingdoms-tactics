@@ -741,13 +741,6 @@
     "version": 1,
     "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
   },
-  "ch2_hj_council_narrator_02": {
-    "character": "narrator",
-    "hash": "9a7b08204743a3a82686416836c5e5109791549e0aa269adf2ad70bb02d0f94a",
-    "text": "诸臣议论未定，宫中已秘不发丧，并拟矫诏再召何进。",
-    "version": 1,
-    "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
-  },
   "ch2_hj_council_ys_01": {
     "character": "yuanshao",
     "hash": "855398c2009dcfbb05aea44b62a9c9d25e88b38547d789bd740cfa60857ba354",

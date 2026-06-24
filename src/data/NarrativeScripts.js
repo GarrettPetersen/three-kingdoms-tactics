@@ -4131,25 +4131,13 @@ export const NARRATIVE_SCRIPTS = {
                 zh: '刀兵未动，先定储位。遣人守宫中消息，等潘隐再报。'
             }
         },
-        {
-            type: 'narrator',
-            voiceId: 'ch2_hj_council_narrator_02',
-            text: {
-                en: 'Even as the ministers argued, the palace concealed Emperor Ling\'s death and prepared a forged summons.',
-                zh: '诸臣议论未定，宫中已秘不发丧，并拟矫诏再召何进。'
-            }
-        },
-        { type: 'command', action: 'fade', target: 1, speed: 0.001 }
-    ],
-    'chapter2_hejin_secret_death': [
-        { bg: 'luoyang_council_hall', fg: null, type: 'command', action: 'clearActors' },
-        { type: 'command', action: 'clearProps' },
-        { type: 'command', action: 'fade', target: 0, speed: 0.001 },
-        { type: 'command', action: 'addActor', id: 'hejin', imgKey: 'hejin', x: 134, y: 202 },
-        { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: 72, y: 204 },
-        { type: 'command', action: 'addActor', id: 'yuanshao', imgKey: 'yuanshao', x: 198, y: 204, flip: true },
-        { type: 'command', action: 'addActor', id: 'panyin', imgKey: 'panyin', x: 340, y: 206, actorAction: 'walk', speed: 0.88, flip: true },
-        { type: 'command', action: 'move', id: 'panyin', x: 236, y: 206, wait: true },
+        { type: 'command', action: 'playSound', key: 'heavy_door_unlocking', volume: 0.75 },
+        { type: 'command', action: 'flip', id: 'hejin', flip: false },
+        { type: 'command', action: 'flip', id: 'caocao', flip: false },
+        { type: 'command', action: 'flip', id: 'yuanshao', flip: false },
+        { type: 'command', action: 'flip', id: 'minister', flip: false },
+        { type: 'command', action: 'addActor', id: 'panyin', imgKey: 'panyin', x: 292, y: 206, actorAction: 'walk', speed: 0.88, flip: true },
+        { type: 'command', action: 'move', id: 'panyin', x: 220, y: 206, wait: true },
         {
             type: 'dialogue',
             portraitKey: 'panyin',
@@ -4183,8 +4171,8 @@ export const NARRATIVE_SCRIPTS = {
                 zh: '其意先绝公之后患，再立皇子协。'
             }
         },
-        { type: 'command', action: 'addActor', id: 'false_messenger', imgKey: 'eunuch', x: 340, y: 206, actorAction: 'walk', speed: 0.74, flip: true },
-        { type: 'command', action: 'move', id: 'false_messenger', x: 270, y: 206, wait: true },
+        { type: 'command', action: 'addActor', id: 'false_messenger', imgKey: 'eunuch', x: 292, y: 206, actorAction: 'walk', speed: 0.74, flip: true },
+        { type: 'command', action: 'move', id: 'false_messenger', x: 224, y: 206, wait: true },
         {
             type: 'dialogue',
             portraitKey: 'eunuch',
@@ -4241,17 +4229,39 @@ export const NARRATIVE_SCRIPTS = {
             }
         },
         {
+            type: 'dialogue',
+            portraitKey: 'cao-cao',
+            name: 'Cao Cao',
+            voiceId: 'ch2_hj_death_cc_order_choice',
+            position: 'top',
+            text: {
+                en: 'If the troops enter under strict orders, the court sees guardians of the succession. Go straight to the coffin and seals, and touch no chamber not named.',
+                zh: '若严令军伍入宫，朝廷所见便是护立储君。直趋梓宫与玺绶，不得擅入别殿。'
+            }
+        },
+        {
+            type: 'dialogue',
+            portraitKey: 'yuan-shao',
+            name: 'Yuan Shao',
+            voiceId: 'ch2_hj_death_ys_force_choice',
+            position: 'top',
+            text: {
+                en: 'If every gate sees our spears, the eunuchs may yield before they spring another trap. Fear will clear the way, though it will run ahead of us.',
+                zh: '若使诸门尽见兵锋，宦官未及再设罗网，便先胆寒。畏惧能开路，也会先传遍宫中。'
+            }
+        },
+        {
             type: 'choice',
             portraitKey: 'hejin',
             name: 'He Jin',
             position: 'top',
             options: [
                 {
-                    buttonText: { en: 'Enter with discipline.', zh: '整军入宫' },
+                    buttonText: { en: 'Guard the succession.', zh: '护立储君' },
                     voiceId: 'ch2_hj_death_hj_discipline',
                     text: {
-                        en: 'Take the troops, but keep them under command. We enter to secure the throne, not to loot the palace.',
-                        zh: '可点兵入宫，但须严令约束。入宫为正君位，不为劫掠。'
+                        en: 'Take the troops, but bind every man to order. We enter as lawful guardians, not an army of vengeance.',
+                        zh: '可点兵入宫，但人人受令约束。我等是奉法护驾，不是挟怨兴兵。'
                     },
                     speaker: 'hejin',
                     result: [
@@ -4270,11 +4280,11 @@ export const NARRATIVE_SCRIPTS = {
                     ]
                 },
                 {
-                    buttonText: { en: 'Show force openly.', zh: '张兵示威' },
+                    buttonText: { en: 'Overawe the palace.', zh: '威慑宫禁' },
                     voiceId: 'ch2_hj_death_hj_force',
                     text: {
-                        en: 'Let the palace see our strength before it opens its mouth again.',
-                        zh: '让宫中先见我兵威，再敢开口。'
+                        en: 'Let banners and spear-points fill the gates. If the palace means treachery, let it tremble before it speaks.',
+                        zh: '旌旗枪戟，尽列诸门。宫中若还藏奸，先叫它未言而惧。'
                     },
                     speaker: 'hejin',
                     result: [

@@ -636,12 +636,6 @@
     "source": "NarrativeScripts.js"
   },
   {
-    "id": "ch2_hj_council_narrator_02",
-    "char": "narrator",
-    "text": "诸臣议论未定，宫中已秘不发丧，并拟矫诏再召何进。",
-    "source": "NarrativeScripts.js"
-  },
-  {
     "id": "ch2_hj_council_ys_01",
     "char": "yuanshao",
     "text": "大将军，此事分明。列其奸名，发兵入宫，一扫而尽。",
@@ -678,6 +672,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "ch2_hj_death_cc_order_choice",
+    "char": "caocao",
+    "text": "若严令军伍入宫，朝廷所见便是护立储君。直趋梓宫与玺绶，不得擅入别殿。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "ch2_hj_death_eunuch_01",
     "char": "eunuch",
     "text": "宫中有命：请大将军速入，以定后事。",
@@ -692,13 +692,13 @@
   {
     "id": "ch2_hj_death_hj_discipline",
     "char": "hejin",
-    "text": "可点兵入宫，但须严令约束。入宫为正君位，不为劫掠。",
+    "text": "可点兵入宫，但人人受令约束。我等是奉法护驾，不是挟怨兴兵。",
     "source": "NarrativeScripts.js"
   },
   {
     "id": "ch2_hj_death_hj_force",
     "char": "hejin",
-    "text": "让宫中先见我兵威，再敢开口。",
+    "text": "旌旗枪戟，尽列诸门。宫中若还藏奸，先叫它未言而惧。",
     "source": "NarrativeScripts.js"
   },
   {
@@ -735,6 +735,12 @@
     "id": "ch2_hj_death_ys_02",
     "char": "yuanshao",
     "text": "善。宦官所懂的朝廷话，正是畏惧二字。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_hj_death_ys_force_choice",
+    "char": "yuanshao",
+    "text": "若使诸门尽见兵锋，宦官未及再设罗网，便先胆寒。畏惧能开路，也会先传遍宫中。",
     "source": "NarrativeScripts.js"
   },
   {

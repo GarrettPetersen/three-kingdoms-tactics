@@ -741,13 +741,6 @@
     "version": 1,
     "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
   },
-  "ch2_hj_council_narrator_02": {
-    "character": "narrator",
-    "hash": "b59bcbcdc802f213b018a9ceb4824fecf95db0347ca9816a7c9d7f15adc7b39f",
-    "text": "Even as the ministers argued, the palace concealed Emperor Ling's death and prepared a forged summons.",
-    "version": 1,
-    "voice_target": "movies/clean/clean_uncle-iroh.wav"
-  },
   "ch2_hj_council_ys_01": {
     "character": "yuanshao",
     "hash": "191eab2b0f5801959739172b8b2257e75780cec01b2c9dd885459f30d41ba2b5",
