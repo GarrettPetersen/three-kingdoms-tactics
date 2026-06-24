@@ -4278,9 +4278,9 @@
         "character": "hejin",
         "original_text": "可点兵入宫，但人人受令约束。我等是奉法护驾，不是挟怨兴兵。",
         "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav",
-        "stt_output": "可点兵入宫 但人受令约束我懂事 奉法护驾不是邪院新兵",
-        "wer": 3.0,
-        "is_bad": true,
+        "stt_output": "可点兵入宫 但人受令约束我等是奉法护驾不是邪院新兵",
+        "wer": 0.16,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:ch2_hj_death_hj_force": {
@@ -4289,8 +4289,8 @@
         "original_text": "旌旗枪戟，尽列诸门。宫中若还藏奸，先叫它未言而惧。",
         "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav",
         "stt_output": "驚奇相起 警列豬門共中入海藏間先叫他為言而句",
-        "wer": 2.0,
-        "is_bad": true,
+        "wer": 0.6190476190476191,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:ch2_hj_death_narrator_01": {
@@ -5676,9 +5676,9 @@
         "character": "caocao",
         "original_text": "若严令军伍入宫，朝廷所见便是护立储君。直趋梓宫与玺绶，不得擅入别殿。",
         "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
-        "stt_output": "若言令君武入宫朝庭所见,殿室,互利处军,直驱子宫与洗手,不得善入别殿。",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "若言令君武入宫朝庭所见,便是,互利处军,直驱子宫与洗手,不得善入别殿。",
+        "wer": 0.43333333333333335,
+        "is_bad": false,
         "language": "zh"
     },
     "zh:ch2_hj_death_ys_force_choice": {
@@ -5686,9 +5686,9 @@
         "character": "yuanshao",
         "original_text": "若使诸门尽见兵锋，宦官未及再设罗网，便先胆寒。畏惧能开路，也会先传遍宫中。",
         "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav",
-        "stt_output": "各市出門景見冰峰換官未繼在蛇羅網便先打喊未聚能開路也會先傳遍攻中",
-        "wer": 1.0,
-        "is_bad": true,
+        "stt_output": "各市出門景見冰峰換官未繼在蛇羅網便先打喊未聚能開入也會先傳變工中",
+        "wer": 0.53125,
+        "is_bad": false,
         "language": "zh"
     }
 }

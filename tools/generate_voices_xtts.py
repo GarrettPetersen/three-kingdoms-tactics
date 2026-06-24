@@ -1,7 +1,6 @@
 import os
 import sys
 import subprocess
-import string
 import hashlib
 
 try:
@@ -10,11 +9,8 @@ except ImportError:
     whisper = None  # Optional dependency
 import json
 from pathlib import Path
+from voice_metrics import calculate_text_error_rate
 
-try:
-    from jiwer import wer
-except ImportError:
-    wer = None  # Optional dependency
 try:
     from TTS.api import TTS
 except ImportError:
@@ -474,13 +470,10 @@ def verify_audio(audio_path, expected_text, lang_code="en"):
         transcribed_text = result["text"].strip()
         original_text = expected_text.strip()
 
-        # Cleanup punctuation for comparison
-        table = str.maketrans("", "", string.punctuation)
-        transcribed_clean = transcribed_text.lower().translate(table)
-        original_clean = original_text.lower().translate(table)
-
-        # Calculate Word Error Rate (WER)
-        error_rate = wer(original_clean, transcribed_clean)
+        # Chinese is scored as character tokens because whitespace-delimited
+        # WER turns a whole sentence into a single "word" and badly overstates
+        # transcription errors.
+        error_rate = calculate_text_error_rate(original_text, transcribed_text, lang_code)
 
         print(f'    Transcribed: "{transcribed_text}"')
         print(f"    WER: {error_rate:.2f}")

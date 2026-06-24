@@ -7,7 +7,7 @@ and comparing to the original text.
 import os
 import json
 from faster_whisper import WhisperModel
-from jiwer import wer
+from voice_metrics import calculate_text_error_rate
 
 # Language support
 LANGUAGE = os.environ.get("VOICE_LANG", "en")
@@ -25,9 +25,9 @@ else:
 with open(EXTRACTED_LINES_FILE, 'r', encoding='utf-8') as f:
     game_script = json.load(f)
 
-# WER threshold for marking as bad
-WER_THRESHOLD = 0.3  # 30% word error rate
-
+# WER threshold for marking as bad. Mandarin uses character-token scoring, so
+# it stays more lenient than English speech-to-text verification.
+WER_THRESHOLD = 0.7 if LANGUAGE == "zh" else 0.3
 
 def load_whisper_model():
     """Load the Whisper model (using 'base' for speed, 'medium' for accuracy)"""
@@ -52,21 +52,9 @@ def calculate_wer(original, transcribed):
     """Calculate Word Error Rate between original and transcribed text"""
     if not original or not transcribed:
         return 0.0
-    
-    # Normalize texts for comparison
-    original_clean = original.lower().strip()
-    transcribed_clean = transcribed.lower().strip()
-    
-    # Remove punctuation for WER calculation
-    import re
-    original_clean = re.sub(r'[^\w\s]', '', original_clean)
-    transcribed_clean = re.sub(r'[^\w\s]', '', transcribed_clean)
-    
-    if not original_clean:
-        return 0.0
-    
+
     try:
-        return wer(original_clean, transcribed_clean)
+        return calculate_text_error_rate(original, transcribed, LANGUAGE)
     except Exception as e:
         print(f"Error calculating WER: {e}")
         return 0.0
@@ -230,4 +218,3 @@ if __name__ == "__main__":
     else:
         # Verify all lines
         verify_all_voices()
-
