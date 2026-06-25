@@ -88,7 +88,10 @@ def load_pipeline():
     try:
         pipe = StableDiffusionImg2ImgPipeline.from_single_file(
             MODEL_PATH,
-            load_safety_checker=False,
+            safety_checker=None,
+            feature_extractor=None,
+            requires_safety_checker=False,
+            local_files_only=True,
             torch_dtype=torch.float32,
             use_safetensors=True
         )
