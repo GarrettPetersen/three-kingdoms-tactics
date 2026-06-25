@@ -1,7 +1,20 @@
 import { STORY_ROUTES, getStoryNodeNextIds } from '../data/StoryGraph.js';
 import { CHAPTERS } from '../data/Chapters.js';
 import { BATTLES } from '../data/Battles.js';
-import { IS_DEMO } from './Constants.js';
+import { isStoryRouteAvailableInBuild } from './BuildAvailability.js';
+
+export {
+    getBattleChapterId,
+    getNarrativeScriptChapterId,
+    getStoryNodeChapterId,
+    getStoryRouteChapterId,
+    isBattleAvailableInBuild,
+    isChapterAvailableInBuild,
+    isNarrativeScriptAvailableInBuild,
+    isSceneTargetAvailableInBuild,
+    isStoryNodeAvailableInBuild,
+    isStoryRouteAvailableInBuild
+} from './BuildAvailability.js';
 
 const NODE_LAUNCH_OVERRIDES = {
     prologue: { scene: 'tactics', params: { battleId: 'yellow_turban_rout' }, label: 'battle: yellow_turban_rout' },
@@ -82,25 +95,6 @@ const INTERACTIVE_MAP_TRANSITIONS = {
 };
 
 let chapterSceneMetadata = null;
-let routeChapterIds = null;
-
-export function getStoryRouteChapterId(routeId) {
-    if (!routeChapterIds) {
-        routeChapterIds = {};
-        for (const chapter of Object.values(CHAPTERS || {})) {
-            for (const route of Object.values(chapter.routes || {})) {
-                if (route?.id) routeChapterIds[route.id] = Number(chapter.id);
-            }
-        }
-    }
-    return routeChapterIds[routeId] || null;
-}
-
-export function isStoryRouteAvailableInBuild(routeId) {
-    if (!IS_DEMO) return true;
-    const chapterId = getStoryRouteChapterId(routeId);
-    return !chapterId || chapterId <= 1;
-}
 
 export function collectChapterSceneMetadata() {
     if (chapterSceneMetadata) return chapterSceneMetadata;

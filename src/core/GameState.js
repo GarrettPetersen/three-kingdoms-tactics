@@ -1,5 +1,11 @@
 import { STORY_ROUTES, buildParentMap } from '../data/StoryGraph.js';
 import { CHAPTERS } from '../data/Chapters.js';
+import {
+    getBuildUnavailableFallbackTarget,
+    isBattleAvailableInBuild,
+    isNarrativeScriptAvailableInBuild,
+    isStoryRouteAvailableInBuild
+} from './BuildAvailability.js';
 
 const SAVE_VERSION = 4;
 const SCENE_STATE_KEYS = ['map', 'tactics', 'narrative', 'levelup', 'liubo'];
@@ -541,11 +547,40 @@ export class GameState {
 
         const campaignId = this.getCurrentCampaign();
         const lastScene = this.getLastScene();
-        const narrativeState = this.getSceneState('narrative');
-        const battleState = this.getSceneState('tactics');
+        let narrativeState = this.getSceneState('narrative');
+        let battleState = this.getSceneState('tactics');
         const mapState = this.getSceneState('map');
         const levelUpState = this.getSceneState('levelup');
         const liuboState = this.getSceneState('liubo');
+        const fallbackTarget = getBuildUnavailableFallbackTarget();
+
+        if (campaignId && !isStoryRouteAvailableInBuild(campaignId)) {
+            this.clearSceneState('map', campaignId);
+            this.clearSceneState('narrative', campaignId);
+            this.clearSceneState('tactics', campaignId);
+            this.clearSceneState('levelup', campaignId);
+            this.clearSceneState('liubo', campaignId);
+            this.setCurrentBattleId(null);
+            this.setLastScene(fallbackTarget.scene);
+            return fallbackTarget;
+        }
+
+        if (battleState?.battleId && !isBattleAvailableInBuild(battleState.battleId)) {
+            console.warn('Clearing unavailable battle state for this build', battleState.battleId);
+            this.clearSceneState('tactics');
+            if (this.getCurrentBattleId() === battleState.battleId) this.setCurrentBattleId(null);
+            battleState = null;
+        }
+        if (this.getCurrentBattleId() && !isBattleAvailableInBuild(this.getCurrentBattleId())) {
+            console.warn('Clearing unavailable current battle for this build', this.getCurrentBattleId());
+            this.setCurrentBattleId(null);
+        }
+
+        if (narrativeState?.scriptId && !isNarrativeScriptAvailableInBuild(narrativeState.scriptId)) {
+            console.warn('Clearing unavailable narrative state for this build', narrativeState.scriptId);
+            this.clearSceneState('narrative');
+            narrativeState = null;
+        }
 
         if (this.isCampaignComplete(campaignId)) {
             return { scene: 'campaign_selection', params: {} };

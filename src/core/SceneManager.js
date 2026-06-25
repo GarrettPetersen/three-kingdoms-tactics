@@ -1,5 +1,6 @@
 import { GameState } from './GameState.js';
 import { assets } from './AssetLoader.js';
+import { getBuildUnavailableFallbackTarget, isSceneTargetAvailableInBuild } from './BuildAvailability.js';
 
 const GLOBAL_PALETTE_STORAGE_KEY = 'three_kingdoms_tactics_palette';
 
@@ -198,6 +199,12 @@ export class SceneManager {
     switchTo(name, params = {}) {
         if (this.isOptionsOverlayActive()) {
             this.closeOptionsOverlay();
+        }
+        if (!isSceneTargetAvailableInBuild(name, params, this.gameState)) {
+            const fallback = getBuildUnavailableFallbackTarget();
+            console.warn(`Blocked unavailable scene target in this build: ${name}`, params);
+            name = fallback.scene;
+            params = fallback.params;
         }
         this.gameState.validateAndRepairInvariants(name, params);
 
