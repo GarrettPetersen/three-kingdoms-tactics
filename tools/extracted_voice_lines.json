@@ -160,6 +160,18 @@
     "source": "Battles.js"
   },
   {
+    "id": "cc_yc_intercept_defeat_cc_01",
+    "char": "caocao",
+    "text": "The intercept failed because we let speed become disorder. Form the cavalry again and close the road properly.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_intercept_defeat_cr_01",
+    "char": "caoren",
+    "text": "Understood. The next charge will leave them no gap.",
+    "source": "Battles.js"
+  },
+  {
     "id": "cc_yc_zb_01",
     "char": "zhangbao",
     "text": "Cavalry ahead?! Break through! Break through!",
@@ -531,6 +543,18 @@
     "char": "zhujun",
     "text": "Good. The road to Yangcheng opens beyond that ridge. Break him there, and he will have only the city walls left.",
     "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_defeat_lb_01",
+    "char": "liubei",
+    "text": "We know the method. Next time, close the pincer and strike him directly.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_counter_defeat_zj_01",
+    "char": "zhujun",
+    "text": "The counter failed before the filth reached Zhang Bao. Reform the two wings and try again.",
+    "source": "Battles.js"
   },
   {
     "id": "ch2_counter_gy_01",
@@ -1079,6 +1103,18 @@
     "source": "LiuboScene.js"
   },
   {
+    "id": "ch2_oath_dz_defeat_gy_01",
+    "char": "guanyu",
+    "text": "Anger must answer to righteousness.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_oath_dz_defeat_lb_01",
+    "char": "liubei",
+    "text": "Dong Zhuo is not worth the ruin of our oath. We return to the moment and choose our course with clear minds.",
+    "source": "Battles.js"
+  },
+  {
     "id": "ch2_oath_dz_restrain_01",
     "char": "dongzhuo",
     "text": "Know your place, commoners. Be grateful I even speak to you.",
@@ -1139,6 +1175,12 @@
     "source": "TacticsScene.js"
   },
   {
+    "id": "ch2_oath_soldier_reinforce_01",
+    "char": "soldier",
+    "text": "General Dong Zhuo! Imperial cavalry rides to your aid!",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "ch2_oath_zf_restrain_01",
     "char": "zhangfei",
     "text": "Hmph... I obey, eldest brother. But I will remember this insult.",
@@ -1161,6 +1203,18 @@
     "char": "zhangfei",
     "text": "Bah! Not even drowning would keep that coward down. Next time, I'll tie a stone to him myself.",
     "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_probe_defeat_lb_01",
+    "char": "liubei",
+    "text": "Zhang Bao's lightning broke our advance before we understood his method. Reform the vanguard; we test him again.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_probe_defeat_zf_01",
+    "char": "zhangfei",
+    "text": "Let him throw thunder. I will still close the distance.",
+    "source": "Battles.js"
   },
   {
     "id": "ch2_probe_lb_01",
@@ -1835,6 +1889,18 @@
     "source": "Battles.js"
   },
   {
+    "id": "dx_defeat_lb_01",
+    "char": "liubei",
+    "text": "Daxing cannot be left to the rebels. Gather the volunteers; we strike again before they scatter into the county.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "dx_defeat_zf_01",
+    "char": "zhangfei",
+    "text": "Good. I owe those captains another meeting.",
+    "source": "Battles.js"
+  },
+  {
     "id": "dx_dm_01",
     "char": "dengmao",
     "text": "Imperial dogs! You dare stand in the way of the Lord of Heaven?",
@@ -1874,6 +1940,18 @@
     "id": "dx_zf_01",
     "char": "zhangfei",
     "text": "Let me at them! My Serpent Spear is thirsty for rebel blood!",
+    "source": "Battles.js"
+  },
+  {
+    "id": "dz_rescue_defeat_lb_01",
+    "char": "liubei",
+    "text": "Dong Zhuo's column is still under threat. Whatever his manners, we cannot let the rebels destroy an imperial force.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "dz_rescue_defeat_zf_01",
+    "char": "zhangfei",
+    "text": "Saving him twice had better be worth it.",
     "source": "Battles.js"
   },
   {
@@ -1948,6 +2026,30 @@
     "char": "dongzhuo",
     "text": "Hmph! You dare lecture me? I should have you arrested! But... you did save my life today. Leave now, before I change my mind.",
     "source": "TacticsScene.js"
+  },
+  {
+    "id": "gz_enc_defeat_lb_01",
+    "char": "liubei",
+    "text": "The escort overcame us before Master Lu could be freed. We return to the road and make the choice again with steadier hands.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_enc_defeat_zf_01",
+    "char": "zhangfei",
+    "text": "Then let me start closer to the cage.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_escort_defeat_gy_01",
+    "char": "guanyu",
+    "text": "Then we must strike without harming the innocent.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_escort_defeat_lb_01",
+    "char": "liubei",
+    "text": "If we choose to free Master Lu, hesitation will only shame us. Reform the line and break the escort cleanly.",
+    "source": "Battles.js"
   },
   {
     "id": "gz_gy_free_01",
@@ -2954,6 +3056,18 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "qz_prelude_defeat_gy_01",
+    "char": "guanyu",
+    "text": "This time the flanks will move as one.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "qz_prelude_defeat_lb_01",
+    "char": "liubei",
+    "text": "The pass swallowed our formation before the ambush could be set. We return to the ridge and prepare the signal again.",
+    "source": "Battles.js"
+  },
+  {
     "id": "qz_ret_gj_01",
     "char": "gongjing",
     "text": "Heroic brothers! You have saved Qingzhou! When your signal echoed through the pass, we charged from the gates. The rebels were caught between us and slaughtered.",
@@ -3000,6 +3114,18 @@
     "char": "liubei",
     "text": "Commander Lu Zhi needs aid. We cannot abandon a loyal servant of the Han.",
     "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_siege_defeat_lb_01",
+    "char": "liubei",
+    "text": "The signal failed and the pass fell into confusion. We return to the mouth of the gorge and run the ambush again.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "qz_siege_defeat_zf_01",
+    "char": "zhangfei",
+    "text": "Let me hear that gong properly this time.",
+    "source": "Battles.js"
   },
   {
     "id": "qz_vic_gy_01",
@@ -3139,6 +3265,12 @@
     "char": "zhangfei",
     "text": "Bah! Those rascals got a lucky hit in! Next time, they won't be so fortunate!",
     "source": "RecoveryScene.js"
+  },
+  {
+    "id": "train_defeat_zf_01",
+    "char": "zhangfei",
+    "text": "Wooden dummies got the better of us? Again!",
+    "source": "Battles.js"
   },
   {
     "id": "train_gy_01",

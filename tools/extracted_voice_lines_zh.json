@@ -156,6 +156,18 @@
     "source": "Battles.js"
   },
   {
+    "id": "cc_yc_intercept_defeat_cc_01",
+    "char": "caocao",
+    "text": "截击失利，是快而无序。重整骑军，严封道路。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_yc_intercept_defeat_cr_01",
+    "char": "caoren",
+    "text": "明白。下次冲阵，不留缺口。",
+    "source": "Battles.js"
+  },
+  {
     "id": "cc_yc_zb_01",
     "char": "zhangbao",
     "text": "前方竟有骑军？冲出去！冲出去！",
@@ -526,6 +538,18 @@
     "char": "zhujun",
     "text": "善。过此山冈，便是阳城之路。此处破之，他只得退守城中。",
     "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "ch2_counter_defeat_lb_01",
+    "char": "liubei",
+    "text": "破法之策已明。再往，合围上前，务必中其身。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_counter_defeat_zj_01",
+    "char": "zhujun",
+    "text": "秽物未及张宝，破法便败。重整两翼，再试一次。",
+    "source": "Battles.js"
   },
   {
     "id": "ch2_counter_gy_01",
@@ -1074,6 +1098,18 @@
     "source": "LiuboScene.js"
   },
   {
+    "id": "ch2_oath_dz_defeat_gy_01",
+    "char": "guanyu",
+    "text": "怒气也须听从义理。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_oath_dz_defeat_lb_01",
+    "char": "liubei",
+    "text": "董卓不值得毁我兄弟之义。回到此刻，冷静决断。",
+    "source": "Battles.js"
+  },
+  {
     "id": "ch2_oath_dz_restrain_01",
     "char": "dongzhuo",
     "text": "认清自己的身份，草民。能让本官同你们说话，已是恩典。",
@@ -1134,6 +1170,12 @@
     "source": "TacticsScene.js"
   },
   {
+    "id": "ch2_oath_soldier_reinforce_01",
+    "char": "soldier",
+    "text": "董将军！朝廷骑兵前来助阵！",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "ch2_oath_zf_restrain_01",
     "char": "zhangfei",
     "text": "哼……我听大哥的。只是这口气，我记下了。",
@@ -1156,6 +1198,18 @@
     "char": "zhangfei",
     "text": "呸！连淹都淹不死这胆小鬼。下次俺也去亲手给他绑块石头！",
     "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_probe_defeat_lb_01",
+    "char": "liubei",
+    "text": "未明张宝雷法，前军先乱。重整先锋，再试其阵。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "ch2_probe_defeat_zf_01",
+    "char": "zhangfei",
+    "text": "任他使雷，俺也去近前会他。",
+    "source": "Battles.js"
   },
   {
     "id": "ch2_probe_lb_01",
@@ -1830,6 +1884,18 @@
     "source": "Battles.js"
   },
   {
+    "id": "dx_defeat_lb_01",
+    "char": "liubei",
+    "text": "大兴不可任贼侵扰。收拢义勇，趁贼未散，再战一次。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "dx_defeat_zf_01",
+    "char": "zhangfei",
+    "text": "好。俺也正要再会会那两个贼首。",
+    "source": "Battles.js"
+  },
+  {
     "id": "dx_dm_01",
     "char": "dengmao",
     "text": "朝廷走狗！你们敢阻挡天公将军？",
@@ -1869,6 +1935,18 @@
     "id": "dx_zf_01",
     "char": "zhangfei",
     "text": "让我来对付他们！我的丈八蛇矛渴饮叛军之血！",
+    "source": "Battles.js"
+  },
+  {
+    "id": "dz_rescue_defeat_lb_01",
+    "char": "liubei",
+    "text": "董卓军仍在危急之中。无论其人如何，不能坐视官军覆灭。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "dz_rescue_defeat_zf_01",
+    "char": "zhangfei",
+    "text": "救他两回，最好别白费。",
     "source": "Battles.js"
   },
   {
@@ -1942,6 +2020,30 @@
     "char": "dongzhuo",
     "text": "哼！你敢教训我？我应该逮捕你们！但是...你们今天确实救了我的命。现在离开，在我改变主意之前。",
     "source": "TacticsScene.js"
+  },
+  {
+    "id": "gz_enc_defeat_lb_01",
+    "char": "liubei",
+    "text": "押送兵先胜一阵，卢师未能脱困。回到路上，再作决断。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_enc_defeat_zf_01",
+    "char": "zhangfei",
+    "text": "那就让俺离牢笼近些再打。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_escort_defeat_gy_01",
+    "char": "guanyu",
+    "text": "既如此，更要出手有度，不伤无辜。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "gz_escort_defeat_lb_01",
+    "char": "liubei",
+    "text": "既要救卢师，迟疑只会自辱。重整阵势，破开押送兵。",
+    "source": "Battles.js"
   },
   {
     "id": "gz_gy_free_01",
@@ -2934,6 +3036,18 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "qz_prelude_defeat_gy_01",
+    "char": "guanyu",
+    "text": "此番两翼必同时而动。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "qz_prelude_defeat_lb_01",
+    "char": "liubei",
+    "text": "山道乱了阵脚，伏兵未成。退回岭上，重新布置信号。",
+    "source": "Battles.js"
+  },
+  {
     "id": "qz_ret_gj_01",
     "char": "gongjing",
     "text": "英勇的兄弟们！你们救了青州！当你们的信号响彻关隘，我们从城门冲出。叛军被我们夹击，尽数歼灭。",
@@ -2980,6 +3094,18 @@
     "char": "liubei",
     "text": "卢植中郎将需要援助。我们不能抛弃汉朝的忠臣。",
     "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "qz_siege_defeat_lb_01",
+    "char": "liubei",
+    "text": "旗号未成，山道大乱。退回谷口，重整伏击。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "qz_siege_defeat_zf_01",
+    "char": "zhangfei",
+    "text": "这回锣声可要响个痛快。",
+    "source": "Battles.js"
   },
   {
     "id": "qz_vic_gy_01",
@@ -3118,6 +3244,12 @@
     "char": "zhangfei",
     "text": "呸！那些混蛋只是侥幸得手！下次，他们就没这么幸运了！",
     "source": "RecoveryScene.js"
+  },
+  {
+    "id": "train_defeat_zf_01",
+    "char": "zhangfei",
+    "text": "木桩都能占上风？再来！",
+    "source": "Battles.js"
   },
   {
     "id": "train_gy_01",

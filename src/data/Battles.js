@@ -92,8 +92,8 @@ export const BATTLES = {
         defeat: {
             retry: { scene: 'tactics', params: { battleId: 'daxing' } },
             script: [
-                { bg: 'army_camp', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "Daxing cannot be left to the rebels. Gather the volunteers; we strike again before they scatter into the county.", zh: "大兴不可任贼侵扰。收拢义勇，趁贼未散，再战一次。" } },
-                { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', text: { en: "Good. I owe those captains another meeting.", zh: "好。俺也正要再会会那两个贼首。" } }
+                { bg: 'army_camp', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'dx_defeat_lb_01', text: { en: "Daxing cannot be left to the rebels. Gather the volunteers; we strike again before they scatter into the county.", zh: "大兴不可任贼侵扰。收拢义勇，趁贼未散，再战一次。" } },
+                { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'dx_defeat_zf_01', text: { en: "Good. I owe those captains another meeting.", zh: "好。俺也正要再会会那两个贼首。" } }
             ]
         }
     },
@@ -141,7 +141,7 @@ export const BATTLES = {
         defeat: {
             retry: { scene: 'tactics', params: { battleId: 'zhuo_training' } },
             script: [
-                { bg: 'noticeboard', type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', text: { en: "Wooden dummies got the better of us? Again!", zh: "木桩都能占上风？再来！" } }
+                { bg: 'noticeboard', type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_defeat_zf_01', text: { en: "Wooden dummies got the better of us? Again!", zh: "木桩都能占上风？再来！" } }
             ]
         }
     },
@@ -188,8 +188,8 @@ export const BATTLES = {
         defeat: {
             retry: { scene: 'tactics', params: { battleId: 'qingzhou_prelude' } },
             script: [
-                { bg: 'army_camp', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "The pass swallowed our formation before the ambush could be set. We return to the ridge and prepare the signal again.", zh: "山道乱了阵脚，伏兵未成。退回岭上，重新布置信号。" } },
-                { type: 'dialogue', portraitKey: 'guan-yu', name: 'Guan Yu', text: { en: "This time the flanks will move as one.", zh: "此番两翼必同时而动。" } }
+                { bg: 'army_camp', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'qz_prelude_defeat_lb_01', text: { en: "The pass swallowed our formation before the ambush could be set. We return to the ridge and prepare the signal again.", zh: "山道乱了阵脚，伏兵未成。退回岭上，重新布置信号。" } },
+                { type: 'dialogue', portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'qz_prelude_defeat_gy_01', text: { en: "This time the flanks will move as one.", zh: "此番两翼必同时而动。" } }
             ]
         }
     },
@@ -220,8 +220,8 @@ export const BATTLES = {
         defeat: {
             retry: { scene: 'tactics', params: { battleId: 'qingzhou_siege' } },
             script: [
-                { bg: 'army_camp', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "The signal failed and the pass fell into confusion. We return to the mouth of the gorge and run the ambush again.", zh: "旗号未成，山道大乱。退回谷口，重整伏击。" } },
-                { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', text: { en: "Let me hear that gong properly this time.", zh: "这回锣声可要响个痛快。" } }
+                { bg: 'army_camp', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'qz_siege_defeat_lb_01', text: { en: "The signal failed and the pass fell into confusion. We return to the mouth of the gorge and run the ambush again.", zh: "旗号未成，山道大乱。退回谷口，重整伏击。" } },
+                { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'qz_siege_defeat_zf_01', text: { en: "Let me hear that gong properly this time.", zh: "这回锣声可要响个痛快。" } }
             ]
         }
     },
@@ -422,8 +422,8 @@ export const BATTLES = {
         defeat: {
             retry: { scene: 'tactics', params: { battleId: 'guangzong_encounter' } },
             script: [
-                { bg: 'dirt_road_city_in_distance', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "The escort overcame us before Master Lu could be freed. We return to the road and make the choice again with steadier hands.", zh: "押送兵先胜一阵，卢师未能脱困。回到路上，再作决断。" } },
-                { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', text: { en: "Then let me start closer to the cage.", zh: "那就让俺离牢笼近些再打。" } }
+                { bg: 'dirt_road_city_in_distance', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_enc_defeat_lb_01', text: { en: "The escort overcame us before Master Lu could be freed. We return to the road and make the choice again with steadier hands.", zh: "押送兵先胜一阵，卢师未能脱困。回到路上，再作决断。" } },
+                { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'gz_enc_defeat_zf_01', text: { en: "Then let me start closer to the cage.", zh: "那就让俺离牢笼近些再打。" } }
             ]
         }
     },
@@ -468,8 +468,8 @@ export const BATTLES = {
         defeat: {
             retry: { scene: 'tactics', params: { battleId: 'guangzong_escort' } },
             script: [
-                { bg: 'dirt_road_city_in_distance', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "If we choose to free Master Lu, hesitation will only shame us. Reform the line and break the escort cleanly.", zh: "既要救卢师，迟疑只会自辱。重整阵势，破开押送兵。" } },
-                { type: 'dialogue', portraitKey: 'guan-yu', name: 'Guan Yu', text: { en: "Then we must strike without harming the innocent.", zh: "既如此，更要出手有度，不伤无辜。" } }
+                { bg: 'dirt_road_city_in_distance', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'gz_escort_defeat_lb_01', text: { en: "If we choose to free Master Lu, hesitation will only shame us. Reform the line and break the escort cleanly.", zh: "既要救卢师，迟疑只会自辱。重整阵势，破开押送兵。" } },
+                { type: 'dialogue', portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'gz_escort_defeat_gy_01', text: { en: "Then we must strike without harming the innocent.", zh: "既如此，更要出手有度，不伤无辜。" } }
             ]
         }
     },
@@ -555,8 +555,8 @@ export const BATTLES = {
         defeat: {
             retry: { scene: 'tactics', params: { battleId: 'dongzhuo_battle' } },
             script: [
-                { bg: 'dirt_road_city_in_distance', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "Dong Zhuo's column is still under threat. Whatever his manners, we cannot let the rebels destroy an imperial force.", zh: "董卓军仍在危急之中。无论其人如何，不能坐视官军覆灭。" } },
-                { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', text: { en: "Saving him twice had better be worth it.", zh: "救他两回，最好别白费。" } }
+                { bg: 'dirt_road_city_in_distance', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'dz_rescue_defeat_lb_01', text: { en: "Dong Zhuo's column is still under threat. Whatever his manners, we cannot let the rebels destroy an imperial force.", zh: "董卓军仍在危急之中。无论其人如何，不能坐视官军覆灭。" } },
+                { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'dz_rescue_defeat_zf_01', text: { en: "Saving him twice had better be worth it.", zh: "救他两回，最好别白费。" } }
             ]
         }
     },
@@ -598,8 +598,8 @@ export const BATTLES = {
         defeat: {
             retry: { scene: 'tactics', params: { battleId: 'chapter2_oath_dongzhuo_choice' } },
             script: [
-                { bg: 'dirt_road_city_in_distance', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "Dong Zhuo is not worth the ruin of our oath. We return to the moment and choose our course with clear minds.", zh: "董卓不值得毁我兄弟之义。回到此刻，冷静决断。" } },
-                { type: 'dialogue', portraitKey: 'guan-yu', name: 'Guan Yu', text: { en: "Anger must answer to righteousness.", zh: "怒气也须听从义理。" } }
+                { bg: 'dirt_road_city_in_distance', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'ch2_oath_dz_defeat_lb_01', text: { en: "Dong Zhuo is not worth the ruin of our oath. We return to the moment and choose our course with clear minds.", zh: "董卓不值得毁我兄弟之义。回到此刻，冷静决断。" } },
+                { type: 'dialogue', portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'ch2_oath_dz_defeat_gy_01', text: { en: "Anger must answer to righteousness.", zh: "怒气也须听从义理。" } }
             ]
         }
     },
@@ -665,8 +665,8 @@ export const BATTLES = {
         defeat: {
             retry: { scene: 'tactics', params: { battleId: 'chapter2_zhangbao_probe' } },
             script: [
-                { bg: 'army_camp', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "Zhang Bao's lightning broke our advance before we understood his method. Reform the vanguard; we test him again.", zh: "未明张宝雷法，前军先乱。重整先锋，再试其阵。" } },
-                { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', text: { en: "Let him throw thunder. I will still close the distance.", zh: "任他使雷，俺也去近前会他。" } }
+                { bg: 'army_camp', type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'ch2_probe_defeat_lb_01', text: { en: "Zhang Bao's lightning broke our advance before we understood his method. Reform the vanguard; we test him again.", zh: "未明张宝雷法，前军先乱。重整先锋，再试其阵。" } },
+                { type: 'dialogue', portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'ch2_probe_defeat_zf_01', text: { en: "Let him throw thunder. I will still close the distance.", zh: "任他使雷，俺也去近前会他。" } }
             ]
         }
     },
@@ -774,8 +774,8 @@ export const BATTLES = {
         defeat: {
             retry: { scene: 'tactics', params: { battleId: 'chapter2_zhangbao_counter' } },
             script: [
-                { bg: 'army_camp', type: 'dialogue', portraitKey: 'zhu-jun-generic', name: 'Zhu Jun', text: { en: "The counter failed before the filth reached Zhang Bao. Reform the two wings and try again.", zh: "秽物未及张宝，破法便败。重整两翼，再试一次。" } },
-                { type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', text: { en: "We know the method. Next time, close the pincer and strike him directly.", zh: "破法之策已明。再往，合围上前，务必中其身。" } }
+                { bg: 'army_camp', type: 'dialogue', portraitKey: 'zhu-jun-generic', name: 'Zhu Jun', voiceId: 'ch2_counter_defeat_zj_01', text: { en: "The counter failed before the filth reached Zhang Bao. Reform the two wings and try again.", zh: "秽物未及张宝，破法便败。重整两翼，再试一次。" } },
+                { type: 'dialogue', portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'ch2_counter_defeat_lb_01', text: { en: "We know the method. Next time, close the pincer and strike him directly.", zh: "破法之策已明。再往，合围上前，务必中其身。" } }
             ]
         }
     },
@@ -1642,8 +1642,8 @@ export const BATTLES = {
         defeat: {
             retry: { scene: 'tactics', params: { battleId: 'caocao_yingchuan_intercept' } },
             script: [
-                { bg: 'army_camp', type: 'dialogue', portraitKey: 'cao-cao', name: 'Cao Cao', text: { en: "The intercept failed because we let speed become disorder. Form the cavalry again and close the road properly.", zh: "截击失利，是快而无序。重整骑军，严封道路。" } },
-                { type: 'dialogue', portraitKey: 'cao-ren', name: 'Cao Ren', text: { en: "Understood. The next charge will leave them no gap.", zh: "明白。下次冲阵，不留缺口。" } }
+                { bg: 'army_camp', type: 'dialogue', portraitKey: 'cao-cao', name: 'Cao Cao', voiceId: 'cc_yc_intercept_defeat_cc_01', text: { en: "The intercept failed because we let speed become disorder. Form the cavalry again and close the road properly.", zh: "截击失利，是快而无序。重整骑军，严封道路。" } },
+                { type: 'dialogue', portraitKey: 'cao-ren', name: 'Cao Ren', voiceId: 'cc_yc_intercept_defeat_cr_01', text: { en: "Understood. The next charge will leave them no gap.", zh: "明白。下次冲阵，不留缺口。" } }
             ]
         }
     },

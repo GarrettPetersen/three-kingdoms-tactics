@@ -2631,8 +2631,10 @@ export class TacticsScene extends BaseScene {
                 this.addDamageNumber(this.manager.canvas.width / 2, 56, getLocalizedText({ en: "REINFORCEMENTS!", zh: "援军到达！" }), '#ffcc66');
                 const speaker = reinforcements[0];
                 this.startBattleEndDialogue([{
+                    speaker: 'soldier',
                     portraitKey: 'dong-zhuo',
                     name: speaker.name,
+                    voiceId: 'ch2_oath_soldier_reinforce_01',
                     text: {
                         en: "General Dong Zhuo! Imperial cavalry rides to your aid!",
                         zh: "董将军！朝廷骑兵前来助阵！"

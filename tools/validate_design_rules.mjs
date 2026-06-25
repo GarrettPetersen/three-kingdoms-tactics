@@ -489,6 +489,183 @@ function checkVoiceTargetAssignments() {
     });
 }
 
+function isLocalizedDialogueText(text) {
+    return text && typeof text === 'object' && (
+        typeof text.en === 'string'
+        || typeof text.zh === 'string'
+    );
+}
+
+function isSpokenDialogueObject(value) {
+    if (!value || typeof value !== 'object') return false;
+    if (!isLocalizedDialogueText(value.text)) return false;
+
+    const type = value.type;
+    if (type === 'dialogue' || type === 'narrator') return true;
+    if (['command', 'title', 'choice', 'prompt', 'interactive'].includes(type)) return false;
+    return !!(value.speaker || value.name || value.portraitKey);
+}
+
+function isExplicitlySilentDialogue(value) {
+    return value?.silent === true || value?.skipVoice === true;
+}
+
+function hasValidVoiceId(value) {
+    return typeof value?.voiceId === 'string' && value.voiceId.trim().length > 0;
+}
+
+function formatSpokenTextPreview(value) {
+    const text = value?.text?.en || value?.text?.zh || '';
+    return text.length > 72 ? `${text.slice(0, 69)}...` : text;
+}
+
+function checkStructuredSpokenDialogueVoiceIds(root, rootLabel) {
+    const visit = (value, pathLabel) => {
+        if (Array.isArray(value)) {
+            value.forEach((entry, index) => visit(entry, `${pathLabel}[${index}]`));
+            return;
+        }
+        if (!value || typeof value !== 'object') return;
+
+        if (isSpokenDialogueObject(value) && !isExplicitlySilentDialogue(value) && !hasValidVoiceId(value)) {
+            failures.push(`${pathLabel} spoken dialogue must include a non-empty voiceId: "${formatSpokenTextPreview(value)}"`);
+        }
+
+        Object.entries(value).forEach(([key, child]) => visit(child, `${pathLabel}.${key}`));
+    };
+
+    visit(root, rootLabel);
+}
+
+function collectBracePairs(source) {
+    const stack = [];
+    const pairs = [];
+    let quote = null;
+    let escape = false;
+    let lineComment = false;
+    let blockComment = false;
+
+    for (let index = 0; index < source.length; index += 1) {
+        const char = source[index];
+        const next = source[index + 1];
+
+        if (lineComment) {
+            if (char === '\n') lineComment = false;
+            continue;
+        }
+        if (blockComment) {
+            if (char === '*' && next === '/') {
+                blockComment = false;
+                index += 1;
+            }
+            continue;
+        }
+        if (quote) {
+            if (escape) {
+                escape = false;
+                continue;
+            }
+            if (char === '\\') {
+                escape = true;
+                continue;
+            }
+            if (char === quote) quote = null;
+            continue;
+        }
+
+        if (char === '/' && next === '/') {
+            lineComment = true;
+            index += 1;
+            continue;
+        }
+        if (char === '/' && next === '*') {
+            blockComment = true;
+            index += 1;
+            continue;
+        }
+        if (char === '\'' || char === '"' || char === '`') {
+            quote = char;
+            continue;
+        }
+
+        if (char === '{') {
+            stack.push(index);
+        } else if (char === '}') {
+            const start = stack.pop();
+            if (start !== undefined) pairs.push({ start, end: index + 1 });
+        }
+    }
+
+    return pairs;
+}
+
+function findInnermostBracePairContaining(pairs, position) {
+    let best = null;
+    pairs.forEach(pair => {
+        if (pair.start < position && position < pair.end && (!best || pair.start > best.start)) {
+            best = pair;
+        }
+    });
+    return best;
+}
+
+function lineNumberAt(source, position) {
+    return source.slice(0, position).split(/\r?\n/).length;
+}
+
+function sourceObjectLooksSpoken(objectSource) {
+    if (/\btype\s*:\s*['"](?:command|title|choice|prompt|interactive)['"]/.test(objectSource)) return false;
+    return /\btype\s*:\s*['"](?:dialogue|narrator)['"]|\bspeaker\s*:|\bname\s*:|\bportraitKey\s*:/.test(objectSource);
+}
+
+function sourceObjectHasValidVoiceId(objectSource) {
+    return /\bvoiceId\s*:\s*['"][^'"]+['"]/.test(objectSource) || /\bvoiceId\s*:\s*[A-Za-z_$][\w$]*/.test(objectSource);
+}
+
+function sourceObjectIsExplicitlySilent(objectSource) {
+    return /\b(?:silent|skipVoice)\s*:\s*true\b/.test(objectSource);
+}
+
+function sourceObjectTextPreview(objectSource) {
+    const match = objectSource.match(/\ben\s*:\s*(['"])(.*?)\1/s) || objectSource.match(/\bzh\s*:\s*(['"])(.*?)\1/s);
+    const text = match?.[2] || '';
+    return text.length > 72 ? `${text.slice(0, 69)}...` : text;
+}
+
+function checkSourceSpokenDialogueVoiceIds(relPath) {
+    const source = fs.readFileSync(path.join(projectRoot, relPath), 'utf8');
+    const pairs = collectBracePairs(source);
+    const localizedTextPattern = /\btext\s*:\s*\{\s*(?:en|zh)\s*:/g;
+    let match;
+
+    while ((match = localizedTextPattern.exec(source)) !== null) {
+        const pair = findInnermostBracePairContaining(pairs, match.index);
+        if (!pair) continue;
+        const objectSource = source.slice(pair.start, pair.end);
+        if (!sourceObjectLooksSpoken(objectSource)) continue;
+        if (sourceObjectIsExplicitlySilent(objectSource)) continue;
+        if (sourceObjectHasValidVoiceId(objectSource)) continue;
+
+        const lineNo = lineNumberAt(source, pair.start);
+        failures.push(`${relPath}:${lineNo} spoken dialogue must include a non-empty voiceId: "${sourceObjectTextPreview(objectSource)}"`);
+    }
+}
+
+function checkSpokenDialogueVoiceIds() {
+    checkStructuredSpokenDialogueVoiceIds(NARRATIVE_SCRIPTS, 'NARRATIVE_SCRIPTS');
+    checkStructuredSpokenDialogueVoiceIds(BATTLES, 'BATTLES');
+
+    [
+        'src/scenes/TacticsScene.js',
+        'src/scenes/MapScene.js',
+        'src/scenes/BattleSummaryScene.js',
+        'src/scenes/LevelUpScene.js',
+        'src/scenes/RecoveryScene.js',
+        'src/scenes/LiuboScene.js',
+        'src/main.js'
+    ].forEach(checkSourceSpokenDialogueVoiceIds);
+}
+
 function isAllowedWalkmaskPixel(r, g, b, a) {
     if (a === 0) return true;
     return a === 255 && (
@@ -701,6 +878,7 @@ checkCanvasTextRendering();
 checkNarrativeScriptImmutability();
 checkBattleDialogueScriptImmutability();
 checkVoiceTargetAssignments();
+checkSpokenDialogueVoiceIds();
 await checkSettingWalkmasks();
 await checkInnNarrativeWalkmaskPaths();
 
