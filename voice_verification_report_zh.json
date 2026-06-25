@@ -3981,41 +3981,41 @@
         "id": "ch2_anxi_gy_01",
         "character": "guanyu",
         "original_text": "功劳本当自明。只是朝堂之上，功劳也似乎要人引见。",
-        "stt_output": "功勞本當自明,只是朝堂之上,功勞也似乎要人引見。",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "功勞本當自民,只是朝堂之上,功勞也似乎要人隱間。",
+        "wer": 0.2857142857142857,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_gy_02": {
         "id": "ch2_anxi_gy_02",
         "character": "guanyu",
         "original_text": "那便清清白白去。以义守微官，胜过以耻买高位。",
-        "stt_output": "那便清清白白去,以一手微觀,勝過一尺買高尾。",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "那便清清白白去,以一手微官,勝過一尺買高為。",
+        "wer": 0.42105263157894735,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_gy_both_01": {
         "id": "ch2_anxi_gy_both_01",
         "character": "guanyu",
         "original_text": "既不能以官职效力，仍可在乱处护民。义路未绝。",
-        "stt_output": "既不能以官職效力,仍可再亂出护民,一路未決。",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "既不能以關職效力,仍可在亂處互名,一路為決。",
+        "wer": 0.47368421052631576,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_gy_one_01": {
         "id": "ch2_anxi_gy_one_01",
         "character": "guanyu",
         "original_text": "他们不能没你的功，便把官职压得小过功劳。",
-        "stt_output": "他們不能沒你的功,便把關直壓的小郭功勞。",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "他們不能美你的功,便把關職壓得小過功了。",
+        "wer": 0.3888888888888889,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_lb_01": {
         "id": "ch2_anxi_lb_01",
@@ -4041,11 +4041,11 @@
         "id": "ch2_anxi_lb_03",
         "character": "liubei",
         "original_text": "安喜县尉。印绶虽小，印下百姓却不可轻。",
-        "stt_output": "安喜线为 硬受碎小 印下百姓却不可清",
-        "wer": 3.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "安喜先為 硬受衰小 硬下百姓卻不可清",
+        "wer": 0.5,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_lb_both_01": {
         "id": "ch2_anxi_lb_both_01",
@@ -4597,21 +4597,21 @@
         "id": "ch2_wan_north_lb_02",
         "character": "liubei",
         "original_text": "孙仲一队已破。收其兵器，弃械者可免。",
-        "stt_output": "孫眾一對一破 收起冰淇 氣泄著殼棉",
-        "wer": 3.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "孫重一對已破,受襲兵器,謝謝著可免。",
+        "wer": 0.5333333333333333,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_wan_north_sj_01": {
         "id": "ch2_wan_north_sj_01",
         "character": "sunjian",
         "original_text": "城墙已取，赵弘已死。你等守路，使贼众不能复成军势。",
-        "stt_output": "成强一曲 赵鸿一死你等手入使贼重不能复成君世",
-        "wer": 2.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
+        "stt_output": "承抢一曲 赵鸿一死你等手路使贼重不能复成军事",
+        "wer": 0.42857142857142855,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_wan_north_sz_01": {
         "id": "ch2_wan_north_sz_01",
@@ -4667,21 +4667,21 @@
         "id": "ch2_wan_rev_sj_02_road",
         "character": "sunjian",
         "original_text": "城墙交给孙坚。贼若北逃，便请诸君使其路窄于城门。",
-        "stt_output": "成强交给孙奸 贼弱背头变性诸军 史奇 录载与成门",
-        "wer": 4.0,
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
+        "stt_output": "勤強交給孫奸 賊弱北投變請駐軍 史奇 陸寨瑜 成門",
+        "wer": 0.8571428571428571,
         "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
+        "language": "zh"
     },
     "zh:ch2_wan_rev_sj_02_wall": {
         "id": "ch2_wan_rev_sj_02_wall",
         "character": "sunjian",
         "original_text": "好。并力登城，趁赵弘胆气未固，便定此役。",
-        "stt_output": "好 合 病例登城趁照红胆气围故辩定此意",
-        "wer": 3.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
+        "stt_output": "好 並立登成趁趙洪南氣圍不辯定此意",
+        "wer": 0.6875,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_wan_rev_zj_03_road": {
         "id": "ch2_wan_rev_zj_03_road",
@@ -4707,11 +4707,11 @@
         "id": "cc_ch1_end_01",
         "character": "narrator",
         "original_text": "颍川一役，败贼再遭截击，兵势益乱。曹操旋即北追，自此声名渐起。",
-        "stt_output": "影創一夜,拜賊在遭劫機並是一亂曹操璇及北追四次生命見齊",
-        "wer": 1.0,
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",
+        "stt_output": "影穿衣 拜賊 再遭劫機 兵史一亂操作選舉北追自此聖明見期",
+        "wer": 0.7307692307692307,
         "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
+        "language": "zh"
     },
     "zh:ch2_anxi_narrator_wait_01": {
         "id": "ch2_anxi_narrator_wait_01",
@@ -4847,181 +4847,181 @@
         "id": "ch2_anxi_govern_clerk_01",
         "character": "zhoujing",
         "original_text": "刘公，督邮以威压人。他口中不说，心里所要，无非贿赂。",
-        "stt_output": "劉公都由以威压人他口中不说心里所要无非愧录",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",
+        "stt_output": "流攻度由以威压人他口中不说心理所要无非晦路",
+        "wer": 0.3333333333333333,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_elder_01": {
         "id": "ch2_anxi_govern_elder_01",
         "character": "farmer",
         "original_text": "张将军，督邮要害刘公。我等来作证，却被他手下拦在门外。",
-        "stt_output": "張將軍都要害流供我等來作證卻被他手下爛在門外",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",
+        "stt_output": "張將軍都有要害劉共我等來作證卻被他手下攔在門外",
+        "wer": 0.43478260869565216,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_gy_01": {
         "id": "ch2_anxi_govern_gy_01",
         "character": "guanyu",
         "original_text": "兄长，枳棘丛中，非栖鸾凤之所。不如缴还印绶，另图远计。",
-        "stt_output": "胸掌指擊從中飛起軟縫之所不如腳還硬瘦 令圖遠跡",
-        "wer": 2.0,
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "兄長至極從中飛騎軟鳳之所不如叫海硬獸領土遠跡",
+        "wer": 0.7272727272727273,
         "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_inspector_01": {
         "id": "ch2_anxi_govern_inspector_01",
         "character": "merchant",
         "original_text": "刘玄德。你是何出身，又凭何功得授职任？",
-        "stt_output": "留選得你是何出生又平和功德受執任",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "流选得,你是何出任又平和功德受职任。",
+        "wer": 0.5,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_inspector_02": {
         "id": "ch2_anxi_govern_inspector_02",
         "character": "merchant",
         "original_text": "诈称皇亲，虚报功绩。朝廷正要沙汰这等军功滥官，你恐怕正合其例。",
-        "stt_output": "詐稱黃清,需報攻擊,朝廷正要殺台這等軍功難關,你恐怕任何勤力。",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "詐稱黃清,虛保攻擊,朝廷正要殺太這等軍工難關,你恐怕任何起立。",
+        "wer": 0.6666666666666666,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_inspector_03": {
         "id": "ch2_anxi_govern_inspector_03",
         "character": "merchant",
         "original_text": "玄德公！救我性命！",
-        "stt_output": "選得功就我性命",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "選德宮救我性命",
+        "wer": 0.2857142857142857,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_lb_01": {
         "id": "ch2_anxi_govern_lb_01",
         "character": "liubei",
         "original_text": "备乃中山靖王之后。自涿郡起兵以来，大小三十余战，讨剿黄巾。",
-        "stt_output": "被乃中山禁王之后自捉俊起兵以来大小三十余战逃脚黄金",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "被乃中山禁王之后自捉俊起兵以来大小三十余战逃脚皇金",
+        "wer": 0.32,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_lb_02": {
         "id": "ch2_anxi_govern_lb_02",
         "character": "liubei",
         "original_text": "我与民秋毫无犯。若要献财，岂不是先成了他口中的贪吏？",
-        "stt_output": "我與明秋好無法,若要現在起步實現成了他口中的貪力",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "我與民秋毫無犯,若要現在奇不實現成了他口中的貪力。",
+        "wer": 0.391304347826087,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_lb_03": {
         "id": "ch2_anxi_govern_lb_03",
         "character": "liubei",
         "original_text": "翼德，够了。他当受责罚，却不该死于我等怒气。",
-        "stt_output": "一得夠了,他當受则罰,卻不該死於,我等怒氣。",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "一得夠了,他當受则罰,卻不該死於我的怒氣",
+        "wer": 0.6111111111111112,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_lb_04": {
         "id": "ch2_anxi_govern_lb_04",
         "character": "liubei",
         "original_text": "督邮，据你害民，本当杀却。今姑饶汝命。把这印绶带回给那些轻卖功名的人。",
-        "stt_output": "都由,據你害民,本當殺卻,經孤老辱命,把這印獸帶回給那些親邁公民的人。",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "都由俱你害民,本当杀却,金姑老辱命,把这印收带回给那些亲卖共鸣的人。",
+        "wer": 0.3333333333333333,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_narrator_01": {
         "id": "ch2_anxi_govern_narrator_01",
         "character": "narrator",
         "original_text": "署县事一月，刘备与民秋毫无犯，安喜百姓渐渐信服这位新县尉。",
-        "stt_output": "數限十一月流被與民秋毫無犯安喜百姓見幸福這位新憲為",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",
+        "stt_output": "數據是1月,劉備與明秋毫無犯安喜百姓見解幸福,這位新現為",
+        "wer": 0.6153846153846154,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_narrator_02": {
         "id": "ch2_anxi_govern_narrator_02",
         "character": "narrator",
         "original_text": "到任之后，与关、张食则同桌，寝则同床。稠人广坐之中，关、张侍立终日不倦。",
-        "stt_output": "到人之后 与官张时则同着 请则同床仇人广作之中 官张时李中日不见",
-        "wer": 4.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",
+        "stt_output": "到任之后 与官张世子同着 请则同床仇人闻广作之中 官张是李中日不见",
+        "wer": 0.4482758620689655,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_narrator_03": {
         "id": "ch2_anxi_govern_narrator_03",
         "character": "narrator",
         "original_text": "次日，督邮先提县吏，勒令指称刘备害民。乡老前来苦告，又被门人赶打。",
-        "stt_output": "四日都由先提线里,乐令指称刘卫海明向老前来苦告,又被门人看打",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",
+        "stt_output": "四日,都由先提限立,勒令指称劉備害民鄉老前來苦告又被門人敢打",
+        "wer": 0.35714285714285715,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_narrator_04": {
         "id": "ch2_anxi_govern_narrator_04",
         "character": "narrator",
         "original_text": "刘备将印绶挂在督邮颈上，与关羽、张飞离开安喜，北往代州投刘恢。",
-        "stt_output": "劉備將應受掛在獨有景上與關於張飛離開安喜北網帶州投流會",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",
+        "stt_output": "由北江一售掛在都游景上與關於張飛離開安喜北往帶州投流灰",
+        "wer": 0.6666666666666666,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_narrator_one_01": {
         "id": "ch2_anxi_govern_narrator_one_01",
         "character": "narrator",
         "original_text": "虽在他人印下供职，刘备处置安喜县事，仍与民秋毫无犯。",
-        "stt_output": "所以在他人印下共职刘备处置安喜县市仍与明秋毫无饭",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",
+        "stt_output": "所以在他人印下共知,流被出置安息現實,仍與民求好無犯。",
+        "wer": 0.6086956521739131,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_zf_01": {
         "id": "ch2_anxi_govern_zf_01",
         "character": "zhangfei",
         "original_text": "害民的贼，倒敢说俺哥哥贪污？让他的皮肉听听真话！",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
         "stt_output": "害民的贼倒敢说按哥哥贪污让他的皮肉听听真话",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
+        "wer": 0.047619047619047616,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_gy_both_02": {
         "id": "ch2_anxi_gy_both_02",
         "character": "guanyu",
         "original_text": "那就该在朝廷改口之前离开。因惧而赦，未必经得起第二句谗言。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
         "stt_output": "那就该在朝廷改口之前离开音剧而射未必经得起第二句产业",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+        "wer": 0.19230769230769232,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_liuhui_gy_01": {
         "id": "ch2_liuhui_gy_01",
         "character": "guanyu",
         "original_text": "义路有时也须借人门庭而过。承蒙收留，关某铭感。",
-        "stt_output": "一路有时也须借人们听而过成盟收留 官某敏感",
-        "wer": 2.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "一路有失業虛倦人們聽二過成盟收留 觀夢敏感",
+        "wer": 0.7,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_liuhui_lb_01": {
         "id": "ch2_liuhui_lb_01",
@@ -5047,11 +5047,11 @@
         "id": "ch2_liuhui_lh_01",
         "character": "zhoujing",
         "original_text": "玄德，我知你名，也知你宗。似你这等人为朝廷所逼，汉家更贫。寒舍可容。",
-        "stt_output": "我知你明 也知你中",
-        "wer": 2.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",
+        "stt_output": "把弦德我知你名,也知你宗,是你这等人为朝廷所逼,汉家更平,韩社可容。",
+        "wer": 0.21428571428571427,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_liuhui_narrator_02": {
         "id": "ch2_liuhui_narrator_02",
@@ -5237,21 +5237,21 @@
         "id": "ch2_anxi_govern_gy_stop_01",
         "character": "guanyu",
         "original_text": "翼德，够了。惩恶是义，任怒伤人便非义了。",
-        "stt_output": "亦得夠了,成惡事意,任怒商人便非意了。",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "亦得夠了,承惡事意,任怒商人便非意了。",
+        "wer": 0.5625,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_lb_harder_01": {
         "id": "ch2_anxi_govern_lb_harder_01",
         "character": "liubei",
         "original_text": "让他替所害百姓，再受这一记。",
-        "stt_output": "让他替索害百姓再受这一击",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "让他替锁害百姓再收这一机",
+        "wer": 0.25,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_hj_council_cc_01": {
         "id": "ch2_hj_council_cc_01",
