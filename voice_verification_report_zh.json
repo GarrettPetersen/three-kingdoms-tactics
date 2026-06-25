@@ -4227,51 +4227,51 @@
         "id": "ch2_hj_death_cc_01",
         "character": "caocao",
         "original_text": "此便是罗网，却披作诏命。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
         "stt_output": "此便是罗网,确批做照明",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+        "wer": 0.5,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_hj_death_cc_02": {
         "id": "ch2_hj_death_cc_02",
         "character": "caocao",
         "original_text": "今日之计，先宜正君位，然后图贼。",
-        "stt_output": "今日之際,先一正軍為,然後徒賊",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "今日之際先以正軍為然後徒賊",
+        "wer": 0.5384615384615384,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_hj_death_cc_03": {
         "id": "ch2_hj_death_cc_03",
         "character": "caocao",
         "original_text": "如此，速与整尚可为公所用。",
-        "stt_output": "如此,素于整箱可为工所用",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "如此 素于整上可为工所用",
+        "wer": 0.36363636363636365,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_hj_death_eunuch_01": {
         "id": "ch2_hj_death_eunuch_01",
         "character": "eunuch",
         "original_text": "宫中有命：请大将军速入，以定后事。",
-        "stt_output": "公中有命請大將軍送入以定後事",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_grandiose_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_grandiose_male_mandarin.wav",
+        "stt_output": "共中有命請大將軍速入 一定後世",
+        "wer": 0.42857142857142855,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_hj_death_hj_01": {
         "id": "ch2_hj_death_hj_01",
         "character": "hejin",
         "original_text": "谁敢与吾入宫，正君讨贼，扫清朝廷？",
-        "stt_output": "誰敢與吳魯公正軍討賊掃清朝廷",
-        "wer": 1.0,
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav",
+        "stt_output": "誰敢與吳吳吳共政軍討賊掃清朝廷",
+        "wer": 0.7857142857142857,
         "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
+        "language": "zh"
     },
     "zh:ch2_hj_death_hj_discipline": {
         "id": "ch2_hj_death_hj_discipline",
@@ -4297,111 +4297,111 @@
         "id": "ch2_hj_death_narrator_01",
         "character": "narrator",
         "original_text": "何进大喜，遂点御林军，欲引众臣入宫，于灵帝柩前扶立太子辩。",
-        "stt_output": "何靖大喜碎點玉玲軍,律宇宙城入宮,玉玲地就先福立太子邊。",
-        "wer": 1.0,
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",
+        "stt_output": "河境大喜 碎脸玉林军 玉影中 纯路宫玉林地九千福利太子边",
+        "wer": 0.72,
         "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
+        "language": "zh"
     },
     "zh:ch2_hj_death_panyin_01": {
         "id": "ch2_hj_death_panyin_01",
         "character": "panyin",
         "original_text": "大将军，灵帝已崩。",
+        "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav",
         "stt_output": "大将军林地以崩",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
+        "wer": 0.42857142857142855,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_hj_death_panyin_02": {
         "id": "ch2_hj_death_panyin_02",
         "character": "panyin",
         "original_text": "蹇硕与十常侍秘不发丧，又拟矫诏再召公入宫。",
-        "stt_output": "簡述與時常事密不發生又你腳趙在照公入公",
-        "wer": 1.0,
+        "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav",
+        "stt_output": "顯示與時常事密不發燒又你腳趙在照功入功",
+        "wer": 0.7894736842105263,
         "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
+        "language": "zh"
     },
     "zh:ch2_hj_death_panyin_03": {
         "id": "ch2_hj_death_panyin_03",
         "character": "panyin",
         "original_text": "其意先绝公之后患，再立皇子协。",
-        "stt_output": "其一先絕功之後換再立皇子協",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav",
+        "stt_output": "习亦先绝功之后患,再立皇子邪",
+        "wer": 0.3076923076923077,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_hj_death_ys_01": {
         "id": "ch2_hj_death_ys_01",
         "character": "yuanshao",
         "original_text": "愿借精兵五千，斩关入内，册立新君，尽诛阉竖。",
-        "stt_output": "燕姐金兵五千掌關入內策理新軍緊諸嚴肅",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav",
+        "stt_output": "援借金顶五千掌关入内策略新军警署因素",
+        "wer": 0.6111111111111112,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_hj_death_ys_02": {
         "id": "ch2_hj_death_ys_02",
         "character": "yuanshao",
         "original_text": "善。宦官所懂的朝廷话，正是畏惧二字。",
-        "stt_output": "善患罐所懂的朝廷化正是微距二字",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav",
+        "stt_output": "是還關關所懂的朝廷話正式圍巨二字",
+        "wer": 0.5333333333333333,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_hj_enthrone_cc_dismissed_01": {
         "id": "ch2_hj_enthrone_cc_dismissed_01",
         "character": "caocao",
         "original_text": "若兵威在前，至少让名义紧随其后。",
-        "stt_output": "若冰味在前,至少让民意紧随其后。",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "若冰威在前,至少让名义紧随其后。",
+        "wer": 0.07142857142857142,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_hj_enthrone_cc_heeded_01": {
         "id": "ch2_hj_enthrone_cc_heeded_01",
         "character": "caocao",
         "original_text": "少开一门，便少漏一分奸计。直趋梓宫与玺绶。",
-        "stt_output": "少开一门,变少露一分,监几,直去子宫与洗售。",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "少开一门,变少露一份监击,直曲子弓与洗售。",
+        "wer": 0.5555555555555556,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_hj_enthrone_hj_01": {
         "id": "ch2_hj_enthrone_hj_01",
         "character": "hejin",
         "original_text": "于灵帝梓宫之前，奉太子辩受玺绶，即皇帝位。",
-        "stt_output": "于林地子公之前奉太子变受喜受极皇帝为",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav",
+        "stt_output": "于林弟子公之前奉太子变受喜受及皇帝位",
+        "wer": 0.4444444444444444,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_hj_enthrone_hj_disciplined_01": {
         "id": "ch2_hj_enthrone_hj_disciplined_01",
         "character": "hejin",
         "original_text": "诸军不得乱行，不得擅入别殿。我等入宫，只为正君位。",
-        "stt_output": "中軍不得亂行不得善入別墊我懂入功只為正軍為",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav",
+        "stt_output": "中軍不得亂行不得善入別墊我懂入功只為正軍位",
+        "wer": 0.3333333333333333,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_hj_enthrone_narrator_01": {
         "id": "ch2_hj_enthrone_narrator_01",
         "character": "narrator",
         "original_text": "袁绍借御林军五千，何颙、荀攸、郑泰等诸臣随何进入宫。",
-        "stt_output": "元少界玉林君五千和勇巡邮正太等朱城随和进入宫",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",
+        "stt_output": "元少界玉林君五千和勇尋忧政太等朱臣随和进入宫",
+        "wer": 0.5909090909090909,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_hj_enthrone_narrator_02": {
         "id": "ch2_hj_enthrone_narrator_02",
@@ -4747,41 +4747,41 @@
         "id": "ch2_anxi_zj_clean_01",
         "character": "zhoujing",
         "original_text": "然而他们惧有功之士再生怨言，已将你铨注为安喜县尉。",
-        "stt_output": "然而他们具有公知识的声愿言以将你全驻为安喜相",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",
+        "stt_output": "然而他们具有公知识在声愿言以将你全住为安息线为",
+        "wer": 0.5652173913043478,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_zj_dz_01": {
         "id": "ch2_anxi_zj_dz_01",
         "character": "zhoujing",
         "original_text": "他们又提董卓之事：你兄弟曾向朝廷将帅举刃。朱儁力言你功不可刑。",
-        "stt_output": "他们又提动着之事你兄弟曾向朝廷将率局认诸俊立言你公布可行",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",
+        "stt_output": "他們又提懂卓之事你兄弟曾向朝廷降帥舉人朱俊立言你公不可行",
+        "wer": 0.35714285714285715,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_zj_freed_01": {
         "id": "ch2_anxi_zj_freed_01",
         "character": "zhoujing",
         "original_text": "他们又提卢植之事：你劫夺朝廷解送，私放其身。朱儁力言你功不可刑。",
-        "stt_output": "他们又提如知之事你解夺朝廷借送私放其身诸俊立言你公布可行",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",
+        "stt_output": "他們又提盧直直是你解奪朝廷借送私放其甚諸俊立言以公不可行",
+        "wer": 0.5357142857142857,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_zj_one_01": {
         "id": "ch2_anxi_zj_one_01",
         "character": "zhoujing",
         "original_text": "朝廷赦其罪，减其赏。你得赴安喜供职，却非自掌县尉之印。",
-        "stt_output": "朝廷社期最減期上你得复安喜共职却非自掌线为之应",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",
+        "stt_output": "朝廷社 其罪 減妻傻你得复安洗控制血非责账线 未知意",
+        "wer": 0.6521739130434783,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_wan_final_zj_02": {
         "id": "ch2_wan_final_zj_02",
