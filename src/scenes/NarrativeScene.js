@@ -987,6 +987,9 @@ export class NarrativeScene extends BaseScene {
         } else if ((step.type === 'title' || step.type === 'dialogue' || step.type === 'narrator') && step.duration && this.manager.actionRecorder?.recording) {
             setTimeout(() => this.manager.actionRecorder?.signalActionEnd(), step.duration);
         }
+        if (step.type === 'title' && step.entrySoundKey) {
+            assets.playSound(step.entrySoundKey, step.entrySoundVolume !== undefined ? step.entrySoundVolume : 1.0);
+        }
 
         this.preloadSetupAfterFade(step);
 
@@ -1881,9 +1884,10 @@ export class NarrativeScene extends BaseScene {
             this.renderClickableRegions(ctx, canvas, step);
         }
 
+        const previousTitleLinkRegion = this.titleLinkRegion;
         this.titleLinkRegion = null;
         if (step && step.type === 'title') {
-            this.renderTitleCard(step);
+            this.renderTitleCard(step, previousTitleLinkRegion);
         } else if (step && (step.type === 'dialogue' || step.type === 'narrator')) {
             const bgKey = this.getActiveVisualKey('bg');
             const bgImg = bgKey ? assets.getImage(bgKey) : null;
@@ -2128,7 +2132,7 @@ export class NarrativeScene extends BaseScene {
         step._panelMetadata = { px, py, panelWidth, panelHeight, wrappedOptions, optionHeights, padding, lineSpacing, optionSpacing, optionInnerPadY, options };
     }
 
-    renderTitleCard(step) {
+    renderTitleCard(step, previousTitleLinkRegion = null) {
         const { ctx, canvas } = this.manager;
         ctx.fillStyle = 'rgba(0,0,0,0.7)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -2166,10 +2170,19 @@ export class NarrativeScene extends BaseScene {
         if (step.linkUrl && step.linkText) {
             const localizedLinkText = getLocalizedText(step.linkText);
             const linkY = nextY + 2;
-            const metrics = this.drawPixelText(ctx, localizedLinkText, cx, linkY, { color: '#7ec8ff', font: '8px Silkscreen', align: 'center' });
+            const linkColor = step.linkColor || '#7ec8ff';
+            const linkHoverColor = step.linkHoverColor || linkColor;
+            const isHoveringLink = previousTitleLinkRegion
+                && previousTitleLinkRegion.step === step
+                && this.lastMouseX >= previousTitleLinkRegion.x
+                && this.lastMouseX <= previousTitleLinkRegion.x + previousTitleLinkRegion.w
+                && this.lastMouseY >= previousTitleLinkRegion.y
+                && this.lastMouseY <= previousTitleLinkRegion.y + previousTitleLinkRegion.h;
+            const activeLinkColor = isHoveringLink ? linkHoverColor : linkColor;
+            const metrics = this.drawPixelText(ctx, localizedLinkText, cx, linkY, { color: activeLinkColor, font: '8px Silkscreen', align: 'center' });
             if (metrics) {
                 const underlineY = Math.round(linkY + 10);
-                ctx.fillStyle = '#7ec8ff';
+                ctx.fillStyle = activeLinkColor;
                 ctx.fillRect(metrics.drawX, underlineY, Math.max(1, Math.round(metrics.width)), 1);
                 this.titleLinkRegion = {
                     step,
@@ -2183,10 +2196,11 @@ export class NarrativeScene extends BaseScene {
         }
 
         // Pulse "CLICK TO CONTINUE" if player is waiting
-        if (this.elapsedInStep > 3500) {
+        const promptDelayMs = step.continuePromptDelayMs !== undefined ? step.continuePromptDelayMs : 3500;
+        if (this.elapsedInStep > promptDelayMs) {
             const pulse = Math.abs(Math.sin(Date.now() / 500)) * 0.5 + 0.5;
             ctx.globalAlpha = pulse;
-            const continueText = getLocalizedText(UI_TEXT['CLICK TO CONTINUE']);
+            const continueText = getLocalizedText(step.continueText || UI_TEXT['CLICK TO CONTINUE']);
             this.drawPixelText(ctx, continueText, cx, canvas.height - 30, { 
                 color: '#ffd700', 
                 font: '8px Silkscreen', 
@@ -2408,6 +2422,9 @@ export class NarrativeScene extends BaseScene {
         }
 
         if (step && step.type === 'title' && x !== -1000 && y !== -1000 && this.activateTitleLinkAt(x, y, step)) {
+            return;
+        }
+        if (step && step.type === 'title' && this.elapsedInStep < (step.blockAdvanceBeforeMs || 0)) {
             return;
         }
 
