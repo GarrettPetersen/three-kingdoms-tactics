@@ -5777,5 +5777,255 @@
         "wer": 0.08333333333333333,
         "is_bad": false,
         "language": "en"
+    },
+    "en:ch2_oath_lb_restrain_02": {
+        "id": "ch2_oath_lb_restrain_02",
+        "character": "liubei",
+        "original_text": "We leave this place tonight and march to join General Zhu Jun at Yingchuan.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "stt_output": "We leave this place tonight and march to join General Xu Jun at Ying Chuan.",
+        "wer": 0.21428571428571427,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_oath_lb_strike_after_01": {
+        "id": "ch2_oath_lb_strike_after_01",
+        "character": "liubei",
+        "original_text": "Enough. We march to Yingchuan and place our strength under General Zhu Jun.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "stt_output": "In the afr, we march to In Kuang and place our strength under General Zhu Jun.",
+        "wer": 0.38461538461538464,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_oath_lb_strike_water_after_01": {
+        "id": "ch2_oath_lb_strike_water_after_01",
+        "character": "liubei",
+        "original_text": "Enough. We march to Yingchuan and place our strength under General Zhu Jun.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "stt_output": "Enough! We march to Inquan and place our strength on the general Chuyun Tong.",
+        "wer": 0.38461538461538464,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_yc_intercept_defeat_cc_01": {
+        "id": "cc_yc_intercept_defeat_cc_01",
+        "character": "caocao",
+        "original_text": "The intercept failed because we let speed become disorder. Form the cavalry again and close the road properly.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "The intercept failed because we let speed become disorder. Form the cavalry again and close the road properly.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_yc_intercept_defeat_cr_01": {
+        "id": "cc_yc_intercept_defeat_cr_01",
+        "character": "caoren",
+        "original_text": "Understood. The next charge will leave them no gap.",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav",
+        "stt_output": "Understood. The next charge will leave them no gap.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_defeat_lb_01": {
+        "id": "ch2_counter_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "We know the method. Next time, close the pincer and strike him directly.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "stt_output": "We know the method, next time, close the pincer and strike him directly.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_counter_defeat_zj_01": {
+        "id": "ch2_counter_defeat_zj_01",
+        "character": "zhujun",
+        "original_text": "The counter failed before the filth reached Zhang Bao. Reform the two wings and try again.",
+        "voice_target": "movies/clean/clean_anton-ego-villainous-food-critic.wav",
+        "stt_output": "The counter failed before the filth reached Jan Baow, reform the two wings and try again.",
+        "wer": 0.125,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_oath_dz_defeat_gy_01": {
+        "id": "ch2_oath_dz_defeat_gy_01",
+        "character": "guanyu",
+        "original_text": "Anger must answer to righteousness.",
+        "voice_target": "movies/clean/clean_master_xehanort.wav",
+        "stt_output": "Anger must answer to righteousness.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_oath_dz_defeat_lb_01": {
+        "id": "ch2_oath_dz_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "Dong Zhuo is not worth the ruin of our oath. We return to the moment and choose our course with clear minds.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "stt_output": "Don Tuo is not worth the ruin of our oath. We return to the moment and choose our course with clear minds.",
+        "wer": 0.09090909090909091,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_oath_soldier_reinforce_01": {
+        "id": "ch2_oath_soldier_reinforce_01",
+        "character": "soldier",
+        "original_text": "General Dong Zhuo! Imperial cavalry rides to your aid!",
+        "voice_target": "movies/clean/clean_devious_adult_male.wav",
+        "stt_output": "Genera don't swore Imperial cavalry rides to your aid.",
+        "wer": 0.3333333333333333,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_probe_defeat_lb_01": {
+        "id": "ch2_probe_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "Zhang Bao's lightning broke our advance before we understood his method. Reform the vanguard; we test him again.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "stt_output": "Shangbao's lightning broke our advance before we understood his method. Reform the Vanguard. We test him again.",
+        "wer": 0.1111111111111111,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_probe_defeat_zf_01": {
+        "id": "ch2_probe_defeat_zf_01",
+        "character": "zhangfei",
+        "original_text": "Let him throw thunder. I will still close the distance.",
+        "voice_target": "movies/clean/clean_kublai-khan.wav",
+        "stt_output": "Let him throw thunder. I will still close the distance.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:dx_defeat_lb_01": {
+        "id": "dx_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "Daxing cannot be left to the rebels. Gather the volunteers; we strike again before they scatter into the county.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "stt_output": "Daxing cannot be left to the rebels. Gather the volunteers. We strike again before they scatter into the count.",
+        "wer": 0.05263157894736842,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:dx_defeat_zf_01": {
+        "id": "dx_defeat_zf_01",
+        "character": "zhangfei",
+        "original_text": "Good. I owe those captains another meeting.",
+        "voice_target": "movies/clean/clean_kublai-khan.wav",
+        "stt_output": "Good day. I owe those captains another meeting.",
+        "wer": 0.14285714285714285,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:dz_rescue_defeat_lb_01": {
+        "id": "dz_rescue_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "Dong Zhuo's column is still under threat. Whatever his manners, we cannot let the rebels destroy an imperial force.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "stt_output": "Dom Tzuo's column is still under threat. Whatever his manners, we cannot let the rebels destroy an imperial fourth.",
+        "wer": 0.15789473684210525,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:dz_rescue_defeat_zf_01": {
+        "id": "dz_rescue_defeat_zf_01",
+        "character": "zhangfei",
+        "original_text": "Saving him twice had better be worth it.",
+        "voice_target": "movies/clean/clean_kublai-khan.wav",
+        "stt_output": "Saving him twice had better be worth it.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:gz_enc_defeat_lb_01": {
+        "id": "gz_enc_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "The escort overcame us before Master Lu could be freed. We return to the road and make the choice again with steadier hands.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "stt_output": "The escort over Kamus before Master Liu could be freed. We return to the road and make the choice again with steadier hair.",
+        "wer": 0.17391304347826086,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:gz_enc_defeat_zf_01": {
+        "id": "gz_enc_defeat_zf_01",
+        "character": "zhangfei",
+        "original_text": "Then let me start closer to the cage.",
+        "voice_target": "movies/clean/clean_kublai-khan.wav",
+        "stt_output": "Then let me start closer to the cage.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:gz_escort_defeat_gy_01": {
+        "id": "gz_escort_defeat_gy_01",
+        "character": "guanyu",
+        "original_text": "Then we must strike without harming the innocent.",
+        "voice_target": "movies/clean/clean_master_xehanort.wav",
+        "stt_output": "Then we must strike without harming the innocent.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:gz_escort_defeat_lb_01": {
+        "id": "gz_escort_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "If we choose to free Master Lu, hesitation will only shame us. Reform the line and break the escort cleanly.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "stt_output": "If we choose to free Master Liu, hesitation will only shame us. Reform the line and break the escort cleanly.",
+        "wer": 0.05,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_prelude_defeat_gy_01": {
+        "id": "qz_prelude_defeat_gy_01",
+        "character": "guanyu",
+        "original_text": "This time the flanks will move as one.",
+        "voice_target": "movies/clean/clean_master_xehanort.wav",
+        "stt_output": "This time the flanks will move as one.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_prelude_defeat_lb_01": {
+        "id": "qz_prelude_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "The pass swallowed our formation before the ambush could be set. We return to the ridge and prepare the signal again.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "stt_output": "The pass swallowed our formation before the ambush could be set. We return to the ridge and prepare the signal again.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_siege_defeat_lb_01": {
+        "id": "qz_siege_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "The signal failed and the pass fell into confusion. We return to the mouth of the gorge and run the ambush again.",
+        "voice_target": "movies/clean/clean_li-shang-captain-from-mulan.wav",
+        "stt_output": "The signal failed and the pass fell into confusion. We return to the mouth of the gorge and run the ambush again.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:qz_siege_defeat_zf_01": {
+        "id": "qz_siege_defeat_zf_01",
+        "character": "zhangfei",
+        "original_text": "Let me hear that gong properly this time.",
+        "voice_target": "movies/clean/clean_kublai-khan.wav",
+        "stt_output": "Let me hear that gong properly this time.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:train_defeat_zf_01": {
+        "id": "train_defeat_zf_01",
+        "character": "zhangfei",
+        "original_text": "Wooden dummies got the better of us? Again!",
+        "voice_target": "movies/clean/clean_kublai-khan.wav",
+        "stt_output": "Wouldn't Dami's got the better of us? Again!",
+        "wer": 0.25,
+        "is_bad": false,
+        "language": "en"
     }
 }

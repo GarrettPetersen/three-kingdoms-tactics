@@ -4021,21 +4021,21 @@
         "id": "ch2_anxi_lb_01",
         "character": "liubei",
         "original_text": "有官则尽职，无官亦守义。只是随我等出生入死之人，也该见朝廷公道。",
-        "stt_output": "有關則禁止,無關一手一,只是隨我等出生入死之人,也該見朝廷公道。",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "有關則禁止無關一手一只是隨我等出生入死之人也該見朝廷公道",
+        "wer": 0.39285714285714285,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_lb_02": {
         "id": "ch2_anxi_lb_02",
         "character": "liubei",
         "original_text": "朱将军已上名籍。我等只待朝廷铨注。除此之外，备无可为。",
-        "stt_output": "朱江君已上民籍,我等之待朝廷全住,除此之外,被無可危。",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "朱将军以上明极我等着带朝廷全住除此之外被无可谓",
+        "wer": 0.391304347826087,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_lb_03": {
         "id": "ch2_anxi_lb_03",
@@ -4051,41 +4051,41 @@
         "id": "ch2_anxi_lb_both_01",
         "character": "liubei",
         "original_text": "如此，我等所得不是印绶，而是尚留此身一口气。此气尚在，仍可择义而行。",
-        "stt_output": "如此我登所的不是印奏而是上流此生意口气此气上在仍可则意而行",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "如此我登所的不是印奏而是上流此生意口气此气上在任何则一而行",
+        "wer": 0.41379310344827586,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_lb_one_01": {
         "id": "ch2_anxi_lb_one_01",
         "character": "liubei",
         "original_text": "安喜县尉佐。虽无自掌之印，然此职所及，仍是汉家百姓。",
-        "stt_output": "安喜憲為左,雖無自長之印,然此之所其仍是漢家百姓。",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "安喜憲為左,雖無自常之應,然此之所及,仍是漢家百姓。",
+        "wer": 0.4090909090909091,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_narrator_01": {
         "id": "ch2_anxi_narrator_01",
         "character": "narrator",
         "original_text": "宛城既定，南阳平息，朱儁班师洛阳奏捷，并上表奏孙坚、刘备等人之功。",
-        "stt_output": "完成既定南洋平西朱俊班失落洋作节并上表作瞬间劉備等任志工",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",
+        "stt_output": "完成既定南洋平息朱俊班失落洋作截并上表作瞬间劉備等人之功",
+        "wer": 0.5,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_narrator_02": {
         "id": "ch2_anxi_narrator_02",
         "character": "narrator",
         "original_text": "孙坚有人情，不久便得别郡司马之任。刘备在宫门外候命，日复一日，却始终不得除授。",
-        "stt_output": "孙奸有人勤不久變得別徵司馬之刃留為在公門外後命日付一日確實中不得處受",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",
+        "stt_output": "瞬间有人情不久变得别俊司马之认刘备在公门外后命日复一日确实中不得处受",
+        "wer": 0.35294117647058826,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_narrator_03": {
         "id": "ch2_anxi_narrator_03",
@@ -4100,11 +4100,11 @@
         "id": "ch2_anxi_narrator_04",
         "character": "narrator",
         "original_text": "刘备遂遣军士各归乡里，只带少数亲随，与关羽、张飞赴安喜县上任。",
-        "stt_output": "劉備歲前軍事各規象裡職貸少數精髓與關於張飛復安喜憲上任",
-        "wer": 1.0,
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",
+        "stt_output": "劉備歲前軍事各規相理直待少父親隨,與關與張飛復,安喜現少人。",
+        "wer": 0.8148148148148148,
         "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
+        "language": "zh"
     },
     "zh:ch2_anxi_narrator_both_01": {
         "id": "ch2_anxi_narrator_both_01",
@@ -4137,91 +4137,91 @@
         "id": "ch2_anxi_narrator_one_02",
         "character": "narrator",
         "original_text": "刘备遂遣军士各归乡里，只带少数亲随，与关羽、张飞赴安喜，在他人印下供职。",
-        "stt_output": "劉備歲前軍是各閨鄉裡直帶少數青髓與關於張飛輔安喜在他人印下共職",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",
+        "stt_output": "由被遂前軍事各閨鄉裡直帶少父親隨與關與張飛復安喜在他人印下公職",
+        "wer": 0.6451612903225806,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_zf_01": {
         "id": "ch2_anxi_zf_01",
         "character": "zhangfei",
         "original_text": "咱们破张宝、定阳城，又助取宛城。难道要在这宫门石上走出沟来，才有人理会？",
-        "stt_output": "咱们破账宝定阳城又住期晚男的要在这公门时尚走出狗来他有人理会",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
+        "stt_output": "咱們破章寶定陽城又住取碗城難道要在這公門時上走出勾來才有人理會",
+        "wer": 0.3870967741935484,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_zf_02": {
         "id": "ch2_anxi_zf_02",
         "character": "zhangfei",
         "original_text": "也罢。若有花面官来欺压良民，可别叫俺陪他笑脸。",
-        "stt_output": "也罢也罢若有欢面关来西亚两名可别叫按陪他笑脸",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
+        "stt_output": "也罢 若有画面观来欺压两名可别交胆陪他笑着",
+        "wer": 0.35,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_zf_both_01": {
         "id": "ch2_anxi_zf_both_01",
         "character": "zhangfei",
         "original_text": "赦我们？我们救了他们的天下！若怒气是酒，俺能把洛阳灌沉。",
-        "stt_output": "是我们我们救了他们的天下若怒气是久暗能把若阳贯成",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
+        "stt_output": "是我们我们救了他们的天下若怒气侍久暗能把落杨冠臣",
+        "wer": 0.3333333333333333,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_zf_one_01": {
         "id": "ch2_anxi_zf_one_01",
         "character": "zhangfei",
         "original_text": "一场大战，只给半截赏赐。哼。去安喜，俺仍陪大哥。",
-        "stt_output": "一城大站只给半截赏似哼去安喜按任陪大哥",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
+        "stt_output": "一场大战只给半截赏四恨去安喜 安仁陪大哥",
+        "wer": 0.21052631578947367,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_zj_01": {
         "id": "ch2_anxi_zj_01",
         "character": "zhoujing",
         "original_text": "你便是刘玄德？军报中屡闻其名。为何在此久候，如无功小吏？",
-        "stt_output": "你便是留玄德軍報中舉文其名為何在此久後如無功效力",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",
+        "stt_output": "你便是刘玄的君报中 李文奇名为何在此久后如无功小例",
+        "wer": 0.2916666666666667,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_zj_02": {
         "id": "ch2_anxi_zj_02",
         "character": "zhoujing",
         "original_text": "既如此，我便替这沉默开口。将士为汉流血，官爵却在门内买卖。",
-        "stt_output": "即如此我便替这程末开口相识为汉流血官觉却在门内买卖",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",
+        "stt_output": "即如此我便帝这沉默开口将是为汉流血冠决却在门内买卖",
+        "wer": 0.2,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_zj_03": {
         "id": "ch2_anxi_zj_03",
         "character": "zhoujing",
         "original_text": "我已直奏天子：黄巾之乱，正因卖官鬻爵、任亲害仇，贤者有功，反须乞命。",
-        "stt_output": "我已執照天子黃金之亂正因邁官預決任親害仇顯著有功返復其名",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",
+        "stt_output": "我以职奏天子黃金之亂正因邁官拒绝任新害仇显着有功反射喜命",
+        "wer": 0.4642857142857143,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_zj_04": {
         "id": "ch2_anxi_zj_04",
         "character": "zhoujing",
         "original_text": "我请诛十常侍之蠹，重赏讨贼有功者。宦官却称我欺主，将我逐出。",
-        "stt_output": "我请诸石尝试制度逐场跑贼有公者换官却称我其主将我逐出",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",
+        "stt_output": "我请诸食尝试之度重伤口讨责有公着慣馆确称我欺主将我诸出",
+        "wer": 0.5384615384615384,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_hj_death_cc_01": {
         "id": "ch2_hj_death_cc_01",
@@ -4717,31 +4717,31 @@
         "id": "ch2_anxi_narrator_wait_01",
         "character": "narrator",
         "original_text": "数个时辰后，张钧自宫门复出，衣冠带尘，怒气未消，所幸性命尚在。",
-        "stt_output": "数个十成后,张军子宫门付出一关大城,怒气为销,所信性命上在",
-        "wer": 1.0,
+        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav",
+        "stt_output": "數個十成後張軍自公門付出一關大城怒氣 微笑 所幸幸名上載",
+        "wer": 0.7692307692307693,
         "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_calm_baritone_male_mandarin.wav"
+        "language": "zh"
     },
     "zh:ch2_anxi_zj_both_01": {
         "id": "ch2_anxi_zj_both_01",
         "character": "zhoujing",
         "original_text": "他们两罪并提：以兵私放卢植，又向董卓举刃。朱儁可救你性命，却救不得官职。",
-        "stt_output": "他們兩對並提以兵司法盧旨又向董卓舉任朱俊可救你性命卻就不得關職",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",
+        "stt_output": "他们两罪病题以兵司放录之又向动作举人朱俊可救你性命却就不得关职",
+        "wer": 0.3548387096774194,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_zj_both_02": {
         "id": "ch2_anxi_zj_both_02",
         "character": "zhoujing",
         "original_text": "朝廷免你罪名，不授一官。趁尚无人再借叛名生事，速离洛阳。",
-        "stt_output": "朝廷免以罪名不受已關趁上無人再借怕名生事素離落羊",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_mature_yet_jovial_male_mandarin.wav",
+        "stt_output": "朝廷免你罪名不受一關趁上無人在借探名聲勢素離落洋",
+        "wer": 0.5,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_zj_clean_01": {
         "id": "ch2_anxi_zj_clean_01",
@@ -5227,11 +5227,11 @@
         "id": "ch2_anxi_palace_guard_01",
         "character": "soldier",
         "original_text": "宫门有令：奉诏者、持表奏事的朝官方可入内；待赏军士，一概候门外。",
-        "stt_output": "公門有令封照者實表作勢的朝官方可入內戴上軍事一戴後門外",
-        "wer": 1.0,
-        "is_bad": true,
-        "language": "zh",
-        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav",
+        "stt_output": "公門有令封照著時表周適的朝官方可入內戴上軍事一蓋賀門外",
+        "wer": 0.48148148148148145,
+        "is_bad": false,
+        "language": "zh"
     },
     "zh:ch2_anxi_govern_gy_stop_01": {
         "id": "ch2_anxi_govern_gy_stop_01",
@@ -5776,6 +5776,256 @@
         "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav",
         "stt_output": "大将军 检术知认 值等公一步 不等一时",
         "wer": 0.3125,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_oath_lb_restrain_02": {
+        "id": "ch2_oath_lb_restrain_02",
+        "character": "liubei",
+        "original_text": "今夜便离此地，赶赴颍川投朱儁将军麾下。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "親夜便離此地,敢附影穿頭豬菌將軍灰下。",
+        "wer": 0.6470588235294118,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_oath_lb_strike_after_01": {
+        "id": "ch2_oath_lb_strike_after_01",
+        "character": "liubei",
+        "original_text": "够了。我们即刻赶赴颍川，归入朱儁将军麾下。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "夠了,我們即刻趕複隱穿,归入朱俊將軍灰下",
+        "wer": 0.5,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_oath_lb_strike_water_after_01": {
+        "id": "ch2_oath_lb_strike_water_after_01",
+        "character": "liubei",
+        "original_text": "够了。我们即刻赶赴颍川，归入朱儁将军麾下。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "夠了,我們即刻趕複影穿規入諸菌將軍灰下",
+        "wer": 0.6111111111111112,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_yc_intercept_defeat_cc_01": {
+        "id": "cc_yc_intercept_defeat_cc_01",
+        "character": "caocao",
+        "original_text": "截击失利，是快而无序。重整骑军，严封道路。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "邪急施力是快而无续重整其军严峰道路",
+        "wer": 0.4117647058823529,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_yc_intercept_defeat_cr_01": {
+        "id": "cc_yc_intercept_defeat_cr_01",
+        "character": "caoren",
+        "original_text": "明白。下次冲阵，不留缺口。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "明白,下次冲震,不留缺口。",
+        "wer": 0.1,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_defeat_lb_01": {
+        "id": "ch2_counter_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "破法之策已明。再往，合围上前，务必中其身。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "破法之策以名,在王和尾上前,物比中其身。",
+        "wer": 0.47058823529411764,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_counter_defeat_zj_01": {
+        "id": "ch2_counter_defeat_zj_01",
+        "character": "zhujun",
+        "original_text": "秽物未及张宝，破法便败。重整两翼，再试一次。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "會誤為極章寶 破法變敗 種整兩億再試一次",
+        "wer": 0.6666666666666666,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_oath_dz_defeat_gy_01": {
+        "id": "ch2_oath_dz_defeat_gy_01",
+        "character": "guanyu",
+        "original_text": "怒气也须听从义理。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "怒气也需要听从意理",
+        "wer": 0.375,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_oath_dz_defeat_lb_01": {
+        "id": "ch2_oath_dz_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "董卓不值得毁我兄弟之义。回到此刻，冷静决断。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "懂着不知的回我兄弟之一回到此刻冷靜绝断",
+        "wer": 0.42105263157894735,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_oath_soldier_reinforce_01": {
+        "id": "ch2_oath_soldier_reinforce_01",
+        "character": "soldier",
+        "original_text": "董将军！朝廷骑兵前来助阵！",
+        "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav",
+        "stt_output": "董将军朝廷企业兵前来驻阵",
+        "wer": 0.2727272727272727,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_probe_defeat_lb_01": {
+        "id": "ch2_probe_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "未明张宝雷法，前军先乱。重整先锋，再试其阵。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "為名章寶雷法前軍先亂重整先鋒在世起鎮",
+        "wer": 0.5,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_probe_defeat_zf_01": {
+        "id": "ch2_probe_defeat_zf_01",
+        "character": "zhangfei",
+        "original_text": "任他使雷，俺也去近前会他。",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
+        "stt_output": "任他使雷、安野去金錢會他",
+        "wer": 0.36363636363636365,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:dx_defeat_lb_01": {
+        "id": "dx_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "大兴不可任贼侵扰。收拢义勇，趁贼未散，再战一次。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "大心不可認賊,輕饒,收容義勇,趁責為善,再戰一次。",
+        "wer": 0.55,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:dx_defeat_zf_01": {
+        "id": "dx_defeat_zf_01",
+        "character": "zhangfei",
+        "original_text": "好。俺也正要再会会那两个贼首。",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
+        "stt_output": "好 徒 安野正教再會會那兩個賊手",
+        "wer": 0.6153846153846154,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:dz_rescue_defeat_lb_01": {
+        "id": "dz_rescue_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "董卓军仍在危急之中。无论其人如何，不能坐视官军覆灭。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "董卓军仍在危及之中无论其人如何不能做事冠军负面",
+        "wer": 0.2608695652173913,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:dz_rescue_defeat_zf_01": {
+        "id": "dz_rescue_defeat_zf_01",
+        "character": "zhangfei",
+        "original_text": "救他两回，最好别白费。",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
+        "stt_output": "救他两回最好别白费",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_enc_defeat_lb_01": {
+        "id": "gz_enc_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "押送兵先胜一阵，卢师未能脱困。回到路上，再作决断。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "压送兵先胜疑症 如诗未能脱坤回到路上再做绝段",
+        "wer": 0.42857142857142855,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_enc_defeat_zf_01": {
+        "id": "gz_enc_defeat_zf_01",
+        "character": "zhangfei",
+        "original_text": "那就让俺离牢笼近些再打。",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
+        "stt_output": "那就讓艾黎、老龍近期再打",
+        "wer": 0.5454545454545454,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_escort_defeat_gy_01": {
+        "id": "gz_escort_defeat_gy_01",
+        "character": "guanyu",
+        "original_text": "既如此，更要出手有度，不伤无辜。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "即如此,更要出手有度,不上無辜。",
+        "wer": 0.23076923076923078,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:gz_escort_defeat_lb_01": {
+        "id": "gz_escort_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "既要救卢师，迟疑只会自辱。重整阵势，破开押送兵。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "既要就如是,食椅只會自如忠正正式破開壓送兵",
+        "wer": 0.55,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_prelude_defeat_gy_01": {
+        "id": "qz_prelude_defeat_gy_01",
+        "character": "guanyu",
+        "original_text": "此番两翼必同时而动。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "此翻两一避同时而动",
+        "wer": 0.3333333333333333,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_prelude_defeat_lb_01": {
+        "id": "qz_prelude_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "山道乱了阵脚，伏兵未成。退回岭上，重新布置信号。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "山道亂了鎮角,福兵未成,退回領上重新不知信號。",
+        "wer": 0.4,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_siege_defeat_lb_01": {
+        "id": "qz_siege_defeat_lb_01",
+        "character": "liubei",
+        "original_text": "旗号未成，山道大乱。退回谷口，重整伏击。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "其号卫城,山道大乱,退回鼓口,种正福祈",
+        "wer": 0.5,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:qz_siege_defeat_zf_01": {
+        "id": "qz_siege_defeat_zf_01",
+        "character": "zhangfei",
+        "original_text": "这回锣声可要响个痛快。",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
+        "stt_output": "就回落身可要想哥痛快",
+        "wer": 0.5,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:train_defeat_zf_01": {
+        "id": "train_defeat_zf_01",
+        "character": "zhangfei",
+        "original_text": "木桩都能占上风？再来！",
+        "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav",
+        "stt_output": "目桌都能站上风再来",
+        "wer": 0.3333333333333333,
         "is_bad": false,
         "language": "zh"
     }

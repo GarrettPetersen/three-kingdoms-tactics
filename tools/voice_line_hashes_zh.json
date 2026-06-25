@@ -181,6 +181,20 @@
     "version": 1,
     "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
   },
+  "cc_yc_intercept_defeat_cc_01": {
+    "character": "caocao",
+    "hash": "5a65c1b5446f4dc393981dc85caacb4f7535a5cb7b7b6199863d8c7f050d9682",
+    "text": "截击失利，是快而无序。重整骑军，严封道路。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "cc_yc_intercept_defeat_cr_01": {
+    "character": "caoren",
+    "hash": "9004e700f59c1d36f3dd5c3f7f4c8fa5ea28f15d14d980313924ef44caafece6",
+    "text": "明白。下次冲阵，不留缺口。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
   "cc_yc_zb_01": {
     "character": "zhangbao",
     "hash": "fb1dd2be29772d187378f49c98807a886250a63b67ffafddbee255372a5f3e20",
@@ -612,6 +626,20 @@
     "character": "zhujun",
     "hash": "52ee061512ae28929abb646b6dfa2191966914250012f3ee9b1ceed943cebd9b",
     "text": "善。过此山冈，便是阳城之路。此处破之，他只得退守城中。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "ch2_counter_defeat_lb_01": {
+    "character": "liubei",
+    "hash": "accaeb3eded92765558c970031f0e5dd5e29248b8f899fa3a3b5b70874fe0add",
+    "text": "破法之策已明。再往，合围上前，务必中其身。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "ch2_counter_defeat_zj_01": {
+    "character": "zhujun",
+    "hash": "210e7f407f8066658293b5b9ed376882b44ce896451975e64f63593f207b722f",
+    "text": "秽物未及张宝，破法便败。重整两翼，再试一次。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
   },
@@ -1252,6 +1280,20 @@
     "version": 1,
     "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
   },
+  "ch2_oath_dz_defeat_gy_01": {
+    "character": "guanyu",
+    "hash": "0c9fea08b6d8f95f68669f82576c70011067f1ad6c4f9291df4488ae9c748705",
+    "text": "怒气也须听从义理。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "ch2_oath_dz_defeat_lb_01": {
+    "character": "liubei",
+    "hash": "789b249625cfe611bfa0612da1edae2fc99a0ad519ebb510af0d907518c0fabf",
+    "text": "董卓不值得毁我兄弟之义。回到此刻，冷静决断。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
   "ch2_oath_dz_restrain_01": {
     "character": "dongzhuo",
     "hash": "22bfbf930b7d486eeca243ab443b5bed4a22a27a3f86e42c645405f40c77c100",
@@ -1294,12 +1336,40 @@
     "version": 1,
     "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
   },
+  "ch2_oath_lb_restrain_02": {
+    "character": "liubei",
+    "hash": "f6dae8676eaaf6040f329b94a210d7acf9290d8c5adea25a4465478793c7269a",
+    "text": "今夜便离此地，赶赴颍川投朱儁将军麾下。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
   "ch2_oath_lb_strike_01": {
     "character": "liubei",
     "hash": "7098707004a2581c5d1a78eb70e35039b0926c686a7975a254692b62f9f9ebab",
     "text": "既然言语无用，便以刀兵明是非。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "ch2_oath_lb_strike_after_01": {
+    "character": "liubei",
+    "hash": "d10fd0964ab4d19dc5d0d01cb1ab9acf56c132973a3b4e37a29c6aacc0aca3d3",
+    "text": "够了。我们即刻赶赴颍川，归入朱儁将军麾下。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "ch2_oath_lb_strike_water_after_01": {
+    "character": "liubei",
+    "hash": "941c04bdea61a5d509d0bb26dcc4158d19bbd10de0f51c67b611f6f46542ea12",
+    "text": "够了。我们即刻赶赴颍川，归入朱儁将军麾下。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "ch2_oath_soldier_reinforce_01": {
+    "character": "soldier",
+    "hash": "bee91392de8fe9aab3b8721628da486579f3390e83c9788d16babf060dde7549",
+    "text": "董将军！朝廷骑兵前来助阵！",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
   },
   "ch2_oath_zf_restrain_01": {
     "character": "zhangfei",
@@ -1326,6 +1396,20 @@
     "character": "zhangfei",
     "hash": "dbe98ba5f0cfa50d64d4cd60e8bcac9b5895a90faeeaecf7e3412d8d18dd1c05",
     "text": "呸！连淹都淹不死这胆小鬼。下次俺也去亲手给他绑块石头！",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
+  },
+  "ch2_probe_defeat_lb_01": {
+    "character": "liubei",
+    "hash": "44e8544b8394d86b9b53c1b70d46113aba01466fe21f80264c0713b6cd2cd928",
+    "text": "未明张宝雷法，前军先乱。重整先锋，再试其阵。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "ch2_probe_defeat_zf_01": {
+    "character": "zhangfei",
+    "hash": "6347d006c18e77a4cdabc009c25b9a9f6b748942d4778b07c0fc37437ba1896b",
+    "text": "任他使雷，俺也去近前会他。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
   },
@@ -2113,6 +2197,20 @@
     "version": 1,
     "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
   },
+  "dx_defeat_lb_01": {
+    "character": "liubei",
+    "hash": "6c984a7150d8ed5819a8b7bb3faf64730d9083b60cb4742bf703bea507621f7b",
+    "text": "大兴不可任贼侵扰。收拢义勇，趁贼未散，再战一次。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "dx_defeat_zf_01": {
+    "character": "zhangfei",
+    "hash": "08951e64c89eaa6c4c88754ad62304879fa0fe3642aa55217b42d2ef4325f517",
+    "text": "好。俺也正要再会会那两个贼首。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
+  },
   "dx_dm_01": {
     "character": "dengmao",
     "hash": "6eb4ffd5da55a8cca608875dda19b9b1d16b0db8a5ddb86eb26be6a50845b234",
@@ -2159,6 +2257,20 @@
     "character": "zhangfei",
     "hash": "1c8d33c1eb93a29ee9f0b2c7d5632756067e302c9e2afdbfd08fed1fedff7e03",
     "text": "让我来对付他们！我的丈八蛇矛渴饮叛军之血！",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
+  },
+  "dz_rescue_defeat_lb_01": {
+    "character": "liubei",
+    "hash": "7b04c5dfcfd47ff8a31c149ad894a60f434801f95fbc7057e0f4f98a3c4faaa1",
+    "text": "董卓军仍在危急之中。无论其人如何，不能坐视官军覆灭。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "dz_rescue_defeat_zf_01": {
+    "character": "zhangfei",
+    "hash": "863ca9cd47b704279678e993eaadc6d3bc5f8d179c721abf5cb5c165d20fdf18",
+    "text": "救他两回，最好别白费。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
   },
@@ -2245,6 +2357,34 @@
     "text": "哼！你敢教训我？我应该逮捕你们！但是...你们今天确实救了我的命。现在离开，在我改变主意之前。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
+  },
+  "gz_enc_defeat_lb_01": {
+    "character": "liubei",
+    "hash": "32f9b5802f54fa01f2849204861f87e2592cc3e5f6ee6c5bda54e4054d61b9e2",
+    "text": "押送兵先胜一阵，卢师未能脱困。回到路上，再作决断。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "gz_enc_defeat_zf_01": {
+    "character": "zhangfei",
+    "hash": "6a56cf9d59c728d7951009effa7433861c39a0f15ddbdfdc80ccc40073cb19cf",
+    "text": "那就让俺离牢笼近些再打。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
+  },
+  "gz_escort_defeat_gy_01": {
+    "character": "guanyu",
+    "hash": "6ba00cd57b719c28387a1d86d7e1d1742b22a00bbd5365c2c701050ade64d619",
+    "text": "既如此，更要出手有度，不伤无辜。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "gz_escort_defeat_lb_01": {
+    "character": "liubei",
+    "hash": "0f32b7e8b77575dd3fff29c3d78bb7bf21087cb08fc7386f8f68f9b5313475b8",
+    "text": "既要救卢师，迟疑只会自辱。重整阵势，破开押送兵。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
   },
   "gz_gy_free_01": {
     "character": "guanyu",
@@ -3401,6 +3541,20 @@
     "version": 1,
     "voice_target": "mandarin/clean/clean_young_adult_male_mandarin.wav"
   },
+  "qz_prelude_defeat_gy_01": {
+    "character": "guanyu",
+    "hash": "6108fc5f9f897f2ed1092b7de6da84b703d3e575b438de86023e3558df7a5f7c",
+    "text": "此番两翼必同时而动。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "qz_prelude_defeat_lb_01": {
+    "character": "liubei",
+    "hash": "bd20a3e85195143b983b9da115079b5e1c0978607f7520b6590118d626b6c7fc",
+    "text": "山道乱了阵脚，伏兵未成。退回岭上，重新布置信号。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
   "qz_ret_gj_01": {
     "character": "gongjing",
     "hash": "0cbce4c3f084d4123e5a22818f7a8484a8af7671ec65f78d63e9c6c55f4d6e76",
@@ -3456,6 +3610,20 @@
     "text": "卢植中郎将需要援助。我们不能抛弃汉朝的忠臣。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "qz_siege_defeat_lb_01": {
+    "character": "liubei",
+    "hash": "aafd8a77fd472785c43154d0505931d9cf8ae9c364d65a89e3dd24da06900fd5",
+    "text": "旗号未成，山道大乱。退回谷口，重整伏击。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "qz_siege_defeat_zf_01": {
+    "character": "zhangfei",
+    "hash": "74ab2f61b5b9fbcc3a2f5ecedc13ff55bee4b31978fee0f04d9e6c3d2484a4a1",
+    "text": "这回锣声可要响个痛快。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
   },
   "qz_vic_gy_01": {
     "character": "guanyu",
@@ -3615,6 +3783,13 @@
     "character": "zhangfei",
     "hash": "5296ba688f5bfb29de2fef64e4be285556665f67a2922bcd8c2ebca988f4723a",
     "text": "呸！那些混蛋只是侥幸得手！下次，他们就没这么幸运了！",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
+  },
+  "train_defeat_zf_01": {
+    "character": "zhangfei",
+    "hash": "b4ae46fa274d557d738cd1e69f749b3b861a7f4dc39a264cad073de623bc8005",
+    "text": "木桩都能占上风？再来！",
     "version": 1,
     "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
   },
