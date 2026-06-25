@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
 Build portrait references from character_creator modular parts.
+
+This builder is intentionally paper-doll only: add reusable PNG parts when a
+feature is missing, rather than adding character-specific pixel cleanup passes.
 """
 
 from __future__ import annotations
@@ -279,6 +282,41 @@ HAT_GUAN_ACCENT: RGBA = (172, 50, 50, 255)
 SCARF_DARK: RGBA = (223, 113, 38, 255)
 SCARF_LIGHT: RGBA = (251, 242, 54, 255)
 SKIN_LAYER_PARTS = {"head_normal.png", "head_chubby.png", "head_obese.png", "big_nose.png", "long_earlobe.png"}
+HAIR_LAYER_PREFIXES = ("hair_",)
+HAIR_LAYER_NAMES = {"long_bangs.png", "short_bangs.png", "bangs_wild_spiky.png"}
+FACIAL_HAIR_LAYER_PREFIXES = ("beard_", "moustache_")
+
+
+def _is_hair_layer(part_name: str) -> bool:
+    return part_name.startswith(HAIR_LAYER_PREFIXES) or part_name in HAIR_LAYER_NAMES
+
+
+def _is_facial_hair_layer(part_name: str) -> bool:
+    return part_name.startswith(FACIAL_HAIR_LAYER_PREFIXES)
+
+
+def _validate_paper_doll_layer_order(char_id: str, layers: List[Tuple[str, dict]]) -> None:
+    """
+    Hair/bangs must composite over beards and moustaches. If a new overlap needs
+    different pixels, make a new source part instead of post-processing output.
+    """
+    last_facial_hair = max(
+        (i for i, (part_name, _) in enumerate(layers) if _is_facial_hair_layer(part_name)),
+        default=None,
+    )
+    if last_facial_hair is None:
+        return
+    first_hair_above_face = min(
+        (i for i, (part_name, _) in enumerate(layers) if _is_hair_layer(part_name)),
+        default=None,
+    )
+    if first_hair_above_face is None:
+        return
+    if first_hair_above_face < last_facial_hair:
+        raise ValueError(
+            f"{char_id} paper-doll layer order puts hair/bangs before facial hair. "
+            "Move beard/moustache parts earlier so hair composites on top."
+        )
 
 
 def _char_specs() -> Dict[str, dict]:
@@ -300,10 +338,10 @@ def _char_specs() -> Dict[str, dict]:
                 ),
                 ("shirt_robe.png", {}),
                 ("long_earlobe.png", {}),
-                ("hair_short_bun.png", {}),
-                ("eyebrows_thin.png", {}),
                 ("moustache_thin.png", {}),
                 ("beard_pointy.png", {}),
+                ("hair_short_bun.png", {}),
+                ("eyebrows_thin.png", {}),
                 (
                     "hat_guan.png",
                     {},
@@ -342,10 +380,6 @@ def _char_specs() -> Dict[str, dict]:
                     },
                 ),
                 ("shirt_robe.png", {}),
-                ("hair_short_bun.png", {
-                    (0, 0, 0, 255): (72, 72, 71, 255),
-                }),
-                ("eyebrows_thick.png", {}),
                 ("beard_pointy.png", {}),
                 ("smirk.png", {
                     SKIN_LIGHT: (255, 233, 210, 255),
@@ -353,6 +387,10 @@ def _char_specs() -> Dict[str, dict]:
                     SKIN_DARK: (159, 107, 95, 255),
                 }),
                 ("moustache_fu_manchu.png", {}),
+                ("hair_short_bun.png", {
+                    (0, 0, 0, 255): (72, 72, 71, 255),
+                }),
+                ("eyebrows_thick.png", {}),
                 ("hat_guan.png", {}),
             ],
             "manual_palette": {
@@ -388,10 +426,10 @@ def _char_specs() -> Dict[str, dict]:
                     },
                 ),
                 ("shirt_high_collar.png", {}),
-                ("hair_long.png", {}),
-                ("eyebrows_spock.png", {}),
                 ("moustache_thick.png", {}),
                 ("beard_long.png", {}),
+                ("hair_long.png", {}),
+                ("eyebrows_spock.png", {}),
                 ("hat_headscarf.png", {}),
             ],
             "manual_palette": {
@@ -428,12 +466,12 @@ def _char_specs() -> Dict[str, dict]:
                     },
                 ),
                 ("shirt_armour.png", {}),
-                ("hair_long.png", {}),
-                ("hair_long_bun.png", {}),
-                ("eyebrows_thick.png", {}),
                 ("big_nose.png", {}),
                 ("moustache_thick.png", {}),
                 ("beard_bushy.png", {}),
+                ("hair_long.png", {}),
+                ("hair_long_bun.png", {}),
+                ("eyebrows_thick.png", {}),
                 ("hat_headscarf.png", {}),
                 ("short_bangs.png", {}),
             ],
@@ -458,9 +496,9 @@ def _char_specs() -> Dict[str, dict]:
             "layers": [
                 ("head_normal.png", {}),
                 ("shirt_robe.png", {}),
+                ("moustache_thin.png", {}),
                 ("hair_short_bun.png", {}),
                 ("eyebrows_thin.png", {}),
-                ("moustache_thin.png", {}),
                 ("hat_guan.png", {}),
             ],
             "manual_palette": {
@@ -572,10 +610,10 @@ def _char_specs() -> Dict[str, dict]:
             "layers": [
                 ("head_obese.png", {}),
                 ("shirt_robe.png", {}),
-                ("hair_short.png", {}),
-                ("eyebrows_thin.png", {}),
                 ("moustache_fu_manchu.png", {}),
                 ("beard_long.png", {}),
+                ("hair_short.png", {}),
+                ("eyebrows_thin.png", {}),
                 (
                     "hat_square_futou.png",
                     {
@@ -606,18 +644,18 @@ def _char_specs() -> Dict[str, dict]:
             "layers": [
                 ("head_chubby.png", {}),
                 ("shirt_high_collar.png", {}),
+                ("moustache_thick.png", {
+                    (0, 0, 0, 255): (110, 110, 118, 255),
+                }),
+                ("beard_pointy.png", {
+                    (0, 0, 0, 255): (118, 118, 126, 255),
+                }),
                 ("hair_short_bun.png", {
                     (0, 0, 0, 255): (96, 96, 104, 255),
                     (34, 32, 52, 255): (146, 146, 154, 255),
                 }),
                 ("eyebrows_thick.png", {
                     (0, 0, 0, 255): (96, 96, 104, 255),
-                }),
-                ("moustache_thick.png", {
-                    (0, 0, 0, 255): (110, 110, 118, 255),
-                }),
-                ("beard_pointy.png", {
-                    (0, 0, 0, 255): (118, 118, 126, 255),
                 }),
                 ("hat_headscarf.png", {}),
                 ("short_bangs.png", {
@@ -792,11 +830,11 @@ def _char_specs() -> Dict[str, dict]:
             "layers": [
                 ("head_normal.png", {}),
                 ("shirt_robe.png", {}),
+                ("moustache_thick.png", {}),
+                ("beard_long.png", {}),
                 ("hair_long.png", {}),
                 ("hair_long_bun.png", {}),
                 ("eyebrows_thin.png", {}),
-                ("moustache_thick.png", {}),
-                ("beard_long.png", {}),
                 ("hat_headscarf.png", {}),
                 ("hat_guan.png", {}),
                 ("long_bangs.png", {}),
@@ -831,10 +869,10 @@ def _char_specs() -> Dict[str, dict]:
             "layers": [
                 ("head_chubby.png", {}),
                 ("shirt_high_collar.png", {}),
-                ("hair_male_pattern_baldness.png", {}),
-                ("eyebrows_thick.png", {}),
                 ("moustache_thick.png", {}),
                 ("beard_bushy.png", {}),
+                ("hair_male_pattern_baldness.png", {}),
+                ("eyebrows_thick.png", {}),
                 ("hat_headscarf.png", {}),
             ],
             "manual_palette": {
@@ -863,10 +901,10 @@ def _char_specs() -> Dict[str, dict]:
             "layers": [
                 ("head_normal.png", {}),
                 ("shirt_robe.png", {}),
-                ("hair_short_bun.png", {}),
-                ("eyebrows_thin.png", {}),
                 ("moustache_thin.png", {}),
                 ("beard_pointy.png", {}),
+                ("hair_short_bun.png", {}),
+                ("eyebrows_thin.png", {}),
                 ("hat_headscarf.png", {}),
             ],
             "manual_palette": {
@@ -886,12 +924,540 @@ def _char_specs() -> Dict[str, dict]:
                 ]
             },
         },
+        "caoren": {
+            "source_sprite": "assets/characters/034_caoren.png",
+            "bg_gradient": {
+                "top": [92, 96, 132],
+                "bottom": [42, 48, 80],
+            },
+            "layers": [
+                ("head_normal.png", {}),
+                ("shirt_armour.png", {}),
+                ("moustache_thick.png", {
+                    (0, 0, 0, 255): (42, 32, 24, 255),
+                }),
+                ("beard_extra_bushy.png", {
+                    (0, 0, 0, 255): (42, 32, 24, 255),
+                }),
+                ("eyebrows_thick.png", {
+                    (0, 0, 0, 255): (32, 32, 32, 255),
+                }),
+                (
+                    "generals_helmet.png",
+                    {
+                        (7, 48, 201, 255): (24, 34, 86, 255),
+                        (36, 82, 255, 255): (55, 75, 160, 255),
+                        (54, 255, 0, 255): (55, 75, 160, 255),
+                        (43, 206, 0, 255): (24, 34, 86, 255),
+                        (242, 255, 0, 255): (225, 178, 48, 255),
+                        (211, 155, 0, 255): (170, 84, 34, 255),
+                        (255, 0, 0, 255): (225, 178, 48, 255),
+                        (201, 0, 0, 255): (170, 84, 34, 255),
+                    },
+                ),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [245, 178, 132, 255],
+                    "mid": [198, 120, 82, 255],
+                    "dark": [123, 70, 52, 255]
+                },
+                "shirt_tones": {
+                    "dark": [32, 32, 72, 255],
+                    "mid": [54, 72, 154, 255],
+                    "light": [232, 184, 42, 255]
+                }
+            },
+        },
+        "dongzhuo": {
+            "source_sprite": "assets/characters/002_dongzhuo.png",
+            "bg_gradient": {
+                "top": [94, 72, 122],
+                "bottom": [45, 32, 70],
+            },
+            "layers": [
+                ("head_obese.png", {}),
+                ("shirt_robe.png", {}),
+                ("moustache_fu_manchu.png", {
+                    (0, 0, 0, 255): (42, 44, 50, 255),
+                }),
+                ("beard_extra_bushy.png", {
+                    (0, 0, 0, 255): (42, 44, 50, 255),
+                }),
+                ("hair_long.png", {
+                    (0, 0, 0, 255): (38, 40, 46, 255),
+                    (34, 32, 52, 255): (74, 76, 80, 255),
+                }),
+                ("hair_long_bun.png", {
+                    (0, 0, 0, 255): (38, 40, 46, 255),
+                    (34, 32, 52, 255): (74, 76, 80, 255),
+                }),
+                ("bangs_wild_spiky.png", {
+                    (0, 0, 0, 255): (38, 40, 46, 255),
+                    (106, 106, 108, 255): (92, 92, 94, 255),
+                }),
+                ("big_nose.png", {}),
+                ("eyebrows_evil.png", {}),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [245, 171, 125, 255],
+                    "mid": [195, 110, 80, 255],
+                    "dark": [122, 64, 52, 255]
+                },
+                "shirt_tones": {
+                    "dark": [42, 18, 54, 255],
+                    "mid": [94, 42, 124, 255],
+                    "light": [205, 148, 46, 255]
+                }
+            },
+        },
+        "yuanshao": {
+            "source_sprite": "assets/characters/009_yuanshao.png",
+            "bg_gradient": {
+                "top": [132, 106, 82],
+                "bottom": [74, 48, 38],
+            },
+            "layers": [
+                ("head_normal.png", {}),
+                ("shirt_armour.png", {}),
+                ("moustache_thin.png", {
+                    (0, 0, 0, 255): (72, 58, 42, 255),
+                }),
+                ("beard_pointy.png", {
+                    (0, 0, 0, 255): (72, 58, 42, 255),
+                }),
+                ("eyebrows_thin.png", {
+                    (0, 0, 0, 255): (72, 58, 42, 255),
+                }),
+                (
+                    "generals_helmet.png",
+                    {
+                        (7, 48, 201, 255): (84, 56, 28, 255),
+                        (36, 82, 255, 255): (146, 96, 34, 255),
+                        (54, 255, 0, 255): (226, 160, 48, 255),
+                        (43, 206, 0, 255): (154, 58, 32, 255),
+                        (242, 255, 0, 255): (226, 160, 48, 255),
+                        (211, 155, 0, 255): (154, 58, 32, 255),
+                    },
+                ),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [246, 186, 142, 255],
+                    "mid": [207, 137, 92, 255],
+                    "dark": [128, 78, 56, 255]
+                },
+                "shirt_tones": {
+                    "dark": [74, 28, 22, 255],
+                    "mid": [154, 58, 32, 255],
+                    "light": [226, 160, 48, 255]
+                }
+            },
+        },
+        "sunjian": {
+            "source_sprite": "assets/characters/016_sunjian.png",
+            "bg_gradient": {
+                "top": [144, 96, 76],
+                "bottom": [74, 44, 46],
+            },
+            "layers": [
+                ("head_normal.png", {}),
+                ("shirt_armour.png", {}),
+                ("hair_long.png", {
+                    (0, 0, 0, 255): (64, 28, 28, 255),
+                    (34, 32, 52, 255): (74, 28, 22, 255),
+                }),
+                ("hair_long_bun.png", {
+                    (0, 0, 0, 255): (64, 28, 28, 255),
+                    (34, 32, 52, 255): (74, 28, 22, 255),
+                }),
+                ("hat_headscarf.png", {}),
+                ("bangs_wild_spiky.png", {
+                    (0, 0, 0, 255): (64, 28, 28, 255),
+                    (106, 106, 108, 255): (118, 52, 38, 255),
+                }),
+                ("eyebrows_thick.png", {
+                    (0, 0, 0, 255): (32, 32, 32, 255),
+                }),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [248, 175, 132, 255],
+                    "mid": [202, 104, 78, 255],
+                    "dark": [126, 62, 50, 255]
+                },
+                "shirt_tones": {
+                    "dark": [88, 18, 12, 255],
+                    "mid": [178, 48, 24, 255],
+                    "light": [236, 170, 40, 255]
+                },
+                "headscarf_colors": [
+                    [116, 24, 12, 255],
+                    [226, 72, 30, 255]
+                ]
+            },
+        },
+        "hejin": {
+            "source_sprite": "assets/characters/101_hejin.png",
+            "bg_gradient": {
+                "top": [132, 76, 72],
+                "bottom": [70, 40, 54],
+            },
+            "layers": [
+                ("head_chubby.png", {}),
+                ("shirt_robe.png", {}),
+                ("moustache_thick.png", {
+                    (0, 0, 0, 255): (54, 34, 28, 255),
+                }),
+                ("beard_pointy.png", {
+                    (0, 0, 0, 255): (54, 34, 28, 255),
+                }),
+                ("hair_short_bun.png", {
+                    (0, 0, 0, 255): (42, 30, 26, 255),
+                    (34, 32, 52, 255): (72, 44, 34, 255),
+                }),
+                ("eyebrows_thick.png", {
+                    (0, 0, 0, 255): (54, 34, 28, 255),
+                }),
+                ("hat_official_tall.png", {}),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [245, 186, 156, 255],
+                    "mid": [208, 128, 98, 255],
+                    "dark": [130, 78, 62, 255]
+                },
+                "shirt_tones": {
+                    "dark": [62, 16, 26, 255],
+                    "mid": [126, 38, 54, 255],
+                    "light": [210, 76, 64, 255]
+                }
+            },
+        },
+        "panyin": {
+            "source_sprite": "assets/characters/090_fushang01.png",
+            "bg_gradient": {
+                "top": [110, 104, 126],
+                "bottom": [58, 54, 72],
+            },
+            "layers": [
+                ("head_obese.png", {}),
+                ("shirt_robe.png", {}),
+                ("moustache_fu_manchu.png", {
+                    (0, 0, 0, 255): (82, 78, 78, 255),
+                }),
+                ("beard_long.png", {
+                    (0, 0, 0, 255): (82, 78, 78, 255),
+                }),
+                ("hair_short.png", {
+                    (0, 0, 0, 255): (72, 72, 76, 255),
+                }),
+                ("eyebrows_thin.png", {
+                    (0, 0, 0, 255): (72, 72, 76, 255),
+                }),
+                (
+                    "hat_square_futou.png",
+                    {
+                        (64, 64, 96, 255): (82, 86, 102, 255),
+                        (32, 32, 32, 255): (40, 42, 50, 255),
+                    },
+                ),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [246, 195, 164, 255],
+                    "mid": [202, 138, 98, 255],
+                    "dark": [128, 82, 60, 255]
+                },
+                "shirt_tones": {
+                    "dark": [36, 30, 28, 255],
+                    "mid": [88, 74, 50, 255],
+                    "light": [178, 146, 84, 255]
+                }
+            },
+        },
+        "gongjing": {
+            "source_sprite": "assets/characters/067_dongyun.png",
+            "bg_gradient": {
+                "top": [92, 142, 108],
+                "bottom": [42, 78, 58],
+            },
+            "layers": [
+                ("head_normal.png", {}),
+                ("shirt_robe.png", {}),
+                ("moustache_thin.png", {}),
+                ("hair_short_bun.png", {}),
+                ("eyebrows_thin.png", {}),
+                ("hat_headcloth.png", {}),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [239, 186, 144, 255],
+                    "mid": [190, 124, 88, 255],
+                    "dark": [116, 74, 54, 255]
+                },
+                "shirt_tones": {
+                    "dark": [32, 78, 44, 255],
+                    "mid": [66, 154, 82, 255],
+                    "light": [224, 232, 178, 255]
+                },
+                "headcloth_tones": {
+                    "dark": [32, 78, 44, 255],
+                    "mid": [66, 154, 82, 255],
+                    "light": [224, 232, 178, 255]
+                }
+            },
+        },
+        "huangfusong": {
+            "source_sprite": "assets/characters/072_liyan.png",
+            "bg_gradient": {
+                "top": [126, 120, 108],
+                "bottom": [72, 68, 58],
+            },
+            "layers": [
+                ("head_normal.png", {}),
+                ("shirt_high_collar.png", {}),
+                ("moustache_thin.png", {
+                    (0, 0, 0, 255): (92, 88, 78, 255),
+                }),
+                ("hair_male_pattern_baldness.png", {
+                    (0, 0, 0, 255): (70, 70, 68, 255),
+                    (34, 32, 52, 255): (112, 112, 106, 255),
+                }),
+                ("eyebrows_thin.png", {
+                    (0, 0, 0, 255): (92, 88, 78, 255),
+                }),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [230, 178, 142, 255],
+                    "mid": [186, 126, 92, 255],
+                    "dark": [112, 72, 54, 255]
+                },
+                "shirt_tones": {
+                    "dark": [42, 42, 38, 255],
+                    "mid": [104, 96, 78, 255],
+                    "light": [218, 206, 170, 255]
+                }
+            },
+        },
+        "luzhi": {
+            "source_sprite": "assets/characters/071_chendeng.png",
+            "bg_gradient": {
+                "top": [128, 132, 112],
+                "bottom": [70, 76, 64],
+            },
+            "layers": [
+                ("head_normal.png", {}),
+                ("shirt_robe.png", {}),
+                ("moustache_thin.png", {
+                    (0, 0, 0, 255): (78, 58, 42, 255),
+                }),
+                ("hair_short.png", {
+                    (0, 0, 0, 255): (78, 58, 42, 255),
+                }),
+                ("eyebrows_thin.png", {
+                    (0, 0, 0, 255): (78, 58, 42, 255),
+                }),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [245, 188, 148, 255],
+                    "mid": [204, 132, 88, 255],
+                    "dark": [126, 80, 56, 255]
+                },
+                "shirt_tones": {
+                    "dark": [72, 82, 46, 255],
+                    "mid": [132, 140, 74, 255],
+                    "light": [218, 202, 104, 255]
+                }
+            },
+        },
+        "zhujun": {
+            "source_sprite": "assets/characters/073_chendao.png",
+            "bg_gradient": {
+                "top": [132, 124, 104],
+                "bottom": [74, 68, 52],
+            },
+            "layers": [
+                ("head_chubby.png", {}),
+                ("shirt_armour.png", {}),
+                ("moustache_thin.png", {
+                    (0, 0, 0, 255): (58, 48, 38, 255),
+                }),
+                ("eyebrows_thin.png", {
+                    (0, 0, 0, 255): (58, 48, 38, 255),
+                }),
+                (
+                    "generals_helmet.png",
+                    {
+                        (7, 48, 201, 255): (70, 62, 48, 255),
+                        (36, 82, 255, 255): (148, 120, 68, 255),
+                        (54, 255, 0, 255): (112, 178, 196, 255),
+                        (43, 206, 0, 255): (72, 118, 138, 255),
+                        (242, 255, 0, 255): (230, 210, 138, 255),
+                        (211, 155, 0, 255): (148, 120, 68, 255),
+                    },
+                ),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [246, 184, 138, 255],
+                    "mid": [202, 126, 84, 255],
+                    "dark": [126, 76, 54, 255]
+                },
+                "shirt_tones": {
+                    "dark": [58, 48, 38, 255],
+                    "mid": [148, 120, 68, 255],
+                    "light": [230, 210, 138, 255]
+                }
+            },
+        },
+        "eunuch": {
+            "source_sprite": "assets/characters/086_xiaoer01.png",
+            "bg_gradient": {
+                "top": [118, 126, 148],
+                "bottom": [72, 80, 104],
+            },
+            "layers": [
+                ("head_normal.png", {}),
+                ("shirt_robe.png", {}),
+                ("hair_short.png", {}),
+                ("eyebrows_thin.png", {}),
+                (
+                    "hat_cloth_cap.png",
+                    {
+                        (91, 110, 225, 255): (72, 78, 126, 255),
+                        (99, 155, 255, 255): (116, 132, 190, 255),
+                        (63, 63, 116, 255): (34, 34, 58, 255),
+                    },
+                ),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [246, 206, 188, 255],
+                    "mid": [210, 154, 132, 255],
+                    "dark": [138, 94, 82, 255]
+                },
+                "shirt_tones": {
+                    "dark": [34, 34, 58, 255],
+                    "mid": [72, 78, 126, 255],
+                    "light": [156, 162, 204, 255]
+                }
+            },
+        },
+        "eunuch_guard": {
+            "source_sprite": "assets/characters/087_chushi01.png",
+            "bg_gradient": {
+                "top": [134, 128, 112],
+                "bottom": [78, 70, 58],
+            },
+            "layers": [
+                ("head_chubby.png", {}),
+                ("shirt_high_collar.png", {}),
+                ("hair_short.png", {
+                    (0, 0, 0, 255): (48, 44, 40, 255),
+                }),
+                ("eyebrows_thin.png", {
+                    (0, 0, 0, 255): (48, 44, 40, 255),
+                }),
+                ("hat_headcloth.png", {}),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [238, 182, 152, 255],
+                    "mid": [196, 112, 92, 255],
+                    "dark": [126, 70, 58, 255]
+                },
+                "shirt_tones": {
+                    "dark": [54, 44, 34, 255],
+                    "mid": [112, 92, 58, 255],
+                    "light": [208, 188, 130, 255]
+                },
+                "headcloth_tones": {
+                    "dark": [178, 174, 160, 255],
+                    "mid": [218, 212, 192, 255],
+                    "light": [250, 246, 226, 255]
+                }
+            },
+        },
+        "palace_assassin": {
+            "source_sprite": "assets/characters/102_palace_assassin.png",
+            "bg_gradient": {
+                "top": [112, 72, 100],
+                "bottom": [58, 34, 58],
+            },
+            "layers": [
+                ("head_chubby.png", {}),
+                ("shirt_armour.png", {}),
+                ("eyebrows_thin.png", {
+                    (0, 0, 0, 255): (42, 18, 34, 255),
+                }),
+                (
+                    "generals_helmet.png",
+                    {
+                        (7, 48, 201, 255): (42, 18, 34, 255),
+                        (36, 82, 255, 255): (92, 36, 72, 255),
+                        (54, 255, 0, 255): (162, 82, 110, 255),
+                        (43, 206, 0, 255): (92, 36, 72, 255),
+                        (242, 255, 0, 255): (162, 82, 110, 255),
+                        (211, 155, 0, 255): (92, 36, 72, 255),
+                        (255, 0, 0, 255): (162, 82, 110, 255),
+                        (201, 0, 0, 255): (92, 36, 72, 255),
+                    },
+                ),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [234, 172, 146, 255],
+                    "mid": [190, 108, 92, 255],
+                    "dark": [116, 64, 58, 255]
+                },
+                "shirt_tones": {
+                    "dark": [42, 18, 34, 255],
+                    "mid": [92, 36, 72, 255],
+                    "light": [162, 82, 110, 255]
+                }
+            },
+        },
+        "butcher": {
+            "source_sprite": "assets/characters/082_tufu01.png",
+            "bg_gradient": {
+                "top": [116, 108, 98],
+                "bottom": [64, 58, 50],
+            },
+            "layers": [
+                ("head_chubby.png", {}),
+                ("shirt_high_collar.png", {}),
+                ("hair_male_pattern_baldness.png", {
+                    (0, 0, 0, 255): (54, 50, 48, 255),
+                    (34, 32, 52, 255): (86, 82, 76, 255),
+                }),
+                ("eyebrows_thick.png", {
+                    (0, 0, 0, 255): (54, 50, 48, 255),
+                }),
+            ],
+            "manual_palette": {
+                "skin_tones": {
+                    "light": [246, 178, 150, 255],
+                    "mid": [202, 112, 88, 255],
+                    "dark": [124, 70, 58, 255]
+                },
+                "shirt_tones": {
+                    "dark": [34, 34, 32, 255],
+                    "mid": [82, 74, 58, 255],
+                    "light": [176, 156, 112, 255]
+                }
+            },
+        },
     }
 
 
 def build_reference(char_id: str, spec: dict) -> Tuple[Path, Path]:
     palette = _extract_full_palette(spec["source_sprite"]) if spec.get("source_sprite") else []
     parts_dir = PROJECT_ROOT / spec["parts_dir"] if spec.get("parts_dir") else PARTS_DIR
+    _validate_paper_doll_layer_order(char_id, spec["layers"])
     manual_cfg = spec.get("manual_palette", {})
     skin_tones: Dict[str, RGBA] = {}
     shirt_tones: Dict[str, RGBA] = {}
