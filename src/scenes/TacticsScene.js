@@ -2536,6 +2536,7 @@ export class TacticsScene extends BaseScene {
                     speaker: 'liubei',
                     portraitKey: 'liu-bei',
                     name: 'Liu Bei',
+                    voiceId: 'ch2_oath_lb_restrain_02',
                     text: { en: "We leave this place tonight and march to join General Zhu Jun at Yingchuan.", zh: "今夜便离此地，赶赴颍川投朱儁将军麾下。" }
                 }
             ];
@@ -2931,6 +2932,7 @@ export class TacticsScene extends BaseScene {
                 speaker: 'liubei',
                 portraitKey: 'liu-bei',
                 name: 'Liu Bei',
+                voiceId: 'ch2_oath_lb_strike_water_after_01',
                 text: { en: "Enough. We march to Yingchuan and place our strength under General Zhu Jun.", zh: "够了。我们即刻赶赴颍川，归入朱儁将军麾下。" }
             }
         ]
@@ -2953,6 +2955,7 @@ export class TacticsScene extends BaseScene {
                 speaker: 'liubei',
                 portraitKey: 'liu-bei',
                 name: 'Liu Bei',
+                voiceId: 'ch2_oath_lb_strike_after_01',
                 text: { en: "Enough. We march to Yingchuan and place our strength under General Zhu Jun.", zh: "够了。我们即刻赶赴颍川，归入朱儁将军麾下。" }
             }
         ];

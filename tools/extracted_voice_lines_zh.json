@@ -1110,9 +1110,27 @@
     "source": "TacticsScene.js"
   },
   {
+    "id": "ch2_oath_lb_restrain_02",
+    "char": "liubei",
+    "text": "今夜便离此地，赶赴颍川投朱儁将军麾下。",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "ch2_oath_lb_strike_01",
     "char": "liubei",
     "text": "既然言语无用，便以刀兵明是非。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_lb_strike_after_01",
+    "char": "liubei",
+    "text": "够了。我们即刻赶赴颍川，归入朱儁将军麾下。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_lb_strike_water_after_01",
+    "char": "liubei",
+    "text": "够了。我们即刻赶赴颍川，归入朱儁将军麾下。",
     "source": "TacticsScene.js"
   },
   {

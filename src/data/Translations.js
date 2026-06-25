@@ -316,6 +316,10 @@ export const UI_TEXT = {
         en: 'CAMPAIGN LOCKED',
         zh: '战役已锁定'
     },
+    'DEMO CHAPTER LOCKED': {
+        en: 'DEMO ENDS AFTER CHAPTER 1',
+        zh: '试玩版到第一章结束'
+    },
     'STORY COMPLETE': {
         en: 'STORY COMPLETE',
         zh: '故事完成'

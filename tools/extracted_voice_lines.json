@@ -1115,9 +1115,27 @@
     "source": "TacticsScene.js"
   },
   {
+    "id": "ch2_oath_lb_restrain_02",
+    "char": "liubei",
+    "text": "We leave this place tonight and march to join General Zhu Jun at Yingchuan.",
+    "source": "TacticsScene.js"
+  },
+  {
     "id": "ch2_oath_lb_strike_01",
     "char": "liubei",
     "text": "If words fail, then let steel answer steel.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_lb_strike_after_01",
+    "char": "liubei",
+    "text": "Enough. We march to Yingchuan and place our strength under General Zhu Jun.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "ch2_oath_lb_strike_water_after_01",
+    "char": "liubei",
+    "text": "Enough. We march to Yingchuan and place our strength under General Zhu Jun.",
     "source": "TacticsScene.js"
   },
   {

@@ -3,7 +3,7 @@ import { assets } from '../core/AssetLoader.js';
 import { IS_DEMO } from '../core/Constants.js';
 import { getLocalizedText, LANGUAGE } from '../core/Language.js';
 import { UI_TEXT, getLocalizedCharacterName } from '../data/Translations.js';
-import { launchStoryNode } from '../core/StoryFlow.js';
+import { isStoryRouteAvailableInBuild, launchStoryNode } from '../core/StoryFlow.js';
 
 const STORY_MAP_LEGACY_WIDTH = 256;
 const STORY_MAP_LEGACY_HEIGHT = 256;
@@ -80,11 +80,31 @@ export class CampaignSelectionScene extends BaseScene {
         return this.campaigns.filter(c => (c.chapters || ['1']).includes(selectedChapter));
     }
 
+    isDemoChapterBlocked(chapterId) {
+        return IS_DEMO && Number(chapterId) > 1;
+    }
+
+    addChapterLockedMessage(chapterIndex = null) {
+        const chapter = chapterIndex !== null ? this.chapters[chapterIndex] : null;
+        const isDemoLocked = chapter ? this.isDemoChapterBlocked(chapter.id) : false;
+        const textKey = isDemoLocked ? 'DEMO CHAPTER LOCKED' : 'CAMPAIGN LOCKED';
+        const color = isDemoLocked ? '#ffd700' : '#8b0000';
+        this.addMessage(getLocalizedText(UI_TEXT[textKey]), color, chapterIndex);
+    }
+
+    addDemoRouteLockedMessage() {
+        this.addMessage(getLocalizedText(UI_TEXT['DEMO CHAPTER LOCKED']), '#ffd700');
+    }
+
     refreshChapterAvailability() {
         const gs = this.manager.gameState;
         this.chapters.forEach((chapter, index) => {
             if (index === 0) {
                 chapter.available = true;
+                return;
+            }
+            if (this.isDemoChapterBlocked(chapter.id)) {
+                chapter.available = false;
                 return;
             }
             const previousChapterId = Number(this.chapters[index - 1]?.id);
@@ -106,7 +126,11 @@ export class CampaignSelectionScene extends BaseScene {
     }
 
     getDefaultChapterIndex() {
-        if (IS_DEMO) return this.selectedChapterIndex;
+        if (IS_DEMO) {
+            return this.chapters[this.selectedChapterIndex]?.available
+                ? this.selectedChapterIndex
+                : 0;
+        }
         const nextChapterIndex = this.chapters.findIndex(chapter => (
             chapter.available && !this.isChapterCompleteForProgression(Number(chapter.id))
         ));
@@ -254,6 +278,10 @@ export class CampaignSelectionScene extends BaseScene {
     }
 
     startChapter2OathRoute() {
+        if (!isStoryRouteAvailableInBuild('chapter2_oath')) {
+            this.addDemoRouteLockedMessage();
+            return;
+        }
         const gs = this.manager.gameState;
         const routeId = 'chapter2_oath';
         gs.setCurrentCampaign(routeId);
@@ -289,6 +317,10 @@ export class CampaignSelectionScene extends BaseScene {
     }
 
     startChapter2HeJinRoute() {
+        if (!isStoryRouteAvailableInBuild('hejin')) {
+            this.addDemoRouteLockedMessage();
+            return;
+        }
         const gs = this.manager.gameState;
         const routeId = 'hejin';
         gs.setCurrentCampaign(routeId);
@@ -691,7 +723,7 @@ export class CampaignSelectionScene extends BaseScene {
             const ch = this.chapters[t.index];
             if (!ch) return;
             if (!ch.available) {
-                this.addMessage(getLocalizedText(UI_TEXT['CAMPAIGN LOCKED']), '#8b0000', t.index);
+                this.addChapterLockedMessage(t.index);
                 return;
             }
             this.selectedChapterIndex = t.index;
@@ -712,6 +744,10 @@ export class CampaignSelectionScene extends BaseScene {
             }
             const gs = this.manager.gameState;
             const selectedChapter = this.chapters[this.selectedChapterIndex]?.id || '1';
+            if (this.isDemoChapterBlocked(selectedChapter)) {
+                this.addDemoRouteLockedMessage();
+                return;
+            }
             if (selected.id === 'caocao') {
                 gs.setCurrentCampaign('caocao');
                 gs.startStoryRoute('caocao', 'caocao_intro');
@@ -794,7 +830,7 @@ export class CampaignSelectionScene extends BaseScene {
             // Wider hit area for the timeline items
             if (x >= 0 && x <= 120 && y >= ty - 5 && y <= ty + 20) {
                 if (!ch.available) {
-                    this.addMessage(getLocalizedText(UI_TEXT['CAMPAIGN LOCKED']), '#8b0000', i);
+                    this.addChapterLockedMessage(i);
                     return;
                 }
                 
@@ -819,6 +855,10 @@ export class CampaignSelectionScene extends BaseScene {
                     } else {
                         const gs = this.manager.gameState;
                         const selectedChapter = this.chapters[this.selectedChapterIndex]?.id || '1';
+                        if (this.isDemoChapterBlocked(selectedChapter)) {
+                            this.addDemoRouteLockedMessage();
+                            return;
+                        }
                         if (c.id === 'caocao') {
                             gs.setCurrentCampaign('caocao');
                             gs.startStoryRoute('caocao', 'caocao_intro');
