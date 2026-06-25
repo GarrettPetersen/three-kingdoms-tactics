@@ -1188,7 +1188,13 @@ def _char_specs() -> Dict[str, dict]:
                 ("shirt_robe.png", {}),
                 ("moustache_thin.png", {}),
                 ("eyebrows_thin.png", {}),
-                ("hat_official_box.png", {}),
+                ("hat_official_tall_striped.png", {
+                    (206, 74, 54, 255): (66, 154, 82, 255),
+                    (81, 18, 20, 255): (28, 72, 38, 255),
+                    (188, 184, 172, 255): (232, 230, 202, 255),
+                    (231, 182, 45, 255): (126, 210, 104, 255),
+                    (196, 158, 52, 255): (38, 98, 48, 255),
+                }),
             ],
             "manual_palette": {
                 "skin_tones": {
