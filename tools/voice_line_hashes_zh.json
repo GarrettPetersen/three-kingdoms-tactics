@@ -680,8 +680,8 @@
   },
   "ch2_hj_council_cc_01": {
     "character": "caocao",
-    "hash": "acf1724c870b624a72be64af018282e25b5426573803494512f22c1984ff2e20",
-    "text": "宦官世在禁中，帘幕廊庑之间，皆有其耳目。",
+    "hash": "ddbc4d895e56e15dc6c2a738bd9f87c21cf261514afe60c060945c100c831eae",
+    "text": "宦官世在宫中，帘幕廊庑之间，皆有其耳目。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
   },
@@ -708,8 +708,8 @@
   },
   "ch2_hj_council_hj_01": {
     "character": "hejin",
-    "hash": "0bca17c54903c26e4a5e5c0b79774cc5357cef5becfed809a9faae3d352fd80e",
-    "text": "蹇硕在宫门设刃害我。此毒根已遍禁中。",
+    "hash": "303bdce04c767186d8eb43ddf88dabc02714506eea636962b297d86414448532",
+    "text": "蹇硕在宫门设刃害我。此毒根已遍宫中。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
   },
@@ -740,6 +740,48 @@
     "text": "孟德之慎，言中要害。先查明谁与蹇硕同党。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
+  },
+  "ch2_hj_council_march_cc_01": {
+    "character": "caocao",
+    "hash": "a1d46b94b5380c39a37d05eedd53e5e894d3b7ccfe1626196301997c5a173471",
+    "text": "速行，整肃，少言。此三者，便是今日护卫。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "ch2_hj_council_march_hj_01": {
+    "character": "hejin",
+    "hash": "dbe12b000f2d981a11f9a6f98a33d307d0674d86d621bfa1bec192a41a1379e3",
+    "text": "必须先定君位，不可再给宦官设局之机。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
+  },
+  "ch2_hj_council_march_messenger_01": {
+    "character": "eunuch",
+    "hash": "01b59cb5a7526cd9331e96633bbb7627e31929dc874ce986341cf552b33eebf2",
+    "text": "小人只是奉命传旨。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_grandiose_male_mandarin.wav"
+  },
+  "ch2_hj_council_march_minister_01": {
+    "character": "soldierv1",
+    "hash": "ab23a97d39740bb1c309eea46c5a9b13bb00c22e4c9631d586cbff8736191d23",
+    "text": "府中兵士已集，大将军。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "ch2_hj_council_march_panyin_01": {
+    "character": "panyin",
+    "hash": "4d1dade0cfa99adb29f8aafe920eaa78cb95c3ba8825d3d062dae53a2698bdfc",
+    "text": "前召既伪，宫中再出的命令，只会更伪。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
+  },
+  "ch2_hj_council_march_ys_01": {
+    "character": "yuanshao",
+    "hash": "e48927e163833a665e0fab5c18c72c96c0d4198d531e9b6b0e6cea9ec11a8ee9",
+    "text": "兵马只等大将军一令。且叫宫门知道谁可号令。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
   },
   "ch2_hj_council_ys_01": {
     "character": "yuanshao",
@@ -936,6 +978,27 @@
     "text": "大将军何进，陛下在宫中相候。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_grandiose_male_mandarin.wav"
+  },
+  "ch2_hj_gate_click_guard_01": {
+    "character": "soldierv1",
+    "hash": "bf33bd76fa6ae950fc53e73224be6f52f18b47c98503b73d3fcd4bf099df491e",
+    "text": "大将军。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "ch2_hj_gate_click_hejin_01": {
+    "character": "hejin",
+    "hash": "579b4f9f8d5faef3028c031937e485c241b7e9e8bffb2728ebe6ac97ba62162c",
+    "text": "若此言属实，连宫门也成了陷阱。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav"
+  },
+  "ch2_hj_gate_click_panyin_01": {
+    "character": "panyin",
+    "hash": "213e4245e4b1041e7b046f8fa22e2dcda5d48e41ea2d6709646936e5a305d05f",
+    "text": "大将军，蹇硕之刃只等公一步，不等一时。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav"
   },
   "ch2_hj_guard_01": {
     "character": "palace_assassin",

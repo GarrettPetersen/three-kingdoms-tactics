@@ -822,7 +822,7 @@ async function init() {
                 eunuch: 'assets/characters/086_xiaoer01.png',
                 eunuch_guard: 'assets/characters/087_chushi01.png',
                 palace_assassin: 'assets/characters/102_palace_assassin.png',
-                liubian: 'assets/characters/044_xunyou.png',
+                liubian: 'assets/characters/103_emperorshao.png',
                 emperor_ling_deathbed: 'assets/characters/emperor_ling_deathbed.png',
                 emperor_ling_deathbed02: 'assets/characters/emperor_ling_deathbed02.png',
                 caocao: 'assets/characters/031_caocao.png',

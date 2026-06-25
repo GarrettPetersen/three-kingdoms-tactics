@@ -5300,13 +5300,12 @@
     "en:ch2_hj_council_hj_01": {
         "id": "ch2_hj_council_hj_01",
         "character": "hejin",
-        "original_text": "Jian Shuo set a blade for me at the palace gate. This poison has roots through the whole forbidden palace.",
+        "original_text": "Jian Shuo set a blade for me at the palace gate. This poison has roots through the whole palace.",
         "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
-        "language": "en",
-        "stt_output": "",
-        "wer": null,
+        "stt_output": "John Shuo, set a blade for me at the palace gate. This poison has roots through the whole palace.",
+        "wer": 0.05263157894736842,
         "is_bad": false,
-        "verification_status": "metadata_only"
+        "language": "en"
     },
     "en:ch2_hj_council_hj_02": {
         "id": "ch2_hj_council_hj_02",
@@ -5686,6 +5685,96 @@
         "voice_target": "movies/clean/clean_brash_australian_man.wav",
         "stt_output": "If every gate sees our spears, the unix may yield before they spring another trap. Fear will clear the way, though it will run ahead of us.",
         "wer": 0.037037037037037035,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_council_march_cc_01": {
+        "id": "ch2_hj_council_march_cc_01",
+        "character": "caocao",
+        "original_text": "Speed, order, and few words. Those are our guards now.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "Speed, order, and few words. Those are our guards now.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_council_march_hj_01": {
+        "id": "ch2_hj_council_march_hj_01",
+        "character": "hejin",
+        "original_text": "The throne must be settled before the eunuchs set another snare.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "The throne must be settled before the Unix set another snare.",
+        "wer": 0.09090909090909091,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_council_march_messenger_01": {
+        "id": "ch2_hj_council_march_messenger_01",
+        "character": "eunuch",
+        "original_text": "I carried the order as it was given to me.",
+        "voice_target": "movies/clean/clean_disney_hades.wav",
+        "stt_output": "I carried the order as it was given to me.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_council_march_minister_01": {
+        "id": "ch2_hj_council_march_minister_01",
+        "character": "soldierv1",
+        "original_text": "The household troops are assembled, my lord.",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav",
+        "stt_output": "The household troops are assembled, my lord.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_council_march_panyin_01": {
+        "id": "ch2_hj_council_march_panyin_01",
+        "character": "panyin",
+        "original_text": "If the summons was false, the next order from within will be falser still.",
+        "voice_target": "movies/clean/clean_mulans-dad.wav",
+        "stt_output": "If the summons was false, the next order from within will be false or still.",
+        "wer": 0.14285714285714285,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_council_march_ys_01": {
+        "id": "ch2_hj_council_march_ys_01",
+        "character": "yuanshao",
+        "original_text": "The troops wait for your word. Let the gates learn who commands them.",
+        "voice_target": "movies/clean/clean_brash_australian_man.wav",
+        "stt_output": "The troops wait for your word. Let the gates learn who commands them.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_gate_click_guard_01": {
+        "id": "ch2_hj_gate_click_guard_01",
+        "character": "soldierv1",
+        "original_text": "Sir.",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav",
+        "stt_output": "Sir!",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_gate_click_hejin_01": {
+        "id": "ch2_hj_gate_click_hejin_01",
+        "character": "hejin",
+        "original_text": "If this is true, then even the palace gate has become a trap.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "If this is true, then even the palace gate has become a trap.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:ch2_hj_gate_click_panyin_01": {
+        "id": "ch2_hj_gate_click_panyin_01",
+        "character": "panyin",
+        "original_text": "My lord, Jian Shuo's blade waits for one step, not one hour.",
+        "voice_target": "movies/clean/clean_mulans-dad.wav",
+        "stt_output": "My lord, Gian Shuo's blade waits for one step, not one hour.",
+        "wer": 0.08333333333333333,
         "is_bad": false,
         "language": "en"
     }

@@ -5256,13 +5256,12 @@
     "zh:ch2_hj_council_cc_01": {
         "id": "ch2_hj_council_cc_01",
         "character": "caocao",
-        "original_text": "宦官世在禁中，帘幕廊庑之间，皆有其耳目。",
+        "original_text": "宦官世在宫中，帘幕廊庑之间，皆有其耳目。",
         "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
-        "language": "zh",
-        "stt_output": "",
-        "wer": null,
+        "stt_output": "換官是在公中聯目狼舞之間,皆有其而目",
+        "wer": 0.5294117647058824,
         "is_bad": false,
-        "verification_status": "metadata_only"
+        "language": "zh"
     },
     "zh:ch2_hj_council_cc_02": {
         "id": "ch2_hj_council_cc_02",
@@ -5300,13 +5299,12 @@
     "zh:ch2_hj_council_hj_01": {
         "id": "ch2_hj_council_hj_01",
         "character": "hejin",
-        "original_text": "蹇硕在宫门设刃害我。此毒根已遍禁中。",
+        "original_text": "蹇硕在宫门设刃害我。此毒根已遍宫中。",
         "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav",
-        "language": "zh",
-        "stt_output": "",
-        "wer": null,
+        "stt_output": "簡述在公門攝任害我死毒根一遍公中",
+        "wer": 0.5,
         "is_bad": false,
-        "verification_status": "metadata_only"
+        "language": "zh"
     },
     "zh:ch2_hj_council_hj_02": {
         "id": "ch2_hj_council_hj_02",
@@ -5688,6 +5686,96 @@
         "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav",
         "stt_output": "各市出門景見冰峰換官未繼在蛇羅網便先打喊未聚能開入也會先傳變工中",
         "wer": 0.53125,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_hj_council_march_cc_01": {
+        "id": "ch2_hj_council_march_cc_01",
+        "character": "caocao",
+        "original_text": "速行，整肃，少言。此三者，便是今日护卫。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "速行,整速,少言,死三者,便是今日戶為。",
+        "wer": 0.26666666666666666,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_hj_council_march_hj_01": {
+        "id": "ch2_hj_council_march_hj_01",
+        "character": "hejin",
+        "original_text": "必须先定君位，不可再给宦官设局之机。",
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav",
+        "stt_output": "必須先定 均為 不可再給換官社局之際",
+        "wer": 0.4375,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_hj_council_march_messenger_01": {
+        "id": "ch2_hj_council_march_messenger_01",
+        "character": "eunuch",
+        "original_text": "小人只是奉命传旨。",
+        "voice_target": "mandarin/clean/clean_grandiose_male_mandarin.wav",
+        "stt_output": "小人只是奉命传旨",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_hj_council_march_minister_01": {
+        "id": "ch2_hj_council_march_minister_01",
+        "character": "soldierv1",
+        "original_text": "府中兵士已集，大将军。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "府中兵市一一大将军",
+        "wer": 0.3333333333333333,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_hj_council_march_panyin_01": {
+        "id": "ch2_hj_council_march_panyin_01",
+        "character": "panyin",
+        "original_text": "前召既伪，宫中再出的命令，只会更伪。",
+        "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav",
+        "stt_output": "前召计为,公冬在处的命令只会更为",
+        "wer": 0.4666666666666667,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_hj_council_march_ys_01": {
+        "id": "ch2_hj_council_march_ys_01",
+        "character": "yuanshao",
+        "original_text": "兵马只等大将军一令。且叫宫门知道谁可号令。",
+        "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav",
+        "stt_output": "姨馬茲等大將軍一連且教功門知道誰可好戀",
+        "wer": 0.5263157894736842,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_hj_gate_click_guard_01": {
+        "id": "ch2_hj_gate_click_guard_01",
+        "character": "soldierv1",
+        "original_text": "大将军。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "大将军",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_hj_gate_click_hejin_01": {
+        "id": "ch2_hj_gate_click_hejin_01",
+        "character": "hejin",
+        "original_text": "若此言属实，连宫门也成了陷阱。",
+        "voice_target": "mandarin/clean/clean_villainous_middle_aged_male_mandarin.wav",
+        "stt_output": "若此言属時 聯工門也成了陷阱",
+        "wer": 0.23076923076923078,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:ch2_hj_gate_click_panyin_01": {
+        "id": "ch2_hj_gate_click_panyin_01",
+        "character": "panyin",
+        "original_text": "大将军，蹇硕之刃只等公一步，不等一时。",
+        "voice_target": "mandarin/clean/clean_calm_wise_male_mandarin.wav",
+        "stt_output": "大将军 检术知认 值等公一步 不等一时",
+        "wer": 0.3125,
         "is_bad": false,
         "language": "zh"
     }

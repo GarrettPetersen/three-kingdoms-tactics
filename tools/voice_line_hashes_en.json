@@ -708,8 +708,8 @@
   },
   "ch2_hj_council_hj_01": {
     "character": "hejin",
-    "hash": "92aa39956cec265134f6556e7006e4f0cbb1d6f0e692c99f0a4680d2f156071d",
-    "text": "Jian Shuo set a blade for me at the palace gate. This poison has roots through the whole forbidden palace.",
+    "hash": "6912559aaae2e123dbff00570e2901cf747e93dd7fb6842cca672d9c16429b48",
+    "text": "Jian Shuo set a blade for me at the palace gate. This poison has roots through the whole palace.",
     "version": 1,
     "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
   },
@@ -740,6 +740,48 @@
     "text": "Your caution is sharp, Mengde. We will first learn who stands with Jian Shuo.",
     "version": 1,
     "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_council_march_cc_01": {
+    "character": "caocao",
+    "hash": "22453275346a344c4dbeea6dac2f1d605e67606c9aab0d0d15f2bd7deac86624",
+    "text": "Speed, order, and few words. Those are our guards now.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_council_march_hj_01": {
+    "character": "hejin",
+    "hash": "0fbd228324cb3c5e3ec2847d3734df1df73880b7a979fd68ec6a4f4fe96b54fe",
+    "text": "The throne must be settled before the eunuchs set another snare.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_council_march_messenger_01": {
+    "character": "eunuch",
+    "hash": "d972da9055e4cbed6b3b0030c155308b4d646c1cef7f0357e6c559b399974fb9",
+    "text": "I carried the order as it was given to me.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_disney_hades.wav"
+  },
+  "ch2_hj_council_march_minister_01": {
+    "character": "soldierv1",
+    "hash": "971b9c29dddf597a73a604de32385aa5209a8387132a6c10faedbd70028bff13",
+    "text": "The household troops are assembled, my lord.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "ch2_hj_council_march_panyin_01": {
+    "character": "panyin",
+    "hash": "7b21334b8c5200a0784ab13af4cc56c3c0936f0376232cbdc146c9e83af5bd2e",
+    "text": "If the summons was false, the next order from within will be falser still.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
+  },
+  "ch2_hj_council_march_ys_01": {
+    "character": "yuanshao",
+    "hash": "c5a8b94551d2e74546805c78091559d6c291be34a685c9247a9dddad6cade725",
+    "text": "The troops wait for your word. Let the gates learn who commands them.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_brash_australian_man.wav"
   },
   "ch2_hj_council_ys_01": {
     "character": "yuanshao",
@@ -936,6 +978,27 @@
     "text": "General-in-Chief He Jin, His Majesty awaits within.",
     "version": 1,
     "voice_target": "movies/clean/clean_disney_hades.wav"
+  },
+  "ch2_hj_gate_click_guard_01": {
+    "character": "soldierv1",
+    "hash": "e392caf6485e59e26403508c72453be47accd5ab52ef13c5c420f406c59025b4",
+    "text": "Sir.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "ch2_hj_gate_click_hejin_01": {
+    "character": "hejin",
+    "hash": "cc72c22993932ee3a77317e94fe2acf171f662644d01fd4a7f037a761307dde7",
+    "text": "If this is true, then even the palace gate has become a trap.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "ch2_hj_gate_click_panyin_01": {
+    "character": "panyin",
+    "hash": "3df413de3cc0121bc9ef15af4f1767989b926c462cc20fe9f731b660a475d858",
+    "text": "My lord, Jian Shuo's blade waits for one step, not one hour.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_mulans-dad.wav"
   },
   "ch2_hj_guard_01": {
     "character": "palace_assassin",
