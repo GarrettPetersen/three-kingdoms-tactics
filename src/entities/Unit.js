@@ -65,6 +65,7 @@ export class Unit {
         this.immortal = config.immortal || null; // Boolean or config object
         this.immortalTriggered = config.immortalTriggered || false;
         this.immortalPendingCause = config.immortalPendingCause || null; // 'damage' | 'drown'
+        this.immortalDrownEscapeOrigin = null;
         this.stepTimer = 0;
         this.level = config.level || 1;
         this.allyPartyOwnerId = config.allyPartyOwnerId || null;
@@ -131,6 +132,10 @@ export class Unit {
 
             if (this.drownTimer > 2000) {
                 if (this.isImmortal()) {
+                    this.immortalDrownEscapeOrigin = {
+                        x: pos.x,
+                        y: pos.y + Math.min(1, this.drownTimer / 2000) * 40
+                    };
                     this.hp = Math.max(this.hp, this.getImmortalTriggerHp());
                     this.intent = null;
                     this.isDrowning = false;

@@ -1423,6 +1423,91 @@ export class TacticsScene extends BaseScene {
         return 1;
     }
 
+    isDryImmortalEscapeCell(cell, unit = null) {
+        if (!cell || cell.omitted || cell.impassable) return false;
+        if (cell.unit && cell.unit !== unit) return false;
+        const terrain = cell.terrain || '';
+        if (terrain.includes('water')) return false;
+        if (this.isSolidCityGatehouseCell(cell)) return false;
+        return true;
+    }
+
+    findNearestDryFreeCell(r, q, maxDist = 8, unit = null) {
+        const start = this.clampCoordToMap(r, q);
+        const queue = [{ r: start.r, q: start.q, d: 0 }];
+        const visited = new Set([`${start.r},${start.q}`]);
+
+        while (queue.length > 0) {
+            const current = queue.shift();
+            const cell = this.tacticsMap.getCell(current.r, current.q);
+            if (current.d > 0 && this.isDryImmortalEscapeCell(cell, unit)) {
+                return cell;
+            }
+            if (current.d >= maxDist) continue;
+            const neighbors = this.tacticsMap.getNeighbors(current.r, current.q);
+            neighbors.forEach(n => {
+                const key = `${n.r},${n.q}`;
+                if (visited.has(key)) return;
+                visited.add(key);
+                queue.push({ r: n.r, q: n.q, d: current.d + 1 });
+            });
+        }
+        return null;
+    }
+
+    performImmortalDrowningEscape(unit, onComplete = null, options = {}) {
+        if (!unit) return false;
+        const originCell = this.tacticsMap.getCell(unit.r, unit.q);
+        const baseOriginPos = this.getPixelPos(unit.r, unit.q);
+        const liveSinkOffset = unit.isDrowning ? Math.min(1, (unit.drownTimer || 0) / 2000) * 40 : 0;
+        const originPos = unit.immortalDrownEscapeOrigin || {
+            x: (typeof unit.visualX === 'number') ? unit.visualX : baseOriginPos.x,
+            y: ((typeof unit.visualY === 'number') ? unit.visualY : baseOriginPos.y) + liveSinkOffset
+        };
+        unit.immortalDrownEscapeOrigin = null;
+
+        const triggerHp = this.getImmortalTriggerHp(unit) || 1;
+        unit.hp = Math.max(unit.hp, triggerHp);
+        unit.intent = null;
+        unit.isDrowning = false;
+        unit.drownTimer = 0;
+        unit.isGone = false;
+        unit.action = 'standby';
+        unit.currentAnimAction = 'standby';
+        unit.frame = 0;
+
+        const maxDist = Number.isFinite(options.maxDist) ? options.maxDist : 8;
+        const landingCell = this.findNearestDryFreeCell(unit.r, unit.q, maxDist, unit)
+            || this.findNearestFreeCell(unit.r, unit.q, maxDist);
+
+        if (originCell && originCell.unit === unit) originCell.unit = null;
+
+        if (!landingCell) {
+            if (originCell && !originCell.unit) originCell.unit = unit;
+            if (typeof onComplete === 'function') onComplete(false);
+            return false;
+        }
+
+        unit.setPosition(landingCell.r, landingCell.q);
+        landingCell.unit = unit;
+        const landingPos = this.getPixelPos(landingCell.r, landingCell.q);
+        unit.startPush(originPos.x, originPos.y, landingPos.x, landingPos.y, false, Number.isFinite(options.fallHeight) ? options.fallHeight : 2);
+        if (unit.pushData) {
+            unit.pushData.arcHeight = Number.isFinite(options.arcHeight) ? options.arcHeight : 56;
+        }
+        assets.playSound('splash', Number.isFinite(options.volume) ? options.volume : 0.7);
+
+        const waitForJump = () => {
+            if (unit.pushData) {
+                setTimeout(waitForJump, 60);
+                return;
+            }
+            if (typeof onComplete === 'function') onComplete(true);
+        };
+        setTimeout(waitForJump, 60);
+        return true;
+    }
+
     makeUnitFleeOffscreen(unit, fleeCfg = {}) {
         if (!unit || unit.isGone) return;
         const edge = fleeCfg.edge || 'right';
@@ -1555,34 +1640,48 @@ export class TacticsScene extends BaseScene {
             return;
         }
         if (callback === 'chapter2_zhangbao_sorcery') {
-            this.triggerChapter2ZhangBaoSorcery();
+            const triggerSorcery = () => this.triggerChapter2ZhangBaoSorcery();
+            if (cause === 'drown') {
+                this.performImmortalDrowningEscape(unit, triggerSorcery);
+                return;
+            }
+            triggerSorcery();
             return;
         }
 
-        const sayCfg = nearDeathCfg.say || immortalCfg.say;
-        const sayDuration = Number.isFinite(sayCfg?.durationMs) ? sayCfg.durationMs : 2200;
-        if (sayCfg?.text) {
-            this.startBattleEndDialogue([{
-                portraitKey: sayCfg.portraitKey || unit.imgKey,
-                name: unit.name,
-                text: sayCfg.text,
-                voiceId: sayCfg.voiceId
-            }]);
+        const continueImmortalBehavior = () => {
+            const sayCfg = nearDeathCfg.say || immortalCfg.say;
+            const sayDuration = Number.isFinite(sayCfg?.durationMs) ? sayCfg.durationMs : 2200;
+            if (sayCfg?.text) {
+                this.startBattleEndDialogue([{
+                    portraitKey: sayCfg.portraitKey || unit.imgKey,
+                    name: unit.name,
+                    text: sayCfg.text,
+                    voiceId: sayCfg.voiceId
+                }]);
+            }
+
+            const fleeCfg = nearDeathCfg.flee || immortalCfg.flee;
+            if (fleeCfg) {
+                const delayMs = Number.isFinite(fleeCfg.delayMs) ? fleeCfg.delayMs : sayDuration;
+                setTimeout(() => this.makeUnitFleeOffscreen(unit, fleeCfg), Math.max(0, delayMs));
+            }
+
+            const endBattleCfg = nearDeathCfg.endBattle || immortalCfg.endBattle;
+            if (endBattleCfg && typeof endBattleCfg.won === 'boolean') {
+                const delayMs = Number.isFinite(endBattleCfg.delayMs) ? endBattleCfg.delayMs : sayDuration;
+                setTimeout(() => {
+                    if (!this.isGameOver) this.endBattle(!!endBattleCfg.won);
+                }, Math.max(0, delayMs));
+            }
+        };
+
+        if (cause === 'drown') {
+            this.performImmortalDrowningEscape(unit, continueImmortalBehavior);
+            return;
         }
 
-        const fleeCfg = nearDeathCfg.flee || immortalCfg.flee;
-        if (fleeCfg) {
-            const delayMs = Number.isFinite(fleeCfg.delayMs) ? fleeCfg.delayMs : sayDuration;
-            setTimeout(() => this.makeUnitFleeOffscreen(unit, fleeCfg), Math.max(0, delayMs));
-        }
-
-        const endBattleCfg = nearDeathCfg.endBattle || immortalCfg.endBattle;
-        if (endBattleCfg && typeof endBattleCfg.won === 'boolean') {
-            const delayMs = Number.isFinite(endBattleCfg.delayMs) ? endBattleCfg.delayMs : sayDuration;
-            setTimeout(() => {
-                if (!this.isGameOver) this.endBattle(!!endBattleCfg.won);
-            }, Math.max(0, delayMs));
-        }
+        continueImmortalBehavior();
     }
 
     triggerChapter2ZhangBaoSorcery() {
@@ -2783,49 +2882,7 @@ export class TacticsScene extends BaseScene {
         };
 
         if (fromDrowning) {
-            // Let the full drowning animation almost complete, then jump from the current
-            // rendered sink position so it reads as a continuous water-to-land leap.
-            const originPos = {
-                x: (typeof dongzhuo.visualX === 'number') ? dongzhuo.visualX : this.getPixelPos(dongzhuo.r, dongzhuo.q).x,
-                y: (typeof dongzhuo.visualY === 'number') ? dongzhuo.visualY : this.getPixelPos(dongzhuo.r, dongzhuo.q).y
-            };
-            const safeCell = this.findNearestFreeCell(dongzhuo.r, dongzhuo.q, 8);
-            if (!safeCell) {
-                // Fallback: if no safe landing, still force a spoken retreat.
-                dongzhuo.isDrowning = false;
-                dongzhuo.drownTimer = 0;
-                dongzhuo.isGone = false;
-                dongzhuo.hp = 1;
-                if (currentCell && currentCell.unit !== dongzhuo) currentCell.unit = dongzhuo;
-                beginRunAway();
-                return;
-            }
-
-            if (currentCell && currentCell.unit === dongzhuo) currentCell.unit = null;
-            dongzhuo.isGone = false;
-            dongzhuo.isDrowning = false;
-            dongzhuo.drownTimer = 0;
-            dongzhuo.hp = 1;
-            dongzhuo.action = 'standby';
-            dongzhuo.currentAnimAction = 'standby';
-            dongzhuo.frame = 0;
-            dongzhuo.setPosition(safeCell.r, safeCell.q);
-            safeCell.unit = dongzhuo;
-            const landPos = this.getPixelPos(safeCell.r, safeCell.q);
-            dongzhuo.startPush(originPos.x, originPos.y, landPos.x, landPos.y, false, 2);
-            if (dongzhuo.pushData) {
-                dongzhuo.pushData.arcHeight = 56; // Make the jump visibly read as a leap.
-            }
-            assets.playSound('splash', 0.7);
-
-            const waitForJump = () => {
-                if (dongzhuo.pushData) {
-                    setTimeout(waitForJump, 60);
-                    return;
-                }
-                beginRunAway();
-            };
-            setTimeout(waitForJump, 60);
+            this.performImmortalDrowningEscape(dongzhuo, beginRunAway, { maxDist: 8 });
             return;
         }
 
