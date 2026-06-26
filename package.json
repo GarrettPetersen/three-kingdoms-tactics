@@ -4,7 +4,8 @@
   "main": "electron-main.js",
   "scripts": {
     "export-trailer": "node tools/export_trailer.js",
-    "validate:design": "node tools/validate_design_rules.mjs",
+    "audit:portraits": "node tools/audit_portrait_coverage.mjs",
+    "validate:design": "node tools/validate_design_rules.mjs && node tools/audit_portrait_coverage.mjs",
     "dev": "vite",
     "build": "npm run validate:design && vite build",
     "build:demo": "npm run validate:design && vite build --mode demo",

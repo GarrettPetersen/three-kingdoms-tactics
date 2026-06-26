@@ -5,6 +5,7 @@ import { NARRATIVE_SCRIPTS } from '../data/NarrativeScripts.js';
 import { getCurrentLanguage, getLocalizedText } from '../core/Language.js';
 import { UI_TEXT } from '../data/Translations.js';
 import { completeStoryNode } from '../core/StoryFlow.js';
+import { getSpeakerDialogueDefault } from '../data/PortraitRegistry.js';
 
 export class NarrativeScene extends BaseScene {
     constructor() {
@@ -423,20 +424,7 @@ export class NarrativeScene extends BaseScene {
         const fallbackText = opt?.buttonText || '';
         const dialogueText = opt?.text !== undefined && opt?.text !== null ? opt.text : fallbackText;
         const speakerKey = opt?.speaker ? String(opt.speaker).trim().toLowerCase() : '';
-        const speakerDefaults = {
-            liubei: { portraitKey: 'liu-bei', name: 'Liu Bei' },
-            guanyu: { portraitKey: 'guan-yu', name: 'Guan Yu' },
-            zhangfei: { portraitKey: 'zhang-fei', name: 'Zhang Fei' },
-            caocao: { portraitKey: 'cao-cao', name: 'Cao Cao' },
-            caoren: { portraitKey: 'cao-ren', name: 'Cao Ren' },
-            dongzhuo: { portraitKey: 'dong-zhuo', name: 'Dong Zhuo' },
-            hejin: { portraitKey: 'hejin', name: 'He Jin' },
-            luzhi: { portraitKey: 'lu-zhi', name: 'Lu Zhi' },
-            zhoujing: { portraitKey: 'zhou-jing', name: 'Zhou Jing' },
-            gongjing: { portraitKey: 'gong-jing', name: 'Gong Jing' },
-            xiaoer: { portraitKey: 'xiaoer', name: 'Liubo Player' }
-        };
-        const speakerDefault = speakerDefaults[speakerKey] || {};
+        const speakerDefault = getSpeakerDialogueDefault(speakerKey) || {};
         return {
             type: 'dialogue',
             speaker: opt?.speaker || step.speaker,

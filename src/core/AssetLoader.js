@@ -602,25 +602,34 @@ export class AssetLoader {
     }
 
     async loadPortraits(characterNames) {
-        // Load dedicated portraits from generated only.
-        // Missing generated portraits should fall back to in-scene sprite zoom logic.
-        const promises = characterNames.map(name => {
-            const formattedName = name.replace(/ /g, '-');
-            const key = `portrait_${formattedName}`;
-            // Generated portrait source
-            const srcGenerated = `assets/portraits/generated/${formattedName}.png`;
-            
-            return new Promise((resolve) => {
+        const loadPortrait = (key, sources) => new Promise((resolve) => {
+            const trySource = (index) => {
+                if (index >= sources.length) {
+                    resolve(null);
+                    return;
+                }
                 const img = new Image();
                 img.onload = () => {
                     this.images[key] = img;
                     resolve(img);
                 };
-                img.onerror = () => {
-                    resolve(null); // No generated portrait found
-                };
-                img.src = srcGenerated;
-            });
+                img.onerror = () => trySource(index + 1);
+                img.src = sources[index];
+            };
+            trySource(0);
+        });
+
+        const promises = characterNames.flatMap(name => {
+            const formattedName = name.replace(/ /g, '-');
+            return [
+                loadPortrait(`portrait_${formattedName}`, [
+                    `assets/portraits/small/${formattedName}.png`,
+                    `assets/portraits/generated/${formattedName}.png`
+                ]),
+                loadPortrait(`portrait_large_${formattedName}`, [
+                    `assets/portraits/large/${formattedName}.png`
+                ])
+            ];
         });
         return Promise.all(promises);
     }

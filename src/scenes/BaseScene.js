@@ -2,6 +2,13 @@ import { ANIMATIONS } from '../core/Constants.js';
 import { assets } from '../core/AssetLoader.js';
 import { getLocalizedText, getFontForLanguage, getUIScale, LANGUAGE } from '../core/Language.js';
 import { getLocalizedCharacterName } from '../data/Translations.js';
+import {
+    getPortraitAssetKey,
+    getSpriteKeyForPortrait,
+    isNarratorPortrait,
+    isNoticeboardPortrait,
+    resolvePortraitId
+} from '../data/PortraitRegistry.js';
 
 export class BaseScene {
     constructor() {
@@ -814,207 +821,47 @@ export class BaseScene {
         ctx.lineWidth = 1;
         ctx.strokeRect(px + 0.5, py + 0.5, panelWidth - 1, panelHeight - 1);
 
-        // Portrait Box (Adjusted for 40x48)
+        // Portraits use a large dialogue bust when available, with the old inset box as fallback.
         const portraitW = 40;
         const portraitH = 48;
         const portraitX = px + 6;
         const portraitY = py + 6;
-        
-        // Portrait Background/Border
-        ctx.fillStyle = '#000';
-        ctx.fillRect(portraitX - 1, portraitY - 1, portraitW + 2, portraitH + 2);
-        ctx.strokeStyle = '#444';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(portraitX - 0.5, portraitY - 0.5, portraitW + 1, portraitH + 1);
-
-        const speakerToPortraitKey = {
-            liubei: 'liu-bei',
-            guanyu: 'guan-yu',
-            zhangfei: 'zhang-fei',
-            caocao: 'cao-cao',
-            caoren: 'cao-ren',
-            dongzhuo: 'dong-zhuo',
-            hejin: 'hejin',
-            panyin: 'panyin',
-            eunuch: 'eunuch',
-            eunuchguard: 'eunuch-guard',
-            palaceassassin: 'palace-assassin',
-            sunjian: 'sun-jian',
-            zhangjue: 'zhang-jiao',
-            zhangliang: 'zhang-liang',
-            zhangbao: 'zhang-bao',
-            dengmao: 'deng-mao',
-            chengyuanzhi: 'cheng-yuanzhi',
-            huangfusong: 'huangfu-song-generic',
-            zhujun: 'zhu-jun-generic',
-            luzhi: 'lu-zhi',
-            gongjing: 'gong-jing',
-            zhoujing: 'zhou-jing',
-            yuanshao: 'yuan-shao',
-            soldier: 'soldier',
-            farmer: 'farmer',
-            farmer2: 'farmer2',
-            merchant: 'merchant',
-            blacksmith: 'blacksmith',
-            xiaoer: 'xiaoer',
-            yellowturban: 'yellowturban',
-            narrator: 'narrator',
-            noticeboard: 'noticeboard'
+        const largePortraitW = 80;
+        const largePortraitH = 96;
+        const largePortraitX = px + 6;
+        const largePortraitY = position === 'top'
+            ? margin + 6
+            : canvas.height - margin - 6 - largePortraitH;
+        const drawInsetPortraitFrame = () => {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(portraitX - 1, portraitY - 1, portraitW + 2, portraitH + 2);
+            ctx.strokeStyle = '#444';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(portraitX - 0.5, portraitY - 0.5, portraitW + 1, portraitH + 1);
         };
-        const nameToPortraitKey = {
-            'liu bei': 'liu-bei',
-            'guan yu': 'guan-yu',
-            'zhang fei': 'zhang-fei',
-            'cao cao': 'cao-cao',
-            'cao ren': 'cao-ren',
-            'dong zhuo': 'dong-zhuo',
-            'he jin': 'hejin',
-            'pan yin': 'panyin',
-            'palace eunuch': 'eunuch',
-            'palace attendant': 'eunuch',
-            'palace assassin': 'palace-assassin',
-            'sun jian': 'sun-jian',
-            'zhang jue': 'zhang-jiao',
-            'zhang liang': 'zhang-liang',
-            'zhang bao': 'zhang-bao',
-            'deng mao': 'deng-mao',
-            'cheng yuanzhi': 'cheng-yuanzhi',
-            'huangfu song': 'huangfu-song-generic',
-            'zhu jun': 'zhu-jun-generic',
-            'lu zhi': 'lu-zhi',
-            'commander lu zhi': 'lu-zhi',
-            'gong jing': 'gong-jing',
-            'zhou jing': 'zhou-jing',
-            'yuan shao': 'yuan-shao',
-            villager: 'farmer',
-            farmer: 'farmer',
-            merchant: 'merchant',
-            blacksmith: 'blacksmith',
-            narrator: 'narrator'
-        };
-        const legacyPortraitAliases = {
-            liubei: 'liu-bei',
-            guanyu: 'guan-yu',
-            zhangfei: 'zhang-fei',
-            caocao: 'cao-cao',
-            caoren: 'cao-ren',
-            dongzhuo: 'dong-zhuo',
-            eunuchguard: 'eunuch-guard',
-            palace_assassin: 'palace-assassin',
-            palaceassassin: 'palace-assassin',
-            sunjian: 'sun-jian',
-            zhangjiao: 'zhang-jiao',
-            zhangbao: 'zhang-bao',
-            zhangliang: 'zhang-liang',
-            luzhi: 'lu-zhi',
-            gongjing: 'gong-jing',
-            dengmao: 'deng-mao',
-            chengyuanzhi: 'cheng-yuanzhi',
-            zhoujing: 'zhou-jing',
-            yuanshao: 'yuan-shao',
-            yellowturban: 'yellow-turban'
-        };
-        const portraitAssetKeyById = {
-            'liu-bei': 'Liu-Bei',
-            'guan-yu': 'Guan-Yu',
-            'zhang-fei': 'Zhang-Fei',
-            'cao-cao': 'Cao-Cao',
-            'cao-ren': 'Cao-Ren',
-            'zhou-jing': 'Zhou-Jing',
-            'yuan-shao': 'Yuan-Shao',
-            'hejin': 'He-Jin',
-            'he-jin': 'He-Jin',
-            'panyin': 'panyin',
-            'eunuch': 'eunuch',
-            'eunuch-guard': 'eunuch-guard',
-            'palace-assassin': 'palace-assassin',
-            'sun-jian': 'Sun-Jian',
-            'deng-mao': 'Deng-Mao',
-            'cheng-yuanzhi': 'Cheng-Yuanzhi',
-            'dong-zhuo': 'Dong-Zhuo',
-            'zhang-jiao': 'Zhang-Jiao',
-            'zhang-bao': 'Zhang-Bao',
-            'zhang-liang': 'Zhang-Liang',
-            'huangfu-song-generic': 'Huangfu-Song-generic',
-            'zhu-jun-generic': 'Zhu-Jun-generic',
-            'farmer': 'farmer',
-            'farmer-v1': 'farmer-v1',
-            'farmer-v2': 'farmer-v2',
-            'farmer-v3': 'farmer-v3',
-            'farmer-v4': 'farmer-v4',
-            'farmer-v5': 'farmer-v5',
-            'farmer-female': 'farmer-female',
-            'merchant': 'merchant',
-            'blacksmith': 'blacksmith',
-            'xiaoer': 'xiaoer',
-            'soldier': 'soldier',
-            'soldier-v1': 'soldier-v1',
-            'soldier-v2': 'soldier-v2',
-            'soldier-v3': 'soldier-v3',
-            'soldier-v4': 'soldier-v4',
-            'soldier-v5': 'soldier-v5',
-            'gong-jing': 'Gong-Jing',
-            'lu-zhi': 'Lu-Zhi',
-            'yellow-turban': 'Yellow-Turban'
+        const drawLargePortrait = (img) => {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(largePortraitX - 1, largePortraitY - 1, largePortraitW + 2, largePortraitH + 2);
+            ctx.drawImage(img, largePortraitX, largePortraitY, largePortraitW, largePortraitH);
         };
 
         // Try to find a dedicated portrait first
         let portraitImg = null;
-        const rawSpeaker = (step.speaker || '').trim();
-        const speakerKey = rawSpeaker.toLowerCase();
-        const nameKey = (step.name || '').trim().toLowerCase();
-        const rawPortraitId =
-            ((step.portraitKey && String(step.portraitKey)) ||
-            speakerToPortraitKey[speakerKey] ||
-            nameToPortraitKey[nameKey] ||
-            rawSpeaker ||
-            '')
-                .trim()
-                .toLowerCase();
-        let resolvedPortraitId = legacyPortraitAliases[rawPortraitId] || rawPortraitId || null;
-
-        const genericName = (step.name || '').trim().toLowerCase();
-        if (genericName === 'yellow turban' || step.speaker === 'yellowturban') {
-            // Non-named rebels should use the generic battlefield sprite portrait.
-            resolvedPortraitId = 'yellow-turban';
-        }
+        let largePortraitImg = null;
+        let usesLargePortrait = false;
+        const resolvedPortraitId = resolvePortraitId(step);
         step.portraitKey = resolvedPortraitId;
 
-        const isNoticeboard = resolvedPortraitId === 'noticeboard' || (step.name && step.name.toLowerCase().includes('noticeboard'));
-        const isNarrator = resolvedPortraitId === 'narrator' || !step.name || step.name.toLowerCase() === 'narrator';
+        const isNoticeboard = isNoticeboardPortrait(step, resolvedPortraitId);
+        const isNarrator = isNarratorPortrait(step, resolvedPortraitId);
 
         // Force Narrator name if not set
         if (isNarrator && (!step.name || step.name.toLowerCase() === 'narrator')) {
             step.name = 'Narrator';
         }
 
-        const portraitToSpriteKey = {
-            'liu-bei': 'liubei',
-            'guan-yu': 'guanyu',
-            'zhang-fei': 'zhangfei',
-            'cao-cao': 'caocao',
-            'cao-ren': 'caoren',
-            'zhou-jing': 'zhoujing',
-            'yuan-shao': 'yuanshao',
-            'dong-zhuo': 'dongzhuo',
-            'hejin': 'hejin',
-            'he-jin': 'hejin',
-            'panyin': 'panyin',
-            'pan-yin': 'panyin',
-            'eunuch': 'eunuch',
-            'eunuch-guard': 'eunuch_guard',
-            'palace-assassin': 'palace_assassin',
-            'sun-jian': 'sunjian',
-            'zhang-bao': 'zhangbao',
-            'zhang-jiao': 'zhangjiao',
-            'zhang-liang': 'zhangliang',
-            'gong-jing': 'gongjing_sprite',
-            'lu-zhi': 'zhoujing',
-            'huangfu-song-generic': 'huangfusong_sprite',
-            'zhu-jun-generic': 'zhujun_sprite',
-            'yellow-turban': 'yellowturban'
-        };
         if (isNoticeboard || isNarrator) {
+            drawInsetPortraitFrame();
             let useBg = bgImg;
             if (isNarrator && !useBg) {
                 // Default narrator background to peach garden for a nice visual
@@ -1031,16 +878,24 @@ export class BaseScene {
             }
             // If no bgImg, it just stays black (narrator/noticeboard default)
         } else if (resolvedPortraitId) {
-            const dedicatedPortraitKey = portraitAssetKeyById[resolvedPortraitId];
+            const dedicatedPortraitKey = getPortraitAssetKey(resolvedPortraitId);
             if (dedicatedPortraitKey) {
+                largePortraitImg = assets.getImage(`portrait_large_${dedicatedPortraitKey}`);
                 portraitImg = assets.getImage(`portrait_${dedicatedPortraitKey}`);
             }
 
-            if (!portraitImg) {
+            if (largePortraitImg) {
+                usesLargePortrait = true;
+                drawLargePortrait(largePortraitImg);
+            } else {
+                drawInsetPortraitFrame();
+            }
+
+            if (!largePortraitImg && !portraitImg) {
                 // Universal fallback: zoomed sprite portrait from the actor sheet.
                 const rawKey = resolvedPortraitId || '';
                 const normalizedKey = rawKey.replace(/-/g, '').toLowerCase();
-                const mappedKey = portraitToSpriteKey[rawKey] || portraitToSpriteKey[normalizedKey] || null;
+                const mappedKey = getSpriteKeyForPortrait(rawKey) || getSpriteKeyForPortrait(normalizedKey);
                 const spriteImg =
                     assets.getImage(rawKey) ||
                     (mappedKey ? assets.getImage(mappedKey) : null) ||
@@ -1081,14 +936,14 @@ export class BaseScene {
                         ctx.drawImage(zoomCanvas, cropX, cropY, cropW, cropH, portraitX, portraitY, portraitW, portraitH);
                     }
                 }
-            } else {
+            } else if (!largePortraitImg && portraitImg) {
                 // Draw dedicated portrait at native 1:1 resolution
                 ctx.drawImage(portraitImg, portraitX, portraitY, portraitW, portraitH);
             }
         }
 
         // Name
-        const textX = portraitX + portraitW + 8;
+        const textX = usesLargePortrait ? largePortraitX + largePortraitW + 8 : portraitX + portraitW + 8;
         const localizedName = getLocalizedCharacterName(step.name);
         const nameText = localizedName ? (LANGUAGE.current === 'zh' ? localizedName : localizedName.toUpperCase()) : '';
         this.drawPixelText(ctx, nameText, textX, py + 6, { color: '#ffd700', font: '8px Silkscreen' });

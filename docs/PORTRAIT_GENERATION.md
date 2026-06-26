@@ -11,6 +11,106 @@ This doc explains how to create or update character portraits used in dialogue. 
 
 ---
 
+## Runtime portrait layout
+
+The current dialogue system uses two portrait sizes:
+
+| Purpose | Size | Path |
+|--------|------|------|
+| Large dialogue busts | `80x96` | `public/assets/portraits/large/<Name>.png` |
+| Archived / fallback small portraits | `40x48` | `public/assets/portraits/small/<Name>.png` |
+| Large source images kept for recropping | source resolution | `public/assets/portraits/large_sources/<Name>-source.png` |
+| Old generated output and review variants | varies | `public/assets/portraits/generated/` |
+
+The game first tries to load a large dialogue portrait as `portrait_large_<Name>`. If that is missing, it falls back to the small portrait and then to sprite zoom logic.
+
+Large portraits should be treated as **portrait-shaped assets**, not landscape crops. The shipped runtime PNG must be exactly `80x96`, preserving the old `40x48` shape at 2x scale.
+
+---
+
+## Style guide
+
+The portrait style target is **cartoony historical pixel-art busts with strong shapes**, not finely rendered painterly portraits. The portraits that downscale best are the ones closer to the earlier Liu Bei, Zhang Fei, Cao Cao, Dong Zhuo, and He Jin variants: simplified planes, readable eyes, bold silhouettes, and limited mid-tone noise.
+
+### Style anchors
+
+Use these as the current target family:
+
+- Liu Bei: clean, cartoony face planes; readable hair and robe silhouette.
+- Zhang Fei: bold expression and simple high-contrast feature groups.
+- Cao Cao: stylized but controlled; clear facial angle and limited texture.
+- Dong Zhuo: exaggerated heavy features without becoming muddy.
+- He Jin: strong hat silhouette, simple face shadowing, readable at small size.
+
+Sun Jian, Yuan Shao, Zhu Jun, and the Zhang brothers are acceptable references for mood and palette, but they should be pulled slightly toward the simpler cartoony read when possible.
+
+### What makes a portrait work at `80x96`
+
+- A clear head-and-shoulders bust, with the face filling the upper half but not touching the frame.
+- One dominant face direction: front or 3/4. Avoid ambiguous twisted head/eye directions.
+- Large readable eye, brow, nose, mouth, beard, hat, and hair masses.
+- Simple color groups with only a few meaningful highlight and shadow steps.
+- Strong clothing silhouette below the head so the portrait reads as a bust, not a floating face.
+- Distinct character-specific cues: Guan Yu's green and long beard, Zhang Fei's red headband and fierce brow, Cao Cao's composed purple/black courtly palette, etc.
+- A simple coloured background can help the portrait feel intentional and finished. Prefer one restrained hue or a soft two-step gradient that complements the character.
+
+### Avoid
+
+- Extreme close-ups that crop off hat, shoulders, beard, or hair.
+- High-detail painterly rendering that becomes noisy after nearest-neighbor downscale.
+- Washed-out or photo-like skin gradients.
+- Neon greens, hot pink skin, or other saturated colors that do not match the rest of the cast.
+- Thin hair strands, tiny decorative patterns, or subtle linework that will alias into clutter.
+- White/light outline artifacts around the figure.
+- Busy backgrounds, scenery, hard patterns, or high-contrast halos that compete with the face.
+- Perfectly realistic anatomy if it weakens the icon-like read.
+
+### Good generation prompt shape
+
+Use this kind of wording for new source images:
+
+```text
+high-quality pixel art bust portrait, Three Kingdoms era Chinese character,
+cartoony historical strategy RPG style, strong readable silhouette, simplified
+face planes, bold eyes and brows, clean nose and mouth shapes, limited palette,
+simple coloured background, head and upper torso visible, portrait-oriented crop,
+not an extreme close-up, no text, no watermark, no white outline
+```
+
+Then add the character-specific identity in concrete terms. Example:
+
+```text
+Guan Yu, stern middle-aged warrior-general, long black beard and moustache,
+deep green robe and green headwrap, dignified 3/4 view, subtle gold accent
+```
+
+### Source framing
+
+Before downscaling, crop the high-resolution source to the same `5:6` aspect ratio as `80x96`.
+
+- Keep the head, hair/hat, shoulders, and enough torso to read as a bust.
+- Put the face in the upper-middle third, not dead center.
+- Keep the background as a broad colour field. Purple, muted blue, dark green, warm brown, or smoky red can work when they support the character; avoid detailed scenery.
+- Downscale once with nearest-neighbor scaling.
+- Do not reposition a tiny result after downscaling; fix composition at source resolution first.
+
+### Retro Diffusion consistency pass
+
+Retro Diffusion should be used as a **style unifier**, not as the main concept generator.
+
+Recommended process:
+
+1. Generate or choose a high-resolution source that already has the right pose, expression, and character identity.
+2. Crop and downscale it to a review `80x96` candidate.
+3. If the candidate is too painterly, too noisy, or inconsistent with the anchors, run low-strength Retro Diffusion sweeps from the `80x96` candidate.
+4. Use strengths around `0.12`, `0.18`, and `0.24`.
+5. Compare candidates at both actual size and 3x/4x nearest-neighbor preview.
+6. Accept only if identity, crop, and readability survive. If Retro Diffusion changes the character, reject it.
+
+Do not use high strength by default. High strength can fix style but often damages identity, face direction, and specific costume cues.
+
+---
+
 ## Different device or model path
 
 **Stage 1** (build refs) only needs the project venv and Pillow; it does **not** load any image model. It will work on any device that has the repo and the venv.
@@ -105,7 +205,9 @@ For a character that uses a **creator ref** (not a raw photo in `source_raw`), r
 - **`<Output-Name>`:** Exact portrait name the game expects (e.g. `Yellow-Turban`, `Liu-Bei`). Must match the names in `src/main.js` (e.g. `'Yellow-Turban'` in the portrait list) and the key used in dialogue (e.g. `portraitKey: 'yellow-turban'` → asset `Yellow-Turban.png`).
 - **`<name>`:** Base name for the prompt files (e.g. `yellowturban`, `dengmao`).
 
-Output path: use **`public/assets/portraits/generated/`** so the built app finds the portrait at `assets/portraits/generated/<Output-Name>.png`.
+For the current large dialogue system, keep generated review variants in **`public/assets/portraits/generated/`**, then copy the approved runtime result to **`public/assets/portraits/large/<Output-Name>.png`** at exactly `80x96`. Keep the full-resolution source in **`public/assets/portraits/large_sources/<Output-Name>-source.png`**.
+
+Legacy `40x48` portraits live in **`public/assets/portraits/small/`** and are still used as fallback portraits when a large bust does not exist.
 
 ### 2.3 Alternative: portraits from source_raw
 
@@ -123,17 +225,17 @@ make portraits   # regenerate all from source_raw
 
 ## Variant refinement for existing portraits
 
-Use this path when an existing 40x48 portrait is structurally correct, but you want a stronger face pose, expression, or read without rebuilding the character from modular parts.
+Use this path when an existing portrait is structurally correct, but you want a stronger face pose, expression, or read without rebuilding the character from modular parts. For the current large dialogue portraits, do this at `80x96`. The older `40x48` process is still useful when repairing fallback portraits.
 
 1. **Generate concept variants.** Use the existing portrait as the identity reference and make a small set of concepts with different face angles, eye direction, mouth shape, expression, or crop position. Do not target a single mood by default; "battle ready" is only one possible candidate.
 2. **Frame the concept before downscaling.** Do crop, padding, foreground extraction, and placement at the source resolution first. Then downscale once to `40x48` with nearest-neighbor scaling. Do not downscale the full generated image and then move the tiny result around; that bakes in bad composition and throws away useful detail.
-3. **Save the 40x48 framed refs.** Put them in `public/assets/portraits/generated/<character>-variants/`. These are review/reference images, not final art.
-4. **Reject bad 40x48 reads immediately.** Native image generation often produces concepts that look reasonable at preview size but fail as tiny portrait assets. Discard any variant with a white/light border, bad crop, missing margins, changed identity, excessive smoothing, or a face/shoulder mass that does not fit the existing 40x48 dialogue frame.
+3. **Save the framed refs.** Put them in `public/assets/portraits/generated/<character>-variants/`. These are review/reference images, not final art.
+4. **Reject bad small reads immediately.** Native image generation often produces concepts that look reasonable at preview size but fail as tiny portrait assets. Discard any variant with a white/light border, bad crop, missing margins, changed identity, excessive smoothing, or a face/shoulder mass that does not fit the dialogue frame.
 5. **Pick the strongest concept only if it passes the frame test.** Favor identity preservation, readable eyes/mouth, and compatibility with the current dialogue portrait crop over novelty. If none pass, keep the existing portrait or use the creator-ref pipeline instead.
-6. **Run low-strength RetroDiffusion sweeps.** Use the chosen 40x48 concept as `--input-ref` with strengths around `0.12`, `0.18`, and `0.24`. This keeps the composition while re-pixeling the portrait into the local art style.
-7. **Compare a contact sheet.** Upscale candidates with nearest-neighbor only. Pick the version that still reads clearly at 40x48.
-8. **Replace the live portrait only after visual approval.** Copy the selected candidate to `public/assets/portraits/generated/<Name>.png`. Keep discarded variants untracked unless they are useful review artifacts.
-9. **Verify dimensions and frame fit.** The shipped file must remain exactly `40x48`, and the visible character should not touch the canvas edges unless the previous portrait did so intentionally.
+6. **Run low-strength RetroDiffusion sweeps.** Use the chosen concept as `--input-ref` with strengths around `0.12`, `0.18`, and `0.24`. This keeps the composition while re-pixeling the portrait into the local art style.
+7. **Compare a contact sheet.** Upscale candidates with nearest-neighbor only. Pick the version that still reads clearly at actual size.
+8. **Replace the live portrait only after visual approval.** Copy the selected large candidate to `public/assets/portraits/large/<Name>.png`; copy a fallback candidate to `public/assets/portraits/small/<Name>.png` only when explicitly updating the fallback. Keep discarded variants untracked unless they are useful review artifacts.
+9. **Verify dimensions and frame fit.** The shipped large file must remain exactly `80x96`; fallback small portraits must remain exactly `40x48`. The visible character should not touch the canvas edges unless the previous portrait did so intentionally.
 
 Example low-strength sweep:
 
@@ -177,7 +279,10 @@ Example low-strength sweep:
 | Character parts (heads, hats, etc.) | `assets/portraits/character_creator/` |
 | Creator refs (built) | `assets/portraits/img2img_refs/creator_refs/` |
 | Prompt / negative prompt files | `public/assets/portraits/img2img_refs/prompts/` |
-| **Final portraits (game loads these)** | `public/assets/portraits/generated/` |
+| **Large dialogue portraits (game loads these first)** | `public/assets/portraits/large/` |
+| **Large portrait sources** | `public/assets/portraits/large_sources/` |
+| **Small fallback portraits** | `public/assets/portraits/small/` |
+| Generated review variants / legacy outputs | `public/assets/portraits/generated/` |
 | Source raw (for make portrait NAME=...) | `assets/portraits/source_raw/` |
 
 Use **`./tools/venv_xtts/bin/python3`** when that venv exists (e.g. on the main dev machine). On another device, use a venv that has the same dependencies (Pillow, torch, diffusers) and set the model path via the env vars above if the model lives elsewhere.

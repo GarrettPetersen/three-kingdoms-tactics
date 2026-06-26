@@ -17,6 +17,7 @@ import { LiuboScene } from './scenes/LiuboScene.js';
 import { DebugStoryGraphScene } from './scenes/DebugStoryGraphScene.js';
 import { StoryScriptReaderScene } from './scenes/StoryScriptReaderScene.js';
 import { STORY_ROUTES } from './data/StoryGraph.js';
+import { PORTRAIT_ASSET_NAMES } from './data/PortraitRegistry.js';
 
 const canvas = document.getElementById('game-canvas');
 const gameContainer = document.getElementById('game-container');
@@ -695,39 +696,7 @@ async function init() {
             });
         });
 
-        // Character names for dedicated portraits
-        const portraitNames = [
-            'Liu-Bei', 'Guan-Yu', 'Zhang-Fei', 'Cao-Cao', 'Cao-Ren', 'Zhou-Jing', 'Diaochan', 
-            'Deng-Mao', 'Cheng-Yuanzhi', 'The-Noticeboard', 'Yellow-Turban',
-            'Dong-Zhuo', 'Zhang-Jiao', 'Zhang-Bao',
-            'Huangfu-Song-generic', 'Zhu-Jun-generic',
-            'Yuan-Shao',
-            'He-Jin',
-            'panyin',
-            'eunuch',
-            'eunuch-guard',
-            'palace-assassin',
-            'Sun-Jian',
-            'farmer',
-            'farmer-v1',
-            'farmer-v2',
-            'farmer-v3',
-            'farmer-v4',
-            'farmer-v5',
-            'farmer-female',
-            'merchant',
-            'blacksmith',
-            'xiaoer',
-            'soldier',
-            'soldier-v1',
-            'soldier-v2',
-            'soldier-v3',
-            'soldier-v4',
-            'soldier-v5',
-            'Zhang-Liang',
-            'Gong-Jing',
-            'Lu-Zhi'
-        ];
+        const portraitNames = PORTRAIT_ASSET_NAMES;
 
         await Promise.all([
             assets.loadPortraits(portraitNames),
