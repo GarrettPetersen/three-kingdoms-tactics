@@ -178,7 +178,7 @@ def process_portrait(
     guidance = 7.5 if guidance_override is None else float(guidance_override)
     steps = 20 if steps_override is None else int(steps_override)
 
-    prompt = prompt_override or f"pixel art portrait of Chinese Han Dynasty {age} {gender} {name_clean}, {features} {age_keywords} {eye_prompt}, distinct nose and mouth, proportionate facial features, sharp crisp outlines, cleaned up, refined, consistent palette, sharp pixels, 16-bit style"
+    prompt = prompt_override or f"pixel art portrait of Chinese Han Dynasty {age} {gender} {name_clean}, {features} {age_keywords} {eye_prompt}, distinct nose and mouth, proportionate facial features, sharp crisp outlines, cleaned up, refined, high-saturation vibrant SNES palette, consistent palette, sharp pixels, 16-bit style"
     negative_prompt = negative_prompt_override or f"blurry, low quality, photographic, realistic, gradient, 3d render, soft, smooth, fuzzy outlines, merged nose and mouth, short face, distorted anatomy, {negative_age} changed face, different character"
     
     try:

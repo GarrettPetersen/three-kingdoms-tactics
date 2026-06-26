@@ -30,7 +30,7 @@ Large portraits should be treated as **portrait-shaped assets**, not landscape c
 
 ## Style guide
 
-The portrait style target is **cartoony historical pixel-art busts with strong shapes**, not finely rendered painterly portraits. The portraits that downscale best are the ones closer to the earlier Liu Bei, Zhang Fei, Cao Cao, Dong Zhuo, and He Jin variants: simplified planes, readable eyes, bold silhouettes, and limited mid-tone noise.
+The portrait style target is **cartoony historical pixel-art busts with strong shapes and high-saturation colour**, not finely rendered painterly portraits. The portraits that downscale best are the ones closer to the earlier Liu Bei, Zhang Fei, Cao Cao, Dong Zhuo, and He Jin variants: simplified planes, readable eyes, bold silhouettes, vibrant SNES-like colour groups, and limited mid-tone noise.
 
 ### Style anchors
 
@@ -50,6 +50,7 @@ Sun Jian, Yuan Shao, Zhu Jun, and the Zhang brothers are acceptable references f
 - One dominant face direction: front or 3/4. Avoid ambiguous twisted head/eye directions.
 - Large readable eye, brow, nose, mouth, beard, hat, and hair masses.
 - Simple color groups with only a few meaningful highlight and shadow steps.
+- High saturation that can stand against the setting backgrounds. As a rule of thumb, finished portraits should be roughly `+30%` more saturated than a conservative image-model output, while still preserving readable skin tones and dark outlines.
 - Strong clothing silhouette below the head so the portrait reads as a bust, not a floating face.
 - Distinct character-specific cues: Guan Yu's green and long beard, Zhang Fei's red headband and fierce brow, Cao Cao's composed purple/black courtly palette, etc.
 - A simple coloured background can help the portrait feel intentional and finished. Prefer one restrained hue or a soft two-step gradient that complements the character.
@@ -59,7 +60,7 @@ Sun Jian, Yuan Shao, Zhu Jun, and the Zhang brothers are acceptable references f
 - Extreme close-ups that crop off hat, shoulders, beard, or hair.
 - High-detail painterly rendering that becomes noisy after nearest-neighbor downscale.
 - Washed-out or photo-like skin gradients.
-- Neon greens, hot pink skin, or other saturated colors that do not match the rest of the cast.
+- Uncontrolled neon greens, hot pink skin, or other saturated colors that do not match the rest of the cast. Aim for strong period-appropriate saturation, not candy colours.
 - Thin hair strands, tiny decorative patterns, or subtle linework that will alias into clutter.
 - White/light outline artifacts around the figure.
 - Busy backgrounds, scenery, hard patterns, or high-contrast halos that compete with the face.
@@ -72,7 +73,8 @@ Use this kind of wording for new source images:
 ```text
 high-quality pixel art bust portrait, Three Kingdoms era Chinese character,
 cartoony historical strategy RPG style, strong readable silhouette, simplified
-face planes, bold eyes and brows, clean nose and mouth shapes, limited palette,
+face planes, bold eyes and brows, clean nose and mouth shapes, high-saturation
+vibrant SNES palette with controlled skin tones,
 simple coloured background, head and upper torso visible, portrait-oriented crop,
 not an extreme close-up, no text, no watermark, no white outline
 ```
