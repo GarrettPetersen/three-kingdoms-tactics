@@ -15,16 +15,16 @@ For the visual target, use [Portrait Style Guide](PORTRAIT_STYLE_GUIDE.md) as th
 
 ## Runtime portrait layout
 
-The current dialogue system uses two portrait sizes:
+The current dialogue system uses one runtime portrait size:
 
 | Purpose | Size | Path |
 |--------|------|------|
 | Large dialogue busts | `80x96` | `public/assets/portraits/large/<Name>.png` |
-| Archived / fallback small portraits | `40x48` | `public/assets/portraits/small/<Name>.png` |
+| Legacy small portrait archive, not loaded at runtime | `40x48` | `public/assets/portraits/small/<Name>.png` |
 | Large source images kept for recropping | source resolution | `public/assets/portraits/large_sources/<Name>-source.png` |
 | Old generated output and review variants | varies | `public/assets/portraits/generated/` |
 
-The game first tries to load a large dialogue portrait as `portrait_large_<Name>`. If that is missing, it falls back to the small portrait and then to sprite zoom logic.
+The game loads dialogue portraits only as `portrait_large_<Name>`. If that is missing, it falls back to sprite zoom logic. Runtime code should not load `portrait_<Name>` from `small` or `generated`.
 
 Large portraits should be treated as **portrait-shaped assets**, not landscape crops. The shipped runtime PNG must be exactly `80x96`, preserving the old `40x48` shape at 2x scale.
 
@@ -211,7 +211,7 @@ For a character that uses a **creator ref** (not a raw photo in `source_raw`), r
 
 For the current large dialogue system, keep generated review variants in **`public/assets/portraits/generated/`**, then copy the approved runtime result to **`public/assets/portraits/large/<Output-Name>.png`** at exactly `80x96`. Keep the full-resolution source in **`public/assets/portraits/large_sources/<Output-Name>-source.png`**.
 
-Legacy `40x48` portraits live in **`public/assets/portraits/small/`** and are still used as fallback portraits when a large bust does not exist.
+Legacy `40x48` portraits live in **`public/assets/portraits/small/`** as an archive only. They are not runtime fallbacks.
 
 ### 2.3 Alternative: portraits from source_raw
 
@@ -238,8 +238,8 @@ Use this path when an existing portrait is structurally correct, but you want a 
 5. **Pick the strongest concept only if it passes the frame test.** Favor identity preservation, readable eyes/mouth, and compatibility with the current dialogue portrait crop over novelty. If none pass, keep the existing portrait or use the creator-ref pipeline instead.
 6. **Run low-strength RetroDiffusion sweeps.** Use the chosen concept as `--input-ref` with strengths around `0.12`, `0.18`, and `0.24`. This keeps the composition while re-pixeling the portrait into the local art style.
 7. **Compare a contact sheet.** Upscale candidates with nearest-neighbor only. Pick the version that still reads clearly at actual size.
-8. **Replace the live portrait only after visual approval.** Copy the selected large candidate to `public/assets/portraits/large/<Name>.png`; copy a fallback candidate to `public/assets/portraits/small/<Name>.png` only when explicitly updating the fallback. Keep discarded variants untracked unless they are useful review artifacts.
-9. **Verify dimensions and frame fit.** The shipped large file must remain exactly `80x96`; fallback small portraits must remain exactly `40x48`. The visible character should not touch the canvas edges unless the previous portrait did so intentionally.
+8. **Replace the live portrait only after visual approval.** Copy the selected large candidate to `public/assets/portraits/large/<Name>.png`. Keep discarded variants untracked unless they are useful review artifacts.
+9. **Verify dimensions and frame fit.** The shipped large file must remain exactly `80x96`. If you deliberately touch the legacy small archive, those files must remain exactly `40x48`. The visible character should not touch the canvas edges unless the previous portrait did so intentionally.
 
 Example low-strength sweep:
 
@@ -272,7 +272,7 @@ Example low-strength sweep:
    `public/assets/portraits/img2img_refs/prompts/yellowturban.prompt.txt` and `yellowturban.negative_prompt.txt`.
 4. **Generate portrait:**  
    `./tools/venv_xtts/bin/python3 tools/generate_portraits.py --input-ref assets/portraits/img2img_refs/creator_refs/yellowturban_creator_ref.png --output public/assets/portraits/generated/Yellow-Turban.png --prompt-file public/assets/portraits/img2img_refs/prompts/yellowturban.prompt.txt --negative-prompt-file public/assets/portraits/img2img_refs/prompts/yellowturban.negative_prompt.txt`
-5. **Game:** Portrait is loaded as `portrait_Yellow-Turban` from `assets/portraits/generated/Yellow-Turban.png`; dialogue uses `portraitKey: 'yellow-turban'` which maps to that asset.
+5. **Game:** Portrait is loaded as `portrait_large_Yellow-Turban` from `assets/portraits/large/Yellow-Turban.png`; dialogue uses `portraitKey: 'yellow-turban'` which maps to that asset.
 
 ---
 
@@ -285,7 +285,7 @@ Example low-strength sweep:
 | Prompt / negative prompt files | `public/assets/portraits/img2img_refs/prompts/` |
 | **Large dialogue portraits (game loads these first)** | `public/assets/portraits/large/` |
 | **Large portrait sources** | `public/assets/portraits/large_sources/` |
-| **Small fallback portraits** | `public/assets/portraits/small/` |
+| Legacy small portrait archive | `public/assets/portraits/small/` |
 | Generated review variants / legacy outputs | `public/assets/portraits/generated/` |
 | Source raw (for make portrait NAME=...) | `assets/portraits/source_raw/` |
 

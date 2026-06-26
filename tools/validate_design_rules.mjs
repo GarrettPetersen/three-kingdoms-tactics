@@ -382,6 +382,27 @@ function listJsFiles(dir) {
     });
 }
 
+function checkNoSmallPortraitRuntimeUsage() {
+    const srcRoot = path.join(projectRoot, 'src');
+    const files = listJsFiles(srcRoot);
+
+    files.forEach(filePath => {
+        const relPath = path.relative(projectRoot, filePath);
+        const source = fs.readFileSync(filePath, 'utf8');
+        const lines = source.split(/\r?\n/);
+
+        lines.forEach((line, index) => {
+            if (/assets\/portraits\/(?:small|generated)\//.test(line)) {
+                failures.push(`${relPath}:${index + 1} must not load legacy small/generated portraits at runtime; use portraits/large plus sprite fallback.`);
+            }
+
+            if (/(?:assets\.getImage|loadPortrait)\s*\(\s*['"`]portrait_(?!large_)/.test(line)) {
+                failures.push(`${relPath}:${index + 1} must not request portrait_<Name>; use portrait_large_<Name> or sprite fallback.`);
+            }
+        });
+    });
+}
+
 function checkCanvasTextRendering() {
     const srcRoot = path.join(projectRoot, 'src');
     const files = listJsFiles(srcRoot);
@@ -874,6 +895,7 @@ checkBattleRows();
 checkZhuoTrainingBattle();
 checkQingzhouCityGatePrelude();
 checkLiuboPerchRules();
+checkNoSmallPortraitRuntimeUsage();
 checkCanvasTextRendering();
 checkNarrativeScriptImmutability();
 checkBattleDialogueScriptImmutability();

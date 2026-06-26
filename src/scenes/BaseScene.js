@@ -821,7 +821,7 @@ export class BaseScene {
         ctx.lineWidth = 1;
         ctx.strokeRect(px + 0.5, py + 0.5, panelWidth - 1, panelHeight - 1);
 
-        // Portraits use a large dialogue bust when available, with the old inset box as fallback.
+        // Portraits use a large dialogue bust when available, with a sprite crop as fallback.
         const portraitW = 40;
         const portraitH = 48;
         const portraitX = px + 6;
@@ -846,7 +846,6 @@ export class BaseScene {
         };
 
         // Try to find a dedicated portrait first
-        let portraitImg = null;
         let largePortraitImg = null;
         let usesLargePortrait = false;
         const resolvedPortraitId = resolvePortraitId(step);
@@ -881,7 +880,6 @@ export class BaseScene {
             const dedicatedPortraitKey = getPortraitAssetKey(resolvedPortraitId);
             if (dedicatedPortraitKey) {
                 largePortraitImg = assets.getImage(`portrait_large_${dedicatedPortraitKey}`);
-                portraitImg = assets.getImage(`portrait_${dedicatedPortraitKey}`);
             }
 
             if (largePortraitImg) {
@@ -891,7 +889,7 @@ export class BaseScene {
                 drawInsetPortraitFrame();
             }
 
-            if (!largePortraitImg && !portraitImg) {
+            if (!largePortraitImg) {
                 // Universal fallback: zoomed sprite portrait from the actor sheet.
                 const rawKey = resolvedPortraitId || '';
                 const normalizedKey = rawKey.replace(/-/g, '').toLowerCase();
@@ -936,9 +934,6 @@ export class BaseScene {
                         ctx.drawImage(zoomCanvas, cropX, cropY, cropW, cropH, portraitX, portraitY, portraitW, portraitH);
                     }
                 }
-            } else if (!largePortraitImg && portraitImg) {
-                // Draw dedicated portrait at native 1:1 resolution
-                ctx.drawImage(portraitImg, portraitX, portraitY, portraitW, portraitH);
             }
         }
 

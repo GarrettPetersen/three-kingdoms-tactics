@@ -19,6 +19,19 @@ const RECOVERY_DIALOGUE = {
     }
 };
 
+const RECOVERY_SPRITE_KEYS = {
+    liubei: 'liubei',
+    'liu-bei': 'liubei',
+    guanyu: 'guanyu',
+    'guan-yu': 'guanyu',
+    zhangfei: 'zhangfei',
+    'zhang-fei': 'zhangfei',
+    caocao: 'caocao',
+    'cao-cao': 'caocao',
+    caoren: 'caoren',
+    'cao-ren': 'caoren'
+};
+
 export class RecoveryScene extends BaseScene {
     constructor() {
         super();
@@ -45,6 +58,24 @@ export class RecoveryScene extends BaseScene {
         } else {
             this.finish();
         }
+    }
+
+    getRecoverySpriteKey(current) {
+        if (current?.imgKey && assets.getImage(current.imgKey)) return current.imgKey;
+
+        const candidates = [
+            current?.imgKey,
+            current?.id,
+            current?.name
+        ]
+            .filter(Boolean)
+            .map(value => String(value).trim().replace(/\s+/g, '-').toLowerCase());
+
+        for (const candidate of candidates) {
+            const mapped = RECOVERY_SPRITE_KEYS[candidate] || candidate.replace(/-/g, '');
+            if (assets.getImage(mapped)) return mapped;
+        }
+        return null;
     }
 
     playCurrentVoice() {
@@ -96,53 +127,56 @@ export class RecoveryScene extends BaseScene {
             outline: true
         });
 
-        // Portrait
-        const portraitKey = `portrait_${current.name.replace(/ /g, '-')}`;
-        const portraitImg = assets.getImage(portraitKey);
-        if (portraitImg) {
-            const px = cx - 20;
-            const py = 70;
+        // Character sprite
+        const spriteKey = this.getRecoverySpriteKey(current);
+        const spriteImg = spriteKey ? assets.getImage(spriteKey) : null;
+        if (spriteImg) {
+            const frame = Math.floor(timestamp / 300);
+            const spriteFeetY = 114;
+            ctx.save();
+            ctx.globalAlpha = 0.45;
             ctx.fillStyle = '#000';
-            ctx.fillRect(px - 1, py - 1, 42, 50);
-            ctx.drawImage(portraitImg, px, py, 40, 48);
-            ctx.strokeStyle = '#444';
-            ctx.strokeRect(px - 0.5, py - 0.5, 41, 49);
+            ctx.beginPath();
+            ctx.ellipse(cx, spriteFeetY + 18, 28, 7, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+            this.drawCharacter(ctx, spriteImg, 'sitting', frame, cx, spriteFeetY);
         }
 
         // Name (localized)
         const displayName = getLocalizedCharacterName(current.name) || current.name;
-        this.drawPixelText(ctx, displayName, cx, 125, { 
-            color: '#fff', 
-            font: '16px Silkscreen', 
-            align: 'center' 
+        this.drawPixelText(ctx, displayName, cx, 150, {
+            color: '#fff',
+            font: '16px Silkscreen',
+            align: 'center'
         });
 
         // XP Loss Info
         this.drawPixelText(ctx, getLocalizedText({
             en: `Returned to Level ${current.level}`,
             zh: `恢复到等级 ${current.level}`
-        }), cx, 140, {
-            color: '#aaa', 
-            font: '8px Tiny5', 
-            align: 'center' 
+        }), cx, 165, {
+            color: '#aaa',
+            font: '8px Tiny5',
+            align: 'center'
         });
         if (current.xpLost > 0) {
             this.drawPixelText(ctx, getLocalizedText({
                 en: `-${current.xpLost} XP lost while wounded`,
                 zh: `重伤期间损失 -${current.xpLost} 经验`
-            }), cx, 150, {
-                color: '#ff4444', 
-                font: '8px Tiny5', 
-                align: 'center' 
+            }), cx, 175, {
+                color: '#ff4444',
+                font: '8px Tiny5',
+                align: 'center'
             });
         }
 
         // Dialogue Box
         const dialogue = RECOVERY_DIALOGUE[current.id] || { text: { en: "I'm back on my feet.", zh: "我重新站起来了。" } };
-        const boxW = 200;
-        const boxH = 50;
+        const boxW = Math.min(228, canvas.width - 28);
+        const boxH = 46;
         const bx = cx - boxW / 2;
-        const by = 170;
+        const by = 186;
 
         ctx.fillStyle = 'rgba(20, 20, 20, 0.9)';
         ctx.fillRect(bx, by, boxW, boxH);
@@ -164,7 +198,7 @@ export class RecoveryScene extends BaseScene {
             ctx.save();
             ctx.globalAlpha = pulse;
             const continueText = getLocalizedText(UI_TEXT['CLICK TO CONTINUE']);
-            this.drawPixelText(ctx, continueText, cx, 235, {
+            this.drawPixelText(ctx, continueText, cx, 241, {
                 color: '#aaa',
                 font: '8px Silkscreen',
                 align: 'center'

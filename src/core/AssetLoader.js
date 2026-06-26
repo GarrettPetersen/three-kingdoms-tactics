@@ -622,10 +622,6 @@ export class AssetLoader {
         const promises = characterNames.flatMap(name => {
             const formattedName = name.replace(/ /g, '-');
             return [
-                loadPortrait(`portrait_${formattedName}`, [
-                    `assets/portraits/small/${formattedName}.png`,
-                    `assets/portraits/generated/${formattedName}.png`
-                ]),
                 loadPortrait(`portrait_large_${formattedName}`, [
                     `assets/portraits/large/${formattedName}.png`
                 ])

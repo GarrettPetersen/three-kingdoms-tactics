@@ -143,7 +143,7 @@ Reject or regenerate if:
 | --- | --- |
 | Live large portraits | `public/assets/portraits/large/<Name>.png` |
 | Large source archive | `public/assets/portraits/large_sources/<Name>-source.png` |
-| Small fallback archive | `public/assets/portraits/small/<Name>.png` |
+| Legacy small portrait archive, not loaded at runtime | `public/assets/portraits/small/<Name>.png` |
 | Generated review variants | `public/assets/portraits/generated/` |
 | Built-in image review outputs | `public/assets/portraits/generated/builtin_cartoon_review/` |
 | Prompt files | `public/assets/portraits/img2img_refs/prompts/` |
