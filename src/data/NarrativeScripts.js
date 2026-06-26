@@ -1304,7 +1304,7 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'addActor', id: 'zhangfei', imgKey: 'zhangfei', x: 120, y: 200, flip: true },
         { type: 'command', action: 'animate', id: 'liubei', animation: 'recovery' },
         { type: 'command', action: 'animate', id: 'zhangfei', animation: 'recovery' },
-        { type: 'command', action: 'addActor', id: 'bar_farmer', imgKey: 'farmer', x: 36, y: 194 },
+        { type: 'command', action: 'addActor', id: 'bar_farmer', imgKey: 'bandit2', x: 36, y: 194 },
         { type: 'command', action: 'animate', id: 'bar_farmer', animation: 'recovery' },
         { type: 'command', action: 'addActor', id: 'liubo_player', imgKey: 'xiaoer', x: 198, y: 158, flip: true },
         { type: 'command', action: 'animate', id: 'liubo_player', animation: 'recovery' },
