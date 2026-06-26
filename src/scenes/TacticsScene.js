@@ -5943,6 +5943,9 @@ export class TacticsScene extends BaseScene {
     /** Start a boulder rolling along the precomputed path. Caller must clear boulder from current cell. */
     startBoulderRoll(boulder, path, dirIndex) {
         if (!path || path.length < 2) return;
+        if (this.activeActionMotionToken) {
+            this.activeActionMotionToken.hadBoulderRoll = true;
+        }
         const start = path[0];
         const cell = this.tacticsMap.getCell(start.r, start.q);
         if (cell && cell.unit === boulder) cell.unit = null;
@@ -6257,6 +6260,42 @@ export class TacticsScene extends BaseScene {
             timer: 1000,
             maxTime: 1000
         });
+    }
+
+    hasPendingActionMotion() {
+        return this.units.some(u => u.rollData || u.pushData);
+    }
+
+    waitForActionMotionToSettle(callback, token = null) {
+        const startedAt = Date.now();
+        const maxWaitMs = 12000;
+        let quietSince = null;
+
+        const check = () => {
+            const hasMotion = this.hasPendingActionMotion();
+            const now = Date.now();
+
+            if (!hasMotion) {
+                if (quietSince === null) quietSince = now;
+                const quietMs = token?.hadBoulderRoll ? 320 : 32;
+                if (now - quietSince >= quietMs || now - startedAt >= maxWaitMs) {
+                    callback();
+                    return;
+                }
+            } else {
+                quietSince = null;
+            }
+
+            if (now - startedAt >= maxWaitMs) {
+                console.warn('Action motion did not settle before timeout; completing action.');
+                callback();
+                return;
+            }
+
+            setTimeout(check, 16);
+        };
+
+        check();
     }
 
     triggerHexDamageWave(r, q, amplitudePx = 3.2, durationMs = 760, delayMs = 0, options = {}) {
@@ -6777,6 +6816,8 @@ export class TacticsScene extends BaseScene {
         // Mark which units were alive at the very start of this logical action
         // to determine if a collision should occur vs sliding over a corpse.
         this.units.forEach(u => u._aliveAtStartOfAction = u.hp > 0);
+        const actionMotionToken = { hadBoulderRoll: false };
+        this.activeActionMotionToken = actionMotionToken;
         this._cityGateDamageActionActive = true;
         this._cityGateDamagedThisAttack = false;
 
@@ -6794,6 +6835,9 @@ export class TacticsScene extends BaseScene {
         if (this.turn === 'player' && attacker.faction !== 'player') {
             this._cityGateDamageActionActive = false;
             this._cityGateDamagedThisAttack = false;
+            if (this.activeActionMotionToken === actionMotionToken) {
+                this.activeActionMotionToken = null;
+            }
             if (onComplete) onComplete();
             return;
         }
@@ -6805,14 +6849,19 @@ export class TacticsScene extends BaseScene {
             completed = true;
             this._cityGateDamageActionActive = false;
             this._cityGateDamagedThisAttack = false;
-            if (onComplete) onComplete();
+            this.waitForActionMotionToSettle(() => {
+                if (this.activeActionMotionToken === actionMotionToken) {
+                    this.activeActionMotionToken = null;
+                }
+                if (onComplete) onComplete();
+            }, actionMotionToken);
         };
         setTimeout(() => {
             if (!completed) {
                 console.warn(`Attack ${attackKey} by ${attacker.id} timed out. Forcing completion.`);
                 wrappedOnComplete();
             }
-        }, 3000); // 3s fallback
+        }, 12000); // Emergency fallback only; several legitimate attacks/effects run longer than 3s.
 
         attacker.intent = null; // Clear intent so arrow disappears
         const attack = ATTACKS[attackKey];
