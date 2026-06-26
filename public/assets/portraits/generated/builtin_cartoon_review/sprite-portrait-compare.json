@@ -150,14 +150,14 @@
     "key": "Lu-Zhi",
     "file": "Lu-Zhi.png",
     "spriteKey": "zhoujing",
-    "spriteFile": "071_chendeng.png",
+    "spriteFile": "105_zhoujing.png",
     "note": "shared sprite"
   },
   {
     "key": "merchant",
     "file": "merchant.png",
     "spriteKey": "merchant",
-    "spriteFile": "090_fushang01.png",
+    "spriteFile": "104_panyin.png",
     "note": ""
   },
   {
@@ -275,7 +275,7 @@
     "key": "Zhou-Jing",
     "file": "Zhou-Jing.png",
     "spriteKey": "zhoujing",
-    "spriteFile": "071_chendeng.png",
+    "spriteFile": "105_zhoujing.png",
     "note": ""
   },
   {
