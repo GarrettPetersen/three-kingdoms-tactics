@@ -8,6 +8,38 @@ from PIL import Image
 # --- MAC MEMORY OPTIMIZATION ---
 os.environ["PYTORCH_MPS_HIGH_WATERMARK_RATIO"] = "0.0"
 
+if not hasattr(torch, "xpu"):
+    class _NoXpuBackend:
+        @staticmethod
+        def empty_cache():
+            return None
+
+        @staticmethod
+        def device_count():
+            return 0
+
+        @staticmethod
+        def manual_seed(seed):
+            return None
+
+        @staticmethod
+        def reset_peak_memory_stats(*args, **kwargs):
+            return None
+
+        @staticmethod
+        def max_memory_allocated(*args, **kwargs):
+            return 0
+
+        @staticmethod
+        def synchronize(*args, **kwargs):
+            return None
+
+        @staticmethod
+        def is_available():
+            return False
+
+    torch.xpu = _NoXpuBackend()
+
 # --- SURGICAL STANDALONE PATCH ---
 try:
     import transformers.utils.import_utils as t_utils

@@ -121,6 +121,42 @@ make portraits   # regenerate all from source_raw
 
 ---
 
+## Variant refinement for existing portraits
+
+Use this path when an existing 40x48 portrait is structurally correct, but you want a stronger face pose, expression, or read without rebuilding the character from modular parts.
+
+1. **Generate concept variants.** Use the existing portrait as the identity reference and make a small set of concepts with different face angles, eye direction, mouth shape, expression, or crop position. Do not target a single mood by default; "battle ready" is only one possible candidate.
+2. **Frame the concept before downscaling.** Do crop, padding, foreground extraction, and placement at the source resolution first. Then downscale once to `40x48` with nearest-neighbor scaling. Do not downscale the full generated image and then move the tiny result around; that bakes in bad composition and throws away useful detail.
+3. **Save the 40x48 framed refs.** Put them in `public/assets/portraits/generated/<character>-variants/`. These are review/reference images, not final art.
+4. **Reject bad 40x48 reads immediately.** Native image generation often produces concepts that look reasonable at preview size but fail as tiny portrait assets. Discard any variant with a white/light border, bad crop, missing margins, changed identity, excessive smoothing, or a face/shoulder mass that does not fit the existing 40x48 dialogue frame.
+5. **Pick the strongest concept only if it passes the frame test.** Favor identity preservation, readable eyes/mouth, and compatibility with the current dialogue portrait crop over novelty. If none pass, keep the existing portrait or use the creator-ref pipeline instead.
+6. **Run low-strength RetroDiffusion sweeps.** Use the chosen 40x48 concept as `--input-ref` with strengths around `0.12`, `0.18`, and `0.24`. This keeps the composition while re-pixeling the portrait into the local art style.
+7. **Compare a contact sheet.** Upscale candidates with nearest-neighbor only. Pick the version that still reads clearly at 40x48.
+8. **Replace the live portrait only after visual approval.** Copy the selected candidate to `public/assets/portraits/generated/<Name>.png`. Keep discarded variants untracked unless they are useful review artifacts.
+9. **Verify dimensions and frame fit.** The shipped file must remain exactly `40x48`, and the visible character should not touch the canvas edges unless the previous portrait did so intentionally.
+
+Example low-strength sweep:
+
+```bash
+./tools/venv_xtts/bin/python3 tools/generate_portraits.py \
+  --input-ref public/assets/portraits/generated/<character>-variants/<Chosen-Concept>.png \
+  --output public/assets/portraits/generated/<character>-variants/<Name>-rd-s012.png \
+  --strength 0.12 \
+  --steps 20
+./tools/venv_xtts/bin/python3 tools/generate_portraits.py \
+  --input-ref public/assets/portraits/generated/<character>-variants/<Chosen-Concept>.png \
+  --output public/assets/portraits/generated/<character>-variants/<Name>-rd-s018.png \
+  --strength 0.18 \
+  --steps 20
+./tools/venv_xtts/bin/python3 tools/generate_portraits.py \
+  --input-ref public/assets/portraits/generated/<character>-variants/<Chosen-Concept>.png \
+  --output public/assets/portraits/generated/<character>-variants/<Name>-rd-s024.png \
+  --strength 0.24 \
+  --steps 20
+```
+
+---
+
 ## Worked example: Yellow Turban
 
 1. **Spec (in `build_character_creator_refs.py`):** `"yellowturban"` with layers including `("hat_headscarf.png", {})` and `manual_palette` with `headscarf_colors` (no `headcloth_tones`).

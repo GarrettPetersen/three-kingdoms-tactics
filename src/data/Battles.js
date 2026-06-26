@@ -1265,7 +1265,7 @@ export const BATTLES = {
             },
             {
                 speaker: 'sunjian',
-                portraitKey: 'chengyuanzhi',
+                portraitKey: 'sun-jian',
                 name: 'Sun Jian',
                 voiceId: 'ch2_wan_north_sj_01',
                 text: {
@@ -1379,7 +1379,7 @@ export const BATTLES = {
             },
             {
                 speaker: 'sunjian',
-                portraitKey: 'chengyuanzhi',
+                portraitKey: 'sun-jian',
                 name: 'Sun Jian',
                 voiceId: 'ch2_wan_final_sj_01',
                 text: {
@@ -1431,7 +1431,7 @@ export const BATTLES = {
             },
             {
                 speaker: 'sunjian',
-                portraitKey: 'chengyuanzhi',
+                portraitKey: 'sun-jian',
                 name: 'Sun Jian',
                 voiceId: 'ch2_wan_final_sj_02',
                 text: {
