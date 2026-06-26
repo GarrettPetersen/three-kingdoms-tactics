@@ -185,6 +185,13 @@ export const PORTRAIT_TO_SPRITE_KEY = Object.freeze({
     'lu-zhi': 'zhoujing',
     'huangfu-song-generic': 'huangfusong_sprite',
     'zhu-jun-generic': 'zhujun_sprite',
+    'farmer': 'farmer',
+    'farmer-v1': 'farmer',
+    'farmer-v2': 'bandit2',
+    'farmer-v3': 'bandit2',
+    'farmer-v4': 'bandit2',
+    'farmer-v5': 'bandit2',
+    'farmer-female': 'farmer2',
     'yellow-turban': 'yellowturban'
 });
 

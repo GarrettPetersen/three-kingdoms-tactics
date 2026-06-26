@@ -2,6 +2,8 @@
 
 This doc explains how to create or update character portraits used in dialogue. The pipeline has two stages: **building the reference image** from modular parts, then **running img2img** to produce the final portrait.
 
+For the visual target, use [Portrait Style Guide](PORTRAIT_STYLE_GUIDE.md) as the canonical reference. This file focuses on workflow and tooling.
+
 ---
 
 ## Prerequisites

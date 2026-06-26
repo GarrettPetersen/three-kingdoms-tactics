@@ -793,7 +793,7 @@ async function init() {
                 dongzhuo: 'assets/characters/002_dongzhuo.png',
                 hejin: 'assets/characters/101_hejin.png',
                 yuanshao: 'assets/characters/009_yuanshao.png',
-                panyin: 'assets/characters/090_fushang01.png',
+                panyin: 'assets/characters/104_panyin.png',
                 eunuch: 'assets/characters/086_xiaoer01.png',
                 eunuch_guard: 'assets/characters/087_chushi01.png',
                 palace_assassin: 'assets/characters/102_palace_assassin.png',

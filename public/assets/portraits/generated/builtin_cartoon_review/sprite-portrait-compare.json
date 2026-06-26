@@ -1,0 +1,288 @@
+[
+  {
+    "key": "blacksmith",
+    "file": "blacksmith.png",
+    "spriteKey": "blacksmith",
+    "spriteFile": "091_tiejiang01.png",
+    "note": ""
+  },
+  {
+    "key": "butcher",
+    "file": "butcher.png",
+    "spriteKey": "butcher",
+    "spriteFile": "082_tufu01.png",
+    "note": ""
+  },
+  {
+    "key": "Cao-Cao",
+    "file": "Cao-Cao.png",
+    "spriteKey": "caocao",
+    "spriteFile": "031_caocao.png",
+    "note": ""
+  },
+  {
+    "key": "Cao-Ren",
+    "file": "Cao-Ren.png",
+    "spriteKey": "caoren",
+    "spriteFile": "034_caoren.png",
+    "note": ""
+  },
+  {
+    "key": "Cheng-Yuanzhi",
+    "file": "Cheng-Yuanzhi.png",
+    "spriteKey": "chengyuanzhi",
+    "spriteFile": "027_chengpu.png",
+    "note": ""
+  },
+  {
+    "key": "Deng-Mao",
+    "file": "Deng-Mao.png",
+    "spriteKey": "dengmao",
+    "spriteFile": "028_xusheng.png",
+    "note": ""
+  },
+  {
+    "key": "Dong-Zhuo",
+    "file": "Dong-Zhuo.png",
+    "spriteKey": "dongzhuo",
+    "spriteFile": "002_dongzhuo.png",
+    "note": ""
+  },
+  {
+    "key": "eunuch-guard",
+    "file": "eunuch-guard.png",
+    "spriteKey": "eunuch_guard",
+    "spriteFile": "087_chushi01.png",
+    "note": ""
+  },
+  {
+    "key": "eunuch",
+    "file": "eunuch.png",
+    "spriteKey": "eunuch",
+    "spriteFile": "086_xiaoer01.png",
+    "note": ""
+  },
+  {
+    "key": "farmer-female",
+    "file": "farmer-female.png",
+    "spriteKey": "farmer2",
+    "spriteFile": "084_nongfu02.png",
+    "note": "shared sprite"
+  },
+  {
+    "key": "farmer-v1",
+    "file": "farmer-v1.png",
+    "spriteKey": "farmer",
+    "spriteFile": "083_nongfu01.png",
+    "note": "shared sprite"
+  },
+  {
+    "key": "farmer-v2",
+    "file": "farmer-v2.png",
+    "spriteKey": "bandit2",
+    "spriteFile": "089_qiangdao02.png",
+    "note": "shared sprite"
+  },
+  {
+    "key": "farmer-v3",
+    "file": "farmer-v3.png",
+    "spriteKey": "bandit2",
+    "spriteFile": "089_qiangdao02.png",
+    "note": "shared sprite"
+  },
+  {
+    "key": "farmer-v4",
+    "file": "farmer-v4.png",
+    "spriteKey": "bandit2",
+    "spriteFile": "089_qiangdao02.png",
+    "note": "shared sprite"
+  },
+  {
+    "key": "farmer-v5",
+    "file": "farmer-v5.png",
+    "spriteKey": "bandit2",
+    "spriteFile": "089_qiangdao02.png",
+    "note": "shared sprite"
+  },
+  {
+    "key": "farmer",
+    "file": "farmer.png",
+    "spriteKey": "farmer",
+    "spriteFile": "083_nongfu01.png",
+    "note": ""
+  },
+  {
+    "key": "Gong-Jing",
+    "file": "Gong-Jing.png",
+    "spriteKey": "gongjing_sprite",
+    "spriteFile": "067_dongyun.png",
+    "note": ""
+  },
+  {
+    "key": "Guan-Yu",
+    "file": "Guan-Yu.png",
+    "spriteKey": "guanyu",
+    "spriteFile": "049_guanyu.png",
+    "note": ""
+  },
+  {
+    "key": "He-Jin",
+    "file": "He-Jin.png",
+    "spriteKey": "hejin",
+    "spriteFile": "101_hejin.png",
+    "note": ""
+  },
+  {
+    "key": "Huangfu-Song-generic",
+    "file": "Huangfu-Song-generic.png",
+    "spriteKey": "huangfusong_sprite",
+    "spriteFile": "072_liyan.png",
+    "note": ""
+  },
+  {
+    "key": "Liu-Bei",
+    "file": "Liu-Bei.png",
+    "spriteKey": "liubei",
+    "spriteFile": "048_liubei.png",
+    "note": ""
+  },
+  {
+    "key": "Lu-Zhi",
+    "file": "Lu-Zhi.png",
+    "spriteKey": "zhoujing",
+    "spriteFile": "071_chendeng.png",
+    "note": "shared sprite"
+  },
+  {
+    "key": "merchant",
+    "file": "merchant.png",
+    "spriteKey": "merchant",
+    "spriteFile": "090_fushang01.png",
+    "note": ""
+  },
+  {
+    "key": "palace-assassin",
+    "file": "palace-assassin.png",
+    "spriteKey": "palace_assassin",
+    "spriteFile": "102_palace_assassin.png",
+    "note": ""
+  },
+  {
+    "key": "panyin",
+    "file": "panyin.png",
+    "spriteKey": "panyin",
+    "spriteFile": "104_panyin.png"
+  },
+  {
+    "key": "soldier-v1",
+    "file": "soldier-v1.png",
+    "spriteKey": "soldier",
+    "spriteFile": "081_shibing001.png",
+    "note": "shared sprite"
+  },
+  {
+    "key": "soldier-v2",
+    "file": "soldier-v2.png",
+    "spriteKey": "soldier",
+    "spriteFile": "081_shibing001.png",
+    "note": "shared sprite"
+  },
+  {
+    "key": "soldier-v3",
+    "file": "soldier-v3.png",
+    "spriteKey": "soldier",
+    "spriteFile": "081_shibing001.png",
+    "note": "shared sprite"
+  },
+  {
+    "key": "soldier-v4",
+    "file": "soldier-v4.png",
+    "spriteKey": "soldier",
+    "spriteFile": "081_shibing001.png",
+    "note": "shared sprite"
+  },
+  {
+    "key": "soldier-v5",
+    "file": "soldier-v5.png",
+    "spriteKey": "soldier",
+    "spriteFile": "081_shibing001.png",
+    "note": "shared sprite"
+  },
+  {
+    "key": "soldier",
+    "file": "soldier.png",
+    "spriteKey": "soldier",
+    "spriteFile": "081_shibing001.png",
+    "note": ""
+  },
+  {
+    "key": "Sun-Jian",
+    "file": "Sun-Jian.png",
+    "spriteKey": "sunjian",
+    "spriteFile": "016_sunjian.png",
+    "note": ""
+  },
+  {
+    "key": "xiaoer",
+    "file": "xiaoer.png",
+    "spriteKey": "xiaoer",
+    "spriteFile": "086_xiaoer01.png",
+    "note": ""
+  },
+  {
+    "key": "Yellow-Turban",
+    "file": "Yellow-Turban.png",
+    "spriteKey": "yellowturban",
+    "spriteFile": "097_yellowturban.png",
+    "note": ""
+  },
+  {
+    "key": "Yuan-Shao",
+    "file": "Yuan-Shao.png",
+    "spriteKey": "yuanshao",
+    "spriteFile": "009_yuanshao.png",
+    "note": ""
+  },
+  {
+    "key": "Zhang-Bao",
+    "file": "Zhang-Bao.png",
+    "spriteKey": "zhangbao",
+    "spriteFile": "006_zhangbao.png",
+    "note": ""
+  },
+  {
+    "key": "Zhang-Fei",
+    "file": "Zhang-Fei.png",
+    "spriteKey": "zhangfei",
+    "spriteFile": "050_zhangfei.png",
+    "note": ""
+  },
+  {
+    "key": "Zhang-Jiao",
+    "file": "Zhang-Jiao.png",
+    "spriteKey": "zhangjiao",
+    "spriteFile": "005_zhangjiao.png",
+    "note": ""
+  },
+  {
+    "key": "Zhang-Liang",
+    "file": "Zhang-Liang.png",
+    "spriteKey": "zhangliang",
+    "spriteFile": "007_zhangliang.png",
+    "note": ""
+  },
+  {
+    "key": "Zhou-Jing",
+    "file": "Zhou-Jing.png",
+    "spriteKey": "zhoujing",
+    "spriteFile": "071_chendeng.png",
+    "note": ""
+  },
+  {
+    "key": "Zhu-Jun-generic",
+    "file": "Zhu-Jun-generic.png",
+    "spriteKey": "zhujun_sprite",
+    "spriteFile": "073_chendao.png",
+    "note": ""
+  }
+]
