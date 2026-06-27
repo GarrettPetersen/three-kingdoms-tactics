@@ -28,7 +28,9 @@ const EXCLUDED_PREFIXES = [
     'assets/portraits/character_creator/',
     'assets/portraits/female_character_creator/',
     'assets/portraits/stylized/',
-    'assets/portraits/generated_replacements/'
+    'assets/portraits/generated/',
+    'assets/portraits/generated_replacements/',
+    'assets/portraits/large_sources/'
 ];
 
 const EXCLUDED_SUFFIXES = [
