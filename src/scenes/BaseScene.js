@@ -803,6 +803,163 @@ export class BaseScene {
         return lines;
     }
 
+    getChoiceOptionLines(ctx, option, index, maxWidth, options = {}) {
+        const font = options.font || '8px Dogica';
+        const maxLines = Math.max(1, options.maxLines || 2);
+
+        if (option?.lines) {
+            const rawLines = Array.isArray(option.lines)
+                ? option.lines
+                : (option.lines[LANGUAGE.current] || option.lines.en || []);
+            const lines = [];
+            rawLines.forEach(line => {
+                const localized = getLocalizedText(line);
+                const wrapped = this.wrapText(ctx, localized, maxWidth, font);
+                lines.push(...(wrapped.length ? wrapped : [localized]));
+            });
+            return lines.slice(0, maxLines);
+        }
+
+        const buttonText = option?.buttonText !== undefined && option?.buttonText !== null
+            ? getLocalizedText(option.buttonText)
+            : '';
+        const fullText = option?.text !== undefined && option?.text !== null
+            ? getLocalizedText(option.text)
+            : '';
+        const fallback = getLocalizedText({ en: `Choice ${index + 1}`, zh: `选项 ${index + 1}` });
+        const displayText = buttonText || fullText || fallback;
+        return this.wrapText(ctx, displayText, maxWidth, font).slice(0, maxLines);
+    }
+
+    getChoicePanelLayout(ctx, canvas, rawOptions, options = {}) {
+        const choiceOptions = rawOptions || [];
+        const isTouchLayout = !!this.manager?.config?.hasCoarsePointer;
+        const outerMargin = Math.max(8, Math.floor(Math.min(canvas.width, canvas.height) * 0.04));
+        const panelW = Math.min(canvas.width - outerMargin * 2, isTouchLayout ? 232 : 236);
+        const px = Math.floor((canvas.width - panelW) / 2);
+        const textW = Math.max(1, panelW - 28);
+        const font = options.font || '8px Dogica';
+        const lineHeight = LANGUAGE.current === 'zh' ? 13 : 11;
+        const maxLines = choiceOptions.length > 4 ? 2 : 3;
+        const optionLines = choiceOptions.map((opt, index) => this.getChoiceOptionLines(ctx, opt, index, textW, {
+            font,
+            maxLines
+        }));
+
+        const promptText = options.promptText ? getLocalizedText(options.promptText) : '';
+        const promptLines = promptText ? this.wrapText(ctx, promptText, textW, '8px Silkscreen').slice(0, 2) : [];
+        const promptBlockH = promptLines.length ? promptLines.length * 11 + 8 : 0;
+
+        const availableH = canvas.height - outerMargin * 2;
+        let pad = isTouchLayout ? 12 : 10;
+        let gap = isTouchLayout ? 9 : 8;
+        let minOptionH = isTouchLayout ? 44 : 36;
+        let optionPadY = isTouchLayout ? 10 : 8;
+
+        let optionHeights = optionLines.map(lines => Math.max(minOptionH, lines.length * lineHeight + optionPadY * 2));
+        let panelH = pad * 2 + promptBlockH + optionHeights.reduce((sum, h) => sum + h, 0) + gap * Math.max(0, choiceOptions.length - 1);
+
+        if (panelH > availableH) {
+            pad = 8;
+            gap = 6;
+            minOptionH = 34;
+            optionPadY = 6;
+            optionHeights = optionLines.map(lines => Math.max(minOptionH, lines.length * lineHeight + optionPadY * 2));
+            panelH = pad * 2 + promptBlockH + optionHeights.reduce((sum, h) => sum + h, 0) + gap * Math.max(0, choiceOptions.length - 1);
+        }
+
+        if (panelH > availableH && choiceOptions.length > 0) {
+            const availableForOptions = Math.max(28, availableH - pad * 2 - promptBlockH - gap * Math.max(0, choiceOptions.length - 1));
+            const compressedH = Math.max(28, Math.floor(availableForOptions / choiceOptions.length));
+            optionHeights = optionHeights.map(() => compressedH);
+            panelH = pad * 2 + promptBlockH + optionHeights.reduce((sum, h) => sum + h, 0) + gap * Math.max(0, choiceOptions.length - 1);
+        }
+
+        panelH = Math.min(availableH, panelH);
+        const py = Math.floor((canvas.height - panelH) / 2);
+        const optionRects = [];
+        let y = py + pad + promptBlockH;
+        optionHeights.forEach((h, index) => {
+            optionRects.push({
+                x: px + 10,
+                y,
+                w: panelW - 20,
+                h,
+                index
+            });
+            y += h + gap;
+        });
+
+        return {
+            px,
+            py,
+            panelW,
+            panelH,
+            pad,
+            gap,
+            optionLines,
+            optionRects,
+            promptLines,
+            lineHeight,
+            font,
+            options: choiceOptions
+        };
+    }
+
+    renderChoicePanel(ctx, canvas, rawOptions, options = {}) {
+        const layout = this.getChoicePanelLayout(ctx, canvas, rawOptions, options);
+        const highlightedIndex = Number.isFinite(options.highlightedIndex) ? options.highlightedIndex : -1;
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.48)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = 'rgba(18, 14, 11, 0.96)';
+        ctx.fillRect(layout.px, layout.py, layout.panelW, layout.panelH);
+        ctx.strokeStyle = '#8a6a35';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(layout.px + 0.5, layout.py + 0.5, layout.panelW - 1, layout.panelH - 1);
+
+        if (layout.promptLines.length) {
+            const promptY = layout.py + layout.pad;
+            layout.promptLines.forEach((line, index) => {
+                this.drawPixelText(ctx, line, layout.px + layout.panelW / 2, promptY + index * 11, {
+                    color: '#ffd77a',
+                    font: '8px Silkscreen',
+                    align: 'center'
+                });
+            });
+        }
+
+        layout.optionRects.forEach(rect => {
+            const opt = layout.options[rect.index] || {};
+            const isHighlighted = highlightedIndex === rect.index;
+            const baseColor = opt.color || '#d8b36c';
+            const hoverColor = opt.hoverColor || '#fff1b8';
+            const strokeColor = isHighlighted ? hoverColor : baseColor;
+            const fillColor = isHighlighted ? 'rgba(255, 218, 126, 0.18)' : 'rgba(42, 32, 23, 0.96)';
+
+            ctx.fillStyle = fillColor;
+            ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+            ctx.strokeStyle = strokeColor;
+            ctx.strokeRect(rect.x + 0.5, rect.y + 0.5, rect.w - 1, rect.h - 1);
+
+            const lines = layout.optionLines[rect.index] || [];
+            const blockH = lines.length * layout.lineHeight;
+            const textY = Math.round(rect.y + (rect.h - blockH) / 2);
+            lines.forEach((line, lineIndex) => {
+                this.drawPixelText(ctx, line, rect.x + rect.w / 2, textY + lineIndex * layout.lineHeight, {
+                    color: isHighlighted ? '#fff' : '#ead9b7',
+                    font: layout.font,
+                    align: 'center'
+                });
+            });
+        });
+
+        ctx.restore();
+        return layout;
+    }
+
     renderDialogueBox(ctx, canvas, step, options = {}) {
         const { subStep = 0, bgImg = null } = options;
         const margin = 5;

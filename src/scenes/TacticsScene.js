@@ -12064,87 +12064,12 @@ export class TacticsScene extends BaseScene {
     drawChoiceUI() {
         const { ctx, canvas } = this.manager;
         const choiceState = this.getActiveChoiceState();
-        const isNarrativeChoice = !!(choiceState && choiceState.kind === 'narrative');
-        const isTouchLayout = !!this.manager?.config?.hasCoarsePointer;
-        
-        const optionWidth = isTouchLayout ? Math.min(300, canvas.width - 32) : 100;
-        const optionHeight = isTouchLayout ? 42 : 36;
-        const spacing = isTouchLayout ? 8 : 16;
-        const promptY = isTouchLayout ? canvas.height - 56 - (optionHeight + spacing) * Math.max(0, (choiceState?.options?.length || 2) - 1) : canvas.height - 98;
-        const optionY = isTouchLayout ? promptY + 26 : canvas.height - 56;
-        const overlayH = isTouchLayout
-            ? Math.min(canvas.height, canvas.height - Math.max(0, promptY - 18))
-            : 120;
-
-        // Semi-transparent overlay - tall enough for prompt + choice boxes (extra space for Chinese)
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-        ctx.fillRect(0, canvas.height - overlayH, canvas.width, overlayH);
-        
-        // Choice prompt (moved up so it doesn't overlap option boxes in Chinese)
-        const promptText = isNarrativeChoice
-            ? getLocalizedText({ en: 'Choose your reply', zh: '请选择回复' })
-            : getLocalizedText({ en: "What will you do?", zh: "你要怎么做？" });
-        this.drawPixelText(ctx, promptText, canvas.width / 2, promptY, {
-            color: '#ffd700',
-            align: 'center',
-            font: '16px Silkscreen'
+        const options = (choiceState && choiceState.options) ? choiceState.options : [];
+        const layout = this.renderChoicePanel(ctx, canvas, options, {
+            highlightedIndex: this.choiceHovered,
+            promptText: choiceState?.step?.prompt || this.battleDef?.choicePrompt || null
         });
-        
-        const options = isNarrativeChoice
-            ? choiceState.options.map((opt, i) => {
-                const lang = LANGUAGE.current || 'en';
-                const hasLocalizedButtonObject = !!(opt.buttonText && typeof opt.buttonText === 'object');
-                const buttonText = getLocalizedText(opt.buttonText || '');
-                const fullText = getLocalizedText(opt.text || '');
-                const displayText = hasLocalizedButtonObject
-                    ? (buttonText || fullText || getLocalizedText({ en: `Choice ${i + 1}`, zh: `选项 ${i + 1}` }))
-                    : (lang === 'en'
-                        ? (buttonText || fullText || getLocalizedText({ en: `Choice ${i + 1}`, zh: `选项 ${i + 1}` }))
-                        : (fullText || buttonText || getLocalizedText({ en: `Choice ${i + 1}`, zh: `选项 ${i + 1}` })));
-                return {
-                    lines: this.wrapText(ctx, displayText, optionWidth - 12, '8px Silkscreen').slice(0, isTouchLayout ? 3 : 2),
-                    color: '#ffd700',
-                    hoverColor: '#ffffff'
-                };
-            })
-            : ((choiceState && choiceState.options) ? choiceState.options : []);
-        
-        const startX = isTouchLayout
-            ? Math.floor((canvas.width - optionWidth) / 2)
-            : canvas.width / 2 - (options.length * optionWidth + (options.length - 1) * spacing) / 2;
-        
-        this.choiceRects = [];
-        
-        options.forEach((opt, i) => {
-            const ox = isTouchLayout ? startX : startX + i * (optionWidth + spacing);
-            const oy = isTouchLayout ? optionY + i * (optionHeight + spacing) : optionY;
-            const isHovered = this.choiceHovered === i;
-            
-            // Store rect for hit detection
-            this.choiceRects.push({ x: ox, y: oy, w: optionWidth, h: optionHeight, index: i });
-            
-            // Draw option box
-            ctx.fillStyle = isHovered ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.7)';
-            ctx.fillRect(ox, oy, optionWidth, optionHeight);
-            ctx.strokeStyle = isHovered ? opt.hoverColor : opt.color;
-            ctx.lineWidth = 1;
-            ctx.strokeRect(ox + 0.5, oy + 0.5, optionWidth - 1, optionHeight - 1);
-            
-            // Draw text - two lines (resolve localized lines if opt.lines is { en: [...], zh: [...] })
-            const lineHeight = 10;
-            const textColor = isHovered ? opt.hoverColor : opt.color;
-            const lines = (opt.lines && typeof opt.lines === 'object' && !Array.isArray(opt.lines))
-                ? (opt.lines[LANGUAGE.current] || opt.lines['en'] || [])
-                : (Array.isArray(opt.lines) ? opt.lines : []);
-            const textY = Math.round(oy + (optionHeight - lines.length * lineHeight) / 2);
-            lines.forEach((line, lineIdx) => {
-                this.drawPixelText(ctx, line, ox + optionWidth / 2, textY + lineIdx * lineHeight, {
-                    color: textColor,
-                    align: 'center',
-                    font: '8px Silkscreen'
-                });
-            });
-        });
+        this.choiceRects = layout.optionRects;
     }
 
     rebuildControllerNavTargets() {
@@ -12274,8 +12199,9 @@ export class TacticsScene extends BaseScene {
         if (preserved >= 0) {
             this.controllerNavIndex = preserved;
         } else {
+            const defaultChoice = this.isChoiceActive ? targets.findIndex(t => t.type === 'choice') : -1;
             const defaultUnit = this.selectedUnit ? targets.findIndex(t => t.type === 'unit' && t.unit === this.selectedUnit) : -1;
-            this.controllerNavIndex = defaultUnit >= 0 ? defaultUnit : 0;
+            this.controllerNavIndex = defaultChoice >= 0 ? defaultChoice : (defaultUnit >= 0 ? defaultUnit : 0);
         }
     }
 

@@ -2036,88 +2036,20 @@ export class NarrativeScene extends BaseScene {
     renderChoice(step) {
         const { ctx, canvas } = this.manager;
         const options = this.getAvailableChoiceOptions(step);
-        const currentLang = getCurrentLanguage();
-        const isTouchLayout = !!this.manager?.config?.hasCoarsePointer;
-        const padding = isTouchLayout ? 12 : 10;
-        const lineSpacing = currentLang === 'zh' ? 14 : 12;
-        const optionInnerPadY = isTouchLayout ? 10 : 2;
-        const optionSpacing = isTouchLayout ? 10 : 6;
-        const minOptionHeight = isTouchLayout ? 42 : 0;
-        const panelWidth = Math.max(220, Math.min(420, Math.floor(canvas.width * (isTouchLayout ? 0.94 : 0.84))));
-        
-        // Pre-calculate wrapped lines and total height
-        const wrappedOptions = options.map(opt => {
-            // ALWAYS use buttonText for display in the choice box (it's the abbreviated version)
-            // Only fall back to text if buttonText is not provided
-            const hasLocalizedButtonObject = !!(opt.buttonText && typeof opt.buttonText === 'object');
-            const buttonText = (opt.buttonText !== undefined && opt.buttonText !== null) ? getLocalizedText(opt.buttonText) : null;
-            const text = getLocalizedText(opt.text);
-            const displayText = hasLocalizedButtonObject
-                ? (buttonText || text)
-                : (currentLang === 'en' ? (buttonText || text) : (text || buttonText));
-            // Use wrapText which handles Chinese properly
-            const lines = this.wrapText(ctx, displayText, panelWidth - 20, '8px Dogica');
-            return lines;
-        });
-
-        const optionHeights = wrappedOptions.map(lines => Math.max(
-            minOptionHeight,
-            lines.length * lineSpacing + optionInnerPadY * 2
-        ));
-
-        let totalContentHeight = 0;
-        optionHeights.forEach(optionHeight => {
-            totalContentHeight += optionHeight + optionSpacing;
-        });
-        if (optionHeights.length > 0) totalContentHeight -= optionSpacing;
-        
-        const panelHeight = Math.min(totalContentHeight + padding * 2, canvas.height - 24);
-        const px = Math.floor((canvas.width - panelWidth) / 2);
-        const py = Math.floor((canvas.height - panelHeight) / 2);
-
-        // Panel Background
-        ctx.fillStyle = 'rgba(20, 20, 20, 0.95)';
-        ctx.fillRect(px, py, panelWidth, panelHeight);
-        ctx.strokeStyle = '#ffd700';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(px + 0.5, py + 0.5, panelWidth - 1, panelHeight - 1);
-
-        let currentY = py + padding;
-        wrappedOptions.forEach((lines, i) => {
-            const optionTopY = currentY;
-            const optionHeight = optionHeights[i];
-            const textBlockHeight = lines.length * lineSpacing;
-            const textY = Math.round(optionTopY + (optionHeight - textBlockHeight) / 2);
-            
-            // Check if mouse is over this option
-            const isMouseOver = this.lastMouseX >= px && this.lastMouseX <= px + panelWidth &&
-                              this.lastMouseY >= optionTopY && this.lastMouseY <= optionTopY + optionHeight;
-            
-            // Update highlighted index on mouseover (only if mouseover is enabled)
+        const previewLayout = this.getChoicePanelLayout(ctx, canvas, options, { promptText: step.prompt });
+        previewLayout.optionRects.forEach(rect => {
+            const isMouseOver = this.lastMouseX >= rect.x && this.lastMouseX <= rect.x + rect.w &&
+                this.lastMouseY >= rect.y && this.lastMouseY <= rect.y + rect.h;
             if (isMouseOver && this.selection) {
-                this.handleSelectionMouseover(i);
+                this.handleSelectionMouseover(rect.index);
             }
-            
-            // Highlight if it's the currently highlighted option
-            const isHovered = this.selection && this.selection.highlightedIndex === i;
-
-            if (isHovered) {
-                ctx.fillStyle = 'rgba(255, 215, 0, 0.2)';
-                ctx.fillRect(px + 2, optionTopY, panelWidth - 4, optionHeight);
-            }
-
-            lines.forEach((line, lineIdx) => {
-                this.drawPixelText(ctx, line, px + 10, textY + lineIdx * lineSpacing, {
-                    color: isHovered ? '#fff' : '#ccc', 
-                    font: '8px Dogica' 
-                });
-            });
-
-            currentY += optionHeight + optionSpacing;
         });
 
-        // Store panel metadata for input handling
-        step._panelMetadata = { px, py, panelWidth, panelHeight, wrappedOptions, optionHeights, padding, lineSpacing, optionSpacing, optionInnerPadY, options };
+        const layout = this.renderChoicePanel(ctx, canvas, options, {
+            highlightedIndex: this.selection ? this.selection.highlightedIndex : -1,
+            promptText: step.prompt
+        });
+        step._panelMetadata = { ...layout, options };
     }
 
     renderTitleCard(step, previousTitleLinkRegion = null) {
@@ -2425,16 +2357,11 @@ export class NarrativeScene extends BaseScene {
                     this.handleSelectionMouseClick();
                 }
                 
-                // Handle mouse clicks
-                let currentY = m.py + m.padding;
-                
                 const options = m.options || this.getAvailableChoiceOptions(step);
-                options.forEach((opt, i) => {
-                    const lines = m.wrappedOptions[i];
-                    const optionHeight = m.optionHeights?.[i] ?? (lines.length * m.lineSpacing + (m.optionInnerPadY || 0) * 2);
-                    
-                    if (x >= m.px && x <= m.px + m.panelWidth && 
-                        y >= currentY && y <= currentY + optionHeight) {
+                (m.optionRects || []).forEach(rect => {
+                    const opt = options[rect.index];
+                    if (x >= rect.x && x <= rect.x + rect.w &&
+                        y >= rect.y && y <= rect.y + rect.h) {
                         // Create a dialogue step for the choice so it gets voiced and displayed.
                         // Fallback to button text if full text is missing to avoid blank dialogue panels.
                         const choiceDialogue = this.createChoiceDialogueStep(step, opt);
@@ -2448,7 +2375,6 @@ export class NarrativeScene extends BaseScene {
                         this.pushRuntimeFrame([choiceDialogue, ...resultSteps], { advanceParentAfter: true });
                         this.processStep();
                     }
-                    currentY += optionHeight + m.optionSpacing;
                 });
             }
             return;
