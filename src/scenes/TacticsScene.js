@@ -11949,25 +11949,28 @@ export class TacticsScene extends BaseScene {
 
     getBattleInactivityPrompt() {
         if (this.hasActiveBattleDialogue()) {
-            return {
-                en: "Click anywhere or press Enter/Space to advance the text.",
-                zh: "点击任意位置，或按 Enter/空格继续文字。"
-            };
+            return this.getModalityPrompt({
+                mouse: { en: "Click anywhere to advance the text.", zh: "点击任意位置继续文字。" },
+                keyboard: { en: "Press Enter/Space to advance the text.", zh: "按 Enter/空格继续文字。" },
+                controller: { en: "Press the confirm button to advance the text.", zh: "按确认键继续文字。" }
+            });
         }
         if (this.isGameOver || this.isIntroAnimating || this.isProcessingTurn || this.showEndTurnConfirm || this.isChoiceActive) return null;
         if (this.turn !== 'player') return null;
 
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack && this.attackTiles.size > 0) {
-            return {
-                en: "Click a red hex to attack.",
-                zh: "点击红色格子进行攻击。"
-            };
+            return this.getModalityPrompt({
+                mouse: { en: "Click a red hex to attack.", zh: "点击红色格子进行攻击。" },
+                keyboard: { en: "Use arrow keys to choose a red hex, then press Enter/Space to attack.", zh: "用方向键选择红色格子，再按 Enter/空格攻击。" },
+                controller: { en: "Use the D-pad or stick to choose a red hex, then press confirm to attack.", zh: "用方向键或摇杆选择红色格子，再按确认键攻击。" }
+            });
         }
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && this.reachableTiles.size > 0) {
-            return {
-                en: "Click a yellow hex to move there.",
-                zh: "点击黄色格子移动到那里。"
-            };
+            return this.getModalityPrompt({
+                mouse: { en: "Click a yellow hex to move there.", zh: "点击黄色格子移动到那里。" },
+                keyboard: { en: "Use arrow keys to choose a yellow hex, then press Enter/Space to move.", zh: "用方向键选择黄色格子，再按 Enter/空格移动。" },
+                controller: { en: "Use the D-pad or stick to choose a yellow hex, then press confirm to move.", zh: "用方向键或摇杆选择黄色格子，再按确认键移动。" }
+            });
         }
 
         const selectableHeroes = this.units.some(u =>
@@ -11978,16 +11981,18 @@ export class TacticsScene extends BaseScene {
             !u.hasActed
         );
         if (selectableHeroes) {
-            return {
-                en: "Click one of your heroes to select them.",
-                zh: "点击你的英雄来选择他。"
-            };
+            return this.getModalityPrompt({
+                mouse: { en: "Click one of your heroes to select them.", zh: "点击你的英雄来选择他。" },
+                keyboard: { en: "Use arrow keys to choose one of your heroes, then press Enter/Space.", zh: "用方向键选择你的英雄，再按 Enter/空格。" },
+                controller: { en: "Use the D-pad or stick to choose one of your heroes, then press confirm.", zh: "用方向键或摇杆选择你的英雄，再按确认键。" }
+            });
         }
 
-        return {
-            en: "Click End Turn to end your turn.",
-            zh: "点击结束回合来结束你的回合。"
-        };
+        return this.getModalityPrompt({
+            mouse: { en: "Click End Turn to end your turn.", zh: "点击结束回合来结束你的回合。" },
+            keyboard: { en: "Use arrow keys to choose End Turn, then press Enter/Space.", zh: "用方向键选择结束回合，再按 Enter/空格。" },
+            controller: { en: "Use the D-pad or stick to choose End Turn, then press confirm.", zh: "用方向键或摇杆选择结束回合，再按确认键。" }
+        });
     }
 
     renderBattleInactivityPrompt(ctx, canvas, timestamp) {

@@ -333,30 +333,34 @@ export class LiuboScene extends BaseScene {
     getLiuboInactivityPrompt() {
         if (this.showRules || this.confirmReturn || this.state.winner) return null;
         if (this.activeTutorialDialogue) {
-            return {
-                en: "Click anywhere or press Enter/Space to advance the text.",
-                zh: "点击任意位置，或按 Enter/空格继续文字。"
-            };
+            return this.getModalityPrompt({
+                mouse: { en: "Click anywhere to advance the text.", zh: "点击任意位置继续文字。" },
+                keyboard: { en: "Press Enter/Space to advance the text.", zh: "按 Enter/空格继续文字。" },
+                controller: { en: "Press the confirm button to advance the text.", zh: "按确认键继续文字。" }
+            });
         }
         if (this.state.currentPlayer !== this.state.humanPlayer || this.moveAnimations.length || this.cupPassAnimation || this.rollAnimation) return null;
         if (this.state.phase === 'roll') {
-            return {
-                en: "Click the cup to throw sticks.",
-                zh: "点击杯子来掷箸。"
-            };
+            return this.getModalityPrompt({
+                mouse: { en: "Click the cup to throw sticks.", zh: "点击杯子来掷箸。" },
+                keyboard: { en: "Press R or Enter to throw sticks.", zh: "按 R 或 Enter 掷箸。" },
+                controller: { en: "Press the confirm button to throw sticks.", zh: "按确认键掷箸。" }
+            });
         }
         if (this.state.phase === 'choose_piece') {
             if (this.state.selectedPieceId && (this.state.legalMoves || []).length > 0) {
-                return {
-                    en: "Click a location to move the selected bird.",
-                    zh: "点击一个位置来移动选中的鸟。"
-                };
+                return this.getModalityPrompt({
+                    mouse: { en: "Click a location to move the selected bird.", zh: "点击一个位置来移动选中的鸟。" },
+                    keyboard: { en: "Click a location to move the selected bird.", zh: "点击一个位置来移动选中的鸟。" },
+                    controller: { en: "Click a location to move the selected bird.", zh: "点击一个位置来移动选中的鸟。" }
+                });
             }
             if (this.getSelectablePieceIds().size > 0) {
-                return {
-                    en: "Click a bird to select it.",
-                    zh: "点击一只鸟来选择它。"
-                };
+                return this.getModalityPrompt({
+                    mouse: { en: "Click a bird to select it.", zh: "点击一只鸟来选择它。" },
+                    keyboard: { en: "Click a bird to select it.", zh: "点击一只鸟来选择它。" },
+                    controller: { en: "Click a bird to select it.", zh: "点击一只鸟来选择它。" }
+                });
             }
         }
         return null;

@@ -1893,16 +1893,18 @@ export class NarrativeScene extends BaseScene {
     getNarrativeInactivityPrompt(step) {
         if (!step) return null;
         if (step.type === 'dialogue' || step.type === 'narrator' || step.type === 'title') {
-            return {
-                en: "Click anywhere or press Enter/Space to advance the text.",
-                zh: "点击任意位置，或按 Enter/空格继续文字。"
-            };
+            return this.getModalityPrompt({
+                mouse: { en: "Click anywhere to advance the text.", zh: "点击任意位置继续文字。" },
+                keyboard: { en: "Press Enter/Space to advance the text.", zh: "按 Enter/空格继续文字。" },
+                controller: { en: "Press the confirm button to advance the text.", zh: "按确认键继续文字。" }
+            });
         }
         if (this.isInteractive && this.isWaiting && (step.type === 'interactive' || step.type === 'prompt')) {
-            return {
-                en: "Click on a person or object to interact with them.",
-                zh: "点击人物或物体进行互动。"
-            };
+            return this.getModalityPrompt({
+                mouse: { en: "Click on a person or object to interact with them.", zh: "点击人物或物体进行互动。" },
+                keyboard: { en: "Use arrow keys to choose a person or object, then press Enter/Space.", zh: "用方向键选择人物或物体，再按 Enter/空格。" },
+                controller: { en: "Use the D-pad or stick to choose a person or object, then press confirm.", zh: "用方向键或摇杆选择人物或物体，再按确认键。" }
+            });
         }
         return null;
     }

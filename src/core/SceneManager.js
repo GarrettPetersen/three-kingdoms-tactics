@@ -45,13 +45,13 @@ export class SceneManager {
             } else if (this.currentScene && this.currentScene.onMouseInput) {
                 this.currentScene.onMouseInput(this.logicalMouseX, this.logicalMouseY);
             }
-            this.noteCurrentSceneUserActivity();
+            this.noteCurrentSceneUserActivity(Date.now(), 'mouse');
         });
     }
 
-    noteCurrentSceneUserActivity(timestamp = Date.now()) {
+    noteCurrentSceneUserActivity(timestamp = Date.now(), modality = null) {
         if (this.currentScene && typeof this.currentScene.noteUserActivity === 'function') {
-            this.currentScene.noteUserActivity(timestamp);
+            this.currentScene.noteUserActivity(timestamp, modality);
         }
     }
 
@@ -252,7 +252,7 @@ export class SceneManager {
         if (this.currentScene && this.currentScene.enter) {
             this.currentScene.enter(params);
         }
-        this.noteCurrentSceneUserActivity();
+        this.noteCurrentSceneUserActivity(Date.now(), 'mouse');
     }
 
     update(timestamp) {
@@ -279,7 +279,7 @@ export class SceneManager {
     }
 
     handleInput(e) {
-        this.noteCurrentSceneUserActivity();
+        this.noteCurrentSceneUserActivity(Date.now(), 'mouse');
         if (this.isOptionsOverlayActive()) {
             if (this.optionsOverlay && this.optionsOverlay.handleInput) {
                 this.optionsOverlay.handleInput(e);
@@ -298,7 +298,7 @@ export class SceneManager {
     }
 
     handlePointerUp(e) {
-        this.noteCurrentSceneUserActivity();
+        this.noteCurrentSceneUserActivity(Date.now(), 'mouse');
         if (this.isOptionsOverlayActive()) return;
         if (this.currentScene && this.currentScene.handlePointerUp) {
             this.currentScene.handlePointerUp(e);
@@ -306,7 +306,7 @@ export class SceneManager {
     }
 
     handleKeyDown(e) {
-        this.noteCurrentSceneUserActivity();
+        this.noteCurrentSceneUserActivity(Date.now(), e?.fromGamepad ? 'controller' : 'keyboard');
         if (e && e.key === 'Escape') {
             if (this.isOptionsOverlayActive()) {
                 if (typeof e.preventDefault === 'function') e.preventDefault();
@@ -336,7 +336,7 @@ export class SceneManager {
     }
 
     handleWheel(e) {
-        this.noteCurrentSceneUserActivity();
+        this.noteCurrentSceneUserActivity(Date.now(), 'mouse');
         if (this.isOptionsOverlayActive()) return;
         if (this.currentScene && this.currentScene.handleWheel) {
             this.currentScene.handleWheel(e);
@@ -489,7 +489,7 @@ export class SceneManager {
         } else if (this.currentScene && this.currentScene.onNonMouseInput) {
             this.currentScene.onNonMouseInput();
         }
-        this.noteCurrentSceneUserActivity(timestamp);
+        this.noteCurrentSceneUserActivity(timestamp, 'controller');
         this.handleKeyDown({
             key,
             fromGamepad: true,

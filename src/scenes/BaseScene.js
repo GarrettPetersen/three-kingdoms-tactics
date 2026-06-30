@@ -18,6 +18,7 @@ export class BaseScene {
         this._characterOutlineCache = new Map();
         this._imageFrameOutlineCache = new Map();
         this.lastUserActivityAt = Date.now();
+        this.lastInputModality = 'mouse';
     }
 
     enter(params) {}
@@ -109,13 +110,25 @@ export class BaseScene {
         }
     }
 
-    noteUserActivity(timestamp = Date.now()) {
+    noteUserActivity(timestamp = Date.now(), modality = null) {
         this.lastUserActivityAt = Number.isFinite(timestamp) ? timestamp : Date.now();
+        if (modality === 'mouse' || modality === 'keyboard' || modality === 'controller') {
+            this.lastInputModality = modality;
+        }
     }
 
     getInactivityMs(timestamp = Date.now()) {
         const last = Number.isFinite(this.lastUserActivityAt) ? this.lastUserActivityAt : timestamp;
         return Math.max(0, timestamp - last);
+    }
+
+    getLastInputModality() {
+        return this.lastInputModality || 'mouse';
+    }
+
+    getModalityPrompt(variants) {
+        const modality = this.getLastInputModality();
+        return variants?.[modality] || variants?.mouse || variants?.keyboard || variants?.controller || null;
     }
 
     shouldShowInactivityPrompt(timestamp = Date.now(), thresholdMs = 10000) {
