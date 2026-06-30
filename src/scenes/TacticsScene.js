@@ -12742,12 +12742,7 @@ export class TacticsScene extends BaseScene {
                     if (this.turn === 'player' && attacker.hp > 0) {
                         attacker.hasAttacked = true;
                         attacker.hasActed = true;
-                        if (this.selectedUnit === attacker) {
-                            this.selectedUnit = null;
-                            this.selectedAttack = null;
-                            this.doubleBladesFirstTarget = null;
-                            this.attackTiles.clear();
-                        }
+                        this.clearCompletedPlayerAttackSelection(attacker);
                         this.pushHistory();
                     }
                     this.isProcessingTurn = false;
@@ -12905,6 +12900,15 @@ export class TacticsScene extends BaseScene {
         this.selectedAttack = null;
         this.doubleBladesFirstTarget = null;
         this.reachableTiles.clear();
+        this.attackTiles.clear();
+        this.attackRects = [];
+    }
+
+    clearCompletedPlayerAttackSelection(attacker) {
+        if (this.selectedUnit && this.selectedUnit !== attacker) return;
+        this.selectedUnit = null;
+        this.selectedAttack = null;
+        this.doubleBladesFirstTarget = null;
         this.attackTiles.clear();
         this.attackRects = [];
     }
@@ -15735,6 +15739,7 @@ export class TacticsScene extends BaseScene {
             assets.playSound('ui_error', 0.4);
             return;
         }
+        if (this.selectedAttack === attackKey) return;
         
         this.selectedAttack = attackKey;
         this.doubleBladesFirstTarget = null;
@@ -16268,12 +16273,7 @@ export class TacticsScene extends BaseScene {
                     if (this.turn === 'player' && attacker.hp > 0) {
                         attacker.hasAttacked = true;
                         attacker.hasActed = true;
-                        if (this.selectedUnit === attacker) {
-                    this.selectedUnit = null;
-                    this.selectedAttack = null;
-                    this.doubleBladesFirstTarget = null;
-                    this.attackTiles.clear();
-                        }
+                        this.clearCompletedPlayerAttackSelection(attacker);
                         this.pushHistory(); // Capture state AFTER attack
                     }
                     this.isProcessingTurn = false; // Unlock turn
