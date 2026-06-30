@@ -1887,6 +1887,32 @@ export class NarrativeScene extends BaseScene {
         } else if (step && step.type === 'choice') {
             this.renderChoice(step);
         }
+        this.renderNarrativeInactivityPrompt(ctx, canvas, timestamp);
+    }
+
+    getNarrativeInactivityPrompt(step) {
+        if (!step) return null;
+        if (step.type === 'dialogue' || step.type === 'narrator' || step.type === 'title') {
+            return {
+                en: "Click anywhere or press Enter/Space to advance the text.",
+                zh: "点击任意位置，或按 Enter/空格继续文字。"
+            };
+        }
+        if (this.isInteractive && this.isWaiting && (step.type === 'interactive' || step.type === 'prompt')) {
+            return {
+                en: "Click on a person or object to interact with them.",
+                zh: "点击人物或物体进行互动。"
+            };
+        }
+        return null;
+    }
+
+    renderNarrativeInactivityPrompt(ctx, canvas, timestamp) {
+        if (this.fadeAlpha !== this.fadeTarget) return;
+        const step = this.script?.[this.currentStep];
+        const prompt = this.getNarrativeInactivityPrompt(step);
+        if (!prompt) return;
+        this.renderInactivityPrompt(ctx, canvas, prompt, { timestamp });
     }
 
     shouldRenderInteractiveRegions(step) {

@@ -17,6 +17,7 @@ export class BaseScene {
         this._nextOutlineImageId = 1;
         this._characterOutlineCache = new Map();
         this._imageFrameOutlineCache = new Map();
+        this.lastUserActivityAt = Date.now();
     }
 
     enter(params) {}
@@ -106,6 +107,61 @@ export class BaseScene {
             this.confirmSelection.lastMouseX = mouseX;
             this.confirmSelection.lastMouseY = mouseY;
         }
+    }
+
+    noteUserActivity(timestamp = Date.now()) {
+        this.lastUserActivityAt = Number.isFinite(timestamp) ? timestamp : Date.now();
+    }
+
+    getInactivityMs(timestamp = Date.now()) {
+        const last = Number.isFinite(this.lastUserActivityAt) ? this.lastUserActivityAt : timestamp;
+        return Math.max(0, timestamp - last);
+    }
+
+    shouldShowInactivityPrompt(timestamp = Date.now(), thresholdMs = 10000) {
+        return this.getInactivityMs(timestamp) >= thresholdMs;
+    }
+
+    renderInactivityPrompt(ctx, canvas, textDef, options = {}) {
+        const text = getLocalizedText(textDef);
+        if (!text) return;
+
+        const {
+            timestamp = Date.now(),
+            thresholdMs = 10000,
+            maxWidth = Math.min(canvas.width - 24, 340),
+            font = '8px Tiny5',
+            color = '#fff',
+            borderColor = '#ffd700'
+        } = options;
+        if (!this.shouldShowInactivityPrompt(timestamp, thresholdMs)) return;
+
+        const pulse = 0.58 + Math.abs(Math.sin(timestamp / 360)) * 0.42;
+        const lines = this.wrapText(ctx, text, maxWidth - 14, font);
+        const lineHeight = LANGUAGE.current === 'zh' ? 12 : 9;
+        const boxW = maxWidth;
+        const boxH = Math.max(24, 12 + lines.length * lineHeight + 8);
+        const boxX = Math.floor((canvas.width - boxW) / 2);
+        const boxY = Math.floor((canvas.height - boxH) / 2);
+
+        ctx.save();
+        ctx.globalAlpha = pulse;
+        ctx.fillStyle = 'rgba(10, 10, 10, 0.88)';
+        ctx.fillRect(boxX, boxY, boxW, boxH);
+        ctx.strokeStyle = borderColor;
+        ctx.strokeRect(boxX + 0.5, boxY + 0.5, boxW - 1, boxH - 1);
+
+        let y = boxY + Math.floor((boxH - lines.length * lineHeight) / 2);
+        lines.forEach(line => {
+            this.drawPixelText(ctx, line, boxX + boxW / 2, y, {
+                color,
+                font,
+                align: 'center',
+                outline: true
+            });
+            y += lineHeight;
+        });
+        ctx.restore();
     }
 
     getMousePos(e) {

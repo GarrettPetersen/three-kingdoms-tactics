@@ -118,6 +118,7 @@ export class TacticsScene extends BaseScene {
         this.zhuoTrainingUndoPromptShown = false;
         this.zhuoTrainingAwaitingUndo = false;
         this.zhuoTrainingUndoUsed = false;
+        this.zhuoTrainingUndoPromptVoicePlayed = false;
         this.zhuoTrainingAttackPromptShown = {};
         this.zhuoTrainingAttackInstructionShown = false;
         this.zhuoTrainingEndTurnPromptShown = false;
@@ -756,6 +757,7 @@ export class TacticsScene extends BaseScene {
         this.zhuoTrainingUndoPromptShown = false;
         this.zhuoTrainingAwaitingUndo = false;
         this.zhuoTrainingUndoUsed = false;
+        this.zhuoTrainingUndoPromptVoicePlayed = false;
         this.zhuoTrainingAttackPromptShown = {};
         this.zhuoTrainingAttackInstructionShown = false;
         this.zhuoTrainingEndTurnPromptShown = false;
@@ -5412,6 +5414,13 @@ export class TacticsScene extends BaseScene {
         return null;
     }
 
+    getZhuoTrainingUndoPromptLines() {
+        return [
+            { en: "Zhang Fei: If your hand slips, use the buttons in the bottom right.", zh: "张飞：若是手滑，就用右下角的按钮。" },
+            { en: "One button undoes your last action. One resets the whole turn.", zh: "一个可以撤销上一步，一个可以重置整个回合。" }
+        ];
+    }
+
     maybeShowZhuoTrainingAttackPrompt(unit) {
         if (!this.isZhuoTrainingTutorialBattle()) return false;
         if (!unit || unit.faction !== 'player' || unit.hp <= 0 || unit.isGone) return false;
@@ -5452,10 +5461,10 @@ export class TacticsScene extends BaseScene {
             this.zhuoTrainingAwaitingUndo = true;
             this.selectedAttack = null;
             this.attackTiles.clear();
-            this.startBattleEndDialogue([
-                { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_zf_01', text: { en: "If your hand slips, use the buttons in the bottom right.", zh: "若是手滑，就用右下角的按钮。" } },
-                { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_zf_02', text: { en: "One button undoes your last action. One resets the whole turn.", zh: "一个可以撤销上一步，一个可以重置整个回合。" } }
-            ]);
+            if (!this.zhuoTrainingUndoPromptVoicePlayed) {
+                this.zhuoTrainingUndoPromptVoicePlayed = true;
+                this.playBattleVoice('train_zf_01');
+            }
             this.saveBattleState();
             return true;
         }
@@ -11927,6 +11936,64 @@ export class TacticsScene extends BaseScene {
         }
 
         this.drawPaletteToast(ctx, timestamp);
+        this.renderBattleInactivityPrompt(ctx, canvas, timestamp);
+    }
+
+    hasActiveBattleDialogue() {
+        return !!(
+            (this.isIntroDialogueActive && this.introScript) ||
+            (this.isVictoryDialogueActive && this.victoryScript) ||
+            (this.isCleanupDialogueActive && this.cleanupDialogueScript)
+        );
+    }
+
+    getBattleInactivityPrompt() {
+        if (this.hasActiveBattleDialogue()) {
+            return {
+                en: "Click anywhere or press Enter/Space to advance the text.",
+                zh: "点击任意位置，或按 Enter/空格继续文字。"
+            };
+        }
+        if (this.isGameOver || this.isIntroAnimating || this.isProcessingTurn || this.showEndTurnConfirm || this.isChoiceActive) return null;
+        if (this.turn !== 'player') return null;
+
+        if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack && this.attackTiles.size > 0) {
+            return {
+                en: "Click a red hex to attack.",
+                zh: "点击红色格子进行攻击。"
+            };
+        }
+        if (this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && this.reachableTiles.size > 0) {
+            return {
+                en: "Click a yellow hex to move there.",
+                zh: "点击黄色格子移动到那里。"
+            };
+        }
+
+        const selectableHeroes = this.units.some(u =>
+            u &&
+            u.faction === 'player' &&
+            u.hp > 0 &&
+            !u.isGone &&
+            !u.hasActed
+        );
+        if (selectableHeroes) {
+            return {
+                en: "Click one of your heroes to select them.",
+                zh: "点击你的英雄来选择他。"
+            };
+        }
+
+        return {
+            en: "Click End Turn to end your turn.",
+            zh: "点击结束回合来结束你的回合。"
+        };
+    }
+
+    renderBattleInactivityPrompt(ctx, canvas, timestamp) {
+        const prompt = this.getBattleInactivityPrompt();
+        if (!prompt) return;
+        this.renderInactivityPrompt(ctx, canvas, prompt, { timestamp });
     }
 
     collectEnvironmentPaletteKeys() {
@@ -15296,8 +15363,27 @@ export class TacticsScene extends BaseScene {
         ctx.fillRect(0, y0, x0, y1 - y0);
         ctx.fillRect(x1, y0, canvas.width - x1, y1 - y0);
         this.drawPixelRectOutline(ctx, x0 - 1, y0 - 1, (x1 - x0) + 2, (y1 - y0) + 2, '#ffd700');
-        this.drawBouncingArrow(ctx, this.resetTurnRect.x + this.resetTurnRect.w / 2, this.resetTurnRect.y - 2);
-        this.drawBouncingArrow(ctx, this.undoRect.x + this.undoRect.w / 2, this.undoRect.y - 2);
+
+        const promptText = this.getZhuoTrainingUndoPromptLines()
+            .map(line => getLocalizedText(line))
+            .join(LANGUAGE.current === 'zh' ? '' : ' ');
+        const boxW = Math.min(canvas.width - 16, 360);
+        const lines = this.wrapText(ctx, promptText, boxW - 14, '8px Tiny5');
+        const lineHeight = LANGUAGE.current === 'zh' ? 11 : 8;
+        const boxH = 10 + (lines.length * lineHeight) + 8;
+        const boxX = Math.floor((canvas.width - boxW) / 2);
+        const boxY = 8;
+        ctx.fillStyle = 'rgba(10, 10, 10, 0.92)';
+        ctx.fillRect(boxX, boxY, boxW, boxH);
+        ctx.strokeStyle = '#ffd700';
+        ctx.strokeRect(boxX + 0.5, boxY + 0.5, boxW - 1, boxH - 1);
+        let ty = boxY + 6;
+        lines.forEach(line => {
+            this.drawPixelText(ctx, line, boxX + boxW / 2, ty, { color: '#fff', font: '8px Tiny5', align: 'center' });
+            ty += lineHeight;
+        });
+
+        this.drawBouncingArrow(ctx, (x0 + x1) / 2, y0 - 2);
         ctx.restore();
     }
 
