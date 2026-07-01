@@ -17,7 +17,7 @@ export class BaseScene {
         this._nextOutlineImageId = 1;
         this._characterOutlineCache = new Map();
         this._imageFrameOutlineCache = new Map();
-        this.lastUserActivityAt = Date.now();
+        this.lastUserActivityAt = this.getIdleClockNow();
         this.lastInputModality = 'mouse';
     }
 
@@ -110,14 +110,21 @@ export class BaseScene {
         }
     }
 
-    noteUserActivity(timestamp = Date.now(), modality = null) {
-        this.lastUserActivityAt = Number.isFinite(timestamp) ? timestamp : Date.now();
-        if (modality === 'mouse' || modality === 'keyboard' || modality === 'controller') {
+    getIdleClockNow() {
+        if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+            return performance.now();
+        }
+        return Date.now();
+    }
+
+    noteUserActivity(timestamp = this.getIdleClockNow(), modality = null) {
+        this.lastUserActivityAt = Number.isFinite(timestamp) ? timestamp : this.getIdleClockNow();
+        if (modality === 'mouse' || modality === 'touch' || modality === 'keyboard' || modality === 'controller') {
             this.lastInputModality = modality;
         }
     }
 
-    getInactivityMs(timestamp = Date.now()) {
+    getInactivityMs(timestamp = this.getIdleClockNow()) {
         const last = Number.isFinite(this.lastUserActivityAt) ? this.lastUserActivityAt : timestamp;
         return Math.max(0, timestamp - last);
     }
@@ -128,10 +135,10 @@ export class BaseScene {
 
     getModalityPrompt(variants) {
         const modality = this.getLastInputModality();
-        return variants?.[modality] || variants?.mouse || variants?.keyboard || variants?.controller || null;
+        return variants?.[modality] || variants?.mouse || variants?.touch || variants?.keyboard || variants?.controller || null;
     }
 
-    shouldShowInactivityPrompt(timestamp = Date.now(), thresholdMs = 10000) {
+    shouldShowInactivityPrompt(timestamp = this.getIdleClockNow(), thresholdMs = 10000) {
         return this.getInactivityMs(timestamp) >= thresholdMs;
     }
 
@@ -140,7 +147,7 @@ export class BaseScene {
         if (!text) return;
 
         const {
-            timestamp = Date.now(),
+            timestamp = this.getIdleClockNow(),
             thresholdMs = 10000,
             maxWidth = Math.min(canvas.width - 24, 340),
             font = '8px Tiny5',
@@ -149,21 +156,40 @@ export class BaseScene {
         } = options;
         if (!this.shouldShowInactivityPrompt(timestamp, thresholdMs)) return;
 
-        const pulse = 0.58 + Math.abs(Math.sin(timestamp / 360)) * 0.42;
-        const lines = this.wrapText(ctx, text, maxWidth - 14, font);
+        const shownMs = Math.max(0, this.getInactivityMs(timestamp) - thresholdMs);
+        const fadeAlpha = Math.min(1, shownMs / 900);
+        const pulse = 0.5 + Math.sin(timestamp / 900) * 0.5;
+        const lines = this.wrapText(ctx, text, maxWidth - 24, font);
         const lineHeight = LANGUAGE.current === 'zh' ? 12 : 9;
-        const boxW = maxWidth;
-        const boxH = Math.max(24, 12 + lines.length * lineHeight + 8);
+        ctx.save();
+        ctx.font = getFontForLanguage(font);
+        const textW = lines.reduce((max, line) => Math.max(max, ctx.measureText(line).width), 0);
+        const boxW = Math.min(maxWidth, Math.max(128, Math.ceil(textW) + 28));
+        const boxH = Math.max(28, 14 + lines.length * lineHeight + 8);
         const boxX = Math.floor((canvas.width - boxW) / 2);
         const boxY = Math.floor((canvas.height - boxH) / 2);
 
-        ctx.save();
-        ctx.globalAlpha = pulse;
+        ctx.globalAlpha = fadeAlpha * 0.32;
+        ctx.fillStyle = '#000';
+        ctx.fillRect(boxX + 3, boxY + 3, boxW, boxH);
+
+        ctx.globalAlpha = fadeAlpha;
         ctx.fillStyle = 'rgba(10, 10, 10, 0.88)';
         ctx.fillRect(boxX, boxY, boxW, boxH);
+
+        ctx.globalAlpha = fadeAlpha * 0.14;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(boxX + 2, boxY + 2, boxW - 4, 1);
+
+        ctx.globalAlpha = fadeAlpha * (0.58 + pulse * 0.22);
         ctx.strokeStyle = borderColor;
         ctx.strokeRect(boxX + 0.5, boxY + 0.5, boxW - 1, boxH - 1);
 
+        ctx.globalAlpha = fadeAlpha * 0.2;
+        ctx.strokeStyle = '#ffffff';
+        ctx.strokeRect(boxX + 2.5, boxY + 2.5, boxW - 5, boxH - 5);
+
+        ctx.globalAlpha = fadeAlpha * (0.9 + pulse * 0.1);
         let y = boxY + Math.floor((boxH - lines.length * lineHeight) / 2);
         lines.forEach(line => {
             this.drawPixelText(ctx, line, boxX + boxW / 2, y, {

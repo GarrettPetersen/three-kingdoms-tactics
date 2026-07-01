@@ -11951,6 +11951,7 @@ export class TacticsScene extends BaseScene {
         if (this.hasActiveBattleDialogue()) {
             return this.getModalityPrompt({
                 mouse: { en: "Click anywhere to advance the text.", zh: "点击任意位置继续文字。" },
+                touch: { en: "Tap anywhere to advance the text.", zh: "轻触任意位置继续文字。" },
                 keyboard: { en: "Press Enter/Space to advance the text.", zh: "按 Enter/空格继续文字。" },
                 controller: { en: "Press the confirm button to advance the text.", zh: "按确认键继续文字。" }
             });
@@ -11961,6 +11962,7 @@ export class TacticsScene extends BaseScene {
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack && this.attackTiles.size > 0) {
             return this.getModalityPrompt({
                 mouse: { en: "Click a red hex to attack.", zh: "点击红色格子进行攻击。" },
+                touch: { en: "Tap a red hex to attack.", zh: "轻触红色格子进行攻击。" },
                 keyboard: { en: "Use arrow keys to choose a red hex, then press Enter/Space to attack.", zh: "用方向键选择红色格子，再按 Enter/空格攻击。" },
                 controller: { en: "Use the D-pad or stick to choose a red hex, then press confirm to attack.", zh: "用方向键或摇杆选择红色格子，再按确认键攻击。" }
             });
@@ -11968,6 +11970,7 @@ export class TacticsScene extends BaseScene {
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && this.reachableTiles.size > 0) {
             return this.getModalityPrompt({
                 mouse: { en: "Click a yellow hex to move there.", zh: "点击黄色格子移动到那里。" },
+                touch: { en: "Tap a yellow hex to move there.", zh: "轻触黄色格子移动到那里。" },
                 keyboard: { en: "Use arrow keys to choose a yellow hex, then press Enter/Space to move.", zh: "用方向键选择黄色格子，再按 Enter/空格移动。" },
                 controller: { en: "Use the D-pad or stick to choose a yellow hex, then press confirm to move.", zh: "用方向键或摇杆选择黄色格子，再按确认键移动。" }
             });
@@ -11983,6 +11986,7 @@ export class TacticsScene extends BaseScene {
         if (selectableHeroes) {
             return this.getModalityPrompt({
                 mouse: { en: "Click one of your heroes to select them.", zh: "点击你的英雄来选择他。" },
+                touch: { en: "Tap one of your heroes to select them.", zh: "轻触你的英雄来选择他。" },
                 keyboard: { en: "Use arrow keys to choose one of your heroes, then press Enter/Space.", zh: "用方向键选择你的英雄，再按 Enter/空格。" },
                 controller: { en: "Use the D-pad or stick to choose one of your heroes, then press confirm.", zh: "用方向键或摇杆选择你的英雄，再按确认键。" }
             });
@@ -11990,6 +11994,7 @@ export class TacticsScene extends BaseScene {
 
         return this.getModalityPrompt({
             mouse: { en: "Click End Turn to end your turn.", zh: "点击结束回合来结束你的回合。" },
+            touch: { en: "Tap End Turn to end your turn.", zh: "轻触结束回合来结束你的回合。" },
             keyboard: { en: "Use arrow keys to choose End Turn, then press Enter/Space.", zh: "用方向键选择结束回合，再按 Enter/空格。" },
             controller: { en: "Use the D-pad or stick to choose End Turn, then press confirm.", zh: "用方向键或摇杆选择结束回合，再按确认键。" }
         });

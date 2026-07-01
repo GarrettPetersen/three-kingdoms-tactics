@@ -22,6 +22,7 @@ export class SceneManager {
         this.lastPointerY = 0;
         this.logicalMouseX = 0;
         this.logicalMouseY = 0;
+        this.lastInputModality = 'mouse';
         this._padRepeatState = new Map();
         this._steamInputState = {
             up: false,
@@ -45,14 +46,28 @@ export class SceneManager {
             } else if (this.currentScene && this.currentScene.onMouseInput) {
                 this.currentScene.onMouseInput(this.logicalMouseX, this.logicalMouseY);
             }
-            this.noteCurrentSceneUserActivity(Date.now(), 'mouse');
+            this.noteCurrentSceneUserActivity(this.getIdleClockNow(), this.getPointerInputModality(e));
         });
     }
 
-    noteCurrentSceneUserActivity(timestamp = Date.now(), modality = null) {
+    getIdleClockNow() {
+        if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+            return performance.now();
+        }
+        return Date.now();
+    }
+
+    noteCurrentSceneUserActivity(timestamp = this.getIdleClockNow(), modality = null) {
+        if (modality === 'mouse' || modality === 'touch' || modality === 'keyboard' || modality === 'controller') {
+            this.lastInputModality = modality;
+        }
         if (this.currentScene && typeof this.currentScene.noteUserActivity === 'function') {
             this.currentScene.noteUserActivity(timestamp, modality);
         }
+    }
+
+    getPointerInputModality(e) {
+        return e?.pointerType === 'touch' || e?.pointerType === 'pen' ? 'touch' : 'mouse';
     }
 
     setDisplayControls(controls = {}) {
@@ -252,7 +267,7 @@ export class SceneManager {
         if (this.currentScene && this.currentScene.enter) {
             this.currentScene.enter(params);
         }
-        this.noteCurrentSceneUserActivity(Date.now(), 'mouse');
+        this.noteCurrentSceneUserActivity(this.getIdleClockNow(), this.lastInputModality);
     }
 
     update(timestamp) {
@@ -279,7 +294,7 @@ export class SceneManager {
     }
 
     handleInput(e) {
-        this.noteCurrentSceneUserActivity(Date.now(), 'mouse');
+        this.noteCurrentSceneUserActivity(this.getIdleClockNow(), this.getPointerInputModality(e));
         if (this.isOptionsOverlayActive()) {
             if (this.optionsOverlay && this.optionsOverlay.handleInput) {
                 this.optionsOverlay.handleInput(e);
@@ -298,7 +313,7 @@ export class SceneManager {
     }
 
     handlePointerUp(e) {
-        this.noteCurrentSceneUserActivity(Date.now(), 'mouse');
+        this.noteCurrentSceneUserActivity(this.getIdleClockNow(), this.getPointerInputModality(e));
         if (this.isOptionsOverlayActive()) return;
         if (this.currentScene && this.currentScene.handlePointerUp) {
             this.currentScene.handlePointerUp(e);
@@ -306,7 +321,7 @@ export class SceneManager {
     }
 
     handleKeyDown(e) {
-        this.noteCurrentSceneUserActivity(Date.now(), e?.fromGamepad ? 'controller' : 'keyboard');
+        this.noteCurrentSceneUserActivity(this.getIdleClockNow(), e?.fromGamepad ? 'controller' : 'keyboard');
         if (e && e.key === 'Escape') {
             if (this.isOptionsOverlayActive()) {
                 if (typeof e.preventDefault === 'function') e.preventDefault();
@@ -336,7 +351,7 @@ export class SceneManager {
     }
 
     handleWheel(e) {
-        this.noteCurrentSceneUserActivity(Date.now(), 'mouse');
+        this.noteCurrentSceneUserActivity(this.getIdleClockNow(), 'mouse');
         if (this.isOptionsOverlayActive()) return;
         if (this.currentScene && this.currentScene.handleWheel) {
             this.currentScene.handleWheel(e);
