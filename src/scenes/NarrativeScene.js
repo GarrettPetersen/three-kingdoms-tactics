@@ -25,8 +25,10 @@ export class NarrativeScene extends BaseScene {
         this.isInteractive = false; // Whether we're in interactive mode (point-and-click)
         this.interactiveStepIndex = -1; // Track which step is the interactive step
         this.clickableActors = {}; // { actorId: { onClick: function or script steps } }
+        this.clickableProps = {}; // { propId: { delegateActorId?: string, onClick?: script steps } }
         this.clickableRegions = {}; // { regionId: { x, y, w, h, onClick: script steps } }
         this.hoveredActor = null; // Currently hovered actor ID
+        this.hoveredProp = null; // Currently hovered prop ID
         this.hoveredRegion = null; // Currently hovered region ID
         this.scriptLabels = {}; // { labelName: stepIndex } - map of label names to script indices
         this.baseScript = [];
@@ -156,8 +158,10 @@ export class NarrativeScene extends BaseScene {
     clearInteractiveState() {
         this.isInteractive = false;
         this.clickableActors = {};
+        this.clickableProps = {};
         this.clickableRegions = {};
         this.hoveredActor = null;
+        this.hoveredProp = null;
         this.hoveredRegion = null;
         this.interactiveNavTargets = [];
         this.interactiveNavIndex = -1;
@@ -674,11 +678,13 @@ export class NarrativeScene extends BaseScene {
         }
         this.interactiveStepIndex = state.interactiveStepIndex !== undefined ? state.interactiveStepIndex : -1;
         this.clickableActors = state.clickableActors || {};
+        this.clickableProps = state.clickableProps || {};
         this.clickableRegions = state.clickableRegions || {};
         this.returnStack = state.returnStack ? [...state.returnStack] : [];
         this.insertedStepsCount = state.insertedStepsCount || 0;
         this.insertedStepsStartIndex = state.insertedStepsStartIndex !== undefined ? state.insertedStepsStartIndex : -1;
         this.hoveredActor = null; // Reset hover state on restore
+        this.hoveredProp = null;
         this.hoveredRegion = null; // Reset hover state on restore
             this.interactiveNavTargets = [];
             this.interactiveNavIndex = -1;
@@ -698,6 +704,7 @@ export class NarrativeScene extends BaseScene {
             if (!isAtInteractiveStep && !isInsideInsertedBranch) {
                 this.isInteractive = false;
                 this.clickableActors = {};
+                this.clickableProps = {};
                 this.clickableRegions = {};
             }
         }
@@ -729,6 +736,7 @@ export class NarrativeScene extends BaseScene {
             if ((step.type === 'interactive' || step.type === 'prompt') && this.isInteractive) {
                 // Just set up the clickable elements without replaying voice
                 this.clickableActors = step.clickableActors || {};
+                this.clickableProps = step.clickableProps || {};
                 this.clickableRegions = { ...(step.clickableRegions || {}) };
                 if (step.type === 'prompt' || Array.isArray(step.promptOptions)) {
                     Object.assign(this.clickableRegions, this.buildPromptClickableRegions(step));
@@ -906,8 +914,10 @@ export class NarrativeScene extends BaseScene {
         this.isInteractive = false;
         this.interactiveStepIndex = -1;
         this.clickableActors = {};
+        this.clickableProps = {};
         this.clickableRegions = {};
         this.hoveredActor = null;
+        this.hoveredProp = null;
         this.hoveredRegion = null;
         this.returnStack = [];
         this.insertedStepsCount = 0;
@@ -993,6 +1003,7 @@ export class NarrativeScene extends BaseScene {
             this.isWaiting = true;
             // Set up clickable actors from step definition
             this.clickableActors = step.clickableActors || {};
+            this.clickableProps = step.clickableProps || {};
             // Set up clickable regions from step definition
             this.clickableRegions = { ...(step.clickableRegions || {}) };
             if (step.type === 'prompt' || Array.isArray(step.promptOptions)) {
@@ -1188,8 +1199,9 @@ export class NarrativeScene extends BaseScene {
             }
             this.nextStep();
         } else if (cmd.action === 'clearAllClickable') {
-            // Clear all clickable actors and regions
+            // Clear all clickable actors, props, and regions
             this.clickableActors = {};
+            this.clickableProps = {};
             this.clickableRegions = {};
             this.nextStep();
         } else if (cmd.action === 'setClickableRegion') {
@@ -1480,6 +1492,7 @@ export class NarrativeScene extends BaseScene {
             isInteractive: this.isInteractive || false,
             interactiveStepIndex: this.interactiveStepIndex !== undefined ? this.interactiveStepIndex : -1,
             clickableActors: this.clickableActors || {},
+            clickableProps: this.clickableProps || {},
             clickableRegions: this.clickableRegions || {},
             returnStack: this.returnStack ? [...this.returnStack] : [],
             insertedStepsCount: 0,
@@ -1788,6 +1801,10 @@ export class NarrativeScene extends BaseScene {
             below: null,
             above: null
         };
+        const hoveredPropOutlines = {
+            below: null,
+            above: null
+        };
         const drawActor = (a, actorId) => {
             if (!a.img && a.imgKey) {
                 a.img = assets.getImage(a.imgKey);
@@ -1814,24 +1831,26 @@ export class NarrativeScene extends BaseScene {
                 };
             }
         };
-        const drawProp = (prop) => {
-            let img = prop.img;
-            if (Array.isArray(prop.imgKeys) && prop.imgKeys.length > 0) {
-                const frameMs = Math.max(1, prop.frameMs || 900);
-                const frameIdx = Math.floor((Date.now() + (prop.frameOffsetMs || 0)) / frameMs) % prop.imgKeys.length;
-                const frameKey = prop.imgKeys[frameIdx];
-                img = assets.getImage(frameKey);
-            } else if (!img && prop.imgKey) {
-                img = assets.getImage(prop.imgKey);
-                prop.img = img;
-            }
+        const drawProp = (prop, propId) => {
+            const img = this.getPropImage(prop);
             if (!img) return;
             const w = prop.w || img.width;
             const h = prop.h || img.height;
             ctx.drawImage(img, bgX + prop.x, bgY + prop.y, w, h);
+            const isClickable = propId && this.clickableProps && this.clickableProps[propId];
+            if (this.isInteractive && isClickable && this.hoveredProp === propId) {
+                const outlineLayer = prop.drawAboveForeground ? 'above' : 'below';
+                hoveredPropOutlines[outlineLayer] = {
+                    img,
+                    x: bgX + prop.x,
+                    y: bgY + prop.y,
+                    w,
+                    h
+                };
+            }
         };
         const drawDrawable = (entry) => {
-            if (entry.type === 'prop') drawProp(entry.item);
+            if (entry.type === 'prop') drawProp(entry.item, entry.id);
             else drawActor(entry.item, entry.id);
         };
         const drawHoveredActorOutline = (outline) => {
@@ -1846,8 +1865,13 @@ export class NarrativeScene extends BaseScene {
                 { flip: outline.flip, color: '#ffd700' }
             );
         };
+        const drawHoveredPropOutline = (outline) => {
+            if (!outline) return;
+            this.drawImagePixelOutline(ctx, outline.img, outline.x, outline.y, outline.w, outline.h, { color: '#ffd700' });
+        };
         drawablesBelowForeground.forEach(drawDrawable);
         drawHoveredActorOutline(hoveredActorOutlines.below);
+        drawHoveredPropOutline(hoveredPropOutlines.below);
 
         if (fgKey && resolvedBg) {
             const fg = this.getPaletteShiftedVisualImage(assets.getImage(fgKey), visualPaletteInfo, visualPaletteProgress);
@@ -1860,6 +1884,7 @@ export class NarrativeScene extends BaseScene {
         }
         drawablesAboveForeground.forEach(drawDrawable);
         drawHoveredActorOutline(hoveredActorOutlines.above);
+        drawHoveredPropOutline(hoveredPropOutlines.above);
         ctx.restore();
 
         // Fade overlay
@@ -2222,12 +2247,79 @@ export class NarrativeScene extends BaseScene {
         return true;
     }
 
+    getPropImage(prop) {
+        if (!prop) return null;
+        if (Array.isArray(prop.imgKeys) && prop.imgKeys.length > 0) {
+            const frameMs = Math.max(1, prop.frameMs || 900);
+            const frameIdx = Math.floor((Date.now() + (prop.frameOffsetMs || 0)) / frameMs) % prop.imgKeys.length;
+            return assets.getImage(prop.imgKeys[frameIdx]);
+        }
+        if (!prop.img && prop.imgKey) {
+            prop.img = assets.getImage(prop.imgKey);
+        }
+        return prop.img || null;
+    }
+
+    checkPropImageHit(prop, screenX, screenY, clickX, clickY) {
+        const img = this.getPropImage(prop);
+        if (!img) return false;
+        const w = prop.w || img.width;
+        const h = prop.h || img.height;
+        if (clickX < screenX || clickX > screenX + w || clickY < screenY || clickY > screenY + h) return false;
+
+        const localX = Math.floor((clickX - screenX) * img.width / w);
+        const localY = Math.floor((clickY - screenY) * img.height / h);
+        if (localX < 0 || localX >= img.width || localY < 0 || localY >= img.height) return false;
+
+        if (!this._hitCanvas) {
+            this._hitCanvas = document.createElement('canvas');
+            this._hitCanvas.width = 1;
+            this._hitCanvas.height = 1;
+            this._hitCtx = this._hitCanvas.getContext('2d', { willReadFrequently: true });
+        }
+        const hctx = this._hitCtx;
+        hctx.clearRect(0, 0, 1, 1);
+        hctx.drawImage(img, localX, localY, 1, 1, 0, 0, 1, 1);
+        return hctx.getImageData(0, 0, 1, 1).data[3] > 32;
+    }
+
+    drawImagePixelOutline(ctx, img, x, y, w, h, options = {}) {
+        if (!img) return;
+        const color = options.color || '#ffd700';
+        if (!this._propOutlineCanvas) {
+            this._propOutlineCanvas = document.createElement('canvas');
+            this._propOutlineCtx = this._propOutlineCanvas.getContext('2d');
+        }
+        const outlineCanvas = this._propOutlineCanvas;
+        const outlineCtx = this._propOutlineCtx;
+        outlineCanvas.width = Math.max(1, Math.ceil(w));
+        outlineCanvas.height = Math.max(1, Math.ceil(h));
+        outlineCtx.clearRect(0, 0, outlineCanvas.width, outlineCanvas.height);
+        outlineCtx.imageSmoothingEnabled = false;
+        outlineCtx.drawImage(img, 0, 0, outlineCanvas.width, outlineCanvas.height);
+        outlineCtx.globalCompositeOperation = 'source-in';
+        outlineCtx.fillStyle = color;
+        outlineCtx.fillRect(0, 0, outlineCanvas.width, outlineCanvas.height);
+        outlineCtx.globalCompositeOperation = 'source-over';
+
+        ctx.save();
+        ctx.imageSmoothingEnabled = false;
+        ctx.globalAlpha = 0.9;
+        ctx.drawImage(outlineCanvas, x - 1, y);
+        ctx.drawImage(outlineCanvas, x + 1, y);
+        ctx.drawImage(outlineCanvas, x, y - 1);
+        ctx.drawImage(outlineCanvas, x, y + 1);
+        ctx.globalAlpha = 0.45;
+        ctx.drawImage(outlineCanvas, x - 1, y - 1);
+        ctx.drawImage(outlineCanvas, x + 1, y - 1);
+        ctx.drawImage(outlineCanvas, x - 1, y + 1);
+        ctx.drawImage(outlineCanvas, x + 1, y + 1);
+        ctx.restore();
+    }
+
     activateInteractiveRegion(regionId) {
         const region = this.clickableRegions?.[regionId];
         if (!region) return false;
-        if (region.delegateActorId && this.clickableActors?.[region.delegateActorId]) {
-            return this.activateInteractiveActor(region.delegateActorId);
-        }
         assets.playSound('ui_click', 0.5);
         let clickHandler = region.onClick;
         if (region.liuboActivityId && region.onClickRepeat) {
@@ -2279,6 +2371,62 @@ export class NarrativeScene extends BaseScene {
 
         const shouldAdvanceRegion = !!region.advanceOnClick || (!!region.promptStyle && !clickHandler);
         if (shouldAdvanceRegion) {
+            this.pendingInteractiveAdvance = true;
+        }
+        this.nextStep();
+        return true;
+    }
+
+    activateInteractiveProp(propId) {
+        const prop = this.clickableProps?.[propId];
+        if (!prop) return false;
+        if (prop.delegateActorId && this.clickableActors?.[prop.delegateActorId]) {
+            return this.activateInteractiveActor(prop.delegateActorId);
+        }
+        assets.playSound('ui_click', 0.5);
+        const clickHandler = prop.onClick;
+
+        if (clickHandler) {
+            if (Array.isArray(clickHandler)) {
+                if (this.pushRuntimeFrame(clickHandler, {
+                    returnToInteractive: !prop.advanceOnClick,
+                    advanceParentAfter: !!prop.advanceOnClick
+                })) {
+                    if (prop.advanceOnClick) this.clearInteractiveState();
+                    this.processStep();
+                    return true;
+                }
+            } else if (clickHandler.branch) {
+                const branchSteps = clickHandler.branch;
+                if (Array.isArray(branchSteps)) {
+                    const returnsToInteractive = clickHandler.return !== false;
+                    if (this.pushRuntimeFrame(branchSteps, {
+                        returnToInteractive: returnsToInteractive,
+                        advanceParentAfter: !returnsToInteractive
+                    })) {
+                        if (!returnsToInteractive) this.clearInteractiveState();
+                        this.processStep();
+                        return true;
+                    }
+                } else if (typeof branchSteps === 'string') {
+                    this.pushRuntimeFrame([{ type: 'command', action: 'jump', label: branchSteps }], {
+                        returnToInteractive: clickHandler.return !== false,
+                        advanceParentAfter: clickHandler.return === false
+                    });
+                    if (clickHandler.return === false) this.clearInteractiveState();
+                    this.processStep();
+                    return true;
+                }
+            } else if (typeof clickHandler === 'string') {
+                this.pushRuntimeFrame([{ type: 'command', action: 'jump', label: clickHandler }], {
+                    returnToInteractive: true
+                });
+                this.processStep();
+                return true;
+            }
+        }
+
+        if (prop.advanceOnClick) {
             this.pendingInteractiveAdvance = true;
         }
         this.nextStep();
@@ -2361,6 +2509,12 @@ export class NarrativeScene extends BaseScene {
                 const clickedRegion = this.checkRegionClick(x, y);
                 if (clickedRegion && this.clickableRegions[clickedRegion]) {
                     this.activateInteractiveRegion(clickedRegion);
+                    return;
+                }
+
+                const clickedProp = this.checkPropClick(x, y);
+                if (clickedProp && this.clickableProps[clickedProp]) {
+                    this.activateInteractiveProp(clickedProp);
                     return;
                 }
                 
@@ -2482,6 +2636,26 @@ export class NarrativeScene extends BaseScene {
         return null;
     }
 
+    checkPropClick(clickX, clickY) {
+        const step = this.script[this.currentStep];
+        if (!step || !this.clickableProps) return null;
+
+        const { bgX, bgY } = this.getCurrentBackgroundOffset();
+        const candidates = Object.entries(this.props || {})
+            .filter(([propId]) => !!this.clickableProps[propId])
+            .sort((a, b) => (b[1].sortY ?? b[1].y) - (a[1].sortY ?? a[1].y));
+
+        for (const [propId, prop] of candidates) {
+            const screenX = bgX + prop.x;
+            const screenY = bgY + prop.y;
+            if (this.checkPropImageHit(prop, screenX, screenY, clickX, clickY)) {
+                return propId;
+            }
+        }
+
+        return null;
+    }
+
     checkRegionClick(clickX, clickY) {
         // Check if click hits any clickable region
         if (!this.clickableRegions) return null;
@@ -2560,6 +2734,20 @@ export class NarrativeScene extends BaseScene {
             });
         }
 
+        for (const [propId, prop] of Object.entries(this.props || {})) {
+            if (!this.clickableProps || !this.clickableProps[propId]) continue;
+            const img = this.getPropImage(prop);
+            const w = prop.w || img?.width || 1;
+            const h = prop.h || img?.height || 1;
+            targets.push({
+                id: `prop:${propId}`,
+                type: 'prop',
+                propId,
+                x: bgX + prop.x + w / 2,
+                y: bgY + prop.y + h / 2
+            });
+        }
+
         // Preserve focus when possible
         let selectedId = null;
         if (this.interactiveNavIndex >= 0 && this.interactiveNavIndex < this.interactiveNavTargets.length) {
@@ -2570,6 +2758,7 @@ export class NarrativeScene extends BaseScene {
         if (targets.length === 0) {
             this.interactiveNavIndex = -1;
             this.hoveredActor = null;
+            this.hoveredProp = null;
             this.hoveredRegion = null;
             return;
         }
@@ -2581,10 +2770,12 @@ export class NarrativeScene extends BaseScene {
 
     syncInteractiveHoverFromNav() {
         this.hoveredActor = null;
+        this.hoveredProp = null;
         this.hoveredRegion = null;
         if (this.interactiveNavIndex < 0 || this.interactiveNavIndex >= this.interactiveNavTargets.length) return;
         const target = this.interactiveNavTargets[this.interactiveNavIndex];
         if (target.type === 'actor') this.hoveredActor = target.actorId;
+        if (target.type === 'prop') this.hoveredProp = target.propId;
         if (target.type === 'region') this.hoveredRegion = target.regionId;
     }
 
@@ -2604,17 +2795,22 @@ export class NarrativeScene extends BaseScene {
     activateInteractiveTarget(target) {
         this.activateNavigationTarget(target, {
             region: (t) => this.activateInteractiveRegion(t.regionId),
+            prop: (t) => this.activateInteractiveProp(t.propId),
             actor: (t) => this.activateInteractiveActor(t.actorId)
         });
     }
 
     updateHoverState(mouseX, mouseY) {
-        // Update which actor or region is being hovered
-        const hoveredActor = this.checkActorClick(mouseX, mouseY);
+        // Update which interactive target is being hovered.
+        const hoveredProp = this.checkPropClick(mouseX, mouseY);
+        const hoveredActor = hoveredProp ? null : this.checkActorClick(mouseX, mouseY);
         const hoveredRegion = this.checkRegionClick(mouseX, mouseY);
         
         if (hoveredActor !== this.hoveredActor) {
             this.hoveredActor = hoveredActor;
+        }
+        if (hoveredProp !== this.hoveredProp) {
+            this.hoveredProp = hoveredProp;
         }
         if (hoveredRegion !== this.hoveredRegion) {
             this.hoveredRegion = hoveredRegion;

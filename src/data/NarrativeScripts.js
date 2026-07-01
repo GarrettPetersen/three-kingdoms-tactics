@@ -1314,14 +1314,12 @@ export const NARRATIVE_SCRIPTS = {
         
         // Interactive step: players can explore the inn before Guan Yu arrives
         { type: 'interactive',
-          clickableRegions: {
+          clickableProps: {
             'liubo_table': {
-                x: 174,
-                y: 138,
-                w: 48,
-                h: 48,
                 delegateActorId: 'liubo_player'
-            },
+            }
+          },
+          clickableRegions: {
             'wine_casks': {
                 // Wine casks on left-hand middle of screen (approximate position)
                 x: 0,
@@ -1740,12 +1738,8 @@ export const NARRATIVE_SCRIPTS = {
         },
         {
             type: 'interactive',
-            clickableRegions: {
+            clickableProps: {
                 'liubo_table': {
-                    x: 174,
-                    y: 138,
-                    w: 48,
-                    h: 48,
                     delegateActorId: 'liubo_player'
                 }
             },
@@ -3084,12 +3078,8 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'removeActor', id: 'zhangjun' },
         {
             type: 'interactive',
-            clickableRegions: {
+            clickableProps: {
                 'luoyang_liubo_table': {
-                    x: 176,
-                    y: 166,
-                    w: 48,
-                    h: 48,
                     delegateActorId: 'luoyang_liubo_player'
                 }
             },
