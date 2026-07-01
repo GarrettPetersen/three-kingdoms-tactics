@@ -373,7 +373,24 @@ export class LiuboScene extends BaseScene {
     renderLiuboInactivityPrompt(ctx, canvas) {
         const prompt = this.getLiuboInactivityPrompt();
         if (!prompt) return;
-        this.renderInactivityPrompt(ctx, canvas, prompt);
+        this.renderInactivityPrompt(ctx, canvas, prompt, {
+            contextKey: this.getLiuboInactivityPromptContextKey()
+        });
+    }
+
+    getLiuboInactivityPromptContextKey() {
+        if (this.activeTutorialDialogue) {
+            const voiceKey = this.activeTutorialDialogue.voiceId || this.activeTutorialDialogue.speaker || 'tutorial';
+            return `liubo:tutorial:${voiceKey}:${this.tutorialSubStep || 0}`;
+        }
+        if (this.state.phase === 'roll') {
+            return `liubo:roll:${this.state.currentPlayer}:${this.state.turnNumber || 0}`;
+        }
+        if (this.state.phase === 'choose_piece') {
+            const legalMoveCount = (this.state.legalMoves || []).length;
+            return `liubo:choose:${this.state.currentPlayer}:${this.state.selectedPieceId || 'none'}:${legalMoveCount}`;
+        }
+        return `liubo:${this.state.phase || 'idle'}:${this.state.currentPlayer || 'none'}`;
     }
 
     getLayout(canvas) {

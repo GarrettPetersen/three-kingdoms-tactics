@@ -19,6 +19,8 @@ export class BaseScene {
         this._imageFrameOutlineCache = new Map();
         this.lastUserActivityAt = this.getIdleClockNow();
         this.lastInputModality = 'mouse';
+        this.inactivityPromptContextKey = null;
+        this.inactivityPromptContextStartedAt = this.lastUserActivityAt;
     }
 
     enter(params) {}
@@ -142,6 +144,20 @@ export class BaseScene {
         return this.getInactivityMs(timestamp) >= thresholdMs;
     }
 
+    getInactivityPromptStart(timestamp = this.getIdleClockNow(), contextKey = 'default') {
+        const key = String(contextKey || 'default');
+        if (this.inactivityPromptContextKey !== key) {
+            this.inactivityPromptContextKey = key;
+            this.inactivityPromptContextStartedAt = timestamp;
+        }
+
+        const contextStart = Number.isFinite(this.inactivityPromptContextStartedAt)
+            ? this.inactivityPromptContextStartedAt
+            : timestamp;
+        const lastActivity = Number.isFinite(this.lastUserActivityAt) ? this.lastUserActivityAt : timestamp;
+        return Math.max(contextStart, lastActivity);
+    }
+
     renderInactivityPrompt(ctx, canvas, textDef, options = {}) {
         const text = getLocalizedText(textDef);
         if (!text) return;
@@ -152,13 +168,16 @@ export class BaseScene {
             maxWidth = Math.min(canvas.width - 24, 340),
             font = '8px Tiny5',
             color = '#fff',
-            borderColor = '#ffd700'
+            borderColor = '#ffd700',
+            contextKey = text
         } = options;
-        if (!this.shouldShowInactivityPrompt(timestamp, thresholdMs)) return;
+        const promptStart = this.getInactivityPromptStart(timestamp, contextKey);
+        const promptIdleMs = Math.max(0, timestamp - promptStart);
+        if (promptIdleMs < thresholdMs) return;
 
-        const shownMs = Math.max(0, this.getInactivityMs(timestamp) - thresholdMs);
+        const shownMs = Math.max(0, promptIdleMs - thresholdMs);
         const fadeAlpha = Math.min(1, shownMs / 900);
-        const pulse = 0.5 + Math.sin(timestamp / 900) * 0.5;
+        const pulse = 0.5 + Math.sin(timestamp / 750) * 0.5;
         const lines = this.wrapText(ctx, text, maxWidth - 24, font);
         const lineHeight = LANGUAGE.current === 'zh' ? 12 : 9;
         ctx.save();
@@ -181,15 +200,15 @@ export class BaseScene {
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(boxX + 2, boxY + 2, boxW - 4, 1);
 
-        ctx.globalAlpha = fadeAlpha * (0.58 + pulse * 0.22);
+        ctx.globalAlpha = fadeAlpha * (0.42 + pulse * 0.5);
         ctx.strokeStyle = borderColor;
         ctx.strokeRect(boxX + 0.5, boxY + 0.5, boxW - 1, boxH - 1);
 
-        ctx.globalAlpha = fadeAlpha * 0.2;
+        ctx.globalAlpha = fadeAlpha * (0.12 + pulse * 0.18);
         ctx.strokeStyle = '#ffffff';
         ctx.strokeRect(boxX + 2.5, boxY + 2.5, boxW - 5, boxH - 5);
 
-        ctx.globalAlpha = fadeAlpha * (0.9 + pulse * 0.1);
+        ctx.globalAlpha = fadeAlpha * (0.76 + pulse * 0.24);
         let y = boxY + Math.floor((boxH - lines.length * lineHeight) / 2);
         lines.forEach(line => {
             this.drawPixelText(ctx, line, boxX + boxW / 2, y, {

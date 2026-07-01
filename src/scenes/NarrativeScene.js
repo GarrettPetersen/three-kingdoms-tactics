@@ -1916,7 +1916,22 @@ export class NarrativeScene extends BaseScene {
         const step = this.script?.[this.currentStep];
         const prompt = this.getNarrativeInactivityPrompt(step);
         if (!prompt) return;
-        this.renderInactivityPrompt(ctx, canvas, prompt, { timestamp });
+        this.renderInactivityPrompt(ctx, canvas, prompt, {
+            timestamp,
+            contextKey: this.getNarrativeInactivityPromptContextKey(step)
+        });
+    }
+
+    getNarrativeInactivityPromptContextKey(step) {
+        if (!step) return 'narrative:none';
+        const frameDepth = Array.isArray(this.executionFrames) ? this.executionFrames.length : 0;
+        if (step.type === 'dialogue' || step.type === 'narrator' || step.type === 'title') {
+            return `narrative:${this.scriptId || 'script'}:${frameDepth}:${this.currentStep}:${this.subStep}:${step.type}`;
+        }
+        if (this.isInteractive && this.isWaiting && (step.type === 'interactive' || step.type === 'prompt')) {
+            return `narrative:${this.scriptId || 'script'}:${frameDepth}:${this.currentStep}:interactive:${this.interactiveStepIndex}`;
+        }
+        return `narrative:${this.scriptId || 'script'}:${frameDepth}:${this.currentStep}:${step.type || 'step'}`;
     }
 
     shouldRenderInteractiveRegions(step) {

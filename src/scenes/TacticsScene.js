@@ -41,6 +41,11 @@ const TEMPLATE_RUNTIME_FIELDS = [
     'destroyedImgKey',
     'ladderCombatLevel'
 ];
+const LOW_POWER_WEATHER_SPAWN_SCALE = 0.55;
+const THROTTLED_WEATHER_SPAWN_SCALE = 0.2;
+const LOW_POWER_MAX_WEATHER_PARTICLES = 45;
+const THROTTLED_MAX_WEATHER_PARTICLES = 28;
+const DEFAULT_MAX_WEATHER_PARTICLES = 130;
 
 export class TacticsScene extends BaseScene {
     constructor() {
@@ -79,6 +84,7 @@ export class TacticsScene extends BaseScene {
         this.overkillEffects = [];
         this.fireSmokeParticles = []; // { x, y, r, life, maxLife, vx, vy, alpha, driftTimer, size }
         this.weatherType = null; // 'rain', 'snow'
+        this.lowPowerBattleModeOverride = null;
         this.enemiesKilled = 0; // Track kills for specific objectives
         this.ambushTriggered = false;
         this.flagPos = null; // { r, q }
@@ -270,6 +276,20 @@ export class TacticsScene extends BaseScene {
 
     getActiveDialogueScript() {
         return this.getActiveDialogueState()?.script || null;
+    }
+
+    isLowPowerBattleMode() {
+        if (typeof this.lowPowerBattleModeOverride === 'boolean') return this.lowPowerBattleModeOverride;
+        const config = this.manager?.config || {};
+        return !!config.hasCoarsePointer;
+    }
+
+    isBattleVisualThrottleActive() {
+        return !!(this.isProcessingTurn || (this.turn && this.turn !== 'player'));
+    }
+
+    shouldUseFullBattleVisualEffects() {
+        return !this.isBattleVisualThrottleActive();
     }
 
     getActiveDialogueState() {
@@ -10508,7 +10528,10 @@ export class TacticsScene extends BaseScene {
             
             let hoveredUnit = null;
             let hoveredUnitCell = null;
-            if (!this.manager?.config?.hasCoarsePointer) {
+            if (this.isLowPowerBattleMode()) {
+                this.hoveredMountedAttackRegions = null;
+                this.hoveredCell = null;
+            } else {
                 const activeUnits = this.units.filter(u => u.hp > 0 && !u.isGone);
                 // Match draw order (bottom-to-top) for picking
                 activeUnits.sort((a, b) => b.currentSortR - a.currentSortR);
@@ -10582,31 +10605,30 @@ export class TacticsScene extends BaseScene {
                         break;
                     }
                 }
-            }
-
-            const rawHoveredCell = this.getCellAt(hx, hy);
-            this.hoveredMountedAttackRegions = null;
-            
-            if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack) {
-                if (hoveredUnit && hoveredUnit.onHorse) {
-                    const regions = this.getMountedAttackRegions(hoveredUnit);
-                    if (regions.some(r => r.canAttack)) {
-                        this.hoveredMountedAttackRegions = regions;
-                    }
-                    if (hoveredUnitCell && this.attackTiles.has(`${hoveredUnitCell.r},${hoveredUnitCell.q}`)) {
+                const rawHoveredCell = this.getCellAt(hx, hy);
+                this.hoveredMountedAttackRegions = null;
+                
+                if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack) {
+                    if (hoveredUnit && hoveredUnit.onHorse) {
+                        const regions = this.getMountedAttackRegions(hoveredUnit);
+                        if (regions.some(r => r.canAttack)) {
+                            this.hoveredMountedAttackRegions = regions;
+                        }
+                        if (hoveredUnitCell && this.attackTiles.has(`${hoveredUnitCell.r},${hoveredUnitCell.q}`)) {
+                            this.hoveredCell = hoveredUnitCell;
+                        } else {
+                            this.hoveredCell = rawHoveredCell;
+                        }
+                    } else if (hoveredUnitCell && this.attackTiles.has(`${hoveredUnitCell.r},${hoveredUnitCell.q}`)) {
+                        // When targeting an attack, prioritize unit sprite IF it's in range
                         this.hoveredCell = hoveredUnitCell;
                     } else {
                         this.hoveredCell = rawHoveredCell;
                     }
-                } else if (hoveredUnitCell && this.attackTiles.has(`${hoveredUnitCell.r},${hoveredUnitCell.q}`)) {
-                    // When targeting an attack, prioritize unit sprite IF it's in range
-                    this.hoveredCell = hoveredUnitCell;
                 } else {
-                    this.hoveredCell = rawHoveredCell;
+                    // Standard selection hover
+                    this.hoveredCell = hoveredUnitCell || rawHoveredCell;
                 }
-            } else {
-                // Standard selection hover
-                this.hoveredCell = hoveredUnitCell || rawHoveredCell;
             }
         }
 
@@ -10632,14 +10654,26 @@ export class TacticsScene extends BaseScene {
         this.updateRainAmbienceAudio();
         const forceRain = this.forceRainUntil && Date.now() < this.forceRainUntil;
         const effectiveWeather = forceRain ? 'rain' : this.weatherType;
+        const lowPower = this.isLowPowerBattleMode();
+        const throttleVisuals = this.isBattleVisualThrottleActive();
+        const weatherSpawnScale = throttleVisuals
+            ? THROTTLED_WEATHER_SPAWN_SCALE
+            : (lowPower ? LOW_POWER_WEATHER_SPAWN_SCALE : 1);
+        const maxWeatherParticles = throttleVisuals
+            ? THROTTLED_MAX_WEATHER_PARTICLES
+            : (lowPower ? LOW_POWER_MAX_WEATHER_PARTICLES : DEFAULT_MAX_WEATHER_PARTICLES);
 
-        const { config, canvas } = this.manager;
+        const { config } = this.manager;
         
         // 1. Spawn new particles (Slower spawn rates)
         if (effectiveWeather) {
-            const spawnRate = effectiveWeather === 'rain' ? 0.15 : 0.03; // Much slower
+            const spawnRate = (effectiveWeather === 'rain' ? 0.15 : 0.03) * weatherSpawnScale; // Much slower
+            const weatherParticleCount = this.particles.reduce((count, p) => (
+                p.type === 'rain' || p.type === 'snow' ? count + 1 : count
+            ), 0);
+            const availableWeatherSlots = Math.max(0, maxWeatherParticles - weatherParticleCount);
             const spawnCount = Math.floor(dt * spawnRate + Math.random());
-            for (let i = 0; i < spawnCount; i++) {
+            for (let i = 0; i < Math.min(spawnCount, availableWeatherSlots); i++) {
                 const r = Math.floor(Math.random() * config.mapHeight);
                 const q = Math.floor(Math.random() * config.mapWidth);
                 const pos = this.getPixelPos(r, q);
@@ -11449,7 +11483,7 @@ export class TacticsScene extends BaseScene {
                     drawOptions.sinkOffset = 2;
                     drawOptions.hideBottom = 27;
                 }
-                if (drawOptions.isSubmerged && this.ensureWaterEffectMaskForFrame(drawCalls)) {
+                if (drawOptions.isSubmerged && this.shouldUseFullBattleVisualEffects() && this.ensureWaterEffectMaskForFrame(drawCalls)) {
                     drawOptions.waterMaskCanvas = this.waterEffectMaskCanvas;
                     drawOptions.waterEffectTime = timestamp;
                 }
@@ -11547,7 +11581,7 @@ export class TacticsScene extends BaseScene {
                     const midX = Math.floor(pos.x);
                     const hexCell = this.tacticsMap.getCell(h.r, h.q);
                     const isShallow = !!(hexCell && hexCell.terrain?.includes('water_shallow'));
-                    if (isShallow) this.ensureWaterEffectMaskForFrame(drawCalls);
+                    if (isShallow && this.shouldUseFullBattleVisualEffects()) this.ensureWaterEffectMaskForFrame(drawCalls);
                     const sink = isShallow ? 4 : 0;
                     const midY = Math.floor(pos.y) + effect.yOffset + sink;
                     this.drawRiderlessHorse(ctx, h, midX, midY, effect, timestamp);
@@ -11948,6 +11982,8 @@ export class TacticsScene extends BaseScene {
     }
 
     getBattleInactivityPrompt() {
+        if (this.isGameOver || this.isIntroAnimating || this.isProcessingTurn || this.showEndTurnConfirm || this.isChoiceActive) return null;
+        if (this.turn && this.turn !== 'player') return null;
         if (this.hasActiveBattleDialogue()) {
             return this.getModalityPrompt({
                 mouse: { en: "Click anywhere to advance the text.", zh: "点击任意位置继续文字。" },
@@ -11956,8 +11992,6 @@ export class TacticsScene extends BaseScene {
                 controller: { en: "Press the confirm button to advance the text.", zh: "按确认键继续文字。" }
             });
         }
-        if (this.isGameOver || this.isIntroAnimating || this.isProcessingTurn || this.showEndTurnConfirm || this.isChoiceActive) return null;
-        if (this.turn !== 'player') return null;
 
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack && this.attackTiles.size > 0) {
             return this.getModalityPrompt({
@@ -12000,10 +12034,40 @@ export class TacticsScene extends BaseScene {
         });
     }
 
+    getBattleInactivityPromptContextKey() {
+        if (this.hasActiveBattleDialogue()) {
+            if (this.isCleanupDialogueActive && this.cleanupDialogueScript) {
+                return `battle:${this.battleId || 'battle'}:cleanup:${this.cleanupDialogueStep || 0}:${this.subStep || 0}`;
+            }
+            const dialogueState = this.getActiveDialogueState();
+            return `battle:${this.battleId || 'battle'}:dialogue:${dialogueState?.sourceKind || 'active'}:${dialogueState?.kind || 'base'}:${dialogueState?.index || 0}:${this.subStep || 0}`;
+        }
+        if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack && this.attackTiles.size > 0) {
+            return `battle:${this.battleId || 'battle'}:attack:${this.selectedUnit.id || this.selectedUnit.name}:${this.selectedAttack}:${this.attackTiles.size}`;
+        }
+        if (this.selectedUnit && this.selectedUnit.faction === 'player' && !this.selectedUnit.hasMoved && this.reachableTiles.size > 0) {
+            return `battle:${this.battleId || 'battle'}:move:${this.selectedUnit.id || this.selectedUnit.name}:${this.reachableTiles.size}`;
+        }
+        const selectableCount = this.units.filter(u =>
+            u &&
+            u.faction === 'player' &&
+            u.hp > 0 &&
+            !u.isGone &&
+            !u.hasActed
+        ).length;
+        if (selectableCount > 0) {
+            return `battle:${this.battleId || 'battle'}:select:${this.turnNumber || 0}:${selectableCount}`;
+        }
+        return `battle:${this.battleId || 'battle'}:end-turn:${this.turnNumber || 0}`;
+    }
+
     renderBattleInactivityPrompt(ctx, canvas, timestamp) {
         const prompt = this.getBattleInactivityPrompt();
         if (!prompt) return;
-        this.renderInactivityPrompt(ctx, canvas, prompt, { timestamp });
+        this.renderInactivityPrompt(ctx, canvas, prompt, {
+            timestamp,
+            contextKey: this.getBattleInactivityPromptContextKey()
+        });
     }
 
     collectEnvironmentPaletteKeys() {
@@ -12538,6 +12602,7 @@ export class TacticsScene extends BaseScene {
 
     drawUnitOutlineOverlayPass(ctx) {
         if (this.isIntroAnimating) return;
+        if (!this.shouldUseFullBattleVisualEffects()) return;
         const items = this._unitOutlineItems || [];
         if (items.length === 0) return;
 
@@ -13136,6 +13201,7 @@ export class TacticsScene extends BaseScene {
      * Draw only a unit's sprite (horse+rider, boulder, or character+cage). Used in main draw loop and for telegraph punch (destination-out).
      */
     drawWaterMaskedImageFrame(ctx, drawSource, bounds, eligibilityClip, timestamp) {
+        if (!this.shouldUseFullBattleVisualEffects()) return false;
         if (!this.waterEffectMaskCanvas) return false;
         return this.drawWaterMaskedPass(ctx, {
             bounds,
