@@ -9,7 +9,7 @@ WALKMASKS_SCRIPT = tools/generate_walkmasks.py
 VOICE_LANG ?= all
 VOICE_LANGUAGES = en zh
 
-.PHONY: help portrait portraits extract-voices voices voice-repair clean-voices walkmasks walkmask-prompts plot-init plot-answer-major plot-answer-pov plot-answer-pov-set plot-pov-qa-start plot-answer-pov-qa plot-answer-pov-b plot-answer-pov-c plot-prompt build build-all build-mac build-win build-linux
+.PHONY: help portrait portraits extract-voices voices voice-repair clean-voices walkmasks walkmask-prompts plot-init plot-answer-major plot-answer-pov plot-answer-pov-set plot-pov-qa-start plot-answer-pov-qa plot-answer-pov-b plot-answer-pov-c plot-prompt build build-demo build-all build-mac build-win build-linux
 
 help:
 	@echo "Available commands:"
@@ -31,6 +31,7 @@ help:
 	@echo "  make plot-answer-pov-c TEASER_EN=\"...\" TEASER_ZH=\"...\" - Save Question C (early-story teaser, max 150 chars each)"
 	@echo "  make plot-prompt            - Rebuild prompt from workflow state"
 	@echo "  make build                  - Build Mac app bundle"
+	@echo "  make build-demo             - Build web demo"
 	@echo "  make build-all              - Build all platform releases (Mac, Windows, Linux)"
 	@echo "  make build-mac              - Build Mac app bundle"
 	@echo "  make build-win              - Build Windows portable"
@@ -151,6 +152,9 @@ plot-prompt:
 
 # Builds
 build: build-mac
+
+build-demo:
+	npm run build:demo
 
 build-all:
 	npm run dist:all
