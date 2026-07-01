@@ -31,7 +31,7 @@ help:
 	@echo "  make plot-answer-pov-c TEASER_EN=\"...\" TEASER_ZH=\"...\" - Save Question C (early-story teaser, max 150 chars each)"
 	@echo "  make plot-prompt            - Rebuild prompt from workflow state"
 	@echo "  make build                  - Build Mac app bundle"
-	@echo "  make build-demo             - Build web demo"
+	@echo "  make build-demo             - Build itch.io demo zip"
 	@echo "  make build-all              - Build all platform releases (Mac, Windows, Linux)"
 	@echo "  make build-mac              - Build Mac app bundle"
 	@echo "  make build-win              - Build Windows portable"
@@ -154,7 +154,7 @@ plot-prompt:
 build: build-mac
 
 build-demo:
-	npm run build:demo
+	npm run package:demo:itch
 
 build-all:
 	npm run dist:all
