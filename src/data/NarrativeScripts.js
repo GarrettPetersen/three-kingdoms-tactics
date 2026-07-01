@@ -1315,6 +1315,13 @@ export const NARRATIVE_SCRIPTS = {
         // Interactive step: players can explore the inn before Guan Yu arrives
         { type: 'interactive',
           clickableRegions: {
+            'liubo_table': {
+                x: 174,
+                y: 138,
+                w: 48,
+                h: 48,
+                delegateActorId: 'liubo_player'
+            },
             'wine_casks': {
                 // Wine casks on left-hand middle of screen (approximate position)
                 x: 0,
@@ -1733,6 +1740,15 @@ export const NARRATIVE_SCRIPTS = {
         },
         {
             type: 'interactive',
+            clickableRegions: {
+                'liubo_table': {
+                    x: 174,
+                    y: 138,
+                    w: 48,
+                    h: 48,
+                    delegateActorId: 'liubo_player'
+                }
+            },
             promptOptions: [
                 { id: 'to_peach_garden', text: { en: 'TO PEACH GARDEN', zh: '前往桃园' }, position: 'right', y: 88, w: 118, h: 25, advanceOnClick: true }
             ],
@@ -3068,6 +3084,15 @@ export const NARRATIVE_SCRIPTS = {
         { type: 'command', action: 'removeActor', id: 'zhangjun' },
         {
             type: 'interactive',
+            clickableRegions: {
+                'luoyang_liubo_table': {
+                    x: 176,
+                    y: 166,
+                    w: 48,
+                    h: 48,
+                    delegateActorId: 'luoyang_liubo_player'
+                }
+            },
             clickableActors: {
                 'palace_gate_guard': {
                     onClick: [

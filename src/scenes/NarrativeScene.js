@@ -2225,6 +2225,9 @@ export class NarrativeScene extends BaseScene {
     activateInteractiveRegion(regionId) {
         const region = this.clickableRegions?.[regionId];
         if (!region) return false;
+        if (region.delegateActorId && this.clickableActors?.[region.delegateActorId]) {
+            return this.activateInteractiveActor(region.delegateActorId);
+        }
         assets.playSound('ui_click', 0.5);
         let clickHandler = region.onClick;
         if (region.liuboActivityId && region.onClickRepeat) {
