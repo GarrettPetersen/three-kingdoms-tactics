@@ -1954,9 +1954,14 @@ export class NarrativeScene extends BaseScene {
         const step = this.script?.[this.currentStep];
         const prompt = this.getNarrativeInactivityPrompt(step);
         if (!prompt) return;
+        const contextKey = this.getNarrativeInactivityPromptContextKey(step);
+        const promptStartAt = (step?.type === 'dialogue' || step?.type === 'narrator' || step?.type === 'title')
+            ? this.getVoiceAwareInactivityPromptStart(timestamp, contextKey, step.voiceId)
+            : null;
         this.renderInactivityPrompt(ctx, canvas, prompt, {
             timestamp,
-            contextKey: this.getNarrativeInactivityPromptContextKey(step)
+            contextKey,
+            promptStartAt
         });
     }
 

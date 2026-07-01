@@ -158,6 +158,24 @@ export class BaseScene {
         return Math.max(contextStart, lastActivity);
     }
 
+    getVoiceAwareInactivityPromptStart(timestamp, contextKey, voiceId) {
+        const promptStart = this.getInactivityPromptStart(timestamp, contextKey);
+        if (!voiceId || !assets?.voices) return promptStart;
+
+        const voice = assets.voices[voiceId];
+        const durationMs = Number.isFinite(voice?.duration) && voice.duration > 0
+            ? voice.duration * 1000
+            : 0;
+        if (durationMs <= 0) return promptStart;
+
+        let voiceEndAt = promptStart + durationMs;
+        if (assets.currentVoice === voice && !voice.paused && !voice.ended) {
+            const remainingMs = Math.max(0, (voice.duration - voice.currentTime) * 1000);
+            voiceEndAt = Math.max(voiceEndAt, timestamp + remainingMs);
+        }
+        return Math.max(promptStart, voiceEndAt);
+    }
+
     renderInactivityPrompt(ctx, canvas, textDef, options = {}) {
         const text = getLocalizedText(textDef);
         if (!text) return;
@@ -169,9 +187,13 @@ export class BaseScene {
             font = '8px Tiny5',
             color = '#fff',
             borderColor = '#ffd700',
-            contextKey = text
+            contextKey = text,
+            promptStartAt = null
         } = options;
-        const promptStart = this.getInactivityPromptStart(timestamp, contextKey);
+        const basePromptStart = this.getInactivityPromptStart(timestamp, contextKey);
+        const promptStart = Number.isFinite(promptStartAt)
+            ? Math.max(basePromptStart, promptStartAt)
+            : basePromptStart;
         const promptIdleMs = Math.max(0, timestamp - promptStart);
         if (promptIdleMs < thresholdMs) return;
 

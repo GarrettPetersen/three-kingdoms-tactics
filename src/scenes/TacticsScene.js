@@ -12101,6 +12101,14 @@ export class TacticsScene extends BaseScene {
         );
     }
 
+    getActiveBattleDialogueStep() {
+        if (this.isCleanupDialogueActive && this.cleanupDialogueScript) {
+            return this.cleanupDialogueScript[this.cleanupDialogueStep || 0] || null;
+        }
+        const dialogueState = this.getActiveDialogueState();
+        return dialogueState?.script?.[dialogueState.index || 0] || null;
+    }
+
     getBattleInactivityPrompt() {
         if (this.isGameOver || this.showEndTurnConfirm || this.isChoiceActive) return null;
         if (this.hasActiveBattleDialogue()) {
@@ -12185,9 +12193,14 @@ export class TacticsScene extends BaseScene {
     renderBattleInactivityPrompt(ctx, canvas, timestamp) {
         const prompt = this.getBattleInactivityPrompt();
         if (!prompt) return;
+        const contextKey = this.getBattleInactivityPromptContextKey();
+        const dialogueStep = this.hasActiveBattleDialogue() ? this.getActiveBattleDialogueStep() : null;
         this.renderInactivityPrompt(ctx, canvas, prompt, {
             timestamp,
-            contextKey: this.getBattleInactivityPromptContextKey()
+            contextKey,
+            promptStartAt: dialogueStep
+                ? this.getVoiceAwareInactivityPromptStart(timestamp, contextKey, dialogueStep.voiceId)
+                : null
         });
     }
 
