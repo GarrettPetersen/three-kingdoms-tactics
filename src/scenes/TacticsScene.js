@@ -46,6 +46,8 @@ const THROTTLED_WEATHER_SPAWN_SCALE = 0.2;
 const LOW_POWER_MAX_WEATHER_PARTICLES = 45;
 const THROTTLED_MAX_WEATHER_PARTICLES = 28;
 const DEFAULT_MAX_WEATHER_PARTICLES = 130;
+const NPC_FULL_ATTACK_SCORE_LIMIT = 24;
+const NPC_FULL_GATE_SCORE_LIMIT = 16;
 
 export class TacticsScene extends BaseScene {
     constructor() {
@@ -3263,7 +3265,7 @@ export class TacticsScene extends BaseScene {
         return danger;
     }
 
-    filterAlliedDestinationsForBoltSafety(unit, validDestinations) {
+    filterAlliedDestinationsForBoltSafety(unit, validDestinations, reachableData = validDestinations) {
         if (!unit || unit.faction !== 'allied' || !validDestinations || validDestinations.size <= 1) {
             return validDestinations;
         }
@@ -3276,7 +3278,7 @@ export class TacticsScene extends BaseScene {
             const [r, q] = key.split(',').map(Number);
             if (dangerKeys.has(`${r},${q}`)) return;
 
-            const path = this.tacticsMap.getPath(unit.r, unit.q, r, q, unit.moveRange, unit);
+            const path = this.getReachablePathFromData(reachableData, unit.r, unit.q, r, q);
             const entersDanger = (path || []).some((step, index) => {
                 if (index === 0) return false;
                 return dangerKeys.has(`${step.r},${step.q}`);
@@ -3285,6 +3287,62 @@ export class TacticsScene extends BaseScene {
         });
 
         return safeDestinations.size > 0 ? safeDestinations : validDestinations;
+    }
+
+    getReachablePathFromData(reachableData, startR, startQ, targetR, targetQ) {
+        if (!reachableData) return null;
+        const targetKey = `${targetR},${targetQ}`;
+        if (!reachableData.has(targetKey)) return null;
+
+        const path = [];
+        let current = targetKey;
+        const startKey = `${startR},${startQ}`;
+        let guard = 0;
+        while (current && guard++ < 128) {
+            const [r, q] = current.split(',').map(Number);
+            path.unshift({ r, q });
+            if (current === startKey) break;
+            current = reachableData.get(current)?.parent || null;
+        }
+        return path.length > 0 && path[0].r === startR && path[0].q === startQ ? path : null;
+    }
+
+    getNpcCandidateBaseScore(unit, attackKey, fromR, fromQ, target, options = {}) {
+        const { gate = false, targeterCounts = null } = options;
+        const dist = this.tacticsMap.getDistance(fromR, fromQ, target.r, target.q);
+        const { maxRange } = this.getEffectiveAttackRange(unit, attackKey);
+        const isRanged = maxRange > 1;
+        let score = gate
+            ? (isRanged ? dist * 0.45 : (10 - dist) * 0.55)
+            : (isRanged ? dist * 0.65 : (10 - dist) * 0.5);
+        score += this.getNpcSiegeWallAttackPositionBonus(unit, fromR, fromQ);
+        if (!gate && target?.id) {
+            const targeters = targeterCounts?.get(target.id) || 0;
+            score -= targeters * 2.5;
+            if (unit.faction === 'enemy' && target.id === 'dongzhuo') score += 3;
+        }
+        return score;
+    }
+
+    scoreNpcAttackCandidates(unit, candidates, limit = NPC_FULL_ATTACK_SCORE_LIMIT, options = {}) {
+        if (!Array.isArray(candidates) || candidates.length === 0) return [];
+        const { gate = false, targeterCounts = null } = options;
+        const candidatesToScore = candidates.length > limit
+            ? [...candidates]
+                .sort((a, b) => (b._baseScore || 0) - (a._baseScore || 0))
+                .slice(0, limit)
+            : candidates;
+
+        return candidatesToScore.map(c => {
+            const baseScore = Number.isFinite(c._baseScore)
+                ? c._baseScore
+                : this.getNpcCandidateBaseScore(unit, c.attackKey, c.r, c.q, c.target, { gate, targeterCounts });
+            if (gate) {
+                return { ...c, _score: baseScore + Math.random() * 1.0 };
+            }
+            const aoe = this.evaluateNpcAttackAt(unit, c.attackKey, c.r, c.q, c.target.r, c.target.q);
+            return { ...c, _score: aoe.score + baseScore + Math.random() * 1.5 };
+        }).sort((a, b) => b._score - a._score);
     }
 
     evaluateNpcAttackAt(unit, attackKey, fromR, fromQ, targetR, targetQ) {
@@ -3393,7 +3451,7 @@ export class TacticsScene extends BaseScene {
             const filtered = new Map();
             validDestinations.forEach((data, key) => {
                 const [r, q] = key.split(',').map(Number);
-                const pathToDestination = this.tacticsMap.getPath(unit.r, unit.q, r, q, unit.moveRange, unit);
+                const pathToDestination = this.getReachablePathFromData(reachableData, unit.r, unit.q, r, q);
                 if (this.pathUsesCityGateTransition(pathToDestination, unit)) {
                     filtered.set(key, { ...data, mountedFlip: unit.flip });
                     return;
@@ -3416,11 +3474,17 @@ export class TacticsScene extends BaseScene {
             filtered.forEach((v, k) => validDestinations.set(k, v));
         }
 
-        const safeDestinations = this.filterAlliedDestinationsForBoltSafety(unit, validDestinations);
+        const safeDestinations = this.filterAlliedDestinationsForBoltSafety(unit, validDestinations, reachableData);
         if (safeDestinations !== validDestinations) {
             validDestinations.clear();
             safeDestinations.forEach((v, k) => validDestinations.set(k, v));
         }
+
+        const targeterCounts = new Map();
+        this.units.forEach(u => {
+            if (u === unit || u.faction !== unit.faction || !u.intent?.targetId) return;
+            targeterCounts.set(u.intent.targetId, (targeterCounts.get(u.intent.targetId) || 0) + 1);
+        });
 
         // 1. Check if we can reach a unit to attack it
         let unitAttackTiles = [];
@@ -3431,7 +3495,13 @@ export class TacticsScene extends BaseScene {
                 // Look for targets within range from this tile
                 unitTargets.forEach(t => {
                     if (!this.canNpcAttackTileFrom(unit, attackKey, r, q, t.r, t.q)) return;
-                    unitAttackTiles.push({ r, q, target: t, attackKey });
+                    unitAttackTiles.push({
+                        r,
+                        q,
+                        target: t,
+                        attackKey,
+                        _baseScore: this.getNpcCandidateBaseScore(unit, attackKey, r, q, t, { targeterCounts })
+                    });
                 });
             });
         });
@@ -3439,22 +3509,7 @@ export class TacticsScene extends BaseScene {
         if (unitAttackTiles.length > 0) {
             // Rank attacks by AOE value first (maximize desired hits, minimize friendly fire),
             // then apply softer distance/dog-pile preferences.
-            const scored = unitAttackTiles.map(c => {
-                const aoe = this.evaluateNpcAttackAt(unit, c.attackKey, c.r, c.q, c.target.r, c.target.q);
-                const dist = this.tacticsMap.getDistance(c.r, c.q, c.target.r, c.target.q);
-                const { maxRange } = this.getEffectiveAttackRange(unit, c.attackKey);
-                const isRanged = maxRange > 1;
-                let score = aoe.score + (isRanged ? dist * 0.5 : (10 - dist) * 0.5);
-                // Tie-breaker: if tactical value is close, staying farther away is safer.
-                score += isRanged ? (dist * 0.15) : 0;
-                score += this.getNpcSiegeWallAttackPositionBonus(unit, c.r, c.q);
-                const targeters = this.units.filter(u => u !== unit && u.faction === unit.faction && u.intent && u.intent.targetId === c.target.id).length;
-                score -= targeters * 2.5;
-                if (unit.faction === 'enemy' && c.target.id === 'dongzhuo') score += 3;
-                score += Math.random() * 1.5;
-                return { ...c, _score: score };
-            });
-            scored.sort((a, b) => b._score - a._score);
+            const scored = this.scoreNpcAttackCandidates(unit, unitAttackTiles, NPC_FULL_ATTACK_SCORE_LIMIT, { targeterCounts });
             bestTile = scored[0];
             chosenTargetPos = { r: bestTile.target.r, q: bestTile.target.q };
             chosenTargetId = bestTile.target.id || null;
@@ -3468,22 +3523,19 @@ export class TacticsScene extends BaseScene {
                 attackOptions.forEach(attackKey => {
                     gateTargets.forEach(g => {
                         if (!this.canNpcAttackTileFrom(unit, attackKey, r, q, g.r, g.q)) return;
-                        gateAttackTiles.push({ r, q, target: g, attackKey });
+                        gateAttackTiles.push({
+                            r,
+                            q,
+                            target: g,
+                            attackKey,
+                            _baseScore: this.getNpcCandidateBaseScore(unit, attackKey, r, q, g, { gate: true })
+                        });
                     });
                 });
             });
 
             if (gateAttackTiles.length > 0) {
-                const scored = gateAttackTiles.map(c => {
-                    const dist = this.tacticsMap.getDistance(c.r, c.q, c.target.r, c.target.q);
-                    const { maxRange } = this.getEffectiveAttackRange(unit, c.attackKey);
-                    const isRanged = maxRange > 1;
-                    let score = isRanged ? dist * 0.45 : (10 - dist) * 0.55;
-                    score += this.getNpcSiegeWallAttackPositionBonus(unit, c.r, c.q);
-                    score += Math.random() * 1.0;
-                    return { ...c, _score: score };
-                });
-                scored.sort((a, b) => b._score - a._score);
+                const scored = this.scoreNpcAttackCandidates(unit, gateAttackTiles, NPC_FULL_GATE_SCORE_LIMIT, { gate: true });
                 bestTile = scored[0];
                 chosenTargetPos = { r: bestTile.target.r, q: bestTile.target.q };
                 chosenTargetId = null;
@@ -3609,7 +3661,7 @@ export class TacticsScene extends BaseScene {
             }
         }
 
-        const path = this.tacticsMap.getPath(unit.r, unit.q, bestTile.r, bestTile.q, unit.moveRange, unit);
+        const path = this.getReachablePathFromData(reachableData, unit.r, unit.q, bestTile.r, bestTile.q);
         if (path && path.length > 1) {
             const crossesCityGate = this.pathUsesCityGateTransition(path, unit);
             // Unit needs to move
