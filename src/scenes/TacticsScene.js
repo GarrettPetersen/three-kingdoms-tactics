@@ -48,6 +48,13 @@ const THROTTLED_MAX_WEATHER_PARTICLES = 28;
 const DEFAULT_MAX_WEATHER_PARTICLES = 130;
 const NPC_FULL_ATTACK_SCORE_LIMIT = 24;
 const NPC_FULL_GATE_SCORE_LIMIT = 16;
+const BATTLE_FRAME_SAMPLE_MAX_MS = 250;
+const BATTLE_LATENCY_LEVEL_1_MS = 24;
+const BATTLE_LATENCY_LEVEL_2_MS = 34;
+const BATTLE_LATENCY_RECOVER_MS = 19;
+const BATTLE_LATENCY_LEVEL_1_WINDOW_MS = 360;
+const BATTLE_LATENCY_LEVEL_2_WINDOW_MS = 540;
+const BATTLE_LATENCY_RECOVER_WINDOW_MS = 1600;
 
 export class TacticsScene extends BaseScene {
     constructor() {
@@ -87,6 +94,11 @@ export class TacticsScene extends BaseScene {
         this.fireSmokeParticles = []; // { x, y, r, life, maxLife, vx, vy, alpha, driftTimer, size }
         this.weatherType = null; // 'rain', 'snow'
         this.lowPowerBattleModeOverride = null;
+        this.battleFrameLatencyMs = 16.7;
+        this.battleFrameBadDurationMs = 0;
+        this.battleFrameSevereDurationMs = 0;
+        this.battleFrameGoodDurationMs = 0;
+        this.battleVisualLatencyLevel = 0;
         this.enemiesKilled = 0; // Track kills for specific objectives
         this.ambushTriggered = false;
         this.flagPos = null; // { r, q }
@@ -282,8 +294,7 @@ export class TacticsScene extends BaseScene {
 
     isLowPowerBattleMode() {
         if (typeof this.lowPowerBattleModeOverride === 'boolean') return this.lowPowerBattleModeOverride;
-        const config = this.manager?.config || {};
-        return !!config.hasCoarsePointer;
+        return this.getAdaptiveBattleVisualLevel() >= 1;
     }
 
     isBattleVisualThrottleActive() {
@@ -291,7 +302,61 @@ export class TacticsScene extends BaseScene {
     }
 
     shouldUseFullBattleVisualEffects() {
-        return !this.isBattleVisualThrottleActive();
+        return !this.isBattleVisualThrottleActive() && this.getAdaptiveBattleVisualLevel() < 2;
+    }
+
+    shouldReducePassiveHoverWork() {
+        return this.isBattleVisualThrottleActive() || this.getAdaptiveBattleVisualLevel() >= 2;
+    }
+
+    getAdaptiveBattleVisualLevel() {
+        return Math.max(0, Math.min(2, this.battleVisualLatencyLevel || 0));
+    }
+
+    resetBattleLatencyMonitor() {
+        this.battleFrameLatencyMs = 16.7;
+        this.battleFrameBadDurationMs = 0;
+        this.battleFrameSevereDurationMs = 0;
+        this.battleFrameGoodDurationMs = 0;
+        this.battleVisualLatencyLevel = 0;
+    }
+
+    updateBattleLatencyMonitor(frameMs) {
+        if (!Number.isFinite(frameMs) || frameMs <= 0 || frameMs > BATTLE_FRAME_SAMPLE_MAX_MS) return;
+
+        this.battleFrameLatencyMs = this.battleFrameLatencyMs * 0.86 + frameMs * 0.14;
+        const latencyMs = this.battleFrameLatencyMs;
+
+        if (latencyMs >= BATTLE_LATENCY_LEVEL_1_MS) {
+            this.battleFrameBadDurationMs += frameMs;
+        } else {
+            this.battleFrameBadDurationMs = Math.max(0, this.battleFrameBadDurationMs - frameMs * 1.5);
+        }
+
+        if (latencyMs >= BATTLE_LATENCY_LEVEL_2_MS) {
+            this.battleFrameSevereDurationMs += frameMs;
+        } else {
+            this.battleFrameSevereDurationMs = Math.max(0, this.battleFrameSevereDurationMs - frameMs * 1.5);
+        }
+
+        if (latencyMs <= BATTLE_LATENCY_RECOVER_MS) {
+            this.battleFrameGoodDurationMs += frameMs;
+        } else {
+            this.battleFrameGoodDurationMs = 0;
+        }
+
+        if (this.battleFrameSevereDurationMs >= BATTLE_LATENCY_LEVEL_2_WINDOW_MS) {
+            this.battleVisualLatencyLevel = 2;
+            this.battleFrameGoodDurationMs = 0;
+        } else if (this.battleFrameBadDurationMs >= BATTLE_LATENCY_LEVEL_1_WINDOW_MS) {
+            this.battleVisualLatencyLevel = Math.max(this.battleVisualLatencyLevel || 0, 1);
+            this.battleFrameGoodDurationMs = 0;
+        } else if (this.battleVisualLatencyLevel > 0 && this.battleFrameGoodDurationMs >= BATTLE_LATENCY_RECOVER_WINDOW_MS) {
+            this.battleVisualLatencyLevel -= 1;
+            this.battleFrameBadDurationMs = 0;
+            this.battleFrameSevereDurationMs = 0;
+            this.battleFrameGoodDurationMs = 0;
+        }
     }
 
     getActiveDialogueState() {
@@ -742,6 +807,7 @@ export class TacticsScene extends BaseScene {
         this.introTimer = 0;
         this.lastTime = 0;
         this.hitStopRemaining = 0;
+        this.resetBattleLatencyMonitor();
         this.onVictoryCallback = params.onVictory || null; // Custom callback for battle result
         this.storyRouteId = params.storyRouteId || savedState?.storyRouteId || null;
         this.storyNodeId = params.storyNodeId || savedState?.storyNodeId || null;
@@ -10353,6 +10419,7 @@ export class TacticsScene extends BaseScene {
     update(timestamp) {
         let dt = timestamp - (this.lastTime || timestamp);
         this.lastTime = timestamp;
+        this.updateBattleLatencyMonitor(dt);
         if (this.hitStopRemaining > 0) {
             const consume = Math.min(this.hitStopRemaining, dt);
             this.hitStopRemaining -= consume;
@@ -10580,7 +10647,7 @@ export class TacticsScene extends BaseScene {
             
             let hoveredUnit = null;
             let hoveredUnitCell = null;
-            if (this.isLowPowerBattleMode()) {
+            if (this.shouldReducePassiveHoverWork()) {
                 this.hoveredMountedAttackRegions = null;
                 this.hoveredCell = null;
             } else {
@@ -10708,12 +10775,13 @@ export class TacticsScene extends BaseScene {
         const effectiveWeather = forceRain ? 'rain' : this.weatherType;
         const lowPower = this.isLowPowerBattleMode();
         const throttleVisuals = this.isBattleVisualThrottleActive();
+        const latencyLevel = this.getAdaptiveBattleVisualLevel();
         const weatherSpawnScale = throttleVisuals
             ? THROTTLED_WEATHER_SPAWN_SCALE
-            : (lowPower ? LOW_POWER_WEATHER_SPAWN_SCALE : 1);
+            : (latencyLevel >= 2 ? 0.35 : (lowPower ? LOW_POWER_WEATHER_SPAWN_SCALE : 1));
         const maxWeatherParticles = throttleVisuals
             ? THROTTLED_MAX_WEATHER_PARTICLES
-            : (lowPower ? LOW_POWER_MAX_WEATHER_PARTICLES : DEFAULT_MAX_WEATHER_PARTICLES);
+            : (latencyLevel >= 2 ? THROTTLED_MAX_WEATHER_PARTICLES : (lowPower ? LOW_POWER_MAX_WEATHER_PARTICLES : DEFAULT_MAX_WEATHER_PARTICLES));
 
         const { config } = this.manager;
         
