@@ -2304,34 +2304,28 @@ export class NarrativeScene extends BaseScene {
     drawImagePixelOutline(ctx, img, x, y, w, h, options = {}) {
         if (!img) return;
         const color = options.color || '#ffd700';
-        if (!this._propOutlineCanvas) {
-            this._propOutlineCanvas = document.createElement('canvas');
-            this._propOutlineCtx = this._propOutlineCanvas.getContext('2d');
-        }
-        const outlineCanvas = this._propOutlineCanvas;
-        const outlineCtx = this._propOutlineCtx;
-        outlineCanvas.width = Math.max(1, Math.ceil(w));
-        outlineCanvas.height = Math.max(1, Math.ceil(h));
-        outlineCtx.clearRect(0, 0, outlineCanvas.width, outlineCanvas.height);
-        outlineCtx.imageSmoothingEnabled = false;
-        outlineCtx.drawImage(img, 0, 0, outlineCanvas.width, outlineCanvas.height);
-        outlineCtx.globalCompositeOperation = 'source-in';
-        outlineCtx.fillStyle = color;
-        outlineCtx.fillRect(0, 0, outlineCanvas.width, outlineCanvas.height);
-        outlineCtx.globalCompositeOperation = 'source-over';
+        const alphaThreshold = options.alphaThreshold ?? 32;
+        const srcW = img.width;
+        const srcH = img.height;
+        const destW = Math.max(1, Math.ceil(w || srcW));
+        const destH = Math.max(1, Math.ceil(h || srcH));
+
+        const outlineCanvas = this.getCachedPixelOutlineCanvas(
+            img,
+            0,
+            0,
+            srcW,
+            srcH,
+            color,
+            alphaThreshold,
+            this._imageFrameOutlineCache,
+            128
+        );
+        if (!outlineCanvas) return;
 
         ctx.save();
         ctx.imageSmoothingEnabled = false;
-        ctx.globalAlpha = 0.9;
-        ctx.drawImage(outlineCanvas, x - 1, y);
-        ctx.drawImage(outlineCanvas, x + 1, y);
-        ctx.drawImage(outlineCanvas, x, y - 1);
-        ctx.drawImage(outlineCanvas, x, y + 1);
-        ctx.globalAlpha = 0.45;
-        ctx.drawImage(outlineCanvas, x - 1, y - 1);
-        ctx.drawImage(outlineCanvas, x + 1, y - 1);
-        ctx.drawImage(outlineCanvas, x - 1, y + 1);
-        ctx.drawImage(outlineCanvas, x + 1, y + 1);
+        ctx.drawImage(outlineCanvas, Math.floor(x), Math.floor(y), destW, destH);
         ctx.restore();
     }
 
