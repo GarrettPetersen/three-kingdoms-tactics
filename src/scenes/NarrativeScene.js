@@ -175,6 +175,10 @@ export class NarrativeScene extends BaseScene {
             && this.fadeAlpha > 0;
     }
 
+    isFadeSetupPreloadActive() {
+        return this.shouldPreloadDuringFade(this.script?.[this.currentStep]);
+    }
+
     isFadePreloadCommand(step) {
         if (step?.type !== 'command' || step._preloadedDuringFade) return false;
         return [
@@ -206,7 +210,8 @@ export class NarrativeScene extends BaseScene {
                 speed: cmd.speed || 1,
                 loopXStart,
                 loopXEnd,
-                drawAboveForeground: !!cmd.drawAboveForeground
+                drawAboveForeground: !!cmd.drawAboveForeground,
+                preloadedDuringFade: true
             };
         } else if (cmd.action === 'addProp') {
             this.props[cmd.id] = {
@@ -220,7 +225,8 @@ export class NarrativeScene extends BaseScene {
                 frameOffsetMs: Number.isFinite(cmd.frameOffsetMs) ? cmd.frameOffsetMs : 0,
                 drawAboveForeground: !!cmd.drawAboveForeground,
                 w: cmd.w,
-                h: cmd.h
+                h: cmd.h,
+                preloadedDuringFade: true
             };
         } else if (cmd.action === 'clearActors') {
             this.actors = {};
@@ -623,7 +629,8 @@ export class NarrativeScene extends BaseScene {
                 speed: actor.speed || 1,
                 loopXStart: actor.loopXStart !== undefined ? actor.loopXStart : null,
                 loopXEnd: actor.loopXEnd !== undefined ? actor.loopXEnd : null,
-                drawAboveForeground: !!actor.drawAboveForeground
+                drawAboveForeground: !!actor.drawAboveForeground,
+                preloadedDuringFade: !!actor.preloadedDuringFade
             };
         }
 
@@ -641,7 +648,8 @@ export class NarrativeScene extends BaseScene {
                 frameOffsetMs: Number.isFinite(prop.frameOffsetMs) ? prop.frameOffsetMs : 0,
                 drawAboveForeground: !!prop.drawAboveForeground,
                 w: prop.w,
-                h: prop.h
+                h: prop.h,
+                preloadedDuringFade: !!prop.preloadedDuringFade
             };
         }
         
@@ -1792,8 +1800,13 @@ export class NarrativeScene extends BaseScene {
             ctx.clip();
         }
 
-        const actorEntries = Object.entries(this.actors).map(([id, actor]) => ({ id, type: 'actor', item: actor, sortY: actor.y }));
-        const propEntries = Object.entries(this.props || {}).map(([id, prop]) => ({ id, type: 'prop', item: prop, sortY: prop.sortY ?? prop.y }));
+        const hideFadePreloadedSetup = this.isFadeSetupPreloadActive();
+        const actorEntries = Object.entries(this.actors)
+            .filter(([, actor]) => !(hideFadePreloadedSetup && actor.preloadedDuringFade))
+            .map(([id, actor]) => ({ id, type: 'actor', item: actor, sortY: actor.y }));
+        const propEntries = Object.entries(this.props || {})
+            .filter(([, prop]) => !(hideFadePreloadedSetup && prop.preloadedDuringFade))
+            .map(([id, prop]) => ({ id, type: 'prop', item: prop, sortY: prop.sortY ?? prop.y }));
         const sortedDrawables = [...actorEntries, ...propEntries].sort((a, b) => a.sortY - b.sortY);
         const drawablesBelowForeground = sortedDrawables.filter(entry => !entry.item.drawAboveForeground);
         const drawablesAboveForeground = sortedDrawables.filter(entry => !!entry.item.drawAboveForeground);

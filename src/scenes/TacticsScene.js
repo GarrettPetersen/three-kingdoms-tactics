@@ -12102,8 +12102,7 @@ export class TacticsScene extends BaseScene {
     }
 
     getBattleInactivityPrompt() {
-        if (this.isGameOver || this.isIntroAnimating || this.isProcessingTurn || this.showEndTurnConfirm || this.isChoiceActive) return null;
-        if (this.turn && this.turn !== 'player') return null;
+        if (this.isGameOver || this.showEndTurnConfirm || this.isChoiceActive) return null;
         if (this.hasActiveBattleDialogue()) {
             return this.getModalityPrompt({
                 mouse: { en: "Click anywhere to advance the text.", zh: "点击任意位置继续文字。" },
@@ -12112,6 +12111,8 @@ export class TacticsScene extends BaseScene {
                 controller: { en: "Press the confirm button to advance the text.", zh: "按确认键继续文字。" }
             });
         }
+        if (this.isIntroAnimating || this.isProcessingTurn) return null;
+        if (this.turn && this.turn !== 'player') return null;
 
         if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedAttack && this.attackTiles.size > 0) {
             return this.getModalityPrompt({
