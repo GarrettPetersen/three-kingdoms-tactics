@@ -29,6 +29,19 @@ const WEB_FULLSCREEN_IDLE_MS = 3200;
 const WEB_FULLSCREEN_PROXIMITY_PX = 96;
 let webFullscreenIdleTimer = null;
 
+function getSafeDevicePixelRatio() {
+    const dpr = window.devicePixelRatio || 1;
+    return Number.isFinite(dpr) && dpr > 0 ? dpr : 1;
+}
+
+function snapCssPixel(value, dpr = getSafeDevicePixelRatio()) {
+    return Math.round(value * dpr) / dpr;
+}
+
+function floorCssPixel(value, dpr = getSafeDevicePixelRatio()) {
+    return Math.floor(value * dpr) / dpr;
+}
+
 function hideBootLoader() {
     const loader = document.getElementById('boot-loader');
     if (!loader) return;
@@ -112,9 +125,11 @@ function setupCanvas() {
     canvas.height = config.virtualHeight;
     ctx.imageSmoothingEnabled = false;
 
-    // Use uniform integer scale to keep pixels square and avoid distortion/blur.
-    const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
+    // Use uniform scale to keep pixels square; snap the CSS box to device pixels to avoid browser interpolation blur.
+    const viewport = window.visualViewport;
+    const screenWidth = viewport?.width || window.innerWidth;
+    const screenHeight = viewport?.height || window.innerHeight;
+    const dpr = getSafeDevicePixelRatio();
     const hasCoarsePointer = window.matchMedia?.('(pointer: coarse)').matches || false;
     const isFullscreen = document.fullscreenElement === gameContainer;
     const useFitScreen = isFullscreen || config.scaleMode === 'fit';
@@ -124,15 +139,26 @@ function setupCanvas() {
     const fitHeight = shouldRotate ? config.virtualWidth : config.virtualHeight;
     const maxScale = Math.min(screenWidth / fitWidth, screenHeight / fitHeight);
     const scale = Math.max(1, useFitScreen ? maxScale : Math.floor(maxScale));
+    const displayWidth = floorCssPixel(config.virtualWidth * scale, dpr);
+    const displayHeight = floorCssPixel(config.virtualHeight * scale, dpr);
+    const displayLeft = snapCssPixel((screenWidth - displayWidth) / 2, dpr);
+    const displayTop = snapCssPixel((screenHeight - displayHeight) / 2, dpr);
     config.displayRotation = shouldRotate ? 90 : 0;
     config.displayScale = scale;
+    config.displayPhysicalScale = scale * dpr;
+    config.displayDevicePixelRatio = dpr;
+    config.displayLeft = displayLeft;
+    config.displayTop = displayTop;
     config.hasCoarsePointer = hasCoarsePointer;
     config.isFullscreen = isFullscreen;
     config.scaleMode = useFitScreen ? 'fit' : 'pixel';
-    canvas.style.width = `${config.virtualWidth * scale}px`;
-    canvas.style.height = `${config.virtualHeight * scale}px`;
+    canvas.style.position = 'absolute';
+    canvas.style.left = `${displayLeft}px`;
+    canvas.style.top = `${displayTop}px`;
+    canvas.style.width = `${displayWidth}px`;
+    canvas.style.height = `${displayHeight}px`;
     canvas.style.transform = shouldRotate ? 'rotate(90deg)' : '';
-    canvas.style.transformOrigin = 'center center';
+    canvas.style.transformOrigin = '50% 50%';
 }
 
 async function lockLandscapeIfPossible() {

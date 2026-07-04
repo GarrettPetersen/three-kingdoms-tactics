@@ -193,6 +193,21 @@ function checkZhuoTrainingBattle() {
         'training dummy template should break to dummy_broken.');
 }
 
+function checkNpcAiActionability() {
+    const relPath = 'src/scenes/TacticsScene.js';
+    const source = fs.readFileSync(path.join(projectRoot, relPath), 'utf8');
+    assertRule(source.includes('getNpcAttackOptions(unit'),
+        `${relPath} must centralize NPC attack capability in getNpcAttackOptions().`);
+    assertRule(source.includes('canNpcTakePhaseAction(unit'),
+        `${relPath} must centralize NPC phase actionability in canNpcTakePhaseAction().`);
+    assertRule(source.includes('this.getNpcPhaseUnits('),
+        `${relPath} must filter NPC phase participants through getNpcPhaseUnits().`);
+    assertRule(!source.includes("unit.attacks && unit.attacks.length > 0 ? unit.attacks : ['stab']"),
+        `${relPath} must not give attackless NPCs an implicit stab fallback.`);
+    assertRule(!source.includes("attackOptions.length === 0) attackOptions.push('stab')"),
+        `${relPath} must not convert an empty NPC attack list into stab.`);
+}
+
 function checkQingzhouCityGatePrelude() {
     const battle = BATTLES.qingzhou_prelude;
     assertRule(!!battle, 'qingzhou_prelude battle must exist.');
@@ -454,6 +469,21 @@ function checkCanvasTextRendering() {
         'BaseScene.drawPixelText must use top baseline for predictable pixel alignment.');
     assertRule(drawPixelTextSource.includes('getFontForLanguage(font)'),
         'BaseScene.drawPixelText must route fonts through getFontForLanguage().');
+
+    const mainSource = fs.readFileSync(path.join(srcRoot, 'main.js'), 'utf8');
+    const setupCanvasMatch = mainSource.match(/function setupCanvas\(\) \{[\s\S]*?\n\}/);
+    assertRule(!!setupCanvasMatch, 'src/main.js must keep canvas display sizing centralized in setupCanvas().');
+    const setupCanvasSource = setupCanvasMatch?.[0] || '';
+    assertRule(mainSource.includes('function snapCssPixel') && mainSource.includes('function floorCssPixel'),
+        'src/main.js must provide device-pixel snapping helpers for canvas CSS sizing.');
+    assertRule(setupCanvasSource.includes('window.visualViewport') && setupCanvasSource.includes('getSafeDevicePixelRatio()') && mainSource.includes('window.devicePixelRatio'),
+        'setupCanvas() must size against the visual viewport and devicePixelRatio for fullscreen/mobile display correctness.');
+    assertRule(setupCanvasSource.includes('floorCssPixel(config.virtualWidth * scale') && setupCanvasSource.includes('floorCssPixel(config.virtualHeight * scale'),
+        'setupCanvas() must floor canvas CSS size to the device-pixel grid to prevent fullscreen interpolation blur.');
+    assertRule(setupCanvasSource.includes('snapCssPixel((screenWidth - displayWidth) / 2') && setupCanvasSource.includes('snapCssPixel((screenHeight - displayHeight) / 2'),
+        'setupCanvas() must snap canvas CSS position to the device-pixel grid to prevent blurry pixel text.');
+    assertRule(setupCanvasSource.includes("canvas.style.position = 'absolute'") && setupCanvasSource.includes('canvas.style.left') && setupCanvasSource.includes('canvas.style.top'),
+        'setupCanvas() must explicitly position the canvas instead of relying on flexbox centering.');
 }
 
 function checkNarrativeScriptImmutability() {
@@ -893,6 +923,7 @@ checkSharedForceState();
 checkLegacyForceMigration();
 checkBattleRows();
 checkZhuoTrainingBattle();
+checkNpcAiActionability();
 checkQingzhouCityGatePrelude();
 checkLiuboPerchRules();
 checkNoSmallPortraitRuntimeUsage();

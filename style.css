@@ -125,7 +125,9 @@ body {
 }
 
 canvas {
-    position: relative;
+    position: absolute;
+    left: 0;
+    top: 0;
     z-index: 1;
     image-rendering: pixelated;
     image-rendering: crisp-edges;

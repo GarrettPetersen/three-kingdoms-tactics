@@ -3202,8 +3202,8 @@ export class TacticsScene extends BaseScene {
         
         // Caged units cannot act - they're trapped!
         // Filter out NPCs that have already acted in this phase (to prevent double-acting on restore)
-        const allies = this.units.filter(u => u.faction === 'allied' && u.hp > 0 && !u.caged && !u.hasActed && !u.spectator);
-        const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.caged && !u.hasActed && !u.spectator);
+        const allies = this.getNpcPhaseUnits('allied');
+        const enemies = this.getNpcPhaseUnits('enemy');
         
         const executeMoves = (npcs, index, onComplete) => {
             if (index >= npcs.length) {
@@ -3287,6 +3287,47 @@ export class TacticsScene extends BaseScene {
                 a.attackOrder = order++;
             }
         });
+    }
+
+    getNpcAttackOptions(unit, options = {}) {
+        const preferred = options.preferred || null;
+        const keys = [
+            ...(preferred ? [preferred] : []),
+            ...(Array.isArray(unit?.attacks) ? unit.attacks : [])
+        ];
+        return Array.from(new Set(keys)).filter(key => ATTACKS[key] && ATTACKS[key].type !== 'command');
+    }
+
+    canNpcMoveForPhase(unit) {
+        const moveRange = Number.isFinite(unit?.moveRange) ? unit.moveRange : 0;
+        return moveRange > 0;
+    }
+
+    canNpcTakePhaseAction(unit) {
+        if (!unit || unit.hp <= 0 || unit.isGone || unit.caged || unit.spectator) return false;
+        if (this.isSiegeLadder(unit)) return true;
+        if (this.canNpcMoveForPhase(unit)) return true;
+        return this.getNpcAttackOptions(unit).length > 0;
+    }
+
+    getNpcPhaseUnits(faction, options = {}) {
+        const { includeActed = false } = options;
+        return this.units.filter(u => {
+            if (u.faction !== faction) return false;
+            if (!includeActed && u.hasActed) return false;
+            return this.canNpcTakePhaseAction(u);
+        });
+    }
+
+    completeNpcWithoutAction(unit, onComplete) {
+        if (unit) {
+            unit.intent = null;
+            unit.npcPreferredAttackKey = null;
+            unit.attackOrder = null;
+            unit.hasActed = true;
+            unit.hasMoved = true;
+        }
+        onComplete?.();
     }
 
     isVictimDesiredForNpcAttack(attacker, victim) {
@@ -3470,9 +3511,11 @@ export class TacticsScene extends BaseScene {
             return;
         }
 
-        const attackOptions = Array.from(new Set((unit.attacks && unit.attacks.length > 0 ? unit.attacks : ['stab'])))
-            .filter(k => ATTACKS[k]?.type !== 'command');
-        if (attackOptions.length === 0) attackOptions.push('stab');
+        const attackOptions = this.getNpcAttackOptions(unit);
+        if (!this.canNpcMoveForPhase(unit) && attackOptions.length === 0) {
+            this.completeNpcWithoutAction(unit, onComplete);
+            return;
+        }
 
         // Determine valid targets based on faction
         // - Enemies target player and allied units, but NOT caged allies (they're protecting the cage)
@@ -3971,11 +4014,12 @@ export class TacticsScene extends BaseScene {
             return;
         }
         const preferred = unit.npcPreferredAttackKey || null;
-        const attackOptions = Array.from(new Set([
-            ...(preferred ? [preferred] : []),
-            ...((unit.attacks && unit.attacks.length > 0) ? unit.attacks : ['stab'])
-        ])).filter(k => ATTACKS[k]?.type !== 'command');
-        if (attackOptions.length === 0) attackOptions.push('stab');
+        const attackOptions = this.getNpcAttackOptions(unit, { preferred });
+        if (attackOptions.length === 0) {
+            unit.intent = null;
+            unit.npcPreferredAttackKey = null;
+            return;
+        }
         
         // Same targeting logic as moveNpcAndTelegraph:
         // - Enemies target player and allied units, but NOT caged allies
@@ -4687,14 +4731,12 @@ export class TacticsScene extends BaseScene {
         // If we're restoring mid-NPC-phase, we can't continue the async operations (setTimeouts are lost)
         // But we can detect where we are and continue from the right point
         if ((this.turn === 'enemy' || this.turn === 'enemy_moving' || this.turn === 'allied_moving')) {
-            const npcs = this.units.filter(u => 
-                (u.faction === 'enemy' || u.faction === 'allied') && 
-                u.hp > 0 && 
-                !u.caged && 
-                !u.isGone
-            );
+            const npcs = [
+                ...this.getNpcPhaseUnits('enemy', { includeActed: true }),
+                ...this.getNpcPhaseUnits('allied', { includeActed: true })
+            ];
             const hasIntents = npcs.some(npc => npc.intent);
-            const allNpcsActed = npcs.length > 0 && npcs.every(npc => npc.hasActed);
+            const allNpcsActed = npcs.length === 0 || npcs.every(npc => npc.hasActed);
             
             if (this.isProcessingTurn) {
                 // Mid-NPC-phase: NPCs are still moving
@@ -4747,7 +4789,7 @@ export class TacticsScene extends BaseScene {
                     if (npcsThatMoved.length > 0) {
                         // NPCs have moved but no intents - try to recreate intents for NPCs that can attack
                         npcsThatMoved.forEach(npc => {
-                            if (!npc.intent && npc.attacks && npc.attacks.length > 0) {
+                            if (!npc.intent && this.getNpcAttackOptions(npc).length > 0) {
                                 // Recreate intent for this NPC
                                 this.telegraphSingleNpc(npc);
                             }
@@ -4758,12 +4800,10 @@ export class TacticsScene extends BaseScene {
                     this.telegraphAllNpcs();
                     
                     // Check again if intents exist
-                    const npcsAfterTelegraph = this.units.filter(u => 
-                        (u.faction === 'enemy' || u.faction === 'allied') && 
-                        u.hp > 0 && 
-                        !u.caged && 
-                        !u.isGone
-                    );
+                    const npcsAfterTelegraph = [
+                        ...this.getNpcPhaseUnits('enemy', { includeActed: true }),
+                        ...this.getNpcPhaseUnits('allied', { includeActed: true })
+                    ];
                     const hasIntentsAfterTelegraph = npcsAfterTelegraph.some(npc => npc.intent);
                     
                     if (hasIntentsAfterTelegraph) {
