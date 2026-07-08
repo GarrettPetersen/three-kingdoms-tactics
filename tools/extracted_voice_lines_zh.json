@@ -42,6 +42,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "cc_dq_after_training_01",
+    "char": "caocao",
+    "text": "够了。骑士已备，立刻进发颍川。",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "cc_dq_att_00",
     "char": "zhoujing",
     "text": "县令，流民皆称黄巾沿途焚掠，郡县震动。百姓扶老携幼，争入城中避难。",
@@ -78,6 +84,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "cc_dq_cr_train_prompt_01",
+    "char": "caoren",
+    "text": "兄长，出兵之前，要不要先停下来操练一番？",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "cc_dq_msg_01",
     "char": "volunteer",
     "text": "洛阳急报！奉朝廷诏令：东郡当募骑兵五千。",
@@ -94,6 +106,132 @@
     "char": "volunteer",
     "text": "今擢曹操县令为骑都尉，总领东郡所募此部骑军。",
     "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_train_no_01",
+    "char": "caocao",
+    "text": "不必。我们足以出发，颍川之路等不得。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_train_yes_01",
+    "char": "caocao",
+    "text": "好。现在操练骑士；上阵之后，贼军不会等我们慢慢学。",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_train_cc_01",
+    "char": "caocao",
+    "text": "临战之前，先看清战场如何运转。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_train_cc_02",
+    "char": "caocao",
+    "text": "敌人与友军会先行动，并标出他们准备攻击的位置。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_train_cc_03",
+    "char": "caocao",
+    "text": "只有你结束回合之后，那些攻击才会真正落下。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_train_cc_04",
+    "char": "caocao",
+    "text": "将领可以先移动再攻击，也可以不移动直接出手。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cc_05",
+    "char": "caocao",
+    "text": "点击一名将领，再点击黄色高亮格，就能移动到那里。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cc_06",
+    "char": "caocao",
+    "text": "选择攻击后，点击红色高亮格即可出招。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cc_07",
+    "char": "caocao",
+    "text": "我的佩剑可斩击一名敌人，并将其击退。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cc_08",
+    "char": "caocao",
+    "text": "我的号令也能让友军行动；眼下先练习攻击木桩。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cc_end_turn_01",
+    "char": "caocao",
+    "text": "好。两位将领都已经出手。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cc_end_turn_02",
+    "char": "caocao",
+    "text": "现在点击结束回合。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cc_watch_01",
+    "char": "caocao",
+    "text": "实战中，要留心其他单位瞄准的格子。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cr_01",
+    "char": "caoren",
+    "text": "红色代表敌人，蓝色代表友军，绿色代表由你指挥的将领。",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_train_cr_02",
+    "char": "caoren",
+    "text": "每位将领都有自己的攻击路数。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cr_03",
+    "char": "caoren",
+    "text": "我有两种攻击。先点击任意攻击按钮，再选择目标。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cr_04",
+    "char": "caoren",
+    "text": "我的长枪可直刺最多两格，并击退最远的目标。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cr_05",
+    "char": "caoren",
+    "text": "盾击可打击近处弧形范围，并将目标推开两格；推到友军时不会伤到他们。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cr_finish_01",
+    "char": "caoren",
+    "text": "现在放手去，把剩下的木桩都击碎。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cr_undo_01",
+    "char": "caoren",
+    "text": "若是手滑，就用右下角的按钮。",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_defeat_cr_01",
+    "char": "caoren",
+    "text": "木桩都看出我军散乱。再来，练到阵线稳住为止。",
+    "source": "Battles.js"
   },
   {
     "id": "cc_yc_01",
@@ -3333,12 +3471,6 @@
     "id": "train_zf_01",
     "char": "zhangfei",
     "text": "若是手滑，就用右下角的按钮。",
-    "source": "TacticsScene.js"
-  },
-  {
-    "id": "train_zf_02",
-    "char": "zhangfei",
-    "text": "一个可以撤销上一步，一个可以重置整个回合。",
     "source": "TacticsScene.js"
   },
   {

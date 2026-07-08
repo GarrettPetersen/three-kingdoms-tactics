@@ -145,6 +145,53 @@ export const BATTLES = {
             ]
         }
     },
+    'caocao_training': {
+        name: "Dong Commandery Training",
+        map: {
+            biome: 'northern',
+            layout: 'foothills',
+            seed: 'caocao_training',
+            forestDensity: 0.0,
+            mountainDensity: 0.0,
+            riverDensity: 0.0,
+            houseDensity: 0.0,
+            weather: 'none'
+        },
+        playerFaction: 'cao_cao_cavalry',
+        baseXP: 0,
+        units: [
+            { id: 'caocao', r: 2, q: 3, type: 'caocao_force' },
+            { id: 'caoren', r: 3, q: 3, type: 'caocao_force' },
+            { id: 'rider1', r: 1, q: 2, type: 'caocao_force' },
+            { id: 'rider2', r: 1, q: 4, type: 'caocao_force' },
+            { id: 'dummy1', r: 6, q: 2, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy2', r: 6, q: 3, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy3', r: 6, q: 4, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy4', r: 7, q: 3, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy5', r: 7, q: 5, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy6', r: 8, q: 4, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy7', r: 5, q: 1, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy8', r: 5, q: 5, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy9', r: 7, q: 1, type: 'training_dummy', templateId: 'dummy' },
+            { id: 'dummy10', r: 8, q: 6, type: 'training_dummy', templateId: 'dummy' }
+        ],
+        victoryCondition: {
+            type: 'defeat_all_enemies',
+            mustSurvive: ['caocao', 'caoren']
+        },
+        introScript: [
+            { portraitKey: 'cao-cao', name: 'Cao Cao', voiceId: 'cc_train_cc_01', text: { en: "Before battle, study how the field moves.", zh: "临战之前，先看清战场如何运转。" } },
+            { portraitKey: 'cao-cao', name: 'Cao Cao', voiceId: 'cc_train_cc_02', text: { en: "Enemies and allies move first. They show where they mean to strike.", zh: "敌人与友军会先行动，并标出他们准备攻击的位置。" } },
+            { portraitKey: 'cao-cao', name: 'Cao Cao', voiceId: 'cc_train_cc_03', text: { en: "Those attacks do not land until you end your turn.", zh: "只有你结束回合之后，那些攻击才会真正落下。" } },
+            { portraitKey: 'cao-ren', name: 'Cao Ren', voiceId: 'cc_train_cr_01', text: { en: "Red marks enemies. Blue marks allies. Green marks the commanders under your control.", zh: "红色代表敌人，蓝色代表友军，绿色代表由你指挥的将领。" } }
+        ],
+        defeat: {
+            retry: { scene: 'tactics', params: { battleId: 'caocao_training' } },
+            script: [
+                { bg: 'urban_street', type: 'dialogue', portraitKey: 'cao-ren', name: 'Cao Ren', voiceId: 'cc_train_defeat_cr_01', text: { en: "The dummies exposed our disorder. Again, until the line holds.", zh: "木桩都看出我军散乱。再来，练到阵线稳住为止。" } }
+            ]
+        }
+    },
     'qingzhou_prelude': {
         name: "Ambush at Qingzhou",
         map: {

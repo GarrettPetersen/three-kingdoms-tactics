@@ -48,6 +48,13 @@
     "version": 1,
     "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
   },
+  "cc_dq_after_training_01": {
+    "character": "caocao",
+    "hash": "9fc1afb1d1ede3e84d72de5870ea954fe8278c34f45ba553277716419f551fb7",
+    "text": "够了。骑士已备，立刻进发颍川。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
   "cc_dq_att_00": {
     "character": "zhoujing",
     "hash": "f41addb3b682fcf8daab833ab4a1ce3844a55727a8437cef60809bc1fb79fb6b",
@@ -90,6 +97,13 @@
     "version": 1,
     "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
   },
+  "cc_dq_cr_train_prompt_01": {
+    "character": "caoren",
+    "hash": "ae7a68cbfa2ddf5da2532b3ef73466c37bb7ab30293a45bbdd7af3ad3f97f2b3",
+    "text": "兄长，出兵之前，要不要先停下来操练一番？",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
   "cc_dq_msg_01": {
     "character": "volunteer",
     "hash": "929ecd8d5b6a21d5d2b480d3d896db62774921efe242f562ff39fd31cdc0e0a6",
@@ -110,6 +124,153 @@
     "text": "今擢曹操县令为骑都尉，总领东郡所募此部骑军。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_bipolar_male_mandarin.wav"
+  },
+  "cc_dq_train_no_01": {
+    "character": "caocao",
+    "hash": "85d9c305abaa720f35a0dce1f0ff7604ac9a4991a533e887110d62d776c4d5ac",
+    "text": "不必。我们足以出发，颍川之路等不得。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "cc_dq_train_yes_01": {
+    "character": "caocao",
+    "hash": "57ca8c9fbdf5c54d39558b573a7c97bb845a090bb8d0fd478d059ef8b1c6769e",
+    "text": "好。现在操练骑士；上阵之后，贼军不会等我们慢慢学。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "cc_train_cc_01": {
+    "character": "caocao",
+    "hash": "de370f0f1013ea278c770e3d00c61af3e0cc3300aa01ef751709b294ac7c21a4",
+    "text": "临战之前，先看清战场如何运转。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "cc_train_cc_02": {
+    "character": "caocao",
+    "hash": "8266d1f9f52eb984fecf96bddb8ebe4fcfeefbc33840808ac944a0dd61aab390",
+    "text": "敌人与友军会先行动，并标出他们准备攻击的位置。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "cc_train_cc_03": {
+    "character": "caocao",
+    "hash": "7733e197a6c43aebe9c818705afffdc2c64bc926809df24e9502de7431b3c3ce",
+    "text": "只有你结束回合之后，那些攻击才会真正落下。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "cc_train_cc_04": {
+    "character": "caocao",
+    "hash": "2c9088643e3f613b89983e34e2145721df9c40d50c6491f49e95fda5563aa9d8",
+    "text": "将领可以先移动再攻击，也可以不移动直接出手。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "cc_train_cc_05": {
+    "character": "caocao",
+    "hash": "c8b8a5f5b14e92270ce0a4a6a78230ece30f3d57d22a7f319f7c793fecc6290a",
+    "text": "点击一名将领，再点击黄色高亮格，就能移动到那里。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "cc_train_cc_06": {
+    "character": "caocao",
+    "hash": "ce507288296a6d771b098b63c9acc6cbf9c4397a39afc3e930160567c34759a7",
+    "text": "选择攻击后，点击红色高亮格即可出招。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "cc_train_cc_07": {
+    "character": "caocao",
+    "hash": "8c014b550a04b6388c08bc97071643567345012f68d9237a6c9404ca268cebe9",
+    "text": "我的佩剑可斩击一名敌人，并将其击退。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "cc_train_cc_08": {
+    "character": "caocao",
+    "hash": "50d2193fef8709f2bf454833a67e33857b767db9809435250eca4e8b422b959c",
+    "text": "我的号令也能让友军行动；眼下先练习攻击木桩。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "cc_train_cc_end_turn_01": {
+    "character": "caocao",
+    "hash": "b61e1560f26a8bdf83e14da7e75dfc284e75ab6dee1ae8169292112853e7768e",
+    "text": "好。两位将领都已经出手。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "cc_train_cc_end_turn_02": {
+    "character": "caocao",
+    "hash": "87797a789d3f6074d8468fd81266c672430c59f379325dde1f6e46dd472aa204",
+    "text": "现在点击结束回合。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "cc_train_cc_watch_01": {
+    "character": "caocao",
+    "hash": "4bd6a57db10d2c64b4f855ffcf4e6cbb01134d679c0e6f1df52cf2a67c4e00d7",
+    "text": "实战中，要留心其他单位瞄准的格子。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav"
+  },
+  "cc_train_cr_01": {
+    "character": "caoren",
+    "hash": "7c4fb2289493bbc0de70bca2c8e497dfdafd051f73c62c2db736bd8565f1ac74",
+    "text": "红色代表敌人，蓝色代表友军，绿色代表由你指挥的将领。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "cc_train_cr_02": {
+    "character": "caoren",
+    "hash": "2365e40c1f4a5b32efd4cbd31779e0410665ffc6522930241ee39d4142146bfc",
+    "text": "每位将领都有自己的攻击路数。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "cc_train_cr_03": {
+    "character": "caoren",
+    "hash": "4e6508eb1a7ac7df35eaa20106b1c75fb32ee317328575fd980f629350795412",
+    "text": "我有两种攻击。先点击任意攻击按钮，再选择目标。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "cc_train_cr_04": {
+    "character": "caoren",
+    "hash": "cd2c821c7ee88b17c13d62ef7b9eada54fc5cc5b98deeda484ec9ba9d7d64ee3",
+    "text": "我的长枪可直刺最多两格，并击退最远的目标。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "cc_train_cr_05": {
+    "character": "caoren",
+    "hash": "822407f1930cecf6f84dc97318d4e2f341c4be8f08a8870720906c0aaf9b9e0a",
+    "text": "盾击可打击近处弧形范围，并将目标推开两格；推到友军时不会伤到他们。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "cc_train_cr_finish_01": {
+    "character": "caoren",
+    "hash": "2bd0a5fceeee3b562bb039b7f992e2a66cd60478d59fdfd6f9ee683aa89bab45",
+    "text": "现在放手去，把剩下的木桩都击碎。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "cc_train_cr_undo_01": {
+    "character": "caoren",
+    "hash": "c43bd60edb95228b5fdcc0e86c21630878cf3a103e10e88fc4d930917c60d74d",
+    "text": "若是手滑，就用右下角的按钮。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
+  },
+  "cc_train_defeat_cr_01": {
+    "character": "caoren",
+    "hash": "30cf79ad5f46ea8c571cd76e33f93fa1fd71a2ef6e225a0ce87cd461e11f767c",
+    "text": "木桩都看出我军散乱。再来，练到阵线稳住为止。",
+    "version": 1,
+    "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav"
   },
   "cc_yc_01": {
     "character": "caocao",
@@ -3888,13 +4049,6 @@
     "character": "zhangfei",
     "hash": "08080be818b06a8a83a56e43cec54bf84e8471382da050a718097784ee9d1a27",
     "text": "若是手滑，就用右下角的按钮。",
-    "version": 1,
-    "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
-  },
-  "train_zf_02": {
-    "character": "zhangfei",
-    "hash": "29cf78c4cd67a90b605d26a9650cf18da3330ca1926d1e0ed27c78857d09e226",
-    "text": "一个可以撤销上一步，一个可以重置整个回合。",
     "version": 1,
     "voice_target": "mandarin/clean/clean_gruff_mature_male_mandarin.wav"
   },

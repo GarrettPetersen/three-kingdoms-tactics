@@ -910,6 +910,12 @@ export class TacticsScene extends BaseScene {
             };
         }
 
+        if (this.battleId === 'caocao_training' && !this.onVictoryCallback) {
+            this.onVictoryCallback = () => {
+                this.manager.switchTo('narrative', { scriptId: 'caocao_after_training' });
+            };
+        }
+
         if (this.battleId === 'chapter2_oath_dongzhuo_choice') {
             this.onChoiceRestrain = () => {
                 this.startChapter2DongZhuoChoiceDialogue(false);
@@ -5550,57 +5556,114 @@ export class TacticsScene extends BaseScene {
     }
 
     isZhuoTrainingTutorialBattle() {
-        return this.battleId === 'zhuo_training';
+        return !!this.getTrainingTutorialConfig();
+    }
+
+    getTrainingTutorialConfig() {
+        const configs = {
+            zhuo_training: {
+                heroIds: ['liubei', 'guanyu', 'zhangfei'],
+                movePrompt: [
+                    { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_04', text: { en: "A hero may move, then attack. You may also attack without moving.", zh: "英雄可以先移动再攻击，也可以不移动直接出手。" } },
+                    { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_05', text: { en: "Click a hero, then click a highlighted yellow hex to move there.", zh: "点击一名英雄，再点击黄色高亮格，就能移动到那里。" } }
+                ],
+                undoVoiceLine: { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_zf_01', text: { en: "If your hand slips, use the buttons in the bottom right.", zh: "若是手滑，就用右下角的按钮。" } },
+                undoPromptLines: [
+                    { en: "Zhang Fei: If your hand slips, use the buttons in the bottom right.", zh: "张飞：若是手滑，就用右下角的按钮。" },
+                    { en: "One button undoes your last action. One resets the whole turn.", zh: "一个可以撤销上一步，一个可以重置整个回合。" }
+                ],
+                attackIntro: [
+                    { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'train_gy_02', text: { en: "Each brother strikes in a different pattern.", zh: "三兄弟各有不同的攻击路数。" } },
+                    { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_06', text: { en: "With an attack selected, click a highlighted red hex to strike.", zh: "选择攻击后，点击红色高亮格即可出招。" } }
+                ],
+                attackScripts: {
+                    liubei: [
+                        { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_07', text: { en: "My double swords cut in two opposite directions and push the targets back.", zh: "我的双股剑可向前后两方出击，并将目标击退。" } }
+                    ],
+                    guanyu: [
+                        { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'train_gy_03', text: { en: "My Green Dragon Crescent Blade sweeps an arc at a range of one or two hexes.", zh: "我的青龙偃月刀可在一到两格外横扫成弧。" } }
+                    ],
+                    zhangfei: [
+                        { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_zf_03', text: { en: "My Serpent Spear thrusts one or two spaces in a straight line.", zh: "我的丈八蛇矛可直刺一格或两格。" } },
+                        { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_zf_04', text: { en: "It can damage both spaces, and it pushes the farther target.", zh: "它能伤到直线上的两个位置，并击退较远的目标。" } }
+                    ]
+                },
+                endTurnPrompt: [
+                    { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_end_turn_01', text: { en: "Good. All three heroes have attacked.", zh: "好。三位英雄都已经出手。" } },
+                    { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_end_turn_02', text: { en: "Now hit the End Turn button.", zh: "现在点击结束回合。" } }
+                ],
+                freePracticePrompt: [
+                    { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'train_gy_watch_01', text: { en: "In real battle, watch the hexes other units are targeting.", zh: "实战中，要留心其他单位瞄准的格子。" } },
+                    { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_zf_finish_01', text: { en: "Now go ahead and smash the rest of these dummies.", zh: "现在放手去，把剩下的木桩都打碎！" } }
+                ]
+            },
+            caocao_training: {
+                heroIds: ['caocao', 'caoren'],
+                movePrompt: [
+                    { portraitKey: 'cao-cao', name: 'Cao Cao', voiceId: 'cc_train_cc_04', text: { en: "A commander may move, then attack. You may also attack without moving.", zh: "将领可以先移动再攻击，也可以不移动直接出手。" } },
+                    { portraitKey: 'cao-cao', name: 'Cao Cao', voiceId: 'cc_train_cc_05', text: { en: "Click a commander, then click a highlighted yellow hex to move there.", zh: "点击一名将领，再点击黄色高亮格，就能移动到那里。" } }
+                ],
+                undoVoiceLine: { portraitKey: 'cao-ren', name: 'Cao Ren', voiceId: 'cc_train_cr_undo_01', text: { en: "If your hand slips, use the buttons in the bottom right.", zh: "若是手滑，就用右下角的按钮。" } },
+                undoPromptLines: [
+                    { en: "Cao Ren: If your hand slips, use the buttons in the bottom right.", zh: "曹仁：若是手滑，就用右下角的按钮。" },
+                    { en: "One button undoes your last action. One resets the whole turn.", zh: "一个可以撤销上一步，一个可以重置整个回合。" }
+                ],
+                attackIntro: [
+                    { portraitKey: 'cao-ren', name: 'Cao Ren', voiceId: 'cc_train_cr_02', text: { en: "Each commander has his own attack pattern.", zh: "每位将领都有自己的攻击路数。" } },
+                    { portraitKey: 'cao-cao', name: 'Cao Cao', voiceId: 'cc_train_cc_06', text: { en: "With an attack selected, click a highlighted red hex to strike.", zh: "选择攻击后，点击红色高亮格即可出招。" } }
+                ],
+                attackScripts: {
+                    caocao: [
+                        { portraitKey: 'cao-cao', name: 'Cao Cao', voiceId: 'cc_train_cc_07', text: { en: "My sword strikes one enemy and pushes him back.", zh: "我的佩剑可斩击一名敌人，并将其击退。" } },
+                        { portraitKey: 'cao-cao', name: 'Cao Cao', voiceId: 'cc_train_cc_08', text: { en: "My command can also order an ally to act, but for now, practice striking the dummies.", zh: "我的号令也能让友军行动；眼下先练习攻击木桩。" } }
+                    ],
+                    caoren: [
+                        { portraitKey: 'cao-ren', name: 'Cao Ren', voiceId: 'cc_train_cr_03', text: { en: "I have two attacks. Click either attack button before choosing a target.", zh: "我有两种攻击。先点击任意攻击按钮，再选择目标。" } },
+                        { portraitKey: 'cao-ren', name: 'Cao Ren', voiceId: 'cc_train_cr_04', text: { en: "My long spear thrusts up to two hexes in a line and pushes the farthest target.", zh: "我的长枪可直刺最多两格，并击退最远的目标。" } },
+                        { portraitKey: 'cao-ren', name: 'Cao Ren', voiceId: 'cc_train_cr_05', text: { en: "Shield Bash strikes a short arc and shoves targets two hexes. It pushes allies without hurting them.", zh: "盾击可打击近处弧形范围，并将目标推开两格；推到友军时不会伤到他们。" } }
+                    ]
+                },
+                endTurnPrompt: [
+                    { portraitKey: 'cao-cao', name: 'Cao Cao', voiceId: 'cc_train_cc_end_turn_01', text: { en: "Good. Both commanders have attacked.", zh: "好。两位将领都已经出手。" } },
+                    { portraitKey: 'cao-cao', name: 'Cao Cao', voiceId: 'cc_train_cc_end_turn_02', text: { en: "Now hit the End Turn button.", zh: "现在点击结束回合。" } }
+                ],
+                freePracticePrompt: [
+                    { portraitKey: 'cao-cao', name: 'Cao Cao', voiceId: 'cc_train_cc_watch_01', text: { en: "In real battle, watch the hexes other units are targeting.", zh: "实战中，要留心其他单位瞄准的格子。" } },
+                    { portraitKey: 'cao-ren', name: 'Cao Ren', voiceId: 'cc_train_cr_finish_01', text: { en: "Now go ahead and break the rest of these dummies.", zh: "现在放手去，把剩下的木桩都击碎。" } }
+                ]
+            }
+        };
+        return configs[this.battleId] || null;
     }
 
     maybeShowZhuoTrainingMovePrompt() {
-        if (!this.isZhuoTrainingTutorialBattle()) return;
+        const config = this.getTrainingTutorialConfig();
+        if (!config) return;
         if (this.zhuoTrainingMovePromptShown || this.isGameOver || this.isCleanupDialogueActive) return;
         if (this.turn !== 'player' || this.turnNumber !== 1) return;
-        const heroes = ['liubei', 'guanyu', 'zhangfei']
+        const heroes = config.heroIds
             .map(id => this.units.find(u => u.id === id && u.hp > 0 && !u.isGone))
             .filter(Boolean);
         if (heroes.length === 0) return;
 
         this.zhuoTrainingMovePromptShown = true;
         this.zhuoTrainingAwaitingFirstMove = true;
-        this.startBattleEndDialogue([
-            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_04', text: { en: "A hero may move, then attack. You may also attack without moving.", zh: "英雄可以先移动再攻击，也可以不移动直接出手。" } },
-            { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_05', text: { en: "Click a hero, then click a highlighted yellow hex to move there.", zh: "点击一名英雄，再点击黄色高亮格，就能移动到那里。" } }
-        ]);
+        this.startBattleEndDialogue(config.movePrompt);
         this.saveBattleState();
     }
 
     getZhuoTrainingAttackScript(unit) {
         if (!unit) return null;
-        if (unit.id === 'liubei') {
-            return [
-                { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_07', text: { en: "My double swords cut in two opposite directions and push the targets back.", zh: "我的双股剑可向前后两方出击，并将目标击退。" } }
-            ];
-        }
-        if (unit.id === 'guanyu') {
-            return [
-                { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'train_gy_03', text: { en: "My Green Dragon Crescent Blade sweeps an arc at a range of one or two hexes.", zh: "我的青龙偃月刀可在一到两格外横扫成弧。" } }
-            ];
-        }
-        if (unit.id === 'zhangfei') {
-            return [
-                { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_zf_03', text: { en: "My Serpent Spear thrusts one or two spaces in a straight line.", zh: "我的丈八蛇矛可直刺一格或两格。" } },
-                { portraitKey: 'zhang-fei', name: 'Zhang Fei', voiceId: 'train_zf_04', text: { en: "It can damage both spaces, and it pushes the farther target.", zh: "它能伤到直线上的两个位置，并击退较远的目标。" } }
-            ];
-        }
-        return null;
+        return this.getTrainingTutorialConfig()?.attackScripts?.[unit.id] || null;
     }
 
     getZhuoTrainingUndoPromptLines() {
-        return [
-            { en: "Zhang Fei: If your hand slips, use the buttons in the bottom right.", zh: "张飞：若是手滑，就用右下角的按钮。" },
-            { en: "One button undoes your last action. One resets the whole turn.", zh: "一个可以撤销上一步，一个可以重置整个回合。" }
-        ];
+        return this.getTrainingTutorialConfig()?.undoPromptLines || [];
     }
 
     maybeShowZhuoTrainingAttackPrompt(unit) {
-        if (!this.isZhuoTrainingTutorialBattle()) return false;
+        const config = this.getTrainingTutorialConfig();
+        if (!config) return false;
         if (!unit || unit.faction !== 'player' || unit.hp <= 0 || unit.isGone) return false;
         if (!unit.hasMoved || unit.hasAttacked || unit.hasActed) return false;
         if (!this.zhuoTrainingUndoUsed || this.zhuoTrainingAwaitingUndo) return false;
@@ -5611,10 +5674,7 @@ export class TacticsScene extends BaseScene {
         const fullScript = [];
         if (!this.zhuoTrainingAttackInstructionShown) {
             this.zhuoTrainingAttackInstructionShown = true;
-            fullScript.push(
-                { portraitKey: 'guan-yu', name: 'Guan Yu', voiceId: 'train_gy_02', text: { en: "Each brother strikes in a different pattern.", zh: "三兄弟各有不同的攻击路数。" } },
-                { portraitKey: 'liu-bei', name: 'Liu Bei', voiceId: 'train_lb_06', text: { en: "With an attack selected, click a highlighted red hex to strike.", zh: "选择攻击后，点击红色高亮格即可出招。" } }
-            );
+            fullScript.push(...config.attackIntro);
         }
         fullScript.push(...script);
         this.zhuoTrainingAttackPromptShown = { ...(this.zhuoTrainingAttackPromptShown || {}), [unit.id]: true };
@@ -5641,7 +5701,8 @@ export class TacticsScene extends BaseScene {
             this.attackTiles.clear();
             if (!this.zhuoTrainingUndoPromptVoicePlayed) {
                 this.zhuoTrainingUndoPromptVoicePlayed = true;
-                this.playBattleVoice('train_zf_01');
+                const voiceId = this.getTrainingTutorialConfig()?.undoVoiceLine?.voiceId;
+                if (voiceId) this.playBattleVoice(voiceId);
             }
             this.saveBattleState();
             return true;
@@ -5665,65 +5726,29 @@ export class TacticsScene extends BaseScene {
     }
 
     maybeShowZhuoTrainingEndTurnPrompt() {
-        if (this.battleId !== 'zhuo_training') return;
+        const config = this.getTrainingTutorialConfig();
+        if (!config) return;
         if (this.zhuoTrainingEndTurnPromptShown || this.isGameOver || this.isCleanupDialogueActive) return;
         const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.isGone);
         if (enemies.length === 0) return;
-        const heroes = ['liubei', 'guanyu', 'zhangfei']
+        const heroes = config.heroIds
             .map(id => this.units.find(u => u.id === id && u.hp > 0 && !u.isGone))
             .filter(Boolean);
         if (heroes.length === 0 || !heroes.every(hero => hero.hasAttacked)) return;
         this.zhuoTrainingEndTurnPromptShown = true;
-        this.startBattleEndDialogue([
-            {
-                portraitKey: 'liu-bei',
-                name: 'Liu Bei',
-                voiceId: 'train_lb_end_turn_01',
-                text: {
-                    en: "Good. All three heroes have attacked.",
-                    zh: "好。三位英雄都已经出手。"
-                }
-            },
-            {
-                portraitKey: 'liu-bei',
-                name: 'Liu Bei',
-                voiceId: 'train_lb_end_turn_02',
-                text: {
-                    en: "Now hit the End Turn button.",
-                    zh: "现在点击结束回合。"
-                }
-            }
-        ]);
+        this.startBattleEndDialogue(config.endTurnPrompt);
         this.saveBattleState();
     }
 
     maybeShowZhuoTrainingFreePracticePrompt() {
-        if (this.battleId !== 'zhuo_training') return;
+        const config = this.getTrainingTutorialConfig();
+        if (!config) return;
         if (!this.zhuoTrainingEndTurnPromptShown || this.zhuoTrainingFreePracticePromptShown) return;
         if (this.turnNumber < 2 || this.isGameOver || this.isCleanupDialogueActive) return;
         const enemies = this.units.filter(u => u.faction === 'enemy' && u.hp > 0 && !u.isGone);
         if (enemies.length === 0) return;
         this.zhuoTrainingFreePracticePromptShown = true;
-        this.startBattleEndDialogue([
-            {
-                portraitKey: 'guan-yu',
-                name: 'Guan Yu',
-                voiceId: 'train_gy_watch_01',
-                text: {
-                    en: "In real battle, watch the hexes other units are targeting.",
-                    zh: "实战中，要留心其他单位瞄准的格子。"
-                }
-            },
-            {
-                portraitKey: 'zhang-fei',
-                name: 'Zhang Fei',
-                voiceId: 'train_zf_finish_01',
-                text: {
-                    en: "Now go ahead and smash the rest of these dummies.",
-                    zh: "现在放手去，把剩下的木桩都打碎！"
-                }
-            }
-        ]);
+        this.startBattleEndDialogue(config.freePracticePrompt);
         this.saveBattleState();
     }
 

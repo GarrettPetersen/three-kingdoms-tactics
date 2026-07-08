@@ -2405,16 +2405,95 @@ export const NARRATIVE_SCRIPTS = {
                 zh: '谨遵县令之命。属下这就分头施行。'
             }
         },
+        { type: 'command', action: 'addActor', id: 'caoren', imgKey: 'caoren', x: 322, y: 260, actorAction: 'walk', speed: 0.78, flip: true, drawAboveForeground: true },
+        { type: 'command', action: 'move', id: 'caoren', x: 184, y: 214, wait: true },
+        {
+            type: 'dialogue',
+            name: 'Cao Ren',
+            speaker: 'caoren',
+            portraitKey: 'cao-ren',
+            voiceId: 'cc_dq_cr_train_prompt_01',
+            position: 'top',
+            bg: 'urban_street',
+            fg: 'urban_street_foreground',
+            text: {
+                en: 'Cousin, before we ride, should we pause to do some training?',
+                zh: '兄长，出兵之前，要不要先停下来操练一番？'
+            }
+        },
+        {
+            type: 'choice',
+            portraitKey: 'cao-cao',
+            name: 'Cao Cao',
+            position: 'top',
+            options: [
+                {
+                    buttonText: { en: 'Yes. (play combat tutorial)', zh: '操练。（进入战斗教程）' },
+                    portraitKey: 'cao-cao',
+                    name: 'Cao Cao',
+                    voiceId: 'cc_dq_train_yes_01',
+                    text: {
+                        en: 'Yes. Drill the riders now; the rebels will not wait for us to learn in battle.',
+                        zh: '好。现在操练骑士；上阵之后，贼军不会等我们慢慢学。'
+                    },
+                    result: [
+                        { type: 'command', action: 'startBattle', battleId: 'caocao_training' }
+                    ]
+                },
+                {
+                    buttonText: { en: 'No. (skip combat tutorial)', zh: '不必。（跳过战斗教程）' },
+                    portraitKey: 'cao-cao',
+                    name: 'Cao Cao',
+                    voiceId: 'cc_dq_train_no_01',
+                    text: {
+                        en: 'No. We know enough to begin; the road to Yingchuan cannot wait.',
+                        zh: '不必。我们足以出发，颍川之路等不得。'
+                    },
+                    result: [
+                        { type: 'command', action: 'jump', label: 'caocao_post_training_prompt' }
+                    ]
+                }
+            ]
+        },
+        { type: 'label', name: 'caocao_post_training_prompt' },
         { type: 'command', action: 'move', id: 'caocao', x: 142, y: 328, wait: false },
         { type: 'command', action: 'move', id: 'caocao_civil_attendant', x: 116, y: 330, wait: false },
+        { type: 'command', action: 'move', id: 'caoren', x: 196, y: 332, wait: false },
         { type: 'command', action: 'move', id: 'messenger', x: 170, y: 332, wait: true },
         { type: 'command', action: 'removeActor', id: 'caocao' },
+        { type: 'command', action: 'removeActor', id: 'caoren' },
         { type: 'command', action: 'removeActor', id: 'caocao_civil_attendant' },
         { type: 'command', action: 'removeActor', id: 'messenger' },
         { type: 'command', action: 'setActorLoop', id: 'refugee_m_01', enabled: false },
         { type: 'command', action: 'setActorLoop', id: 'refugee_f_01', enabled: false },
         { type: 'command', action: 'setActorLoop', id: 'refugee_m_02', enabled: false },
         { type: 'command', action: 'setActorLoop', id: 'refugee_f_02', enabled: false }
+    ],
+    'caocao_after_training': [
+        { bg: 'urban_street', fg: 'urban_street_foreground', type: 'command', action: 'clearActors' },
+        { type: 'command', action: 'addActor', id: 'caocao', imgKey: 'caocao', x: 102, y: 206, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'caoren', imgKey: 'caoren', x: 184, y: 214, flip: true, drawAboveForeground: true },
+        { type: 'command', action: 'addActor', id: 'messenger', imgKey: 'xiaoer', x: 166, y: 216, flip: true, drawAboveForeground: true },
+        {
+            type: 'dialogue',
+            name: 'Cao Cao',
+            portraitKey: 'cao-cao',
+            voiceId: 'cc_dq_after_training_01',
+            position: 'top',
+            bg: 'urban_street',
+            fg: 'urban_street_foreground',
+            text: {
+                en: 'Enough. The riders are ready. We march for Yingchuan.',
+                zh: '够了。骑士已备，立刻进发颍川。'
+            }
+        },
+        { type: 'command', action: 'move', id: 'caocao', x: 142, y: 328, wait: false },
+        { type: 'command', action: 'move', id: 'caoren', x: 196, y: 332, wait: false },
+        { type: 'command', action: 'move', id: 'messenger', x: 170, y: 332, wait: true },
+        { type: 'command', action: 'removeActor', id: 'caocao' },
+        { type: 'command', action: 'removeActor', id: 'caoren' },
+        { type: 'command', action: 'removeActor', id: 'messenger' },
+        { type: 'command', action: 'fade', target: 1, speed: 0.0005 }
     ],
     'chapter2_zhujun_camp': [
         { bg: 'army_camp', type: 'command', action: 'clearActors' },

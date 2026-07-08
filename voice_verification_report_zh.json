@@ -6028,5 +6028,235 @@
         "wer": 0.3333333333333333,
         "is_bad": false,
         "language": "zh"
+    },
+    "zh:cc_dq_after_training_01": {
+        "id": "cc_dq_after_training_01",
+        "character": "caocao",
+        "original_text": "够了。骑士已备，立刻进发颍川。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "夠了,歧視一輩,立刻進發影川",
+        "wer": 0.6666666666666666,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_dq_cr_train_prompt_01": {
+        "id": "cc_dq_cr_train_prompt_01",
+        "character": "caoren",
+        "original_text": "兄长，出兵之前，要不要先停下来操练一番？",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "兄長出兵之前要不要先停下來操練一番",
+        "wer": 0.17647058823529413,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_dq_train_no_01": {
+        "id": "cc_dq_train_no_01",
+        "character": "caocao",
+        "original_text": "不必。我们足以出发，颍川之路等不得。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "不必,我们足以出发,隐穿之路等不得",
+        "wer": 0.13333333333333333,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_dq_train_yes_01": {
+        "id": "cc_dq_train_yes_01",
+        "character": "caocao",
+        "original_text": "好。现在操练骑士；上阵之后，贼军不会等我们慢慢学。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "好,現在超練騎士上陣之後賊軍不會等我們慢慢學",
+        "wer": 0.42857142857142855,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cc_01": {
+        "id": "cc_train_cc_01",
+        "character": "caocao",
+        "original_text": "临战之前，先看清战场如何运转。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "零站之前,先看清站场如何运转。",
+        "wer": 0.23076923076923078,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cc_02": {
+        "id": "cc_train_cc_02",
+        "character": "caocao",
+        "original_text": "敌人与友军会先行动，并标出他们准备攻击的位置。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "敵人与有军会先行动定标出他们准备攻击的位置",
+        "wer": 0.14285714285714285,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cc_03": {
+        "id": "cc_train_cc_03",
+        "character": "caocao",
+        "original_text": "只有你结束回合之后，那些攻击才会真正落下。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "只有你結束回合之後,那些攻擊才會真正落下。",
+        "wer": 0.15789473684210525,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cc_04": {
+        "id": "cc_train_cc_04",
+        "character": "caocao",
+        "original_text": "将领可以先移动再攻击，也可以不移动直接出手。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "降臨可以先移动在攻击,也可以不移动直接出手",
+        "wer": 0.15,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cc_05": {
+        "id": "cc_train_cc_05",
+        "character": "caocao",
+        "original_text": "点击一名将领，再点击黄色高亮格，就能移动到那里。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "點擊一名降臨在點擊黃色高亮格就能移動到那裡",
+        "wer": 0.38095238095238093,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cc_06": {
+        "id": "cc_train_cc_06",
+        "character": "caocao",
+        "original_text": "选择攻击后，点击红色高亮格即可出招。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "选择攻击后,点击红色高亮格即可出招",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cc_07": {
+        "id": "cc_train_cc_07",
+        "character": "caocao",
+        "original_text": "我的佩剑可斩击一名敌人，并将其击退。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "我的配件可展示一名敵人,定将其几退",
+        "wer": 0.4375,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cc_08": {
+        "id": "cc_train_cc_08",
+        "character": "caocao",
+        "original_text": "我的号令也能让友军行动；眼下先练习攻击木桩。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "我的耗令也能让有军行动眼下先练习攻击目装",
+        "wer": 0.2,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cc_end_turn_01": {
+        "id": "cc_train_cc_end_turn_01",
+        "character": "caocao",
+        "original_text": "好。两位将领都已经出手。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "好,两位将领都已经出手",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cc_end_turn_02": {
+        "id": "cc_train_cc_end_turn_02",
+        "character": "caocao",
+        "original_text": "现在点击结束回合。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "现在点击结束回合",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cc_watch_01": {
+        "id": "cc_train_cc_watch_01",
+        "character": "caocao",
+        "original_text": "实战中，要留心其他单位瞄准的格子。",
+        "voice_target": "mandarin/clean/clean_deep_male_mandarin.wav",
+        "stt_output": "實戰中要留心其他單位瞄準的隔子",
+        "wer": 0.3333333333333333,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cr_01": {
+        "id": "cc_train_cr_01",
+        "character": "caoren",
+        "original_text": "红色代表敌人，蓝色代表友军，绿色代表由你指挥的将领。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "紅色代表敵人 藍色代表 有軍綠色代表 有你指揮的降臨",
+        "wer": 0.391304347826087,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cr_02": {
+        "id": "cc_train_cr_02",
+        "character": "caoren",
+        "original_text": "每位将领都有自己的攻击路数。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "每位降臨都有自己的攻击入署。",
+        "wer": 0.3076923076923077,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cr_03": {
+        "id": "cc_train_cr_03",
+        "character": "caoren",
+        "original_text": "我有两种攻击。先点击任意攻击按钮，再选择目标。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "我有兩種攻擊,先點擊任意攻擊按鈕,再選擇目標",
+        "wer": 0.45,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cr_04": {
+        "id": "cc_train_cr_04",
+        "character": "caoren",
+        "original_text": "我的长枪可直刺最多两格，并击退最远的目标。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "我的長腔可直次最多兩格並積退最遠的目標",
+        "wer": 0.42105263157894735,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cr_05": {
+        "id": "cc_train_cr_05",
+        "character": "caoren",
+        "original_text": "盾击可打击近处弧形范围，并将目标推开两格；推到友军时不会伤到他们。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "頓級可打擊進處弧行範圍並將目標推開兩個推到有軍事不會傷到他們",
+        "wer": 0.5666666666666667,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cr_finish_01": {
+        "id": "cc_train_cr_finish_01",
+        "character": "caoren",
+        "original_text": "现在放手去，把剩下的木桩都击碎。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "现在放手去把剩下的木装都几岁",
+        "wer": 0.21428571428571427,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_cr_undo_01": {
+        "id": "cc_train_cr_undo_01",
+        "character": "caoren",
+        "original_text": "若是手滑，就用右下角的按钮。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "若是首皇,就用右下角的按鈕",
+        "wer": 0.25,
+        "is_bad": false,
+        "language": "zh"
+    },
+    "zh:cc_train_defeat_cr_01": {
+        "id": "cc_train_defeat_cr_01",
+        "character": "caoren",
+        "original_text": "木桩都看出我军散乱。再来，练到阵线稳住为止。",
+        "voice_target": "mandarin/clean/clean_serious_male_mandarin.wav",
+        "stt_output": "目妆都看出我军散乱再来练到正线稳住为止",
+        "wer": 0.15789473684210525,
+        "is_bad": false,
+        "language": "zh"
     }
 }

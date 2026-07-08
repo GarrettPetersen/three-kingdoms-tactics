@@ -48,6 +48,13 @@
     "version": 1,
     "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
   },
+  "cc_dq_after_training_01": {
+    "character": "caocao",
+    "hash": "58c828ace0cfb48704dc267ab348a49d9f3f8ba880c4774462da6e96b37b44b7",
+    "text": "Enough. The riders are ready. We march for Yingchuan.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
   "cc_dq_att_00": {
     "character": "zhoujing",
     "hash": "545196647f59b7624cfb680c76f5ad9e251db327092516a6e54e1836b0ab3488",
@@ -90,6 +97,13 @@
     "version": 1,
     "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
   },
+  "cc_dq_cr_train_prompt_01": {
+    "character": "caoren",
+    "hash": "ca14b853b8175cd5beadff2d118e87f3487cb65bd08d3c38f3e4846d4cf7b277",
+    "text": "Cousin, before we ride, should we pause to do some training?",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
   "cc_dq_msg_01": {
     "character": "volunteer",
     "hash": "640d01cfa4600c4bee4c78e5b6b2bd5dcd02db5c76c0a47303d636ca9ceacee9",
@@ -110,6 +124,153 @@
     "text": "Magistrate Cao Cao is elevated to Cavalry Commander and placed in command of this Dong Commandery cavalry force.",
     "version": 1,
     "voice_target": "movies/clean/clean_dark_riku_young_adult.wav"
+  },
+  "cc_dq_train_no_01": {
+    "character": "caocao",
+    "hash": "c848e793b6bdec9c111f28bca25ebb937eca758a0feb7bcc761df0c012d2fdc2",
+    "text": "No. We know enough to begin; the road to Yingchuan cannot wait.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_dq_train_yes_01": {
+    "character": "caocao",
+    "hash": "559cfb5ca1582503721c16927ee4a38a314724f6c37cb6bc0041149f491745bb",
+    "text": "Yes. Drill the riders now; the rebels will not wait for us to learn in battle.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_train_cc_01": {
+    "character": "caocao",
+    "hash": "57ea5831c4a48aab81b1df74f6836ece47f777e10d653eca9156448c6e4e4df3",
+    "text": "Before battle, study how the field moves.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_train_cc_02": {
+    "character": "caocao",
+    "hash": "25b1d5385f3350c33d0b28619525161c48415280c81eaf6ebc2fb5ec7bf578cc",
+    "text": "Enemies and allies move first. They show where they mean to strike.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_train_cc_03": {
+    "character": "caocao",
+    "hash": "4500500ddd74044cd03f484dc6ed18119ba1eec13c566039f17e0d0f1d53cc26",
+    "text": "Those attacks do not land until you end your turn.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_train_cc_04": {
+    "character": "caocao",
+    "hash": "42b9b375ebed0df5062edc66dd9cebed8f4e3ab18ca186b3c79c6733d608d686",
+    "text": "A commander may move, then attack. You may also attack without moving.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_train_cc_05": {
+    "character": "caocao",
+    "hash": "d70d972082ceee266b8b9b1ec2cd711f5b158264286385ad829a723aa45b0869",
+    "text": "Click a commander, then click a highlighted yellow hex to move there.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_train_cc_06": {
+    "character": "caocao",
+    "hash": "5778a3da2bcc5366b1be027aaf0f516bf89763e3846a050a7a285ea92ae04b11",
+    "text": "With an attack selected, click a highlighted red hex to strike.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_train_cc_07": {
+    "character": "caocao",
+    "hash": "715b32acf247a0652040ac8c3ba920bfae3fa0ebc51f46e3c76185bf586d88ae",
+    "text": "My sword strikes one enemy and pushes him back.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_train_cc_08": {
+    "character": "caocao",
+    "hash": "0134f631d9745ed3832e40817fed973d2a73a711945e840ca0719b7e0691de45",
+    "text": "My command can also order an ally to act, but for now, practice striking the dummies.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_train_cc_end_turn_01": {
+    "character": "caocao",
+    "hash": "a4610cf39b7c8d7059d6f1c33cf13498fc0856b4fdd9dec69a181570d4cf75f0",
+    "text": "Good. Both commanders have attacked.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_train_cc_end_turn_02": {
+    "character": "caocao",
+    "hash": "c7b64f440ecbb5a65fa8676395495963253c16917615406b4262233ac671302e",
+    "text": "Now hit the End Turn button.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_train_cc_watch_01": {
+    "character": "caocao",
+    "hash": "0266da8fde952eedfe4ddf2391b5e4a71b40989f8b89965b2f25307dfac3bae7",
+    "text": "In real battle, watch the hexes other units are targeting.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_thanos_deep_villain.wav"
+  },
+  "cc_train_cr_01": {
+    "character": "caoren",
+    "hash": "80ad5741f343d581686615f411dbbc9ed4f16afdaaaadaa5a42dbd2450eff2c6",
+    "text": "Red marks enemies. Blue marks allies. Green marks the commanders under your control.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "cc_train_cr_02": {
+    "character": "caoren",
+    "hash": "538cd43eda58bbbf95fee7d147a78370b1a1cd90c9cf370de9a322662218bcb8",
+    "text": "Each commander has his own attack pattern.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "cc_train_cr_03": {
+    "character": "caoren",
+    "hash": "b094911d35100622368b310db33bf68726a4eeb91645add82ae2d974ce01b3a0",
+    "text": "I have two attacks. Click either attack button before choosing a target.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "cc_train_cr_04": {
+    "character": "caoren",
+    "hash": "f09c0c0bb48a398709e65de1a946edadad8650e923191d5eff0c69e9b9d22c23",
+    "text": "My long spear thrusts up to two hexes in a line and pushes the farthest target.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "cc_train_cr_05": {
+    "character": "caoren",
+    "hash": "0b51561e35f654dedc808118c2b61c3ed8b034f167734865eab0add7672b525e",
+    "text": "Shield Bash strikes a short arc and shoves targets two hexes. It pushes allies without hurting them.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "cc_train_cr_finish_01": {
+    "character": "caoren",
+    "hash": "edf448455448e32d7240b9a734d32d317d1a2131a769b60e68de4fe2bf3dcdd8",
+    "text": "Now go ahead and break the rest of these dummies.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "cc_train_cr_undo_01": {
+    "character": "caoren",
+    "hash": "80dc760e73642cd315b7b6a9c66fdf728536ab881a47b69af1bd66806739de6a",
+    "text": "If your hand slips, use the buttons in the bottom right.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
+  },
+  "cc_train_defeat_cr_01": {
+    "character": "caoren",
+    "hash": "8e0d432e2bd0fb3e15ed9862ab0a05fbfc03df0eb33fc4066236eae5fe800167",
+    "text": "The dummies exposed our disorder. Again, until the line holds.",
+    "version": 1,
+    "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav"
   },
   "cc_yc_01": {
     "character": "caocao",
@@ -3888,13 +4049,6 @@
     "character": "zhangfei",
     "hash": "d9274e77f14c4d8919ee07578308b78d4375f065e3a4beab7f0830bd656071f2",
     "text": "If your hand slips, use the buttons in the bottom right.",
-    "version": 1,
-    "voice_target": "movies/clean/clean_kublai-khan.wav"
-  },
-  "train_zf_02": {
-    "character": "zhangfei",
-    "hash": "50e0fc354c54bfb6e254bdf42973cc60f7ea2f0b54f090f77ac981bee7f8dfbd",
-    "text": "One button undoes your last action. One resets the whole turn.",
     "version": 1,
     "voice_target": "movies/clean/clean_kublai-khan.wav"
   },

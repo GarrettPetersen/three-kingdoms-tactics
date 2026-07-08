@@ -1345,7 +1345,7 @@ export class NarrativeScene extends BaseScene {
                     // Add milestone when inn scene completes (normally done in onComplete)
                     this.manager.gameState.addMilestone('prologue_complete');
                     this.manager.gameState.setStoryCursor('prologue_complete', 'liubei');
-                } else if (this.scriptId === 'caocao_dunqiu_intro') {
+                } else if (this.scriptId === 'caocao_dunqiu_intro' || this.scriptId === 'caocao_after_training') {
                     this.manager.gameState.setStoryCursor('caocao_intro_complete', 'caocao');
                 } else if (this.scriptId === 'caocao_ch1_end_card') {
                     this.manager.gameState.setStoryCursor('caocao_chapter1_complete', 'caocao');
@@ -2934,6 +2934,7 @@ export class NarrativeScene extends BaseScene {
             'daxing_messenger': 'map',
             'guangzong_arrival': 'map',
             'caocao_dunqiu_intro': 'map',
+            'caocao_after_training': 'map',
             'caocao_ch1_end_card': 'campaign_selection',
             'chapter2_hejin_gate': 'campaign_selection',
             'chapter2_hejin_council': 'campaign_selection',
@@ -2974,6 +2975,7 @@ export class NarrativeScene extends BaseScene {
             'daxing_messenger': { afterEvent: 'daxing' },
             'guangzong_arrival': { campaignId: 'liubei' },
             'caocao_dunqiu_intro': { campaignId: 'caocao', partyX: 168, partyY: 98 },
+            'caocao_after_training': { campaignId: 'caocao', partyX: 168, partyY: 98 },
             'caocao_ch1_end_card': {},
             'chapter2_hejin_gate': {},
             'chapter2_hejin_council': {},

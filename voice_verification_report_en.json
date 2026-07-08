@@ -6027,5 +6027,235 @@
         "wer": 0.25,
         "is_bad": false,
         "language": "en"
+    },
+    "en:cc_dq_after_training_01": {
+        "id": "cc_dq_after_training_01",
+        "character": "caocao",
+        "original_text": "Enough. The riders are ready. We march for Yingchuan.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "Enough! The riders are ready! We march for Yin Chuan!",
+        "wer": 0.2222222222222222,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_dq_cr_train_prompt_01": {
+        "id": "cc_dq_cr_train_prompt_01",
+        "character": "caoren",
+        "original_text": "Cousin, before we ride, should we pause to do some training?",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav",
+        "stt_output": "cousin before we ride should we pause to do some training",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_dq_train_no_01": {
+        "id": "cc_dq_train_no_01",
+        "character": "caocao",
+        "original_text": "No. We know enough to begin; the road to Yingchuan cannot wait.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "No, we know enough to begin. The road to Yinchuan cannot wait.",
+        "wer": 0.08333333333333333,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_dq_train_yes_01": {
+        "id": "cc_dq_train_yes_01",
+        "character": "caocao",
+        "original_text": "Yes. Drill the riders now; the rebels will not wait for us to learn in battle.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "Yes. Drill the riders now. The rebels will not wait for us to learn in battle.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cc_01": {
+        "id": "cc_train_cc_01",
+        "character": "caocao",
+        "original_text": "Before battle, study how the field moves.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "Before battle, study how the field moves.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cc_02": {
+        "id": "cc_train_cc_02",
+        "character": "caocao",
+        "original_text": "Enemies and allies move first. They show where they mean to strike.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "Enemies and allies move first. They show what they mean to strike.",
+        "wer": 0.08333333333333333,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cc_03": {
+        "id": "cc_train_cc_03",
+        "character": "caocao",
+        "original_text": "Those attacks do not land until you end your turn.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "Those attacks do not land until you end your turn.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cc_04": {
+        "id": "cc_train_cc_04",
+        "character": "caocao",
+        "original_text": "A commander may move, then attack. You may also attack without moving.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "A commander may move, then attack. You may also attack without moving.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cc_05": {
+        "id": "cc_train_cc_05",
+        "character": "caocao",
+        "original_text": "Click a commander, then click a highlighted yellow hex to move there.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "Click a commander, then click a highlighted yellow hex to move there.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cc_06": {
+        "id": "cc_train_cc_06",
+        "character": "caocao",
+        "original_text": "With an attack selected, click a highlighted red hex to strike.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "With an attack selected, click a highlighted red hex to strike.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cc_07": {
+        "id": "cc_train_cc_07",
+        "character": "caocao",
+        "original_text": "My sword strikes one enemy and pushes him back.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "My sword strikes one enemy and pushes him back.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cc_08": {
+        "id": "cc_train_cc_08",
+        "character": "caocao",
+        "original_text": "My command can also order an ally to act, but for now, practice striking the dummies.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "My command can also order an ally to act, but for now, practice striking the dummies.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cc_end_turn_01": {
+        "id": "cc_train_cc_end_turn_01",
+        "character": "caocao",
+        "original_text": "Good. Both commanders have attacked.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "Good. Both commanders have attacked.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cc_end_turn_02": {
+        "id": "cc_train_cc_end_turn_02",
+        "character": "caocao",
+        "original_text": "Now hit the End Turn button.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "Now hit the end turn button.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cc_watch_01": {
+        "id": "cc_train_cc_watch_01",
+        "character": "caocao",
+        "original_text": "In real battle, watch the hexes other units are targeting.",
+        "voice_target": "movies/clean/clean_thanos_deep_villain.wav",
+        "stt_output": "in real battle. Watch the Hex's other units are targeting.",
+        "wer": 0.1,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cr_01": {
+        "id": "cc_train_cr_01",
+        "character": "caoren",
+        "original_text": "Red marks enemies. Blue marks allies. Green marks the commanders under your control.",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav",
+        "stt_output": "Red marks enemies, bloom marks allies, green marks, the commanders under your control.",
+        "wer": 0.07692307692307693,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cr_02": {
+        "id": "cc_train_cr_02",
+        "character": "caoren",
+        "original_text": "Each commander has his own attack pattern.",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav",
+        "stt_output": "Each commander has his own attack pattern.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cr_03": {
+        "id": "cc_train_cr_03",
+        "character": "caoren",
+        "original_text": "I have two attacks. Click either attack button before choosing a target.",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav",
+        "stt_output": "I have two attacks. Click the Attack button before choosing a target.",
+        "wer": 0.08333333333333333,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cr_04": {
+        "id": "cc_train_cr_04",
+        "character": "caoren",
+        "original_text": "My long spear thrusts up to two hexes in a line and pushes the farthest target.",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav",
+        "stt_output": "My long spear thrusts up to two hexes in a line and pushes the farthest target.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cr_05": {
+        "id": "cc_train_cr_05",
+        "character": "caoren",
+        "original_text": "Shield Bash strikes a short arc and shoves targets two hexes. It pushes allies without hurting them.",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav",
+        "stt_output": "Shield bash, strikes a short arc, and shoves targets to hexes. It pushes allies without hurting them.",
+        "wer": 0.058823529411764705,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cr_finish_01": {
+        "id": "cc_train_cr_finish_01",
+        "character": "caoren",
+        "original_text": "Now go ahead and break the rest of these dummies.",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav",
+        "stt_output": "Now go ahead and break the rest of these dummies.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_cr_undo_01": {
+        "id": "cc_train_cr_undo_01",
+        "character": "caoren",
+        "original_text": "If your hand slips, use the buttons in the bottom right.",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav",
+        "stt_output": "If your hand slips, use the buttons in the bottom right.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
+    },
+    "en:cc_train_defeat_cr_01": {
+        "id": "cc_train_defeat_cr_01",
+        "character": "caoren",
+        "original_text": "The dummies exposed our disorder. Again, until the line holds.",
+        "voice_target": "movies/clean/clean_hercules_young_adult_hero.wav",
+        "stt_output": "The dummies exposed our disorder. Again, until the line holds.",
+        "wer": 0.0,
+        "is_bad": false,
+        "language": "en"
     }
 }

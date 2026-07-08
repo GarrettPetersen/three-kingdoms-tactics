@@ -44,6 +44,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "cc_dq_after_training_01",
+    "char": "caocao",
+    "text": "Enough. The riders are ready. We march for Yingchuan.",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "cc_dq_att_00",
     "char": "zhoujing",
     "text": "Magistrate, the refugees all report the Yellow Turbans are burning and plundering along the roads. The people are carrying old and young alike and pleading to enter the city for shelter.",
@@ -80,6 +86,12 @@
     "source": "NarrativeScripts.js"
   },
   {
+    "id": "cc_dq_cr_train_prompt_01",
+    "char": "caoren",
+    "text": "Cousin, before we ride, should we pause to do some training?",
+    "source": "NarrativeScripts.js"
+  },
+  {
     "id": "cc_dq_msg_01",
     "char": "volunteer",
     "text": "Dispatch from Luoyang! Imperial order: Dong Commandery is to muster a cavalry force of five thousand.",
@@ -97,6 +109,132 @@
     "text": "Magistrate Cao Cao is elevated to Cavalry Commander and placed in command of this Dong Commandery cavalry force.",
     "source": "NarrativeScripts.js",
     "phonetic_text": "Magistrate Tsao Tsao is elevated to Cavalry Commander and placed in command of this Dong Commandery cavalry force."
+  },
+  {
+    "id": "cc_dq_train_no_01",
+    "char": "caocao",
+    "text": "No. We know enough to begin; the road to Yingchuan cannot wait.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_dq_train_yes_01",
+    "char": "caocao",
+    "text": "Yes. Drill the riders now; the rebels will not wait for us to learn in battle.",
+    "source": "NarrativeScripts.js"
+  },
+  {
+    "id": "cc_train_cc_01",
+    "char": "caocao",
+    "text": "Before battle, study how the field moves.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_train_cc_02",
+    "char": "caocao",
+    "text": "Enemies and allies move first. They show where they mean to strike.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_train_cc_03",
+    "char": "caocao",
+    "text": "Those attacks do not land until you end your turn.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_train_cc_04",
+    "char": "caocao",
+    "text": "A commander may move, then attack. You may also attack without moving.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cc_05",
+    "char": "caocao",
+    "text": "Click a commander, then click a highlighted yellow hex to move there.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cc_06",
+    "char": "caocao",
+    "text": "With an attack selected, click a highlighted red hex to strike.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cc_07",
+    "char": "caocao",
+    "text": "My sword strikes one enemy and pushes him back.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cc_08",
+    "char": "caocao",
+    "text": "My command can also order an ally to act, but for now, practice striking the dummies.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cc_end_turn_01",
+    "char": "caocao",
+    "text": "Good. Both commanders have attacked.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cc_end_turn_02",
+    "char": "caocao",
+    "text": "Now hit the End Turn button.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cc_watch_01",
+    "char": "caocao",
+    "text": "In real battle, watch the hexes other units are targeting.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cr_01",
+    "char": "caoren",
+    "text": "Red marks enemies. Blue marks allies. Green marks the commanders under your control.",
+    "source": "Battles.js"
+  },
+  {
+    "id": "cc_train_cr_02",
+    "char": "caoren",
+    "text": "Each commander has his own attack pattern.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cr_03",
+    "char": "caoren",
+    "text": "I have two attacks. Click either attack button before choosing a target.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cr_04",
+    "char": "caoren",
+    "text": "My long spear thrusts up to two hexes in a line and pushes the farthest target.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cr_05",
+    "char": "caoren",
+    "text": "Shield Bash strikes a short arc and shoves targets two hexes. It pushes allies without hurting them.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cr_finish_01",
+    "char": "caoren",
+    "text": "Now go ahead and break the rest of these dummies.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_cr_undo_01",
+    "char": "caoren",
+    "text": "If your hand slips, use the buttons in the bottom right.",
+    "source": "TacticsScene.js"
+  },
+  {
+    "id": "cc_train_defeat_cr_01",
+    "char": "caoren",
+    "text": "The dummies exposed our disorder. Again, until the line holds.",
+    "source": "Battles.js"
   },
   {
     "id": "cc_yc_01",
@@ -3354,12 +3492,6 @@
     "id": "train_zf_01",
     "char": "zhangfei",
     "text": "If your hand slips, use the buttons in the bottom right.",
-    "source": "TacticsScene.js"
-  },
-  {
-    "id": "train_zf_02",
-    "char": "zhangfei",
-    "text": "One button undoes your last action. One resets the whole turn.",
     "source": "TacticsScene.js"
   },
   {

@@ -168,22 +168,42 @@ function checkBattleRows() {
     });
 }
 
-function checkZhuoTrainingBattle() {
-    const battle = BATTLES.zhuo_training;
-    assertRule(!!battle, 'zhuo_training battle must exist.');
-    if (!battle) return;
+function checkTrainingBattles() {
+    const zhuoBattle = BATTLES.zhuo_training;
+    assertRule(!!zhuoBattle, 'zhuo_training battle must exist.');
+    if (zhuoBattle) {
+        const allies = (zhuoBattle.units || []).filter(unit => unit.id.startsWith('ally'));
+        assertRule(allies.length > 0, 'zhuo_training should include normal allied units.');
+        allies.forEach(unit => {
+            assertRule(unit.type === 'allied_soldier',
+                `zhuo_training.${unit.id} should use normal allied_soldier AI.`);
+            assertRule(!('templateId' in unit),
+                `zhuo_training.${unit.id} should use the canonical persistent ally path.`);
+        });
+    }
 
-    const allies = (battle.units || []).filter(unit => unit.id.startsWith('ally'));
-    assertRule(allies.length > 0, 'zhuo_training should include normal allied units.');
-    allies.forEach(unit => {
-        assertRule(unit.type === 'allied_soldier',
-            `zhuo_training.${unit.id} should use normal allied_soldier AI.`);
-        assertRule(!('templateId' in unit),
-            `zhuo_training.${unit.id} should use the canonical persistent ally path.`);
+    const caocaoBattle = BATTLES.caocao_training;
+    assertRule(!!caocaoBattle, 'caocao_training battle must exist.');
+    if (caocaoBattle) {
+        const unitIds = new Set((caocaoBattle.units || []).map(unit => unit.id));
+        assertRule(unitIds.has('caocao') && unitIds.has('caoren'),
+            'caocao_training should include Cao Cao and Cao Ren.');
+        const riders = (caocaoBattle.units || []).filter(unit => /^rider\d+$/.test(unit.id));
+        assertRule(riders.length > 0, 'caocao_training should include normal Cao Cao rider allies.');
+        riders.forEach(unit => {
+            assertRule(unit.type === 'caocao_force',
+                `caocao_training.${unit.id} should use the canonical Cao Cao force path.`);
+            assertRule(!('templateId' in unit),
+                `caocao_training.${unit.id} should not hardcode a Cao Cao rider template.`);
+        });
+    }
+
+    ['zhuo_training', 'caocao_training'].forEach(battleId => {
+        const battle = BATTLES[battleId];
+        if (!battle) return;
+        const dummies = (battle.units || []).filter(unit => unit.type === 'training_dummy');
+        assertRule(dummies.length >= 10, `${battleId} should have enough dummies for multiple attacks.`);
     });
-
-    const dummies = (battle.units || []).filter(unit => unit.type === 'training_dummy');
-    assertRule(dummies.length >= 10, 'zhuo_training should have enough dummies for multiple attacks.');
     const dummyTemplate = UNIT_TEMPLATES.training_dummy?.dummy;
     assertRule(dummyTemplate?.hp === 1, 'training dummy template should have 1 HP.');
     assertRule(dummyTemplate?.moveRange === 0, 'training dummy template should have zero movement.');
@@ -922,7 +942,7 @@ async function checkSettingWalkmasks() {
 checkSharedForceState();
 checkLegacyForceMigration();
 checkBattleRows();
-checkZhuoTrainingBattle();
+checkTrainingBattles();
 checkNpcAiActionability();
 checkQingzhouCityGatePrelude();
 checkLiuboPerchRules();
