@@ -8424,6 +8424,8 @@ export class TacticsScene extends BaseScene {
                 victim.img = assets.getImage(victim.breaksToImgKey);
                 victim.keepBrokenOnDefeat = true;
                 victim.isGone = false;
+                victim.pushData = null;
+                victim.rollData = null;
                 victim.action = 'standby';
                 victim.currentAnimAction = 'standby';
                 victim.frame = 0;
@@ -8755,6 +8757,7 @@ export class TacticsScene extends BaseScene {
             && victim.hp <= 0
             && !victim.isGone
             && !victim.overkillEffectStarted;
+        const brokeStaticProp = victim.hp <= 0 && victim.keepBrokenOnDefeat;
         if (finalDamage > 0) {
             victim.triggerShake(startPos.x, startPos.y, endPos.x, endPos.y);
             this.hitStopRemaining = 80;
@@ -8770,6 +8773,12 @@ export class TacticsScene extends BaseScene {
             this.addDamageNumber(endPos.x, endPos.y - 30, `${finalDamage} ${critText}`, '#ff0000');
         } else {
             this.addDamageNumber(endPos.x, endPos.y - 30, finalDamage);
+        }
+
+        if (brokeStaticProp) {
+            victim.pushData = null;
+            victim.rollData = null;
+            return;
         }
 
         if (attack.push) {

@@ -164,6 +164,10 @@ export class Unit {
 
         // Ensure hp=0 units stay in death animation
         if (this.hp <= 0 && this.keepBrokenOnDefeat) {
+            this.pushData = null;
+            this.rollData = null;
+            this.isMoving = false;
+            this.path = [];
             this.action = 'standby';
             this.currentAnimAction = 'standby';
             this.frame = 0;
